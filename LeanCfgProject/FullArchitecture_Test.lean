@@ -1160,11 +1160,37 @@ axiom extractionMap
       (extractedWitnessedStructure G1 H)
       (extractedWitnessedStructure G2 H)
 
-axiom extractionFunctor
+axiom extractionMap_id
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
+    extractionMap G G H (SSBNFGrammar.GrammarMorphism.id G) =
+      StructureMorphism.id (extractedWitnessedStructure G H)
+
+axiom extractionMap_comp
+    (G1 G2 G3 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (g : SSBNFGrammar.GrammarMorphism G2 G3) :
+    extractionMap G1 G3 H (SSBNFGrammar.GrammarMorphism.comp f g) =
+      StructureMorphism.comp
+        (extractionMap G1 G2 H f)
+        (extractionMap G2 G3 H g)
+
+noncomputable def extractionFunctor
     (H : FixedFiniteMonoidHom Sigma M) :
     CategoryTheory.Functor
       (SSBNFGrammar Sigma)
-      (WitnessedFiniteContextStructure H)
+      (WitnessedFiniteContextStructure H) :=
+  {
+    obj := fun G => extractedWitnessedStructure G H
+    map := fun {G1 G2} f => extractionMap G1 G2 H f
+    map_id := by
+      intro G
+      exact extractionMap_id G H
+    map_comp := by
+      intro G1 G2 G3 f g
+      exact extractionMap_comp G1 G2 G3 H f g
+  }
 
 end Extraction
 
