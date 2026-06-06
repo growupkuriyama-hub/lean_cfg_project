@@ -37,7 +37,7 @@ attribute [instance] SSBNFGrammar.fintypeV
 
 noncomputable def finiteList (alpha : Type u) [Fintype alpha] : List alpha := by
   classical
-  exact (Fintype.elems alpha).toList
+  exact ((Fintype.elems : Finset alpha).toList)
 
 abbrev FullTypedState
     {Sigma : Type u}
@@ -138,7 +138,7 @@ inductive IsReachable
   | start
       (A : G.V)
       (p : M)
-      (hstart : Membership.mem A G.startRules)
+      (hstart : Membership.mem G.startRules A)
       (hprod : IsProductive G H (mkFullTypedState A p 1 1)) :
       IsReachable G H (mkFullTypedState A p 1 1)
   | binary_left
