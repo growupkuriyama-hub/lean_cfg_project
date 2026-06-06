@@ -145,7 +145,8 @@ theorem sameHTypedSyntacticObservation_trans
     SameHTypedSyntacticObservation H L v w →
     SameHTypedSyntacticObservation H L u w := by
   intro huv hvw x y
-  exact sameHTypedObservation_trans H L (x ++ u ++ y) (x ++ v ++ y) (x ++ w ++ y)
+  exact sameHTypedObservation_trans H L
+    (x ++ u ++ y) (x ++ v ++ y) (x ++ w ++ y)
     (huv x y) (hvw x y)
 
 theorem sameHTypedSyntacticObservation_implies_observation
@@ -195,7 +196,8 @@ theorem sameHTypedSyntacticObservation_concat
     sameHTypedSyntacticObservation_right H L u₁ v₁ u₂ h1
   have hright : SameHTypedSyntacticObservation H L (v₁ ++ u₂) (v₁ ++ v₂) :=
     sameHTypedSyntacticObservation_left H L u₂ v₂ v₁ h2
-  exact sameHTypedSyntacticObservation_trans H L (u₁ ++ u₂) (v₁ ++ u₂) (v₁ ++ v₂) hleft hright
+  exact sameHTypedSyntacticObservation_trans H L
+    (u₁ ++ u₂) (v₁ ++ u₂) (v₁ ++ v₂) hleft hright
 
 theorem sameHTypedSyntacticObservation_maximal
     {Sigma M : Type u}
@@ -295,11 +297,9 @@ theorem h_eq_in_context
     (x y : Word Sigma) :
     H.h (x ++ u ++ y) = H.h (x ++ v ++ y) := by
   have hxuy : H.h (x ++ u ++ y) = (H.h x * H.h u) * H.h y := by
-    rw [← List.append_assoc x u y]
     rw [H.map_append (x ++ u) y]
     rw [H.map_append x u]
   have hxvy : H.h (x ++ v ++ y) = (H.h x * H.h v) * H.h y := by
-    rw [← List.append_assoc x v y]
     rw [H.map_append (x ++ v) y]
     rw [H.map_append x v]
   calc
