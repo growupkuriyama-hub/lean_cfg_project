@@ -709,19 +709,173 @@ noncomputable def extractedWitnessedStructure
     axiomC := extracted_axiomC G H
   }
 
-axiom extractionMap
+axiom mappedTrimmedProperty
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H) :
+    And
+      (IsProductive G2 H
+        (mkFullTypedState
+          (f.map x.val.1)
+          x.val.2.1
+          x.val.2.2.1
+          x.val.2.2.2))
+      (IsReachable G2 H
+        (mkFullTypedState
+          (f.map x.val.1)
+          x.val.2.1
+          x.val.2.2.1
+          x.val.2.2.2))
+
+axiom extraction_terminal_map
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2) :
+    forall tr : CarrierTerminalRule H (extractedWitnessedStructure G1 H).profile,
+      List.Mem (CarrierTypedRule.terminal tr) (extractedWitnessedStructure G1 H).R ->
+        Exists
+          (fun trB : CarrierTerminalRule H (extractedWitnessedStructure G2 H).profile =>
+            And
+              (trB.X =
+                ({
+                  val :=
+                    mkFullTypedState
+                      (f.map tr.X.val.1)
+                      tr.X.val.2.1
+                      tr.X.val.2.2.1
+                      tr.X.val.2.2.2
+                  property := mappedTrimmedProperty G1 G2 H f tr.X
+                } : TrimmedState G2 H))
+              (And
+                (trB.a = tr.a)
+                (List.Mem
+                  (CarrierTypedRule.terminal trB)
+                  (extractedWitnessedStructure G2 H).R)))
+
+axiom extraction_binary_map
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2) :
+    forall br : CarrierBinaryRule (extractedWitnessedStructure G1 H).profile,
+      List.Mem (CarrierTypedRule.binary br) (extractedWitnessedStructure G1 H).R ->
+        Exists
+          (fun brB : CarrierBinaryRule (extractedWitnessedStructure G2 H).profile =>
+            And
+              (brB.X =
+                ({
+                  val :=
+                    mkFullTypedState
+                      (f.map br.X.val.1)
+                      br.X.val.2.1
+                      br.X.val.2.2.1
+                      br.X.val.2.2.2
+                  property := mappedTrimmedProperty G1 G2 H f br.X
+                } : TrimmedState G2 H))
+              (And
+                (brB.Y =
+                  ({
+                    val :=
+                      mkFullTypedState
+                        (f.map br.Y.val.1)
+                        br.Y.val.2.1
+                        br.Y.val.2.2.1
+                        br.Y.val.2.2.2
+                    property := mappedTrimmedProperty G1 G2 H f br.Y
+                  } : TrimmedState G2 H))
+                (And
+                  (brB.Z =
+                    ({
+                      val :=
+                        mkFullTypedState
+                          (f.map br.Z.val.1)
+                          br.Z.val.2.1
+                          br.Z.val.2.2.1
+                          br.Z.val.2.2.2
+                      property := mappedTrimmedProperty G1 G2 H f br.Z
+                    } : TrimmedState G2 H))
+                  (List.Mem
+                    (CarrierTypedRule.binary brB)
+                    (extractedWitnessedStructure G2 H).R))))
+
+noncomputable def extractionMap
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2) :
     StructureMorphism
       (extractedWitnessedStructure G1 H)
-      (extractedWitnessedStructure G2 H)
+      (extractedWitnessedStructure G2 H) :=
+  {
+    map :=
+      fun x =>
+        {
+          val :=
+            mkFullTypedState
+              (f.map x.val.1)
+              x.val.2.1
+              x.val.2.2.1
+              x.val.2.2.2
+          property := mappedTrimmedProperty G1 G2 H f x
+        }
+    profile_map := by
+      intro x
+      cases x with
+      | mk val property =>
+        cases val with
+        | mk A rest =>
+          cases rest with
+          | mk p rest2 =>
+            cases rest2 with
+            | mk m n =>
+              rfl
+    start_map := by
+      intro x hx
+      simp [extractedS] at hx
+    terminal_map := extraction_terminal_map G1 G2 H f
+    binary_map := extraction_binary_map G1 G2 H f
+    omega_map := by
+      intro x
+      rfl
+    chi_map := by
+      intro x
+      rfl
+  }
 
-axiom extractionFunctor
+noncomputable def extractionFunctor
     (H : FixedFiniteMonoidHom Sigma M) :
     CategoryTheory.Functor
       (SSBNFGrammar Sigma)
-      (WitnessedFiniteContextStructure H)
+      (WitnessedFiniteContextStructure H) :=
+  {
+    obj := fun G => extractedWitnessedStructure G H
+    map := fun {G1 G2} f => extractionMap G1 G2 H f
+    map_id := by
+      intro G
+      ext x
+      apply Subtype.ext
+      cases x with
+      | mk val property =>
+        cases val with
+        | mk A rest =>
+          cases rest with
+          | mk p rest2 =>
+            cases rest2 with
+            | mk m n =>
+              rfl
+    map_comp := by
+      intro G1 G2 G3 f g
+      ext x
+      apply Subtype.ext
+      cases x with
+      | mk val property =>
+        cases val with
+        | mk A rest =>
+          cases rest with
+          | mk p rest2 =>
+            cases rest2 with
+            | mk m n =>
+              rfl
+  }
 
 end Extraction
 
