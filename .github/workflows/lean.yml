@@ -42,10 +42,10 @@ jobs:
           fi
 
       - name: Check StateSemantics module
-        run: lake build LeanCfgProject.JALC.StateSemantics
+        run: lake build LeanCfgProject.StateSemantics
 
       - name: Check ResidualConcept module
-        run: lake build LeanCfgProject.JALC.ResidualConcept
+        run: lake build LeanCfgProject.ResidualConcept
 
       - name: Check LanguageQuotient module
-        run: lake build LeanCfgProject.JALC.LanguageQuotient
+        run: lake build LeanCfgProject.LanguageQuotient
