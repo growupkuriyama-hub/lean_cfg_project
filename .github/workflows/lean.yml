@@ -29,7 +29,14 @@ jobs:
 
       - name: Reject sorry
         run: |
-          if grep -R -n "sorry" --include="*.lean" LeanCfgProject; then
+          if grep -R -nE '\bsorry\b' LeanCfgProject --include="*.lean"; then
             echo "::error::sorry found in Lean files"
+            exit 1
+          fi
+
+      - name: Reject axiom
+        run: |
+          if grep -R -nE '^[[:space:]]*axiom\b' LeanCfgProject --include="*.lean"; then
+            echo "::error::axiom found in Lean files"
             exit 1
           fi
