@@ -856,6 +856,7 @@ theorem extracted_axiomRch
               { val := mkFullTypedState A p 1 1
                 property := And.intro hprodArg (IsReachable.start A p hstart hprod0) }
             have hmemS : Membership.mem (extractedS G H) xs := by
+              letI : Fintype (TrimmedState G H) := trimmedStateFintype G H
               unfold extractedS
               apply Finset.mem_filter.mpr
               apply And.intro
