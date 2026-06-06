@@ -1,4 +1,4 @@
-﻿import Mathlib.Data.List.Basic
+import Mathlib.Data.List.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.Group.Basic
