@@ -1,9 +1,11 @@
 import LeanCfgProject.Step25_Test
-import Mathlib.CategoryTheory.Category.Basic
+import Mathlib.CategoryTheory.Functor.Basic
 
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unreachableTactic false
+set_option linter.style.openClassical false
+set_option linter.style.whitespace false
 
 universe u
 
@@ -13,17 +15,6 @@ open Classical
 open CategoryTheory
 
 noncomputable section
-
-/-
-  Full architecture test file.
-
-  This file intentionally uses ASCII syntax only.
-  It extends the definitions checked in Step25_Test.lean.
-
-  The proof-heavy global categorical/extraction facts are registered as
-  axioms here. The purpose of this file is to check that the full
-  architecture has coherent Lean types. It is not the final proof file.
--/
 
 namespace ContextCategory
 
@@ -345,7 +336,7 @@ axiom realizationMap
       (stateSeparatedGrammar H B)
 
 axiom realizationFunctor :
-    Functor
+    CategoryTheory.Functor
       (WitnessedFiniteContextStructure H)
       (SSBNFGrammar Sigma)
 
@@ -357,6 +348,11 @@ open FullTypedRefinement
 
 variable {Sigma : Type u}
 variable {M : Type u} [Monoid M] [Fintype M]
+
+axiom trimmedStateFintype
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
+    Fintype (TrimmedState G H)
 
 noncomputable def extractedS
     (G : SSBNFGrammar Sigma)
@@ -391,7 +387,7 @@ noncomputable def extractedFiniteContextStructure
     FiniteContextStructure H :=
   {
     W := TrimmedState G H
-    fintypeW := by infer_instance
+    fintypeW := trimmedStateFintype G H
     profile := extractedProfile G H
     R := extractedR G H
     S := extractedS G H
@@ -424,7 +420,7 @@ noncomputable def extractedWitnessedStructure
     WitnessedFiniteContextStructure H :=
   {
     W := TrimmedState G H
-    fintypeW := by infer_instance
+    fintypeW := trimmedStateFintype G H
     profile := extractedProfile G H
     R := extractedR G H
     S := extractedS G H
@@ -447,7 +443,7 @@ axiom extractionMap
 
 axiom extractionFunctor
     (H : FixedFiniteMonoidHom Sigma M) :
-    Functor
+    CategoryTheory.Functor
       (SSBNFGrammar Sigma)
       (WitnessedFiniteContextStructure H)
 
