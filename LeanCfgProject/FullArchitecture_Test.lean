@@ -624,10 +624,14 @@ open FullTypedRefinement
 variable {Sigma : Type u}
 variable {M : Type u} [Monoid M] [Fintype M]
 
-axiom trimmedStateFintype
+@[reducible]
+noncomputable def trimmedStateFintype
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
-    Fintype (TrimmedState G H)
+    Fintype (TrimmedState G H) := by
+  classical
+  unfold TrimmedState
+  infer_instance
 
 noncomputable def extractedS
     (G : SSBNFGrammar Sigma)
