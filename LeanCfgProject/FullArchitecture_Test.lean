@@ -7,6 +7,7 @@ set_option linter.unusedTactic false
 set_option linter.unreachableTactic false
 set_option linter.style.openClassical false
 set_option linter.style.whitespace false
+set_option linter.style.multiGoal false
 
 universe u
 
@@ -604,11 +605,13 @@ noncomputable def realizationFunctor :
     map := fun {A B} f => realizationMap H f
     map_id := by
       intro A
-      ext x
+      apply SSBNFGrammar.GrammarMorphism.ext
+      intro x
       rfl
     map_comp := by
       intro A B C f g
-      ext x
+      apply SSBNFGrammar.GrammarMorphism.ext
+      intro x
       rfl
   }
 
@@ -621,11 +624,13 @@ open FullTypedRefinement
 variable {Sigma : Type u}
 variable {M : Type u} [Monoid M] [Fintype M]
 
+@[reducible]
 noncomputable def trimmedStateFintype
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     Fintype (TrimmedState G H) := by
   classical
+  unfold TrimmedState
   infer_instance
 
 noncomputable def extractedS
@@ -643,7 +648,8 @@ theorem extracted_axiomS
           ((extractedProfile G H x).lt = 1)
           ((extractedProfile G H x).rt = 1) := by
   intro x hx
-  simp [extractedS] at hx
+  unfold extractedS at hx
+  exact False.elim ((Finset.not_mem_empty x) hx)
 
 axiom extracted_axiomP
     (G : SSBNFGrammar Sigma)
