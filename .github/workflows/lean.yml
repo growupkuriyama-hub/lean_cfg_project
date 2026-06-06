@@ -6,15 +6,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  check-step25:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Lean and build
+      - name: Setup Lean
         uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
-          build-args: Step25_Test.lean
+          build: false
+          test: false
+          lint: false
+
+      - name: Check Step25_Test.lean
+        run: lake env lean Step25_Test.lean
