@@ -1372,6 +1372,29 @@ theorem mapTrimmedState_start_mem
     rw [hp]
     exact hb
 
+theorem mapTrimmedState_id
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (x : TrimmedState G H) :
+    mapTrimmedState H (SSBNFGrammar.GrammarMorphism.id G) x = x := by
+  cases x with
+  | mk X hx =>
+      apply Subtype.ext
+      exact mapFullTypedState_id G X
+
+theorem mapTrimmedState_comp
+    {G1 G2 G3 : SSBNFGrammar Sigma}
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (g : SSBNFGrammar.GrammarMorphism G2 G3)
+    (x : TrimmedState G1 H) :
+    mapTrimmedState H (SSBNFGrammar.GrammarMorphism.comp f g) x =
+      mapTrimmedState H g (mapTrimmedState H f x) := by
+  cases x with
+  | mk X hx =>
+      apply Subtype.ext
+      exact mapFullTypedState_comp f g X
+
 theorem extractedR_terminal_to_full
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
@@ -1668,13 +1691,16 @@ noncomputable def extractionMap
       exact extraction_chi_map_core G1 G2 H f x
   }
 
-axiom extractionMap_id
+theorem extractionMap_id
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     extractionMap G G H (SSBNFGrammar.GrammarMorphism.id G) =
-      StructureMorphism.id (extractedWitnessedStructure G H)
+      StructureMorphism.id (extractedWitnessedStructure G H) := by
+  apply StructureMorphism.ext
+  funext x
+  exact mapTrimmedState_id G H x
 
-axiom extractionMap_comp
+theorem extractionMap_comp
     (G1 G2 G3 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
@@ -1682,7 +1708,10 @@ axiom extractionMap_comp
     extractionMap G1 G3 H (SSBNFGrammar.GrammarMorphism.comp f g) =
       StructureMorphism.comp
         (extractionMap G1 G2 H f)
-        (extractionMap G2 G3 H g)
+        (extractionMap G2 G3 H g) := by
+  apply StructureMorphism.ext
+  funext x
+  exact mapTrimmedState_comp H f g x
 
 noncomputable def extractionFunctor
     (H : FixedFiniteMonoidHom Sigma M) :
