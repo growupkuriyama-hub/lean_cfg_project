@@ -269,4 +269,4 @@ theorem pointedSynObs_implies_h_eq
 -- The proof should use set extensionality for HTypedContextTypes and H.map_append.
 -- It is not included here so that this file remains placeholder-free and assumption-free.
 
-end LeanCfgProject.JALC
+end LeanCfgProject
