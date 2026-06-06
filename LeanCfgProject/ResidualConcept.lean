@@ -70,4 +70,53 @@ theorem state_semantics_subset_residual
   rw [← q_mul ell w]
   rw [← q_mul (ell ++ w) r]
 
+theorem commonContexts_antitone
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    {U V : Set Q}
+    (hUV : U ⊆ V) :
+    CommonContexts S V ⊆ CommonContexts S U := by
+  intro ab hab gamma hgamma
+  exact hab gamma (hUV hgamma)
+
+theorem elementsOfContexts_antitone
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    {K L : Set (Q × Q)}
+    (hKL : K ⊆ L) :
+    ElementsOfContexts S L ⊆ ElementsOfContexts S K := by
+  intro gamma hgamma ab hab
+  exact hgamma ab (hKL hab)
+
+theorem conceptClosure_mono
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    {U V : Set Q}
+    (hUV : U ⊆ V) :
+    ConceptClosure S U ⊆ ConceptClosure S V := by
+  intro gamma hgamma ab hab
+  apply hgamma
+  intro delta hdelta
+  exact hab delta (hUV hdelta)
+
+
+theorem binary_sound_after_closure
+    {Sigma : Type u} {Q : Type v} {State : Type u}
+    [Monoid Q]
+    (S : Set Q)
+    (q : Word Sigma → Q)
+    (q_mul : ∀ u v : Word Sigma, q (u ++ v) = q u * q v)
+    (Yield : State → Set (Word Sigma))
+    (X Y Z : State)
+    (hbin : ∀ u v : Word Sigma,
+      u ∈ Yield Y →
+      v ∈ Yield Z →
+      u ++ v ∈ Yield X) :
+    ConceptClosure S
+      (SetMul (StateSemantics q Yield Y)
+              (StateSemantics q Yield Z))
+      ⊆
+    ConceptClosure S (StateSemantics q Yield X) := by
+  exact conceptClosure_mono S (binary_sound q q_mul Yield X Y Z hbin)
+
 end LeanCfgProject

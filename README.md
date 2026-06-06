@@ -1,178 +1,285 @@
-# \# lean\_cfg\_project
+# lean_cfg_project
 
-# 
+This repository contains an experimental Lean 4 formalization for the fixed-`h`
+CFG / residual concept semantics project.
 
-# This repository contains an experimental Lean 4 formalization of an abstract architecture for finite two-sided typed context structures associated with CFG presentations.
+The project studies finite two-sided monoid-typed structures associated with
+context-free grammar presentations, together with a Lean-checked semantic layer
+connecting presentation-level descriptors to powerset-valued and residual
+concept semantics.
 
-# 
+The intended mathematical direction is:
 
-# The current formalization is organized around two core Lean modules:
+```text
+presentation-level descriptor E_h(G)
+        -> powerset-valued state semantics P(Q)
+        -> residual concept universe Concepts(Q, q[L])
+```
 
-# 
+The goal is **not** to claim a canonical CFG presentation or to solve CFG
+equivalence.  The current goal is to formalize a sound architecture in which
+fixed-`h` two-sided CFG presentation descriptors admit semantic interpretations
+inside a language-level residual/concept universe.
 
-# \* `LeanCfgProject.Step25\_Test`
+## Verification status
 
-# \* `LeanCfgProject.FullArchitecture\_Test`
+The current verified commit is:
 
-# 
+```text
+10b043a
+```
 
-# \## Verification status
+GitHub Actions status:
 
-# 
+```text
+Lean CI #70: passed
+```
 
-# The current verified commit is:
+The current CI checks the following modules:
 
-# 
+```bash
+lake build LeanCfgProject.Step25_Test
+lake build LeanCfgProject.FullArchitecture_Test
+lake build LeanCfgProject.StateSemantics
+lake build LeanCfgProject.ResidualConcept
+lake build LeanCfgProject.LanguageQuotient
+```
 
-# ```text
+The CI also rejects Lean source files containing:
 
-# d8d8d4e
+- `sorry`
+- top-level `axiom` declarations
 
-# ```
+Current status:
 
-# 
+- `Step25_Test.lean`: verified
+- `FullArchitecture_Test.lean`: verified
+- `StateSemantics.lean`: verified
+- `ResidualConcept.lean`: verified
+- `LanguageQuotient.lean`: verified
+- `sorry`: 0
+- `axiom`: 0
+- GitHub Actions: green
 
-# GitHub Actions status:
+The successful build currently reports minor whitespace-style warnings in
+`StateSemantics.lean` and `LanguageQuotient.lean`.  These warnings are
+non-fatal and do not affect verification.
 
-# 
+## What is formalized
 
-# ```text
+The project currently has two layers.
 
-# Lean CI #61: passed
+### 1. Presentation-level architecture
 
-# ```
+The original verified core formalizes an abstract architecture for finite
+two-sided typed context structures associated with CFG presentations.
 
-# 
+This layer includes:
 
-# The CI checks the following modules:
+- finite monoid-typed refinements of CFG-style rules;
+- full typed states carrying yield, left-context, and right-context information;
+- extraction of finite context structures from refined grammars;
+- realization of witnessed finite context structures as state-separated grammars;
+- functorial extraction and realization constructions;
+- a retraction-style normalization interface for the extracted/realized architecture.
 
-# 
+This part is mainly contained in:
 
-# ```bash
+```text
+LeanCfgProject/Step25_Test.lean
+LeanCfgProject/FullArchitecture_Test.lean
+```
 
-# lake build LeanCfgProject.Step25\_Test
+### 2. Residual concept semantics layer
 
-# lake build LeanCfgProject.FullArchitecture\_Test
+The newer verified layer formalizes abstract semantic tools used to connect
+presentation-level descriptors with language-level residual/concept semantics.
 
-# ```
+This layer includes:
 
-# 
+- image semantics of languages under a multiplicative word observation;
+- concatenation of languages and subset multiplication;
+- powerset-valued state semantics;
+- terminal and binary rule soundness over an abstract monoid carrier;
+- two-sided residuals of a start image `S = q[L]`;
+- quotient-level Galois maps between subsets of `Q` and subsets of `Q × Q`;
+- the residual Galois connection;
+- the first syntactic-observation definitions for fixed-`h` language quotients.
+
+This part is mainly contained in:
+
+```text
+LeanCfgProject/StateSemantics.lean
+LeanCfgProject/ResidualConcept.lean
+LeanCfgProject/LanguageQuotient.lean
+```
 
-# The CI also rejects Lean source files containing:
+## Main files
+
+```text
+LeanCfgProject/
+  Step25_Test.lean
+  FullArchitecture_Test.lean
+  StateSemantics.lean
+  ResidualConcept.lean
+  LanguageQuotient.lean
+```
 
-# 
+### `Step25_Test.lean`
 
-# \* `sorry`
+Contains the underlying typed CFG refinement layer, including words,
+fixed finite monoid homomorphisms, typed states, full typed states, typed rules,
+productivity/reachability, trimmed states, extracted profiles, and extracted
+typed rule structures.
 
-# \* `axiom`
+### `FullArchitecture_Test.lean`
 
-# 
+Builds the architectural layer on top of `Step25_Test.lean`, including finite
+context structures, witnessed finite context structures, morphisms,
+extraction/realization interfaces, and a retraction-style interface.
 
-# Current status:
+### `StateSemantics.lean`
 
-# 
+Defines abstract powerset-valued semantics for languages and grammar states
+under a multiplicative word observation `q : Sigma* -> Q`.
 
-# \* `Step25\_Test.lean`: verified
+Main declarations include:
 
-# \* `FullArchitecture\_Test.lean`: verified
+```text
+Language
+ImageOfLanguage
+LangMul
+SetMul
+StateSemantics
+image_langMul_eq_setMul
+terminal_sound
+binary_sound
+```
 
-# \* `sorry`: 0
+The key mathematical idea is that if `q` is multiplicative, then image semantics
+turns concatenation into subset multiplication:
 
-# \* `axiom`: 0
+```text
+q[Y Z] = q[Y] q[Z]
+```
 
-# 
+Consequently, binary CFG rules are interpreted soundly as subset multiplication
+inclusions.
 
-# \## What is formalized
+### `ResidualConcept.lean`
 
-# 
+Defines residual and Galois structures over an abstract monoid carrier `Q`.
 
-# The project formalizes a finite typed architecture inspired by two-sided context structures for context-free grammar presentations.  The development includes:
+Main declarations include:
 
-# 
+```text
+TwoSidedResidual
+CommonContexts
+ElementsOfContexts
+ConceptClosure
+residual_galois_connection
+subset_conceptClosure
+state_semantics_subset_residual
+```
 
-# \* finite monoid-typed refinements of CFG-style rules;
+The key mathematical idea is that, for `S = q[L]`, the relation
 
-# \* full typed states carrying yield, left-context, and right-context information;
+```text
+gamma I_S (alpha, beta)  iff  alpha * gamma * beta ∈ S
+```
 
-# \* extraction of finite context structures from refined grammars;
+induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.
+This is the residual/concept semantics layer connecting the project with
+Clark-style syntactic concept lattices and formal concept analysis.
 
-# \* realization of witnessed finite context structures as state-separated grammars;
+### `LanguageQuotient.lean`
 
-# \* functorial extraction and realization constructions;
+Defines initial language-level observation relations.
 
-# \* a retraction-style normalization interface for the extracted/realized architecture.
+Main declarations include:
 
-# 
+```text
+HTypedContextTypes
+SameHTypedObservation
+SameHTypedSyntacticObservation
+SameSyntacticContext
+SameHTypedPointedObservation
+SameHTypedPointedSyntacticObservation
+```
 
-# The code is intended as a formally checked architectural skeleton, rather than a complete formalization of every theorem in the accompanying mathematical manuscript.
+It also verifies basic reflexivity, symmetry, transitivity, and simple
+implication lemmas for the observation relations.
 
-# 
+This file is the starting point for formalizing the distinction between:
 
-# \## Main files
+- finite but non-composition-compatible observation quotients;
+- unpointed syntactic observation congruences;
+- pointed observation relations, which connect to ordinary syntactic congruence.
 
-# 
+## Continuous integration
 
-# ```text
+The repository uses GitHub Actions to run Lean verification automatically on
+push, pull request, and manual workflow dispatch.
 
-# LeanCfgProject/
+The workflow file is:
 
-# &#x20; Step25\_Test.lean
+```text
+.github/workflows/lean.yml
+```
 
-# &#x20; FullArchitecture\_Test.lean
+The CI currently performs these checks:
 
-# ```
+1. build `LeanCfgProject.Step25_Test`;
+2. build `LeanCfgProject.FullArchitecture_Test`;
+3. reject any remaining `sorry`;
+4. reject top-level `axiom` declarations;
+5. build `LeanCfgProject.StateSemantics`;
+6. build `LeanCfgProject.ResidualConcept`;
+7. build `LeanCfgProject.LanguageQuotient`.
 
-# 
+## Current mathematical interpretation
 
-# `Step25\_Test.lean` contains the underlying typed CFG refinement layer.
+The repository should be read as a machine-checked Lean model of the core
+architecture and its first semantic extension.
 
-# 
+The currently verified development supports the following conservative claim:
 
-# `FullArchitecture\_Test.lean` builds the categorical and architectural layer on top of `Step25\_Test.lean`.
+```text
+At commit 10b043a, the presentation-level architecture and the abstract
+residual-concept semantic layer build successfully in Lean 4 with no sorry
+and no axiom.
+```
 
-# 
+It does **not** claim that:
 
-# \## Continuous integration
+- the entire accompanying paper is fully formalized;
+- CFG equivalence is solved;
+- a canonical CFG presentation has been constructed;
+- every fixed-`h` descriptor is already a language-level invariant.
 
-# 
+The intended claim is more modest and more precise:
 
-# The repository uses GitHub Actions to run Lean verification automatically on push and pull request.
+```text
+Fixed-h two-sided CFG presentation descriptors admit sound powerset-valued
+and residual-concept semantic interpretations inside a language-level universe.
+```
 
-# 
+## Research direction
 
-# The workflow file is:
+The current formalization supports a research program around the semantic bridge:
 
-# 
+```text
+E_h(G) -> P(Q) -> Concepts(Q, q[L])
+```
 
-# ```text
+Here:
 
-# .github/workflows/lean.yml
+- `E_h(G)` is a presentation-level fixed-`h` two-sided descriptor;
+- `Q` is a language-level observation carrier or quotient candidate;
+- `P(Q)` is the powerset-valued state semantics;
+- `q[L]` is the start image of the language;
+- `Concepts(Q, q[L])` is the residual Galois / Clark-style concept universe.
 
-# ```
-
-# 
-
-# The CI performs three checks:
-
-# 
-
-# 1\. build `LeanCfgProject.Step25\_Test`;
-
-# 2\. build `LeanCfgProject.FullArchitecture\_Test`;
-
-# 3\. reject any remaining `sorry` or `axiom` declarations.
-
-# 
-
-# \## Notes
-
-# 
-
-# This repository is experimental research code.  The formalization should be read as a machine-checked Lean model of the core architecture, not as a claim that the entire associated paper has been fully formalized.
-
-# 
-
-# The important verified fact is that the present Lean development builds successfully with no `sorry` and no `axiom` at commit `d8d8d4e`.
-
-# 
-
+The refined open problem is to identify useful finite generated residual concept
+bases for fixed-`h` substitutable context-free languages, without collapsing the
+problem to regular-language recognition.
