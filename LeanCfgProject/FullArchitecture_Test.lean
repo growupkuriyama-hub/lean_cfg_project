@@ -236,6 +236,7 @@ def toFinite
 
 end WitnessedFiniteContextStructure
 
+@[ext]
 structure StructureMorphism
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
@@ -278,13 +279,150 @@ structure StructureMorphism
     forall x : A.W,
       B.chi (map x) = A.chi x
 
-axiom witnessedFiniteContextStructureCategory
+namespace StructureMorphism
+
+def id
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H) :
+    StructureMorphism A A :=
+  {
+    map := fun x => x
+    profile_map := by
+      intro x
+      rfl
+    start_map := by
+      intro x hx
+      exact hx
+    terminal_map := by
+      intro tr hmem
+      apply Exists.intro tr
+      apply And.intro
+      exact rfl
+      apply And.intro
+      exact rfl
+      exact hmem
+    binary_map := by
+      intro br hmem
+      apply Exists.intro br
+      apply And.intro
+      exact rfl
+      apply And.intro
+      exact rfl
+      apply And.intro
+      exact rfl
+      exact hmem
+    omega_map := by
+      intro x
+      rfl
+    chi_map := by
+      intro x
+      rfl
+  }
+
+def comp
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    {A B C : WitnessedFiniteContextStructure H}
+    (f : StructureMorphism A B)
+    (g : StructureMorphism B C) :
+    StructureMorphism A C :=
+  {
+    map := fun x => g.map (f.map x)
+    profile_map := by
+      intro x
+      exact (g.profile_map (f.map x)).trans (f.profile_map x)
+    start_map := by
+      intro x hx
+      exact g.start_map (f.map x) (f.start_map x hx)
+    terminal_map := by
+      intro trA hmemA
+      cases f.terminal_map trA hmemA with
+      | intro trB hB =>
+        cases hB with
+        | intro hBX hBrest =>
+          cases hBrest with
+          | intro hBa hBmem =>
+            cases g.terminal_map trB hBmem with
+            | intro trC hC =>
+              cases hC with
+              | intro hCX hCrest =>
+                cases hCrest with
+                | intro hCa hCmem =>
+                  apply Exists.intro trC
+                  apply And.intro
+                  calc
+                    trC.X = g.map trB.X := hCX
+                    _ = g.map (f.map trA.X) := by rw [hBX]
+                  apply And.intro
+                  calc
+                    trC.a = trB.a := hCa
+                    _ = trA.a := hBa
+                  exact hCmem
+    binary_map := by
+      intro brA hmemA
+      cases f.binary_map brA hmemA with
+      | intro brB hB =>
+        cases hB with
+        | intro hBX hBrest1 =>
+          cases hBrest1 with
+          | intro hBY hBrest2 =>
+            cases hBrest2 with
+            | intro hBZ hBmem =>
+              cases g.binary_map brB hBmem with
+              | intro brC hC =>
+                cases hC with
+                | intro hCX hCrest1 =>
+                  cases hCrest1 with
+                  | intro hCY hCrest2 =>
+                    cases hCrest2 with
+                    | intro hCZ hCmem =>
+                      apply Exists.intro brC
+                      apply And.intro
+                      calc
+                        brC.X = g.map brB.X := hCX
+                        _ = g.map (f.map brA.X) := by rw [hBX]
+                      apply And.intro
+                      calc
+                        brC.Y = g.map brB.Y := hCY
+                        _ = g.map (f.map brA.Y) := by rw [hBY]
+                      apply And.intro
+                      calc
+                        brC.Z = g.map brB.Z := hCZ
+                        _ = g.map (f.map brA.Z) := by rw [hBZ]
+                      exact hCmem
+    omega_map := by
+      intro x
+      exact (g.omega_map (f.map x)).trans (f.omega_map x)
+    chi_map := by
+      intro x
+      exact (g.chi_map (f.map x)).trans (f.chi_map x)
+  }
+
+end StructureMorphism
+
+instance witnessedFiniteContextStructureCategory
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M) :
-    Category (WitnessedFiniteContextStructure H)
-
-attribute [instance] witnessedFiniteContextStructureCategory
+    Category (WitnessedFiniteContextStructure H) where
+  Hom A B := StructureMorphism A B
+  id A := StructureMorphism.id A
+  comp f g := StructureMorphism.comp f g
+  id_comp := by
+    intro A B f
+    ext x
+    rfl
+  comp_id := by
+    intro A B f
+    ext x
+    rfl
+  assoc := by
+    intro A B C D f g h
+    ext x
+    rfl
 
 namespace SSBNFGrammar
 
