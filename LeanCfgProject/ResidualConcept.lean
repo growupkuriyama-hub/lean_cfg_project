@@ -8,7 +8,7 @@ namespace LeanCfgProject
 
 open TwoSidedTypedCFG
 
-universe u v
+universe u v w
 
 def TwoSidedResidual
     {Q : Type u} [Mul Q]
@@ -99,9 +99,8 @@ theorem conceptClosure_mono
   intro delta hdelta
   exact hab delta (hUV hdelta)
 
-
 theorem binary_sound_after_closure
-    {Sigma : Type u} {Q : Type v} {State : Type u}
+    {Sigma : Type u} {Q : Type v} {State : Type w}
     [Monoid Q]
     (S : Set Q)
     (q : Word Sigma → Q)
@@ -118,5 +117,70 @@ theorem binary_sound_after_closure
       ⊆
     ConceptClosure S (StateSemantics q Yield X) := by
   exact conceptClosure_mono S (binary_sound q q_mul Yield X Y Z hbin)
+
+theorem commonContexts_conceptClosure
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    (U : Set Q) :
+    CommonContexts S U ⊆ CommonContexts S (ConceptClosure S U) := by
+  intro ab hab gamma hgamma
+  exact hgamma ab hab
+
+theorem conceptClosure_idempotent
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    (U : Set Q) :
+    ConceptClosure S (ConceptClosure S U) = ConceptClosure S U := by
+  apply Set.Subset.antisymm
+  · intro gamma hgamma ab hab
+    exact hgamma ab (commonContexts_conceptClosure S U hab)
+  · exact subset_conceptClosure S (ConceptClosure S U)
+
+def IsConceptExtent
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    (U : Set Q) : Prop :=
+  ConceptClosure S U = U
+
+theorem conceptClosure_isConceptExtent
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    (U : Set Q) :
+    IsConceptExtent S (ConceptClosure S U) := by
+  unfold IsConceptExtent
+  exact conceptClosure_idempotent S U
+
+def ConceptProduct
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    (A B : Set Q) : Set Q :=
+  ConceptClosure S (SetMul A B)
+
+theorem conceptProduct_isConceptExtent
+    {Q : Type u} [Mul Q]
+    (S : Set Q)
+    (A B : Set Q) :
+    IsConceptExtent S (ConceptProduct S A B) := by
+  unfold ConceptProduct
+  exact conceptClosure_isConceptExtent S (SetMul A B)
+
+theorem binary_sound_as_conceptProduct
+    {Sigma : Type u} {Q : Type v} {State : Type w}
+    [Monoid Q]
+    (S : Set Q)
+    (q : Word Sigma → Q)
+    (q_mul : ∀ u v : Word Sigma, q (u ++ v) = q u * q v)
+    (Yield : State → Set (Word Sigma))
+    (X Y Z : State)
+    (hbin : ∀ u v : Word Sigma,
+      u ∈ Yield Y →
+      v ∈ Yield Z →
+      u ++ v ∈ Yield X) :
+    ConceptProduct S
+      (StateSemantics q Yield Y)
+      (StateSemantics q Yield Z)
+      ⊆
+    ConceptClosure S (StateSemantics q Yield X) := by
+  exact binary_sound_after_closure S q q_mul Yield X Y Z hbin
 
 end LeanCfgProject
