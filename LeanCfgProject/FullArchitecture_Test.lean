@@ -1152,13 +1152,144 @@ noncomputable def extractedWitnessedStructure
     axiomC := extracted_axiomC_from_witness G H
   }
 
-axiom extractionMap
+def mapFullTypedState
+    {G1 G2 : SSBNFGrammar Sigma}
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (X : FullTypedState G1 M) :
+    FullTypedState G2 M :=
+  match X with
+  | (A, p, m, n) => mkFullTypedState (f.map A) p m n
+
+axiom mapFullTypedState_trimmed_property
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H) :
+    And
+      (IsProductive G2 H (mapFullTypedState f x.val))
+      (IsReachable G2 H (mapFullTypedState f x.val))
+
+noncomputable def mapTrimmedState
+    {G1 G2 : SSBNFGrammar Sigma}
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H) :
+    TrimmedState G2 H :=
+  {
+    val := mapFullTypedState f x.val
+    property := mapFullTypedState_trimmed_property G1 G2 H f x
+  }
+
+theorem mapTrimmedState_profile
+    {G1 G2 : SSBNFGrammar Sigma}
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H) :
+    extractedProfile G2 H (mapTrimmedState H f x) =
+      extractedProfile G1 H x := by
+  cases x with
+  | mk X hx =>
+      cases X with
+      | mk A rest1 =>
+          cases rest1 with
+          | mk p rest2 =>
+              cases rest2 with
+              | mk m n =>
+                  simp [mapTrimmedState, mapFullTypedState,
+                    extractedProfile, mkFullTypedState]
+
+theorem mapTrimmedState_start_mem
+    {G1 G2 : SSBNFGrammar Sigma}
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H)
+    (hx : Membership.mem (extractedS G1 H) x) :
+    Membership.mem (extractedS G2 H) (mapTrimmedState H f x) := by
+  classical
+  letI : Fintype (TrimmedState G2 H) := trimmedStateFintype G2 H
+  unfold extractedS
+  apply Finset.mem_filter.mpr
+  apply And.intro
+  · exact Finset.mem_univ (mapTrimmedState H f x)
+  · have hb := extracted_axiomS G1 H x hx
+    have hp := mapTrimmedState_profile H f x
+    rw [hp]
+    exact hb
+
+axiom extraction_terminal_map_core
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (tr : CarrierTerminalRule H (extractedProfile G1 H))
+    (hmem : List.Mem (CarrierTypedRule.terminal tr) (extractedR G1 H)) :
+    Exists
+      (fun trB : CarrierTerminalRule H (extractedProfile G2 H) =>
+        And
+          (trB.X = mapTrimmedState H f tr.X)
+          (And
+            (trB.a = tr.a)
+            (List.Mem (CarrierTypedRule.terminal trB) (extractedR G2 H))))
+
+axiom extraction_binary_map_core
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (br : CarrierBinaryRule (extractedProfile G1 H))
+    (hmem : List.Mem (CarrierTypedRule.binary br) (extractedR G1 H)) :
+    Exists
+      (fun brB : CarrierBinaryRule (extractedProfile G2 H) =>
+        And
+          (brB.X = mapTrimmedState H f br.X)
+          (And
+            (brB.Y = mapTrimmedState H f br.Y)
+            (And
+              (brB.Z = mapTrimmedState H f br.Z)
+              (List.Mem (CarrierTypedRule.binary brB) (extractedR G2 H)))))
+
+axiom extraction_omega_map_core
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H) :
+    extractedOmega G2 H (mapTrimmedState H f x) =
+      extractedOmega G1 H x
+
+axiom extraction_chi_map_core
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (x : TrimmedState G1 H) :
+    extractedChi G2 H (mapTrimmedState H f x) =
+      extractedChi G1 H x
+
+noncomputable def extractionMap
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2) :
     StructureMorphism
       (extractedWitnessedStructure G1 H)
-      (extractedWitnessedStructure G2 H)
+      (extractedWitnessedStructure G2 H) :=
+  {
+    map := mapTrimmedState H f
+    profile_map := by
+      intro x
+      exact mapTrimmedState_profile H f x
+    start_map := by
+      intro x hx
+      exact mapTrimmedState_start_mem H f x hx
+    terminal_map := by
+      intro tr hmem
+      exact extraction_terminal_map_core G1 G2 H f tr hmem
+    binary_map := by
+      intro br hmem
+      exact extraction_binary_map_core G1 G2 H f br hmem
+    omega_map := by
+      intro x
+      exact extraction_omega_map_core G1 G2 H f x
+    chi_map := by
+      intro x
+      exact extraction_chi_map_core G1 G2 H f x
+  }
 
 axiom extractionMap_id
     (G : SSBNFGrammar Sigma)
