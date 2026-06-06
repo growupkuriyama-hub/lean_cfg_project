@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Lean
+      - name: Setup Lean and Mathlib cache
         uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
@@ -23,3 +23,10 @@ jobs:
 
       - name: Check Step25_Test.lean
         run: lake env lean Step25_Test.lean
+
+      - name: Reject sorry
+        run: |
+          if grep -n "sorry" Step25_Test.lean; then
+            echo "::error::sorry found in Step25_Test.lean"
+            exit 1
+          fi
