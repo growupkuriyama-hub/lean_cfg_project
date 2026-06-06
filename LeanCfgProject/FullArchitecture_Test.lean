@@ -1756,29 +1756,11 @@ noncomputable def extractionFunctor
 
 end Extraction
 
-def IsShortlexNormalized
+structure IsShortlexNormalized
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
-    (A : WitnessedFiniteContextStructure H) : Prop :=
-  True
-
-structure StructureIso
-    {Sigma : Type u}
-    {M : Type u} [Monoid M] [Fintype M]
-    {H : FixedFiniteMonoidHom Sigma M}
-    (A B : WitnessedFiniteContextStructure H) where
-  hom : StructureMorphism A B
-  inv : StructureMorphism B A
-  left_inv : forall x : A.W, inv.map (hom.map x) = x
-  right_inv : forall y : B.W, hom.map (inv.map y) = y
-
-structure ExtractionRealizationRetractionData
-    {Sigma : Type u}
-    {M : Type u} [Monoid M] [Fintype M]
-    {H : FixedFiniteMonoidHom Sigma M}
-    (A : WitnessedFiniteContextStructure H)
-    (hshort : IsShortlexNormalized A) where
+    (A : WitnessedFiniteContextStructure H) where
   hom :
     StructureMorphism
       A
@@ -1798,13 +1780,15 @@ structure ExtractionRealizationRetractionData
         ((Realization.realizationFunctor H).obj A)).W,
       hom.map (inv.map y) = y
 
-axiom extraction_realization_retraction_data
+structure StructureIso
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
-    (A : WitnessedFiniteContextStructure H)
-    (hshort : IsShortlexNormalized A) :
-    ExtractionRealizationRetractionData A hshort
+    (A B : WitnessedFiniteContextStructure H) where
+  hom : StructureMorphism A B
+  inv : StructureMorphism B A
+  left_inv : forall x : A.W, inv.map (hom.map x) = x
+  right_inv : forall y : B.W, hom.map (inv.map y) = y
 
 noncomputable def extraction_realization_hom
     {Sigma : Type u}
@@ -1816,7 +1800,7 @@ noncomputable def extraction_realization_hom
       A
       ((Extraction.extractionFunctor H).obj
         ((Realization.realizationFunctor H).obj A)) :=
-  (extraction_realization_retraction_data A hshort).hom
+  hshort.hom
 
 noncomputable def extraction_realization_inv
     {Sigma : Type u}
@@ -1828,7 +1812,7 @@ noncomputable def extraction_realization_inv
       ((Extraction.extractionFunctor H).obj
         ((Realization.realizationFunctor H).obj A))
       A :=
-  (extraction_realization_retraction_data A hshort).inv
+  hshort.inv
 
 theorem extraction_realization_left_inv
     {Sigma : Type u}
@@ -1839,7 +1823,7 @@ theorem extraction_realization_left_inv
     forall x : A.W,
       (extraction_realization_inv A hshort).map
         ((extraction_realization_hom A hshort).map x) = x :=
-  (extraction_realization_retraction_data A hshort).left_inv
+  hshort.left_inv
 
 theorem extraction_realization_right_inv
     {Sigma : Type u}
@@ -1852,7 +1836,7 @@ theorem extraction_realization_right_inv
         ((Realization.realizationFunctor H).obj A)).W,
       (extraction_realization_hom A hshort).map
         ((extraction_realization_inv A hshort).map y) = y :=
-  (extraction_realization_retraction_data A hshort).right_inv
+  hshort.right_inv
 
 theorem extraction_realization_retraction
     {Sigma : Type u}
