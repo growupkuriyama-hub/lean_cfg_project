@@ -651,11 +651,87 @@ theorem extracted_axiomS
   unfold extractedS at hx
   cases hx
 
-axiom extracted_axiomP
+theorem extracted_axiomP
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
-      CarrierIsProductive H (extractedProfile G H) (extractedR G H) x
+      CarrierIsProductive H (extractedProfile G H) (extractedR G H) x := by
+  intro x
+  classical
+
+  have aux :
+      forall (X : FullTypedState G M)
+        (hprod : IsProductive G H X)
+        (hreach : IsReachable G H X),
+        CarrierIsProductive H (extractedProfile G H) (extractedR G H)
+          ({ val := X, property := And.intro hprod hreach } : TrimmedState G H) := by
+    intro X hprod
+    induction hprod with
+    | terminal hmem =>
+        intro hreach
+        have hsurv : And (IsProductive G H X) (IsReachable G H X) :=
+          And.intro (IsProductive.terminal hmem) hreach
+        cases terminal_mem_extractedR G H X _ hmem hsurv with
+        | intro tr htr =>
+          cases htr with
+          | intro hX hrest =>
+            cases hrest with
+            | intro ha hmemR =>
+              have ht :
+                  CarrierIsProductive H (extractedProfile G H) (extractedR G H) tr.X :=
+                CarrierIsProductive.terminal tr hmemR
+              rw [hX] at ht
+              exact ht
+
+    | binary hmem hY hZ ihY ihZ =>
+        intro hreach
+        have hXprod : IsProductive G H X :=
+          IsProductive.binary hmem hY hZ
+        have hYreach : IsReachable G H _ :=
+          IsReachable.binary_left hmem hreach hY hZ
+        have hZreach : IsReachable G H _ :=
+          IsReachable.binary_right hmem hreach hY hZ
+        have hXsurv : And (IsProductive G H X) (IsReachable G H X) :=
+          And.intro hXprod hreach
+        have hYsurv : And (IsProductive G H _) (IsReachable G H _) :=
+          And.intro hY hYreach
+        have hZsurv : And (IsProductive G H _) (IsReachable G H _) :=
+          And.intro hZ hZreach
+
+        have hYcarrier :
+            CarrierIsProductive H (extractedProfile G H) (extractedR G H)
+              ({ val := _, property := hYsurv } : TrimmedState G H) :=
+          ihY hYreach
+        have hZcarrier :
+            CarrierIsProductive H (extractedProfile G H) (extractedR G H)
+              ({ val := _, property := hZsurv } : TrimmedState G H) :=
+          ihZ hZreach
+
+        cases binary_mem_extractedR G H X _ _ hmem hXsurv hYsurv hZsurv with
+        | intro br hbr =>
+          cases hbr with
+          | intro hbrX hrest1 =>
+            cases hrest1 with
+            | intro hbrY hrest2 =>
+              cases hrest2 with
+              | intro hbrZ hmemR =>
+                have hYfinal :
+                    CarrierIsProductive H (extractedProfile G H) (extractedR G H) br.Y := by
+                  rw [hbrY]
+                  exact hYcarrier
+                have hZfinal :
+                    CarrierIsProductive H (extractedProfile G H) (extractedR G H) br.Z := by
+                  rw [hbrZ]
+                  exact hZcarrier
+                have hb :
+                    CarrierIsProductive H (extractedProfile G H) (extractedR G H) br.X :=
+                  CarrierIsProductive.binary br hmemR hYfinal hZfinal
+                rw [hbrX] at hb
+                exact hb
+
+  cases x with
+  | mk X hsurv =>
+      exact aux X hsurv.1 hsurv.2
 
 axiom extracted_axiomRch
     (G : SSBNFGrammar Sigma)
