@@ -288,6 +288,7 @@ attribute [instance] witnessedFiniteContextStructureCategory
 
 namespace SSBNFGrammar
 
+@[ext]
 structure GrammarMorphism
     {Sigma : Type u}
     (G1 G2 : SSBNFGrammar Sigma) where
@@ -305,13 +306,62 @@ structure GrammarMorphism
       List.Mem r G1.binaryRules ->
         List.Mem (map r.1, map r.2.1, map r.2.2) G2.binaryRules
 
+def GrammarMorphism.id
+    {Sigma : Type u}
+    (G : SSBNFGrammar Sigma) :
+    GrammarMorphism G G :=
+  {
+    map := fun x => x
+    start_map := by
+      intro x hx
+      exact hx
+    terminal_map := by
+      intro r hr
+      simpa using hr
+    binary_map := by
+      intro r hr
+      simpa using hr
+  }
+
+def GrammarMorphism.comp
+    {Sigma : Type u}
+    {G1 G2 G3 : SSBNFGrammar Sigma}
+    (f : GrammarMorphism G1 G2)
+    (g : GrammarMorphism G2 G3) :
+    GrammarMorphism G1 G3 :=
+  {
+    map := fun x => g.map (f.map x)
+    start_map := by
+      intro x hx
+      exact g.start_map (f.map x) (f.start_map x hx)
+    terminal_map := by
+      intro r hr
+      exact g.terminal_map (f.map r.1, r.2) (f.terminal_map r hr)
+    binary_map := by
+      intro r hr
+      exact g.binary_map (f.map r.1, f.map r.2.1, f.map r.2.2) (f.binary_map r hr)
+  }
+
 end SSBNFGrammar
 
-axiom ssbnfGrammarCategory
+instance ssbnfGrammarCategory
     {Sigma : Type u} :
-    Category (SSBNFGrammar Sigma)
-
-attribute [instance] ssbnfGrammarCategory
+    Category (SSBNFGrammar Sigma) where
+  Hom G1 G2 := SSBNFGrammar.GrammarMorphism G1 G2
+  id G := SSBNFGrammar.GrammarMorphism.id G
+  comp f g := SSBNFGrammar.GrammarMorphism.comp f g
+  id_comp := by
+    intro G1 G2 f
+    ext x
+    rfl
+  comp_id := by
+    intro G1 G2 f
+    ext x
+    rfl
+  assoc := by
+    intro G1 G2 G3 G4 f g h
+    ext x
+    rfl
 
 namespace Realization
 
