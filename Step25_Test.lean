@@ -3,6 +3,10 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.Group.Basic
 
+set_option linter.unusedVariables false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+
 universe u
 
 namespace TwoSidedTypedCFG
@@ -510,7 +514,6 @@ lemma terminal_mem_extractedR
   refine ⟨(X, a), hmem, ?_⟩
   dsimp only
   rw [dif_pos hsurv, dif_pos htype]
-  rfl
 
 lemma binary_mem_extractedR
     (G : SSBNFGrammar Sigma)
@@ -563,7 +566,6 @@ lemma binary_mem_extractedR
   rw [dif_pos hXsurv, dif_pos hYsurv, dif_pos hZsurv,
       dif_pos hyield, dif_pos hleft_left, dif_pos hleft_right,
       dif_pos hright_left, dif_pos hright_right]
-  rfl
 
 end Extraction
 
