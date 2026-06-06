@@ -1,4 +1,4 @@
-import Step25_Test
+import LeanCfgProject.Step25_Test
 import Mathlib.CategoryTheory.Category.Basic
 
 set_option linter.unusedVariables false

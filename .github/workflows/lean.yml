@@ -21,15 +21,15 @@ jobs:
           test: false
           lint: false
 
-      - name: Check Step25_Test.lean
-        run: lake env lean -R . Step25_Test.lean
+      - name: Check Step25 module
+        run: lake build LeanCfgProject.Step25_Test
 
-      - name: Check FullArchitecture_Test.lean
-        run: lake env lean -R . FullArchitecture_Test.lean
+      - name: Check FullArchitecture module
+        run: lake build LeanCfgProject.FullArchitecture_Test
 
       - name: Reject sorry
         run: |
-          if grep -R -n "sorry" --include="*.lean" .; then
+          if grep -R -n "sorry" --include="*.lean" LeanCfgProject; then
             echo "::error::sorry found in Lean files"
             exit 1
           fi
