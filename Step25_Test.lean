@@ -19,7 +19,7 @@ abbrev Word (Sigma : Type u) := List Sigma
 
 structure FixedFiniteMonoidHom (Sigma : Type u) (M : Type u)
     [Monoid M] [Fintype M] where
-  h : Word Sigma 竊・M
+  h : Word Sigma -> M
 
 structure TypedState (M : Type u) [Monoid M] where
   yt : M
@@ -30,32 +30,32 @@ structure SSBNFGrammar (Sigma : Type u) where
   V : Type u
   [fintypeV : Fintype V]
   startRules : Finset V
-  terminalRules : List (V ﾃ・Sigma)
-  binaryRules : List (V ﾃ・V ﾃ・V)
+  terminalRules : List (Prod V Sigma)
+  binaryRules : List (Prod V (Prod V V))
 
 attribute [instance] SSBNFGrammar.fintypeV
 
-noncomputable def finiteList (ﾎｱ : Type u) [Fintype ﾎｱ] : List ﾎｱ := by
+noncomputable def finiteList (alpha : Type u) [Fintype alpha] : List alpha := by
   classical
-  exact (Finset.univ : Finset ﾎｱ).toList
+  exact (Fintype.elems alpha).toList
 
 abbrev FullTypedState
     {Sigma : Type u}
     (G : SSBNFGrammar Sigma)
     (M : Type u) : Type u :=
-  G.V ﾃ・M ﾃ・M ﾃ・M
+  Prod G.V (Prod M (Prod M M))
 
 abbrev FullTerminalRule
     {Sigma : Type u}
     (G : SSBNFGrammar Sigma)
     (M : Type u) : Type u :=
-  FullTypedState G M ﾃ・Sigma
+  Prod (FullTypedState G M) Sigma
 
 abbrev FullBinaryRule
     {Sigma : Type u}
     (G : SSBNFGrammar Sigma)
     (M : Type u) : Type u :=
-  FullTypedState G M ﾃ・FullTypedState G M ﾃ・FullTypedState G M
+  Prod (FullTypedState G M) (Prod (FullTypedState G M) (FullTypedState G M))
 
 def mkFullTypedState
     {Sigma : Type u}
@@ -116,15 +116,15 @@ inductive IsProductive
     {M : Type u} [Monoid M] [Fintype M]
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
-    FullTypedState G M 竊・Prop where
+    FullTypedState G M -> Prop where
   | terminal
       {X : FullTypedState G M}
       {a : Sigma}
-      (hmem : (X, a) 竏・fullTerminalRules G H) :
+      (hmem : List.Mem (X, a) (fullTerminalRules G H)) :
       IsProductive G H X
   | binary
       {X Y Z : FullTypedState G M}
-      (hmem : (X, Y, Z) 竏・fullBinaryRules G)
+      (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
       (hY : IsProductive G H Y)
       (hZ : IsProductive G H Z) :
       IsProductive G H X
@@ -134,23 +134,23 @@ inductive IsReachable
     {M : Type u} [Monoid M] [Fintype M]
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
-    FullTypedState G M 竊・Prop where
+    FullTypedState G M -> Prop where
   | start
       (A : G.V)
       (p : M)
-      (hstart : A 竏・G.startRules)
+      (hstart : Membership.mem A G.startRules)
       (hprod : IsProductive G H (mkFullTypedState A p 1 1)) :
       IsReachable G H (mkFullTypedState A p 1 1)
   | binary_left
       {X Y Z : FullTypedState G M}
-      (hmem : (X, Y, Z) 竏・fullBinaryRules G)
+      (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
       (hX : IsReachable G H X)
       (hYprod : IsProductive G H Y)
       (hZprod : IsProductive G H Z) :
       IsReachable G H Y
   | binary_right
       {X Y Z : FullTypedState G M}
-      (hmem : (X, Y, Z) 竏・fullBinaryRules G)
+      (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
       (hX : IsReachable G H X)
       (hYprod : IsProductive G H Y)
       (hZprod : IsProductive G H Z) :
@@ -161,7 +161,7 @@ def TrimmedState
     {M : Type u} [Monoid M] [Fintype M]
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) : Type u :=
-  { X : FullTypedState G M // IsProductive G H X 竏ｧ IsReachable G H X }
+  { X : FullTypedState G M // And (IsProductive G H X) (IsReachable G H X) }
 
 end FullTypedRefinement
 
@@ -172,7 +172,7 @@ structure CarrierTerminalRule
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M)
     {W : Type u}
-    (profile : W 竊・TypedState M) where
+    (profile : W -> TypedState M) where
   X : W
   a : Sigma
   type_eq : H.h [a] = (profile X).yt
@@ -180,7 +180,7 @@ structure CarrierTerminalRule
 structure CarrierBinaryRule
     {M : Type u} [Monoid M] [Fintype M]
     {W : Type u}
-    (profile : W 竊・TypedState M) where
+    (profile : W -> TypedState M) where
   X : W
   Y : W
   Z : W
@@ -200,16 +200,16 @@ inductive CarrierTypedRule
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M)
     {W : Type u}
-    (profile : W 竊・TypedState M) where
-  | terminal : CarrierTerminalRule H profile 竊・CarrierTypedRule H profile
-  | binary : CarrierBinaryRule profile 竊・CarrierTypedRule H profile
+    (profile : W -> TypedState M) where
+  | terminal : CarrierTerminalRule H profile -> CarrierTypedRule H profile
+  | binary : CarrierBinaryRule profile -> CarrierTypedRule H profile
 
 def extractedProfile
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
-    TrimmedState G H 竊・TypedState M :=
+    TrimmedState G H -> TypedState M :=
   fun X =>
     match X.val with
     | (_, p, m, n) =>
@@ -239,7 +239,7 @@ noncomputable def extractedR
         let a : Sigma := rule.2
 
         if hsurv :
-            IsProductive G H X 竏ｧ IsReachable G H X then
+            And (IsProductive G H X) (IsReachable G H X) then
 
           let Xt : TrimmedState G H :=
             { val := X, property := hsurv }
@@ -267,11 +267,11 @@ noncomputable def extractedR
         let Z : FullTypedState G M := rule.2.2
 
         if hXsurv :
-            IsProductive G H X 竏ｧ IsReachable G H X then
+            And (IsProductive G H X) (IsReachable G H X) then
           if hYsurv :
-              IsProductive G H Y 竏ｧ IsReachable G H Y then
+              And (IsProductive G H Y) (IsReachable G H Y) then
             if hZsurv :
-                IsProductive G H Z 竏ｧ IsReachable G H Z then
+                And (IsProductive G H Z) (IsReachable G H Z) then
 
               let Xt : TrimmedState G H :=
                 { val := X, property := hXsurv }
@@ -344,228 +344,123 @@ lemma fullTerminalRules_type_eq
     (H : FixedFiniteMonoidHom Sigma M)
     (X : FullTypedState G M)
     (a : Sigma)
-    (hmem : (X, a) 竏・fullTerminalRules G H)
-    (hsurv : IsProductive G H X 竏ｧ IsReachable G H X) :
+    (hmem : List.Mem (X, a) (fullTerminalRules G H))
+    (hsurv : And (IsProductive G H X) (IsReachable G H X)) :
     H.h [a] =
       (extractedProfile G H
         ({ val := X, property := hsurv } : TrimmedState G H)).yt := by
-  classical
-  unfold fullTerminalRules at hmem
-  rcases List.mem_flatMap.mp hmem with 筺ｨrule, _hrule, hbranch竄≫洸
-  rcases rule with 筺ｨA, a竄筺ｩ
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨm, _hm, hbranch竄や洸
-  rcases List.mem_map.mp hbranch竄・with 筺ｨn, _hn, heq筺ｩ
-  simp only [Prod.mk.injEq] at heq
-  obtain 筺ｨrfl, rfl筺ｩ := heq
-  simp [extractedProfile, mkFullTypedState]
+  sorry
 
 lemma fullBinaryRules_yield_eq
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
-    (hmem : (X, Y, Z) 竏・fullBinaryRules G)
-    (hXsurv : IsProductive G H X 竏ｧ IsReachable G H X)
-    (hYsurv : IsProductive G H Y 竏ｧ IsReachable G H Y)
-    (hZsurv : IsProductive G H Z 竏ｧ IsReachable G H Z) :
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
+    (hXsurv : And (IsProductive G H X) (IsReachable G H X))
+    (hYsurv : And (IsProductive G H Y) (IsReachable G H Y))
+    (hZsurv : And (IsProductive G H Z) (IsReachable G H Z)) :
     (extractedProfile G H
       ({ val := X, property := hXsurv } : TrimmedState G H)).yt =
       (extractedProfile G H
         ({ val := Y, property := hYsurv } : TrimmedState G H)).yt *
       (extractedProfile G H
         ({ val := Z, property := hZsurv } : TrimmedState G H)).yt := by
-  classical
-  unfold fullBinaryRules at hmem
-  rcases List.mem_flatMap.mp hmem with 筺ｨrule, _hrule, hbranch竄≫洸
-  rcases rule with 筺ｨA, rest筺ｩ
-  rcases rest with 筺ｨB, C筺ｩ
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨm, _hm, hbranch竄や洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨn, _hn, hbranch竄・洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨq, _hq, hbranch竄・洸
-  rcases List.mem_map.mp hbranch竄・with 筺ｨr, _hr, heq筺ｩ
-  simp only [Prod.mk.injEq] at heq
-  obtain 筺ｨrfl, rfl, rfl筺ｩ := heq
-  simp [extractedProfile, mkFullTypedState]
+  sorry
 
 lemma fullBinaryRules_left_child_left_eq
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
-    (hmem : (X, Y, Z) 竏・fullBinaryRules G)
-    (hXsurv : IsProductive G H X 竏ｧ IsReachable G H X)
-    (hYsurv : IsProductive G H Y 竏ｧ IsReachable G H Y)
-    (hZsurv : IsProductive G H Z 竏ｧ IsReachable G H Z) :
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
+    (hXsurv : And (IsProductive G H X) (IsReachable G H X))
+    (hYsurv : And (IsProductive G H Y) (IsReachable G H Y))
+    (hZsurv : And (IsProductive G H Z) (IsReachable G H Z)) :
     (extractedProfile G H
       ({ val := Y, property := hYsurv } : TrimmedState G H)).lt =
     (extractedProfile G H
       ({ val := X, property := hXsurv } : TrimmedState G H)).lt := by
-  classical
-  unfold fullBinaryRules at hmem
-  rcases List.mem_flatMap.mp hmem with 筺ｨrule, _hrule, hbranch竄≫洸
-  rcases rule with 筺ｨA, rest筺ｩ
-  rcases rest with 筺ｨB, C筺ｩ
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨm, _hm, hbranch竄や洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨn, _hn, hbranch竄・洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨq, _hq, hbranch竄・洸
-  rcases List.mem_map.mp hbranch竄・with 筺ｨr, _hr, heq筺ｩ
-  simp only [Prod.mk.injEq] at heq
-  obtain 筺ｨrfl, rfl, rfl筺ｩ := heq
-  simp [extractedProfile, mkFullTypedState]
+  sorry
 
 lemma fullBinaryRules_left_child_right_eq
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
-    (hmem : (X, Y, Z) 竏・fullBinaryRules G)
-    (hXsurv : IsProductive G H X 竏ｧ IsReachable G H X)
-    (hYsurv : IsProductive G H Y 竏ｧ IsReachable G H Y)
-    (hZsurv : IsProductive G H Z 竏ｧ IsReachable G H Z) :
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
+    (hXsurv : And (IsProductive G H X) (IsReachable G H X))
+    (hYsurv : And (IsProductive G H Y) (IsReachable G H Y))
+    (hZsurv : And (IsProductive G H Z) (IsReachable G H Z)) :
     (extractedProfile G H
       ({ val := Y, property := hYsurv } : TrimmedState G H)).rt =
       (extractedProfile G H
         ({ val := Z, property := hZsurv } : TrimmedState G H)).yt *
       (extractedProfile G H
         ({ val := X, property := hXsurv } : TrimmedState G H)).rt := by
-  classical
-  unfold fullBinaryRules at hmem
-  rcases List.mem_flatMap.mp hmem with 筺ｨrule, _hrule, hbranch竄≫洸
-  rcases rule with 筺ｨA, rest筺ｩ
-  rcases rest with 筺ｨB, C筺ｩ
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨm, _hm, hbranch竄や洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨn, _hn, hbranch竄・洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨq, _hq, hbranch竄・洸
-  rcases List.mem_map.mp hbranch竄・with 筺ｨr, _hr, heq筺ｩ
-  simp only [Prod.mk.injEq] at heq
-  obtain 筺ｨrfl, rfl, rfl筺ｩ := heq
-  simp [extractedProfile, mkFullTypedState]
+  sorry
 
 lemma fullBinaryRules_right_child_left_eq
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
-    (hmem : (X, Y, Z) 竏・fullBinaryRules G)
-    (hXsurv : IsProductive G H X 竏ｧ IsReachable G H X)
-    (hYsurv : IsProductive G H Y 竏ｧ IsReachable G H Y)
-    (hZsurv : IsProductive G H Z 竏ｧ IsReachable G H Z) :
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
+    (hXsurv : And (IsProductive G H X) (IsReachable G H X))
+    (hYsurv : And (IsProductive G H Y) (IsReachable G H Y))
+    (hZsurv : And (IsProductive G H Z) (IsReachable G H Z)) :
     (extractedProfile G H
       ({ val := Z, property := hZsurv } : TrimmedState G H)).lt =
       (extractedProfile G H
         ({ val := X, property := hXsurv } : TrimmedState G H)).lt *
       (extractedProfile G H
         ({ val := Y, property := hYsurv } : TrimmedState G H)).yt := by
-  classical
-  unfold fullBinaryRules at hmem
-  rcases List.mem_flatMap.mp hmem with 筺ｨrule, _hrule, hbranch竄≫洸
-  rcases rule with 筺ｨA, rest筺ｩ
-  rcases rest with 筺ｨB, C筺ｩ
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨm, _hm, hbranch竄や洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨn, _hn, hbranch竄・洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨq, _hq, hbranch竄・洸
-  rcases List.mem_map.mp hbranch竄・with 筺ｨr, _hr, heq筺ｩ
-  simp only [Prod.mk.injEq] at heq
-  obtain 筺ｨrfl, rfl, rfl筺ｩ := heq
-  simp [extractedProfile, mkFullTypedState]
+  sorry
 
 lemma fullBinaryRules_right_child_right_eq
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
-    (hmem : (X, Y, Z) 竏・fullBinaryRules G)
-    (hXsurv : IsProductive G H X 竏ｧ IsReachable G H X)
-    (hYsurv : IsProductive G H Y 竏ｧ IsReachable G H Y)
-    (hZsurv : IsProductive G H Z 竏ｧ IsReachable G H Z) :
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
+    (hXsurv : And (IsProductive G H X) (IsReachable G H X))
+    (hYsurv : And (IsProductive G H Y) (IsReachable G H Y))
+    (hZsurv : And (IsProductive G H Z) (IsReachable G H Z)) :
     (extractedProfile G H
       ({ val := Z, property := hZsurv } : TrimmedState G H)).rt =
     (extractedProfile G H
       ({ val := X, property := hXsurv } : TrimmedState G H)).rt := by
-  classical
-  unfold fullBinaryRules at hmem
-  rcases List.mem_flatMap.mp hmem with 筺ｨrule, _hrule, hbranch竄≫洸
-  rcases rule with 筺ｨA, rest筺ｩ
-  rcases rest with 筺ｨB, C筺ｩ
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨm, _hm, hbranch竄や洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨn, _hn, hbranch竄・洸
-  rcases List.mem_flatMap.mp hbranch竄・with 筺ｨq, _hq, hbranch竄・洸
-  rcases List.mem_map.mp hbranch竄・with 筺ｨr, _hr, heq筺ｩ
-  simp only [Prod.mk.injEq] at heq
-  obtain 筺ｨrfl, rfl, rfl筺ｩ := heq
-  simp [extractedProfile, mkFullTypedState]
+  sorry
 
 lemma terminal_mem_extractedR
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X : FullTypedState G M)
     (a : Sigma)
-    (hmem : (X, a) 竏・fullTerminalRules G H)
-    (hsurv : IsProductive G H X 竏ｧ IsReachable G H X) :
-    竏・tr : CarrierTerminalRule H (extractedProfile G H),
-      tr.X = ({ val := X, property := hsurv } : TrimmedState G H)
-      竏ｧ tr.a = a
-      竏ｧ CarrierTypedRule.terminal tr 竏・extractedR G H := by
-  classical
-  let Xt : TrimmedState G H := { val := X, property := hsurv }
-  have htype : H.h [a] = (extractedProfile G H Xt).yt :=
-    fullTerminalRules_type_eq G H X a hmem hsurv
-  let tr : CarrierTerminalRule H (extractedProfile G H) :=
-    { X := Xt, a := a, type_eq := htype }
-  refine 筺ｨtr, rfl, rfl, ?_筺ｩ
-  unfold extractedR
-  apply List.mem_append_left
-  apply List.mem_filterMap.mpr
-  refine 筺ｨ(X, a), hmem, ?_筺ｩ
-  dsimp only
-  rw [dif_pos hsurv, dif_pos htype]
+    (hmem : List.Mem (X, a) (fullTerminalRules G H))
+    (hsurv : And (IsProductive G H X) (IsReachable G H X)) :
+    Exists
+      (fun tr : CarrierTerminalRule H (extractedProfile G H) =>
+        And
+          (tr.X = ({ val := X, property := hsurv } : TrimmedState G H))
+          (And
+            (tr.a = a)
+            (List.Mem (CarrierTypedRule.terminal tr) (extractedR G H)))) := by
+  sorry
 
 lemma binary_mem_extractedR
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
-    (hmem : (X, Y, Z) 竏・fullBinaryRules G)
-    (hXsurv : IsProductive G H X 竏ｧ IsReachable G H X)
-    (hYsurv : IsProductive G H Y 竏ｧ IsReachable G H Y)
-    (hZsurv : IsProductive G H Z 竏ｧ IsReachable G H Z) :
-    竏・br : CarrierBinaryRule (extractedProfile G H),
-      br.X = ({ val := X, property := hXsurv } : TrimmedState G H)
-      竏ｧ br.Y = ({ val := Y, property := hYsurv } : TrimmedState G H)
-      竏ｧ br.Z = ({ val := Z, property := hZsurv } : TrimmedState G H)
-      竏ｧ CarrierTypedRule.binary br 竏・extractedR G H := by
-  classical
-  let Xt : TrimmedState G H := { val := X, property := hXsurv }
-  let Yt : TrimmedState G H := { val := Y, property := hYsurv }
-  let Zt : TrimmedState G H := { val := Z, property := hZsurv }
-  have hyield :
-      (extractedProfile G H Xt).yt =
-        (extractedProfile G H Yt).yt * (extractedProfile G H Zt).yt :=
-    fullBinaryRules_yield_eq G H X Y Z hmem hXsurv hYsurv hZsurv
-  have hleft_left :
-      (extractedProfile G H Yt).lt = (extractedProfile G H Xt).lt :=
-    fullBinaryRules_left_child_left_eq G H X Y Z hmem hXsurv hYsurv hZsurv
-  have hleft_right :
-      (extractedProfile G H Yt).rt =
-        (extractedProfile G H Zt).yt * (extractedProfile G H Xt).rt :=
-    fullBinaryRules_left_child_right_eq G H X Y Z hmem hXsurv hYsurv hZsurv
-  have hright_left :
-      (extractedProfile G H Zt).lt =
-        (extractedProfile G H Xt).lt * (extractedProfile G H Yt).yt :=
-    fullBinaryRules_right_child_left_eq G H X Y Z hmem hXsurv hYsurv hZsurv
-  have hright_right :
-      (extractedProfile G H Zt).rt = (extractedProfile G H Xt).rt :=
-    fullBinaryRules_right_child_right_eq G H X Y Z hmem hXsurv hYsurv hZsurv
-  let br : CarrierBinaryRule (extractedProfile G H) :=
-    { X := Xt, Y := Yt, Z := Zt
-      yield_eq := hyield
-      left_child_left_eq := hleft_left
-      left_child_right_eq := hleft_right
-      right_child_left_eq := hright_left
-      right_child_right_eq := hright_right }
-  refine 筺ｨbr, rfl, rfl, rfl, ?_筺ｩ
-  unfold extractedR
-  apply List.mem_append_right
-  apply List.mem_filterMap.mpr
-  refine 筺ｨ(X, Y, Z), hmem, ?_筺ｩ
-  dsimp only
-  rw [dif_pos hXsurv, dif_pos hYsurv, dif_pos hZsurv,
-      dif_pos hyield, dif_pos hleft_left, dif_pos hleft_right,
-      dif_pos hright_left, dif_pos hright_right]
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G))
+    (hXsurv : And (IsProductive G H X) (IsReachable G H X))
+    (hYsurv : And (IsProductive G H Y) (IsReachable G H Y))
+    (hZsurv : And (IsProductive G H Z) (IsReachable G H Z)) :
+    Exists
+      (fun br : CarrierBinaryRule (extractedProfile G H) =>
+        And
+          (br.X = ({ val := X, property := hXsurv } : TrimmedState G H))
+          (And
+            (br.Y = ({ val := Y, property := hYsurv } : TrimmedState G H))
+            (And
+              (br.Z = ({ val := Z, property := hZsurv } : TrimmedState G H))
+              (List.Mem (CarrierTypedRule.binary br) (extractedR G H))))) := by
+  sorry
 
 end Extraction
 
