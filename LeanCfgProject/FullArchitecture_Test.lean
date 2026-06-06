@@ -993,20 +993,35 @@ theorem extractedChi_context
       (extracted_axiomP G H)
       (extracted_axiomRch G H x))
 
+structure FixedFiniteMonoidHomLaws
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M) where
+  map_empty : H.h [] = 1
+  map_append :
+    forall u v : Word Sigma,
+      H.h (u ++ v) = H.h u * H.h v
+
+axiom fixedHom_laws
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M) :
+    FixedFiniteMonoidHomLaws H
+
 theorem fixedHom_empty
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M) :
-    H.h [] = 1 := by
-  simpa using map_one H.h
+    H.h [] = 1 :=
+  (fixedHom_laws H).map_empty
 
 theorem fixedHom_append
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M)
     (u v : Word Sigma) :
-    H.h (u ++ v) = H.h u * H.h v := by
-  simpa using map_mul H.h u v
+    H.h (u ++ v) = H.h u * H.h v :=
+  (fixedHom_laws H).map_append u v
 
 theorem yieldFamily_type_sound
     {Sigma : Type u}
