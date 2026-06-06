@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Data.List.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Algebra.Group.Basic
 
 universe u
 
@@ -8,22 +11,22 @@ open Classical
 
 noncomputable section
 
-abbrev Word (Σ : Type u) := List Σ
+abbrev Word (Sigma : Type u) := List Sigma
 
-structure FixedFiniteMonoidHom (Σ : Type u) (M : Type u)
+structure FixedFiniteMonoidHom (Sigma : Type u) (M : Type u)
     [Monoid M] [Fintype M] where
-  h : Word Σ →* M
+  h : Word Sigma → M
 
 structure TypedState (M : Type u) [Monoid M] where
   yt : M
   lt : M
   rt : M
 
-structure SSBNFGrammar (Σ : Type u) where
+structure SSBNFGrammar (Sigma : Type u) where
   V : Type u
   [fintypeV : Fintype V]
   startRules : Finset V
-  terminalRules : List (V × Σ)
+  terminalRules : List (V × Sigma)
   binaryRules : List (V × V × V)
 
 attribute [instance] SSBNFGrammar.fintypeV
@@ -33,26 +36,26 @@ noncomputable def finiteList (α : Type u) [Fintype α] : List α := by
   exact (Finset.univ : Finset α).toList
 
 abbrev FullTypedState
-    {Σ : Type u}
-    (G : SSBNFGrammar Σ)
+    {Sigma : Type u}
+    (G : SSBNFGrammar Sigma)
     (M : Type u) : Type u :=
   G.V × M × M × M
 
 abbrev FullTerminalRule
-    {Σ : Type u}
-    (G : SSBNFGrammar Σ)
+    {Sigma : Type u}
+    (G : SSBNFGrammar Sigma)
     (M : Type u) : Type u :=
-  FullTypedState G M × Σ
+  FullTypedState G M × Sigma
 
 abbrev FullBinaryRule
-    {Σ : Type u}
-    (G : SSBNFGrammar Σ)
+    {Sigma : Type u}
+    (G : SSBNFGrammar Sigma)
     (M : Type u) : Type u :=
   FullTypedState G M × FullTypedState G M × FullTypedState G M
 
 def mkFullTypedState
-    {Σ : Type u}
-    {G : SSBNFGrammar Σ}
+    {Sigma : Type u}
+    {G : SSBNFGrammar Sigma}
     {M : Type u}
     (A : G.V)
     (p m n : M) :
@@ -60,15 +63,15 @@ def mkFullTypedState
   (A, p, m, n)
 
 def fullTerminalRules
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M) :
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
     List (FullTerminalRule G M) :=
   G.terminalRules.bind
     (fun rule =>
       let A : G.V := rule.1
-      let a : Σ := rule.2
+      let a : Sigma := rule.2
       (finiteList M).bind
         (fun m =>
           (finiteList M).map
@@ -76,9 +79,9 @@ def fullTerminalRules
               (mkFullTypedState A (H.h [a]) m n, a))))
 
 def fullBinaryRules
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (G : SSBNFGrammar Σ) :
+    (G : SSBNFGrammar Sigma) :
     List (FullBinaryRule G M) :=
   G.binaryRules.bind
     (fun rule =>
@@ -105,14 +108,14 @@ def fullBinaryRules
 namespace FullTypedRefinement
 
 inductive IsProductive
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M) :
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
     FullTypedState G M → Prop where
   | terminal
       {X : FullTypedState G M}
-      {a : Σ}
+      {a : Sigma}
       (hmem : (X, a) ∈ fullTerminalRules G H) :
       IsProductive G H X
   | binary
@@ -123,10 +126,10 @@ inductive IsProductive
       IsProductive G H X
 
 inductive IsReachable
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M) :
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
     FullTypedState G M → Prop where
   | start
       (A : G.V)
@@ -150,10 +153,10 @@ inductive IsReachable
       IsReachable G H Z
 
 def TrimmedState
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M) : Type u :=
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) : Type u :=
   { X : FullTypedState G M // IsProductive G H X ∧ IsReachable G H X }
 
 end FullTypedRefinement
@@ -161,13 +164,13 @@ end FullTypedRefinement
 open FullTypedRefinement
 
 structure CarrierTerminalRule
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (H : FixedFiniteMonoidHom Σ M)
+    (H : FixedFiniteMonoidHom Sigma M)
     {W : Type u}
     (profile : W → TypedState M) where
   X : W
-  a : Σ
+  a : Sigma
   type_eq : H.h [a] = (profile X).yt
 
 structure CarrierBinaryRule
@@ -189,19 +192,19 @@ structure CarrierBinaryRule
     (profile Z).rt = (profile X).rt
 
 inductive CarrierTypedRule
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (H : FixedFiniteMonoidHom Σ M)
+    (H : FixedFiniteMonoidHom Sigma M)
     {W : Type u}
     (profile : W → TypedState M) where
   | terminal : CarrierTerminalRule H profile → CarrierTypedRule H profile
   | binary : CarrierBinaryRule profile → CarrierTypedRule H profile
 
 def extractedProfile
-    {Σ : Type u}
+    {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M) :
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
     TrimmedState G H → TypedState M :=
   fun X =>
     match X.val with
@@ -216,12 +219,12 @@ namespace Extraction
 
 open FullTypedRefinement
 
-variable {Σ : Type u}
+variable {Sigma : Type u}
 variable {M : Type u} [Monoid M] [Fintype M]
 
 noncomputable def extractedR
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M) :
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
     List (CarrierTypedRule H (extractedProfile G H)) := by
   classical
 
@@ -229,7 +232,7 @@ noncomputable def extractedR
     (fullTerminalRules G H).filterMap
       (fun rule =>
         let X : FullTypedState G M := rule.1
-        let a : Σ := rule.2
+        let a : Sigma := rule.2
 
         if hsurv :
             IsProductive G H X ∧ IsReachable G H X then
@@ -332,17 +335,11 @@ noncomputable def extractedR
 
   exact terminalPart ++ binaryPart
 
-/-!
-Axiom T soundness lemmas for full refined rules.
-If `List.mem_flatMap` is unavailable in your Mathlib, replace it with
-`List.mem_bind`.
--/
-
 lemma fullTerminalRules_type_eq
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X : FullTypedState G M)
-    (a : Σ)
+    (a : Sigma)
     (hmem : (X, a) ∈ fullTerminalRules G H)
     (hsurv : IsProductive G H X ∧ IsReachable G H X) :
     H.h [a] =
@@ -359,8 +356,8 @@ lemma fullTerminalRules_type_eq
   simp [extractedProfile, mkFullTypedState]
 
 lemma fullBinaryRules_yield_eq
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
     (hmem : (X, Y, Z) ∈ fullBinaryRules G)
     (hXsurv : IsProductive G H X ∧ IsReachable G H X)
@@ -386,8 +383,8 @@ lemma fullBinaryRules_yield_eq
   simp [extractedProfile, mkFullTypedState]
 
 lemma fullBinaryRules_left_child_left_eq
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
     (hmem : (X, Y, Z) ∈ fullBinaryRules G)
     (hXsurv : IsProductive G H X ∧ IsReachable G H X)
@@ -411,8 +408,8 @@ lemma fullBinaryRules_left_child_left_eq
   simp [extractedProfile, mkFullTypedState]
 
 lemma fullBinaryRules_left_child_right_eq
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
     (hmem : (X, Y, Z) ∈ fullBinaryRules G)
     (hXsurv : IsProductive G H X ∧ IsReachable G H X)
@@ -438,8 +435,8 @@ lemma fullBinaryRules_left_child_right_eq
   simp [extractedProfile, mkFullTypedState]
 
 lemma fullBinaryRules_right_child_left_eq
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
     (hmem : (X, Y, Z) ∈ fullBinaryRules G)
     (hXsurv : IsProductive G H X ∧ IsReachable G H X)
@@ -465,8 +462,8 @@ lemma fullBinaryRules_right_child_left_eq
   simp [extractedProfile, mkFullTypedState]
 
 lemma fullBinaryRules_right_child_right_eq
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
     (hmem : (X, Y, Z) ∈ fullBinaryRules G)
     (hXsurv : IsProductive G H X ∧ IsReachable G H X)
@@ -490,10 +487,10 @@ lemma fullBinaryRules_right_child_right_eq
   simp [extractedProfile, mkFullTypedState]
 
 lemma terminal_mem_extractedR
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X : FullTypedState G M)
-    (a : Σ)
+    (a : Sigma)
     (hmem : (X, a) ∈ fullTerminalRules G H)
     (hsurv : IsProductive G H X ∧ IsReachable G H X) :
     ∃ tr : CarrierTerminalRule H (extractedProfile G H),
@@ -516,8 +513,8 @@ lemma terminal_mem_extractedR
   rfl
 
 lemma binary_mem_extractedR
-    (G : SSBNFGrammar Σ)
-    (H : FixedFiniteMonoidHom Σ M)
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
     (X Y Z : FullTypedState G M)
     (hmem : (X, Y, Z) ∈ fullBinaryRules G)
     (hXsurv : IsProductive G H X ∧ IsReachable G H X)
