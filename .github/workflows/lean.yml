@@ -40,3 +40,12 @@ jobs:
             echo "::error::axiom found in Lean files"
             exit 1
           fi
+
+      - name: Check StateSemantics module
+        run: lake build LeanCfgProject.JALC.StateSemantics
+
+      - name: Check ResidualConcept module
+        run: lake build LeanCfgProject.JALC.ResidualConcept
+
+      - name: Check LanguageQuotient module
+        run: lake build LeanCfgProject.JALC.LanguageQuotient
