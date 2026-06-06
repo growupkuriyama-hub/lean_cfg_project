@@ -13,6 +13,8 @@ set_option linter.unusedFintypeInType false
 set_option linter.unusedSimpArgs false
 
 
+
+
 universe u
 
 namespace TwoSidedTypedCFG
@@ -82,11 +84,11 @@ def fullTerminalRules
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     List (FullTerminalRule G M) :=
-  G.terminalRules.bind
+  G.terminalRules.flatMap
     (fun rule =>
       let A : G.V := rule.1
       let a : Sigma := rule.2
-      (finiteList M).bind
+      (finiteList M).flatMap
         (fun m =>
           (finiteList M).map
             (fun n =>
@@ -97,16 +99,16 @@ def fullBinaryRules
     {M : Type u} [Monoid M] [Fintype M]
     (G : SSBNFGrammar Sigma) :
     List (FullBinaryRule G M) :=
-  G.binaryRules.bind
+  G.binaryRules.flatMap
     (fun rule =>
       let A : G.V := rule.1
       let B : G.V := rule.2.1
       let C : G.V := rule.2.2
-      (finiteList M).bind
+      (finiteList M).flatMap
         (fun m =>
-          (finiteList M).bind
+          (finiteList M).flatMap
             (fun n =>
-              (finiteList M).bind
+              (finiteList M).flatMap
                 (fun q =>
                   (finiteList M).map
                     (fun r =>
