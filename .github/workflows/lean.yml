@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-step25:
+  check-lean:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,9 +24,12 @@ jobs:
       - name: Check Step25_Test.lean
         run: lake env lean Step25_Test.lean
 
+      - name: Check FullArchitecture_Test.lean
+        run: lake env lean FullArchitecture_Test.lean
+
       - name: Reject sorry
         run: |
-          if grep -n "sorry" Step25_Test.lean; then
-            echo "::error::sorry found in Step25_Test.lean"
+          if grep -R -n "sorry" --include="*.lean" .; then
+            echo "::error::sorry found in Lean files"
             exit 1
           fi
