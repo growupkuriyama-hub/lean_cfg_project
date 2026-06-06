@@ -519,7 +519,6 @@ lemma terminal_mem_extractedR
   refine ⟨(X, a), hmem, ?_⟩
   dsimp only
   rw [dif_pos hsurv, dif_pos htype]
-  rfl
 
 lemma binary_mem_extractedR
     (G : SSBNFGrammar Sigma)
@@ -572,7 +571,6 @@ lemma binary_mem_extractedR
   rw [dif_pos hXsurv, dif_pos hYsurv, dif_pos hZsurv,
       dif_pos hyield, dif_pos hleft_left, dif_pos hleft_right,
       dif_pos hright_left, dif_pos hright_right]
-  rfl
 
 end Extraction
 
