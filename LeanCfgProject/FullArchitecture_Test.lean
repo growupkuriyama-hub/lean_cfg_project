@@ -528,17 +528,89 @@ noncomputable def stateSeparatedGrammar
           | CarrierTypedRule.binary br => some (br.X, br.Y, br.Z))
   }
 
-axiom realizationMap
+noncomputable def realizationMap
     {A B : WitnessedFiniteContextStructure H}
     (f : StructureMorphism A B) :
     SSBNFGrammar.GrammarMorphism
       (stateSeparatedGrammar H A)
-      (stateSeparatedGrammar H B)
+      (stateSeparatedGrammar H B) :=
+  {
+    map := f.map
+    start_map := by
+      intro x hx
+      exact f.start_map x hx
+    terminal_map := by
+      intro r hr
+      dsimp [stateSeparatedGrammar] at hr
+      dsimp [stateSeparatedGrammar]
+      cases List.mem_filterMap.mp hr with
+      | intro rule h1 =>
+        cases h1 with
+        | intro hRule hSome =>
+          cases rule with
+          | terminal tr =>
+            simp only at hSome
+            cases hSome
+            cases f.terminal_map tr hRule with
+            | intro trB hB =>
+              cases hB with
+              | intro hBX hBrest =>
+                cases hBrest with
+                | intro hBa hBmem =>
+                  apply List.mem_filterMap.mpr
+                  apply Exists.intro (CarrierTypedRule.terminal trB)
+                  apply And.intro
+                  exact hBmem
+                  dsimp
+                  rw [hBX, hBa]
+          | binary br =>
+            simp at hSome
+    binary_map := by
+      intro r hr
+      dsimp [stateSeparatedGrammar] at hr
+      dsimp [stateSeparatedGrammar]
+      cases List.mem_filterMap.mp hr with
+      | intro rule h1 =>
+        cases h1 with
+        | intro hRule hSome =>
+          cases rule with
+          | terminal tr =>
+            simp at hSome
+          | binary br =>
+            simp only at hSome
+            cases hSome
+            cases f.binary_map br hRule with
+            | intro brB hB =>
+              cases hB with
+              | intro hBX hBrest1 =>
+                cases hBrest1 with
+                | intro hBY hBrest2 =>
+                  cases hBrest2 with
+                  | intro hBZ hBmem =>
+                    apply List.mem_filterMap.mpr
+                    apply Exists.intro (CarrierTypedRule.binary brB)
+                    apply And.intro
+                    exact hBmem
+                    dsimp
+                    rw [hBX, hBY, hBZ]
+  }
 
-axiom realizationFunctor :
+noncomputable def realizationFunctor :
     CategoryTheory.Functor
       (WitnessedFiniteContextStructure H)
-      (SSBNFGrammar Sigma)
+      (SSBNFGrammar Sigma) :=
+  {
+    obj := fun A => stateSeparatedGrammar H A
+    map := fun {A B} f => realizationMap H f
+    map_id := by
+      intro A
+      ext x
+      rfl
+    map_comp := by
+      intro A B C f g
+      ext x
+      rfl
+  }
 
 end Realization
 
@@ -560,14 +632,16 @@ noncomputable def extractedS
     Finset (TrimmedState G H) :=
   Finset.empty
 
-axiom extracted_axiomS
+theorem extracted_axiomS
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
       Membership.mem (extractedS G H) x ->
         And
           ((extractedProfile G H x).lt = 1)
-          ((extractedProfile G H x).rt = 1)
+          ((extractedProfile G H x).rt = 1) := by
+  intro x hx
+  simp [extractedS] at hx
 
 axiom extracted_axiomP
     (G : SSBNFGrammar Sigma)
