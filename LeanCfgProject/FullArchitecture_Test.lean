@@ -162,6 +162,68 @@ end RuleFamilies
 
 open RuleFamilies
 
+theorem carrier_productive_has_yield
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    {W : Type u}
+    {profile : W -> TypedState M}
+    {R : List (CarrierTypedRule H profile)}
+    {x : W}
+    (hp : CarrierIsProductive H profile R x) :
+    Exists
+      (fun w : Word Sigma =>
+        YieldFamily H profile R x w) := by
+  induction hp with
+  | terminal tr hmem =>
+      exact Exists.intro [tr.a] (YieldFamily.terminal tr hmem)
+  | binary br hmem hY hZ ihY ihZ =>
+      cases ihY with
+      | intro u hu =>
+        cases ihZ with
+        | intro v hv =>
+          exact Exists.intro (u ++ v) (YieldFamily.binary br hmem hu hv)
+
+theorem carrier_reachable_has_context
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    {W : Type u}
+    {profile : W -> TypedState M}
+    {R : List (CarrierTypedRule H profile)}
+    {S : Finset W}
+    (axP : forall x : W, CarrierIsProductive H profile R x)
+    {x : W}
+    (hr : CarrierIsReachable H profile R S x) :
+    Exists
+      (fun c : Prod (Word Sigma) (Word Sigma) =>
+        ContextFamily H profile R S x c.1 c.2) := by
+  induction hr with
+  | start x hmem =>
+      exact Exists.intro ([], []) (ContextFamily.start x hmem)
+  | binary_left br hmem hX ihX =>
+      cases ihX with
+      | intro ctx hctx =>
+        have hpZ : CarrierIsProductive H profile R br.Z :=
+          axP br.Z
+        cases carrier_productive_has_yield hpZ with
+        | intro z hz =>
+          exact
+            Exists.intro
+              (ctx.1, z ++ ctx.2)
+              (ContextFamily.binary_left br hmem hctx hz)
+  | binary_right br hmem hX ihX =>
+      cases ihX with
+      | intro ctx hctx =>
+        have hpY : CarrierIsProductive H profile R br.Y :=
+          axP br.Y
+        cases carrier_productive_has_yield hpY with
+        | intro y hy =>
+          exact
+            Exists.intro
+              (ctx.1 ++ y, ctx.2)
+              (ContextFamily.binary_right br hmem hctx hy)
+
 structure FiniteContextStructure
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
@@ -181,6 +243,28 @@ structure FiniteContextStructure
   axiomRch :
     forall x : W,
       CarrierIsReachable H profile R S x
+
+theorem finiteContext_has_yield
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : FiniteContextStructure H)
+    (x : A.W) :
+    Exists
+      (fun w : Word Sigma =>
+        YieldFamily H A.profile A.R x w) :=
+  carrier_productive_has_yield (A.axiomP x)
+
+theorem finiteContext_has_context
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : FiniteContextStructure H)
+    (x : A.W) :
+    Exists
+      (fun c : Prod (Word Sigma) (Word Sigma) =>
+        ContextFamily H A.profile A.R A.S x c.1 c.2) :=
+  carrier_reachable_has_context A.axiomP (A.axiomRch x)
 
 structure WitnessedFiniteContextStructure
     {Sigma : Type u}
@@ -773,7 +857,11 @@ theorem extracted_axiomRch
                 property := And.intro hprodArg (IsReachable.start A p hstart hprod0) }
             have hmemS : Membership.mem (extractedS G H) xs := by
               unfold extractedS
-              simp [extractedProfile, mkFullTypedState]
+              apply Finset.mem_filter.mpr
+              apply And.intro
+              exact Finset.mem_univ xs
+              dsimp [xs, extractedProfile]
+              exact And.intro rfl rfl
             exact CarrierIsReachable.start xs hmemS)
           (binary_left := by
             intro X0 Y0 Z0 hmem hXreach hYprod hZprod ihX hprodY
