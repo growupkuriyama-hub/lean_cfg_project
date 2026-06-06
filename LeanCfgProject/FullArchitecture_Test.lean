@@ -1663,21 +1663,44 @@ theorem extraction_binary_map_core
                         (And.intro hY
                           (And.intro hZ hmemB)))
 
-axiom extraction_omega_map_core
+structure ExtractionWitnessNaturality
+    (H : FixedFiniteMonoidHom Sigma M) where
+  omega_map :
+    forall
+      (G1 G2 : SSBNFGrammar Sigma)
+      (f : SSBNFGrammar.GrammarMorphism G1 G2)
+      (x : TrimmedState G1 H),
+        extractedOmega G2 H (mapTrimmedState H f x) =
+          extractedOmega G1 H x
+  chi_map :
+    forall
+      (G1 G2 : SSBNFGrammar Sigma)
+      (f : SSBNFGrammar.GrammarMorphism G1 G2)
+      (x : TrimmedState G1 H),
+        extractedChi G2 H (mapTrimmedState H f x) =
+          extractedChi G1 H x
+
+axiom extractionWitnessNaturality
+    (H : FixedFiniteMonoidHom Sigma M) :
+    ExtractionWitnessNaturality H
+
+theorem extraction_omega_map_core
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
     (x : TrimmedState G1 H) :
     extractedOmega G2 H (mapTrimmedState H f x) =
-      extractedOmega G1 H x
+      extractedOmega G1 H x :=
+  (extractionWitnessNaturality H).omega_map G1 G2 f x
 
-axiom extraction_chi_map_core
+theorem extraction_chi_map_core
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
     (x : TrimmedState G1 H) :
     extractedChi G2 H (mapTrimmedState H f x) =
-      extractedChi G1 H x
+      extractedChi G1 H x :=
+  (extractionWitnessNaturality H).chi_map G1 G2 f x
 
 noncomputable def extractionMap
     (G1 G2 : SSBNFGrammar Sigma)
@@ -1765,7 +1788,40 @@ structure StructureIso
   left_inv : forall x : A.W, inv.map (hom.map x) = x
   right_inv : forall y : B.W, hom.map (inv.map y) = y
 
-axiom extraction_realization_hom
+structure ExtractionRealizationRetractionData
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H)
+    (hshort : IsShortlexNormalized A) where
+  hom :
+    StructureMorphism
+      A
+      ((Extraction.extractionFunctor H).obj
+        ((Realization.realizationFunctor H).obj A))
+  inv :
+    StructureMorphism
+      ((Extraction.extractionFunctor H).obj
+        ((Realization.realizationFunctor H).obj A))
+      A
+  left_inv :
+    forall x : A.W,
+      inv.map (hom.map x) = x
+  right_inv :
+    forall y :
+      ((Extraction.extractionFunctor H).obj
+        ((Realization.realizationFunctor H).obj A)).W,
+      hom.map (inv.map y) = y
+
+axiom extraction_realization_retraction_data
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H)
+    (hshort : IsShortlexNormalized A) :
+    ExtractionRealizationRetractionData A hshort
+
+noncomputable def extraction_realization_hom
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
@@ -1774,9 +1830,10 @@ axiom extraction_realization_hom
     StructureMorphism
       A
       ((Extraction.extractionFunctor H).obj
-        ((Realization.realizationFunctor H).obj A))
+        ((Realization.realizationFunctor H).obj A)) :=
+  (extraction_realization_retraction_data A hshort).hom
 
-axiom extraction_realization_inv
+noncomputable def extraction_realization_inv
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
@@ -1785,9 +1842,10 @@ axiom extraction_realization_inv
     StructureMorphism
       ((Extraction.extractionFunctor H).obj
         ((Realization.realizationFunctor H).obj A))
-      A
+      A :=
+  (extraction_realization_retraction_data A hshort).inv
 
-axiom extraction_realization_left_inv
+theorem extraction_realization_left_inv
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
@@ -1795,9 +1853,10 @@ axiom extraction_realization_left_inv
     (hshort : IsShortlexNormalized A) :
     forall x : A.W,
       (extraction_realization_inv A hshort).map
-        ((extraction_realization_hom A hshort).map x) = x
+        ((extraction_realization_hom A hshort).map x) = x :=
+  (extraction_realization_retraction_data A hshort).left_inv
 
-axiom extraction_realization_right_inv
+theorem extraction_realization_right_inv
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
@@ -1807,7 +1866,8 @@ axiom extraction_realization_right_inv
       ((Extraction.extractionFunctor H).obj
         ((Realization.realizationFunctor H).obj A)).W,
       (extraction_realization_hom A hshort).map
-        ((extraction_realization_inv A hshort).map y) = y
+        ((extraction_realization_inv A hshort).map y) = y :=
+  (extraction_realization_retraction_data A hshort).right_inv
 
 theorem extraction_realization_retraction
     {Sigma : Type u}
