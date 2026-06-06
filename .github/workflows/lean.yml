@@ -49,3 +49,6 @@ jobs:
 
       - name: Check LanguageQuotient module
         run: lake build LeanCfgProject.LanguageQuotient
+
+      - name: Check DescriptorSemantics module
+        run: lake build LeanCfgProject.DescriptorSemantics
