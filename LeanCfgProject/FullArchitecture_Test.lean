@@ -1748,7 +1748,51 @@ structure StructureIso
   left_inv : forall x : A.W, inv.map (hom.map x) = x
   right_inv : forall y : B.W, hom.map (inv.map y) = y
 
-axiom extraction_realization_retraction
+axiom extraction_realization_hom
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H)
+    (hshort : IsShortlexNormalized A) :
+    StructureMorphism
+      A
+      ((Extraction.extractionFunctor H).obj
+        ((Realization.realizationFunctor H).obj A))
+
+axiom extraction_realization_inv
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H)
+    (hshort : IsShortlexNormalized A) :
+    StructureMorphism
+      ((Extraction.extractionFunctor H).obj
+        ((Realization.realizationFunctor H).obj A))
+      A
+
+axiom extraction_realization_left_inv
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H)
+    (hshort : IsShortlexNormalized A) :
+    forall x : A.W,
+      (extraction_realization_inv A hshort).map
+        ((extraction_realization_hom A hshort).map x) = x
+
+axiom extraction_realization_right_inv
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    (A : WitnessedFiniteContextStructure H)
+    (hshort : IsShortlexNormalized A) :
+    forall y :
+      ((Extraction.extractionFunctor H).obj
+        ((Realization.realizationFunctor H).obj A)).W,
+      (extraction_realization_hom A hshort).map
+        ((extraction_realization_inv A hshort).map y) = y
+
+theorem extraction_realization_retraction
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     {H : FixedFiniteMonoidHom Sigma M}
@@ -1758,7 +1802,14 @@ axiom extraction_realization_retraction
       (StructureIso
         A
         ((Extraction.extractionFunctor H).obj
-          ((Realization.realizationFunctor H).obj A)))
+          ((Realization.realizationFunctor H).obj A))) :=
+  Nonempty.intro
+    {
+      hom := extraction_realization_hom A hshort
+      inv := extraction_realization_inv A hshort
+      left_inv := extraction_realization_left_inv A hshort
+      right_inv := extraction_realization_right_inv A hshort
+    }
 
 end
 
