@@ -968,23 +968,81 @@ noncomputable def extractedFiniteContextStructure
     axiomRch := extracted_axiomRch G H
   }
 
-axiom extracted_axiomOmega
+noncomputable def extractedOmega
     (G : SSBNFGrammar Sigma)
-    (H : FixedFiniteMonoidHom Sigma M) :
-    forall x : TrimmedState G H,
-      And
-        (YieldFamily H (extractedProfile G H) (extractedR G H) x [])
-        (H.h [] = (extractedProfile G H x).yt)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (x : TrimmedState G H) :
+    Word Sigma :=
+  Classical.choose (carrier_productive_has_yield (extracted_axiomP G H x))
 
-axiom extracted_axiomC
+theorem extractedOmega_yield
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (x : TrimmedState G H) :
+    YieldFamily H (extractedProfile G H) (extractedR G H) x
+      (extractedOmega G H x) :=
+  Classical.choose_spec (carrier_productive_has_yield (extracted_axiomP G H x))
+
+noncomputable def extractedChi
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (x : TrimmedState G H) :
+    Prod (Word Sigma) (Word Sigma) :=
+  Classical.choose
+    (carrier_reachable_has_context
+      (extracted_axiomP G H)
+      (extracted_axiomRch G H x))
+
+theorem extractedChi_context
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (x : TrimmedState G H) :
+    ContextFamily H (extractedProfile G H) (extractedR G H) (extractedS G H) x
+      (extractedChi G H x).1
+      (extractedChi G H x).2 :=
+  Classical.choose_spec
+    (carrier_reachable_has_context
+      (extracted_axiomP G H)
+      (extracted_axiomRch G H x))
+
+axiom extractedOmega_type
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
+    forall x : TrimmedState G H,
+      H.h (extractedOmega G H x) = (extractedProfile G H x).yt
+
+axiom extractedChi_type
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
       And
-        (ContextFamily H (extractedProfile G H) (extractedR G H) (extractedS G H) x [] [])
+        (H.h (extractedChi G H x).1 = (extractedProfile G H x).lt)
+        (H.h (extractedChi G H x).2 = (extractedProfile G H x).rt)
+
+theorem extracted_axiomOmega_from_witness
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
+    forall x : TrimmedState G H,
+      And
+        (YieldFamily H (extractedProfile G H) (extractedR G H) x
+          (extractedOmega G H x))
+        (H.h (extractedOmega G H x) = (extractedProfile G H x).yt) := by
+  intro x
+  exact And.intro (extractedOmega_yield G H x) (extractedOmega_type G H x)
+
+theorem extracted_axiomC_from_witness
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M) :
+    forall x : TrimmedState G H,
+      And
+        (ContextFamily H (extractedProfile G H) (extractedR G H) (extractedS G H) x
+          (extractedChi G H x).1
+          (extractedChi G H x).2)
         (And
-          (H.h [] = (extractedProfile G H x).lt)
-          (H.h [] = (extractedProfile G H x).rt))
+          (H.h (extractedChi G H x).1 = (extractedProfile G H x).lt)
+          (H.h (extractedChi G H x).2 = (extractedProfile G H x).rt)) := by
+  intro x
+  exact And.intro (extractedChi_context G H x) ((extractedChi_type G H) x)
 
 noncomputable def extractedWitnessedStructure
     (G : SSBNFGrammar Sigma)
@@ -999,10 +1057,10 @@ noncomputable def extractedWitnessedStructure
     axiomS := extracted_axiomS G H
     axiomP := extracted_axiomP G H
     axiomRch := extracted_axiomRch G H
-    omega := fun _ => []
-    chi := fun _ => ([], [])
-    axiomOmega := extracted_axiomOmega G H
-    axiomC := extracted_axiomC G H
+    omega := extractedOmega G H
+    chi := extractedChi G H
+    axiomOmega := extracted_axiomOmega_from_witness G H
+    axiomC := extracted_axiomC_from_witness G H
   }
 
 axiom extractionMap
