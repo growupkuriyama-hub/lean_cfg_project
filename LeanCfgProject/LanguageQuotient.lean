@@ -65,6 +65,17 @@ def SameHTypedPointedSyntacticObservation
   ∀ x y : Word Sigma,
     SameHTypedPointedObservation H L (x ++ u ++ y) (x ++ v ++ y)
 
+def RelationContained
+    {α : Type u}
+    (R S : α → α → Prop) : Prop :=
+  ∀ {x y : α}, R x y → S x y
+
+def TwoSidedStable
+    {Sigma : Type u}
+    (R : Word Sigma → Word Sigma → Prop) : Prop :=
+  ∀ {u v : Word Sigma}, R u v →
+    ∀ x y : Word Sigma, R (x ++ u ++ y) (x ++ v ++ y)
+
 theorem sameHTypedObservation_refl
     {Sigma M : Type u}
     [Monoid M] [Fintype M]
@@ -186,6 +197,18 @@ theorem sameHTypedSyntacticObservation_concat
     sameHTypedSyntacticObservation_left H L u₂ v₂ v₁ h2
   exact sameHTypedSyntacticObservation_trans H L (u₁ ++ u₂) (v₁ ++ u₂) (v₁ ++ v₂) hleft hright
 
+theorem sameHTypedSyntacticObservation_maximal
+    {Sigma M : Type u}
+    [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M)
+    (L : Language Sigma)
+    (R : Word Sigma → Word Sigma → Prop)
+    (hstable : TwoSidedStable R)
+    (hrefines : ∀ {u v : Word Sigma}, R u v → SameHTypedObservation H L u v) :
+    RelationContained R (SameHTypedSyntacticObservation H L) := by
+  intro u v huv x y
+  exact hrefines (hstable huv x y)
+
 theorem sameHTypedPointedObservation_refl
     {Sigma M : Type u}
     [Monoid M] [Fintype M]
@@ -263,10 +286,70 @@ theorem pointedSynObs_implies_h_eq
   have h0 := (h [] []).1
   simpa using h0
 
--- Target theorem, intentionally left as a comment rather than an unfinished theorem:
--- If SameSyntacticContext L u v and H.h u = H.h v, then
--- SameHTypedPointedSyntacticObservation H L u v.
--- The proof should use set extensionality for HTypedContextTypes and H.map_append.
--- It is not included here so that this file remains placeholder-free and assumption-free.
+theorem h_eq_in_context
+    {Sigma M : Type u}
+    [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M)
+    {u v : Word Sigma}
+    (huv : H.h u = H.h v)
+    (x y : Word Sigma) :
+    H.h (x ++ u ++ y) = H.h (x ++ v ++ y) := by
+  have hxuy : H.h (x ++ u ++ y) = (H.h x * H.h u) * H.h y := by
+    rw [← List.append_assoc x u y]
+    rw [H.map_append (x ++ u) y]
+    rw [H.map_append x u]
+  have hxvy : H.h (x ++ v ++ y) = (H.h x * H.h v) * H.h y := by
+    rw [← List.append_assoc x v y]
+    rw [H.map_append (x ++ v) y]
+    rw [H.map_append x v]
+  calc
+    H.h (x ++ u ++ y) = (H.h x * H.h u) * H.h y := hxuy
+    _ = (H.h x * H.h v) * H.h y := by rw [huv]
+    _ = H.h (x ++ v ++ y) := hxvy.symm
+
+theorem syntacticContext_and_h_eq_implies_pointedSynObs
+    {Sigma M : Type u}
+    [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M)
+    (L : Language Sigma)
+    (u v : Word Sigma) :
+    SameSyntacticContext L u v →
+    H.h u = H.h v →
+    SameHTypedPointedSyntacticObservation H L u v := by
+  intro hsyn huv x y
+  constructor
+  · exact h_eq_in_context H huv x y
+  · constructor
+    · exact hsyn x y
+    · apply Set.Subset.antisymm
+      · intro mn hmn
+        rcases hmn with ⟨l, r, hmn_eq, hmem⟩
+        refine ⟨l, r, hmn_eq, ?_⟩
+        have hmem' : (l ++ x) ++ u ++ (y ++ r) ∈ L := by
+          simpa [List.append_assoc] using hmem
+        have hv := (hsyn (l ++ x) (y ++ r)).1 hmem'
+        simpa [List.append_assoc] using hv
+      · intro mn hmn
+        rcases hmn with ⟨l, r, hmn_eq, hmem⟩
+        refine ⟨l, r, hmn_eq, ?_⟩
+        have hmem' : (l ++ x) ++ v ++ (y ++ r) ∈ L := by
+          simpa [List.append_assoc] using hmem
+        have hu := (hsyn (l ++ x) (y ++ r)).2 hmem'
+        simpa [List.append_assoc] using hu
+
+theorem pointedSynObs_iff_syntacticContext_and_h_eq
+    {Sigma M : Type u}
+    [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M)
+    (L : Language Sigma)
+    (u v : Word Sigma) :
+    SameHTypedPointedSyntacticObservation H L u v ↔
+      SameSyntacticContext L u v ∧ H.h u = H.h v := by
+  constructor
+  · intro h
+    exact ⟨pointedSynObs_implies_syntacticContext H L u v h,
+           pointedSynObs_implies_h_eq H L u v h⟩
+  · intro h
+    exact syntacticContext_and_h_eq_implies_pointedSynObs H L u v h.1 h.2
 
 end LeanCfgProject
