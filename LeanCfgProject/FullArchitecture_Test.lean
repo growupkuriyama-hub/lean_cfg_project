@@ -1,5 +1,6 @@
 import LeanCfgProject.Step25_Test
 import Mathlib.CategoryTheory.Functor.Basic
+import Mathlib.Tactic
 
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
@@ -18,6 +19,7 @@ noncomputable section
 
 namespace ContextCategory
 
+@[ext]
 structure ContextPath
     {M : Type u} [Monoid M]
     (X Y : TypedState M) where
@@ -58,11 +60,21 @@ def ContextPath.comp
         _ = (g.r * f.r) * X.rt := by simp [mul_assoc]
   }
 
-axiom typedStateCategory
+instance typedStateCategory
     {M : Type u} [Monoid M] :
-    Category (TypedState M)
-
-attribute [instance] typedStateCategory
+    Category (TypedState M) where
+  Hom X Y := ContextPath X Y
+  id X := ContextPath.id X
+  comp f g := ContextPath.comp f g
+  id_comp := by
+    intro X Y f
+    ext <;> simp [ContextPath.id, ContextPath.comp]
+  comp_id := by
+    intro X Y f
+    ext <;> simp [ContextPath.id, ContextPath.comp]
+  assoc := by
+    intro W X Y Z f g h
+    ext <;> simp [ContextPath.comp, mul_assoc]
 
 end ContextCategory
 
