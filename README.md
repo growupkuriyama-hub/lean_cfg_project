@@ -26,13 +26,13 @@ inside a language-level residual/concept universe.
 The current verified commit is:
 
 ```text
-10b043a
+90aac72
 ```
 
 GitHub Actions status:
 
 ```text
-Lean CI #70: passed
+Lean CI #74: passed
 ```
 
 The current CI checks the following modules:
@@ -60,10 +60,6 @@ Current status:
 - `sorry`: 0
 - `axiom`: 0
 - GitHub Actions: green
-
-The successful build currently reports minor whitespace-style warnings in
-`StateSemantics.lean` and `LanguageQuotient.lean`.  These warnings are
-non-fatal and do not affect verification.
 
 ## What is formalized
 
@@ -104,7 +100,10 @@ This layer includes:
 - two-sided residuals of a start image `S = q[L]`;
 - quotient-level Galois maps between subsets of `Q` and subsets of `Q × Q`;
 - the residual Galois connection;
-- the first syntactic-observation definitions for fixed-`h` language quotients.
+- residual concept closure as an extensive, monotone, idempotent closure operation;
+- concept extents and concept products;
+- soundness of binary rules after residual concept closure;
+- initial syntactic-observation definitions for fixed-`h` language quotients.
 
 This part is mainly contained in:
 
@@ -168,7 +167,8 @@ inclusions.
 
 ### `ResidualConcept.lean`
 
-Defines residual and Galois structures over an abstract monoid carrier `Q`.
+Defines residual, Galois, closure, and concept-product structures over an
+abstract monoid carrier `Q`.
 
 Main declarations include:
 
@@ -180,6 +180,17 @@ ConceptClosure
 residual_galois_connection
 subset_conceptClosure
 state_semantics_subset_residual
+commonContexts_antitone
+elementsOfContexts_antitone
+conceptClosure_mono
+binary_sound_after_closure
+commonContexts_conceptClosure
+conceptClosure_idempotent
+IsConceptExtent
+conceptClosure_isConceptExtent
+ConceptProduct
+conceptProduct_isConceptExtent
+binary_sound_as_conceptProduct
 ```
 
 The key mathematical idea is that, for `S = q[L]`, the relation
@@ -189,6 +200,29 @@ gamma I_S (alpha, beta)  iff  alpha * gamma * beta ∈ S
 ```
 
 induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.
+
+The module now also verifies that the induced concept closure behaves as a
+closure operation:
+
+```text
+U ⊆ ConceptClosure S U
+U ⊆ V -> ConceptClosure S U ⊆ ConceptClosure S V
+ConceptClosure S (ConceptClosure S U) = ConceptClosure S U
+```
+
+It further defines concept extents and concept products:
+
+```text
+IsConceptExtent S U
+ConceptProduct S A B = ConceptClosure S (SetMul A B)
+```
+
+and proves that binary rule soundness persists after residual concept closure:
+
+```text
+ConceptProduct S [[Y]] [[Z]] ⊆ ConceptClosure S [[X]]
+```
+
 This is the residual/concept semantics layer connecting the project with
 Clark-style syntactic concept lattices and formal concept analysis.
 
@@ -205,16 +239,21 @@ SameHTypedSyntacticObservation
 SameSyntacticContext
 SameHTypedPointedObservation
 SameHTypedPointedSyntacticObservation
+RelationContained
+TwoSidedStable
+sameHTypedSyntacticObservation_maximal
+pointedSynObs_iff_syntacticContext_and_h_eq
 ```
 
-It also verifies basic reflexivity, symmetry, transitivity, and simple
-implication lemmas for the observation relations.
+It verifies basic reflexivity, symmetry, transitivity, and implication lemmas
+for the observation relations.
 
-This file is the starting point for formalizing the distinction between:
+This file formalizes the distinction between:
 
 - finite but non-composition-compatible observation quotients;
 - unpointed syntactic observation congruences;
-- pointed observation relations, which connect to ordinary syntactic congruence.
+- pointed observation relations, which connect to ordinary syntactic congruence
+  together with the kernel of `h`.
 
 ## Continuous integration
 
@@ -240,14 +279,15 @@ The CI currently performs these checks:
 ## Current mathematical interpretation
 
 The repository should be read as a machine-checked Lean model of the core
-architecture and its first semantic extension.
+architecture and its semantic extension.
 
 The currently verified development supports the following conservative claim:
 
 ```text
-At commit 10b043a, the presentation-level architecture and the abstract
-residual-concept semantic layer build successfully in Lean 4 with no sorry
-and no axiom.
+At commit 90aac72, the presentation-level architecture, the abstract
+powerset-valued state semantics, the residual-concept semantic layer,
+and the initial syntactic-observation layer build successfully in Lean 4
+with no sorry and no axiom.
 ```
 
 It does **not** claim that:
@@ -283,3 +323,16 @@ Here:
 The refined open problem is to identify useful finite generated residual concept
 bases for fixed-`h` substitutable context-free languages, without collapsing the
 problem to regular-language recognition.
+
+## Next Lean targets
+
+Near-term proof targets include:
+
+1. developing concrete small counterexamples for naive observation quotients;
+2. connecting abstract state semantics to the existing extracted typed rule data;
+3. refining the language-level observation quotient layer;
+4. investigating finite generated residual concept bases for fixed-`h`
+   substitutable context-free languages.
+
+The guiding principle is to keep each Lean extension small, modular, and
+compatible with the no-`sorry` / no-`axiom` CI discipline.
