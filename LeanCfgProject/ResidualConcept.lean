@@ -1,10 +1,10 @@
-import LeanCfgProject.JALC.StateSemantics
+import LeanCfgProject.StateSemantics
 
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
 
-namespace LeanCfgProject.JALC
+namespace LeanCfgProject
 
 open TwoSidedTypedCFG
 
@@ -70,4 +70,4 @@ theorem state_semantics_subset_residual
   rw [← q_mul ell w]
   rw [← q_mul (ell ++ w) r]
 
-end LeanCfgProject.JALC
+end LeanCfgProject

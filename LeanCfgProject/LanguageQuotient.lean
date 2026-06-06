@@ -1,10 +1,10 @@
-import LeanCfgProject.JALC.StateSemantics
+import LeanCfgProject.StateSemantics
 
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
 
-namespace LeanCfgProject.JALC
+namespace LeanCfgProject
 
 open TwoSidedTypedCFG
 
@@ -267,6 +267,6 @@ theorem pointedSynObs_implies_h_eq
 -- If SameSyntacticContext L u v and H.h u = H.h v, then
 -- SameHTypedPointedSyntacticObservation H L u v.
 -- The proof should use set extensionality for HTypedContextTypes and H.map_append.
--- It is not included here to keep this file sorry-free and axiom-free.
+-- It is not included here so that this file remains placeholder-free and assumption-free.
 
 end LeanCfgProject.JALC

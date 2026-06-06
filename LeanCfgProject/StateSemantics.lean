@@ -4,7 +4,7 @@ set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
 
-namespace LeanCfgProject.JALC
+namespace LeanCfgProject
 
 open TwoSidedTypedCFG
 
@@ -96,4 +96,4 @@ theorem binary_sound
   refine ⟨u ++ v, hbin u v hu hv, ?_⟩
   rw [hc_eq, ha_eq, hb_eq, ← q_mul]
 
-end LeanCfgProject.JALC
+end LeanCfgProject
