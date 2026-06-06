@@ -1160,14 +1160,115 @@ def mapFullTypedState
   match X with
   | (A, p, m, n) => mkFullTypedState (f.map A) p m n
 
-axiom mapFullTypedState_trimmed_property
+theorem mapFullTypedState_id
+    (G : SSBNFGrammar Sigma)
+    (X : FullTypedState G M) :
+    mapFullTypedState (SSBNFGrammar.GrammarMorphism.id G) X = X := by
+  cases X with
+  | mk A rest1 =>
+      cases rest1 with
+      | mk p rest2 =>
+          cases rest2 with
+          | mk m n =>
+              rfl
+
+theorem mapFullTypedState_comp
+    {G1 G2 G3 : SSBNFGrammar Sigma}
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    (g : SSBNFGrammar.GrammarMorphism G2 G3)
+    (X : FullTypedState G1 M) :
+    mapFullTypedState (SSBNFGrammar.GrammarMorphism.comp f g) X =
+      mapFullTypedState g (mapFullTypedState f X) := by
+  cases X with
+  | mk A rest1 =>
+      cases rest1 with
+      | mk p rest2 =>
+          cases rest2 with
+          | mk m n =>
+              rfl
+
+axiom map_fullTerminalRules_mem
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    {X : FullTypedState G1 M}
+    {a : Sigma}
+    (hmem : List.Mem (X, a) (fullTerminalRules G1 H)) :
+    List.Mem (mapFullTypedState f X, a) (fullTerminalRules G2 H)
+
+axiom map_fullBinaryRules_mem
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    {X Y Z : FullTypedState G1 M}
+    (hmem : List.Mem (X, Y, Z) (fullBinaryRules G1)) :
+    List.Mem
+      (mapFullTypedState f X,
+       mapFullTypedState f Y,
+       mapFullTypedState f Z)
+      (fullBinaryRules G2)
+
+theorem mapFullTypedState_productive
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    {X : FullTypedState G1 M}
+    (hprod : IsProductive G1 H X) :
+    IsProductive G2 H (mapFullTypedState f X) := by
+  induction hprod with
+  | terminal hmem =>
+      exact
+        IsProductive.terminal
+          (map_fullTerminalRules_mem G1 G2 H f hmem)
+  | binary hmem hY hZ ihY ihZ =>
+      exact
+        IsProductive.binary
+          (map_fullBinaryRules_mem G1 G2 H f hmem)
+          ihY
+          ihZ
+
+theorem mapFullTypedState_reachable
+    (G1 G2 : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (f : SSBNFGrammar.GrammarMorphism G1 G2)
+    {X : FullTypedState G1 M}
+    (hreach : IsReachable G1 H X) :
+    IsReachable G2 H (mapFullTypedState f X) := by
+  induction hreach with
+  | start A p hstart hprod =>
+      have hstart2 : Membership.mem G2.startRules (f.map A) :=
+        f.start_map A hstart
+      have hprod2 :
+          IsProductive G2 H (mapFullTypedState f (mkFullTypedState A p 1 1)) :=
+        mapFullTypedState_productive G1 G2 H f hprod
+      simpa [mapFullTypedState, mkFullTypedState] using
+        IsReachable.start (f.map A) p hstart2 hprod2
+  | binary_left hmem hX hYprod hZprod ihX =>
+      exact
+        IsReachable.binary_left
+          (map_fullBinaryRules_mem G1 G2 H f hmem)
+          ihX
+          (mapFullTypedState_productive G1 G2 H f hYprod)
+          (mapFullTypedState_productive G1 G2 H f hZprod)
+  | binary_right hmem hX hYprod hZprod ihX =>
+      exact
+        IsReachable.binary_right
+          (map_fullBinaryRules_mem G1 G2 H f hmem)
+          ihX
+          (mapFullTypedState_productive G1 G2 H f hYprod)
+          (mapFullTypedState_productive G1 G2 H f hZprod)
+
+theorem mapFullTypedState_trimmed_property
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
     (x : TrimmedState G1 H) :
     And
       (IsProductive G2 H (mapFullTypedState f x.val))
-      (IsReachable G2 H (mapFullTypedState f x.val))
+      (IsReachable G2 H (mapFullTypedState f x.val)) :=
+  And.intro
+    (mapFullTypedState_productive G1 G2 H f x.property.1)
+    (mapFullTypedState_reachable G1 G2 H f x.property.2)
 
 noncomputable def mapTrimmedState
     {G1 G2 : SSBNFGrammar Sigma}
