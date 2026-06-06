@@ -636,8 +636,15 @@ noncomputable def trimmedStateFintype
 noncomputable def extractedS
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
-    Finset (TrimmedState G H) :=
-  Finset.empty
+    Finset (TrimmedState G H) := by
+  classical
+  letI : Fintype (TrimmedState G H) := trimmedStateFintype G H
+  exact
+    (Finset.univ : Finset (TrimmedState G H)).filter
+      (fun x =>
+        And
+          ((extractedProfile G H x).lt = 1)
+          ((extractedProfile G H x).rt = 1))
 
 theorem extracted_axiomS
     (G : SSBNFGrammar Sigma)
@@ -648,8 +655,23 @@ theorem extracted_axiomS
           ((extractedProfile G H x).lt = 1)
           ((extractedProfile G H x).rt = 1) := by
   intro x hx
+  classical
   unfold extractedS at hx
-  cases hx
+  simpa using (Finset.mem_filter.mp hx).2
+
+theorem reachable_implies_productive
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    {X : FullTypedState G M}
+    (hreach : IsReachable G H X) :
+    IsProductive G H X := by
+  induction hreach with
+  | start A p hstart hprod =>
+      exact hprod
+  | binary_left hmem hX hYprod hZprod ihX =>
+      exact hYprod
+  | binary_right hmem hX hYprod hZprod ihX =>
+      exact hZprod
 
 axiom extracted_axiomP
     (G : SSBNFGrammar Sigma)
