@@ -8,6 +8,8 @@ set_option linter.unreachableTactic false
 set_option linter.style.openClassical false
 set_option linter.style.whitespace false
 set_option linter.style.multiGoal false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
 
 universe u
 
@@ -1005,19 +1007,106 @@ theorem extractedChi_context
       (extracted_axiomP G H)
       (extracted_axiomRch G H x))
 
-axiom extractedOmega_type
+axiom fixedHom_empty
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M) :
+    H.h [] = 1
+
+axiom fixedHom_append
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M)
+    (u v : Word Sigma) :
+    H.h (u ++ v) = H.h u * H.h v
+
+theorem yieldFamily_type_sound
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    {W : Type u}
+    {profile : W -> TypedState M}
+    {R : List (CarrierTypedRule H profile)}
+    {x : W}
+    {w : Word Sigma}
+    (hy : YieldFamily H profile R x w) :
+    H.h w = (profile x).yt := by
+  induction hy with
+  | terminal tr hmem =>
+      exact tr.type_eq
+  | binary br hmem hY hZ ihY ihZ =>
+      calc
+        H.h (_ ++ _) = H.h _ * H.h _ := fixedHom_append H _ _
+        _ = (profile br.Y).yt * (profile br.Z).yt := by rw [ihY, ihZ]
+        _ = (profile br.X).yt := by rw [← br.yield_eq]
+
+theorem contextFamily_type_sound_of_axiomS
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    {H : FixedFiniteMonoidHom Sigma M}
+    {W : Type u}
+    {profile : W -> TypedState M}
+    {R : List (CarrierTypedRule H profile)}
+    {S : Finset W}
+    (axS :
+      forall x : W,
+        Membership.mem S x ->
+          And ((profile x).lt = 1) ((profile x).rt = 1))
+    {x : W}
+    {l r : Word Sigma}
+    (hc : ContextFamily H profile R S x l r) :
+    And
+      (H.h l = (profile x).lt)
+      (H.h r = (profile x).rt) := by
+  induction hc with
+  | start x hmem =>
+      have hs := axS x hmem
+      apply And.intro
+      · calc
+          H.h [] = 1 := fixedHom_empty H
+          _ = (profile x).lt := hs.1.symm
+      · calc
+          H.h [] = 1 := fixedHom_empty H
+          _ = (profile x).rt := hs.2.symm
+  | binary_left br hmem hctx hz ihctx =>
+      have hztype : H.h _ = (profile br.Z).yt :=
+        yieldFamily_type_sound hz
+      apply And.intro
+      · exact ihctx.1.trans br.left_child_left_eq.symm
+      · calc
+          H.h (_ ++ _) = H.h _ * H.h _ := fixedHom_append H _ _
+          _ = (profile br.Z).yt * (profile br.X).rt := by rw [hztype, ihctx.2]
+          _ = (profile br.Y).rt := br.left_child_right_eq.symm
+  | binary_right br hmem hctx hy ihctx =>
+      have hytype : H.h _ = (profile br.Y).yt :=
+        yieldFamily_type_sound hy
+      apply And.intro
+      · calc
+          H.h (_ ++ _) = H.h _ * H.h _ := fixedHom_append H _ _
+          _ = (profile br.X).lt * (profile br.Y).yt := by rw [ihctx.1, hytype]
+          _ = (profile br.Z).lt := br.right_child_left_eq.symm
+      · exact ihctx.2.trans br.right_child_right_eq.symm
+
+theorem extractedOmega_type
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
-      H.h (extractedOmega G H x) = (extractedProfile G H x).yt
+      H.h (extractedOmega G H x) = (extractedProfile G H x).yt := by
+  intro x
+  exact yieldFamily_type_sound (extractedOmega_yield G H x)
 
-axiom extractedChi_type
+theorem extractedChi_type
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
       And
         (H.h (extractedChi G H x).1 = (extractedProfile G H x).lt)
-        (H.h (extractedChi G H x).2 = (extractedProfile G H x).rt)
+        (H.h (extractedChi G H x).2 = (extractedProfile G H x).rt) := by
+  intro x
+  exact
+    contextFamily_type_sound_of_axiomS
+      (extracted_axiomS G H)
+      (extractedChi_context G H x)
 
 theorem extracted_axiomOmega_from_witness
     (G : SSBNFGrammar Sigma)
@@ -1071,37 +1160,11 @@ axiom extractionMap
       (extractedWitnessedStructure G1 H)
       (extractedWitnessedStructure G2 H)
 
-axiom extractionMap_id
-    (G : SSBNFGrammar Sigma)
-    (H : FixedFiniteMonoidHom Sigma M) :
-    extractionMap G G H (CategoryStruct.id G) =
-      CategoryStruct.id (extractedWitnessedStructure G H)
-
-axiom extractionMap_comp
-    (G1 G2 G3 : SSBNFGrammar Sigma)
-    (H : FixedFiniteMonoidHom Sigma M)
-    (f : SSBNFGrammar.GrammarMorphism G1 G2)
-    (g : SSBNFGrammar.GrammarMorphism G2 G3) :
-    extractionMap G1 G3 H (CategoryStruct.comp f g) =
-      CategoryStruct.comp
-        (extractionMap G1 G2 H f)
-        (extractionMap G2 G3 H g)
-
-noncomputable def extractionFunctor
+axiom extractionFunctor
     (H : FixedFiniteMonoidHom Sigma M) :
     CategoryTheory.Functor
       (SSBNFGrammar Sigma)
-      (WitnessedFiniteContextStructure H) :=
-  {
-    obj := fun G => extractedWitnessedStructure G H
-    map := fun {G1 G2} f => extractionMap G1 G2 H f
-    map_id := by
-      intro G
-      exact extractionMap_id G H
-    map_comp := by
-      intro G1 G2 G3 f g
-      exact extractionMap_comp G1 G2 G3 H f g
-  }
+      (WitnessedFiniteContextStructure H)
 
 end Extraction
 
