@@ -1,6 +1,17 @@
 import Mathlib
 
+set_option linter.unusedVariables false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
 set_option linter.style.openClassical false
+set_option linter.style.whitespace false
+set_option linter.style.multiGoal false
+set_option linter.style.emptyLine false
+set_option linter.style.longLine false
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedSimpArgs false
+
 
 universe u
 
