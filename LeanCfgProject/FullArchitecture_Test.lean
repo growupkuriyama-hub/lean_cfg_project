@@ -644,9 +644,8 @@ theorem extracted_axiomS
           ((extractedProfile G H x).lt = 1)
           ((extractedProfile G H x).rt = 1) := by
   intro x hx
-  have hfalse : False := by
-    simpa [extractedS] using hx
-  exact False.elim hfalse
+  unfold extractedS at hx
+  cases hx
 
 axiom extracted_axiomP
     (G : SSBNFGrammar Sigma)
