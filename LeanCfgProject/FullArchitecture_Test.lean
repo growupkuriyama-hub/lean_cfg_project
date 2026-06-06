@@ -673,17 +673,196 @@ theorem reachable_implies_productive
   | binary_right hmem hX hYprod hZprod ihX =>
       exact hZprod
 
-axiom extracted_axiomP
+theorem extracted_axiomP
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
-      CarrierIsProductive H (extractedProfile G H) (extractedR G H) x
+      CarrierIsProductive H (extractedProfile G H) (extractedR G H) x := by
+  intro x
+  classical
+  cases x with
+  | mk X hsurv =>
+      exact
+        IsProductive.rec
+          (motive := fun X hprod =>
+            forall hreach : IsReachable G H X,
+              CarrierIsProductive H (extractedProfile G H) (extractedR G H)
+                ({ val := X, property := And.intro hprod hreach } : TrimmedState G H))
+          (terminal := by
+            intro X0 a hmem hreach
+            have hprod0 : IsProductive G H X0 :=
+              IsProductive.terminal hmem
+            have hsurv0 : And (IsProductive G H X0) (IsReachable G H X0) :=
+              And.intro hprod0 hreach
+            cases terminal_mem_extractedR G H X0 a hmem hsurv0 with
+            | intro tr htr =>
+              cases htr with
+              | intro hX hrest =>
+                cases hrest with
+                | intro ha hmemR =>
+                  have ht :
+                      CarrierIsProductive H (extractedProfile G H) (extractedR G H) tr.X :=
+                    CarrierIsProductive.terminal tr hmemR
+                  rw [hX] at ht
+                  exact ht)
+          (binary := by
+            intro X0 Y0 Z0 hmem hY hZ ihY ihZ hreach
+            have hXprod : IsProductive G H X0 :=
+              IsProductive.binary hmem hY hZ
+            have hYreach : IsReachable G H Y0 :=
+              IsReachable.binary_left hmem hreach hY hZ
+            have hZreach : IsReachable G H Z0 :=
+              IsReachable.binary_right hmem hreach hY hZ
+            have hXsurv : And (IsProductive G H X0) (IsReachable G H X0) :=
+              And.intro hXprod hreach
+            have hYsurv : And (IsProductive G H Y0) (IsReachable G H Y0) :=
+              And.intro hY hYreach
+            have hZsurv : And (IsProductive G H Z0) (IsReachable G H Z0) :=
+              And.intro hZ hZreach
+            have hYcarrier :
+                CarrierIsProductive H (extractedProfile G H) (extractedR G H)
+                  ({ val := Y0, property := hYsurv } : TrimmedState G H) :=
+              ihY hYreach
+            have hZcarrier :
+                CarrierIsProductive H (extractedProfile G H) (extractedR G H)
+                  ({ val := Z0, property := hZsurv } : TrimmedState G H) :=
+              ihZ hZreach
+            cases binary_mem_extractedR G H X0 Y0 Z0 hmem hXsurv hYsurv hZsurv with
+            | intro br hbr =>
+              cases hbr with
+              | intro hbrX hrest1 =>
+                cases hrest1 with
+                | intro hbrY hrest2 =>
+                  cases hrest2 with
+                  | intro hbrZ hmemR =>
+                    have hYfinal :
+                        CarrierIsProductive H (extractedProfile G H) (extractedR G H) br.Y := by
+                      rw [hbrY]
+                      exact hYcarrier
+                    have hZfinal :
+                        CarrierIsProductive H (extractedProfile G H) (extractedR G H) br.Z := by
+                      rw [hbrZ]
+                      exact hZcarrier
+                    have hb :
+                        CarrierIsProductive H (extractedProfile G H) (extractedR G H) br.X :=
+                      CarrierIsProductive.binary br hmemR hYfinal hZfinal
+                    rw [hbrX] at hb
+                    exact hb)
+          hsurv.1
+          hsurv.2
 
-axiom extracted_axiomRch
+theorem extracted_axiomRch
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M) :
     forall x : TrimmedState G H,
-      CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H) x
+      CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H) x := by
+  intro x
+  classical
+  cases x with
+  | mk X hsurv =>
+      exact
+        IsReachable.rec
+          (motive := fun X hreach =>
+            forall hprod : IsProductive G H X,
+              CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H)
+                ({ val := X, property := And.intro hprod hreach } : TrimmedState G H))
+          (start := by
+            intro A p hstart hprod0 hprodArg
+            let xs : TrimmedState G H :=
+              { val := mkFullTypedState A p 1 1
+                property := And.intro hprodArg (IsReachable.start A p hstart hprod0) }
+            have hmemS : Membership.mem (extractedS G H) xs := by
+              unfold extractedS
+              simp [extractedProfile, mkFullTypedState]
+            exact CarrierIsReachable.start xs hmemS)
+          (binary_left := by
+            intro X0 Y0 Z0 hmem hXreach hYprod hZprod ihX hprodY
+            have hYreach : IsReachable G H Y0 :=
+              IsReachable.binary_left hmem hXreach hYprod hZprod
+            have hZreach : IsReachable G H Z0 :=
+              IsReachable.binary_right hmem hXreach hYprod hZprod
+            have hXprod : IsProductive G H X0 :=
+              reachable_implies_productive G H hXreach
+
+            have hXsurv : And (IsProductive G H X0) (IsReachable G H X0) :=
+              And.intro hXprod hXreach
+            have hYsurv : And (IsProductive G H Y0) (IsReachable G H Y0) :=
+              And.intro hYprod hYreach
+            have hZsurv : And (IsProductive G H Z0) (IsReachable G H Z0) :=
+              And.intro hZprod hZreach
+
+            have hXcarrier :
+                CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H)
+                  ({ val := X0, property := hXsurv } : TrimmedState G H) :=
+              ihX hXprod
+
+            cases binary_mem_extractedR G H X0 Y0 Z0 hmem hXsurv hYsurv hZsurv with
+            | intro br hbr =>
+              cases hbr with
+              | intro hbrX hrest1 =>
+                cases hrest1 with
+                | intro hbrY hrest2 =>
+                  cases hrest2 with
+                  | intro hbrZ hmemR =>
+                    have hXfinal :
+                        CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H) br.X := by
+                      rw [hbrX]
+                      exact hXcarrier
+                    have hYcarrier :
+                        CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H) br.Y :=
+                      CarrierIsReachable.binary_left br hmemR hXfinal
+                    rw [hbrY] at hYcarrier
+                    have hsame :
+                        ({ val := Y0, property := hYsurv } : TrimmedState G H) =
+                        ({ val := Y0, property := And.intro hprodY hYreach } : TrimmedState G H) :=
+                      Subtype.ext rfl
+                    rw [hsame] at hYcarrier
+                    exact hYcarrier)
+          (binary_right := by
+            intro X0 Y0 Z0 hmem hXreach hYprod hZprod ihX hprodZ
+            have hYreach : IsReachable G H Y0 :=
+              IsReachable.binary_left hmem hXreach hYprod hZprod
+            have hZreach : IsReachable G H Z0 :=
+              IsReachable.binary_right hmem hXreach hYprod hZprod
+            have hXprod : IsProductive G H X0 :=
+              reachable_implies_productive G H hXreach
+
+            have hXsurv : And (IsProductive G H X0) (IsReachable G H X0) :=
+              And.intro hXprod hXreach
+            have hYsurv : And (IsProductive G H Y0) (IsReachable G H Y0) :=
+              And.intro hYprod hYreach
+            have hZsurv : And (IsProductive G H Z0) (IsReachable G H Z0) :=
+              And.intro hZprod hZreach
+
+            have hXcarrier :
+                CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H)
+                  ({ val := X0, property := hXsurv } : TrimmedState G H) :=
+              ihX hXprod
+
+            cases binary_mem_extractedR G H X0 Y0 Z0 hmem hXsurv hYsurv hZsurv with
+            | intro br hbr =>
+              cases hbr with
+              | intro hbrX hrest1 =>
+                cases hrest1 with
+                | intro hbrY hrest2 =>
+                  cases hrest2 with
+                  | intro hbrZ hmemR =>
+                    have hXfinal :
+                        CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H) br.X := by
+                      rw [hbrX]
+                      exact hXcarrier
+                    have hZcarrier :
+                        CarrierIsReachable H (extractedProfile G H) (extractedR G H) (extractedS G H) br.Z :=
+                      CarrierIsReachable.binary_right br hmemR hXfinal
+                    rw [hbrZ] at hZcarrier
+                    have hsame :
+                        ({ val := Z0, property := hZsurv } : TrimmedState G H) =
+                        ({ val := Z0, property := And.intro hprodZ hZreach } : TrimmedState G H) :=
+                      Subtype.ext rfl
+                    rw [hsame] at hZcarrier
+                    exact hZcarrier)
+          hsurv.2
+          hsurv.1
 
 noncomputable def extractedFiniteContextStructure
     (G : SSBNFGrammar Sigma)
