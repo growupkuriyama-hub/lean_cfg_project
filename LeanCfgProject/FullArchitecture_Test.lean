@@ -1187,16 +1187,43 @@ theorem mapFullTypedState_comp
           | mk m n =>
               rfl
 
-axiom map_fullTerminalRules_mem
+theorem finiteList_mem
+    {alpha : Type u}
+    [Fintype alpha]
+    (x : alpha) :
+    List.Mem x (finiteList alpha) := by
+  classical
+  unfold finiteList
+  simpa using (Finset.mem_univ x)
+
+theorem map_fullTerminalRules_mem
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
     {X : FullTypedState G1 M}
     {a : Sigma}
     (hmem : List.Mem (X, a) (fullTerminalRules G1 H)) :
-    List.Mem (mapFullTypedState f X, a) (fullTerminalRules G2 H)
+    List.Mem (mapFullTypedState f X, a) (fullTerminalRules G2 H) := by
+  classical
+  unfold fullTerminalRules at hmem
+  unfold fullTerminalRules
+  rcases List.mem_flatMap.mp hmem with ⟨rule, hrule, hbranch1⟩
+  rcases rule with ⟨A, a0⟩
+  rcases List.mem_flatMap.mp hbranch1 with ⟨m, hm, hbranch2⟩
+  rcases List.mem_map.mp hbranch2 with ⟨n, hn, heq⟩
+  simp only [Prod.mk.injEq] at heq
+  obtain ⟨hX, ha⟩ := heq
+  subst X
+  subst a
+  apply List.mem_flatMap.mpr
+  refine ⟨(f.map A, a0), f.terminal_map (A, a0) hrule, ?_⟩
+  apply List.mem_flatMap.mpr
+  refine ⟨m, finiteList_mem m, ?_⟩
+  apply List.mem_map.mpr
+  refine ⟨n, finiteList_mem n, ?_⟩
+  simp [mapFullTypedState, mkFullTypedState]
 
-axiom map_fullBinaryRules_mem
+theorem map_fullBinaryRules_mem
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
@@ -1206,7 +1233,33 @@ axiom map_fullBinaryRules_mem
       (mapFullTypedState f X,
        mapFullTypedState f Y,
        mapFullTypedState f Z)
-      (fullBinaryRules G2)
+      (fullBinaryRules G2) := by
+  classical
+  unfold fullBinaryRules at hmem
+  unfold fullBinaryRules
+  rcases List.mem_flatMap.mp hmem with ⟨rule, hrule, hbranch1⟩
+  rcases rule with ⟨A, rest⟩
+  rcases rest with ⟨B, C⟩
+  rcases List.mem_flatMap.mp hbranch1 with ⟨m, hm, hbranch2⟩
+  rcases List.mem_flatMap.mp hbranch2 with ⟨n, hn, hbranch3⟩
+  rcases List.mem_flatMap.mp hbranch3 with ⟨q, hq, hbranch4⟩
+  rcases List.mem_map.mp hbranch4 with ⟨r, hr, heq⟩
+  simp only [Prod.mk.injEq] at heq
+  obtain ⟨hX, hY, hZ⟩ := heq
+  subst X
+  subst Y
+  subst Z
+  apply List.mem_flatMap.mpr
+  refine ⟨(f.map A, f.map B, f.map C), f.binary_map (A, B, C) hrule, ?_⟩
+  apply List.mem_flatMap.mpr
+  refine ⟨m, finiteList_mem m, ?_⟩
+  apply List.mem_flatMap.mpr
+  refine ⟨n, finiteList_mem n, ?_⟩
+  apply List.mem_flatMap.mpr
+  refine ⟨q, finiteList_mem q, ?_⟩
+  apply List.mem_map.mpr
+  refine ⟨r, finiteList_mem r, ?_⟩
+  simp [mapFullTypedState, mkFullTypedState]
 
 theorem mapFullTypedState_productive
     (G1 G2 : SSBNFGrammar Sigma)
@@ -1317,7 +1370,21 @@ theorem mapTrimmedState_start_mem
     rw [hp]
     exact hb
 
-axiom extraction_terminal_map_core
+axiom extractedR_terminal_to_full
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (tr : CarrierTerminalRule H (extractedProfile G H))
+    (hmem : List.Mem (CarrierTypedRule.terminal tr) (extractedR G H)) :
+    List.Mem (tr.X.val, tr.a) (fullTerminalRules G H)
+
+axiom extractedR_binary_to_full
+    (G : SSBNFGrammar Sigma)
+    (H : FixedFiniteMonoidHom Sigma M)
+    (br : CarrierBinaryRule (extractedProfile G H))
+    (hmem : List.Mem (CarrierTypedRule.binary br) (extractedR G H)) :
+    List.Mem (br.X.val, br.Y.val, br.Z.val) (fullBinaryRules G)
+
+theorem extraction_terminal_map_core
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
@@ -1329,9 +1396,28 @@ axiom extraction_terminal_map_core
           (trB.X = mapTrimmedState H f tr.X)
           (And
             (trB.a = tr.a)
-            (List.Mem (CarrierTypedRule.terminal trB) (extractedR G2 H))))
+            (List.Mem (CarrierTypedRule.terminal trB) (extractedR G2 H)))) := by
+  classical
+  have hfull1 :
+      List.Mem (tr.X.val, tr.a) (fullTerminalRules G1 H) :=
+    extractedR_terminal_to_full G1 H tr hmem
+  have hfull2 :
+      List.Mem (mapFullTypedState f tr.X.val, tr.a) (fullTerminalRules G2 H) :=
+    map_fullTerminalRules_mem G1 G2 H f hfull1
+  have hsurv :
+      And
+        (IsProductive G2 H (mapFullTypedState f tr.X.val))
+        (IsReachable G2 H (mapFullTypedState f tr.X.val)) :=
+    (mapTrimmedState H f tr.X).property
+  cases terminal_mem_extractedR G2 H (mapFullTypedState f tr.X.val) tr.a hfull2 hsurv with
+  | intro trB htrB =>
+      cases htrB with
+      | intro hX hrest =>
+          cases hrest with
+          | intro ha hmemB =>
+              exact Exists.intro trB (And.intro hX (And.intro ha hmemB))
 
-axiom extraction_binary_map_core
+theorem extraction_binary_map_core
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (f : SSBNFGrammar.GrammarMorphism G1 G2)
@@ -1345,7 +1431,51 @@ axiom extraction_binary_map_core
             (brB.Y = mapTrimmedState H f br.Y)
             (And
               (brB.Z = mapTrimmedState H f br.Z)
-              (List.Mem (CarrierTypedRule.binary brB) (extractedR G2 H)))))
+              (List.Mem (CarrierTypedRule.binary brB) (extractedR G2 H))))) := by
+  classical
+  have hfull1 :
+      List.Mem (br.X.val, br.Y.val, br.Z.val) (fullBinaryRules G1) :=
+    extractedR_binary_to_full G1 H br hmem
+  have hfull2 :
+      List.Mem
+        (mapFullTypedState f br.X.val,
+         mapFullTypedState f br.Y.val,
+         mapFullTypedState f br.Z.val)
+        (fullBinaryRules G2) :=
+    map_fullBinaryRules_mem G1 G2 H f hfull1
+  have hXsurv :
+      And
+        (IsProductive G2 H (mapFullTypedState f br.X.val))
+        (IsReachable G2 H (mapFullTypedState f br.X.val)) :=
+    (mapTrimmedState H f br.X).property
+  have hYsurv :
+      And
+        (IsProductive G2 H (mapFullTypedState f br.Y.val))
+        (IsReachable G2 H (mapFullTypedState f br.Y.val)) :=
+    (mapTrimmedState H f br.Y).property
+  have hZsurv :
+      And
+        (IsProductive G2 H (mapFullTypedState f br.Z.val))
+        (IsReachable G2 H (mapFullTypedState f br.Z.val)) :=
+    (mapTrimmedState H f br.Z).property
+  cases
+      binary_mem_extractedR G2 H
+        (mapFullTypedState f br.X.val)
+        (mapFullTypedState f br.Y.val)
+        (mapFullTypedState f br.Z.val)
+        hfull2 hXsurv hYsurv hZsurv with
+  | intro brB hbrB =>
+      cases hbrB with
+      | intro hX hrest1 =>
+          cases hrest1 with
+          | intro hY hrest2 =>
+              cases hrest2 with
+              | intro hZ hmemB =>
+                  exact
+                    Exists.intro brB
+                      (And.intro hX
+                        (And.intro hY
+                          (And.intro hZ hmemB)))
 
 axiom extraction_omega_map_core
     (G1 G2 : SSBNFGrammar Sigma)
