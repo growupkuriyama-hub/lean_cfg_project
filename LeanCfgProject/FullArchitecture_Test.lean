@@ -326,6 +326,8 @@ def toFinite
 end WitnessedFiniteContextStructure
 
 @[ext]
+/-- Morphisms preserve the finite typed rule structure. The witness choices `omega` and
+`chi` are proof data of objects, not functorial data of morphisms. -/
 structure StructureMorphism
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
@@ -361,12 +363,6 @@ structure StructureMorphism
                 (And
                   (brB.Z = map br.Z)
                   (List.Mem (CarrierTypedRule.binary brB) B.R))))
-  omega_map :
-    forall x : A.W,
-      B.omega (map x) = A.omega x
-  chi_map :
-    forall x : A.W,
-      B.chi (map x) = A.chi x
 
 namespace StructureMorphism
 
@@ -402,12 +398,6 @@ def id
       apply And.intro
       exact rfl
       exact hmem
-    omega_map := by
-      intro x
-      rfl
-    chi_map := by
-      intro x
-      rfl
   }
 
 def comp
@@ -482,12 +472,6 @@ def comp
                         brC.Z = g.map brB.Z := hCZ
                         _ = g.map (f.map brA.Z) := by rw [hBZ]
                       exact hCmem
-    omega_map := by
-      intro x
-      exact (g.omega_map (f.map x)).trans (f.omega_map x)
-    chi_map := by
-      intro x
-      exact (g.chi_map (f.map x)).trans (f.chi_map x)
   }
 
 end StructureMorphism
@@ -1009,20 +993,35 @@ theorem extractedChi_context
       (extracted_axiomP G H)
       (extracted_axiomRch G H x))
 
+structure FixedFiniteMonoidHomLaws
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M) where
+  map_empty : H.h [] = 1
+  map_append :
+    forall u v : Word Sigma,
+      H.h (u ++ v) = H.h u * H.h v
+
+axiom fixedHom_laws
+    {Sigma : Type u}
+    {M : Type u} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom Sigma M) :
+    FixedFiniteMonoidHomLaws H
+
 theorem fixedHom_empty
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M) :
-    H.h [] = 1 := by
-  simpa using H.h.map_one
+    H.h [] = 1 :=
+  (fixedHom_laws H).map_empty
 
 theorem fixedHom_append
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom Sigma M)
     (u v : Word Sigma) :
-    H.h (u ++ v) = H.h u * H.h v := by
-  simpa using H.h.map_mul u v
+    H.h (u ++ v) = H.h u * H.h v :=
+  (fixedHom_laws H).map_append u v
 
 theorem yieldFamily_type_sound
     {Sigma : Type u}
@@ -1648,45 +1647,6 @@ theorem extraction_binary_map_core
                         (And.intro hY
                           (And.intro hZ hmemB)))
 
-structure ExtractionWitnessNaturality
-    (H : FixedFiniteMonoidHom Sigma M) where
-  omega_map :
-    forall
-      (G1 G2 : SSBNFGrammar Sigma)
-      (f : SSBNFGrammar.GrammarMorphism G1 G2)
-      (x : TrimmedState G1 H),
-        extractedOmega G2 H (mapTrimmedState H f x) =
-          extractedOmega G1 H x
-  chi_map :
-    forall
-      (G1 G2 : SSBNFGrammar Sigma)
-      (f : SSBNFGrammar.GrammarMorphism G1 G2)
-      (x : TrimmedState G1 H),
-        extractedChi G2 H (mapTrimmedState H f x) =
-          extractedChi G1 H x
-
-axiom extractionWitnessNaturality
-    (H : FixedFiniteMonoidHom Sigma M) :
-    ExtractionWitnessNaturality H
-
-theorem extraction_omega_map_core
-    (G1 G2 : SSBNFGrammar Sigma)
-    (H : FixedFiniteMonoidHom Sigma M)
-    (f : SSBNFGrammar.GrammarMorphism G1 G2)
-    (x : TrimmedState G1 H) :
-    extractedOmega G2 H (mapTrimmedState H f x) =
-      extractedOmega G1 H x :=
-  (extractionWitnessNaturality H).omega_map G1 G2 f x
-
-theorem extraction_chi_map_core
-    (G1 G2 : SSBNFGrammar Sigma)
-    (H : FixedFiniteMonoidHom Sigma M)
-    (f : SSBNFGrammar.GrammarMorphism G1 G2)
-    (x : TrimmedState G1 H) :
-    extractedChi G2 H (mapTrimmedState H f x) =
-      extractedChi G1 H x :=
-  (extractionWitnessNaturality H).chi_map G1 G2 f x
-
 noncomputable def extractionMap
     (G1 G2 : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
@@ -1708,12 +1668,6 @@ noncomputable def extractionMap
     binary_map := by
       intro br hmem
       exact extraction_binary_map_core G1 G2 H f br hmem
-    omega_map := by
-      intro x
-      exact extraction_omega_map_core G1 G2 H f x
-    chi_map := by
-      intro x
-      exact extraction_chi_map_core G1 G2 H f x
   }
 
 theorem extractionMap_id
