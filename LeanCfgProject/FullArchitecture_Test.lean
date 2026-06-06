@@ -10,6 +10,8 @@ set_option linter.style.whitespace false
 set_option linter.style.multiGoal false
 set_option linter.style.emptyLine false
 set_option linter.style.longLine false
+set_option linter.unusedSectionVars false
+set_option linter.unusedFintypeInType false
 
 universe u
 
@@ -1194,7 +1196,7 @@ theorem finiteList_mem
     List.Mem x (finiteList alpha) := by
   classical
   unfold finiteList
-  simpa using (Finset.mem_univ x)
+  exact Finset.mem_toList.mpr (Finset.mem_univ x)
 
 theorem map_fullTerminalRules_mem
     (G1 G2 : SSBNFGrammar Sigma)
@@ -1370,12 +1372,84 @@ theorem mapTrimmedState_start_mem
     rw [hp]
     exact hb
 
-axiom extractedR_terminal_to_full
+theorem extractedR_terminal_to_full
     (G : SSBNFGrammar Sigma)
     (H : FixedFiniteMonoidHom Sigma M)
     (tr : CarrierTerminalRule H (extractedProfile G H))
     (hmem : List.Mem (CarrierTypedRule.terminal tr) (extractedR G H)) :
-    List.Mem (tr.X.val, tr.a) (fullTerminalRules G H)
+    List.Mem (tr.X.val, tr.a) (fullTerminalRules G H) := by
+  classical
+  unfold extractedR at hmem
+  rcases List.mem_append.mp hmem with hleft | hright
+  · rcases List.mem_filterMap.mp hleft with ⟨rule, hfull, hsome⟩
+    rcases rule with ⟨X, a⟩
+    dsimp only at hsome
+    by_cases hsurv : And (IsProductive G H X) (IsReachable G H X)
+    · rw [dif_pos hsurv] at hsome
+      by_cases htype :
+          H.h [a] =
+            (extractedProfile G H
+              ({ val := X, property := hsurv } : TrimmedState G H)).yt
+      · rw [dif_pos htype] at hsome
+        cases hsome
+        simpa
+      · rw [dif_neg htype] at hsome
+        cases hsome
+    · rw [dif_neg hsurv] at hsome
+      cases hsome
+  · rcases List.mem_filterMap.mp hright with ⟨rule, hfull, hsome⟩
+    rcases rule with ⟨X, rest⟩
+    rcases rest with ⟨Y, Z⟩
+    dsimp only at hsome
+    by_cases hXsurv : And (IsProductive G H X) (IsReachable G H X)
+    · rw [dif_pos hXsurv] at hsome
+      by_cases hYsurv : And (IsProductive G H Y) (IsReachable G H Y)
+      · rw [dif_pos hYsurv] at hsome
+        by_cases hZsurv : And (IsProductive G H Z) (IsReachable G H Z)
+        · rw [dif_pos hZsurv] at hsome
+          let Xt : TrimmedState G H := { val := X, property := hXsurv }
+          let Yt : TrimmedState G H := { val := Y, property := hYsurv }
+          let Zt : TrimmedState G H := { val := Z, property := hZsurv }
+          by_cases hyield :
+              (extractedProfile G H Xt).yt =
+                (extractedProfile G H Yt).yt *
+                (extractedProfile G H Zt).yt
+          · rw [dif_pos hyield] at hsome
+            by_cases hleft_left :
+                (extractedProfile G H Yt).lt =
+                  (extractedProfile G H Xt).lt
+            · rw [dif_pos hleft_left] at hsome
+              by_cases hleft_right :
+                  (extractedProfile G H Yt).rt =
+                    (extractedProfile G H Zt).yt *
+                    (extractedProfile G H Xt).rt
+              · rw [dif_pos hleft_right] at hsome
+                by_cases hright_left :
+                    (extractedProfile G H Zt).lt =
+                      (extractedProfile G H Xt).lt *
+                      (extractedProfile G H Yt).yt
+                · rw [dif_pos hright_left] at hsome
+                  by_cases hright_right :
+                      (extractedProfile G H Zt).rt =
+                        (extractedProfile G H Xt).rt
+                  · rw [dif_pos hright_right] at hsome
+                    cases hsome
+                  · rw [dif_neg hright_right] at hsome
+                    cases hsome
+                · rw [dif_neg hright_left] at hsome
+                  cases hsome
+              · rw [dif_neg hleft_right] at hsome
+                cases hsome
+            · rw [dif_neg hleft_left] at hsome
+              cases hsome
+          · rw [dif_neg hyield] at hsome
+            cases hsome
+        · rw [dif_neg hZsurv] at hsome
+          cases hsome
+      · rw [dif_neg hYsurv] at hsome
+        cases hsome
+    · rw [dif_neg hXsurv] at hsome
+      cases hsome
 
 axiom extractedR_binary_to_full
     (G : SSBNFGrammar Sigma)
