@@ -22,10 +22,10 @@ jobs:
           lint: false
 
       - name: Check Step25_Test.lean
-        run: lake env lean Step25_Test.lean
+        run: lake env lean -R . Step25_Test.lean
 
       - name: Check FullArchitecture_Test.lean
-        run: lake env lean FullArchitecture_Test.lean
+        run: lake env lean -R . FullArchitecture_Test.lean
 
       - name: Reject sorry
         run: |
