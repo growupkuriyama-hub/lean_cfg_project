@@ -325,9 +325,9 @@ def toFinite
 
 end WitnessedFiniteContextStructure
 
-@[ext]
 /-- Morphisms preserve the finite typed rule structure. The witness choices `omega` and
 `chi` are proof data of objects, not functorial data of morphisms. -/
+@[ext]
 structure StructureMorphism
     {Sigma : Type u}
     {M : Type u} [Monoid M] [Fintype M]
