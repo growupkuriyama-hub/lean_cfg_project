@@ -130,3 +130,6 @@ jobs:
 
       - name: Check ClosedStageConceptStability module
         run: lake build LeanCfgProject.ClosedStageConceptStability
+
+      - name: Check ClosedStageFrameIntentStability module
+        run: lake build LeanCfgProject.ClosedStageFrameIntentStability
