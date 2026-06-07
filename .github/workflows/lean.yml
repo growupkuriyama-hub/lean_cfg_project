@@ -85,3 +85,13 @@ jobs:
 
       - name: Check CarrierSaturationCorrectness module
         run: lake build LeanCfgProject.CarrierSaturationCorrectness
+
+
+      - name: Check FrameSoundness module
+        run: lake build LeanCfgProject.FrameSoundness
+
+      - name: Check CarrierSaturationCorrectness module
+        run: lake build LeanCfgProject.CarrierSaturationCorrectness
+
+      - name: Check SaturationFrameBridge module
+        run: lake build LeanCfgProject.SaturationFrameBridge
