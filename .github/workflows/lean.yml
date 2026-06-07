@@ -136,3 +136,6 @@ jobs:
 
       - name: Check ClosedStageRuleSemantics module
         run: lake build LeanCfgProject.ClosedStageRuleSemantics
+
+      - name: Check LaterClosedStageClosure module
+        run: lake build LeanCfgProject.LaterClosedStageClosure
