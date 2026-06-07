@@ -303,7 +303,11 @@ theorem carrier_terminalImage_subset_closedStageConcept
       CarrierClosedStageConceptSemantics S q H profile R N X := by
   intro a ha
   unfold CarrierClosedStageConceptSemantics
-  exact subset_conceptClosure S
+  exact (subset_conceptClosure S
+    (SaturationIter
+      (CarrierTerminalImage q H profile R)
+      (CarrierBinaryRel H profile R)
+      N X))
     (carrier_terminalImage_subset_closedStage
       q H profile R N hClosed X ha)
 
@@ -333,7 +337,11 @@ theorem carrier_terminalImage_subset_laterClosedStageConcept
       CarrierClosedStageConceptSemantics S q H profile R (N + k) X := by
   intro a ha
   unfold CarrierClosedStageConceptSemantics
-  exact subset_conceptClosure S
+  exact (subset_conceptClosure S
+    (SaturationIter
+      (CarrierTerminalImage q H profile R)
+      (CarrierBinaryRel H profile R)
+      (N + k) X))
     (carrier_terminalImage_subset_laterClosedStage
       q H profile R N k hClosed X ha)
 
