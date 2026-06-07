@@ -26,13 +26,13 @@ inside a language-level residual/concept universe.
 The current verified commit is:
 
 ```text
-90aac72
+5af89ed
 ```
 
 GitHub Actions status:
 
 ```text
-Lean CI #74: passed
+Lean CI #82: passed
 ```
 
 The current CI checks the following modules:
@@ -43,12 +43,14 @@ lake build LeanCfgProject.FullArchitecture_Test
 lake build LeanCfgProject.StateSemantics
 lake build LeanCfgProject.ResidualConcept
 lake build LeanCfgProject.LanguageQuotient
+lake build LeanCfgProject.DescriptorSemantics
+lake build LeanCfgProject.DescriptorResidualSemantics
 ```
 
 The CI also rejects Lean source files containing:
 
 - `sorry`
-- top-level `axiom` declarations
+- project-level `axiom` declarations
 
 Current status:
 
@@ -57,13 +59,15 @@ Current status:
 - `StateSemantics.lean`: verified
 - `ResidualConcept.lean`: verified
 - `LanguageQuotient.lean`: verified
-- `sorry`: 0
-- `axiom`: 0
+- `DescriptorSemantics.lean`: verified
+- `DescriptorResidualSemantics.lean`: verified
+- `sorry`: 0 under the CI policy
+- `axiom`: 0 project-level declarations under the CI policy
 - GitHub Actions: green
 
 ## What is formalized
 
-The project currently has two layers.
+The project currently has three connected layers.
 
 ### 1. Presentation-level architecture
 
@@ -86,12 +90,12 @@ LeanCfgProject/Step25_Test.lean
 LeanCfgProject/FullArchitecture_Test.lean
 ```
 
-### 2. Residual concept semantics layer
+### 2. Abstract powerset and residual concept semantics
 
-The newer verified layer formalizes abstract semantic tools used to connect
-presentation-level descriptors with language-level residual/concept semantics.
+This layer formalizes abstract semantic tools used to connect presentation-level
+descriptors with language-level residual/concept semantics.
 
-This layer includes:
+It includes:
 
 - image semantics of languages under a multiplicative word observation;
 - concatenation of languages and subset multiplication;
@@ -113,6 +117,30 @@ LeanCfgProject/ResidualConcept.lean
 LeanCfgProject/LanguageQuotient.lean
 ```
 
+### 3. Descriptor-level semantic bridge
+
+The newest verified layer connects the existing carrier rule and context-family
+architecture to the abstract semantic layer.
+
+This layer includes:
+
+- carrier yield sets defined from `YieldFamily`;
+- carrier state semantics as an instance of abstract `StateSemantics`;
+- terminal soundness for carrier terminal rules;
+- binary soundness for carrier binary rules;
+- binary soundness after residual concept closure;
+- carrier concept-product soundness;
+- carrier start languages defined from a start set;
+- context-family yield-to-start soundness;
+- residual soundness for carrier state semantics in a carrier context.
+
+This part is mainly contained in:
+
+```text
+LeanCfgProject/DescriptorSemantics.lean
+LeanCfgProject/DescriptorResidualSemantics.lean
+```
+
 ## Main files
 
 ```text
@@ -122,6 +150,8 @@ LeanCfgProject/
   StateSemantics.lean
   ResidualConcept.lean
   LanguageQuotient.lean
+  DescriptorSemantics.lean
+  DescriptorResidualSemantics.lean
 ```
 
 ### `Step25_Test.lean`
@@ -135,7 +165,8 @@ typed rule structures.
 
 Builds the architectural layer on top of `Step25_Test.lean`, including finite
 context structures, witnessed finite context structures, morphisms,
-extraction/realization interfaces, and a retraction-style interface.
+extraction/realization interfaces, a retraction-style interface, and the
+`YieldFamily` / `ContextFamily` inductive structures used in the semantic bridge.
 
 ### `StateSemantics.lean`
 
@@ -200,31 +231,9 @@ gamma I_S (alpha, beta)  iff  alpha * gamma * beta ∈ S
 ```
 
 induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.
-
-The module now also verifies that the induced concept closure behaves as a
-closure operation:
-
-```text
-U ⊆ ConceptClosure S U
-U ⊆ V -> ConceptClosure S U ⊆ ConceptClosure S V
-ConceptClosure S (ConceptClosure S U) = ConceptClosure S U
-```
-
-It further defines concept extents and concept products:
-
-```text
-IsConceptExtent S U
-ConceptProduct S A B = ConceptClosure S (SetMul A B)
-```
-
-and proves that binary rule soundness persists after residual concept closure:
-
-```text
-ConceptProduct S [[Y]] [[Z]] ⊆ ConceptClosure S [[X]]
-```
-
-This is the residual/concept semantics layer connecting the project with
-Clark-style syntactic concept lattices and formal concept analysis.
+The module verifies that the induced concept closure is extensive, monotone, and
+idempotent, and that binary rule soundness persists after residual concept
+closure.
 
 ### `LanguageQuotient.lean`
 
@@ -245,15 +254,49 @@ sameHTypedSyntacticObservation_maximal
 pointedSynObs_iff_syntacticContext_and_h_eq
 ```
 
-It verifies basic reflexivity, symmetry, transitivity, and implication lemmas
-for the observation relations.
-
-This file formalizes the distinction between:
+It formalizes the distinction between:
 
 - finite but non-composition-compatible observation quotients;
 - unpointed syntactic observation congruences;
 - pointed observation relations, which connect to ordinary syntactic congruence
   together with the kernel of `h`.
+
+### `DescriptorSemantics.lean`
+
+Connects carrier terminal and binary rules to powerset-valued and concept-product
+semantics.
+
+Main declarations include:
+
+```text
+CarrierYieldSet
+CarrierStateSemantics
+carrier_terminal_sound
+carrier_binary_rule_hbin
+carrier_binary_sound
+carrier_binary_sound_after_closure
+carrier_binary_sound_as_conceptProduct
+CarrierStartLanguage
+```
+
+This module verifies that carrier terminal and binary rules from the descriptor
+layer are soundly interpreted by the abstract semantic layer.
+
+### `DescriptorResidualSemantics.lean`
+
+Connects carrier context families to residual soundness.
+
+Main declarations include:
+
+```text
+context_yield_mem_startLanguage_aux
+context_yield_mem_startLanguage
+carrier_state_semantics_subset_residual
+```
+
+This module verifies that if a carrier state occurs in a carrier context, then
+its powerset-valued semantics is contained in the corresponding two-sided
+residual of the carrier start language image.
 
 ## Continuous integration
 
@@ -271,10 +314,12 @@ The CI currently performs these checks:
 1. build `LeanCfgProject.Step25_Test`;
 2. build `LeanCfgProject.FullArchitecture_Test`;
 3. reject any remaining `sorry`;
-4. reject top-level `axiom` declarations;
+4. reject project-level `axiom` declarations;
 5. build `LeanCfgProject.StateSemantics`;
 6. build `LeanCfgProject.ResidualConcept`;
-7. build `LeanCfgProject.LanguageQuotient`.
+7. build `LeanCfgProject.LanguageQuotient`;
+8. build `LeanCfgProject.DescriptorSemantics`;
+9. build `LeanCfgProject.DescriptorResidualSemantics`.
 
 ## Current mathematical interpretation
 
@@ -284,10 +329,11 @@ architecture and its semantic extension.
 The currently verified development supports the following conservative claim:
 
 ```text
-At commit 90aac72, the presentation-level architecture, the abstract
+At commit 5af89ed, the presentation-level architecture, the abstract
 powerset-valued state semantics, the residual-concept semantic layer,
-and the initial syntactic-observation layer build successfully in Lean 4
-with no sorry and no axiom.
+the initial syntactic-observation layer, and the descriptor-level carrier
+rule/context semantic bridges build successfully in Lean 4 with no sorry
+and no project-level axioms under the repository CI policy.
 ```
 
 It does **not** claim that:
@@ -329,10 +375,10 @@ problem to regular-language recognition.
 Near-term proof targets include:
 
 1. developing concrete small counterexamples for naive observation quotients;
-2. connecting abstract state semantics to the existing extracted typed rule data;
-3. refining the language-level observation quotient layer;
-4. investigating finite generated residual concept bases for fixed-`h`
-   substitutable context-free languages.
+2. refining the language-level observation quotient layer;
+3. investigating finite generated residual concept bases for fixed-`h`
+   substitutable context-free languages;
+4. preparing an online companion blueprint with links to declarations and CI logs.
 
 The guiding principle is to keep each Lean extension small, modular, and
-compatible with the no-`sorry` / no-`axiom` CI discipline.
+compatible with the no-`sorry` / no-project-level-`axiom` CI discipline.
