@@ -169,3 +169,6 @@ jobs:
 
       - name: Check K4ResidualAdequacyExample module
         run: lake build LeanCfgProject.K4ResidualAdequacyExample
+
+      - name: Check K4AdequacyStrictness module
+        run: lake build LeanCfgProject.K4AdequacyStrictness
