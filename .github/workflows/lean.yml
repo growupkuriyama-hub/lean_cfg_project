@@ -160,3 +160,6 @@ jobs:
 
       - name: Check FiniteSaturationMeasure module
         run: lake build LeanCfgProject.FiniteSaturationMeasure
+
+      - name: Check FiniteStoppingFrameResidual module
+        run: lake build LeanCfgProject.FiniteStoppingFrameResidual
