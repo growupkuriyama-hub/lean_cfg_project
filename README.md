@@ -1,7 +1,7 @@
 # lean_cfg_project
 
-This repository contains an experimental Lean 4 formalization for the fixed-`h`
-CFG / residual concept semantics project.
+This repository contains the Lean 4 artifact accompanying the paper
+**Residual Concept Semantics for Two-Sided Fixed-h CFG Presentations**.
 
 The project studies finite two-sided monoid-typed structures associated with
 context-free grammar presentations, together with a Lean-checked semantic layer
@@ -21,21 +21,23 @@ equivalence.  The current goal is to formalize a sound architecture in which
 fixed-`h` two-sided CFG presentation descriptors admit semantic interpretations
 inside a language-level residual/concept universe.
 
-## Verification status
+## Verified commit
 
-The current verified commit is:
+Paper version: v11
 
-```text
-5af89ed
-```
-
-GitHub Actions status:
+Verified commit:
 
 ```text
-Lean CI #82: passed
+b1dbc47
 ```
 
-The current CI checks the following modules:
+GitHub Actions:
+
+```text
+Lean CI #84: passed
+```
+
+## Main checked modules
 
 ```bash
 lake build LeanCfgProject.Step25_Test
@@ -45,6 +47,7 @@ lake build LeanCfgProject.ResidualConcept
 lake build LeanCfgProject.LanguageQuotient
 lake build LeanCfgProject.DescriptorSemantics
 lake build LeanCfgProject.DescriptorResidualSemantics
+lake build LeanCfgProject.ObservationCounterexample
 ```
 
 The CI also rejects Lean source files containing:
@@ -61,13 +64,19 @@ Current status:
 - `LanguageQuotient.lean`: verified
 - `DescriptorSemantics.lean`: verified
 - `DescriptorResidualSemantics.lean`: verified
+- `ObservationCounterexample.lean`: verified
 - `sorry`: 0 under the CI policy
 - `axiom`: 0 project-level declarations under the CI policy
 - GitHub Actions: green
 
+## Paper-to-Lean correspondence
+
+See Appendix A of the paper for the correspondence table between paper
+statements and Lean declarations.
+
 ## What is formalized
 
-The project currently has three connected layers.
+The project currently has four connected layers.
 
 ### 1. Presentation-level architecture
 
@@ -119,10 +128,10 @@ LeanCfgProject/LanguageQuotient.lean
 
 ### 3. Descriptor-level semantic bridge
 
-The newest verified layer connects the existing carrier rule and context-family
-architecture to the abstract semantic layer.
+This layer connects the existing carrier rule and context-family architecture
+to the abstract semantic layer.
 
-This layer includes:
+It includes:
 
 - carrier yield sets defined from `YieldFamily`;
 - carrier state semantics as an instance of abstract `StateSemantics`;
@@ -141,185 +150,52 @@ LeanCfgProject/DescriptorSemantics.lean
 LeanCfgProject/DescriptorResidualSemantics.lean
 ```
 
-## Main files
+### 4. Observation counterexample
+
+This layer contains a concrete finite example showing that the naive finite
+`h`-typed observation quotient is not generally compatible with concatenation.
+
+It uses:
 
 ```text
-LeanCfgProject/
-  Step25_Test.lean
-  FullArchitecture_Test.lean
-  StateSemantics.lean
-  ResidualConcept.lean
-  LanguageQuotient.lean
-  DescriptorSemantics.lean
-  DescriptorResidualSemantics.lean
+L = {ab, cd}
+h(w) = |w| mod 2
 ```
-
-### `Step25_Test.lean`
-
-Contains the underlying typed CFG refinement layer, including words,
-fixed finite monoid homomorphisms, typed states, full typed states, typed rules,
-productivity/reachability, trimmed states, extracted profiles, and extracted
-typed rule structures.
-
-### `FullArchitecture_Test.lean`
-
-Builds the architectural layer on top of `Step25_Test.lean`, including finite
-context structures, witnessed finite context structures, morphisms,
-extraction/realization interfaces, a retraction-style interface, and the
-`YieldFamily` / `ContextFamily` inductive structures used in the semantic bridge.
-
-### `StateSemantics.lean`
-
-Defines abstract powerset-valued semantics for languages and grammar states
-under a multiplicative word observation `q : Sigma* -> Q`.
 
 Main declarations include:
 
 ```text
-Language
-ImageOfLanguage
-LangMul
-SetMul
-StateSemantics
-image_langMul_eq_setMul
-terminal_sound
-binary_sound
+CExSym
+Parity
+parityHom
+counterexampleLanguage
+not_same_observation_ab_cb
+same_observation_b_b
+observation_concat_obstruction_from_a_c
 ```
 
-The key mathematical idea is that if `q` is multiplicative, then image semantics
-turns concatenation into subset multiplication:
+This part is contained in:
 
 ```text
-q[Y Z] = q[Y] q[Z]
+LeanCfgProject/ObservationCounterexample.lean
 ```
 
-Consequently, binary CFG rules are interpreted soundly as subset multiplication
-inclusions.
+## Online blueprint
 
-### `ResidualConcept.lean`
+An interactive blueprint will be hosted via GitHub Pages.  The PDF is meant to
+be readable as a conventional paper; the online blueprint provides links to
+Lean declarations, source files, dependency-oriented blueprint pages, and CI
+logs.
 
-Defines residual, Galois, closure, and concept-product structures over an
-abstract monoid carrier `Q`.
+The public repository URL and archived artifact DOI will be inserted in the
+camera-ready or arXiv release once the repository is made public and the
+artifact snapshot is archived.
 
-Main declarations include:
+## No sorry / no user-declared axioms policy
 
-```text
-TwoSidedResidual
-CommonContexts
-ElementsOfContexts
-ConceptClosure
-residual_galois_connection
-subset_conceptClosure
-state_semantics_subset_residual
-commonContexts_antitone
-elementsOfContexts_antitone
-conceptClosure_mono
-binary_sound_after_closure
-commonContexts_conceptClosure
-conceptClosure_idempotent
-IsConceptExtent
-conceptClosure_isConceptExtent
-ConceptProduct
-conceptProduct_isConceptExtent
-binary_sound_as_conceptProduct
-```
-
-The key mathematical idea is that, for `S = q[L]`, the relation
-
-```text
-gamma I_S (alpha, beta)  iff  alpha * gamma * beta ∈ S
-```
-
-induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.
-The module verifies that the induced concept closure is extensive, monotone, and
-idempotent, and that binary rule soundness persists after residual concept
-closure.
-
-### `LanguageQuotient.lean`
-
-Defines initial language-level observation relations.
-
-Main declarations include:
-
-```text
-HTypedContextTypes
-SameHTypedObservation
-SameHTypedSyntacticObservation
-SameSyntacticContext
-SameHTypedPointedObservation
-SameHTypedPointedSyntacticObservation
-RelationContained
-TwoSidedStable
-sameHTypedSyntacticObservation_maximal
-pointedSynObs_iff_syntacticContext_and_h_eq
-```
-
-It formalizes the distinction between:
-
-- finite but non-composition-compatible observation quotients;
-- unpointed syntactic observation congruences;
-- pointed observation relations, which connect to ordinary syntactic congruence
-  together with the kernel of `h`.
-
-### `DescriptorSemantics.lean`
-
-Connects carrier terminal and binary rules to powerset-valued and concept-product
-semantics.
-
-Main declarations include:
-
-```text
-CarrierYieldSet
-CarrierStateSemantics
-carrier_terminal_sound
-carrier_binary_rule_hbin
-carrier_binary_sound
-carrier_binary_sound_after_closure
-carrier_binary_sound_as_conceptProduct
-CarrierStartLanguage
-```
-
-This module verifies that carrier terminal and binary rules from the descriptor
-layer are soundly interpreted by the abstract semantic layer.
-
-### `DescriptorResidualSemantics.lean`
-
-Connects carrier context families to residual soundness.
-
-Main declarations include:
-
-```text
-context_yield_mem_startLanguage_aux
-context_yield_mem_startLanguage
-carrier_state_semantics_subset_residual
-```
-
-This module verifies that if a carrier state occurs in a carrier context, then
-its powerset-valued semantics is contained in the corresponding two-sided
-residual of the carrier start language image.
-
-## Continuous integration
-
-The repository uses GitHub Actions to run Lean verification automatically on
-push, pull request, and manual workflow dispatch.
-
-The workflow file is:
-
-```text
-.github/workflows/lean.yml
-```
-
-The CI currently performs these checks:
-
-1. build `LeanCfgProject.Step25_Test`;
-2. build `LeanCfgProject.FullArchitecture_Test`;
-3. reject any remaining `sorry`;
-4. reject project-level `axiom` declarations;
-5. build `LeanCfgProject.StateSemantics`;
-6. build `LeanCfgProject.ResidualConcept`;
-7. build `LeanCfgProject.LanguageQuotient`;
-8. build `LeanCfgProject.DescriptorSemantics`;
-9. build `LeanCfgProject.DescriptorResidualSemantics`.
+The CI rejects occurrences of `sorry` and project-level `axiom` declarations in
+the checked project files.  This policy is meant to keep the artifact honest
+about what has actually been checked.
 
 ## Current mathematical interpretation
 
@@ -329,11 +205,11 @@ architecture and its semantic extension.
 The currently verified development supports the following conservative claim:
 
 ```text
-At commit 5af89ed, the presentation-level architecture, the abstract
+At commit b1dbc47, the presentation-level architecture, the abstract
 powerset-valued state semantics, the residual-concept semantic layer,
-the initial syntactic-observation layer, and the descriptor-level carrier
-rule/context semantic bridges build successfully in Lean 4 with no sorry
-and no project-level axioms under the repository CI policy.
+the descriptor-level semantic bridge, and the observation-counterexample
+module build successfully in Lean 4 with no sorry and no project-level axiom
+declarations under the CI policy.
 ```
 
 It does **not** claim that:
@@ -341,7 +217,8 @@ It does **not** claim that:
 - the entire accompanying paper is fully formalized;
 - CFG equivalence is solved;
 - a canonical CFG presentation has been constructed;
-- every fixed-`h` descriptor is already a language-level invariant.
+- every fixed-`h` descriptor is already a language-level invariant;
+- a new full identification theorem for CFLs has been proved.
 
 The intended claim is more modest and more precise:
 
@@ -349,36 +226,3 @@ The intended claim is more modest and more precise:
 Fixed-h two-sided CFG presentation descriptors admit sound powerset-valued
 and residual-concept semantic interpretations inside a language-level universe.
 ```
-
-## Research direction
-
-The current formalization supports a research program around the semantic bridge:
-
-```text
-E_h(G) -> P(Q) -> Concepts(Q, q[L])
-```
-
-Here:
-
-- `E_h(G)` is a presentation-level fixed-`h` two-sided descriptor;
-- `Q` is a language-level observation carrier or quotient candidate;
-- `P(Q)` is the powerset-valued state semantics;
-- `q[L]` is the start image of the language;
-- `Concepts(Q, q[L])` is the residual Galois / Clark-style concept universe.
-
-The refined open problem is to identify useful finite generated residual concept
-bases for fixed-`h` substitutable context-free languages, without collapsing the
-problem to regular-language recognition.
-
-## Next Lean targets
-
-Near-term proof targets include:
-
-1. developing concrete small counterexamples for naive observation quotients;
-2. refining the language-level observation quotient layer;
-3. investigating finite generated residual concept bases for fixed-`h`
-   substitutable context-free languages;
-4. preparing an online companion blueprint with links to declarations and CI logs.
-
-The guiding principle is to keep each Lean extension small, modular, and
-compatible with the no-`sorry` / no-project-level-`axiom` CI discipline.
