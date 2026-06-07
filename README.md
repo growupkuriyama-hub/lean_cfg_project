@@ -26,13 +26,13 @@ inside a language-level residual/concept universe.
 The current verified commit is:
 
 ```text
-b7705b7
+b7675b2
 ```
 
 GitHub Actions status:
 
 ```text
-Lean CI #92: passed
+Lean CI #95: passed
 ```
 
 The current CI checks the following modules:
@@ -44,11 +44,14 @@ lake build LeanCfgProject.StateSemantics
 lake build LeanCfgProject.ResidualConcept
 lake build LeanCfgProject.LanguageQuotient
 lake build LeanCfgProject.ObservationFinite
+lake build LeanCfgProject.ObservationSignatureCounterexample
 lake build LeanCfgProject.DescriptorSemantics
 lake build LeanCfgProject.DescriptorResidualSemantics
 lake build LeanCfgProject.CarrierConceptSemantics
+lake build LeanCfgProject.FiniteSaturation
 lake build LeanCfgProject.ObservationCounterexample
 lake build LeanCfgProject.ObservationCounterexample_v2
+lake build LeanCfgProject.SemanticBridgeSummary
 ```
 
 The CI also rejects Lean source files containing:
@@ -64,11 +67,14 @@ Current status:
 - `ResidualConcept.lean`: verified
 - `LanguageQuotient.lean`: verified
 - `ObservationFinite.lean`: verified
+- `ObservationSignatureCounterexample.lean`: verified
 - `DescriptorSemantics.lean`: verified
 - `DescriptorResidualSemantics.lean`: verified
 - `CarrierConceptSemantics.lean`: verified
+- `FiniteSaturation.lean`: verified
 - `ObservationCounterexample.lean`: verified
 - `ObservationCounterexample_v2.lean`: verified
+- `SemanticBridgeSummary.lean`: verified
 - `sorry`: 0 under the CI policy
 - `axiom`: 0 project-level declarations under the CI policy
 - GitHub Actions: green
@@ -119,6 +125,7 @@ This part is mainly contained in:
 ```text
 LeanCfgProject/LanguageQuotient.lean
 LeanCfgProject/ObservationFinite.lean
+LeanCfgProject/ObservationSignatureCounterexample.lean
 ```
 
 ### 3. Abstract powerset and residual concept semantics
@@ -137,13 +144,15 @@ It includes:
 - the residual Galois connection;
 - residual concept closure as an extensive, monotone, idempotent closure operation;
 - concept extents and concept products;
-- soundness of binary rules after residual concept closure.
+- soundness of binary rules after residual concept closure;
+- finite powerset-saturation components for semantic-image computation.
 
 This part is mainly contained in:
 
 ```text
 LeanCfgProject/StateSemantics.lean
 LeanCfgProject/ResidualConcept.lean
+LeanCfgProject/FiniteSaturation.lean
 ```
 
 ### 4. Descriptor-level semantic bridge
@@ -187,11 +196,14 @@ LeanCfgProject/
   ResidualConcept.lean
   LanguageQuotient.lean
   ObservationFinite.lean
+  ObservationSignatureCounterexample.lean
   DescriptorSemantics.lean
   DescriptorResidualSemantics.lean
   CarrierConceptSemantics.lean
+  FiniteSaturation.lean
   ObservationCounterexample.lean
   ObservationCounterexample_v2.lean
+  SemanticBridgeSummary.lean
 ```
 
 ### `Step25_Test.lean`
@@ -251,6 +263,22 @@ sameHTypedObservation_kernel
 
 This supports the paper-level finite-index argument by identifying the relevant
 finite observation data without introducing quotient types.
+
+### `ObservationSignatureCounterexample.lean`
+
+Connects the observation-signature/kernel formulation with the concrete
+counterexample.  It verifies that the observation signatures of `a` and `c`
+coincide, the signatures of `ab` and `cb` differ, and the observation-signature
+map itself is not concatenation-compatible.
+
+Main declarations include:
+
+```text
+observationSignature_a_eq_c
+observationSignature_b_eq_b
+observationSignature_ab_ne_cb
+observationSignature_not_concat_compatible
+```
 
 ### `StateSemantics.lean`
 
@@ -318,6 +346,24 @@ induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.
 The module verifies that the induced concept closure is extensive, monotone, and
 idempotent, and that binary rule soundness persists after residual concept
 closure.
+
+### `FiniteSaturation.lean`
+
+Formalizes finite powerset-saturation components used by the paper's finite
+semantic image computation proposition.  It does not yet prove the full least
+fixed-point equality with `q[Y_G(X)]`, but verifies the inflationary saturation
+step, monotonicity, iteration, and terminal/binary insertion lemmas.
+
+Main declarations include:
+
+```text
+SaturationStep
+IsSaturationClosed
+saturationStep_mono
+SaturationIter
+terminal_mem_saturationIter_one
+binary_mul_mem_saturationIter_succ
+```
 
 ### `DescriptorSemantics.lean`
 
@@ -409,6 +455,22 @@ Together with `same_observation_b_b` and `not_same_observation_ab_cb`, this
 module checks the full concrete fact that the naive finite `h`-typed observation
 relation is not generally compatible with concatenation.
 
+### `SemanticBridgeSummary.lean`
+
+Provides a lightweight summary CI target importing the main semantic-bridge
+modules together.  It intentionally proves only trivial availability theorems;
+its role is to ensure that the observation, saturation, counterexample,
+residual-concept, and carrier-concept modules build simultaneously.
+
+Main declarations include:
+
+```text
+semanticBridgeSummary_observationSignatureKernel_available
+semanticBridgeSummary_counterexample_available
+semanticBridgeSummary_finiteSaturation_available
+semanticBridgeSummary_carrierConceptSemantics_available
+```
+
 ## Continuous integration
 
 The repository uses GitHub Actions to run Lean verification automatically on
@@ -430,11 +492,14 @@ The CI currently performs these checks:
 6. build `LeanCfgProject.ResidualConcept`;
 7. build `LeanCfgProject.LanguageQuotient`;
 8. build `LeanCfgProject.ObservationFinite`;
-9. build `LeanCfgProject.DescriptorSemantics`;
-10. build `LeanCfgProject.DescriptorResidualSemantics`;
-11. build `LeanCfgProject.CarrierConceptSemantics`;
-12. build `LeanCfgProject.ObservationCounterexample`;
-13. build `LeanCfgProject.ObservationCounterexample_v2`.
+9. build `LeanCfgProject.ObservationSignatureCounterexample`;
+10. build `LeanCfgProject.DescriptorSemantics`;
+11. build `LeanCfgProject.DescriptorResidualSemantics`;
+12. build `LeanCfgProject.CarrierConceptSemantics`;
+13. build `LeanCfgProject.FiniteSaturation`;
+14. build `LeanCfgProject.ObservationCounterexample`;
+15. build `LeanCfgProject.ObservationCounterexample_v2`;
+16. build `LeanCfgProject.SemanticBridgeSummary`.
 
 ## Current mathematical interpretation
 
@@ -444,12 +509,14 @@ architecture and its semantic extension.
 The currently verified development supports the following conservative claim:
 
 ```text
-At commit b7705b7, the presentation-level architecture, the observation
-relations and observation-signature kernel, the abstract powerset-valued state
-semantics, the residual-concept semantic layer, the descriptor-level carrier
-rule/context semantic bridges, the named carrier concept semantics, and the
-concrete observation-counterexample modules build successfully in Lean 4 with
-no sorry and no project-level axioms under the repository CI policy.
+At commit b7675b2, the presentation-level architecture, the observation
+relations and observation-signature kernel, the signature-level observation
+counterexample, the abstract powerset-valued state semantics, the
+finite-saturation components, the residual-concept semantic layer, the
+descriptor-level carrier rule/context semantic bridges, the named carrier
+concept semantics, the concrete observation-counterexample modules, and the
+semantic-bridge summary target build successfully in Lean 4 with no sorry and
+no project-level axioms under the repository CI policy.
 ```
 
 It does **not** claim that:

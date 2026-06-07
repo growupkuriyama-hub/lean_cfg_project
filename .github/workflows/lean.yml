@@ -78,3 +78,10 @@ jobs:
 
       - name: Check SemanticBridgeSummary module
         run: lake build LeanCfgProject.SemanticBridgeSummary
+
+
+      - name: Check FrameSoundness module
+        run: lake build LeanCfgProject.FrameSoundness
+
+      - name: Check CarrierSaturationCorrectness module
+        run: lake build LeanCfgProject.CarrierSaturationCorrectness
