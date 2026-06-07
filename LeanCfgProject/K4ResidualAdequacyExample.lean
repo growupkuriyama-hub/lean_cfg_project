@@ -19,9 +19,8 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This v3 avoids `decide` for `ConceptClosure` computations.  Those goals are
-proved by explicit finite case analysis and `simp [mulK4]`, because `decide`
-can get stuck on classical decidability for arbitrary set membership.
+This v4 avoids `decide` for `ConceptClosure` computations and explicitly
+specializes common-context hypotheses where needed.
 -/
 
 inductive K4 where
@@ -76,6 +75,18 @@ def UB : Set K4 := fun g => g = y
 /-- State image for the mixed/parity coset. -/
 def UT : Set K4 := OSet
 
+lemma not_x_mem_D : x ∉ DSet := by
+  intro hx
+  cases hx with
+  | inl h => cases h
+  | inr h => cases h
+
+lemma not_y_mem_D : y ∉ DSet := by
+  intro hy
+  cases hy with
+  | inl h => cases h
+  | inr h => cases h
+
 /-- Residual at frame (e,e) is D. -/
 theorem res_ee :
     TwoSidedResidual Sset e e = DSet := by
@@ -107,19 +118,27 @@ lemma ctx_ee_common_D :
 lemma ctx_ey_common_UA :
     (e, y) ∈ CommonContexts Sset UA := by
   intro gamma hgamma
-  cases gamma <;> simp [CommonContexts, Sset, DSet, UA, mulK4] at hgamma ⊢
+  subst gamma
+  simp [CommonContexts, Sset, DSet, UA, mulK4]
 
 /-- The context (x,e) is common for {y}. -/
 lemma ctx_xe_common_UB :
     (x, e) ∈ CommonContexts Sset UB := by
   intro gamma hgamma
-  cases gamma <;> simp [CommonContexts, Sset, DSet, UB, mulK4] at hgamma ⊢
+  subst gamma
+  simp [CommonContexts, Sset, DSet, UB, mulK4]
 
 /-- The context (e,y) is common for O. -/
 lemma ctx_ey_common_O :
     (e, y) ∈ CommonContexts Sset OSet := by
   intro gamma hgamma
-  cases gamma <;> simp [CommonContexts, Sset, DSet, OSet, mulK4] at hgamma ⊢
+  cases hgamma with
+  | inl hx =>
+      subst gamma
+      simp [CommonContexts, Sset, DSet, OSet, mulK4]
+  | inr hy =>
+      subst gamma
+      simp [CommonContexts, Sset, DSet, OSet, mulK4]
 
 /-- The concept closure of D is D. -/
 theorem cl_D :
@@ -128,10 +147,14 @@ theorem cl_D :
   · intro g hg
     cases g
     · exact Or.inl rfl
-    · have hx := hg (e, e) ctx_ee_common_D
-      simp [Sset, DSet, mulK4] at hx
-    · have hy := hg (e, e) ctx_ee_common_D
-      simp [Sset, DSet, mulK4] at hy
+    · have hxD : x ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (e, e) ctx_ee_common_D)
+      exact False.elim (not_x_mem_D hxD)
+    · have hyD : y ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (e, e) ctx_ee_common_D)
+      exact False.elim (not_y_mem_D hyD)
     · exact Or.inr rfl
   · exact subset_conceptClosure Sset DSet
 
@@ -141,12 +164,16 @@ theorem cl_UA :
   apply Set.Subset.antisymm
   · intro g hg
     cases g
-    · have he := hg (e, y) ctx_ey_common_UA
-      simp [Sset, DSet, mulK4] at he
+    · have hyD : y ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (e, y) ctx_ey_common_UA)
+      exact False.elim (not_y_mem_D hyD)
     · exact Or.inl rfl
     · exact Or.inr rfl
-    · have hz := hg (e, y) ctx_ey_common_UA
-      simp [Sset, DSet, mulK4] at hz
+    · have hxD : x ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (e, y) ctx_ey_common_UA)
+      exact False.elim (not_x_mem_D hxD)
   · intro g hg
     cases hg with
     | inl hx =>
@@ -156,8 +183,9 @@ theorem cl_UA :
         subst g
         intro ab hab
         rcases ab with ⟨a, b⟩
+        have hxD : a * x * b ∈ DSet := hab x rfl
         cases a <;> cases b <;>
-          simp [CommonContexts, Sset, DSet, UA, mulK4] at hab ⊢
+          simpa [Sset, DSet, UA, mulK4] using hxD
 
 /-- The concept closure of {y} is O. -/
 theorem cl_UB :
@@ -165,20 +193,25 @@ theorem cl_UB :
   apply Set.Subset.antisymm
   · intro g hg
     cases g
-    · have he := hg (x, e) ctx_xe_common_UB
-      simp [Sset, DSet, mulK4] at he
+    · have hxD : x ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (x, e) ctx_xe_common_UB)
+      exact False.elim (not_x_mem_D hxD)
     · exact Or.inl rfl
     · exact Or.inr rfl
-    · have hz := hg (x, e) ctx_xe_common_UB
-      simp [Sset, DSet, mulK4] at hz
+    · have hyD : y ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (x, e) ctx_xe_common_UB)
+      exact False.elim (not_y_mem_D hyD)
   · intro g hg
     cases hg with
     | inl hx =>
         subst g
         intro ab hab
         rcases ab with ⟨a, b⟩
+        have hyD : a * y * b ∈ DSet := hab y rfl
         cases a <;> cases b <;>
-          simp [CommonContexts, Sset, DSet, UB, mulK4] at hab ⊢
+          simpa [Sset, DSet, UB, mulK4] using hyD
     | inr hy =>
         subst g
         exact subset_conceptClosure Sset UB rfl
@@ -189,12 +222,16 @@ theorem cl_O :
   apply Set.Subset.antisymm
   · intro g hg
     cases g
-    · have he := hg (e, y) ctx_ey_common_O
-      simp [Sset, DSet, mulK4] at he
+    · have hyD : y ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (e, y) ctx_ey_common_O)
+      exact False.elim (not_y_mem_D hyD)
     · exact Or.inl rfl
     · exact Or.inr rfl
-    · have hz := hg (e, y) ctx_ey_common_O
-      simp [Sset, DSet, mulK4] at hz
+    · have hxD : x ∈ DSet := by
+        simpa [Sset, DSet, mulK4] using
+          (hg (e, y) ctx_ey_common_O)
+      exact False.elim (not_x_mem_D hxD)
   · intro g hg
     exact subset_conceptClosure Sset OSet hg
 
@@ -233,26 +270,26 @@ theorem sound_T :
 /-- Coverage for the start-like state. -/
 theorem cover_S :
     TwoSidedResidual Sset e e ⊆ ConceptClosure Sset US := by
-  rw [res_ee, US, cl_D]
-  exact subset_rfl
+  simpa [US, res_ee, cl_D] using
+    (show DSet ⊆ DSet from subset_rfl)
 
 /-- Coverage for the singleton a-side state. -/
 theorem cover_A :
     TwoSidedResidual Sset e y ⊆ ConceptClosure Sset UA := by
-  rw [res_ey, cl_UA]
-  exact subset_rfl
+  simpa [res_ey, cl_UA] using
+    (show OSet ⊆ OSet from subset_rfl)
 
 /-- Coverage for the singleton b-side state. -/
 theorem cover_B :
     TwoSidedResidual Sset x e ⊆ ConceptClosure Sset UB := by
-  rw [res_xe, cl_UB]
-  exact subset_rfl
+  simpa [res_xe, cl_UB] using
+    (show OSet ⊆ OSet from subset_rfl)
 
 /-- Coverage for the O-state. -/
 theorem cover_T :
     TwoSidedResidual Sset x e ⊆ ConceptClosure Sset UT := by
-  rw [res_xe, UT, cl_O]
-  exact subset_rfl
+  simpa [UT, res_xe, cl_O] using
+    (show OSet ⊆ OSet from subset_rfl)
 
 /--
 Adequacy for the start-like state:
