@@ -137,16 +137,20 @@ theorem context_yield_mem_startLanguage
     (hctx : ContextFamily H profile R S0 X ell r)
     (hy : YieldFamily H profile R X w) :
     ell ++ w ++ r ∈ CarrierStartLanguage H profile R S0 := by
+  revert w
   induction hctx with
   | start x hmem =>
+      intro w hy
       exact ⟨x, hmem, by simpa using hy⟩
   | binary_left br hmem hctx hz ih =>
+      intro w hy
       have hparent := YieldFamily.binary br hmem hy hz
-      have hstart := ih hparent
+      have hstart := ih _ hparent
       simpa [List.append_assoc] using hstart
   | binary_right br hmem hctx hyLeft ih =>
+      intro w hy
       have hparent := YieldFamily.binary br hmem hyLeft hy
-      have hstart := ih hparent
+      have hstart := ih _ hparent
       simpa [List.append_assoc] using hstart
 
 theorem carrier_state_semantics_subset_residual
