@@ -10,6 +10,29 @@ open TwoSidedTypedCFG
 open CExSym
 open Parity
 
+lemma parityWord_length_one_odd
+    (w : Word CExSym)
+    (hw : w.length = 1) :
+    parityHom.h w = odd := by
+  cases w with
+  | nil =>
+      simp at hw
+  | cons x xs =>
+      cases xs with
+      | nil =>
+          simp [parityHom, parityWord, parityLetter, Parity.mul]
+      | cons y ys =>
+          simp at hw
+
+lemma pair_second_impossible
+    (x first targetFirst targetSecond : CExSym)
+    (hneq : first ≠ targetSecond) :
+    ¬ ([x, first] = [targetFirst, targetSecond]) := by
+  intro h
+  apply hneq
+  have hsecond := congrArg (fun w : Word CExSym => w.get? 1) h
+  simpa using hsecond
+
 theorem even_odd_context_for_a :
     (even, odd) ∈
       HTypedContextTypes parityHom counterexampleLanguage [a] := by
@@ -33,62 +56,46 @@ lemma parity_context_values_for_a
   rcases hmem with hAB | hCD
   · have hlen := congrArg List.length hAB
     simp at hlen
-    have hsum : l.length + r.length = 1 := by omega
     cases l with
     | nil =>
-        have hr1 : r.length = 1 := by simpa using hsum
+        have hr1 : r.length = 1 := by simpa using hlen
         constructor
         · rfl
-        · cases r with
-          | nil =>
-              simp at hr1
-          | cons x xs =>
-              cases xs with
-              | nil =>
-                  simp [parityWord, parityLetter]
-              | cons y ys =>
-                  simp at hr1
+        · exact parityWord_length_one_odd r hr1
     | cons x xs =>
-        have hl_le : (x :: xs).length ≤ 1 := by omega
         cases xs with
         | nil =>
-            have hr0 : r.length = 0 := by omega
             cases r with
             | nil =>
-                simp at hAB
+                exfalso
+                exact pair_second_impossible x a a b (by decide) hAB
             | cons y ys =>
-                simp at hr0
+                exfalso
+                omega
         | cons y ys =>
-            simp at hl_le
+            exfalso
+            omega
   · have hlen := congrArg List.length hCD
     simp at hlen
-    have hsum : l.length + r.length = 1 := by omega
     cases l with
     | nil =>
-        have hr1 : r.length = 1 := by simpa using hsum
+        have hr1 : r.length = 1 := by simpa using hlen
         constructor
         · rfl
-        · cases r with
-          | nil =>
-              simp at hr1
-          | cons x xs =>
-              cases xs with
-              | nil =>
-                  simp [parityWord, parityLetter]
-              | cons y ys =>
-                  simp at hr1
+        · exact parityWord_length_one_odd r hr1
     | cons x xs =>
-        have hl_le : (x :: xs).length ≤ 1 := by omega
         cases xs with
         | nil =>
-            have hr0 : r.length = 0 := by omega
             cases r with
             | nil =>
-                simp at hCD
+                exfalso
+                exact pair_second_impossible x a c d (by decide) hCD
             | cons y ys =>
-                simp at hr0
+                exfalso
+                omega
         | cons y ys =>
-            simp at hl_le
+            exfalso
+            omega
 
 lemma parity_context_values_for_c
     (l r : Word CExSym)
@@ -97,62 +104,46 @@ lemma parity_context_values_for_c
   rcases hmem with hAB | hCD
   · have hlen := congrArg List.length hAB
     simp at hlen
-    have hsum : l.length + r.length = 1 := by omega
     cases l with
     | nil =>
-        have hr1 : r.length = 1 := by simpa using hsum
+        have hr1 : r.length = 1 := by simpa using hlen
         constructor
         · rfl
-        · cases r with
-          | nil =>
-              simp at hr1
-          | cons x xs =>
-              cases xs with
-              | nil =>
-                  simp [parityWord, parityLetter]
-              | cons y ys =>
-                  simp at hr1
+        · exact parityWord_length_one_odd r hr1
     | cons x xs =>
-        have hl_le : (x :: xs).length ≤ 1 := by omega
         cases xs with
         | nil =>
-            have hr0 : r.length = 0 := by omega
             cases r with
             | nil =>
-                simp at hAB
+                exfalso
+                exact pair_second_impossible x c a b (by decide) hAB
             | cons y ys =>
-                simp at hr0
+                exfalso
+                omega
         | cons y ys =>
-            simp at hl_le
+            exfalso
+            omega
   · have hlen := congrArg List.length hCD
     simp at hlen
-    have hsum : l.length + r.length = 1 := by omega
     cases l with
     | nil =>
-        have hr1 : r.length = 1 := by simpa using hsum
+        have hr1 : r.length = 1 := by simpa using hlen
         constructor
         · rfl
-        · cases r with
-          | nil =>
-              simp at hr1
-          | cons x xs =>
-              cases xs with
-              | nil =>
-                  simp [parityWord, parityLetter]
-              | cons y ys =>
-                  simp at hr1
+        · exact parityWord_length_one_odd r hr1
     | cons x xs =>
-        have hl_le : (x :: xs).length ≤ 1 := by omega
         cases xs with
         | nil =>
-            have hr0 : r.length = 0 := by omega
             cases r with
             | nil =>
-                simp at hCD
+                exfalso
+                exact pair_second_impossible x c c d (by decide) hCD
             | cons y ys =>
-                simp at hr0
+                exfalso
+                omega
         | cons y ys =>
-            simp at hl_le
+            exfalso
+            omega
 
 lemma context_type_for_a_is_even_odd
     {mn : Parity × Parity}
