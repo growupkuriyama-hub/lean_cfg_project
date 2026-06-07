@@ -4,6 +4,7 @@ import LeanCfgProject.MeasureStoppingCriterion
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
+set_option linter.unusedFintypeInType false
 
 namespace LeanCfgProject
 
@@ -78,13 +79,11 @@ theorem stageCard_lt_of_subset_ne {A B : Set Q}
   classical
   have hproper : ∃ q : Q, q ∈ B ∧ q ∉ A := by
     by_contra hno
-    apply hne
-    ext q
-    constructor
-    · exact hsub
-    · intro hqB
+    have hBA : B ⊆ A := by
+      intro q hqB
       by_contra hqA
       exact hno ⟨q, hqB, hqA⟩
+    exact hne (Set.Subset.antisymm hsub hBA)
   rcases hproper with ⟨q0, hq0B, hq0A⟩
   unfold StageCard
   apply Finset.sum_lt_sum
@@ -214,18 +213,17 @@ section CarrierFiniteSaturationMeasure
 variable {Sigma : Type u}
 variable {M : Type u} [Monoid M] [Fintype M]
 variable {Q : Type v} [Monoid Q] [Fintype Q]
-variable (q : Word Sigma → Q)
-variable (q_mul : ∀ u v : Word Sigma, q (u ++ v) = q u * q v)
-variable (H : FixedFiniteMonoidHom Sigma M)
-variable {W : Type u} [Fintype W]
-variable (profile : W → TypedState M)
-variable (R : List (CarrierTypedRule H profile))
 
 /--
 Bounded closed stage for carrier saturation, obtained from finite state and
 finite observation carrier.
 -/
-theorem exists_le_carrierIsSaturationClosed_stage_of_fintype :
+theorem exists_le_carrierIsSaturationClosed_stage_of_fintype
+    (q : Word Sigma → Q)
+    (H : FixedFiniteMonoidHom Sigma M)
+    {W : Type u} [Fintype W]
+    (profile : W → TypedState M)
+    (R : List (CarrierTypedRule H profile)) :
     ∃ N ≤ Fintype.card W * Fintype.card Q,
       IsSaturationClosed
         (CarrierTerminalImage q H profile R)
@@ -242,7 +240,13 @@ theorem exists_le_carrierIsSaturationClosed_stage_of_fintype :
 There exists a bounded carrier saturation stage that computes carrier state
 semantics.
 -/
-theorem exists_le_carrierStage_computes_stateSemantics_of_fintype :
+theorem exists_le_carrierStage_computes_stateSemantics_of_fintype
+    (q : Word Sigma → Q)
+    (q_mul : ∀ u v : Word Sigma, q (u ++ v) = q u * q v)
+    (H : FixedFiniteMonoidHom Sigma M)
+    {W : Type u} [Fintype W]
+    (profile : W → TypedState M)
+    (R : List (CarrierTypedRule H profile)) :
     ∃ N ≤ Fintype.card W * Fintype.card Q,
       ∀ X : W,
         SaturationIter
@@ -263,7 +267,13 @@ There exists a bounded carrier saturation stage whose residual closure computes
 carrier concept semantics.
 -/
 theorem exists_le_carrierStage_computes_conceptSemantics_of_fintype
-    (S : Set Q) :
+    (S : Set Q)
+    (q : Word Sigma → Q)
+    (q_mul : ∀ u v : Word Sigma, q (u ++ v) = q u * q v)
+    (H : FixedFiniteMonoidHom Sigma M)
+    {W : Type u} [Fintype W]
+    (profile : W → TypedState M)
+    (R : List (CarrierTypedRule H profile)) :
     ∃ N ≤ Fintype.card W * Fintype.card Q,
       ∀ X : W,
         CarrierClosedStageConceptSemantics S q H profile R N X =
@@ -293,7 +303,7 @@ theorem exists_le_carrierIsSaturationClosed_stage_h_of_fintype
           (CarrierBinaryRel H profile R)
           N) := by
   exact exists_le_carrierIsSaturationClosed_stage_of_fintype
-    H.h H profile R
+    (q := H.h) (H := H) (profile := profile) (R := R)
 
 /--
 Standard-observation version: a bounded stage computes carrier state semantics.
@@ -311,7 +321,8 @@ theorem exists_le_carrierStage_computes_stateSemantics_h_of_fintype
             N X =
           CarrierStateSemantics H.h H profile R X := by
   exact exists_le_carrierStage_computes_stateSemantics_of_fintype
-    H.h H.map_append H profile R
+    (q := H.h) (q_mul := H.map_append) (H := H)
+    (profile := profile) (R := R)
 
 /--
 Standard-observation version: a bounded stage computes carrier concept
@@ -328,7 +339,8 @@ theorem exists_le_carrierStage_computes_conceptSemantics_h_of_fintype
         CarrierClosedStageConceptSemantics S H.h H profile R N X =
           CarrierConceptSemantics S H.h H profile R X := by
   exact exists_le_carrierStage_computes_conceptSemantics_of_fintype
-    S H.h H.map_append H profile R
+    (S := S) (q := H.h) (q_mul := H.map_append) (H := H)
+    (profile := profile) (R := R)
 
 end CarrierFiniteSaturationMeasure
 
