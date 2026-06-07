@@ -208,6 +208,10 @@ theorem carrierClosedStageConceptSemantics_later_eq_carrierConcept_h_of_covers
 /--
 If stage `N` is closed, then binary rule soundness holds at every later
 closed-stage concept level.
+
+This proof deliberately avoids constructing a separate proof that the later
+stage is closed.  Instead it uses the already verified binary soundness at
+stage `N`, and rewrites the later stage `N+k` back to `N`.
 -/
 theorem carrier_binaryRule_sound_as_laterClosedStageConceptSemantics
     {Sigma : Type u}
@@ -240,23 +244,36 @@ theorem carrier_binaryRule_sound_as_laterClosedStageConceptSemantics
         (N + k) br.Z)
       ⊆
     CarrierClosedStageConceptSemantics S q H profile R (N + k) br.X := by
-  have hLaterClosed : IsSaturationClosed
-      (CarrierTerminalImage q H profile R)
-      (CarrierBinaryRel H profile R)
-      (SaturationIter
-        (CarrierTerminalImage q H profile R)
-        (CarrierBinaryRel H profile R)
-        (N + k)) := by
-    intro X a ha
-    have hEqStage :=
-      carrierSaturationIter_eq_closed_stage_add
-        q H profile R N k hClosed X
-    have hClosedN := hClosed X
-    -- rewrite the goal and assumption back to stage N
-    rw [hEqStage] at ha
-    have hRes := hClosedN ha
-    simpa [hEqStage] using hRes
-  exact carrier_binaryRule_sound_as_closedStageConceptSemantics
-    S q H profile R (N + k) hLaterClosed br hmem
+  have hsN :=
+    carrier_binaryRule_sound_as_closedStageConceptSemantics
+      S q H profile R N hClosed br hmem
+  have eX :
+      CarrierClosedStageConceptSemantics S q H profile R (N + k) br.X =
+        CarrierClosedStageConceptSemantics S q H profile R N br.X :=
+    carrierClosedStageConceptSemantics_eq_of_closed_later
+      S q H profile R N k hClosed br.X
+  have eY :
+      SaturationIter
+          (CarrierTerminalImage q H profile R)
+          (CarrierBinaryRel H profile R)
+          (N + k) br.Y =
+        SaturationIter
+          (CarrierTerminalImage q H profile R)
+          (CarrierBinaryRel H profile R)
+          N br.Y :=
+    carrierSaturationIter_eq_closed_stage_add
+      q H profile R N k hClosed br.Y
+  have eZ :
+      SaturationIter
+          (CarrierTerminalImage q H profile R)
+          (CarrierBinaryRel H profile R)
+          (N + k) br.Z =
+        SaturationIter
+          (CarrierTerminalImage q H profile R)
+          (CarrierBinaryRel H profile R)
+          N br.Z :=
+    carrierSaturationIter_eq_closed_stage_add
+      q H profile R N k hClosed br.Z
+  simpa [eX, eY, eZ] using hsN
 
 end LeanCfgProject
