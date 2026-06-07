@@ -75,3 +75,6 @@ jobs:
 
       - name: Check ObservationSignatureCounterexample module
         run: lake build LeanCfgProject.ObservationSignatureCounterexample
+
+      - name: Check SemanticBridgeSummary module
+        run: lake build LeanCfgProject.SemanticBridgeSummary
