@@ -74,16 +74,19 @@ theorem saturationIter_subset_of_closed
   induction n with
   | zero =>
       intro X x hx
-      simpa using hx
+      change x ∈ (∅ : Set Q) at hx
+      exact False.elim hx
   | succ n ih =>
       intro X x hx
+      change x ∈ SaturationStep Terminal Binary
+        (SaturationIter Terminal Binary n) X at hx
       rcases hx with hxPrev | hxRest
-      · exact ih X x hxPrev
+      · exact (ih X) hxPrev
       · rcases hxRest with hxTerm | hxBin
-        · exact hTerminal X x hxTerm
+        · exact (hTerminal X) hxTerm
         · rcases hxBin with ⟨Y, Z, b, c, hbin, hb, hc, hxEq⟩
           rw [hxEq]
-          exact hBinary X Y Z b c hbin (ih Y b hb) (ih Z c hc)
+          exact hBinary X Y Z b c hbin ((ih Y) hb) ((ih Z) hc)
 
 /-- Saturation is monotone in the iteration index. -/
 theorem saturationIter_mono_of_le
