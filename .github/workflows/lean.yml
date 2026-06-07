@@ -166,3 +166,6 @@ jobs:
 
       - name: Check FrameAdequacyCriterion module
         run: lake build LeanCfgProject.FrameAdequacyCriterion
+
+      - name: Check K4ResidualAdequacyExample module
+        run: lake build LeanCfgProject.K4ResidualAdequacyExample
