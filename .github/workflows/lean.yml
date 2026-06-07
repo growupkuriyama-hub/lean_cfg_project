@@ -154,3 +154,6 @@ jobs:
 
       - name: Check FiniteStoppingCore module
         run: lake build LeanCfgProject.FiniteStoppingCore
+
+      - name: Check MeasureStoppingCriterion module
+        run: lake build LeanCfgProject.MeasureStoppingCriterion
