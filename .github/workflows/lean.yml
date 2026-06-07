@@ -94,3 +94,6 @@ jobs:
 
       - name: Check FrameIntentClosureBridge module
         run: lake build LeanCfgProject.FrameIntentClosureBridge
+
+      - name: Check ICSemanticBridgeSummary module
+        run: lake build LeanCfgProject.ICSemanticBridgeSummary
