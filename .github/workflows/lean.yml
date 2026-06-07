@@ -157,3 +157,6 @@ jobs:
 
       - name: Check MeasureStoppingCriterion module
         run: lake build LeanCfgProject.MeasureStoppingCriterion
+
+      - name: Check FiniteSaturationMeasure module
+        run: lake build LeanCfgProject.FiniteSaturationMeasure
