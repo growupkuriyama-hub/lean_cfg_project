@@ -95,3 +95,6 @@ jobs:
 
       - name: Check SaturationFrameBridge module
         run: lake build LeanCfgProject.SaturationFrameBridge
+
+      - name: Check CarrierSaturationLeast module
+        run: lake build LeanCfgProject.CarrierSaturationLeast
