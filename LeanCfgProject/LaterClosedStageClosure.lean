@@ -71,7 +71,7 @@ theorem saturationIter_closed_of_closed_le
     SaturationIter Terminal Binary (m + 1) X =
         SaturationIter Terminal Binary N X := by
           exact saturationIter_eq_of_le_closed_stage
-            Terminal Binary (Nat.succ_le_succ hNm) hClosed X
+            Terminal Binary (Nat.le_trans hNm (Nat.le_succ m)) hClosed X
     _ =
         SaturationIter Terminal Binary m X := by
           symm
