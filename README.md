@@ -17,7 +17,7 @@ presentation-level descriptor E_h(G)
 ```
 
 The goal is **not** to claim a canonical CFG presentation or to solve CFG
-equivalence.  The current goal is to formalize a sound architecture in which
+equivalence. The current goal is to formalize a sound architecture in which
 fixed-`h` two-sided CFG presentation descriptors admit semantic interpretations
 inside a language-level residual/concept universe.
 
@@ -26,13 +26,13 @@ inside a language-level residual/concept universe.
 The current verified commit is:
 
 ```text
-2e66ea8
+b7705b7
 ```
 
 GitHub Actions status:
 
 ```text
-Lean CI #89: passed
+Lean CI #92: passed
 ```
 
 The current CI checks the following modules:
@@ -43,8 +43,10 @@ lake build LeanCfgProject.FullArchitecture_Test
 lake build LeanCfgProject.StateSemantics
 lake build LeanCfgProject.ResidualConcept
 lake build LeanCfgProject.LanguageQuotient
+lake build LeanCfgProject.ObservationFinite
 lake build LeanCfgProject.DescriptorSemantics
 lake build LeanCfgProject.DescriptorResidualSemantics
+lake build LeanCfgProject.CarrierConceptSemantics
 lake build LeanCfgProject.ObservationCounterexample
 lake build LeanCfgProject.ObservationCounterexample_v2
 ```
@@ -61,8 +63,10 @@ Current status:
 - `StateSemantics.lean`: verified
 - `ResidualConcept.lean`: verified
 - `LanguageQuotient.lean`: verified
+- `ObservationFinite.lean`: verified
 - `DescriptorSemantics.lean`: verified
 - `DescriptorResidualSemantics.lean`: verified
+- `CarrierConceptSemantics.lean`: verified
 - `ObservationCounterexample.lean`: verified
 - `ObservationCounterexample_v2.lean`: verified
 - `sorry`: 0 under the CI policy
@@ -71,7 +75,7 @@ Current status:
 
 ## What is formalized
 
-The project currently has three connected layers.
+The project currently has four connected layers.
 
 ### 1. Presentation-level architecture
 
@@ -94,7 +98,30 @@ LeanCfgProject/Step25_Test.lean
 LeanCfgProject/FullArchitecture_Test.lean
 ```
 
-### 2. Abstract powerset and residual concept semantics
+### 2. Observation and quotient layer
+
+This layer defines the finite `h`-typed observation relation and its stabilized
+variants.
+
+It includes:
+
+- `HTypedContextTypes`;
+- `SameHTypedObservation`;
+- `SameHTypedSyntacticObservation`;
+- `SameHTypedPointedObservation`;
+- `SameHTypedPointedSyntacticObservation`;
+- SynObs maximality for two-sided stable relations;
+- the pointed boundary theorem connecting pointed SynObs with ordinary syntactic context equivalence together with the kernel of `h`;
+- an observation-signature/kernel formulation of the naive observation relation.
+
+This part is mainly contained in:
+
+```text
+LeanCfgProject/LanguageQuotient.lean
+LeanCfgProject/ObservationFinite.lean
+```
+
+### 3. Abstract powerset and residual concept semantics
 
 This layer formalizes abstract semantic tools used to connect presentation-level
 descriptors with language-level residual/concept semantics.
@@ -110,21 +137,20 @@ It includes:
 - the residual Galois connection;
 - residual concept closure as an extensive, monotone, idempotent closure operation;
 - concept extents and concept products;
-- soundness of binary rules after residual concept closure;
-- initial syntactic-observation definitions for fixed-`h` language quotients.
+- soundness of binary rules after residual concept closure.
 
 This part is mainly contained in:
 
 ```text
 LeanCfgProject/StateSemantics.lean
 LeanCfgProject/ResidualConcept.lean
-LeanCfgProject/LanguageQuotient.lean
 ```
 
-### 3. Descriptor-level semantic bridge
+### 4. Descriptor-level semantic bridge
 
 The newest verified layer connects the existing carrier rule and context-family
-architecture to the abstract semantic layer.
+architecture to the abstract semantic layer and packages the final carrier-level
+concept semantics.
 
 This layer includes:
 
@@ -136,13 +162,19 @@ This layer includes:
 - carrier concept-product soundness;
 - carrier start languages defined from a start set;
 - context-family yield-to-start soundness;
-- residual soundness for carrier state semantics in a carrier context.
+- residual soundness for carrier state semantics in a carrier context;
+- carrier start images;
+- named carrier-level concept semantics;
+- proof that carrier concept semantics is a concept extent;
+- binary rule soundness at the concept-semantics level;
+- context residual closure for carrier concepts.
 
 This part is mainly contained in:
 
 ```text
 LeanCfgProject/DescriptorSemantics.lean
 LeanCfgProject/DescriptorResidualSemantics.lean
+LeanCfgProject/CarrierConceptSemantics.lean
 ```
 
 ## Main files
@@ -154,9 +186,12 @@ LeanCfgProject/
   StateSemantics.lean
   ResidualConcept.lean
   LanguageQuotient.lean
+  ObservationFinite.lean
   DescriptorSemantics.lean
   DescriptorResidualSemantics.lean
+  CarrierConceptSemantics.lean
   ObservationCounterexample.lean
+  ObservationCounterexample_v2.lean
 ```
 
 ### `Step25_Test.lean`
@@ -172,6 +207,50 @@ Builds the architectural layer on top of `Step25_Test.lean`, including finite
 context structures, witnessed finite context structures, morphisms,
 extraction/realization interfaces, a retraction-style interface, and the
 `YieldFamily` / `ContextFamily` inductive structures used in the semantic bridge.
+
+### `LanguageQuotient.lean`
+
+Defines initial language-level observation relations.
+
+Main declarations include:
+
+```text
+HTypedContextTypes
+SameHTypedObservation
+SameHTypedSyntacticObservation
+SameSyntacticContext
+SameHTypedPointedObservation
+SameHTypedPointedSyntacticObservation
+RelationContained
+TwoSidedStable
+sameHTypedSyntacticObservation_maximal
+pointedSynObs_iff_syntacticContext_and_h_eq
+```
+
+It formalizes the distinction between:
+
+- finite but non-composition-compatible observation quotients;
+- unpointed syntactic observation congruences;
+- pointed observation relations, which connect to ordinary syntactic congruence
+  together with the kernel of `h`.
+
+### `ObservationFinite.lean`
+
+Defines the observation signature and verifies that the naive `h`-typed
+observation relation is the kernel of this signature.
+
+Main declarations include:
+
+```text
+ObservationSignature
+observationSignature_eq_of_sameHTypedObservation
+sameHTypedObservation_of_observationSignature_eq
+sameHTypedObservation_iff_observationSignature_eq
+sameHTypedObservation_kernel
+```
+
+This supports the paper-level finite-index argument by identifying the relevant
+finite observation data without introducing quotient types.
 
 ### `StateSemantics.lean`
 
@@ -240,32 +319,6 @@ The module verifies that the induced concept closure is extensive, monotone, and
 idempotent, and that binary rule soundness persists after residual concept
 closure.
 
-### `LanguageQuotient.lean`
-
-Defines initial language-level observation relations.
-
-Main declarations include:
-
-```text
-HTypedContextTypes
-SameHTypedObservation
-SameHTypedSyntacticObservation
-SameSyntacticContext
-SameHTypedPointedObservation
-SameHTypedPointedSyntacticObservation
-RelationContained
-TwoSidedStable
-sameHTypedSyntacticObservation_maximal
-pointedSynObs_iff_syntacticContext_and_h_eq
-```
-
-It formalizes the distinction between:
-
-- finite but non-composition-compatible observation quotients;
-- unpointed syntactic observation congruences;
-- pointed observation relations, which connect to ordinary syntactic congruence
-  together with the kernel of `h`.
-
 ### `DescriptorSemantics.lean`
 
 Connects carrier terminal and binary rules to powerset-valued and concept-product
@@ -302,6 +355,25 @@ carrier_state_semantics_subset_residual
 This module verifies that if a carrier state occurs in a carrier context, then
 its powerset-valued semantics is contained in the corresponding two-sided
 residual of the carrier start language image.
+
+### `CarrierConceptSemantics.lean`
+
+Packages the carrier-level map into residual concept semantics.
+
+Main declarations include:
+
+```text
+CarrierStartImage
+CarrierConceptSemantics
+carrierConceptSemantics_isConceptExtent
+carrier_binary_sound_as_conceptSemantics
+carrier_context_concept_subset_residual_closure
+```
+
+This module verifies that carrier states are mapped to closed residual concept
+extents, that binary rules remain sound at the concept-semantics level, and that
+carrier concepts satisfy the expected residual-closure inclusion for verified
+context families.
 
 ### `ObservationCounterexample.lean`
 
@@ -357,10 +429,12 @@ The CI currently performs these checks:
 5. build `LeanCfgProject.StateSemantics`;
 6. build `LeanCfgProject.ResidualConcept`;
 7. build `LeanCfgProject.LanguageQuotient`;
-8. build `LeanCfgProject.DescriptorSemantics`;
-9. build `LeanCfgProject.DescriptorResidualSemantics`;
-10. build `LeanCfgProject.ObservationCounterexample`;
-11. build `LeanCfgProject.ObservationCounterexample_v2`.
+8. build `LeanCfgProject.ObservationFinite`;
+9. build `LeanCfgProject.DescriptorSemantics`;
+10. build `LeanCfgProject.DescriptorResidualSemantics`;
+11. build `LeanCfgProject.CarrierConceptSemantics`;
+12. build `LeanCfgProject.ObservationCounterexample`;
+13. build `LeanCfgProject.ObservationCounterexample_v2`.
 
 ## Current mathematical interpretation
 
@@ -370,11 +444,12 @@ architecture and its semantic extension.
 The currently verified development supports the following conservative claim:
 
 ```text
-At commit 2e66ea8, the presentation-level architecture, the abstract
-powerset-valued state semantics, the residual-concept semantic layer,
-the initial syntactic-observation layer, the descriptor-level carrier
-rule/context semantic bridges, and the concrete observation-counterexample modules build successfully in Lean 4 with no sorry
-and no project-level axioms under the repository CI policy.
+At commit b7705b7, the presentation-level architecture, the observation
+relations and observation-signature kernel, the abstract powerset-valued state
+semantics, the residual-concept semantic layer, the descriptor-level carrier
+rule/context semantic bridges, the named carrier concept semantics, and the
+concrete observation-counterexample modules build successfully in Lean 4 with
+no sorry and no project-level axioms under the repository CI policy.
 ```
 
 It does **not** claim that:
@@ -415,11 +490,12 @@ problem to regular-language recognition.
 
 Near-term proof targets include:
 
-1. refining the language-level observation quotient layer;
-2. investigating finite generated residual concept bases for fixed-`h`
+1. preparing an online companion blueprint with links to declarations and CI logs;
+2. preparing an artifact snapshot or release tag corresponding to the paper;
+3. investigating finite generated residual concept bases for fixed-`h`
    substitutable context-free languages;
-3. preparing an online companion blueprint with links to declarations and CI logs;
-4. preparing an artifact snapshot or release tag corresponding to the paper.
+4. keeping future extensions small and modular.
 
-The guiding principle is to keep each Lean extension small, modular, and
-compatible with the no-`sorry` / no-project-level-`axiom` CI discipline.
+The guiding principle is to keep each Lean extension compatible with the
+no-`sorry` / no-project-level-`axiom` CI discipline, and to distinguish clearly
+between checked formalization results and open mathematical problems.

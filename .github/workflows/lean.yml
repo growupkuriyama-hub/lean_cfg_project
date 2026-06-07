@@ -69,3 +69,6 @@ jobs:
 
       - name: Check CarrierConceptSemantics module
         run: lake build LeanCfgProject.CarrierConceptSemantics
+
+      - name: Check FiniteSaturation module
+        run: lake build LeanCfgProject.FiniteSaturation
