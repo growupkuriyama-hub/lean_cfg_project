@@ -72,3 +72,6 @@ jobs:
 
       - name: Check FiniteSaturation module
         run: lake build LeanCfgProject.FiniteSaturation
+
+      - name: Check ObservationSignatureCounterexample module
+        run: lake build LeanCfgProject.ObservationSignatureCounterexample
