@@ -103,3 +103,21 @@ jobs:
 
       - name: Check ClosedStageConceptBridge module
         run: lake build LeanCfgProject.ClosedStageConceptBridge
+
+      - name: Check SaturationStability module
+        run: lake build LeanCfgProject.SaturationStability
+
+      - name: Check ClosedStageConceptBridge module
+        run: lake build LeanCfgProject.ClosedStageConceptBridge
+
+      - name: Check ClosedStageFrameBridge module
+        run: lake build LeanCfgProject.ClosedStageFrameBridge
+
+      - name: Check SaturationMonotoneChain module
+        run: lake build LeanCfgProject.SaturationMonotoneChain
+
+      - name: Check ClosedStageAlgorithmCorrectness module
+        run: lake build LeanCfgProject.ClosedStageAlgorithmCorrectness
+
+      - name: Check ICSemanticBridgeSummary v2 module
+        run: lake build LeanCfgProject.ICSemanticBridgeSummary_v2
