@@ -133,3 +133,6 @@ jobs:
 
       - name: Check ClosedStageFrameIntentStability module
         run: lake build LeanCfgProject.ClosedStageFrameIntentStability
+
+      - name: Check ClosedStageRuleSemantics module
+        run: lake build LeanCfgProject.ClosedStageRuleSemantics
