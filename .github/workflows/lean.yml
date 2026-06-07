@@ -121,3 +121,6 @@ jobs:
 
       - name: Check ICSemanticBridgeSummary v2 module
         run: lake build LeanCfgProject.ICSemanticBridgeSummary_v2
+
+      - name: Check FiniteCoverageStopping module
+        run: lake build LeanCfgProject.FiniteCoverageStopping
