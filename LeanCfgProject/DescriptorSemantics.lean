@@ -141,13 +141,11 @@ theorem context_yield_mem_startLanguage
   | start x hmem =>
       exact ⟨x, hmem, by simpa using hy⟩
   | binary_left br hmem hctx hz ih =>
-      have hparent : YieldFamily H profile R br.X (w ++ z) :=
-        YieldFamily.binary br hmem hy hz
+      have hparent := YieldFamily.binary br hmem hy hz
       have hstart := ih hparent
       simpa [List.append_assoc] using hstart
   | binary_right br hmem hctx hyLeft ih =>
-      have hparent : YieldFamily H profile R br.X (y ++ w) :=
-        YieldFamily.binary br hmem hyLeft hy
+      have hparent := YieldFamily.binary br hmem hyLeft hy
       have hstart := ih hparent
       simpa [List.append_assoc] using hstart
 
