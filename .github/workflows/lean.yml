@@ -163,3 +163,6 @@ jobs:
 
       - name: Check FiniteStoppingFrameResidual module
         run: lake build LeanCfgProject.FiniteStoppingFrameResidual
+
+      - name: Check FrameAdequacyCriterion module
+        run: lake build LeanCfgProject.FrameAdequacyCriterion
