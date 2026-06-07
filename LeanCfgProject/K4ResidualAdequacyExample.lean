@@ -78,6 +78,7 @@ def UT : Set K4 := OSet
 /-- Residual at frame (e,e) is D. -/
 theorem res_ee :
     TwoSidedResidual Sset e e = DSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -85,6 +86,7 @@ theorem res_ee :
 /-- Residual at frame (e,y) is O. -/
 theorem res_ey :
     TwoSidedResidual Sset e y = OSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -92,6 +94,7 @@ theorem res_ey :
 /-- Residual at frame (x,e) is O. -/
 theorem res_xe :
     TwoSidedResidual Sset x e = OSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -99,6 +102,7 @@ theorem res_xe :
 /-- The concept closure of D is D. -/
 theorem cl_D :
     ConceptClosure Sset DSet = DSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -106,6 +110,7 @@ theorem cl_D :
 /-- The concept closure of {x} is O. -/
 theorem cl_UA :
     ConceptClosure Sset UA = OSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -113,6 +118,7 @@ theorem cl_UA :
 /-- The concept closure of {y} is O. -/
 theorem cl_UB :
     ConceptClosure Sset UB = OSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -120,6 +126,7 @@ theorem cl_UB :
 /-- The concept closure of O is O. -/
 theorem cl_O :
     ConceptClosure Sset OSet = OSet := by
+  classical
   apply Set.ext
   intro g
   cases g <;> decide
@@ -135,18 +142,14 @@ theorem sound_A :
     UA ⊆ TwoSidedResidual Sset e y := by
   rw [res_ey]
   intro g hg
-  dsimp [UA, OSet] at *
-  subst g
-  exact Or.inl rfl
+  cases g <;> simp [UA, OSet] at *
 
 /-- Raw soundness for the singleton b-side state: {y} ⊆ O. -/
 theorem sound_B :
     UB ⊆ TwoSidedResidual Sset x e := by
   rw [res_xe]
   intro g hg
-  dsimp [UB, OSet] at *
-  subst g
-  exact Or.inr rfl
+  cases g <;> simp [UB, OSet] at *
 
 /-- Raw soundness for the O-state. -/
 theorem sound_T :
@@ -157,26 +160,22 @@ theorem sound_T :
 /-- Coverage for the start-like state. -/
 theorem cover_S :
     TwoSidedResidual Sset e e ⊆ ConceptClosure Sset US := by
-  rw [res_ee, US, cl_D]
-  exact subset_rfl
+  simpa [US, res_ee, cl_D]
 
 /-- Coverage for the singleton a-side state. -/
 theorem cover_A :
     TwoSidedResidual Sset e y ⊆ ConceptClosure Sset UA := by
-  rw [res_ey, cl_UA]
-  exact subset_rfl
+  simpa [res_ey, cl_UA]
 
 /-- Coverage for the singleton b-side state. -/
 theorem cover_B :
     TwoSidedResidual Sset x e ⊆ ConceptClosure Sset UB := by
-  rw [res_xe, cl_UB]
-  exact subset_rfl
+  simpa [res_xe, cl_UB]
 
 /-- Coverage for the O-state. -/
 theorem cover_T :
     TwoSidedResidual Sset x e ⊆ ConceptClosure Sset UT := by
-  rw [res_xe, UT, cl_O]
-  exact subset_rfl
+  simpa [UT, res_xe, cl_O]
 
 /--
 Adequacy for the start-like state:

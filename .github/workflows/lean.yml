@@ -178,3 +178,6 @@ jobs:
 
       - name: Check FiniteStoppedFrameAdequacy module
         run: lake build LeanCfgProject.FiniteStoppedFrameAdequacy
+
+      - name: Check AdequacyBridgeSummary module
+        run: lake build LeanCfgProject.AdequacyBridgeSummary
