@@ -59,8 +59,7 @@ lemma parity_context_values_of_eq_pair
                 have heq' : [x, letter] = [t1, t2] := by
                   simpa using heq
                 injection heq' with hx htail
-                injection htail with hletter
-                exact hletter
+                injection htail
             | cons y ys =>
                 simp at hr0
 
