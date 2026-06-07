@@ -142,3 +142,6 @@ jobs:
 
       - name: Check LocalStoppingCorrectness module
         run: lake build LeanCfgProject.LocalStoppingCorrectness
+
+      - name: Check LocalStoppingRuleSemantics module
+        run: lake build LeanCfgProject.LocalStoppingRuleSemantics
