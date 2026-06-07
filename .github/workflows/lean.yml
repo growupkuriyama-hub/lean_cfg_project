@@ -52,3 +52,7 @@ jobs:
 
       - name: Check DescriptorSemantics module
         run: lake build LeanCfgProject.DescriptorSemantics
+
+
+      - name: Check DescriptorResidualSemantics module
+        run: lake build LeanCfgProject.DescriptorResidualSemantics
