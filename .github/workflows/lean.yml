@@ -151,3 +151,6 @@ jobs:
 
       - name: Check AttackSemanticBridgeSummary module
         run: lake build LeanCfgProject.AttackSemanticBridgeSummary
+
+      - name: Check FiniteStoppingCore module
+        run: lake build LeanCfgProject.FiniteStoppingCore

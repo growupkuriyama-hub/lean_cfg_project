@@ -6,8 +6,8 @@ Lean 4 artifact for the paper:
 
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
-Current verified artifact snapshot: commit `d429b1f`  
-GitHub Actions: Lean CI #106 passed
+Current verified artifact snapshot: commit `b4f7489`  
+GitHub Actions: Lean CI #119 passed
 
 ---
 
@@ -38,6 +38,8 @@ The Lean development verifies selected components of this bridge, including:
 - least closed solution formulation for saturation;
 - saturation-computed concept semantics;
 - closed-stage stability and algorithmic correctness;
+- local stopping correctness for the checkable condition `U_(N+1) = U_N`;
+- local-stopping rule semantics and frame/residual preservation;
 - summary CI targets for the paper appendix.
 
 ---
@@ -49,8 +51,8 @@ The artifact is checked by GitHub Actions using `leanprover/lean-action@v1` with
 Current checked snapshot:
 
 ```text
-commit: d429b1f
-CI run: Lean CI #106
+commit: b4f7489
+CI run: Lean CI #119
 status: passed
 ```
 
@@ -101,6 +103,16 @@ lake build LeanCfgProject.ClosedStageFrameBridge
 lake build LeanCfgProject.SaturationMonotoneChain
 lake build LeanCfgProject.ClosedStageAlgorithmCorrectness
 lake build LeanCfgProject.ICSemanticBridgeSummary_v2
+lake build LeanCfgProject.FiniteCoverageStopping
+lake build LeanCfgProject.ClosedStageEquivalences
+lake build LeanCfgProject.ClosedStageConceptStability
+lake build LeanCfgProject.ClosedStageFrameIntentStability
+lake build LeanCfgProject.ClosedStageRuleSemantics
+lake build LeanCfgProject.LaterClosedStageClosure
+lake build LeanCfgProject.LocalStoppingCorrectness
+lake build LeanCfgProject.LocalStoppingRuleSemantics
+lake build LeanCfgProject.LocalStoppingFrameResidual
+lake build LeanCfgProject.AttackSemanticBridgeSummary
 ```
 
 ---
@@ -169,11 +181,7 @@ sameHTypedObservation_iff_observationSignature_eq
 sameHTypedObservation_kernel
 ```
 
-It formalizes the distinction between:
-
-- finite but non-composition-compatible observation quotients;
-- unpointed syntactic observation as a two-sided stable refinement;
-- pointed observation, which collapses to ordinary syntactic context equivalence together with the kernel of `h`.
+It formalizes the distinction between finite but non-composition-compatible observation quotients, unpointed syntactic observation as a two-sided stable refinement, and pointed observation, which collapses to ordinary syntactic context equivalence together with the kernel of `h`.
 
 The concrete counterexample modules verify, for the language `L = {ab, cd}` and the parity observation, that the naive finite `h`-typed observation is not generally compatible with concatenation.
 
@@ -340,6 +348,8 @@ LeanCfgProject/FrameSoundness.lean
 LeanCfgProject/SaturationFrameBridge.lean
 LeanCfgProject/FrameIntentClosureBridge.lean
 LeanCfgProject/ClosedStageFrameBridge.lean
+LeanCfgProject/ClosedStageFrameIntentStability.lean
+LeanCfgProject/LocalStoppingFrameResidual.lean
 ```
 
 This layer verifies that the two-sided typed frame is not merely decorative.
@@ -352,7 +362,8 @@ It proves:
 - frame membership in the intent side of the residual concept incidence;
 - preservation of frame information after saturation;
 - preservation of frame information after residual concept closure;
-- closed-stage versions of frame residual and frame-intent preservation.
+- closed-stage versions of frame residual and frame-intent preservation;
+- local-stopping versions of frame residual and frame-intent preservation.
 
 Representative declarations include:
 
@@ -368,9 +379,11 @@ carrier_frame_mem_commonContexts_carrierConcept_h
 carrier_frame_mem_commonContexts_saturationConcept_h
 carrierClosedStageConceptSemantics_subset_frame_residual_closure_h
 carrier_frame_mem_commonContexts_closedStageConcept_h
+carrier_frame_mem_commonContexts_laterClosedStageConcept_h
+carrier_localStopped_frame_intent_and_residual_h
 ```
 
-Mathematically, these modules support the statement that typed two-sided frames persist as residual bounds and as intent-side common contexts in the residual concept semantics.
+Mathematically, these modules support the statement that typed two-sided frames persist as residual bounds and as intent-side common contexts in the residual concept semantics, including after closed-stage stabilization and after local stopping is detected.
 
 ---
 
@@ -439,8 +452,15 @@ Files:
 ```text
 LeanCfgProject/SaturationStability.lean
 LeanCfgProject/ClosedStageConceptBridge.lean
+LeanCfgProject/ClosedStageFrameBridge.lean
 LeanCfgProject/SaturationMonotoneChain.lean
 LeanCfgProject/ClosedStageAlgorithmCorrectness.lean
+LeanCfgProject/FiniteCoverageStopping.lean
+LeanCfgProject/ClosedStageEquivalences.lean
+LeanCfgProject/ClosedStageConceptStability.lean
+LeanCfgProject/ClosedStageFrameIntentStability.lean
+LeanCfgProject/ClosedStageRuleSemantics.lean
+LeanCfgProject/LaterClosedStageClosure.lean
 ```
 
 This layer formalizes the closed-stage criterion for effective semantic computation.
@@ -449,10 +469,13 @@ If a finite saturation stage is closed under the one-step saturation operator, t
 
 - the next stage is equal to it;
 - all later stages are equal to it;
+- all later stages are also closed;
 - that closed stage computes the carrier saturation image;
 - that closed stage computes the carrier state semantics;
 - its residual closure computes the carrier concept semantics;
-- binary rules remain sound at the closed-stage concept level.
+- binary rules remain sound at the closed-stage concept level;
+- terminal and binary rule inclusions remain true at the stopped stage and later stages;
+- typed two-sided frames remain visible on the intent side and remain bounded by frame residual closure.
 
 Representative declarations include:
 
@@ -461,30 +484,77 @@ saturationIter_succ_eq_of_closed
 saturationIter_subset_closed_stage
 carrierSaturationImage_eq_of_closed_stage
 carrierStateSemantics_eq_closed_saturationStage
-carrierStateSemantics_eq_closed_saturationStage_h
 CarrierClosedStageConceptSemantics
-carrierClosedStageConceptSemantics_isConceptExtent
-carrierClosedStageConceptSemantics_eq_saturationConceptSemantics
 carrierClosedStageConceptSemantics_eq_carrierConceptSemantics
-carrierClosedStageConceptSemantics_eq_carrierConceptSemantics_h
-carrier_binaryRel_sound_as_closedStageConceptSemantics
 carrier_binaryRule_sound_as_closedStageConceptSemantics
 saturationIter_eq_of_le_closed_stage
-saturationIter_eq_closed_stage_add
-carrierSaturationIter_eq_of_le_closed_stage
 carrierSaturationIter_eq_closed_stage_add
 closedStage_computes_carrierStateSemantics
 closedStage_computes_carrierConceptSemantics
-closedStage_computes_carrierStateSemantics_h
-closedStage_computes_carrierConceptSemantics_h
-closedStage_binaryRule_conceptSound
+carrierSaturationStage_closed_of_covers_saturationImage
+carrierSaturationStage_closed_iff_succ_eq
+carrierSaturationStage_closed_iff_eq_stateSemantics
+carrierClosedStageConceptSemantics_later_eq_carrierConceptSemantics
+carrier_binaryRule_sound_as_laterClosedStageConceptSemantics
+carrier_terminalImage_subset_laterClosedStageConcept
+carrierSaturationIter_closed_of_closed_add
 ```
 
-This supports the algorithmic reading of the paper: once a saturation stage is verified to be closed, that finite stage computes the state semantics and its residual closure computes the concept semantics.
+This supports the algorithmic reading of the paper: once a saturation stage is verified to be closed, that finite stage computes the state semantics and its residual closure computes the concept semantics; after that point, all later stages are stable and closed.
 
 ---
 
-### 11. Summary targets
+### 11. Local stopping correctness
+
+Files:
+
+```text
+LeanCfgProject/LocalStoppingCorrectness.lean
+LeanCfgProject/LocalStoppingRuleSemantics.lean
+LeanCfgProject/LocalStoppingFrameResidual.lean
+```
+
+This layer packages the checkable local stopping condition
+
+```text
+U_(N+1) = U_N
+```
+
+as an algorithmic correctness principle.
+
+If the local stopping equality is detected, then:
+
+- stage `N` is closed;
+- stage `N` equals the full carrier saturation image;
+- stage `N` computes carrier state semantics;
+- its residual closure computes carrier concept semantics;
+- all later stages compute the same state semantics;
+- all later closed-stage concept semantics compute the same carrier concept semantics;
+- terminal and binary rule inclusions hold at the stopped stage and all later stages;
+- for the standard observation `h`, typed frames persist as intent-side common contexts and residual-closure bounds.
+
+Representative declarations include:
+
+```text
+carrierSaturationStage_closed_of_succ_eq
+carrierSaturationStage_eq_saturationImage_of_succ_eq
+carrierSaturationStage_eq_stateSemantics_of_succ_eq
+carrierClosedStageConcept_eq_carrierConcept_of_succ_eq
+carrierSaturationIter_eq_stateSemantics_of_succ_eq_later
+carrierClosedStageConcept_later_eq_carrierConcept_of_succ_eq
+carrier_terminalImage_subset_stoppedStage_of_succ_eq
+carrier_binaryRule_mul_mem_laterStoppedStage_of_succ_eq
+carrierSaturationIter_closed_of_succ_eq_add
+carrier_stoppedStageConcept_subset_frame_residual_closure_h
+carrier_laterStoppedStageConcept_subset_frame_residual_closure_h
+carrier_localStopped_frame_intent_and_residual_h
+```
+
+This is the current strongest algorithmic Lean layer: it does not prove an unconditional finite stopping bound from `Fintype Q`, but it proves that the checkable stopping equality is sound and preserves the relevant state, concept, rule, and frame semantics.
+
+---
+
+### 12. Summary targets
 
 Files:
 
@@ -492,11 +562,12 @@ Files:
 LeanCfgProject/SemanticBridgeSummary.lean
 LeanCfgProject/ICSemanticBridgeSummary.lean
 LeanCfgProject/ICSemanticBridgeSummary_v2.lean
+LeanCfgProject/AttackSemanticBridgeSummary.lean
 ```
 
 These files are compact CI targets collecting the semantic-bridge modules relevant to the paper appendix and reproducibility statement.
 
-They intentionally prove only lightweight availability theorems.  Their role is to ensure that the observation, saturation, counterexample, residual-concept, carrier-concept, frame-soundness, and closed-stage algorithmic modules build simultaneously.
+They intentionally prove only lightweight availability theorems.  Their role is to ensure that the observation, saturation, counterexample, residual-concept, carrier-concept, frame-soundness, closed-stage algorithmic, and local-stopping modules build simultaneously.
 
 Representative declarations include:
 
@@ -506,15 +577,13 @@ semanticBridgeSummary_counterexample_available
 semanticBridgeSummary_finiteSaturation_available
 semanticBridgeSummary_carrierConceptSemantics_available
 icSemanticBridgeSummary_saturationCorrectness_available
-icSemanticBridgeSummary_saturationLeastSolution_available
-icSemanticBridgeSummary_saturationFrameBridge_available
-icSemanticBridgeSummary_saturationConceptSoundness_available
-icSemanticBridgeSummary_frameIntentClosureBridge_available
-icSemanticBridgeSummaryV2_closedStageStability_available
-icSemanticBridgeSummaryV2_closedStageConceptBridge_available
-icSemanticBridgeSummaryV2_closedStageFrameBridge_available
-icSemanticBridgeSummaryV2_monotoneChain_available
 icSemanticBridgeSummaryV2_algorithmicCorrectness_available
+attackSemanticBridgeSummary_finiteCoverageStopping_available
+attackSemanticBridgeSummary_closedStageEquivalences_available
+attackSemanticBridgeSummary_closedStageConceptStability_available
+attackSemanticBridgeSummary_localStoppingCorrectness_available
+attackSemanticBridgeSummary_localStoppingRuleSemantics_available
+attackSemanticBridgeSummary_localStoppingFrameResidual_available
 ```
 
 ---
@@ -555,6 +624,17 @@ LeanCfgProject/
   ClosedStageAlgorithmCorrectness.lean
   ICSemanticBridgeSummary_v2.lean
 
+  FiniteCoverageStopping.lean
+  ClosedStageEquivalences.lean
+  ClosedStageConceptStability.lean
+  ClosedStageFrameIntentStability.lean
+  ClosedStageRuleSemantics.lean
+  LaterClosedStageClosure.lean
+  LocalStoppingCorrectness.lean
+  LocalStoppingRuleSemantics.lean
+  LocalStoppingFrameResidual.lean
+  AttackSemanticBridgeSummary.lean
+
   SemanticBridgeSummary.lean
 ```
 
@@ -564,7 +644,7 @@ LeanCfgProject/
 
 The repository should be read as a machine-checked Lean model of the core architecture and its semantic extension.
 
-At commit `d429b1f`, the currently verified development supports the following conservative claim:
+At commit `b4f7489`, the currently verified development supports the following conservative claim:
 
 ```text
 The presentation-level architecture, observation relations, observation-signature
@@ -572,9 +652,10 @@ kernel, concrete observation counterexamples, abstract powerset-valued state
 semantics, residual concept semantic layer, descriptor-level carrier semantic
 bridges, frame soundness, carrier saturation correctness, least closed solution
 formulation, saturation-computed concept semantics, closed-stage stability,
-closed-stage algorithmic correctness, and semantic-bridge summary targets build
-successfully in Lean 4 with no sorry and no project-level axioms under the
-repository CI policy.
+closed-stage algorithmic correctness, local stopping correctness, local stopping
+rule semantics, local stopping frame/residual preservation, and semantic-bridge
+summary targets build successfully in Lean 4 with no sorry and no project-level
+axioms under the repository CI policy.
 ```
 
 In paper terms, the verified semantic bridge is:
@@ -589,7 +670,9 @@ with the additional verified facts that:
 - saturation is the least closed simultaneous solution of terminal and binary inclusions;
 - saturation-computed concept semantics agrees with carrier concept semantics;
 - closed saturation stages compute state and concept semantics;
-- typed two-sided frames survive as residual bounds and as intent-side common contexts.
+- local stopping `U_(N+1) = U_N` implies closedness and semantic correctness;
+- stopped stages and all later stages are rule-closed semantic models;
+- typed two-sided frames survive as residual bounds and as intent-side common contexts, including after local stopping.
 
 ---
 
@@ -616,9 +699,9 @@ The intended paper version corresponding to this artifact snapshot is:
 
 ```text
 Residual Concept Semantics for Two-Sided Fixed-h CFG Presentations
-Version v21 or later
-Lean CI #106
-commit d429b1f
+Version v22 or later
+Lean CI #119
+commit b4f7489
 ```
 
 The paper appendix contains a theorem/file correspondence table mapping selected paper statements to Lean declarations and CI-checked modules.
@@ -633,11 +716,12 @@ A concise correspondence is:
 | Powerset-valued semantics | `StateSemantics.lean` |
 | Residual concept semantics | `ResidualConcept.lean` |
 | Carrier descriptor semantics | `DescriptorSemantics.lean`, `DescriptorResidualSemantics.lean`, `CarrierConceptSemantics.lean` |
-| Frame soundness and frame-intent preservation | `FrameSoundness.lean`, `SaturationFrameBridge.lean`, `FrameIntentClosureBridge.lean`, `ClosedStageFrameBridge.lean` |
+| Frame soundness and frame-intent preservation | `FrameSoundness.lean`, `SaturationFrameBridge.lean`, `FrameIntentClosureBridge.lean`, `ClosedStageFrameBridge.lean`, `ClosedStageFrameIntentStability.lean`, `LocalStoppingFrameResidual.lean` |
 | Carrier saturation correctness | `FiniteSaturation.lean`, `CarrierSaturationCorrectness.lean`, `CarrierSaturationLeast.lean` |
 | Saturation-computed concept semantics | `CarrierSaturationConceptSoundness.lean` |
-| Closed-stage correctness | `SaturationStability.lean`, `ClosedStageConceptBridge.lean`, `SaturationMonotoneChain.lean`, `ClosedStageAlgorithmCorrectness.lean` |
-| Summary targets | `SemanticBridgeSummary.lean`, `ICSemanticBridgeSummary.lean`, `ICSemanticBridgeSummary_v2.lean` |
+| Closed-stage correctness | `SaturationStability.lean`, `ClosedStageConceptBridge.lean`, `SaturationMonotoneChain.lean`, `ClosedStageAlgorithmCorrectness.lean`, `ClosedStageEquivalences.lean`, `ClosedStageConceptStability.lean`, `ClosedStageRuleSemantics.lean`, `LaterClosedStageClosure.lean` |
+| Local stopping correctness | `LocalStoppingCorrectness.lean`, `LocalStoppingRuleSemantics.lean`, `LocalStoppingFrameResidual.lean` |
+| Summary targets | `SemanticBridgeSummary.lean`, `ICSemanticBridgeSummary.lean`, `ICSemanticBridgeSummary_v2.lean`, `AttackSemanticBridgeSummary.lean` |
 
 ---
 
@@ -682,7 +766,7 @@ Near-term proof targets include:
 1. preparing an online companion blueprint with links to declarations and CI logs;
 2. preparing an artifact snapshot or release tag corresponding to the paper;
 3. investigating finite generated residual concept bases for fixed-`h` substitutable context-free languages;
-4. developing a separate finite-stopping or finite-algorithm layer if needed;
+4. developing an unconditional finite stopping bound from finite state and finite carrier assumptions;
 5. developing restricted adequacy results for controlled examples or subclasses;
 6. keeping future extensions small and modular.
 
