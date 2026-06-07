@@ -1,41 +1,77 @@
 # lean_cfg_project
 
-This repository contains an experimental Lean 4 formalization for the fixed-`h`
-CFG / residual concept semantics project.
+Lean 4 artifact for the paper:
 
-The project studies finite two-sided monoid-typed structures associated with
-context-free grammar presentations, together with a Lean-checked semantic layer
-connecting presentation-level descriptors to powerset-valued and residual
-concept semantics.
+**Residual Concept Semantics for Two-Sided Fixed-`h` CFG Presentations**
 
-The intended mathematical direction is:
+Author: Takayuki Kuriyama  
+Repository: `growupkuriyama-hub/lean_cfg_project`  
+Current verified artifact snapshot: commit `d429b1f`  
+GitHub Actions: Lean CI #106 passed
 
-```text
-presentation-level descriptor E_h(G)
-        -> powerset-valued state semantics P(Q)
-        -> residual concept universe Concepts(Q, q[L])
-```
+---
 
-The goal is **not** to claim a canonical CFG presentation or to solve CFG
-equivalence. The current goal is to formalize a sound architecture in which
-fixed-`h` two-sided CFG presentation descriptors admit semantic interpretations
-inside a language-level residual/concept universe.
+## Overview
 
-## Verification status
+This repository contains an experimental Lean 4 formalization supporting a semantic bridge from two-sided fixed-`h` context-free grammar descriptors to residual concept semantics.
 
-The current verified commit is:
+The paper studies finite presentation-level descriptors `E_h(G)` obtained from CFG presentations refined by a fixed finite monoid homomorphism `h : Sigma* -> M`.  The main semantic bridge has the form
 
 ```text
-b7675b2
+E_h(G) -> P(Q) -> Concepts(Q, q[L])
 ```
 
-GitHub Actions status:
+where `q : Sigma* -> Q` is a multiplicative word observation.
+
+The goal is **not** to claim a canonical CFG presentation or to solve CFG equivalence.  The verified goal is more modest and more precise: fixed-`h` two-sided CFG presentation descriptors admit sound powerset-valued and residual-concept semantic interpretations inside a language-level residual/concept universe.
+
+The Lean development verifies selected components of this bridge, including:
+
+- finite monoid-typed CFG descriptor architecture;
+- `h`-typed observation quotients and boundary theorems;
+- concrete counterexamples showing that naive finite observation is not concatenation-compatible;
+- powerset-valued state semantics;
+- residual Galois connection and concept closure;
+- carrier-level descriptor semantics;
+- frame soundness and frame-to-residual / frame-to-intent preservation;
+- finite-stage carrier saturation correctness;
+- least closed solution formulation for saturation;
+- saturation-computed concept semantics;
+- closed-stage stability and algorithmic correctness;
+- summary CI targets for the paper appendix.
+
+---
+
+## Current CI status
+
+The artifact is checked by GitHub Actions using `leanprover/lean-action@v1` with mathlib cache enabled.
+
+Current checked snapshot:
 
 ```text
-Lean CI #95: passed
+commit: d429b1f
+CI run: Lean CI #106
+status: passed
 ```
 
-The current CI checks the following modules:
+The CI policy rejects Lean source files containing:
+
+- `sorry`
+- project-level `axiom` declarations
+
+Current status under the repository CI policy:
+
+```text
+sorry: 0
+project-level axiom declarations: 0
+GitHub Actions: green
+```
+
+---
+
+## How to build
+
+From the repository root, build individual modules with `lake build`.  The CI currently checks the following targets:
 
 ```bash
 lake build LeanCfgProject.Step25_Test
@@ -43,186 +79,77 @@ lake build LeanCfgProject.FullArchitecture_Test
 lake build LeanCfgProject.StateSemantics
 lake build LeanCfgProject.ResidualConcept
 lake build LeanCfgProject.LanguageQuotient
-lake build LeanCfgProject.ObservationFinite
-lake build LeanCfgProject.ObservationSignatureCounterexample
 lake build LeanCfgProject.DescriptorSemantics
 lake build LeanCfgProject.DescriptorResidualSemantics
-lake build LeanCfgProject.CarrierConceptSemantics
-lake build LeanCfgProject.FiniteSaturation
 lake build LeanCfgProject.ObservationCounterexample
 lake build LeanCfgProject.ObservationCounterexample_v2
+lake build LeanCfgProject.ObservationFinite
+lake build LeanCfgProject.CarrierConceptSemantics
+lake build LeanCfgProject.FiniteSaturation
+lake build LeanCfgProject.ObservationSignatureCounterexample
 lake build LeanCfgProject.SemanticBridgeSummary
+lake build LeanCfgProject.FrameSoundness
+lake build LeanCfgProject.CarrierSaturationCorrectness
+lake build LeanCfgProject.SaturationFrameBridge
+lake build LeanCfgProject.CarrierSaturationLeast
+lake build LeanCfgProject.CarrierSaturationConceptSoundness
+lake build LeanCfgProject.FrameIntentClosureBridge
+lake build LeanCfgProject.ICSemanticBridgeSummary
+lake build LeanCfgProject.SaturationStability
+lake build LeanCfgProject.ClosedStageConceptBridge
+lake build LeanCfgProject.ClosedStageFrameBridge
+lake build LeanCfgProject.SaturationMonotoneChain
+lake build LeanCfgProject.ClosedStageAlgorithmCorrectness
+lake build LeanCfgProject.ICSemanticBridgeSummary_v2
 ```
 
-The CI also rejects Lean source files containing:
+---
 
-- `sorry`
-- project-level `axiom` declarations
+## Main verified layers
 
-Current status:
+The project is best read as a sequence of connected layers.
 
-- `Step25_Test.lean`: verified
-- `FullArchitecture_Test.lean`: verified
-- `StateSemantics.lean`: verified
-- `ResidualConcept.lean`: verified
-- `LanguageQuotient.lean`: verified
-- `ObservationFinite.lean`: verified
-- `ObservationSignatureCounterexample.lean`: verified
-- `DescriptorSemantics.lean`: verified
-- `DescriptorResidualSemantics.lean`: verified
-- `CarrierConceptSemantics.lean`: verified
-- `FiniteSaturation.lean`: verified
-- `ObservationCounterexample.lean`: verified
-- `ObservationCounterexample_v2.lean`: verified
-- `SemanticBridgeSummary.lean`: verified
-- `sorry`: 0 under the CI policy
-- `axiom`: 0 project-level declarations under the CI policy
-- GitHub Actions: green
+### 1. Descriptor architecture
 
-## What is formalized
-
-The project currently has four connected layers.
-
-### 1. Presentation-level architecture
-
-The original verified core formalizes an abstract architecture for finite
-two-sided typed context structures associated with CFG presentations.
-
-This layer includes:
-
-- finite monoid-typed refinements of CFG-style rules;
-- full typed states carrying yield, left-context, and right-context information;
-- extraction of finite context structures from refined grammars;
-- realization of witnessed finite context structures as state-separated grammars;
-- functorial extraction and realization constructions;
-- a retraction-style normalization interface for the extracted/realized architecture.
-
-This part is mainly contained in:
+Files:
 
 ```text
 LeanCfgProject/Step25_Test.lean
 LeanCfgProject/FullArchitecture_Test.lean
 ```
 
-### 2. Observation and quotient layer
+This layer formalizes the basic fixed-finite-monoid typing infrastructure:
 
-This layer defines the finite `h`-typed observation relation and its stabilized
-variants.
+- words and fixed finite monoid homomorphisms;
+- typed states and full typed states;
+- typed terminal and binary rules;
+- productivity and reachability;
+- trimmed states;
+- extracted profiles and extracted typed rules;
+- finite context structures;
+- witnessed finite context structures;
+- morphisms;
+- extraction and realization interfaces;
+- a retraction-style interface;
+- the inductive families `YieldFamily` and `ContextFamily`.
 
-It includes:
+This is the presentation-level architecture behind finite two-sided monoid-typed CFG descriptors.
 
-- `HTypedContextTypes`;
-- `SameHTypedObservation`;
-- `SameHTypedSyntacticObservation`;
-- `SameHTypedPointedObservation`;
-- `SameHTypedPointedSyntacticObservation`;
-- SynObs maximality for two-sided stable relations;
-- the pointed boundary theorem connecting pointed SynObs with ordinary syntactic context equivalence together with the kernel of `h`;
-- an observation-signature/kernel formulation of the naive observation relation.
+---
 
-This part is mainly contained in:
+### 2. Observation quotients and boundary results
+
+Files:
 
 ```text
 LeanCfgProject/LanguageQuotient.lean
 LeanCfgProject/ObservationFinite.lean
+LeanCfgProject/ObservationCounterexample.lean
+LeanCfgProject/ObservationCounterexample_v2.lean
 LeanCfgProject/ObservationSignatureCounterexample.lean
 ```
 
-### 3. Abstract powerset and residual concept semantics
-
-This layer formalizes abstract semantic tools used to connect presentation-level
-descriptors with language-level residual/concept semantics.
-
-It includes:
-
-- image semantics of languages under a multiplicative word observation;
-- concatenation of languages and subset multiplication;
-- powerset-valued state semantics;
-- terminal and binary rule soundness over an abstract monoid carrier;
-- two-sided residuals of a start image `S = q[L]`;
-- quotient-level Galois maps between subsets of `Q` and subsets of `Q × Q`;
-- the residual Galois connection;
-- residual concept closure as an extensive, monotone, idempotent closure operation;
-- concept extents and concept products;
-- soundness of binary rules after residual concept closure;
-- finite powerset-saturation components for semantic-image computation.
-
-This part is mainly contained in:
-
-```text
-LeanCfgProject/StateSemantics.lean
-LeanCfgProject/ResidualConcept.lean
-LeanCfgProject/FiniteSaturation.lean
-```
-
-### 4. Descriptor-level semantic bridge
-
-The newest verified layer connects the existing carrier rule and context-family
-architecture to the abstract semantic layer and packages the final carrier-level
-concept semantics.
-
-This layer includes:
-
-- carrier yield sets defined from `YieldFamily`;
-- carrier state semantics as an instance of abstract `StateSemantics`;
-- terminal soundness for carrier terminal rules;
-- binary soundness for carrier binary rules;
-- binary soundness after residual concept closure;
-- carrier concept-product soundness;
-- carrier start languages defined from a start set;
-- context-family yield-to-start soundness;
-- residual soundness for carrier state semantics in a carrier context;
-- carrier start images;
-- named carrier-level concept semantics;
-- proof that carrier concept semantics is a concept extent;
-- binary rule soundness at the concept-semantics level;
-- context residual closure for carrier concepts.
-
-This part is mainly contained in:
-
-```text
-LeanCfgProject/DescriptorSemantics.lean
-LeanCfgProject/DescriptorResidualSemantics.lean
-LeanCfgProject/CarrierConceptSemantics.lean
-```
-
-## Main files
-
-```text
-LeanCfgProject/
-  Step25_Test.lean
-  FullArchitecture_Test.lean
-  StateSemantics.lean
-  ResidualConcept.lean
-  LanguageQuotient.lean
-  ObservationFinite.lean
-  ObservationSignatureCounterexample.lean
-  DescriptorSemantics.lean
-  DescriptorResidualSemantics.lean
-  CarrierConceptSemantics.lean
-  FiniteSaturation.lean
-  ObservationCounterexample.lean
-  ObservationCounterexample_v2.lean
-  SemanticBridgeSummary.lean
-```
-
-### `Step25_Test.lean`
-
-Contains the underlying typed CFG refinement layer, including words,
-fixed finite monoid homomorphisms, typed states, full typed states, typed rules,
-productivity/reachability, trimmed states, extracted profiles, and extracted
-typed rule structures.
-
-### `FullArchitecture_Test.lean`
-
-Builds the architectural layer on top of `Step25_Test.lean`, including finite
-context structures, witnessed finite context structures, morphisms,
-extraction/realization interfaces, a retraction-style interface, and the
-`YieldFamily` / `ContextFamily` inductive structures used in the semantic bridge.
-
-### `LanguageQuotient.lean`
-
-Defines initial language-level observation relations.
+This layer defines language-level observation relations and their stabilized variants.
 
 Main declarations include:
 
@@ -237,53 +164,44 @@ RelationContained
 TwoSidedStable
 sameHTypedSyntacticObservation_maximal
 pointedSynObs_iff_syntacticContext_and_h_eq
+ObservationSignature
+sameHTypedObservation_iff_observationSignature_eq
+sameHTypedObservation_kernel
 ```
 
 It formalizes the distinction between:
 
 - finite but non-composition-compatible observation quotients;
-- unpointed syntactic observation congruences;
-- pointed observation relations, which connect to ordinary syntactic congruence
-  together with the kernel of `h`.
+- unpointed syntactic observation as a two-sided stable refinement;
+- pointed observation, which collapses to ordinary syntactic context equivalence together with the kernel of `h`.
 
-### `ObservationFinite.lean`
+The concrete counterexample modules verify, for the language `L = {ab, cd}` and the parity observation, that the naive finite `h`-typed observation is not generally compatible with concatenation.
 
-Defines the observation signature and verifies that the naive `h`-typed
-observation relation is the kernel of this signature.
-
-Main declarations include:
+Main counterexample declarations include:
 
 ```text
-ObservationSignature
-observationSignature_eq_of_sameHTypedObservation
-sameHTypedObservation_of_observationSignature_eq
-sameHTypedObservation_iff_observationSignature_eq
-sameHTypedObservation_kernel
-```
-
-This supports the paper-level finite-index argument by identifying the relevant
-finite observation data without introducing quotient types.
-
-### `ObservationSignatureCounterexample.lean`
-
-Connects the observation-signature/kernel formulation with the concrete
-counterexample.  It verifies that the observation signatures of `a` and `c`
-coincide, the signatures of `ab` and `cb` differ, and the observation-signature
-map itself is not concatenation-compatible.
-
-Main declarations include:
-
-```text
+parityHom
+counterexampleLanguage
+same_observation_a_c
+same_observation_b_b
+not_same_observation_ab_cb
+naive_observation_not_concat_compatible
 observationSignature_a_eq_c
-observationSignature_b_eq_b
 observationSignature_ab_ne_cb
 observationSignature_not_concat_compatible
 ```
 
-### `StateSemantics.lean`
+---
 
-Defines abstract powerset-valued semantics for languages and grammar states
-under a multiplicative word observation `q : Sigma* -> Q`.
+### 3. Powerset-valued state semantics
+
+File:
+
+```text
+LeanCfgProject/StateSemantics.lean
+```
+
+This layer defines abstract powerset-valued semantics for languages and grammar states under a multiplicative word observation `q : Sigma* -> Q`.
 
 Main declarations include:
 
@@ -298,20 +216,25 @@ terminal_sound
 binary_sound
 ```
 
-The key mathematical idea is that if `q` is multiplicative, then image semantics
-turns concatenation into subset multiplication:
+The key mathematical idea is that if `q` is multiplicative, then image semantics turns concatenation into subset multiplication:
 
 ```text
 q[Y Z] = q[Y] q[Z]
 ```
 
-Consequently, binary CFG rules are interpreted soundly as subset multiplication
-inclusions.
+Consequently, terminal and binary CFG rules are interpreted soundly as singleton insertion and subset multiplication inclusions.
 
-### `ResidualConcept.lean`
+---
 
-Defines residual, Galois, closure, and concept-product structures over an
-abstract monoid carrier `Q`.
+### 4. Residual concept semantics
+
+File:
+
+```text
+LeanCfgProject/ResidualConcept.lean
+```
+
+This layer formalizes two-sided residuals, Galois maps, concept closure, concept extents, and concept products over an abstract monoid carrier `Q`.
 
 Main declarations include:
 
@@ -336,23 +259,25 @@ conceptProduct_isConceptExtent
 binary_sound_as_conceptProduct
 ```
 
-The key mathematical idea is that, for `S = q[L]`, the relation
+For `S = q[L]`, the relation
 
 ```text
 gamma I_S (alpha, beta)  iff  alpha * gamma * beta ∈ S
 ```
 
-induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.
-The module verifies that the induced concept closure is extensive, monotone, and
-idempotent, and that binary rule soundness persists after residual concept
-closure.
+induces a Galois connection between subsets of `Q` and subsets of `Q × Q`.  The module verifies that the induced concept closure is extensive, monotone, and idempotent, and that binary rule soundness persists after residual concept closure.
 
-### `FiniteSaturation.lean`
+---
 
-Formalizes finite powerset-saturation components used by the paper's finite
-semantic image computation proposition.  It does not yet prove the full least
-fixed-point equality with `q[Y_G(X)]`, but verifies the inflationary saturation
-step, monotonicity, iteration, and terminal/binary insertion lemmas.
+### 5. Finite saturation components
+
+File:
+
+```text
+LeanCfgProject/FiniteSaturation.lean
+```
+
+This module provides the generic finite powerset-saturation framework used later by carrier-level semantics.
 
 Main declarations include:
 
@@ -365,10 +290,21 @@ terminal_mem_saturationIter_one
 binary_mul_mem_saturationIter_succ
 ```
 
-### `DescriptorSemantics.lean`
+The original module verifies the inflationary one-step saturation operator, monotonicity, finite iteration, and terminal/binary insertion lemmas.
 
-Connects carrier terminal and binary rules to powerset-valued and concept-product
-semantics.
+---
+
+### 6. Descriptor-level semantic bridge
+
+Files:
+
+```text
+LeanCfgProject/DescriptorSemantics.lean
+LeanCfgProject/DescriptorResidualSemantics.lean
+LeanCfgProject/CarrierConceptSemantics.lean
+```
+
+This layer connects carrier terminal/binary rule semantics to powerset-valued and residual concept semantics.
 
 Main declarations include:
 
@@ -381,34 +317,9 @@ carrier_binary_sound
 carrier_binary_sound_after_closure
 carrier_binary_sound_as_conceptProduct
 CarrierStartLanguage
-```
-
-This module verifies that carrier terminal and binary rules from the descriptor
-layer are soundly interpreted by the abstract semantic layer.
-
-### `DescriptorResidualSemantics.lean`
-
-Connects carrier context families to residual soundness.
-
-Main declarations include:
-
-```text
 context_yield_mem_startLanguage_aux
 context_yield_mem_startLanguage
 carrier_state_semantics_subset_residual
-```
-
-This module verifies that if a carrier state occurs in a carrier context, then
-its powerset-valued semantics is contained in the corresponding two-sided
-residual of the carrier start language image.
-
-### `CarrierConceptSemantics.lean`
-
-Packages the carrier-level map into residual concept semantics.
-
-Main declarations include:
-
-```text
 CarrierStartImage
 CarrierConceptSemantics
 carrierConceptSemantics_isConceptExtent
@@ -416,122 +327,333 @@ carrier_binary_sound_as_conceptSemantics
 carrier_context_concept_subset_residual_closure
 ```
 
-This module verifies that carrier states are mapped to closed residual concept
-extents, that binary rules remain sound at the concept-semantics level, and that
-carrier concepts satisfy the expected residual-closure inclusion for verified
-context families.
+This layer verifies that carrier terminal and binary rules from the descriptor architecture are interpreted soundly by the abstract semantic layer, that carrier states map into closed residual concept extents, and that verified carrier contexts induce residual soundness.
 
-### `ObservationCounterexample.lean`
+---
 
-Formalizes a concrete obstruction to using the naive finite `h`-typed
-observation quotient as a concatenation-compatible quotient.
+### 7. Frame soundness and frame-intent preservation
+
+Files:
+
+```text
+LeanCfgProject/FrameSoundness.lean
+LeanCfgProject/SaturationFrameBridge.lean
+LeanCfgProject/FrameIntentClosureBridge.lean
+LeanCfgProject/ClosedStageFrameBridge.lean
+```
+
+This layer verifies that the two-sided typed frame is not merely decorative.
+
+It proves:
+
+- yield-frame soundness;
+- context-frame soundness under start-frame hypotheses;
+- frame-to-residual soundness for the standard observation `h`;
+- frame membership in the intent side of the residual concept incidence;
+- preservation of frame information after saturation;
+- preservation of frame information after residual concept closure;
+- closed-stage versions of frame residual and frame-intent preservation.
+
+Representative declarations include:
+
+```text
+carrier_yield_frame_sound
+carrier_context_frame_sound
+carrier_state_semantics_subset_frame_residual_h
+carrier_frame_mem_commonContexts_h
+carrier_concept_semantics_subset_frame_residual_closure_h
+carrier_saturationImage_subset_frame_residual_h
+carrier_frame_mem_commonContexts_saturation_h
+carrier_frame_mem_commonContexts_carrierConcept_h
+carrier_frame_mem_commonContexts_saturationConcept_h
+carrierClosedStageConceptSemantics_subset_frame_residual_closure_h
+carrier_frame_mem_commonContexts_closedStageConcept_h
+```
+
+Mathematically, these modules support the statement that typed two-sided frames persist as residual bounds and as intent-side common contexts in the residual concept semantics.
+
+---
+
+### 8. Carrier saturation correctness and least closed solution
+
+Files:
+
+```text
+LeanCfgProject/CarrierSaturationCorrectness.lean
+LeanCfgProject/CarrierSaturationLeast.lean
+```
+
+This layer lifts the generic saturation framework to carrier grammar semantics.
 
 Main declarations include:
 
 ```text
-parityHom
-counterexampleLanguage
-not_same_observation_ab_cb
-observation_concat_obstruction_from_a_c
+CarrierTerminalImage
+CarrierBinaryRel
+CarrierSaturationImage
+saturationIter_subset_of_closed
+saturationIter_mono_of_le
+carrier_saturationIter_subset_stateSemantics
+carrier_yield_mem_saturationIter_exists
+carrier_saturationImage_eq_stateSemantics
+carrier_terminal_mem_saturationImage
+carrier_binary_mul_mem_saturationImage
+carrierSaturationImage_isSaturationClosed
+carrierSaturationImage_subset_of_closed
+carrierStateSemantics_isSaturationClosed
+carrierSaturationImage_least_closed_solution
 ```
 
-For the language `L = {ab, cd}` and the parity observation, this module verifies
-that `ab` and `cb` are not equivalent under the naive observation relation, and
-records the resulting obstruction to concatenation compatibility.
+This is the main Lean-checked strengthening of the finite-saturation part of the paper.  It verifies that carrier finite-stage saturation images agree with carrier state semantics and that the carrier saturation image is the least closed simultaneous solution of the terminal and binary inclusions.
 
-### `ObservationCounterexample_v2.lean`
+---
 
-Completes the concrete obstruction by verifying that `a` and `c` have the same
-naive finite observation while concatenation with `b` separates them.
+### 9. Saturation-computed concept semantics
+
+File:
+
+```text
+LeanCfgProject/CarrierSaturationConceptSoundness.lean
+```
+
+This layer defines concept semantics computed from carrier saturation images and proves that it agrees with the previously defined carrier concept semantics.
 
 Main declarations include:
 
 ```text
-same_observation_a_c
-naive_observation_not_concat_compatible
+CarrierSaturationConceptSemantics
+carrierSaturationConceptSemantics_isConceptExtent
+carrier_binaryRel_sound_as_saturationConceptSemantics
+carrier_binaryRule_sound_as_saturationConceptSemantics
+carrierSaturationConceptSemantics_eq_carrierConceptSemantics
 ```
 
-Together with `same_observation_b_b` and `not_same_observation_ab_cb`, this
-module checks the full concrete fact that the naive finite `h`-typed observation
-relation is not generally compatible with concatenation.
+This verifies that finite saturation is not merely an auxiliary construction: after residual closure, it gives the same carrier concept semantics as the direct definition from yield semantics.
 
-### `SemanticBridgeSummary.lean`
+---
 
-Provides a lightweight summary CI target importing the main semantic-bridge
-modules together.  It intentionally proves only trivial availability theorems;
-its role is to ensure that the observation, saturation, counterexample,
-residual-concept, and carrier-concept modules build simultaneously.
+### 10. Closed-stage stability and algorithmic correctness
 
-Main declarations include:
+Files:
+
+```text
+LeanCfgProject/SaturationStability.lean
+LeanCfgProject/ClosedStageConceptBridge.lean
+LeanCfgProject/SaturationMonotoneChain.lean
+LeanCfgProject/ClosedStageAlgorithmCorrectness.lean
+```
+
+This layer formalizes the closed-stage criterion for effective semantic computation.
+
+If a finite saturation stage is closed under the one-step saturation operator, then:
+
+- the next stage is equal to it;
+- all later stages are equal to it;
+- that closed stage computes the carrier saturation image;
+- that closed stage computes the carrier state semantics;
+- its residual closure computes the carrier concept semantics;
+- binary rules remain sound at the closed-stage concept level.
+
+Representative declarations include:
+
+```text
+saturationIter_succ_eq_of_closed
+saturationIter_subset_closed_stage
+carrierSaturationImage_eq_of_closed_stage
+carrierStateSemantics_eq_closed_saturationStage
+carrierStateSemantics_eq_closed_saturationStage_h
+CarrierClosedStageConceptSemantics
+carrierClosedStageConceptSemantics_isConceptExtent
+carrierClosedStageConceptSemantics_eq_saturationConceptSemantics
+carrierClosedStageConceptSemantics_eq_carrierConceptSemantics
+carrierClosedStageConceptSemantics_eq_carrierConceptSemantics_h
+carrier_binaryRel_sound_as_closedStageConceptSemantics
+carrier_binaryRule_sound_as_closedStageConceptSemantics
+saturationIter_eq_of_le_closed_stage
+saturationIter_eq_closed_stage_add
+carrierSaturationIter_eq_of_le_closed_stage
+carrierSaturationIter_eq_closed_stage_add
+closedStage_computes_carrierStateSemantics
+closedStage_computes_carrierConceptSemantics
+closedStage_computes_carrierStateSemantics_h
+closedStage_computes_carrierConceptSemantics_h
+closedStage_binaryRule_conceptSound
+```
+
+This supports the algorithmic reading of the paper: once a saturation stage is verified to be closed, that finite stage computes the state semantics and its residual closure computes the concept semantics.
+
+---
+
+### 11. Summary targets
+
+Files:
+
+```text
+LeanCfgProject/SemanticBridgeSummary.lean
+LeanCfgProject/ICSemanticBridgeSummary.lean
+LeanCfgProject/ICSemanticBridgeSummary_v2.lean
+```
+
+These files are compact CI targets collecting the semantic-bridge modules relevant to the paper appendix and reproducibility statement.
+
+They intentionally prove only lightweight availability theorems.  Their role is to ensure that the observation, saturation, counterexample, residual-concept, carrier-concept, frame-soundness, and closed-stage algorithmic modules build simultaneously.
+
+Representative declarations include:
 
 ```text
 semanticBridgeSummary_observationSignatureKernel_available
 semanticBridgeSummary_counterexample_available
 semanticBridgeSummary_finiteSaturation_available
 semanticBridgeSummary_carrierConceptSemantics_available
+icSemanticBridgeSummary_saturationCorrectness_available
+icSemanticBridgeSummary_saturationLeastSolution_available
+icSemanticBridgeSummary_saturationFrameBridge_available
+icSemanticBridgeSummary_saturationConceptSoundness_available
+icSemanticBridgeSummary_frameIntentClosureBridge_available
+icSemanticBridgeSummaryV2_closedStageStability_available
+icSemanticBridgeSummaryV2_closedStageConceptBridge_available
+icSemanticBridgeSummaryV2_closedStageFrameBridge_available
+icSemanticBridgeSummaryV2_monotoneChain_available
+icSemanticBridgeSummaryV2_algorithmicCorrectness_available
 ```
+
+---
+
+## Main files
+
+```text
+LeanCfgProject/
+  Step25_Test.lean
+  FullArchitecture_Test.lean
+
+  StateSemantics.lean
+  ResidualConcept.lean
+  FiniteSaturation.lean
+
+  LanguageQuotient.lean
+  ObservationFinite.lean
+  ObservationCounterexample.lean
+  ObservationCounterexample_v2.lean
+  ObservationSignatureCounterexample.lean
+
+  DescriptorSemantics.lean
+  DescriptorResidualSemantics.lean
+  CarrierConceptSemantics.lean
+
+  FrameSoundness.lean
+  CarrierSaturationCorrectness.lean
+  SaturationFrameBridge.lean
+  CarrierSaturationLeast.lean
+  CarrierSaturationConceptSoundness.lean
+  FrameIntentClosureBridge.lean
+
+  ICSemanticBridgeSummary.lean
+  SaturationStability.lean
+  ClosedStageConceptBridge.lean
+  ClosedStageFrameBridge.lean
+  SaturationMonotoneChain.lean
+  ClosedStageAlgorithmCorrectness.lean
+  ICSemanticBridgeSummary_v2.lean
+
+  SemanticBridgeSummary.lean
+```
+
+---
+
+## Current mathematical interpretation
+
+The repository should be read as a machine-checked Lean model of the core architecture and its semantic extension.
+
+At commit `d429b1f`, the currently verified development supports the following conservative claim:
+
+```text
+The presentation-level architecture, observation relations, observation-signature
+kernel, concrete observation counterexamples, abstract powerset-valued state
+semantics, residual concept semantic layer, descriptor-level carrier semantic
+bridges, frame soundness, carrier saturation correctness, least closed solution
+formulation, saturation-computed concept semantics, closed-stage stability,
+closed-stage algorithmic correctness, and semantic-bridge summary targets build
+successfully in Lean 4 with no sorry and no project-level axioms under the
+repository CI policy.
+```
+
+In paper terms, the verified semantic bridge is:
+
+```text
+E_h(G) -> P(Q) -> Concepts(Q, q[L])
+```
+
+with the additional verified facts that:
+
+- carrier saturation computes carrier state semantics;
+- saturation is the least closed simultaneous solution of terminal and binary inclusions;
+- saturation-computed concept semantics agrees with carrier concept semantics;
+- closed saturation stages compute state and concept semantics;
+- typed two-sided frames survive as residual bounds and as intent-side common contexts.
+
+---
+
+## Current formalization boundary
+
+The current Lean artifact does **not** claim that:
+
+- the entire accompanying paper is fully formalized;
+- CFG equivalence is solved;
+- a canonical CFG presentation has been constructed;
+- every fixed-`h` descriptor is a language-level invariant;
+- an unconditional finite stopping bound from `Fintype Q` and finite state sets has been proved;
+- a general adequacy theorem has been proved saying that all residual concepts are exactly realized by typed presentation states;
+- finite residual-concept bases have been constructed for broad classes of fixed-`h` substitutable CFLs;
+- the regularity corollary from the pointed-boundary theorem has been fully developed in a separate regular-language module.
+
+These points are intentionally separated from the verified bridge results and are treated in the paper as future formalization targets or open problems.
+
+---
+
+## Paper correspondence
+
+The intended paper version corresponding to this artifact snapshot is:
+
+```text
+Residual Concept Semantics for Two-Sided Fixed-h CFG Presentations
+Version v21 or later
+Lean CI #106
+commit d429b1f
+```
+
+The paper appendix contains a theorem/file correspondence table mapping selected paper statements to Lean declarations and CI-checked modules.
+
+A concise correspondence is:
+
+| Paper-level component | Lean files |
+|---|---|
+| Descriptor architecture | `Step25_Test.lean`, `FullArchitecture_Test.lean` |
+| Observation quotients and pointed boundary | `LanguageQuotient.lean`, `ObservationFinite.lean` |
+| Observation counterexample | `ObservationCounterexample.lean`, `ObservationCounterexample_v2.lean`, `ObservationSignatureCounterexample.lean` |
+| Powerset-valued semantics | `StateSemantics.lean` |
+| Residual concept semantics | `ResidualConcept.lean` |
+| Carrier descriptor semantics | `DescriptorSemantics.lean`, `DescriptorResidualSemantics.lean`, `CarrierConceptSemantics.lean` |
+| Frame soundness and frame-intent preservation | `FrameSoundness.lean`, `SaturationFrameBridge.lean`, `FrameIntentClosureBridge.lean`, `ClosedStageFrameBridge.lean` |
+| Carrier saturation correctness | `FiniteSaturation.lean`, `CarrierSaturationCorrectness.lean`, `CarrierSaturationLeast.lean` |
+| Saturation-computed concept semantics | `CarrierSaturationConceptSoundness.lean` |
+| Closed-stage correctness | `SaturationStability.lean`, `ClosedStageConceptBridge.lean`, `SaturationMonotoneChain.lean`, `ClosedStageAlgorithmCorrectness.lean` |
+| Summary targets | `SemanticBridgeSummary.lean`, `ICSemanticBridgeSummary.lean`, `ICSemanticBridgeSummary_v2.lean` |
+
+---
 
 ## Continuous integration
 
-The repository uses GitHub Actions to run Lean verification automatically on
-push, pull request, and manual workflow dispatch.
+The repository uses GitHub Actions to run Lean verification automatically on push, pull request, and manual workflow dispatch.
 
-The workflow file is:
+Workflow file:
 
 ```text
 .github/workflows/lean.yml
 ```
 
-The CI currently performs these checks:
+The CI checks the core files, rejects `sorry`, rejects project-level `axiom` declarations, and builds the semantic bridge modules listed above.
 
-1. build `LeanCfgProject.Step25_Test`;
-2. build `LeanCfgProject.FullArchitecture_Test`;
-3. reject any remaining `sorry`;
-4. reject project-level `axiom` declarations;
-5. build `LeanCfgProject.StateSemantics`;
-6. build `LeanCfgProject.ResidualConcept`;
-7. build `LeanCfgProject.LanguageQuotient`;
-8. build `LeanCfgProject.ObservationFinite`;
-9. build `LeanCfgProject.ObservationSignatureCounterexample`;
-10. build `LeanCfgProject.DescriptorSemantics`;
-11. build `LeanCfgProject.DescriptorResidualSemantics`;
-12. build `LeanCfgProject.CarrierConceptSemantics`;
-13. build `LeanCfgProject.FiniteSaturation`;
-14. build `LeanCfgProject.ObservationCounterexample`;
-15. build `LeanCfgProject.ObservationCounterexample_v2`;
-16. build `LeanCfgProject.SemanticBridgeSummary`.
-
-## Current mathematical interpretation
-
-The repository should be read as a machine-checked Lean model of the core
-architecture and its semantic extension.
-
-The currently verified development supports the following conservative claim:
-
-```text
-At commit b7675b2, the presentation-level architecture, the observation
-relations and observation-signature kernel, the signature-level observation
-counterexample, the abstract powerset-valued state semantics, the
-finite-saturation components, the residual-concept semantic layer, the
-descriptor-level carrier rule/context semantic bridges, the named carrier
-concept semantics, the concrete observation-counterexample modules, and the
-semantic-bridge summary target build successfully in Lean 4 with no sorry and
-no project-level axioms under the repository CI policy.
-```
-
-It does **not** claim that:
-
-- the entire accompanying paper is fully formalized;
-- CFG equivalence is solved;
-- a canonical CFG presentation has been constructed;
-- every fixed-`h` descriptor is already a language-level invariant.
-
-The intended claim is more modest and more precise:
-
-```text
-Fixed-h two-sided CFG presentation descriptors admit sound powerset-valued
-and residual-concept semantic interpretations inside a language-level universe.
-```
+---
 
 ## Research direction
 
@@ -545,13 +667,13 @@ Here:
 
 - `E_h(G)` is a presentation-level fixed-`h` two-sided descriptor;
 - `Q` is a language-level observation carrier or quotient candidate;
-- `P(Q)` is the powerset-valued state semantics;
+- `P(Q)` is powerset-valued state semantics;
 - `q[L]` is the start image of the language;
 - `Concepts(Q, q[L])` is the residual Galois / Clark-style concept universe.
 
-The refined open problem is to identify useful finite generated residual concept
-bases for fixed-`h` substitutable context-free languages, without collapsing the
-problem to regular-language recognition.
+The refined open problem is to identify useful finite generated residual concept bases for fixed-`h` substitutable context-free languages, without collapsing the problem to regular-language recognition.
+
+---
 
 ## Next Lean targets
 
@@ -559,10 +681,15 @@ Near-term proof targets include:
 
 1. preparing an online companion blueprint with links to declarations and CI logs;
 2. preparing an artifact snapshot or release tag corresponding to the paper;
-3. investigating finite generated residual concept bases for fixed-`h`
-   substitutable context-free languages;
-4. keeping future extensions small and modular.
+3. investigating finite generated residual concept bases for fixed-`h` substitutable context-free languages;
+4. developing a separate finite-stopping or finite-algorithm layer if needed;
+5. developing restricted adequacy results for controlled examples or subclasses;
+6. keeping future extensions small and modular.
 
-The guiding principle is to keep each Lean extension compatible with the
-no-`sorry` / no-project-level-`axiom` CI discipline, and to distinguish clearly
-between checked formalization results and open mathematical problems.
+The guiding principle is to keep each Lean extension compatible with the no-`sorry` / no-project-level-`axiom` CI discipline, and to distinguish clearly between checked formalization results and open mathematical problems.
+
+---
+
+## Citation / artifact note
+
+This repository is an evolving research artifact.  A public release tag, archived artifact snapshot, and paper-specific DOI may be added once the corresponding paper version and repository state are frozen.
