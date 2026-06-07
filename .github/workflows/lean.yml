@@ -172,3 +172,6 @@ jobs:
 
       - name: Check K4AdequacyStrictness module
         run: lake build LeanCfgProject.K4AdequacyStrictness
+
+      - name: Check K4ConceptCollapse module
+        run: lake build LeanCfgProject.K4ConceptCollapse
