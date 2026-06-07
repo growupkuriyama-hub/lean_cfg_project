@@ -60,3 +60,6 @@ jobs:
 
       - name: Check ObservationCounterexample module
         run: lake build LeanCfgProject.ObservationCounterexample
+
+      - name: Check ObservationCounterexample v2 module
+        run: lake build LeanCfgProject.ObservationCounterexample_v2
