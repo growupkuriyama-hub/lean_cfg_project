@@ -124,3 +124,6 @@ jobs:
 
       - name: Check FiniteCoverageStopping module
         run: lake build LeanCfgProject.FiniteCoverageStopping
+
+      - name: Check ClosedStageEquivalences module
+        run: lake build LeanCfgProject.ClosedStageEquivalences
