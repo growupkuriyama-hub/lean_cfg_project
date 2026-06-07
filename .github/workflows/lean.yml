@@ -53,10 +53,8 @@ jobs:
       - name: Check DescriptorSemantics module
         run: lake build LeanCfgProject.DescriptorSemantics
 
-
       - name: Check DescriptorResidualSemantics module
         run: lake build LeanCfgProject.DescriptorResidualSemantics
-
 
       - name: Check ObservationCounterexample module
         run: lake build LeanCfgProject.ObservationCounterexample
@@ -79,13 +77,11 @@ jobs:
       - name: Check SemanticBridgeSummary module
         run: lake build LeanCfgProject.SemanticBridgeSummary
 
-
       - name: Check FrameSoundness module
         run: lake build LeanCfgProject.FrameSoundness
 
       - name: Check CarrierSaturationCorrectness module
         run: lake build LeanCfgProject.CarrierSaturationCorrectness
-
 
       - name: Check SaturationFrameBridge module
         run: lake build LeanCfgProject.SaturationFrameBridge
@@ -93,7 +89,7 @@ jobs:
       - name: Check CarrierSaturationLeast module
         run: lake build LeanCfgProject.CarrierSaturationLeast
 
- 	- name: Check CarrierSaturationConceptSoundness module
+      - name: Check CarrierSaturationConceptSoundness module
         run: lake build LeanCfgProject.CarrierSaturationConceptSoundness
 
       - name: Check FrameIntentClosureBridge module
