@@ -145,3 +145,9 @@ jobs:
 
       - name: Check LocalStoppingRuleSemantics module
         run: lake build LeanCfgProject.LocalStoppingRuleSemantics
+
+      - name: Check LocalStoppingFrameResidual module
+        run: lake build LeanCfgProject.LocalStoppingFrameResidual
+
+      - name: Check AttackSemanticBridgeSummary module
+        run: lake build LeanCfgProject.AttackSemanticBridgeSummary
