@@ -139,3 +139,6 @@ jobs:
 
       - name: Check LaterClosedStageClosure module
         run: lake build LeanCfgProject.LaterClosedStageClosure
+
+      - name: Check LocalStoppingCorrectness module
+        run: lake build LeanCfgProject.LocalStoppingCorrectness
