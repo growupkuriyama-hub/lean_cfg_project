@@ -18,13 +18,9 @@ Finite saturation measure.
 
 This is the concrete finite-measure layer.
 
-Instead of using `Set.ncard` directly, we count a subset of a finite type `Q`
-by summing its characteristic function over `Finset.univ`:
-
-  StageCard U = ∑ q : Q, if q ∈ U then 1 else 0.
-
-This avoids fragile `Set.ncard` API details while proving the same finite
-stopping principle for saturation.
+We count a subset of a finite type `Q` by summing its characteristic function
+over `Finset.univ`.  Since arbitrary set membership is not computably decidable,
+the definition is explicitly noncomputable and uses classical decidability.
 
 Main result:
   if `State` and `Q` are finite, then some stage `N ≤ |State| * |Q|`
@@ -39,8 +35,9 @@ section IndicatorMeasure
 variable {Q : Type v} [Fintype Q]
 
 /-- Cardinality of a subset of a finite type, defined by an indicator sum. -/
-def StageCard (U : Set Q) : Nat :=
-  ∑ q : Q, if q ∈ U then 1 else 0
+noncomputable def StageCard (U : Set Q) : Nat := by
+  classical
+  exact ∑ q : Q, if q ∈ U then 1 else 0
 
 /-- Indicator cardinality is monotone under subset inclusion. -/
 theorem stageCard_mono {A B : Set Q} (hsub : A ⊆ B) :
@@ -110,7 +107,7 @@ variable (Binary : State → State → State → Prop)
 Concrete saturation measure:
 sum, over all states, of the indicator-cardinality of the saturation stage.
 -/
-def SatMeasureIndicator (n : Nat) : Nat :=
+noncomputable def SatMeasureIndicator (n : Nat) : Nat :=
   ∑ X : State, StageCard (SaturationIter Terminal Binary n X)
 
 /-- The concrete saturation measure is monotone. -/
