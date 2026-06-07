@@ -127,3 +127,6 @@ jobs:
 
       - name: Check ClosedStageEquivalences module
         run: lake build LeanCfgProject.ClosedStageEquivalences
+
+      - name: Check ClosedStageConceptStability module
+        run: lake build LeanCfgProject.ClosedStageConceptStability
