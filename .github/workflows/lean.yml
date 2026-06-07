@@ -66,3 +66,6 @@ jobs:
 
       - name: Check ObservationFinite module
         run: lake build LeanCfgProject.ObservationFinite
+
+      - name: Check CarrierConceptSemantics module
+        run: lake build LeanCfgProject.CarrierConceptSemantics
