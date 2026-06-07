@@ -19,8 +19,9 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This is exactly the phenomenon needed for frame-indexed adequacy:
-  ConceptClosure S (TwoSidedResidual S frame) = ConceptClosure S stateImage.
+This v3 avoids `decide` for `ConceptClosure` computations.  Those goals are
+proved by explicit finite case analysis and `simp [mulK4]`, because `decide`
+can get stuck on classical decidability for arbitrary set membership.
 -/
 
 inductive K4 where
@@ -78,58 +79,124 @@ def UT : Set K4 := OSet
 /-- Residual at frame (e,e) is D. -/
 theorem res_ee :
     TwoSidedResidual Sset e e = DSet := by
-  classical
   apply Set.ext
   intro g
-  cases g <;> decide
+  cases g <;> simp [TwoSidedResidual, Sset, DSet, mulK4]
 
 /-- Residual at frame (e,y) is O. -/
 theorem res_ey :
     TwoSidedResidual Sset e y = OSet := by
-  classical
   apply Set.ext
   intro g
-  cases g <;> decide
+  cases g <;> simp [TwoSidedResidual, Sset, DSet, OSet, mulK4]
 
 /-- Residual at frame (x,e) is O. -/
 theorem res_xe :
     TwoSidedResidual Sset x e = OSet := by
-  classical
   apply Set.ext
   intro g
-  cases g <;> decide
+  cases g <;> simp [TwoSidedResidual, Sset, DSet, OSet, mulK4]
+
+/-- The context (e,e) is common for D. -/
+lemma ctx_ee_common_D :
+    (e, e) ∈ CommonContexts Sset DSet := by
+  intro gamma hgamma
+  cases gamma <;> simp [CommonContexts, Sset, DSet, mulK4] at hgamma ⊢
+
+/-- The context (e,y) is common for {x}. -/
+lemma ctx_ey_common_UA :
+    (e, y) ∈ CommonContexts Sset UA := by
+  intro gamma hgamma
+  cases gamma <;> simp [CommonContexts, Sset, DSet, UA, mulK4] at hgamma ⊢
+
+/-- The context (x,e) is common for {y}. -/
+lemma ctx_xe_common_UB :
+    (x, e) ∈ CommonContexts Sset UB := by
+  intro gamma hgamma
+  cases gamma <;> simp [CommonContexts, Sset, DSet, UB, mulK4] at hgamma ⊢
+
+/-- The context (e,y) is common for O. -/
+lemma ctx_ey_common_O :
+    (e, y) ∈ CommonContexts Sset OSet := by
+  intro gamma hgamma
+  cases gamma <;> simp [CommonContexts, Sset, DSet, OSet, mulK4] at hgamma ⊢
 
 /-- The concept closure of D is D. -/
 theorem cl_D :
     ConceptClosure Sset DSet = DSet := by
-  classical
-  apply Set.ext
-  intro g
-  cases g <;> decide
+  apply Set.Subset.antisymm
+  · intro g hg
+    cases g
+    · exact Or.inl rfl
+    · have hx := hg (e, e) ctx_ee_common_D
+      simp [Sset, DSet, mulK4] at hx
+    · have hy := hg (e, e) ctx_ee_common_D
+      simp [Sset, DSet, mulK4] at hy
+    · exact Or.inr rfl
+  · exact subset_conceptClosure Sset DSet
 
 /-- The concept closure of {x} is O. -/
 theorem cl_UA :
     ConceptClosure Sset UA = OSet := by
-  classical
-  apply Set.ext
-  intro g
-  cases g <;> decide
+  apply Set.Subset.antisymm
+  · intro g hg
+    cases g
+    · have he := hg (e, y) ctx_ey_common_UA
+      simp [Sset, DSet, mulK4] at he
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+    · have hz := hg (e, y) ctx_ey_common_UA
+      simp [Sset, DSet, mulK4] at hz
+  · intro g hg
+    cases hg with
+    | inl hx =>
+        subst g
+        exact subset_conceptClosure Sset UA rfl
+    | inr hy =>
+        subst g
+        intro ab hab
+        rcases ab with ⟨a, b⟩
+        cases a <;> cases b <;>
+          simp [CommonContexts, Sset, DSet, UA, mulK4] at hab ⊢
 
 /-- The concept closure of {y} is O. -/
 theorem cl_UB :
     ConceptClosure Sset UB = OSet := by
-  classical
-  apply Set.ext
-  intro g
-  cases g <;> decide
+  apply Set.Subset.antisymm
+  · intro g hg
+    cases g
+    · have he := hg (x, e) ctx_xe_common_UB
+      simp [Sset, DSet, mulK4] at he
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+    · have hz := hg (x, e) ctx_xe_common_UB
+      simp [Sset, DSet, mulK4] at hz
+  · intro g hg
+    cases hg with
+    | inl hx =>
+        subst g
+        intro ab hab
+        rcases ab with ⟨a, b⟩
+        cases a <;> cases b <;>
+          simp [CommonContexts, Sset, DSet, UB, mulK4] at hab ⊢
+    | inr hy =>
+        subst g
+        exact subset_conceptClosure Sset UB rfl
 
 /-- The concept closure of O is O. -/
 theorem cl_O :
     ConceptClosure Sset OSet = OSet := by
-  classical
-  apply Set.ext
-  intro g
-  cases g <;> decide
+  apply Set.Subset.antisymm
+  · intro g hg
+    cases g
+    · have he := hg (e, y) ctx_ey_common_O
+      simp [Sset, DSet, mulK4] at he
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+    · have hz := hg (e, y) ctx_ey_common_O
+      simp [Sset, DSet, mulK4] at hz
+  · intro g hg
+    exact subset_conceptClosure Sset OSet hg
 
 /-- Raw soundness for the start-like state. -/
 theorem sound_S :
@@ -142,14 +209,20 @@ theorem sound_A :
     UA ⊆ TwoSidedResidual Sset e y := by
   rw [res_ey]
   intro g hg
-  cases g <;> simp [UA, OSet] at *
+  change g = x ∨ g = y
+  left
+  change g = x at hg
+  exact hg
 
 /-- Raw soundness for the singleton b-side state: {y} ⊆ O. -/
 theorem sound_B :
     UB ⊆ TwoSidedResidual Sset x e := by
   rw [res_xe]
   intro g hg
-  cases g <;> simp [UB, OSet] at *
+  change g = x ∨ g = y
+  right
+  change g = y at hg
+  exact hg
 
 /-- Raw soundness for the O-state. -/
 theorem sound_T :
@@ -160,22 +233,26 @@ theorem sound_T :
 /-- Coverage for the start-like state. -/
 theorem cover_S :
     TwoSidedResidual Sset e e ⊆ ConceptClosure Sset US := by
-  simpa [US, res_ee, cl_D]
+  rw [res_ee, US, cl_D]
+  exact subset_rfl
 
 /-- Coverage for the singleton a-side state. -/
 theorem cover_A :
     TwoSidedResidual Sset e y ⊆ ConceptClosure Sset UA := by
-  simpa [res_ey, cl_UA]
+  rw [res_ey, cl_UA]
+  exact subset_rfl
 
 /-- Coverage for the singleton b-side state. -/
 theorem cover_B :
     TwoSidedResidual Sset x e ⊆ ConceptClosure Sset UB := by
-  simpa [res_xe, cl_UB]
+  rw [res_xe, cl_UB]
+  exact subset_rfl
 
 /-- Coverage for the O-state. -/
 theorem cover_T :
     TwoSidedResidual Sset x e ⊆ ConceptClosure Sset UT := by
-  simpa [UT, res_xe, cl_O]
+  rw [res_xe, UT, cl_O]
+  exact subset_rfl
 
 /--
 Adequacy for the start-like state:
