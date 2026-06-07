@@ -97,3 +97,6 @@ jobs:
 
       - name: Check ICSemanticBridgeSummary module
         run: lake build LeanCfgProject.ICSemanticBridgeSummary
+
+      - name: Check SaturationStability module
+        run: lake build LeanCfgProject.SaturationStability
