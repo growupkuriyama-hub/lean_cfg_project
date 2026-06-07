@@ -95,3 +95,6 @@ jobs:
 
  	- name: Check CarrierSaturationConceptSoundness module
         run: lake build LeanCfgProject.CarrierSaturationConceptSoundness
+
+      - name: Check FrameIntentClosureBridge module
+        run: lake build LeanCfgProject.FrameIntentClosureBridge
