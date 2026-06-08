@@ -20,7 +20,7 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This v7 adds explicit K4 diagonal-transfer lemmas for the K4 multiplication table.  This avoids
+This v8 adds explicit membership simp lemmas for DSet and OSet for the K4 multiplication table.  This avoids
 the previous failure where `simp [mulK4]` did not reduce chained products such
 as `z * y * y` far enough in all branches.
 -/
@@ -92,6 +92,50 @@ def UB : Set K4 := fun g => g = y
 
 /-- State image for the mixed/parity coset. -/
 def UT : Set K4 := OSet
+
+
+@[simp] theorem e_mem_DSet : e ∈ DSet := Or.inl rfl
+@[simp] theorem z_mem_DSet : z ∈ DSet := Or.inr rfl
+
+@[simp] theorem x_mem_DSet_iff : x ∈ DSet ↔ False := by
+  constructor
+  · intro hx
+    cases hx with
+    | inl h => cases h
+    | inr h => cases h
+  · intro h
+    cases h
+
+@[simp] theorem y_mem_DSet_iff : y ∈ DSet ↔ False := by
+  constructor
+  · intro hy
+    cases hy with
+    | inl h => cases h
+    | inr h => cases h
+  · intro h
+    cases h
+
+@[simp] theorem x_mem_OSet : x ∈ OSet := Or.inl rfl
+@[simp] theorem y_mem_OSet : y ∈ OSet := Or.inr rfl
+
+@[simp] theorem e_mem_OSet_iff : e ∈ OSet ↔ False := by
+  constructor
+  · intro he
+    cases he with
+    | inl h => cases h
+    | inr h => cases h
+  · intro h
+    cases h
+
+@[simp] theorem z_mem_OSet_iff : z ∈ OSet ↔ False := by
+  constructor
+  · intro hz
+    cases hz with
+    | inl h => cases h
+    | inr h => cases h
+  · intro h
+    cases h
+
 
 lemma not_x_mem_D : x ∉ DSet := by
   intro hx
