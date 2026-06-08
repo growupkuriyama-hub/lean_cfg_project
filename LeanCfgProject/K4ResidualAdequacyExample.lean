@@ -4,6 +4,7 @@ set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
 set_option linter.unnecessarySimpa false
+set_option linter.style.longLine false
 
 namespace LeanCfgProject
 namespace AnbnAdequacy
@@ -20,7 +21,7 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This v8 adds explicit membership simp lemmas for DSet and OSet for the K4 multiplication table.  This avoids
+This v9 removes unsafe reducibility attributes and keeps explicit membership simp lemmas for the K4 multiplication table.  This avoids
 the previous failure where `simp [mulK4]` did not reduce chained products such
 as `z * y * y` far enough in all branches.
 -/
@@ -68,9 +69,6 @@ instance : Mul K4 := ⟨mulK4⟩
 @[simp] theorem z_mul_x : z * x = y := rfl
 @[simp] theorem y_mul_z : y * z = x := rfl
 @[simp] theorem z_mul_y : z * y = x := rfl
-
-attribute [local reducible]
-  TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
 
 /-- The diagonal subgroup D={e,z}, which is q[{a^n b^n}]. -/
 def DSet : Set K4 := fun g => g = e ∨ g = z
