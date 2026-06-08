@@ -3,6 +3,7 @@ import LeanCfgProject.FrameAdequacyCriterion
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
+set_option linter.unnecessarySimpa false
 
 namespace LeanCfgProject
 namespace AnbnAdequacy
@@ -19,8 +20,9 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This v4 avoids `decide` for `ConceptClosure` computations and explicitly
-specializes common-context hypotheses where needed.
+This v5 adds explicit simp lemmas for the K4 multiplication table.  This avoids
+the previous failure where `simp [mulK4]` did not reduce chained products such
+as `z * y * y` far enough in all branches.
 -/
 
 inductive K4 where
@@ -50,6 +52,22 @@ def mulK4 : K4 → K4 → K4
   | z, y => x
 
 instance : Mul K4 := ⟨mulK4⟩
+
+@[simp] theorem e_mul (a : K4) : e * a = a := by
+  cases a <;> rfl
+
+@[simp] theorem mul_e (a : K4) : a * e = a := by
+  cases a <;> rfl
+
+@[simp] theorem x_mul_x : x * x = e := rfl
+@[simp] theorem y_mul_y : y * y = e := rfl
+@[simp] theorem z_mul_z : z * z = e := rfl
+@[simp] theorem x_mul_y : x * y = z := rfl
+@[simp] theorem y_mul_x : y * x = z := rfl
+@[simp] theorem x_mul_z : x * z = y := rfl
+@[simp] theorem z_mul_x : z * x = y := rfl
+@[simp] theorem y_mul_z : y * z = x := rfl
+@[simp] theorem z_mul_y : z * y = x := rfl
 
 attribute [local reducible]
   TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
@@ -92,41 +110,43 @@ theorem res_ee :
     TwoSidedResidual Sset e e = DSet := by
   apply Set.ext
   intro g
-  cases g <;> simp [TwoSidedResidual, Sset, DSet, mulK4]
+  cases g <;> simp [TwoSidedResidual, Sset, DSet]
 
 /-- Residual at frame (e,y) is O. -/
 theorem res_ey :
     TwoSidedResidual Sset e y = OSet := by
   apply Set.ext
   intro g
-  cases g <;> simp [TwoSidedResidual, Sset, DSet, OSet, mulK4]
+  cases g <;> simp [TwoSidedResidual, Sset, DSet, OSet]
 
 /-- Residual at frame (x,e) is O. -/
 theorem res_xe :
     TwoSidedResidual Sset x e = OSet := by
   apply Set.ext
   intro g
-  cases g <;> simp [TwoSidedResidual, Sset, DSet, OSet, mulK4]
+  cases g <;> simp [TwoSidedResidual, Sset, DSet, OSet]
 
 /-- The context (e,e) is common for D. -/
 lemma ctx_ee_common_D :
     (e, e) ∈ CommonContexts Sset DSet := by
   intro gamma hgamma
-  cases gamma <;> simp [CommonContexts, Sset, DSet, mulK4] at hgamma ⊢
+  cases gamma <;> simp [CommonContexts, Sset, DSet] at hgamma ⊢
 
 /-- The context (e,y) is common for {x}. -/
 lemma ctx_ey_common_UA :
     (e, y) ∈ CommonContexts Sset UA := by
   intro gamma hgamma
+  change gamma = x at hgamma
   subst gamma
-  simp [CommonContexts, Sset, DSet, UA, mulK4]
+  simp [CommonContexts, Sset, DSet, UA]
 
 /-- The context (x,e) is common for {y}. -/
 lemma ctx_xe_common_UB :
     (x, e) ∈ CommonContexts Sset UB := by
   intro gamma hgamma
+  change gamma = y at hgamma
   subst gamma
-  simp [CommonContexts, Sset, DSet, UB, mulK4]
+  simp [CommonContexts, Sset, DSet, UB]
 
 /-- The context (e,y) is common for O. -/
 lemma ctx_ey_common_O :
@@ -135,10 +155,10 @@ lemma ctx_ey_common_O :
   cases hgamma with
   | inl hx =>
       subst gamma
-      simp [CommonContexts, Sset, DSet, OSet, mulK4]
+      simp [CommonContexts, Sset, DSet, OSet]
   | inr hy =>
       subst gamma
-      simp [CommonContexts, Sset, DSet, OSet, mulK4]
+      simp [CommonContexts, Sset, DSet, OSet]
 
 /-- The concept closure of D is D. -/
 theorem cl_D :
@@ -148,11 +168,11 @@ theorem cl_D :
     cases g
     · exact Or.inl rfl
     · have hxD : x ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (e, e) ctx_ee_common_D)
       exact False.elim (not_x_mem_D hxD)
     · have hyD : y ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (e, e) ctx_ee_common_D)
       exact False.elim (not_y_mem_D hyD)
     · exact Or.inr rfl
@@ -165,13 +185,13 @@ theorem cl_UA :
   · intro g hg
     cases g
     · have hyD : y ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_UA)
       exact False.elim (not_y_mem_D hyD)
     · exact Or.inl rfl
     · exact Or.inr rfl
     · have hxD : x ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_UA)
       exact False.elim (not_x_mem_D hxD)
   · intro g hg
@@ -185,7 +205,7 @@ theorem cl_UA :
         rcases ab with ⟨a, b⟩
         have hxD : a * x * b ∈ DSet := hab x rfl
         cases a <;> cases b <;>
-          simpa [Sset, DSet, UA, mulK4] using hxD
+          simpa [Sset, DSet] using hxD
 
 /-- The concept closure of {y} is O. -/
 theorem cl_UB :
@@ -194,13 +214,13 @@ theorem cl_UB :
   · intro g hg
     cases g
     · have hxD : x ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (x, e) ctx_xe_common_UB)
       exact False.elim (not_x_mem_D hxD)
     · exact Or.inl rfl
     · exact Or.inr rfl
     · have hyD : y ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (x, e) ctx_xe_common_UB)
       exact False.elim (not_y_mem_D hyD)
   · intro g hg
@@ -211,7 +231,7 @@ theorem cl_UB :
         rcases ab with ⟨a, b⟩
         have hyD : a * y * b ∈ DSet := hab y rfl
         cases a <;> cases b <;>
-          simpa [Sset, DSet, UB, mulK4] using hyD
+          simpa [Sset, DSet] using hyD
     | inr hy =>
         subst g
         exact subset_conceptClosure Sset UB rfl
@@ -223,13 +243,13 @@ theorem cl_O :
   · intro g hg
     cases g
     · have hyD : y ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_O)
       exact False.elim (not_y_mem_D hyD)
     · exact Or.inl rfl
     · exact Or.inr rfl
     · have hxD : x ∈ DSet := by
-        simpa [Sset, DSet, mulK4] using
+        simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_O)
       exact False.elim (not_x_mem_D hxD)
   · intro g hg
