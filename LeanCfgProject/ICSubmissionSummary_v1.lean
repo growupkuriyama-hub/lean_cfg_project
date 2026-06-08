@@ -12,9 +12,9 @@ ICSubmissionSummary_v1.lean
 Smallest intended top-level CI target for the current I&C paper artifact.
 
 For routine development, it is usually enough to build this file plus the
-no-sorry/no-axiom checks.  All imported dependencies are then checked by Lean's
-normal dependency graph, while avoiding dozens of repeated explicit `lake build`
-steps in GitHub Actions.
+repository placeholder-proof checks.  All imported dependencies are then checked
+by Lean's normal dependency graph, while avoiding dozens of repeated explicit
+`lake build` steps in GitHub Actions.
 -/
 
 theorem icSubmissionSummary_v1_available :
