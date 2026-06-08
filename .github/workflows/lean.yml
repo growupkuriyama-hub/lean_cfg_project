@@ -187,3 +187,6 @@ jobs:
 
       - name: Check ObservedSyntacticCongruence module
         run: lake build LeanCfgProject.ObservedSyntacticCongruence
+
+      - name: Check CanonicalResidualClosureSystem module
+        run: lake build LeanCfgProject.CanonicalResidualClosureSystem
