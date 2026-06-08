@@ -20,7 +20,7 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This v6 adds explicit simp lemmas for the K4 multiplication table.  This avoids
+This v7 adds explicit K4 diagonal-transfer lemmas for the K4 multiplication table.  This avoids
 the previous failure where `simp [mulK4]` did not reduce chained products such
 as `z * y * y` far enough in all branches.
 -/
@@ -104,6 +104,25 @@ lemma not_y_mem_D : y ∉ DSet := by
   cases hy with
   | inl h => cases h
   | inr h => cases h
+
+/--
+In the K4 example, replacing the middle factor `x` by `y` preserves membership
+in the diagonal set `DSet`.
+-/
+lemma mem_D_context_y_of_x (a b : K4)
+    (h : a * x * b ∈ DSet) :
+    a * y * b ∈ DSet := by
+  cases a <;> cases b <;> simp [DSet] at h ⊢
+
+/--
+In the K4 example, replacing the middle factor `y` by `x` preserves membership
+in the diagonal set `DSet`.
+-/
+lemma mem_D_context_x_of_y (a b : K4)
+    (h : a * y * b ∈ DSet) :
+    a * x * b ∈ DSet := by
+  cases a <;> cases b <;> simp [DSet] at h ⊢
+
 
 /-- Residual at frame (e,e) is D. -/
 theorem res_ee :
@@ -203,8 +222,8 @@ theorem cl_UA :
         subst g
         intro ab hab
         rcases ab with ⟨a, b⟩
-        cases a <;> cases b <;>
-          simp [CommonContexts, Sset, DSet, UA] at hab ⊢
+        have hxD : a * x * b ∈ DSet := hab x rfl
+        exact mem_D_context_y_of_x a b hxD
 
 /-- The concept closure of {y} is O. -/
 theorem cl_UB :
@@ -228,8 +247,8 @@ theorem cl_UB :
         subst g
         intro ab hab
         rcases ab with ⟨a, b⟩
-        cases a <;> cases b <;>
-          simp [CommonContexts, Sset, DSet, UB] at hab ⊢
+        have hyD : a * y * b ∈ DSet := hab y rfl
+        exact mem_D_context_x_of_y a b hyD
     | inr hy =>
         subst g
         exact subset_conceptClosure Sset UB rfl
@@ -240,16 +259,16 @@ theorem cl_O :
   apply Set.Subset.antisymm
   · intro g hg
     cases g
-    · have hfalse : False := by
+    · have hyD : y ∈ DSet := by
         simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_O)
-      exact False.elim hfalse
+      exact False.elim (not_y_mem_D hyD)
     · exact Or.inl rfl
     · exact Or.inr rfl
-    · have hfalse : False := by
+    · have hxD : x ∈ DSet := by
         simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_O)
-      exact False.elim hfalse
+      exact False.elim (not_x_mem_D hxD)
   · intro g hg
     exact subset_conceptClosure Sset OSet hg
 
