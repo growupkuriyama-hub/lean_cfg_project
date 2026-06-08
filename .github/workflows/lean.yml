@@ -184,3 +184,6 @@ jobs:
 
       - name: Check ObservedSyntacticConcept module
         run: lake build LeanCfgProject.ObservedSyntacticConcept
+
+      - name: Check ObservedSyntacticCongruence module
+        run: lake build LeanCfgProject.ObservedSyntacticCongruence
