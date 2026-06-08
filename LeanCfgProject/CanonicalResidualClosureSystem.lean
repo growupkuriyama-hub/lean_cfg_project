@@ -13,6 +13,8 @@ CanonicalResidualClosureSystem.lean
 
 This file formalizes the v25.1 "canonical residual closure system" layer.
 
+This v2 removes unsafe local reducibility attributes rejected by Lean 4.31.
+
 The goal is to make precise, at the `(Q,S)` level and independently of any
 grammar presentation, that residual concept extents are exactly intersections
 of two-sided residuals.
@@ -34,9 +36,6 @@ Main statements:
 This gives the Lean counterpart of the paper theorem "Canonical residual
 closure system".
 -/
-
-attribute [local reducible]
-  TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
 
 variable {Q : Type u} [Mul Q]
 
