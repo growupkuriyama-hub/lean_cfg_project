@@ -13,6 +13,9 @@ ObservedSyntacticConcept.lean
 
 This file starts the v25.1 canonical-object layer.
 
+This v2 removes unsafe local reducibility attributes rejected by Lean 4.31.
+All definitional unfolding is handled explicitly in the proofs instead.
+
 It formalizes the observed syntactic congruence of a monoid subset `(Q,S)` and
 proves the core residual-concept facts that are independent of any grammar
 presentation:
@@ -28,9 +31,6 @@ presentation:
 This is the Lean counterpart of the new v25.1 "observed syntactic concept
 object" and "syntactic-block adequacy" paper layer.
 -/
-
-attribute [local reducible]
-  TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
 
 variable {Q : Type u} [Mul Q]
 
