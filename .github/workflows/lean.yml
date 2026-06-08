@@ -181,3 +181,6 @@ jobs:
 
       - name: Check AdequacyBridgeSummary module
         run: lake build LeanCfgProject.AdequacyBridgeSummary
+
+      - name: Check ObservedSyntacticConcept module
+        run: lake build LeanCfgProject.ObservedSyntacticConcept
