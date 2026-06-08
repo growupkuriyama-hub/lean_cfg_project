@@ -23,6 +23,9 @@ Thus the residual-concept closure is genuinely doing work.  The singleton
 state images {x} and {y} do not equal their frame residual O={x,y}; nevertheless
 their residual concepts coincide with the residual concept determined by the
 two-sided frame.
+
+This version avoids fragile `dsimp` calls and uses explicit singleton-membership
+equalities instead.
 -/
 
 /--
@@ -37,10 +40,9 @@ theorem raw_A_strictly_smaller_than_residual :
   · intro hcoverRaw
     have hy_res : y ∈ TwoSidedResidual Sset e y := by
       rw [res_ey]
-      dsimp [OSet]
       exact Or.inr rfl
     have hy_UA : y ∈ UA := hcoverRaw hy_res
-    dsimp [UA] at hy_UA
+    change y = x at hy_UA
     cases hy_UA
 
 /--
@@ -55,10 +57,9 @@ theorem raw_B_strictly_smaller_than_residual :
   · intro hcoverRaw
     have hx_res : x ∈ TwoSidedResidual Sset x e := by
       rw [res_xe]
-      dsimp [OSet]
       exact Or.inl rfl
     have hx_UB : x ∈ UB := hcoverRaw hx_res
-    dsimp [UB] at hx_UB
+    change x = y at hx_UB
     cases hx_UB
 
 /--
