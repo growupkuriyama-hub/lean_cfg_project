@@ -3,6 +3,8 @@ import LeanCfgProject.ObservedSyntacticConcept
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
+set_option linter.unusedSectionVars false
+set_option linter.overlappingInstances false
 
 namespace LeanCfgProject
 
@@ -26,13 +28,10 @@ Here we prove the congruence/maximality layer:
 * any relation that is stable under left/right multiplication and preserves
   membership in `S` is contained in `SameObservedSyntactic S`.
 
-This corresponds to the paper proposition that the observed syntactic
-congruence is the largest two-sided congruence preserving the observed subset
-`S`.
+This version avoids the `[Semigroup Q]` / `[Monoid Q]` instance diamond by
+separating the semigroup compatibility section from the monoid preservation
+and maximality section.
 -/
-
-attribute [local reducible]
-  TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
 
 section BasicMaximality
 
@@ -59,8 +58,8 @@ def PreservesSubset (S : Set Q) (R : Q → Q → Prop) : Prop :=
 If a relation is two-sided stable and preserves `S`, then every related pair
 has the same observed syntactic tests.
 
-This is the core maximality statement, and it only needs `Mul Q`, because the
-two-sided tests are written as left-associated products `(a * x) * b`.
+This core maximality statement only needs `Mul Q`, because the two-sided tests
+are written as left-associated products `(a * x) * b`.
 -/
 theorem rel_subset_sameObservedSyntactic_of_stable_preserves
     {R : Q → Q → Prop}
@@ -90,7 +89,7 @@ theorem relation_le_sameObservedSyntactic
 
 end BasicMaximality
 
-section CongruenceProperties
+section SemigroupCompatibility
 
 variable {Q : Type u} [Semigroup Q]
 variable {S : Set Q}
@@ -154,13 +153,19 @@ theorem sameObservedSyntactic_twoSidedStable :
   · intro b x y hxy
     exact sameObservedSyntactic_mul_right (S := S) b hxy
 
+end SemigroupCompatibility
+
+section MonoidPreservationAndMaximality
+
+variable {Q : Type u} [Monoid Q]
+variable {S : Set Q}
+
 /--
 The observed syntactic relation preserves membership in `S`.
 
-Use the empty context supplied by the unit when `Q` is a monoid.
+Use the empty context supplied by the unit.
 -/
-theorem sameObservedSyntactic_preserves_subset
-    [Monoid Q] :
+theorem sameObservedSyntactic_preserves_subset :
     PreservesSubset S (SameObservedSyntactic S) := by
   intro x y hxy
   have h := hxy 1 1
@@ -170,19 +175,11 @@ theorem sameObservedSyntactic_preserves_subset
 For a monoid, the observed syntactic relation is itself two-sided stable and
 preserves the observed subset.
 -/
-theorem sameObservedSyntactic_is_stable_and_preserving
-    [Monoid Q] :
+theorem sameObservedSyntactic_is_stable_and_preserving :
     TwoSidedStableRel (SameObservedSyntactic S)
       ∧ PreservesSubset S (SameObservedSyntactic S) := by
-  exact ⟨sameObservedSyntactic_twoSidedStable,
-         sameObservedSyntactic_preserves_subset⟩
-
-end CongruenceProperties
-
-section MaximalCongruence
-
-variable {Q : Type u} [Monoid Q]
-variable {S : Set Q}
+  exact ⟨sameObservedSyntactic_twoSidedStable (S := S),
+         sameObservedSyntactic_preserves_subset (S := S)⟩
 
 /--
 Maximality in monoid form.
@@ -210,12 +207,13 @@ theorem observedSyntacticCongruence_summary :
         PreservesSubset S R →
         ∀ x y : Q, R x y → SameObservedSyntactic S x y) := by
   constructor
-  · exact sameObservedSyntactic_twoSidedStable
+  · exact sameObservedSyntactic_twoSidedStable (S := S)
   constructor
-  · exact sameObservedSyntactic_preserves_subset
+  · exact sameObservedSyntactic_preserves_subset (S := S)
   · intro R hstable hpres x y hxy
-    exact sameObservedSyntactic_maximal hstable hpres hxy
+    exact (sameObservedSyntactic_maximal
+      (S := S) (R := R) hstable hpres) x y hxy
 
-end MaximalCongruence
+end MonoidPreservationAndMaximality
 
 end LeanCfgProject
