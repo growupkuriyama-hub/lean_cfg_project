@@ -63,6 +63,21 @@ jobs:
       - name: Check ICSubmissionSummary v1 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v1
 
+      - name: Check ICArtifactReleaseSummary module
+        run: lake build LeanCfgProject.ICArtifactReleaseSummary
+
+      - name: Check ICArtifactAppendixCoverage module
+        run: lake build LeanCfgProject.ICArtifactAppendixCoverage
+
+      - name: Check ICFastCI module
+        run: lake build LeanCfgProject.ICFastCI
+
+      - name: Check ICFullPaperSummary v1 module
+        run: lake build LeanCfgProject.ICFullPaperSummary_v1
+
+      - name: Check ICSubmissionSummary v2 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v2
+
       # ------------------------------------------------------------------
       # Optional full-regression targets.
       # Uncomment these when preparing a release, before tagging an artifact,
