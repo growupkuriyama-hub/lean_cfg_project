@@ -193,3 +193,15 @@ jobs:
 
       - name: Check CarrierObservedAdequacy module
         run: lake build LeanCfgProject.CarrierObservedAdequacy
+
+      - name: Check ObservedSyntacticResidualCorollaries module
+        run: lake build LeanCfgProject.ObservedSyntacticResidualCorollaries
+
+      - name: Check ObservedSyntacticBlockAdequacyCorollaries module
+        run: lake build LeanCfgProject.ObservedSyntacticBlockAdequacyCorollaries
+
+      - name: Check ObservedSyntacticBridgeSummary module
+        run: lake build LeanCfgProject.ObservedSyntacticBridgeSummary
+
+      - name: Check ICSemanticBridgeSummary v3 module
+        run: lake build LeanCfgProject.ICSemanticBridgeSummary_v3

@@ -6,8 +6,8 @@ Lean 4 artifact for the paper:
 
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
-Current verified artifact snapshot: commit `b1e9b4d`  
-GitHub Actions: Lean CI #125 passed
+Current verified artifact snapshot: commit `04d0d88`  
+GitHub Actions: Lean CI #149 passed
 
 ---
 
@@ -43,6 +43,13 @@ The Lean development verifies selected components of this bridge, including:
 - unconditional finite-stopping via an indicator-cardinality measure for finite state sets and finite observations;
 - bounded carrier-stage computation of state semantics and residual concept semantics;
 - bounded finite-stage preservation of two-sided frame residual/intent information;
+- a general frame-adequacy criterion reducing equality of residual concepts to a coverage condition;
+- a finite K4 residual-adequacy worked example, including strict raw-image and nontrivial concept-collapse witnesses;
+- the observed syntactic congruence `SameObservedSyntactic` for an arbitrary monoid pair `(Q,S)`;
+- saturation of concept closures and two-sided residuals under the observed syntactic congruence;
+- maximality of the observed syntactic congruence among two-sided stable `S`-preserving relations;
+- the canonical residual closure system: closed extents are exactly intersections of two-sided residuals;
+- carrier-level observed-syntactic-block adequacy for standard `h` and factor-through-`h` observations;
 - summary CI targets for the paper appendix.
 
 ---
@@ -54,8 +61,8 @@ The artifact is checked by GitHub Actions using `leanprover/lean-action@v1` with
 Current checked snapshot:
 
 ```text
-commit: b1e9b4d
-CI run: Lean CI #125
+commit: 04d0d88
+CI run: Lean CI #149
 status: passed
 ```
 
@@ -120,6 +127,16 @@ lake build LeanCfgProject.FiniteStoppingCore
 lake build LeanCfgProject.MeasureStoppingCriterion
 lake build LeanCfgProject.FiniteSaturationMeasure
 lake build LeanCfgProject.FiniteStoppingFrameResidual
+lake build LeanCfgProject.FrameAdequacyCriterion
+lake build LeanCfgProject.K4ResidualAdequacyExample
+lake build LeanCfgProject.K4AdequacyStrictness
+lake build LeanCfgProject.K4ConceptCollapse
+lake build LeanCfgProject.FiniteStoppedFrameAdequacy
+lake build LeanCfgProject.AdequacyBridgeSummary
+lake build LeanCfgProject.ObservedSyntacticConcept
+lake build LeanCfgProject.ObservedSyntacticCongruence
+lake build LeanCfgProject.CanonicalResidualClosureSystem
+lake build LeanCfgProject.CarrierObservedAdequacy
 ```
 
 ---
@@ -612,7 +629,78 @@ Mathematically, this upgrades the algorithmic story from "if a local stopping eq
 
 ---
 
-### 13. Summary targets
+### 13. Observed syntactic concepts and adequacy layer
+
+Files:
+
+```text
+LeanCfgProject/FrameAdequacyCriterion.lean
+LeanCfgProject/K4ResidualAdequacyExample.lean
+LeanCfgProject/K4AdequacyStrictness.lean
+LeanCfgProject/K4ConceptCollapse.lean
+LeanCfgProject/FiniteStoppedFrameAdequacy.lean
+LeanCfgProject/AdequacyBridgeSummary.lean
+LeanCfgProject/ObservedSyntacticConcept.lean
+LeanCfgProject/ObservedSyntacticCongruence.lean
+LeanCfgProject/CanonicalResidualClosureSystem.lean
+LeanCfgProject/CarrierObservedAdequacy.lean
+```
+
+This layer is the main new verified content at commit `04d0d88` / Lean CI #149. It formalizes the canonical observed-syntactic concept layer used by the v25.2 paper draft.
+
+The general adequacy criterion reduces equality of residual concepts to a concrete coverage condition:
+
+```text
+U ⊆ R, R ⊆ ConceptClosure S U  ==>  ConceptClosure S R = ConceptClosure S U
+```
+
+The K4 worked example verifies a finite nontrivial residual-concept phenomenon: raw singleton images can be proper subsets of their frame residuals, while their residual concept closures still coincide with the frame residual concepts. It also verifies that distinct raw powerset images can collapse to the same residual concept.
+
+The observed syntactic modules define the two-sided observed syntactic congruence `SameObservedSyntactic S x y`, prove it is an equivalence relation, prove saturation of concept closures and residuals under this equivalence, prove residuals are already concept-closed, and prove the syntactic-block adequacy theorem: if a frame residual is contained in one observed syntactic block, then every nonempty sound state image inside it generates that residual by concept closure.
+
+The congruence module proves the maximality package: in a monoid, `SameObservedSyntactic S` is two-sided stable, preserves membership in `S`, and contains every two-sided stable relation preserving `S`.
+
+The canonical closure module proves that concept extents are exactly intersections of two-sided residuals. This is the Lean counterpart of the paper's statement that the residual concept universe is a canonical closure system determined by `(Q,S)`.
+
+The carrier adequacy module lifts the abstract syntactic-block theorem back to CFG descriptor semantics. For standard observation `h`, and also for observations factoring through `h`, a productive carrier state whose frame residual is a single observed syntactic block is frame-adequate at the residual-concept level.
+
+Representative declarations include:
+
+```text
+adequacy_of_residual_coverage
+adequacy_iff_residual_coverage
+carrier_frame_adequacy_of_coverage_h
+k4_bridge_bidirectional
+k4_adequacy_is_nontrivial
+k4_nontrivial_collapse_summary
+SameObservedSyntactic
+sameObservedSyntactic_refl
+sameObservedSyntactic_symm
+sameObservedSyntactic_trans
+conceptClosure_saturated_under_sameObservedSyntactic
+twoSidedResidual_saturated_under_sameObservedSyntactic
+conceptClosure_twoSidedResidual_eq
+syntacticBlockAdequacy
+sameObservedSyntactic_mul_left
+sameObservedSyntactic_mul_right
+sameObservedSyntactic_mul
+sameObservedSyntactic_maximal
+observedSyntacticCongruence_summary
+ResidualIntersection
+residualIntersection_closed
+conceptClosure_eq_residualIntersection_commonContexts
+isConceptExtent_iff_exists_residualIntersection
+canonicalResidualClosureSystem_summary
+carrier_frame_adequacy_of_observedSyntacticBlock_h
+carrier_frame_adequacy_of_observedSyntacticBlock_factor
+carrierObservedAdequacy_summary_h
+```
+
+Mathematically, this upgrades the artifact from a soundness/effectiveness bridge to a checked adequacy route: the presentation-dependent descriptor image lands inside a presentation-independent observed residual-concept universe, and exact frame representation follows under the single observed-syntactic-block hypothesis.
+
+---
+
+### 14. Summary targets
 
 Files:
 
@@ -697,6 +785,17 @@ LeanCfgProject/
   FiniteSaturationMeasure.lean
   FiniteStoppingFrameResidual.lean
 
+  FrameAdequacyCriterion.lean
+  K4ResidualAdequacyExample.lean
+  K4AdequacyStrictness.lean
+  K4ConceptCollapse.lean
+  FiniteStoppedFrameAdequacy.lean
+  AdequacyBridgeSummary.lean
+  ObservedSyntacticConcept.lean
+  ObservedSyntacticCongruence.lean
+  CanonicalResidualClosureSystem.lean
+  CarrierObservedAdequacy.lean
+
   SemanticBridgeSummary.lean
 ```
 
@@ -706,7 +805,7 @@ LeanCfgProject/
 
 The repository should be read as a machine-checked Lean model of the core architecture and its semantic extension.
 
-At commit `b1e9b4d`, the currently verified development supports the following conservative claim:
+At commit `04d0d88`, the currently verified development supports the following conservative claim:
 
 ```text
 The presentation-level architecture, observation relations, observation-signature
@@ -717,8 +816,9 @@ formulation, saturation-computed concept semantics, closed-stage stability,
 closed-stage algorithmic correctness, local stopping correctness, local stopping
 rule semantics, local stopping frame/residual preservation, unconditional finite stopping,
 bounded carrier state/concept computation, finite-stopping frame/residual preservation,
-and semantic-bridge summary targets build successfully in Lean 4 with no sorry and no project-level
-axioms under the repository CI policy.
+frame adequacy criteria, finite K4 residual-adequacy witnesses, observed syntactic congruence and maximality,
+canonical residual closure systems, carrier observed-syntactic-block adequacy, and semantic-bridge summary targets
+build successfully in Lean 4 with no sorry and no project-level axioms under the repository CI policy.
 ```
 
 In paper terms, the verified semantic bridge is:
@@ -737,7 +837,12 @@ with the additional verified facts that:
 - for finite state sets and finite observation carriers, a bounded closed stage exists;
 - a bounded carrier stage computes state semantics and residual concept semantics;
 - stopped stages and all later stages are rule-closed semantic models;
-- typed two-sided frames survive as residual bounds and as intent-side common contexts, including after local stopping and at a bounded finite stopping stage.
+- typed two-sided frames survive as residual bounds and as intent-side common contexts, including after local stopping and at a bounded finite stopping stage;
+- concept closure and two-sided residuals are saturated by the observed syntactic congruence;
+- the observed syntactic congruence is maximal among two-sided stable `S`-preserving relations;
+- concept extents are exactly residual intersections;
+- finite K4 examples witness strict raw-image inclusion but residual-concept adequacy;
+- carrier states are frame-adequate under the checked nonempty single observed-syntactic-block hypothesis.
 
 ---
 
@@ -749,12 +854,12 @@ The current Lean artifact does **not** claim that:
 - CFG equivalence is solved;
 - a canonical CFG presentation has been constructed;
 - every fixed-`h` descriptor is a language-level invariant;
-- a general adequacy theorem has been proved saying that all residual concepts are exactly realized by typed presentation states;
+- an unrestricted adequacy theorem has been proved saying that all residual concepts are exactly realized by typed presentation states without the checked nonempty single observed-syntactic-block hypothesis;
 - finite residual-concept bases have been constructed for broad classes of fixed-`h` substitutable CFLs;
 - the regularity corollary from the pointed-boundary theorem has been fully developed in a separate regular-language module.
 
 These points are intentionally separated from the verified bridge results and are treated in the paper as future formalization targets or open problems.
-The current artifact **does** verify an unconditional bounded finite-stopping theorem for saturation when both the state set and the observation carrier are finite.  This should not be misstated as a theorem from `Fintype Q` alone: the finite-state hypothesis is essential.
+The current artifact **does** verify an unconditional bounded finite-stopping theorem for saturation when both the state set and the observation carrier are finite, and it now also verifies the observed-syntactic-block adequacy criterion and its carrier-level instantiation.  This should not be misstated as a theorem from `Fintype Q` alone: the finite-state hypothesis is essential.
 
 
 ---
@@ -765,8 +870,8 @@ The intended paper version corresponding to this artifact snapshot is:
 
 ```text
 Residual Concept Semantics for Two-Sided Fixed-h CFG Presentations
-Version v23 or later
-Lean CI #125
+Version v25.2 or later
+Lean CI #149
 commit b1e9b4d
 ```
 
@@ -787,7 +892,9 @@ A concise correspondence is:
 | Saturation-computed concept semantics | `CarrierSaturationConceptSoundness.lean` |
 | Closed-stage correctness | `SaturationStability.lean`, `ClosedStageConceptBridge.lean`, `SaturationMonotoneChain.lean`, `ClosedStageAlgorithmCorrectness.lean`, `ClosedStageEquivalences.lean`, `ClosedStageConceptStability.lean`, `ClosedStageRuleSemantics.lean`, `LaterClosedStageClosure.lean` |
 | Local stopping correctness | `LocalStoppingCorrectness.lean`, `LocalStoppingRuleSemantics.lean`, `LocalStoppingFrameResidual.lean` |
-| Summary targets | `SemanticBridgeSummary.lean`, `ICSemanticBridgeSummary.lean`, `ICSemanticBridgeSummary_v2.lean`, `AttackSemanticBridgeSummary.lean` |
+| Observed syntactic concept object and adequacy criterion | `ObservedSyntacticConcept.lean`, `ObservedSyntacticCongruence.lean`, `CanonicalResidualClosureSystem.lean`, `CarrierObservedAdequacy.lean` |
+| K4 residual adequacy worked example | `K4ResidualAdequacyExample.lean`, `K4AdequacyStrictness.lean`, `K4ConceptCollapse.lean`, `AdequacyBridgeSummary.lean` |
+| Summary targets | `SemanticBridgeSummary.lean`, `ICSemanticBridgeSummary.lean`, `ICSemanticBridgeSummary_v2.lean`, `AttackSemanticBridgeSummary.lean`, `AdequacyBridgeSummary.lean` |
 
 ---
 
@@ -832,9 +939,10 @@ Near-term proof targets include:
 1. preparing an online companion blueprint with links to declarations and CI logs;
 2. preparing an artifact snapshot or release tag corresponding to the paper;
 3. investigating finite generated residual concept bases for fixed-`h` substitutable context-free languages;
-4. developing an unconditional finite stopping bound from finite state and finite carrier assumptions;
-5. developing restricted adequacy results for controlled examples or subclasses;
-6. keeping future extensions small and modular.
+4. formalizing the endpoint-monoid non-coset witness and the normal-coset / mod-k families;
+5. investigating quotient invariance of the observed syntactic concept object;
+6. developing restricted adequacy results for controlled examples or subclasses beyond the checked single-block criterion;
+7. keeping future extensions small and modular.
 
 The guiding principle is to keep each Lean extension compatible with the no-`sorry` / no-project-level-`axiom` CI discipline, and to distinguish clearly between checked formalization results and open mathematical problems.
 
