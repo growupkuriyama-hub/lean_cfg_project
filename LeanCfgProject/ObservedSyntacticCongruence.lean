@@ -28,7 +28,7 @@ Here we prove the congruence/maximality layer:
 * any relation that is stable under left/right multiplication and preserves
   membership in `S` is contained in `SameObservedSyntactic S`.
 
-This version avoids the `[Semigroup Q]` / `[Monoid Q]` instance diamond by
+This v4 avoids the `[Semigroup Q]` / `[Monoid Q]` instance diamond by
 separating the semigroup compatibility section from the monoid preservation
 and maximality section.
 -/
@@ -121,14 +121,7 @@ theorem sameObservedSyntactic_mul_right
     (hxy : SameObservedSyntactic S x y) :
     SameObservedSyntactic S (x * b) (y * b) := by
   intro l r
-  calc
-    l * (x * b) * r ∈ S
-        ↔ l * x * (b * r) ∈ S := by
-          rw [mul_assoc l x b, mul_assoc (l * x) b r]
-    _   ↔ l * y * (b * r) ∈ S :=
-          hxy l (b * r)
-    _   ↔ l * (y * b) * r ∈ S := by
-          rw [mul_assoc l y b, mul_assoc (l * y) b r]
+  simpa [mul_assoc] using hxy l (b * r)
 
 /--
 Observed syntactic equivalence is compatible with multiplication.
