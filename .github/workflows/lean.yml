@@ -205,3 +205,15 @@ jobs:
 
       - name: Check ICSemanticBridgeSummary v3 module
         run: lake build LeanCfgProject.ICSemanticBridgeSummary_v3
+
+      - name: Check K4AdequacyPaperSummary module
+        run: lake build LeanCfgProject.K4AdequacyPaperSummary
+
+      - name: Check ObservedSyntacticPaperCorollaries module
+        run: lake build LeanCfgProject.ObservedSyntacticPaperCorollaries
+
+      - name: Check CarrierObservedAdequacyCorollaries module
+        run: lake build LeanCfgProject.CarrierObservedAdequacyCorollaries
+
+      - name: Check ObservedSyntacticPaperSummary module
+        run: lake build LeanCfgProject.ObservedSyntacticPaperSummary
