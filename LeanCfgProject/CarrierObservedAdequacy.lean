@@ -17,6 +17,8 @@ CarrierObservedAdequacy.lean
 This file connects the v25.1 observed-syntactic-block adequacy theorem to
 carrier state semantics and fixed-h frames.
 
+This v2 removes unsafe local reducibility attributes rejected by Lean 4.31.
+
 The previous file `ObservedSyntacticConcept.lean` proves the abstract monoid
 statement:
 
@@ -31,9 +33,6 @@ frame soundness theorem to discharge `U ⊆ Res`.
 This is the first Lean bridge from the canonical `(Q,S)` adequacy theorem back
 to CFG presentation descriptors.
 -/
-
-attribute [local reducible]
-  TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
 
 /--
 Carrier frame adequacy from observed syntactic block, for the standard
