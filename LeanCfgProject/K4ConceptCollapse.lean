@@ -19,10 +19,8 @@ However, they induce the same residual concept closure O={x,y}.  Thus the
 residual-concept layer both fills the missing frame residual elements and
 identifies raw powerset images that belong to the same residual concept.
 
-This is useful in the paper because it clarifies that the bridge
-  E_h(G) -> P(Q) -> Concepts(Q,S)
-is not merely powerset semantics with extra notation; the second arrow performs
-a genuine residual-concept quotient/closure operation.
+This version avoids fragile `dsimp` calls and uses explicit singleton
+membership equalities.
 -/
 
 /-- The singleton a-side and b-side raw images are distinct. -/
@@ -30,10 +28,11 @@ theorem raw_singletons_A_B_distinct :
     UA ≠ UB := by
   intro hEq
   have hxA : x ∈ UA := by
-    dsimp [UA]
+    change x = x
+    rfl
   have hxB : x ∈ UB := by
     simpa [hEq] using hxA
-  dsimp [UB] at hxB
+  change x = y at hxB
   cases hxB
 
 /-- The a-side and b-side frame residuals coincide. -/
