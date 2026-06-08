@@ -190,3 +190,6 @@ jobs:
 
       - name: Check CanonicalResidualClosureSystem module
         run: lake build LeanCfgProject.CanonicalResidualClosureSystem
+
+      - name: Check CarrierObservedAdequacy module
+        run: lake build LeanCfgProject.CarrierObservedAdequacy

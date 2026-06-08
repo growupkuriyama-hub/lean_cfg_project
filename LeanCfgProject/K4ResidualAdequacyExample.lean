@@ -20,7 +20,7 @@ is O={x,y}.  The example verifies that some singleton state images are strictly
 smaller than their frame residuals at the raw powerset level, but become equal
 after residual concept closure.
 
-This v5 adds explicit simp lemmas for the K4 multiplication table.  This avoids
+This v6 adds explicit simp lemmas for the K4 multiplication table.  This avoids
 the previous failure where `simp [mulK4]` did not reduce chained products such
 as `z * y * y` far enough in all branches.
 -/
@@ -203,9 +203,8 @@ theorem cl_UA :
         subst g
         intro ab hab
         rcases ab with ⟨a, b⟩
-        have hxD : a * x * b ∈ DSet := hab x rfl
         cases a <;> cases b <;>
-          simpa [Sset, DSet] using hxD
+          simp [CommonContexts, Sset, DSet, UA] at hab ⊢
 
 /-- The concept closure of {y} is O. -/
 theorem cl_UB :
@@ -229,9 +228,8 @@ theorem cl_UB :
         subst g
         intro ab hab
         rcases ab with ⟨a, b⟩
-        have hyD : a * y * b ∈ DSet := hab y rfl
         cases a <;> cases b <;>
-          simpa [Sset, DSet] using hyD
+          simp [CommonContexts, Sset, DSet, UB] at hab ⊢
     | inr hy =>
         subst g
         exact subset_conceptClosure Sset UB rfl
@@ -242,16 +240,16 @@ theorem cl_O :
   apply Set.Subset.antisymm
   · intro g hg
     cases g
-    · have hyD : y ∈ DSet := by
+    · have hfalse : False := by
         simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_O)
-      exact False.elim (not_y_mem_D hyD)
+      exact False.elim hfalse
     · exact Or.inl rfl
     · exact Or.inr rfl
-    · have hxD : x ∈ DSet := by
+    · have hfalse : False := by
         simpa [Sset, DSet] using
           (hg (e, y) ctx_ey_common_O)
-      exact False.elim (not_x_mem_D hxD)
+      exact False.elim hfalse
   · intro g hg
     exact subset_conceptClosure Sset OSet hg
 
