@@ -106,6 +106,21 @@ jobs:
       - name: Check ICSubmissionSummary v7 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v7
 
+      - name: Check ObservedLearningStablePackage v27 module
+        run: lake build LeanCfgProject.ObservedLearningStablePackage_v27
+
+      - name: Check CanonicalPointFrameStablePackage v27 module
+        run: lake build LeanCfgProject.CanonicalPointFrameStablePackage_v27
+
+      - name: Check ObservedFiniteBasisStablePackage v27 module
+        run: lake build LeanCfgProject.ObservedFiniteBasisStablePackage_v27
+
+      - name: Check ICSubmissionSafeExpansion v27 module
+        run: lake build LeanCfgProject.ICSubmissionSafeExpansion_v27
+
+      - name: Check ICSubmissionSummary v8 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v8
+
       # ------------------------------------------------------------------
       # Previous paper-facing / recent-experiment targets.
       # Temporarily commented out during the current experiment.
