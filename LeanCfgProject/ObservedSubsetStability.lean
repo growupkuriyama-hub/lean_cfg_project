@@ -12,8 +12,12 @@ universe u
 /-
 ObservedSubsetStability.lean
 
-Stability of the canonical observed structures under equality of observed
-subsets.
+Safe stability lemmas for the canonical observed point/frame data under
+equality of observed subsets.
+
+This replacement deliberately avoids making a structure-level equality theorem
+for `canonicalFrameModelCore`.  The paper-facing and downstream Lean uses need
+only relation, point, and frame transport.
 -/
 
 variable {Q : Type u} [Mul Q]
@@ -21,26 +25,55 @@ variable {Q : Type u} [Mul Q]
 theorem same_observed_subset_same_sameObservedSyntactic
     {S T : Set Q} (hST : S = T) (x y : Q) :
     SameObservedSyntactic S x y ↔ SameObservedSyntactic T x y := by
-  subst T
+  cases hST
   exact Iff.rfl
 
 theorem same_observed_subset_same_canonicalPoint
     {S T : Set Q} (hST : S = T) (gamma : Q) :
     CanonicalPoint S gamma = CanonicalPoint T gamma := by
-  subst T
+  cases hST
   rfl
 
 theorem same_observed_subset_same_canonicalFrame
     {S T : Set Q} (hST : S = T) (a b : Q) :
     CanonicalFrame S a b = CanonicalFrame T a b := by
-  subst T
+  cases hST
   rfl
 
-theorem same_observed_subset_same_canonicalFrameModelCore
-    {S T : Set Q} (hST : S = T) :
-    canonicalFrameModelCore Q S = canonicalFrameModelCore Q T := by
-  subst T
+theorem same_observed_subset_same_frameResidual
+    {S T : Set Q} (hST : S = T) (a b : Q) :
+    FrameResidual S a b = FrameResidual T a b := by
+  cases hST
   rfl
+
+theorem same_observed_subset_same_singleBlock
+    {S T : Set Q} (hST : S = T) (a b : Q) :
+    SingleObservedBlock S a b ↔ SingleObservedBlock T a b := by
+  cases hST
+  exact Iff.rfl
+
+theorem same_observed_subset_same_observed_structure_rel
+    {S T : Set Q} (hST : S = T) (x y : Q) :
+    (canonicalObservedFrameStructure (Q := Q) S).rel x y
+      ↔
+    (canonicalObservedFrameStructure (Q := Q) T).rel x y := by
+  cases hST
+  exact Iff.rfl
+
+theorem same_observed_subset_same_observed_structure_residual
+    {S T : Set Q} (hST : S = T) (a b : Q) :
+    (canonicalObservedFrameStructure (Q := Q) S).residual a b =
+      (canonicalObservedFrameStructure (Q := Q) T).residual a b := by
+  cases hST
+  rfl
+
+theorem same_observed_subset_same_observed_structure_singleBlock
+    {S T : Set Q} (hST : S = T) (a b : Q) :
+    (canonicalObservedFrameStructure (Q := Q) S).singleBlock a b
+      ↔
+    (canonicalObservedFrameStructure (Q := Q) T).singleBlock a b := by
+  cases hST
+  exact Iff.rfl
 
 theorem transcript_identifies_sameObservedSyntactic
     {S T : Set Q}
@@ -63,11 +96,67 @@ theorem transcript_identifies_canonicalFrame
   have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
   exact same_observed_subset_same_canonicalFrame (Q := Q) hST a b
 
-theorem transcript_identifies_canonicalFrameModelCore
+theorem transcript_identifies_frameResidual
+    {S T : Set Q}
+    (Tr : ObservedMembershipTranscript (Q := Q) S T) (a b : Q) :
+    FrameResidual S a b = FrameResidual T a b := by
+  have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
+  exact same_observed_subset_same_frameResidual (Q := Q) hST a b
+
+theorem transcript_identifies_singleBlock
+    {S T : Set Q}
+    (Tr : ObservedMembershipTranscript (Q := Q) S T) (a b : Q) :
+    SingleObservedBlock S a b ↔ SingleObservedBlock T a b := by
+  have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
+  exact same_observed_subset_same_singleBlock (Q := Q) hST a b
+
+theorem transcript_identifies_observed_structure_rel
+    {S T : Set Q}
+    (Tr : ObservedMembershipTranscript (Q := Q) S T) (x y : Q) :
+    (canonicalObservedFrameStructure (Q := Q) S).rel x y
+      ↔
+    (canonicalObservedFrameStructure (Q := Q) T).rel x y := by
+  have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
+  exact same_observed_subset_same_observed_structure_rel (Q := Q) hST x y
+
+theorem transcript_identifies_observed_structure_residual
+    {S T : Set Q}
+    (Tr : ObservedMembershipTranscript (Q := Q) S T) (a b : Q) :
+    (canonicalObservedFrameStructure (Q := Q) S).residual a b =
+      (canonicalObservedFrameStructure (Q := Q) T).residual a b := by
+  have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
+  exact same_observed_subset_same_observed_structure_residual (Q := Q) hST a b
+
+theorem transcript_identifies_observed_structure_singleBlock
+    {S T : Set Q}
+    (Tr : ObservedMembershipTranscript (Q := Q) S T) (a b : Q) :
+    (canonicalObservedFrameStructure (Q := Q) S).singleBlock a b
+      ↔
+    (canonicalObservedFrameStructure (Q := Q) T).singleBlock a b := by
+  have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
+  exact same_observed_subset_same_observed_structure_singleBlock
+    (Q := Q) hST a b
+
+theorem transcript_identifies_observed_subset_stability_package
     {S T : Set Q}
     (Tr : ObservedMembershipTranscript (Q := Q) S T) :
-    canonicalFrameModelCore Q S = canonicalFrameModelCore Q T := by
-  have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
-  exact same_observed_subset_same_canonicalFrameModelCore (Q := Q) hST
+    (∀ x y : Q, SameObservedSyntactic S x y ↔ SameObservedSyntactic T x y)
+    ∧
+    (∀ gamma : Q, CanonicalPoint S gamma = CanonicalPoint T gamma)
+    ∧
+    (∀ a b : Q, CanonicalFrame S a b = CanonicalFrame T a b)
+    ∧
+    (∀ a b : Q, SingleObservedBlock S a b ↔ SingleObservedBlock T a b) := by
+  constructor
+  · intro x y
+    exact transcript_identifies_sameObservedSyntactic (Q := Q) Tr x y
+  constructor
+  · intro gamma
+    exact transcript_identifies_canonicalPoint (Q := Q) Tr gamma
+  constructor
+  · intro a b
+    exact transcript_identifies_canonicalFrame (Q := Q) Tr a b
+  · intro a b
+    exact transcript_identifies_singleBlock (Q := Q) Tr a b
 
 end LeanCfgProject

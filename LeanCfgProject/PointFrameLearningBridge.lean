@@ -35,6 +35,26 @@ theorem transcript_identifies_point_frame_incidence
     rw [hp, hf]
     exact h
 
+theorem transcript_identifies_point_frame_incidence_observed_structure
+    {S T : Set Q}
+    (Tr : ObservedMembershipTranscript (Q := Q) S T)
+    (gamma a b : Q) :
+    (CanonicalPoint S gamma ⊆
+        (canonicalObservedFrameStructure (Q := Q) S).residual a b)
+      ↔
+    (CanonicalPoint T gamma ⊆
+        (canonicalObservedFrameStructure (Q := Q) T).residual a b) := by
+  have hp := transcript_identifies_canonicalPoint (Q := Q) Tr gamma
+  have hr := transcript_identifies_observed_structure_residual
+    (Q := Q) Tr a b
+  constructor
+  · intro h
+    rw [← hp, ← hr]
+    exact h
+  · intro h
+    rw [hp, hr]
+    exact h
+
 theorem transcript_identifies_point_collapse
     {S T : Set Q}
     (Tr : ObservedMembershipTranscript (Q := Q) S T)
@@ -42,14 +62,14 @@ theorem transcript_identifies_point_collapse
     (CanonicalPoint S x = CanonicalPoint S y)
       ↔
     (CanonicalPoint T x = CanonicalPoint T y) := by
+  have hx := transcript_identifies_canonicalPoint (Q := Q) Tr x
+  have hy := transcript_identifies_canonicalPoint (Q := Q) Tr y
   constructor
   · intro h
-    rw [← transcript_identifies_canonicalPoint (Q := Q) Tr x]
-    rw [← transcript_identifies_canonicalPoint (Q := Q) Tr y]
+    rw [← hx, ← hy]
     exact h
   · intro h
-    rw [transcript_identifies_canonicalPoint (Q := Q) Tr x]
-    rw [transcript_identifies_canonicalPoint (Q := Q) Tr y]
+    rw [hx, hy]
     exact h
 
 theorem faithful_representatives_identify_point_frame_incidence
