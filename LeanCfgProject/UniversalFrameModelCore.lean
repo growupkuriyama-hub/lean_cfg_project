@@ -13,9 +13,8 @@ universe u
 UniversalFrameModelCore.lean
 
 Core paper-facing package for the canonical reduced frame representation
-section.  This file does not attempt the full abstract lattice-isomorphism
-theorem.  It verifies the point-frame incidence and point-collapse components
-that drive that representation theorem.
+section. This file verifies the point-frame incidence and point-collapse
+components that drive the representation theorem.
 -/
 
 variable {Q : Type u} [Mul Q]
@@ -29,8 +28,8 @@ theorem canonicalObservedFrameStructure_represents_incidence
     CanonicalPoint S gamma ⊆
         (canonicalObservedFrameStructure (Q := Q) S).residual a b
       ↔ a * gamma * b ∈ S := by
-  simpa [canonicalObservedFrameStructure, FrameResidual] using
-    canonicalPoint_subset_frame_iff S gamma a b
+  simpa [CanonicalPoint, canonicalObservedFrameStructure, FrameResidual]
+    using singletonConcept_subset_residual_iff S gamma a b
 
 /--
 The point-collapse relation of the canonical representation is the observed
