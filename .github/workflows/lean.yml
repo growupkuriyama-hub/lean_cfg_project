@@ -78,6 +78,21 @@ jobs:
       - name: Check ICSubmissionSummary v9 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v9
 
+      - name: Check ObservedSubsetTransportPackage v27 module
+        run: lake build LeanCfgProject.ObservedSubsetTransportPackage_v27
+
+      - name: Check PointFrameTransportSummary v27 module
+        run: lake build LeanCfgProject.PointFrameTransportSummary_v27
+
+      - name: Check ObservedLearningSubmissionAudit v27 module
+        run: lake build LeanCfgProject.ObservedLearningSubmissionAudit_v27
+
+      - name: Check ObservedConceptSubmissionIndex v27 module
+        run: lake build LeanCfgProject.ObservedConceptSubmissionIndex_v27
+
+      - name: Check ICSubmissionSummary v10 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v10
+
       # ------------------------------------------------------------------
       # Recent v27.1 experiment targets.
       # Temporarily commented out during the current one-target repair.
