@@ -1,0 +1,17 @@
+      - name: Check ObservedLearningReleaseRegression v27.2 module
+        run: lake build LeanCfgProject.ObservedLearningReleaseRegression_v27_2
+
+      - name: Check PointFrameReleaseRegression v27.2 module
+        run: lake build LeanCfgProject.PointFrameReleaseRegression_v27_2
+
+      - name: Check FiniteBasisReleaseRegression v27.2 module
+        run: lake build LeanCfgProject.FiniteBasisReleaseRegression_v27_2
+
+      - name: Check ICReleaseManifest v27.2 module
+        run: lake build LeanCfgProject.ICReleaseManifest_v27_2
+
+      - name: Check ICReproducibilityIndex CI180 module
+        run: lake build LeanCfgProject.ICReproducibilityIndex_ci180
+
+      - name: Check ICSubmissionSummary v12 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v12
