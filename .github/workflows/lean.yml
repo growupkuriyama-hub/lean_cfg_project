@@ -85,6 +85,27 @@ jobs:
       - name: Check ICSubmissionSummary v6 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v6
 
+      - name: Check FrameModelCoreBasic module
+        run: lake build LeanCfgProject.FrameModelCoreBasic
+
+      - name: Check CanonicalFrameModelCorollaries module
+        run: lake build LeanCfgProject.CanonicalFrameModelCorollaries
+
+      - name: Check ObservedSubsetStability module
+        run: lake build LeanCfgProject.ObservedSubsetStability
+
+      - name: Check PointFrameLearningBridge module
+        run: lake build LeanCfgProject.PointFrameLearningBridge
+
+      - name: Check ReducedFrameModelPaperSummary module
+        run: lake build LeanCfgProject.ReducedFrameModelPaperSummary
+
+      - name: Check ICPaperFormalizationSummary v28 module
+        run: lake build LeanCfgProject.ICPaperFormalizationSummary_v28
+
+      - name: Check ICSubmissionSummary v7 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v7
+
       # ------------------------------------------------------------------
       # Previous paper-facing / recent-experiment targets.
       # Temporarily commented out during the current experiment.
