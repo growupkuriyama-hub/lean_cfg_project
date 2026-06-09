@@ -121,6 +121,21 @@ jobs:
       - name: Check ICSubmissionSummary v8 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v8
 
+      - name: Check ObservedMembershipEquivalence v27 module
+        run: lake build LeanCfgProject.ObservedMembershipEquivalence_v27
+
+      - name: Check PointFrameIncidenceTransport v27 module
+        run: lake build LeanCfgProject.PointFrameIncidenceTransport_v27
+
+      - name: Check FiniteResidualBasisTransport v27 module
+        run: lake build LeanCfgProject.FiniteResidualBasisTransport_v27
+
+      - name: Check ObservedConceptObjectReleaseIndex v27 module
+        run: lake build LeanCfgProject.ObservedConceptObjectReleaseIndex_v27
+
+      - name: Check ICSubmissionSummary v9 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v9
+
       # ------------------------------------------------------------------
       # Previous paper-facing / recent-experiment targets.
       # Temporarily commented out during the current experiment.
