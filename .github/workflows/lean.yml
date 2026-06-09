@@ -63,6 +63,28 @@ jobs:
       - name: Check ICSubmissionSummary v5 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v5
 
+
+      - name: Check PointFrameCorollaries module
+        run: lake build LeanCfgProject.PointFrameCorollaries
+
+      - name: Check ReducedFrameModelCoreDefs module
+        run: lake build LeanCfgProject.ReducedFrameModelCoreDefs
+
+      - name: Check ObservedLearningQueryModel module
+        run: lake build LeanCfgProject.ObservedLearningQueryModel
+
+      - name: Check FaithfulRepresentativeCorollaries module
+        run: lake build LeanCfgProject.FaithfulRepresentativeCorollaries
+
+      - name: Check FiniteObservedBasisCorollaries module
+        run: lake build LeanCfgProject.FiniteObservedBasisCorollaries
+
+      - name: Check ICPaperFormalizationSummary v27 module
+        run: lake build LeanCfgProject.ICPaperFormalizationSummary_v27
+
+      - name: Check ICSubmissionSummary v6 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v6
+
       # ------------------------------------------------------------------
       # Previous paper-facing / recent-experiment targets.
       # Temporarily commented out during the current experiment.

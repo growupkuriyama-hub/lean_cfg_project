@@ -6,8 +6,9 @@ Lean 4 artifact for the paper:
 
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
-Current checked artifact snapshot: commit `370bdcb`  
-GitHub Actions: Lean CI #157 passed
+Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
+Current checked artifact snapshot: commit `05ab02d`  
+GitHub Actions: Lean CI #166 passed
 
 ---
 
@@ -32,15 +33,15 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 The current checked snapshot is:
 
 ```text
-commit: 370bdcb
-CI run: Lean CI #157
+commit: 05ab02d
+CI run: Lean CI #166
 status: passed
 ```
 
 The current fast paper-facing target is:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v3
+lake build LeanCfgProject.ICSubmissionSummary_v5
 ```
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
@@ -69,6 +70,8 @@ At the current checked snapshot, the artifact verifies the following major group
 - maximality of the observed syntactic congruence among two-sided stable `S`-preserving relations;
 - the canonical residual closure system, namely that closed extents are exactly intersections of two-sided residuals;
 - carrier-level observed-syntactic-block adequacy for the standard observation `h` and factor-through-`h` observations;
+- the finite observed-learning layer: canonical observed frame structures, decidability wrappers, finite observed frame bases, finite-set reconstruction, faithful-representative reconstruction, and observed-concept identification wrappers;
+- the canonical point-frame incidence core: singleton concept/frame incidence, equality of point concepts exactly as observed syntactic equivalence, and the paper-facing universal-frame-model core;
 - paper-facing summary and appendix-index targets for reproducibility.
 
 ---
@@ -78,7 +81,7 @@ At the current checked snapshot, the artifact verifies the following major group
 From the repository root, run:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v3
+lake build LeanCfgProject.ICSubmissionSummary_v5
 ```
 
 For a broader paper-facing import check, run:
@@ -94,6 +97,15 @@ For ordinary development, the repository uses a lightweight CI strategy: instead
 The current top-level paper-facing summary modules include:
 
 ```text
+LeanCfgProject/ICSubmissionSummary_v5.lean
+LeanCfgProject/ObservedLearningPaperSummary_v2.lean
+LeanCfgProject/ObservedLearningConstructibilitySummary.lean
+LeanCfgProject/UniversalFrameModelCore.lean
+LeanCfgProject/CanonicalPointFrame.lean
+LeanCfgProject/SingletonClosureIncidence.lean
+LeanCfgProject/ICSubmissionSummary_v4.lean
+LeanCfgProject/ObservedLearningPaperSummary.lean
+LeanCfgProject/FiniteObservedConceptIdentification.lean
 LeanCfgProject/ICSubmissionSummary_v3.lean
 LeanCfgProject/ICFullPaperSummary_v2.lean
 LeanCfgProject/ICFastCI_v2.lean
@@ -608,7 +620,114 @@ This is checked both for the standard observation `h` and for observations facto
 
 ---
 
-### 13. Summary, appendix, and reproducibility targets
+
+### 13. Finite observed-learning layer
+
+Files:
+
+```text
+LeanCfgProject/ObservedFrameStructure.lean
+LeanCfgProject/ObservedFrameStructureDecidable.lean
+LeanCfgProject/FiniteObservedFrameBasis.lean
+LeanCfgProject/FiniteSetQueryReconstruction.lean
+LeanCfgProject/FaithfulRepresentatives.lean
+LeanCfgProject/ObservedLearningExamples.lean
+LeanCfgProject/FiniteObservedConceptIdentification.lean
+LeanCfgProject/ObservedLearningCorollaries.lean
+LeanCfgProject/ObservedLearningConstructibilitySummary.lean
+LeanCfgProject/ObservedLearningPaperSummary.lean
+LeanCfgProject/ObservedLearningPaperSummary_v2.lean
+```
+
+This layer corresponds to the paper's finite observed-learning section.  The target is not the original language itself, but the observed frame-concept data determined by the finite observed subset `S = q[L]`.
+
+Representative declarations:
+
+```text
+FrameResidual
+SingleObservedBlock
+ObservedFrameStructure
+canonicalObservedFrameStructure
+canonical_frameResidual_closed
+frameResidual_singleBlock_generates_residual
+sameObservedSyntactic_has_decision
+frameResidual_membership_has_decision
+singleObservedBlock_has_decision
+conceptClosure_has_common_frame_basis
+conceptClosure_has_finite_frame_basis
+closedConcept_has_finite_frame_basis
+finiteObservedFrameBasis_summary
+finiteSet_eq_of_same_membership
+finiteSet_counterexample_of_ne
+finiteSet_reconstruction_package
+FaithfulRepresentatives
+observedSubset_eq_representative_membership
+observedSubset_eq_of_same_representative_answers
+observedFrameStructure_identified_from_membership
+observedFrameStructure_identified_from_faithful_representatives
+finiteObservedConceptIdentification_summary
+identified_frameResidual_from_membership
+identified_singleBlock_from_membership
+identified_finite_frame_basis_from_membership
+faithful_representatives_identify_frameResidual
+observedLearningConstructibility_from_membership
+observedLearningConstructibility_summary
+```
+
+The verified interpretation is:
+
+- the observed frame-concept structure is determined by the observed subset `S`;
+- every concept closure has a finite observed frame-basis presentation when `Q` is finite;
+- equality of all membership answers for two observed subsets identifies the canonical observed frame structure;
+- faithful representatives identify the observed subset and hence the observed frame structure;
+- once `S` is identified, frame residuals and single-block predicates are identified as well.
+
+This supports the paper's finite observed analogue of distributional learning: the formalized target is the `q`-observed frame-concept object, not the full language `L`.
+
+---
+
+### 14. Canonical point-frame incidence and universal-core layer
+
+Files:
+
+```text
+LeanCfgProject/SingletonClosureIncidence.lean
+LeanCfgProject/CanonicalPointFrame.lean
+LeanCfgProject/UniversalFrameModelCore.lean
+```
+
+This layer corresponds to the paper's canonical reduced frame representation discussion, including the Ganter--Wille/FCA-inspired representation viewpoint specialized to the two-sided monoid incidence induced by `(Q,S)`.
+
+Representative declarations:
+
+```text
+SingletonConcept
+singletonConcept_subset_residual_iff
+singletonConcept_subset_frame_iff
+singletonConcept_subset_residual_of_mem
+CanonicalPoint
+CanonicalFrame
+canonicalPoint_subset_frame_iff
+canonicalPoint_eq_iff_sameObservedSyntactic
+sameObservedSyntactic_iff_canonicalPoint_eq
+canonicalObservedFrameStructure_represents_incidence
+canonicalObservedFrameStructure_pointCollapse
+universalFrameModelCore_summary
+```
+
+The key checked incidence lemma is:
+
+```text
+ConceptClosure S {gamma} ⊆ TwoSidedResidual S a b
+  iff
+a * gamma * b ∈ S
+```
+
+The layer also verifies that equality of canonical point concepts is exactly the observed syntactic equivalence relation.  This provides the Lean-checked core of the paper's canonical reduced frame representation story.  The full abstract complete-lattice isomorphism theorem for arbitrary reduced frame models remains a natural next formalization target, but the point-frame incidence and point-collapse pillars are now checked.
+
+---
+
+### 15. Summary, appendix, and reproducibility targets
 
 Files:
 
@@ -633,6 +752,10 @@ LeanCfgProject/ICReproducibilitySummary.lean
 LeanCfgProject/ICFastCI_v2.lean
 LeanCfgProject/ICFullPaperSummary_v2.lean
 LeanCfgProject/ICSubmissionSummary_v3.lean
+LeanCfgProject/ICSubmissionSummary_v4.lean
+LeanCfgProject/ObservedLearningPaperSummary.lean
+LeanCfgProject/ObservedLearningPaperSummary_v2.lean
+LeanCfgProject/ICSubmissionSummary_v5.lean
 ```
 
 These modules are intentionally lightweight.  Their role is to give stable paper-facing import targets, appendix-index targets, and fast CI targets.
@@ -640,10 +763,10 @@ These modules are intentionally lightweight.  Their role is to give stable paper
 The current recommended top-level target is:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v3
+LeanCfgProject.ICSubmissionSummary_v5
 ```
 
-If this module builds, Lean has checked the current paper-facing import graph through the normal dependency system.
+If this module builds, Lean has checked the current paper-facing import graph, including the observed-learning layer and canonical point-frame incidence core, through the normal dependency system.
 
 ---
 
@@ -668,7 +791,9 @@ If this module builds, Lean has checked the current paper-facing import graph th
 | Syntactic-block adequacy | `ObservedSyntacticBlockAdequacyCorollaries.lean`, `ObservedSyntacticPaperCorollaries.lean` |
 | K4 adequacy witness | `K4ResidualAdequacyExample.lean`, `K4AdequacyStrictness.lean`, `K4ConceptCollapse.lean`, `K4AdequacyPaperSummary.lean`, `AdequacyBridgeSummary.lean` |
 | Carrier observed-block adequacy | `CarrierObservedAdequacy.lean`, `CarrierObservedAdequacyCorollaries.lean` |
-| Paper-facing summary targets | `ICSubmissionSummary_v3.lean`, `ICFullPaperSummary_v2.lean`, `ICFastCI_v2.lean`, `ICReproducibilitySummary.lean`, `ICArtifactFreezeIndex.lean`, `ICArtifactAppendixCoverage.lean` |
+| Finite observed-learning layer | `ObservedFrameStructure.lean`, `ObservedFrameStructureDecidable.lean`, `FiniteObservedFrameBasis.lean`, `FiniteSetQueryReconstruction.lean`, `FaithfulRepresentatives.lean`, `ObservedLearningExamples.lean`, `FiniteObservedConceptIdentification.lean`, `ObservedLearningCorollaries.lean`, `ObservedLearningConstructibilitySummary.lean`, `ObservedLearningPaperSummary.lean`, `ObservedLearningPaperSummary_v2.lean` |
+| Canonical point-frame incidence core | `SingletonClosureIncidence.lean`, `CanonicalPointFrame.lean`, `UniversalFrameModelCore.lean` |
+| Paper-facing summary targets | `ICSubmissionSummary_v5.lean`, `ObservedLearningPaperSummary_v2.lean`, `ICSubmissionSummary_v4.lean`, `ICSubmissionSummary_v3.lean`, `ICFullPaperSummary_v2.lean`, `ICFastCI_v2.lean`, `ICReproducibilitySummary.lean`, `ICArtifactFreezeIndex.lean`, `ICArtifactAppendixCoverage.lean` |
 
 ---
 
@@ -698,7 +823,12 @@ with the following additional verified facts:
 - the observed syntactic congruence is maximal among two-sided stable relations preserving the observed subset;
 - concept extents are exactly residual intersections;
 - finite K4 examples witness strict raw-image inclusion but residual-concept adequacy;
-- carrier states are frame-adequate under the checked nonempty single observed-syntactic-block hypothesis.
+- carrier states are frame-adequate under the checked nonempty single observed-syntactic-block hypothesis;
+- the finite `q`-observed frame-concept object is identified once the observed subset `S` is identified;
+- finite observed frame bases exist for concept closures when `Q` is finite;
+- faithful representatives identify the observed subset and therefore the canonical observed frame structure;
+- singleton point concepts represent two-sided incidence against frame residuals;
+- equality of canonical point concepts is exactly observed syntactic equivalence.
 
 ---
 
@@ -713,7 +843,9 @@ The current Lean artifact does **not** claim that:
 - all residual concepts are exactly realized by typed presentation states without additional hypotheses;
 - finite residual-concept bases have been constructed for broad classes of fixed-`h` substitutable CFLs;
 - the pointed-boundary theorem has been developed into a complete standalone regular-language theory;
-- the endpoint-monoid non-coset witness and the normal-coset / mod-`k` families have all been formalized.
+- the endpoint-monoid non-coset witness and the normal-coset / mod-`k` families have all been formalized;
+- the full abstract complete-lattice isomorphism theorem for arbitrary reduced frame models has been formalized;
+- polynomial-time complexity bounds such as `O(|Q|^4)` have been formalized inside Lean.
 
 The artifact verifies an unconditional bounded finite-stopping theorem only under both finite state and finite observation carrier assumptions.  It also verifies observed-syntactic-block adequacy only under the stated nonempty single-block hypothesis.
 
@@ -726,14 +858,17 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked at commit 370bdcb by GitHub
-Actions Lean CI #157.  The top-level paper-facing target is
-LeanCfgProject.ICSubmissionSummary_v3.  The development verifies the descriptor
+The accompanying Lean 4 artifact was checked at commit 05ab02d by GitHub
+Actions Lean CI #166.  The top-level paper-facing target is
+LeanCfgProject.ICSubmissionSummary_v5.  The development verifies the descriptor
 architecture, residual concept semantics, carrier saturation correctness,
 bounded finite-stopping results, observed syntactic congruence and maximality,
-the canonical residual closure system, K4 adequacy witnesses, and carrier-level
-observed-block adequacy.  The artifact intentionally does not claim a full
-formalization of the paper or an unrestricted adequacy theorem.
+the canonical residual closure system, K4 adequacy witnesses, carrier-level
+observed-block adequacy, the finite observed-learning layer, and the canonical
+point-frame incidence core for the reduced representation viewpoint.  The
+artifact intentionally does not claim a full formalization of the paper, the
+full abstract universal representation theorem, or an unrestricted adequacy
+theorem.
 ```
 
 ---
@@ -745,8 +880,10 @@ Natural next targets include:
 1. preparing a public release tag corresponding to the paper version;
 2. preparing an archived artifact snapshot with a persistent identifier;
 3. adding a lightweight online blueprint linking paper statements to declarations;
-4. formalizing the endpoint-monoid non-coset witness;
-5. formalizing the normal-coset and mod-`k` adequacy families;
-6. investigating quotient invariance of the observed syntactic concept object;
-7. developing restricted adequacy theorems for additional controlled subclasses;
-8. keeping future extensions modular and preserving the current CI discipline.
+4. formalizing the full abstract reduced-frame-model isomorphism theorem;
+5. formalizing endpoint-monoid non-coset witnesses;
+6. formalizing the normal-coset and mod-`k` adequacy families;
+7. formalizing more concrete faithful-representative examples for observed learning;
+8. investigating quotient invariance of the observed syntactic concept object;
+9. developing restricted adequacy theorems for additional controlled subclasses;
+10. keeping future extensions modular and preserving the current CI discipline.
