@@ -120,6 +120,27 @@ jobs:
       - name: Check ICSubmissionSummary v4 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v4
 
+      - name: Check SingletonClosureIncidence module
+        run: lake build LeanCfgProject.SingletonClosureIncidence
+
+      - name: Check CanonicalPointFrame module
+        run: lake build LeanCfgProject.CanonicalPointFrame
+
+      - name: Check UniversalFrameModelCore module
+        run: lake build LeanCfgProject.UniversalFrameModelCore
+
+      - name: Check ObservedLearningCorollaries module
+        run: lake build LeanCfgProject.ObservedLearningCorollaries
+
+      - name: Check ObservedLearningConstructibilitySummary module
+        run: lake build LeanCfgProject.ObservedLearningConstructibilitySummary
+
+      - name: Check ObservedLearningPaperSummary v2 module
+        run: lake build LeanCfgProject.ObservedLearningPaperSummary_v2
+
+      - name: Check ICSubmissionSummary v5 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v5
+
       # ------------------------------------------------------------------
       # Optional full-regression targets.
       # Uncomment these when preparing a release, before tagging an artifact,
