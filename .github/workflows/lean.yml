@@ -93,6 +93,24 @@ jobs:
       - name: Check ICSubmissionSummary v10 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v10
 
+      - name: Check ObservedLearningReleaseTheorems v27 module
+        run: lake build LeanCfgProject.ObservedLearningReleaseTheorems_v27
+
+      - name: Check PointFrameReleaseTheorems v27 module
+        run: lake build LeanCfgProject.PointFrameReleaseTheorems_v27
+
+      - name: Check FiniteBasisReleaseTheorems v27 module
+        run: lake build LeanCfgProject.FiniteBasisReleaseTheorems_v27
+
+      - name: Check ICArtifactAudit v27 module
+        run: lake build LeanCfgProject.ICArtifactAudit_v27
+
+      - name: Check ICFormalizationReleaseIndex v27 module
+        run: lake build LeanCfgProject.ICFormalizationReleaseIndex_v27
+
+      - name: Check ICSubmissionSummary v11 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v11
+
       # ------------------------------------------------------------------
       # Recent v27.1 experiment targets.
       # Temporarily commented out during the current one-target repair.
