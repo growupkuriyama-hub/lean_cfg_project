@@ -20,19 +20,19 @@ fixed.
 
 variable {Q : Type u} [Mul Q]
 
-theorem sameObservedSyntactic_has_decision
+def sameObservedSyntactic_has_decision
     (S : Set Q) (x y : Q) :
     Decidable (SameObservedSyntactic S x y) := by
   classical
   exact inferInstance
 
-theorem frameResidual_membership_has_decision
+def frameResidual_membership_has_decision
     (S : Set Q) (a b x : Q) :
     Decidable (x ∈ FrameResidual S a b) := by
   classical
   exact inferInstance
 
-theorem singleObservedBlock_has_decision
+def singleObservedBlock_has_decision
     (S : Set Q) (a b : Q) :
     Decidable (SingleObservedBlock S a b) := by
   classical
