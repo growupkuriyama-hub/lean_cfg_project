@@ -4,6 +4,7 @@ import LeanCfgProject.ObservedLearningQueryModel
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
+set_option linter.unusedSectionVars false
 
 namespace LeanCfgProject
 
@@ -15,9 +16,9 @@ ObservedSubsetStability.lean
 Safe stability lemmas for the canonical observed point/frame data under
 equality of observed subsets.
 
-This replacement deliberately avoids making a structure-level equality theorem
-for `canonicalFrameModelCore`.  The paper-facing and downstream Lean uses need
-only relation, point, and frame transport.
+This version avoids both:
+1. structure-level equality between differently indexed frame models, and
+2. name collisions with ObservedLearningQueryModel.
 -/
 
 variable {Q : Type u} [Mul Q]
@@ -103,7 +104,8 @@ theorem transcript_identifies_frameResidual
   have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
   exact same_observed_subset_same_frameResidual (Q := Q) hST a b
 
-theorem transcript_identifies_singleBlock
+/-- Avoids collision with `ObservedLearningQueryModel.transcript_identifies_singleBlock`. -/
+theorem transcript_identifies_singleBlock_subset_stability
     {S T : Set Q}
     (Tr : ObservedMembershipTranscript (Q := Q) S T) (a b : Q) :
     SingleObservedBlock S a b ↔ SingleObservedBlock T a b := by
@@ -127,7 +129,7 @@ theorem transcript_identifies_observed_structure_residual
   have hST : S = T := transcript_identifies_observed_subset (Q := Q) Tr
   exact same_observed_subset_same_observed_structure_residual (Q := Q) hST a b
 
-theorem transcript_identifies_observed_structure_singleBlock
+theorem transcript_identifies_observed_structure_singleBlock_subset_stability
     {S T : Set Q}
     (Tr : ObservedMembershipTranscript (Q := Q) S T) (a b : Q) :
     (canonicalObservedFrameStructure (Q := Q) S).singleBlock a b
@@ -157,6 +159,6 @@ theorem transcript_identifies_observed_subset_stability_package
   · intro a b
     exact transcript_identifies_canonicalFrame (Q := Q) Tr a b
   · intro a b
-    exact transcript_identifies_singleBlock (Q := Q) Tr a b
+    exact transcript_identifies_singleBlock_subset_stability (Q := Q) Tr a b
 
 end LeanCfgProject

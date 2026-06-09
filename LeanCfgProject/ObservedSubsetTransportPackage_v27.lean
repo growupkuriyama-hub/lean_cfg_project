@@ -13,8 +13,7 @@ universe u
 ObservedSubsetTransportPackage_v27.lean
 
 Paper-facing package for transporting observed syntactic data along equality
-of the observed subset.  This module avoids structure-level equality between
-indexed frame models and records only the pointwise data used by the paper.
+of the observed subset.
 -/
 
 variable {Q : Type u} [Mul Q]
@@ -83,6 +82,7 @@ theorem transcript_transport_observed_structure_package
   · intro a b
     exact transcript_identifies_observed_structure_residual (Q := Q) Tr a b
   · intro a b
-    exact transcript_identifies_observed_structure_singleBlock (Q := Q) Tr a b
+    exact transcript_identifies_observed_structure_singleBlock_subset_stability
+      (Q := Q) Tr a b
 
 end LeanCfgProject
