@@ -57,6 +57,6 @@ theorem observedSubset_eq_of_same_representative_answers
     S = T := by
   apply finiteSet_eq_of_same_membership
   intro s
-  exact (R.rep_membership s).trans (hT s)
+  exact (R.rep_membership s).symm.trans (hT s)
 
 end LeanCfgProject
