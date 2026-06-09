@@ -1,0 +1,23 @@
+      - name: Check ICPaperClaimIndex v27.2 module
+        run: lake build LeanCfgProject.ICPaperClaimIndex_v27_2
+
+      - name: Check ICTheoremTableIndex v27.2 module
+        run: lake build LeanCfgProject.ICTheoremTableIndex_v27_2
+
+      - name: Check ICFrozenArtifactIndex v27.2 module
+        run: lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
+
+      - name: Check ICDependencyCertificate v27.2 module
+        run: lake build LeanCfgProject.ICDependencyCertificate_v27_2
+
+      - name: Check ICFormalizationSupplementCertificate v27.2 module
+        run: lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
+
+      - name: Check ICPaperSubmissionChecklist v27.2 module
+        run: lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
+
+      - name: Check ICFinalSmokeTest v27.2 module
+        run: lake build LeanCfgProject.ICFinalSmokeTest_v27_2
+
+      - name: Check ICSubmissionSummary v14 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v14

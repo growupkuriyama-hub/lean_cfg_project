@@ -36,67 +36,77 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current experiment targets: v27.2 / CI #180 release-certificate push8.
+      # Current experiment targets: v27.2 / CI #180 final-index push9.
       #
       # Active purpose:
-      #   Check the release-certificate layer after push7 passed, culminating
-      #   in ICSubmissionSummary_v13.
+      #   Check the final-index layer after push8 passed, culminating in
+      #   ICSubmissionSummary_v14.
       #
       # Historical experiment records are preserved below as commented-out
       # blocks.  Do not delete them; uncomment selected blocks for broader
       # regression checks or release preparation.
       # ------------------------------------------------------------------
 
-      - name: Check ICArtifactMetadata CI180 module
-        run: lake build LeanCfgProject.ICArtifactMetadata_ci180
+      - name: Check ICPaperClaimIndex v27.2 module
+        run: lake build LeanCfgProject.ICPaperClaimIndex_v27_2
 
-      - name: Check ICReleaseCertificate v27.2 module
-        run: lake build LeanCfgProject.ICReleaseCertificate_v27_2
+      - name: Check ICTheoremTableIndex v27.2 module
+        run: lake build LeanCfgProject.ICTheoremTableIndex_v27_2
 
-      - name: Check ObservedLearningCertificate v27.2 module
-        run: lake build LeanCfgProject.ObservedLearningCertificate_v27_2
+      - name: Check ICFrozenArtifactIndex v27.2 module
+        run: lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
 
-      - name: Check PointFrameCertificate v27.2 module
-        run: lake build LeanCfgProject.PointFrameCertificate_v27_2
+      - name: Check ICDependencyCertificate v27.2 module
+        run: lake build LeanCfgProject.ICDependencyCertificate_v27_2
 
-      - name: Check FiniteBasisCertificate v27.2 module
-        run: lake build LeanCfgProject.FiniteBasisCertificate_v27_2
+      - name: Check ICFormalizationSupplementCertificate v27.2 module
+        run: lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
 
-      - name: Check ICPaperFormalizationBridge v27.2 module
-        run: lake build LeanCfgProject.ICPaperFormalizationBridge_v27_2
+      - name: Check ICPaperSubmissionChecklist v27.2 module
+        run: lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
 
-      - name: Check ICAppendixReleaseIndex v27.2 module
-        run: lake build LeanCfgProject.ICAppendixReleaseIndex_v27_2
+      - name: Check ICFinalSmokeTest v27.2 module
+        run: lake build LeanCfgProject.ICFinalSmokeTest_v27_2
 
-      - name: Check ICReleaseSmokeTest v27.2 module
-        run: lake build LeanCfgProject.ICReleaseSmokeTest_v27_2
-
-      - name: Check ICSubmissionSummary v13 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v13
+      - name: Check ICSubmissionSummary v14 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v14
 
       # ------------------------------------------------------------------
       # Archived active experiment targets from the uploaded lean.yml.
-      # Temporarily commented out during the current push8 experiment.
+      # Temporarily commented out during the current push9 experiment.
       # ------------------------------------------------------------------
 
-      # - name: Check ObservedLearningReleaseRegression v27.2 module
-      #   run: lake build LeanCfgProject.ObservedLearningReleaseRegression_v27_2
+      # - name: Check ICArtifactMetadata CI180 module
+      #   run: lake build LeanCfgProject.ICArtifactMetadata_ci180
       #
-      # - name: Check PointFrameReleaseRegression v27.2 module
-      #   run: lake build LeanCfgProject.PointFrameReleaseRegression_v27_2
+      # - name: Check ICReleaseCertificate v27.2 module
+      #   run: lake build LeanCfgProject.ICReleaseCertificate_v27_2
       #
-      # - name: Check FiniteBasisReleaseRegression v27.2 module
-      #   run: lake build LeanCfgProject.FiniteBasisReleaseRegression_v27_2
+      # - name: Check ObservedLearningCertificate v27.2 module
+      #   run: lake build LeanCfgProject.ObservedLearningCertificate_v27_2
       #
-      # - name: Check ICReleaseManifest v27.2 module
-      #   run: lake build LeanCfgProject.ICReleaseManifest_v27_2
+      # - name: Check PointFrameCertificate v27.2 module
+      #   run: lake build LeanCfgProject.PointFrameCertificate_v27_2
       #
-      # - name: Check ICReproducibilityIndex CI180 module
-      #   run: lake build LeanCfgProject.ICReproducibilityIndex_ci180
+      # - name: Check FiniteBasisCertificate v27.2 module
+      #   run: lake build LeanCfgProject.FiniteBasisCertificate_v27_2
       #
-      # - name: Check ICSubmissionSummary v12 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v12
+      # - name: Check ICPaperFormalizationBridge v27.2 module
+      #   run: lake build LeanCfgProject.ICPaperFormalizationBridge_v27_2
       #
+      # - name: Check ICAppendixReleaseIndex v27.2 module
+      #   run: lake build LeanCfgProject.ICAppendixReleaseIndex_v27_2
+      #
+      # - name: Check ICReleaseSmokeTest v27.2 module
+      #   run: lake build LeanCfgProject.ICReleaseSmokeTest_v27_2
+      #
+      # - name: Check ICSubmissionSummary v13 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v13
+      #
+
+      # ------------------------------------------------------------------
+      # Original commented archive retained verbatim from uploaded lean.yml.
+      # ------------------------------------------------------------------
 
       # ------------------------------------------------------------------
       # Original commented archive retained verbatim from uploaded lean.yml.
