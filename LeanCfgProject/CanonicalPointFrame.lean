@@ -14,9 +14,6 @@ CanonicalPointFrame.lean
 Point/frame representation lemmas for the observed syntactic concept object.
 -/
 
-attribute [local reducible]
-  TwoSidedResidual CommonContexts ElementsOfContexts ConceptClosure
-
 variable {Q : Type u} [Mul Q]
 
 /-- Canonical point interpretation. -/

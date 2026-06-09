@@ -36,89 +36,11 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Fast paper-facing CI targets.
-      # These top-level modules import the currently relevant dependency
-      # graph, so routine pushes do not need to build every old experimental
-      # target one by one.
+      # Current experiment targets.
+      # Keep only the latest v26.4 full-power experiment active during
+      # ordinary iteration.  All older targets are preserved below as
+      # commented-out blocks and can be restored when preparing a release.
       # ------------------------------------------------------------------
-
-      - name: Check SemanticBridgeSummary module
-        run: lake build LeanCfgProject.SemanticBridgeSummary
-
-      - name: Check AttackSemanticBridgeSummary module
-        run: lake build LeanCfgProject.AttackSemanticBridgeSummary
-
-      - name: Check ObservedSyntacticPaperSummary module
-        run: lake build LeanCfgProject.ObservedSyntacticPaperSummary
-
-      - name: Check ICSemanticBridgeSummary v3 module
-        run: lake build LeanCfgProject.ICSemanticBridgeSummary_v3
-
-      - name: Check ICPaperArtifactSummary module
-        run: lake build LeanCfgProject.ICPaperArtifactSummary
-
-      - name: Check ICLeanAppendixIndex module
-        run: lake build LeanCfgProject.ICLeanAppendixIndex
-
-      - name: Check ICSubmissionSummary v1 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v1
-
-      - name: Check ICArtifactReleaseSummary module
-        run: lake build LeanCfgProject.ICArtifactReleaseSummary
-
-      - name: Check ICArtifactAppendixCoverage module
-        run: lake build LeanCfgProject.ICArtifactAppendixCoverage
-
-      - name: Check ICFastCI module
-        run: lake build LeanCfgProject.ICFastCI
-
-      - name: Check ICFullPaperSummary v1 module
-        run: lake build LeanCfgProject.ICFullPaperSummary_v1
-
-      - name: Check ICSubmissionSummary v2 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v2
-
-      - name: Check ICArtifactFreezeIndex module
-        run: lake build LeanCfgProject.ICArtifactFreezeIndex
-
-      - name: Check ICReproducibilitySummary module
-        run: lake build LeanCfgProject.ICReproducibilitySummary
-
-      - name: Check ICFastCI v2 module
-        run: lake build LeanCfgProject.ICFastCI_v2
-
-      - name: Check ICFullPaperSummary v2 module
-        run: lake build LeanCfgProject.ICFullPaperSummary_v2
-
-      - name: Check ICSubmissionSummary v3 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v3
-
-      - name: Check ObservedFrameStructure module
-        run: lake build LeanCfgProject.ObservedFrameStructure
-
-      - name: Check ObservedFrameStructureDecidable module
-        run: lake build LeanCfgProject.ObservedFrameStructureDecidable
-
-      - name: Check FiniteObservedFrameBasis module
-        run: lake build LeanCfgProject.FiniteObservedFrameBasis
-
-      - name: Check FiniteSetQueryReconstruction module
-        run: lake build LeanCfgProject.FiniteSetQueryReconstruction
-
-      - name: Check FaithfulRepresentatives module
-        run: lake build LeanCfgProject.FaithfulRepresentatives
-
-      - name: Check ObservedLearningExamples module
-        run: lake build LeanCfgProject.ObservedLearningExamples
-
-      - name: Check FiniteObservedConceptIdentification module
-        run: lake build LeanCfgProject.FiniteObservedConceptIdentification
-
-      - name: Check ObservedLearningPaperSummary module
-        run: lake build LeanCfgProject.ObservedLearningPaperSummary
-
-      - name: Check ICSubmissionSummary v4 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v4
 
       - name: Check SingletonClosureIncidence module
         run: lake build LeanCfgProject.SingletonClosureIncidence
@@ -140,6 +62,91 @@ jobs:
 
       - name: Check ICSubmissionSummary v5 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v5
+
+      # ------------------------------------------------------------------
+      # Previous paper-facing / recent-experiment targets.
+      # Temporarily commented out during the current experiment.
+      # Do not delete these blocks: uncomment them for wider regression checks.
+      # ------------------------------------------------------------------
+
+      # - name: Check SemanticBridgeSummary module
+      #   run: lake build LeanCfgProject.SemanticBridgeSummary
+      #
+      # - name: Check AttackSemanticBridgeSummary module
+      #   run: lake build LeanCfgProject.AttackSemanticBridgeSummary
+      #
+      # - name: Check ObservedSyntacticPaperSummary module
+      #   run: lake build LeanCfgProject.ObservedSyntacticPaperSummary
+      #
+      # - name: Check ICSemanticBridgeSummary v3 module
+      #   run: lake build LeanCfgProject.ICSemanticBridgeSummary_v3
+      #
+      # - name: Check ICPaperArtifactSummary module
+      #   run: lake build LeanCfgProject.ICPaperArtifactSummary
+      #
+      # - name: Check ICLeanAppendixIndex module
+      #   run: lake build LeanCfgProject.ICLeanAppendixIndex
+      #
+      # - name: Check ICSubmissionSummary v1 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v1
+      #
+      # - name: Check ICArtifactReleaseSummary module
+      #   run: lake build LeanCfgProject.ICArtifactReleaseSummary
+      #
+      # - name: Check ICArtifactAppendixCoverage module
+      #   run: lake build LeanCfgProject.ICArtifactAppendixCoverage
+      #
+      # - name: Check ICFastCI module
+      #   run: lake build LeanCfgProject.ICFastCI
+      #
+      # - name: Check ICFullPaperSummary v1 module
+      #   run: lake build LeanCfgProject.ICFullPaperSummary_v1
+      #
+      # - name: Check ICSubmissionSummary v2 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v2
+      #
+      # - name: Check ICArtifactFreezeIndex module
+      #   run: lake build LeanCfgProject.ICArtifactFreezeIndex
+      #
+      # - name: Check ICReproducibilitySummary module
+      #   run: lake build LeanCfgProject.ICReproducibilitySummary
+      #
+      # - name: Check ICFastCI v2 module
+      #   run: lake build LeanCfgProject.ICFastCI_v2
+      #
+      # - name: Check ICFullPaperSummary v2 module
+      #   run: lake build LeanCfgProject.ICFullPaperSummary_v2
+      #
+      # - name: Check ICSubmissionSummary v3 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v3
+      #
+      # - name: Check ObservedFrameStructure module
+      #   run: lake build LeanCfgProject.ObservedFrameStructure
+      #
+      # - name: Check ObservedFrameStructureDecidable module
+      #   run: lake build LeanCfgProject.ObservedFrameStructureDecidable
+      #
+      # - name: Check FiniteObservedFrameBasis module
+      #   run: lake build LeanCfgProject.FiniteObservedFrameBasis
+      #
+      # - name: Check FiniteSetQueryReconstruction module
+      #   run: lake build LeanCfgProject.FiniteSetQueryReconstruction
+      #
+      # - name: Check FaithfulRepresentatives module
+      #   run: lake build LeanCfgProject.FaithfulRepresentatives
+      #
+      # - name: Check ObservedLearningExamples module
+      #   run: lake build LeanCfgProject.ObservedLearningExamples
+      #
+      # - name: Check FiniteObservedConceptIdentification module
+      #   run: lake build LeanCfgProject.FiniteObservedConceptIdentification
+      #
+      # - name: Check ObservedLearningPaperSummary module
+      #   run: lake build LeanCfgProject.ObservedLearningPaperSummary
+      #
+      # - name: Check ICSubmissionSummary v4 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v4
+      #
 
       # ------------------------------------------------------------------
       # Optional full-regression targets.
