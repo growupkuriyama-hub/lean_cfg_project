@@ -36,138 +36,151 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current experiment targets.
-      # Keep only the latest v26.4 full-power experiment active during
-      # ordinary iteration.  All older targets are preserved below as
-      # commented-out blocks and can be restored when preparing a release.
+      # Current experiment target.
+      # Only the currently failing/just-fixed module is active.
+      #
+      # Current purpose:
+      #   Test the v2 fix of CanonicalPointFrameStablePackage_v27 after
+      #   replacing finiteSet_eq_of_same_membership by local Set.ext.
+      #
+      # Do not delete historical targets below.  They are preserved as
+      # commented-out experiment records and can be restored for broader
+      # checks after this target passes.
       # ------------------------------------------------------------------
-
-      - name: Check SingletonClosureIncidence module
-        run: lake build LeanCfgProject.SingletonClosureIncidence
-
-      - name: Check CanonicalPointFrame module
-        run: lake build LeanCfgProject.CanonicalPointFrame
-
-      - name: Check UniversalFrameModelCore module
-        run: lake build LeanCfgProject.UniversalFrameModelCore
-
-      - name: Check ObservedLearningCorollaries module
-        run: lake build LeanCfgProject.ObservedLearningCorollaries
-
-      - name: Check ObservedLearningConstructibilitySummary module
-        run: lake build LeanCfgProject.ObservedLearningConstructibilitySummary
-
-      - name: Check ObservedLearningPaperSummary v2 module
-        run: lake build LeanCfgProject.ObservedLearningPaperSummary_v2
-
-      - name: Check ICSubmissionSummary v5 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v5
-
-
-      - name: Check PointFrameCorollaries module
-        run: lake build LeanCfgProject.PointFrameCorollaries
-
-      - name: Check ReducedFrameModelCoreDefs module
-        run: lake build LeanCfgProject.ReducedFrameModelCoreDefs
-
-      - name: Check ObservedLearningQueryModel module
-        run: lake build LeanCfgProject.ObservedLearningQueryModel
-
-      - name: Check FaithfulRepresentativeCorollaries module
-        run: lake build LeanCfgProject.FaithfulRepresentativeCorollaries
-
-      - name: Check FiniteObservedBasisCorollaries module
-        run: lake build LeanCfgProject.FiniteObservedBasisCorollaries
-
-      - name: Check ICPaperFormalizationSummary v27 module
-        run: lake build LeanCfgProject.ICPaperFormalizationSummary_v27
-
-      - name: Check ICSubmissionSummary v6 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v6
-
-      - name: Check FrameModelCoreBasic module
-        run: lake build LeanCfgProject.FrameModelCoreBasic
-
-      - name: Check CanonicalFrameModelCorollaries module
-        run: lake build LeanCfgProject.CanonicalFrameModelCorollaries
-
-      - name: Check ObservedSubsetStability module
-        run: lake build LeanCfgProject.ObservedSubsetStability
-
-      - name: Check PointFrameLearningBridge module
-        run: lake build LeanCfgProject.PointFrameLearningBridge
-
-      - name: Check ReducedFrameModelPaperSummary module
-        run: lake build LeanCfgProject.ReducedFrameModelPaperSummary
-
-      - name: Check ICPaperFormalizationSummary v28 module
-        run: lake build LeanCfgProject.ICPaperFormalizationSummary_v28
-
-      - name: Check ICSubmissionSummary v7 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v7
-
-      - name: Check ObservedLearningStablePackage v27 module
-        run: lake build LeanCfgProject.ObservedLearningStablePackage_v27
 
       - name: Check CanonicalPointFrameStablePackage v27 module
         run: lake build LeanCfgProject.CanonicalPointFrameStablePackage_v27
 
-      - name: Check ObservedFiniteBasisStablePackage v27 module
-        run: lake build LeanCfgProject.ObservedFiniteBasisStablePackage_v27
+      # ------------------------------------------------------------------
+      # Recent v27.1 experiment targets.
+      # Temporarily commented out during the current one-target repair.
+      # Uncomment progressively after CanonicalPointFrameStablePackage_v27
+      # passes again.
+      # ------------------------------------------------------------------
 
-      - name: Check ICSubmissionSafeExpansion v27 module
-        run: lake build LeanCfgProject.ICSubmissionSafeExpansion_v27
-
-      - name: Check ICSubmissionSummary v8 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v8
-
-      - name: Check ObservedMembershipEquivalence v27 module
-        run: lake build LeanCfgProject.ObservedMembershipEquivalence_v27
-
-      - name: Check PointFrameIncidenceTransport v27 module
-        run: lake build LeanCfgProject.PointFrameIncidenceTransport_v27
-
-      - name: Check FiniteResidualBasisTransport v27 module
-        run: lake build LeanCfgProject.FiniteResidualBasisTransport_v27
-
-      - name: Check ObservedConceptObjectReleaseIndex v27 module
-        run: lake build LeanCfgProject.ObservedConceptObjectReleaseIndex_v27
-
-      - name: Check ICSubmissionSummary v9 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v9
-
-      - name: Check ObservedSubsetTransportPackage v27 module
-        run: lake build LeanCfgProject.ObservedSubsetTransportPackage_v27
-
-      - name: Check PointFrameTransportSummary v27 module
-        run: lake build LeanCfgProject.PointFrameTransportSummary_v27
-
-      - name: Check ObservedLearningSubmissionAudit v27 module
-        run: lake build LeanCfgProject.ObservedLearningSubmissionAudit_v27
-
-      - name: Check ObservedConceptSubmissionIndex v27 module
-        run: lake build LeanCfgProject.ObservedConceptSubmissionIndex_v27
-
-      - name: Check ICSubmissionSummary v10 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v10
-
-      - name: Check ObservedLearningReleaseTheorems v27 module
-        run: lake build LeanCfgProject.ObservedLearningReleaseTheorems_v27
-
-      - name: Check PointFrameReleaseTheorems v27 module
-        run: lake build LeanCfgProject.PointFrameReleaseTheorems_v27
-
-      - name: Check FiniteBasisReleaseTheorems v27 module
-        run: lake build LeanCfgProject.FiniteBasisReleaseTheorems_v27
-
-      - name: Check ICArtifactAudit v27 module
-        run: lake build LeanCfgProject.ICArtifactAudit_v27
-
-      - name: Check ICFormalizationReleaseIndex v27 module
-        run: lake build LeanCfgProject.ICFormalizationReleaseIndex_v27
-
-      - name: Check ICSubmissionSummary v11 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v11
+      # - name: Check SingletonClosureIncidence module
+      #   run: lake build LeanCfgProject.SingletonClosureIncidence
+      #
+      # - name: Check CanonicalPointFrame module
+      #   run: lake build LeanCfgProject.CanonicalPointFrame
+      #
+      # - name: Check UniversalFrameModelCore module
+      #   run: lake build LeanCfgProject.UniversalFrameModelCore
+      #
+      # - name: Check ObservedLearningCorollaries module
+      #   run: lake build LeanCfgProject.ObservedLearningCorollaries
+      #
+      # - name: Check ObservedLearningConstructibilitySummary module
+      #   run: lake build LeanCfgProject.ObservedLearningConstructibilitySummary
+      #
+      # - name: Check ObservedLearningPaperSummary v2 module
+      #   run: lake build LeanCfgProject.ObservedLearningPaperSummary_v2
+      #
+      # - name: Check ICSubmissionSummary v5 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v5
+      #
+      # - name: Check PointFrameCorollaries module
+      #   run: lake build LeanCfgProject.PointFrameCorollaries
+      #
+      # - name: Check ReducedFrameModelCoreDefs module
+      #   run: lake build LeanCfgProject.ReducedFrameModelCoreDefs
+      #
+      # - name: Check ObservedLearningQueryModel module
+      #   run: lake build LeanCfgProject.ObservedLearningQueryModel
+      #
+      # - name: Check FaithfulRepresentativeCorollaries module
+      #   run: lake build LeanCfgProject.FaithfulRepresentativeCorollaries
+      #
+      # - name: Check FiniteObservedBasisCorollaries module
+      #   run: lake build LeanCfgProject.FiniteObservedBasisCorollaries
+      #
+      # - name: Check ICPaperFormalizationSummary v27 module
+      #   run: lake build LeanCfgProject.ICPaperFormalizationSummary_v27
+      #
+      # - name: Check ICSubmissionSummary v6 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v6
+      #
+      # - name: Check FrameModelCoreBasic module
+      #   run: lake build LeanCfgProject.FrameModelCoreBasic
+      #
+      # - name: Check CanonicalFrameModelCorollaries module
+      #   run: lake build LeanCfgProject.CanonicalFrameModelCorollaries
+      #
+      # - name: Check ObservedSubsetStability module
+      #   run: lake build LeanCfgProject.ObservedSubsetStability
+      #
+      # - name: Check PointFrameLearningBridge module
+      #   run: lake build LeanCfgProject.PointFrameLearningBridge
+      #
+      # - name: Check ReducedFrameModelPaperSummary module
+      #   run: lake build LeanCfgProject.ReducedFrameModelPaperSummary
+      #
+      # - name: Check ICPaperFormalizationSummary v28 module
+      #   run: lake build LeanCfgProject.ICPaperFormalizationSummary_v28
+      #
+      # - name: Check ICSubmissionSummary v7 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v7
+      #
+      # - name: Check ObservedLearningStablePackage v27 module
+      #   run: lake build LeanCfgProject.ObservedLearningStablePackage_v27
+      #
+      # - name: Check ObservedFiniteBasisStablePackage v27 module
+      #   run: lake build LeanCfgProject.ObservedFiniteBasisStablePackage_v27
+      #
+      # - name: Check ICSubmissionSafeExpansion v27 module
+      #   run: lake build LeanCfgProject.ICSubmissionSafeExpansion_v27
+      #
+      # - name: Check ICSubmissionSummary v8 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v8
+      #
+      # - name: Check ObservedMembershipEquivalence v27 module
+      #   run: lake build LeanCfgProject.ObservedMembershipEquivalence_v27
+      #
+      # - name: Check PointFrameIncidenceTransport v27 module
+      #   run: lake build LeanCfgProject.PointFrameIncidenceTransport_v27
+      #
+      # - name: Check FiniteResidualBasisTransport v27 module
+      #   run: lake build LeanCfgProject.FiniteResidualBasisTransport_v27
+      #
+      # - name: Check ObservedConceptObjectReleaseIndex v27 module
+      #   run: lake build LeanCfgProject.ObservedConceptObjectReleaseIndex_v27
+      #
+      # - name: Check ICSubmissionSummary v9 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v9
+      #
+      # - name: Check ObservedSubsetTransportPackage v27 module
+      #   run: lake build LeanCfgProject.ObservedSubsetTransportPackage_v27
+      #
+      # - name: Check PointFrameTransportSummary v27 module
+      #   run: lake build LeanCfgProject.PointFrameTransportSummary_v27
+      #
+      # - name: Check ObservedLearningSubmissionAudit v27 module
+      #   run: lake build LeanCfgProject.ObservedLearningSubmissionAudit_v27
+      #
+      # - name: Check ObservedConceptSubmissionIndex v27 module
+      #   run: lake build LeanCfgProject.ObservedConceptSubmissionIndex_v27
+      #
+      # - name: Check ICSubmissionSummary v10 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v10
+      #
+      # - name: Check ObservedLearningReleaseTheorems v27 module
+      #   run: lake build LeanCfgProject.ObservedLearningReleaseTheorems_v27
+      #
+      # - name: Check PointFrameReleaseTheorems v27 module
+      #   run: lake build LeanCfgProject.PointFrameReleaseTheorems_v27
+      #
+      # - name: Check FiniteBasisReleaseTheorems v27 module
+      #   run: lake build LeanCfgProject.FiniteBasisReleaseTheorems_v27
+      #
+      # - name: Check ICArtifactAudit v27 module
+      #   run: lake build LeanCfgProject.ICArtifactAudit_v27
+      #
+      # - name: Check ICFormalizationReleaseIndex v27 module
+      #   run: lake build LeanCfgProject.ICFormalizationReleaseIndex_v27
+      #
+      # - name: Check ICSubmissionSummary v11 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v11
+      #
 
       # ------------------------------------------------------------------
       # Previous paper-facing / recent-experiment targets.
@@ -425,3 +438,4 @@ jobs:
       #
       # - name: Check CarrierObservedAdequacyCorollaries module
       #   run: lake build LeanCfgProject.CarrierObservedAdequacyCorollaries
+      #
