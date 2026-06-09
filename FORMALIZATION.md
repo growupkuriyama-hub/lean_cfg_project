@@ -2,13 +2,14 @@
 
 Lean 4 artifact for the paper:
 
-**Residual Concept Semantics for Two-Sided Fixed-`h` CFG Presentations**
+**Residual Concept Representations for Two-Sided Monoid-Typed CFG Descriptors**
 
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Current checked artifact snapshot: commit `05ab02d`  
-GitHub Actions: Lean CI #166 passed
+Current checked artifact snapshot: commit `c6c1705`  
+GitHub Actions: Lean CI #180 passed  
+Pushed by: `growupkuriyama-hub`
 
 ---
 
@@ -33,16 +34,21 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 The current checked snapshot is:
 
 ```text
-commit: 05ab02d
-CI run: Lean CI #166
+commit: c6c1705
+CI run: Lean CI #180
+pushed by: growupkuriyama-hub
 status: passed
+active top-level target: LeanCfgProject.ICSubmissionSummary_v11
+CI log: Built LeanCfgProject.ICSubmissionSummary_v11; build completed successfully, 8607 jobs
 ```
 
 The current fast paper-facing target is:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v5
+lake build LeanCfgProject.ICSubmissionSummary_v11
 ```
+
+The precise commit hash should be recorded from the corresponding GitHub Actions run or release tag when preparing the final archived artifact.
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
 
@@ -72,7 +78,8 @@ At the current checked snapshot, the artifact verifies the following major group
 - carrier-level observed-syntactic-block adequacy for the standard observation `h` and factor-through-`h` observations;
 - the finite observed-learning layer: canonical observed frame structures, decidability wrappers, finite observed frame bases, finite-set reconstruction, faithful-representative reconstruction, and observed-concept identification wrappers;
 - the canonical point-frame incidence core: singleton concept/frame incidence, equality of point concepts exactly as observed syntactic equivalence, and the paper-facing universal-frame-model core;
-- paper-facing summary and appendix-index targets for reproducibility.
+- v27.1 reduced-frame and observed-concept release layers: point-frame corollaries, lightweight reduced frame-model core definitions, canonical frame-model corollaries, observed subset stability, point-frame learning transport, observed-membership equivalence, point-frame incidence transport, finite residual-basis transport, observed-learning release theorems, point-frame release theorems, finite-basis release theorems, and the artifact release-index target;
+- paper-facing summary, audit, release-index, and appendix-index targets for reproducibility.
 
 ---
 
@@ -81,23 +88,60 @@ At the current checked snapshot, the artifact verifies the following major group
 From the repository root, run:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v5
+lake build LeanCfgProject.ICSubmissionSummary_v11
 ```
 
-For a broader paper-facing import check, run:
+For a broader paper-facing import check around the current release-index layer, run:
 
 ```bash
-lake build LeanCfgProject.ICFullPaperSummary_v2
-lake build LeanCfgProject.ICArtifactFreezeIndex
-lake build LeanCfgProject.ICReproducibilitySummary
+lake build LeanCfgProject.ICSubmissionSummary_v11
+lake build LeanCfgProject.ICArtifactAudit_v27
+lake build LeanCfgProject.ICFormalizationReleaseIndex_v27
 ```
+
+Older broad paper-facing targets such as `ICFullPaperSummary_v2`, `ICArtifactFreezeIndex`, and `ICReproducibilitySummary` are still useful for historical regression checks, but the current release-index path is centered on `ICSubmissionSummary_v11`.
 
 For ordinary development, the repository uses a lightweight CI strategy: instead of explicitly building every historical experimental target one by one, it builds high-level summary modules whose imports force Lean to check the relevant dependency graph.
 
 The current top-level paper-facing summary modules include:
 
 ```text
-LeanCfgProject/ICSubmissionSummary_v5.lean
+LeanCfgProject/ICSubmissionSummary_v11.lean
+LeanCfgProject/ICFormalizationReleaseIndex_v27.lean
+LeanCfgProject/ICArtifactAudit_v27.lean
+LeanCfgProject/FiniteBasisReleaseTheorems_v27.lean
+LeanCfgProject/PointFrameReleaseTheorems_v27.lean
+LeanCfgProject/ObservedLearningReleaseTheorems_v27.lean
+LeanCfgProject/ICSubmissionSummary_v10.lean
+LeanCfgProject/ObservedConceptSubmissionIndex_v27.lean
+LeanCfgProject/ObservedLearningSubmissionAudit_v27.lean
+LeanCfgProject/PointFrameTransportSummary_v27.lean
+LeanCfgProject/ObservedSubsetTransportPackage_v27.lean
+LeanCfgProject/ICSubmissionSummary_v9.lean
+LeanCfgProject/ObservedConceptObjectReleaseIndex_v27.lean
+LeanCfgProject/FiniteResidualBasisTransport_v27.lean
+LeanCfgProject/PointFrameIncidenceTransport_v27.lean
+LeanCfgProject/ObservedMembershipEquivalence_v27.lean
+LeanCfgProject/ICSubmissionSummary_v8.lean
+LeanCfgProject/ICSubmissionSafeExpansion_v27.lean
+LeanCfgProject/ObservedFiniteBasisStablePackage_v27.lean
+LeanCfgProject/CanonicalPointFrameStablePackage_v27.lean
+LeanCfgProject/ObservedLearningStablePackage_v27.lean
+LeanCfgProject/ICSubmissionSummary_v7.lean
+LeanCfgProject/ICPaperFormalizationSummary_v28.lean
+LeanCfgProject/ReducedFrameModelPaperSummary.lean
+LeanCfgProject/PointFrameLearningBridge.lean
+LeanCfgProject/ObservedSubsetStability.lean
+LeanCfgProject/CanonicalFrameModelCorollaries.lean
+LeanCfgProject/FrameModelCoreBasic.lean
+LeanCfgProject/ICSubmissionSummary_v6.lean
+LeanCfgProject/ICPaperFormalizationSummary_v27.lean
+LeanCfgProject/FiniteObservedBasisCorollaries.lean
+LeanCfgProject/FaithfulRepresentativeCorollaries.lean
+LeanCfgProject/ObservedLearningQueryModel.lean
+LeanCfgProject/ReducedFrameModelCoreDefs.lean
+LeanCfgProject/PointFrameCorollaries.lean
+LeanCfgProject/ICSubmissionSummary_v11.lean
 LeanCfgProject/ObservedLearningPaperSummary_v2.lean
 LeanCfgProject/ObservedLearningConstructibilitySummary.lean
 LeanCfgProject/UniversalFrameModelCore.lean
@@ -694,6 +738,14 @@ Files:
 LeanCfgProject/SingletonClosureIncidence.lean
 LeanCfgProject/CanonicalPointFrame.lean
 LeanCfgProject/UniversalFrameModelCore.lean
+LeanCfgProject/PointFrameCorollaries.lean
+LeanCfgProject/ReducedFrameModelCoreDefs.lean
+LeanCfgProject/FrameModelCoreBasic.lean
+LeanCfgProject/CanonicalFrameModelCorollaries.lean
+LeanCfgProject/CanonicalPointFrameStablePackage_v27.lean
+LeanCfgProject/PointFrameIncidenceTransport_v27.lean
+LeanCfgProject/PointFrameTransportSummary_v27.lean
+LeanCfgProject/PointFrameReleaseTheorems_v27.lean
 ```
 
 This layer corresponds to the paper's canonical reduced frame representation discussion, including the Ganter--Wille/FCA-inspired representation viewpoint specialized to the two-sided monoid incidence induced by `(Q,S)`.
@@ -713,6 +765,14 @@ sameObservedSyntactic_iff_canonicalPoint_eq
 canonicalObservedFrameStructure_represents_incidence
 canonicalObservedFrameStructure_pointCollapse
 universalFrameModelCore_summary
+canonical_point_frame_incidence_checked
+canonical_point_collapse_checked
+canonical_point_frame_core_checked
+observedMembershipEquivalent_transport_point_frame_incidence
+observedMembershipEquivalent_transport_point_collapse
+transcript_point_frame_transport_summary
+pointFrame_release_core
+pointFrame_release_transcript_transport
 ```
 
 The key checked incidence lemma is:
@@ -755,7 +815,42 @@ LeanCfgProject/ICSubmissionSummary_v3.lean
 LeanCfgProject/ICSubmissionSummary_v4.lean
 LeanCfgProject/ObservedLearningPaperSummary.lean
 LeanCfgProject/ObservedLearningPaperSummary_v2.lean
-LeanCfgProject/ICSubmissionSummary_v5.lean
+LeanCfgProject/ICSubmissionSummary_v11.lean
+LeanCfgProject/PointFrameCorollaries.lean
+LeanCfgProject/ReducedFrameModelCoreDefs.lean
+LeanCfgProject/ObservedLearningQueryModel.lean
+LeanCfgProject/FaithfulRepresentativeCorollaries.lean
+LeanCfgProject/FiniteObservedBasisCorollaries.lean
+LeanCfgProject/ICPaperFormalizationSummary_v27.lean
+LeanCfgProject/ICSubmissionSummary_v6.lean
+LeanCfgProject/FrameModelCoreBasic.lean
+LeanCfgProject/CanonicalFrameModelCorollaries.lean
+LeanCfgProject/ObservedSubsetStability.lean
+LeanCfgProject/PointFrameLearningBridge.lean
+LeanCfgProject/ReducedFrameModelPaperSummary.lean
+LeanCfgProject/ICPaperFormalizationSummary_v28.lean
+LeanCfgProject/ICSubmissionSummary_v7.lean
+LeanCfgProject/ObservedLearningStablePackage_v27.lean
+LeanCfgProject/CanonicalPointFrameStablePackage_v27.lean
+LeanCfgProject/ObservedFiniteBasisStablePackage_v27.lean
+LeanCfgProject/ICSubmissionSafeExpansion_v27.lean
+LeanCfgProject/ICSubmissionSummary_v8.lean
+LeanCfgProject/ObservedMembershipEquivalence_v27.lean
+LeanCfgProject/PointFrameIncidenceTransport_v27.lean
+LeanCfgProject/FiniteResidualBasisTransport_v27.lean
+LeanCfgProject/ObservedConceptObjectReleaseIndex_v27.lean
+LeanCfgProject/ICSubmissionSummary_v9.lean
+LeanCfgProject/ObservedSubsetTransportPackage_v27.lean
+LeanCfgProject/PointFrameTransportSummary_v27.lean
+LeanCfgProject/ObservedLearningSubmissionAudit_v27.lean
+LeanCfgProject/ObservedConceptSubmissionIndex_v27.lean
+LeanCfgProject/ICSubmissionSummary_v10.lean
+LeanCfgProject/ObservedLearningReleaseTheorems_v27.lean
+LeanCfgProject/PointFrameReleaseTheorems_v27.lean
+LeanCfgProject/FiniteBasisReleaseTheorems_v27.lean
+LeanCfgProject/ICArtifactAudit_v27.lean
+LeanCfgProject/ICFormalizationReleaseIndex_v27.lean
+LeanCfgProject/ICSubmissionSummary_v11.lean
 ```
 
 These modules are intentionally lightweight.  Their role is to give stable paper-facing import targets, appendix-index targets, and fast CI targets.
@@ -763,10 +858,36 @@ These modules are intentionally lightweight.  Their role is to give stable paper
 The current recommended top-level target is:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v5
+LeanCfgProject.ICSubmissionSummary_v11
 ```
 
-If this module builds, Lean has checked the current paper-facing import graph, including the observed-learning layer and canonical point-frame incidence core, through the normal dependency system.
+If this module builds, Lean has checked the current v27.1 release-index import graph, including the observed-learning layer, canonical point-frame incidence core, finite residual-basis transport layer, and release-facing audit targets, through the normal dependency system.
+
+---
+
+## v27.1 release-index additions checked by CI #180
+
+The CI #180 run checked the current release-facing path through:
+
+```text
+LeanCfgProject.ICSubmissionSummary_v11
+LeanCfgProject.ICFormalizationReleaseIndex_v27
+LeanCfgProject.ICArtifactAudit_v27
+LeanCfgProject.ObservedLearningReleaseTheorems_v27
+LeanCfgProject.PointFrameReleaseTheorems_v27
+LeanCfgProject.FiniteBasisReleaseTheorems_v27
+```
+
+The release-index layer packages the recent v27.1 additions as paper-facing audit targets.  In particular, it records that:
+
+- observed membership equality identifies the canonical observed frame structure, frame residuals, single-block predicates, and observed relations;
+- observed subset equality and observed-membership transcripts transport `SameObservedSyntactic`, `CanonicalPoint`, `CanonicalFrame`, `FrameResidual`, and `SingleObservedBlock`;
+- canonical point-frame incidence and point collapse are stable under observed membership equality;
+- faithful representatives transport the canonical point-frame incidence and point-collapse data;
+- finite frame-residual basis facts are available for finite observed carriers and can be transported along observed-membership equivalence;
+- the release-facing summary target `ICSubmissionSummary_v11` imports these packages through Lean's normal dependency graph.
+
+Warnings reported in CI #180 concern linter suggestions such as unused `Fintype` hypotheses in theorem statements; they do not indicate failed proof obligations.
 
 ---
 
@@ -792,8 +913,8 @@ If this module builds, Lean has checked the current paper-facing import graph, i
 | K4 adequacy witness | `K4ResidualAdequacyExample.lean`, `K4AdequacyStrictness.lean`, `K4ConceptCollapse.lean`, `K4AdequacyPaperSummary.lean`, `AdequacyBridgeSummary.lean` |
 | Carrier observed-block adequacy | `CarrierObservedAdequacy.lean`, `CarrierObservedAdequacyCorollaries.lean` |
 | Finite observed-learning layer | `ObservedFrameStructure.lean`, `ObservedFrameStructureDecidable.lean`, `FiniteObservedFrameBasis.lean`, `FiniteSetQueryReconstruction.lean`, `FaithfulRepresentatives.lean`, `ObservedLearningExamples.lean`, `FiniteObservedConceptIdentification.lean`, `ObservedLearningCorollaries.lean`, `ObservedLearningConstructibilitySummary.lean`, `ObservedLearningPaperSummary.lean`, `ObservedLearningPaperSummary_v2.lean` |
-| Canonical point-frame incidence core | `SingletonClosureIncidence.lean`, `CanonicalPointFrame.lean`, `UniversalFrameModelCore.lean` |
-| Paper-facing summary targets | `ICSubmissionSummary_v5.lean`, `ObservedLearningPaperSummary_v2.lean`, `ICSubmissionSummary_v4.lean`, `ICSubmissionSummary_v3.lean`, `ICFullPaperSummary_v2.lean`, `ICFastCI_v2.lean`, `ICReproducibilitySummary.lean`, `ICArtifactFreezeIndex.lean`, `ICArtifactAppendixCoverage.lean` |
+| Canonical point-frame incidence and reduced-frame core | `SingletonClosureIncidence.lean`, `CanonicalPointFrame.lean`, `UniversalFrameModelCore.lean`, `PointFrameCorollaries.lean`, `ReducedFrameModelCoreDefs.lean`, `FrameModelCoreBasic.lean`, `CanonicalFrameModelCorollaries.lean`, `CanonicalPointFrameStablePackage_v27.lean`, `PointFrameIncidenceTransport_v27.lean`, `PointFrameTransportSummary_v27.lean`, `PointFrameReleaseTheorems_v27.lean` |
+| Paper-facing summary and release-index targets | `ICSubmissionSummary_v11.lean`, `ICFormalizationReleaseIndex_v27.lean`, `ICArtifactAudit_v27.lean`, `ICSubmissionSummary_v10.lean`, `ICSubmissionSummary_v9.lean`, `ICSubmissionSummary_v8.lean`, `ICSubmissionSummary_v7.lean`, `ICSubmissionSummary_v6.lean`, `ICSubmissionSummary_v11.lean`, `ObservedLearningPaperSummary_v2.lean`, `ICFullPaperSummary_v2.lean`, `ICFastCI_v2.lean`, `ICReproducibilitySummary.lean`, `ICArtifactFreezeIndex.lean`, `ICArtifactAppendixCoverage.lean` |
 
 ---
 
@@ -828,7 +949,11 @@ with the following additional verified facts:
 - finite observed frame bases exist for concept closures when `Q` is finite;
 - faithful representatives identify the observed subset and therefore the canonical observed frame structure;
 - singleton point concepts represent two-sided incidence against frame residuals;
-- equality of canonical point concepts is exactly observed syntactic equivalence.
+- equality of canonical point concepts is exactly observed syntactic equivalence;
+- observed subset equality and observed membership transcripts transport canonical points, canonical frames, frame residuals, single-block predicates, observed relations, and point-frame incidence;
+- observed-membership equivalence is formalized as a reusable transport interface;
+- finite residual-basis facts are packaged and transported along observed-membership equivalence;
+- the v27.1 release-facing audit target `ICSubmissionSummary_v11` imports the observed-learning, point-frame, finite-basis, and release-index packages.
 
 ---
 
@@ -858,17 +983,21 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked at commit 05ab02d by GitHub
-Actions Lean CI #166.  The top-level paper-facing target is
-LeanCfgProject.ICSubmissionSummary_v5.  The development verifies the descriptor
-architecture, residual concept semantics, carrier saturation correctness,
-bounded finite-stopping results, observed syntactic congruence and maximality,
-the canonical residual closure system, K4 adequacy witnesses, carrier-level
-observed-block adequacy, the finite observed-learning layer, and the canonical
-point-frame incidence core for the reduced representation viewpoint.  The
-artifact intentionally does not claim a full formalization of the paper, the
-full abstract universal representation theorem, or an unrestricted adequacy
-theorem.
+The accompanying Lean 4 artifact was checked by GitHub Actions Lean
+CI #180.  The CI log reports that the top-level paper-facing target
+LeanCfgProject.ICSubmissionSummary_v11 was built successfully and that the
+build completed successfully with 8607 jobs.  The development verifies the
+descriptor architecture, residual concept semantics, carrier saturation
+correctness, bounded finite-stopping results, observed syntactic congruence
+and maximality, the canonical residual closure system, K4 adequacy witnesses,
+carrier-level observed-block adequacy, the finite observed-learning layer,
+the canonical point-frame incidence core for the reduced representation
+viewpoint, and the v27.1 release-index packages for observed-subset transport,
+point-frame transport, finite residual-basis transport, and artifact audit.
+The artifact intentionally does not claim a full formalization of the paper,
+the full abstract universal representation theorem, or an unrestricted
+adequacy theorem.  The exact commit hash should be recorded from the
+corresponding GitHub Actions run or release tag in the final archived artifact.
 ```
 
 ---
@@ -877,7 +1006,7 @@ theorem.
 
 Natural next targets include:
 
-1. preparing a public release tag corresponding to the paper version;
+1. preparing a public release tag corresponding to the CI #180 / `ICSubmissionSummary_v11` artifact snapshot;
 2. preparing an archived artifact snapshot with a persistent identifier;
 3. adding a lightweight online blueprint linking paper statements to declarations;
 4. formalizing the full abstract reduced-frame-model isomorphism theorem;
