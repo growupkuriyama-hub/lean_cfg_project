@@ -76,24 +76,24 @@ theorem canonicalPoint_eq_iff_sameObservedSyntactic
     intro gamma
     constructor
     · intro hgamma ab hab
-      have habx : ab ∈ CommonContexts S ({y} : Set Q) := by
-        intro z hz
-        have hz' : z = y := by
-          simpa using hz
-        subst z
-        have hxmem : ab.1 * x * ab.2 ∈ S := by
-          exact hab x (by simp)
-        exact (hxy ab.1 ab.2).mp hxmem
-      exact hgamma ab habx
-    · intro hgamma ab hab
-      have haby : ab ∈ CommonContexts S ({x} : Set Q) := by
+      have habx : ab ∈ CommonContexts S ({x} : Set Q) := by
         intro z hz
         have hz' : z = x := by
           simpa using hz
-        subst z
+        rw [hz']
         have hymem : ab.1 * y * ab.2 ∈ S := by
           exact hab y (by simp)
         exact (hxy ab.1 ab.2).mpr hymem
+      exact hgamma ab habx
+    · intro hgamma ab hab
+      have haby : ab ∈ CommonContexts S ({y} : Set Q) := by
+        intro z hz
+        have hz' : z = y := by
+          simpa using hz
+        rw [hz']
+        have hxmem : ab.1 * x * ab.2 ∈ S := by
+          exact hab x (by simp)
+        exact (hxy ab.1 ab.2).mp hxmem
       exact hgamma ab haby
 
 /--
