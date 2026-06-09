@@ -1,0 +1,26 @@
+      - name: Check ICArtifactMetadata CI180 module
+        run: lake build LeanCfgProject.ICArtifactMetadata_ci180
+
+      - name: Check ICReleaseCertificate v27.2 module
+        run: lake build LeanCfgProject.ICReleaseCertificate_v27_2
+
+      - name: Check ObservedLearningCertificate v27.2 module
+        run: lake build LeanCfgProject.ObservedLearningCertificate_v27_2
+
+      - name: Check PointFrameCertificate v27.2 module
+        run: lake build LeanCfgProject.PointFrameCertificate_v27_2
+
+      - name: Check FiniteBasisCertificate v27.2 module
+        run: lake build LeanCfgProject.FiniteBasisCertificate_v27_2
+
+      - name: Check ICPaperFormalizationBridge v27.2 module
+        run: lake build LeanCfgProject.ICPaperFormalizationBridge_v27_2
+
+      - name: Check ICAppendixReleaseIndex v27.2 module
+        run: lake build LeanCfgProject.ICAppendixReleaseIndex_v27_2
+
+      - name: Check ICReleaseSmokeTest v27.2 module
+        run: lake build LeanCfgProject.ICReleaseSmokeTest_v27_2
+
+      - name: Check ICSubmissionSummary v13 module
+        run: lake build LeanCfgProject.ICSubmissionSummary_v13
