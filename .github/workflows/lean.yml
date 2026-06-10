@@ -50,6 +50,9 @@ jobs:
       - name: Check NormalCosetAdequacyCorollaries
         run: lake build LeanCfgProject.NormalCosetAdequacyCorollaries
 
+      - name: Check ZeroAdjoinedNormalCosetAdequacy
+        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
+
       # ------------------------------------------------------------------
       # Previous finite-example experiment targets.
       # Temporarily commented out so that this workflow tests only the
