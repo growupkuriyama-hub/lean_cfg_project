@@ -50,6 +50,9 @@ jobs:
       - name: Check PointwiseAdequacy item 2
         run: lake build LeanCfgProject.PointwiseAdequacy
 
+      - name: Check UniformAdequacy item 3
+        run: lake build LeanCfgProject.UniformAdequacy
+
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
       # Temporarily commented out so that only item 1 and item 2 are tested.
