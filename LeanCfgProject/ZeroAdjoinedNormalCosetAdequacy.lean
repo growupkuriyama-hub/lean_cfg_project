@@ -18,34 +18,33 @@ Zero-adjoined normal-coset adequacy.
 This module adds an absorbing zero to a group and lifts the normal-coset
 adequacy theorem to the nonzero part of the resulting monoid.
 
-The point is paper-facing: normal-coset adequacy is not merely a statement
-about groups as standalone monoids.  It survives inside a simple non-group
-monoid obtained by adjoining a zero element.
-
-No new residual/concept/syntactic definitions are introduced.
+The main correction from the first draft is that `ZeroAdjoin` is universe
+polymorphic, and the nonzero constructor is named `nz` rather than `of`.
 -/
 
+universe u
+
 /-- A group with an absorbing zero adjoined. -/
-inductive ZeroAdjoin (G : Type*) : Type
-  | zero
-  | of (g : G)
+inductive ZeroAdjoin (G : Type u) : Type u where
+  | z : ZeroAdjoin G
+  | nz : G → ZeroAdjoin G
   deriving DecidableEq, Repr
 
 namespace ZeroAdjoin
 
-variable {G : Type*}
+variable {G : Type u}
 
 def mul [Group G] : ZeroAdjoin G → ZeroAdjoin G → ZeroAdjoin G
-  | zero, _ => zero
-  | _, zero => zero
-  | of x, of y => of (x * y)
+  | z, _ => z
+  | _, z => z
+  | nz x, nz y => nz (x * y)
 
 instance [Group G] : Monoid (ZeroAdjoin G) where
   mul := mul
-  one := of 1
+  one := nz 1
   mul_assoc := by
-    intro x y z
-    cases x <;> cases y <;> cases z <;>
+    intro x y w
+    cases x <;> cases y <;> cases w <;>
       simp [mul, mul_assoc]
   one_mul := by
     intro x
@@ -56,22 +55,22 @@ instance [Group G] : Monoid (ZeroAdjoin G) where
 
 /--
 The lifted nonzero coset `sN` inside the zero-adjoined monoid.
-Zero itself is not in the observed set.
+The absorbing zero is not in the observed set.
 -/
-def LiftedCosetSet {G : Type*} [Group G] (N : Set G) (s : G) :
+def LiftedCosetSet {G : Type u} [Group G] (N : Set G) (s : G) :
     Set (ZeroAdjoin G)
-  | zero => False
-  | of x => s⁻¹ * x ∈ N
+  | z => False
+  | nz x => s⁻¹ * x ∈ N
 
 theorem zero_not_mem_liftedCoset
-    {G : Type*} [Group G] (N : Set G) (s : G) :
-    zero ∉ LiftedCosetSet N s := by
+    {G : Type u} [Group G] (N : Set G) (s : G) :
+    z ∉ LiftedCosetSet N s := by
   intro h
   exact h
 
-theorem of_mem_liftedCoset_iff
-    {G : Type*} [Group G] (N : Set G) (s x : G) :
-    of x ∈ LiftedCosetSet N s ↔ x ∈ LeftCosetSet N s := by
+theorem nz_mem_liftedCoset_iff
+    {G : Type u} [Group G] (N : Set G) (s x : G) :
+    nz x ∈ LiftedCosetSet N s ↔ x ∈ LeftCosetSet N s := by
   rfl
 
 /--
@@ -80,19 +79,19 @@ nonzero points are observed-syntactically equivalent in the zero-adjoined
 monoid.
 -/
 theorem sameObservedSyntactic_of_same_lifted_normal_coset
-    {G : Type*} [Group G] {N : Set G}
+    {G : Type u} [Group G] {N : Set G}
     (hN : NormalSubgroupSet G N) (s : G) {x y : G}
     (hxy : x * y⁻¹ ∈ N) :
-    SameObservedSyntactic (LiftedCosetSet N s) (of x) (of y) := by
+    SameObservedSyntactic (LiftedCosetSet N s) (nz x) (nz y) := by
   intro alpha beta
   cases alpha with
-  | zero =>
+  | z =>
       simp [LiftedCosetSet, mul]
-  | of alphaG =>
+  | nz alphaG =>
       cases beta with
-      | zero =>
+      | z =>
           simp [LiftedCosetSet, mul]
-      | of betaG =>
+      | nz betaG =>
           change
             (s⁻¹ * (alphaG * x * betaG) ∈ N ↔
               s⁻¹ * (alphaG * y * betaG) ∈ N)
@@ -100,30 +99,33 @@ theorem sameObservedSyntactic_of_same_lifted_normal_coset
             hN s hxy alphaG betaG
 
 /--
-For nonzero outer frames, lifted residual membership in the zero-adjoined monoid
-is exactly ordinary residual membership in the group.
+For nonzero outer frames, lifted residual membership in the zero-adjoined
+monoid is exactly ordinary residual membership in the group.
 -/
 theorem lifted_residual_mem_iff
-    {G : Type*} [Group G] {N : Set G} (s a b x : G) :
-    (of x : ZeroAdjoin G) ∈
-        TwoSidedResidual (LiftedCosetSet N s) (of a) (of b)
+    {G : Type u} [Group G] {N : Set G} (s a b x : G) :
+    (nz x : ZeroAdjoin G) ∈
+        TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b)
       ↔
     x ∈ TwoSidedResidual (LeftCosetSet N s) a b := by
+  change
+    (s⁻¹ * (a * x * b) ∈ N ↔
+      s⁻¹ * (a * x * b) ∈ N)
   rfl
 
 /--
 A lifted normal-coset residual over nonzero frames is a single observed-syntactic
-block.
+block on its nonzero elements.
 -/
 theorem lifted_normalCoset_residual_single_observed_block
-    {G : Type*} [Group G] {N : Set G}
+    {G : Type u} [Group G] {N : Set G}
     (hN : NormalSubgroupSet G N) (s a b : G) :
     ∀ x y : G,
-      (of x : ZeroAdjoin G) ∈
-        TwoSidedResidual (LiftedCosetSet N s) (of a) (of b) →
-      (of y : ZeroAdjoin G) ∈
-        TwoSidedResidual (LiftedCosetSet N s) (of a) (of b) →
-      SameObservedSyntactic (LiftedCosetSet N s) (of x) (of y) := by
+      (nz x : ZeroAdjoin G) ∈
+        TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b) →
+      (nz y : ZeroAdjoin G) ∈
+        TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b) →
+      SameObservedSyntactic (LiftedCosetSet N s) (nz x) (nz y) := by
   intro x y hx hy
   have hxG : x ∈ TwoSidedResidual (LeftCosetSet N s) a b := by
     exact (lifted_residual_mem_iff s a b x).1 hx
@@ -138,32 +140,32 @@ The zero element is not in any lifted normal-coset residual with nonzero
 outer frames.
 -/
 theorem zero_not_mem_lifted_nonzero_residual
-    {G : Type*} [Group G] {N : Set G} (s a b : G) :
-    (zero : ZeroAdjoin G) ∉
-      TwoSidedResidual (LiftedCosetSet N s) (of a) (of b) := by
+    {G : Type u} [Group G] {N : Set G} (s a b : G) :
+    (z : ZeroAdjoin G) ∉
+      TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b) := by
   intro h
   change False at h
   exact h
 
 /--
 The whole lifted residual over nonzero frames is a single observed-syntactic
-block, now stated as a subset of the zero-adjoined monoid.
+block, stated as a subset of the zero-adjoined monoid.
 -/
 theorem lifted_normalCoset_residual_singleBlockOn
-    {G : Type*} [Group G] {N : Set G}
+    {G : Type u} [Group G] {N : Set G}
     (hN : NormalSubgroupSet G N) (s a b : G) :
     SingleObservedSyntacticBlockOn
       (LiftedCosetSet N s)
-      (TwoSidedResidual (LiftedCosetSet N s) (of a) (of b)) := by
+      (TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b)) := by
   intro x hx y hy
   cases x with
-  | zero =>
+  | z =>
       exact False.elim ((zero_not_mem_lifted_nonzero_residual s a b) hx)
-  | of xG =>
+  | nz xG =>
       cases y with
-      | zero =>
+      | z =>
           exact False.elim ((zero_not_mem_lifted_nonzero_residual s a b) hy)
-      | of yG =>
+      | nz yG =>
           exact lifted_normalCoset_residual_single_observed_block
             hN s a b xG yG hx hy
 
@@ -172,42 +174,42 @@ Zero-adjoined normal-coset residuals over nonzero frames satisfy uniform
 adequacy.
 -/
 theorem lifted_normalCoset_uniformAdequacyOn_residual
-    {G : Type*} [Group G] {N : Set G}
+    {G : Type u} [Group G] {N : Set G}
     (hN : NormalSubgroupSet G N) (s a b : G) :
     UniformAdequacyOn
       (LiftedCosetSet N s)
-      (TwoSidedResidual (LiftedCosetSet N s) (of a) (of b)) := by
+      (TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b)) := by
   exact
     (uniformAdequacyOn_iff_singleObservedSyntacticBlockOn_residual
-      (LiftedCosetSet N s) (of a) (of b)).2
+      (LiftedCosetSet N s) (nz a) (nz b)).2
       (lifted_normalCoset_residual_singleBlockOn hN s a b)
 
 /--
 Concrete nonempty-subset form in the zero-adjoined monoid.
 -/
 theorem lifted_normalCoset_nonempty_subset_generates_residual
-    {G : Type*} [Group G] {N : Set G}
+    {G : Type u} [Group G] {N : Set G}
     (hN : NormalSubgroupSet G N) (s a b : G)
     (U : Set (ZeroAdjoin G))
     (hne : ∃ x : ZeroAdjoin G, x ∈ U)
-    (hU : U ⊆ TwoSidedResidual (LiftedCosetSet N s) (of a) (of b)) :
+    (hU : U ⊆ TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b)) :
     ConceptClosure (LiftedCosetSet N s) U =
-      TwoSidedResidual (LiftedCosetSet N s) (of a) (of b) := by
+      TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b) := by
   exact lifted_normalCoset_uniformAdequacyOn_residual hN s a b U hne hU
 
 /--
 Package theorem for paper use.
 -/
 theorem lifted_normalCoset_adequacy_package
-    {G : Type*} [Group G] {N : Set G}
+    {G : Type u} [Group G] {N : Set G}
     (hN : NormalSubgroupSet G N) (s a b : G) :
     SingleObservedSyntacticBlockOn
       (LiftedCosetSet N s)
-      (TwoSidedResidual (LiftedCosetSet N s) (of a) (of b))
+      (TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b))
     ∧
     UniformAdequacyOn
       (LiftedCosetSet N s)
-      (TwoSidedResidual (LiftedCosetSet N s) (of a) (of b)) := by
+      (TwoSidedResidual (LiftedCosetSet N s) (nz a) (nz b)) := by
   exact ⟨lifted_normalCoset_residual_singleBlockOn hN s a b,
     lifted_normalCoset_uniformAdequacyOn_residual hN s a b⟩
 
