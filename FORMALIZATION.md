@@ -7,8 +7,8 @@ Lean 4 artifact for the paper:
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Current checked artifact snapshot: commit `0e6dbb5`  
-GitHub Actions: Lean CI #184 passed  
+Current checked artifact snapshot: commit `b1e651e`  
+GitHub Actions: Lean CI #195 passed  
 Pushed by: `growupkuriyama-hub`
 
 ---
@@ -34,26 +34,54 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 The current checked snapshot is:
 
 ```text
-commit: 0e6dbb5
-CI run: Lean CI #184
+commit: b1e651e
+CI run: Lean CI #195
 pushed by: growupkuriyama-hub
 status: passed
-active top-level target: LeanCfgProject.ICSubmissionSummary_v14
-latest checked extension: v27.2 final-index push9
-previous passed release-index snapshot: commit c6c1705 / Lean CI #180
-previous passed targets: LeanCfgProject.ICSubmissionSummary_v11, LeanCfgProject.ICSubmissionSummary_v12, LeanCfgProject.ICSubmissionSummary_v13
-latest layer: paper-claim index, theorem-table index, frozen-artifact index, dependency certificate, FORMALIZATION certificate, submission checklist, final smoke test
+latest checked theorem-body extension: observed factor minimality / item 4
+latest checked theorem-body target: LeanCfgProject.ObservedFactorMinimality
+current theorem-body chain:
+  LeanCfgProject.ResidualConceptNucleus
+  LeanCfgProject.PointwiseAdequacy
+  LeanCfgProject.UniformAdequacy
+  LeanCfgProject.ObservedQuotientResidual
+  LeanCfgProject.ObservedQuotientClosure
+  LeanCfgProject.ObservedQuotientClosureImage
+  LeanCfgProject.ObservedSyntacticSaturation
+  LeanCfgProject.ObservedFactorMinimality
+previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ICSubmissionSummary_v14
+previous release-index snapshot: commit c6c1705 / Lean CI #180
 ```
 
-The current fast paper-facing target is:
+The current theorem-body development target checked by CI #195 is:
+
+```bash
+lake build LeanCfgProject.ObservedFactorMinimality
+```
+
+The current stable paper-facing final-index target from the previous indexed
+snapshot remains:
 
 ```bash
 lake build LeanCfgProject.ICSubmissionSummary_v14
 ```
 
+The theorem-body item1--item4 chain can be checked explicitly by running:
+
+```bash
+lake build LeanCfgProject.ResidualConceptNucleus
+lake build LeanCfgProject.PointwiseAdequacy
+lake build LeanCfgProject.UniformAdequacy
+lake build LeanCfgProject.ObservedQuotientResidual
+lake build LeanCfgProject.ObservedQuotientClosure
+lake build LeanCfgProject.ObservedQuotientClosureImage
+lake build LeanCfgProject.ObservedSyntacticSaturation
+lake build LeanCfgProject.ObservedFactorMinimality
+```
 
 
-The earlier release-index checkpoint `c6c1705` / Lean CI #180 remains useful as a historical base point, but the current paper-facing top-level target is now checked at commit `0e6dbb5` by Lean CI #184.
+
+The earlier release-index checkpoint `c6c1705` / Lean CI #180 and the final-index checkpoint `0e6dbb5` / Lean CI #184 remain useful historical base points.  The current theorem-body development state is checked at commit `b1e651e` by Lean CI #195.
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
 
@@ -64,6 +92,11 @@ At the current checked snapshot, the artifact verifies the following major group
 - concrete counterexamples showing that naive finite observation is not concatenation-compatible;
 - powerset-valued state semantics under multiplicative word observations;
 - residual Galois connection, concept closure, concept extents, and concept products;
+- multiplicative/nuclear behavior of residual concept closure under subset product;
+- pointwise adequacy equivalences between residual equality, common-context equality, and residual coverage;
+- uniform adequacy equivalences between nonempty-subset adequacy, singleton adequacy, and single observed-syntactic block conditions;
+- quotient/factor-map invariance for residuals, common contexts, concept closure, point concepts, and concept products;
+- observed-syntactic saturation and minimality/maximality of exact observed factor maps;
 - carrier-level descriptor semantics;
 - two-sided frame soundness and frame-to-residual / frame-to-intent preservation;
 - finite-stage carrier saturation correctness;
@@ -895,6 +928,158 @@ If this module builds, Lean has checked the current v27.2 final-index import gra
 
 ---
 
+
+## Theorem-body item1--item4 additions checked by CI #195
+
+After the v27.2 final-index snapshot, the development was extended by a new
+theorem-body chain focused on the mathematical core of the paper rather than on
+release packaging.  This chain is checked at commit `b1e651e` by Lean CI #195.
+
+The checked theorem-body modules are:
+
+```text
+LeanCfgProject/ResidualConceptNucleus.lean
+LeanCfgProject/PointwiseAdequacy.lean
+LeanCfgProject/UniformAdequacy.lean
+LeanCfgProject/ObservedQuotientResidual.lean
+LeanCfgProject/ObservedQuotientClosure.lean
+LeanCfgProject/ObservedQuotientClosureImage.lean
+LeanCfgProject/ObservedSyntacticSaturation.lean
+LeanCfgProject/ObservedFactorMinimality.lean
+```
+
+The main new checked declarations include:
+
+```text
+conceptClosure_setMul_subset
+conceptProduct_closure_closure_eq
+conceptProduct_unital_on_concept_extents
+commonContexts_conceptClosure_eq
+pointwiseAdequacy_iff_commonContexts_eq
+pointwiseAdequacy_iff_residual_subset_closure
+commonContexts_eq_iff_residual_subset_closure
+pointwiseAdequacy_equivalences
+UniformAdequacyOn
+SingletonAdequacyOn
+SingleObservedSyntacticBlockOn
+uniformAdequacyOn_iff_singletonAdequacyOn_residual
+singletonAdequacyOn_iff_singleObservedSyntacticBlockOn_residual
+uniformAdequacy_equivalences_for_residual
+quotient_residual_preimage_eq
+quotient_residual_image_surj
+quotient_commonContexts_preimage_eq
+quotient_conceptClosure_preimage_eq
+quotient_preimage_isConceptExtent
+quotient_setMul_image_eq
+quotient_residual_image_eq
+quotient_conceptClosure_image_eq
+quotient_pointConcept_image_eq
+quotient_conceptProduct_image_eq
+sameObservedSyntactic_mem_iff
+image_pullback_eq_of_fibers_sameObservedSyntactic
+observedSyntacticFactor_residual_preimage_eq
+observedSyntacticFactor_residual_image_eq
+observedSyntacticFactor_conceptClosure_preimage_eq
+observedSyntacticFactor_conceptClosure_image_eq
+observedSyntacticFactor_conceptProduct_image_eq
+sameObservedSyntactic_of_factor_eq_of_pullback
+factor_kernel_subset_sameObservedSyntactic
+image_pullback_iff_fibers_sameObservedSyntactic
+imagePullbackFactor_residual_image_eq
+imagePullbackFactor_conceptClosure_image_eq
+imagePullbackFactor_conceptProduct_image_eq
+```
+
+These modules add the following verified mathematical content.
+
+First, residual concept closure is multiplicative/nuclear with respect to subset
+product:
+
+```text
+cl_S(A) · cl_S(B) ⊆ cl_S(A · B).
+```
+
+Consequently the closed extents carry the expected closure-induced product, and
+the checked file also verifies the basic unit behavior of `ConceptProduct` on
+concept extents.
+
+Second, pointwise adequacy of a sound state image inside a two-sided residual is
+equivalent to both equality of common-context intents and residual coverage:
+
+```text
+cl_S(U) = Res_S(a,b)
+  iff
+U^▷ = Res_S(a,b)^▷
+  iff
+Res_S(a,b) ⊆ cl_S(U),
+```
+
+where `U^▷` is represented in Lean by `CommonContexts S U`.
+
+Third, uniform adequacy over nonempty subsets of a residual is equivalent to
+singleton adequacy and to the residual lying in one observed-syntactic block:
+
+```text
+(∀ nonempty U ⊆ R, cl_S(U)=R)
+  iff
+(∀ rho∈R, cl_S({rho})=R)
+  iff
+(∀ rho sigma∈R, rho ≈_S sigma).
+```
+
+The Lean statement is slightly stronger than the nonempty-residual presentation:
+if the residual is empty, the three predicates are vacuously true.
+
+Fourth, quotient/factor-map invariance is verified for an abstract surjective
+multiplicative observed factor map `π : Q -> Qbar`.  If `Sbar` has exactly `S`
+as its pullback, namely `π x ∈ Sbar iff x ∈ S`, then Lean checks:
+
+```text
+π^{-1}(Res_{Sbar}(πa,πb)) = Res_S(a,b),
+π(Res_S(a,b)) = Res_{Sbar}(πa,πb),
+CommonContexts_S(π^{-1}Ubar)
+  =
+π-frame-preimage(CommonContexts_{Sbar}(Ubar)),
+cl_S(π^{-1}Ubar) = π^{-1}(cl_{Sbar}(Ubar)),
+π(cl_S(W)) = cl_{Sbar}(π(W)),
+π(ConceptProduct_S(A,B))
+  =
+ConceptProduct_{Sbar}(π(A),π(B)).
+```
+
+The same image theorem is also checked for singleton point concepts.
+
+Fifth, the abstract factor-map theorem is connected back to observed syntactic
+equivalence.  If the fibers of `π` are contained in `SameObservedSyntactic S`,
+then `S` is exactly the pullback of its image:
+
+```text
+π^{-1}(π(S)) = S.
+```
+
+Conversely, if a multiplicative factor map has exact observed pullback, then
+each fiber is contained in `SameObservedSyntactic S`:
+
+```text
+πx = πy  implies  x ≈_S y.
+```
+
+In particular, the checked theorem
+
+```text
+image_pullback_iff_fibers_sameObservedSyntactic
+```
+
+expresses the equivalence between exact image-pullback preservation and fiber
+containment in the observed syntactic congruence.  This gives the Lean-checked
+core of the statement that `SameObservedSyntactic` is the maximal kernel relation
+compatible with the observed subset `S`, and that exact observed factor maps
+factor through the observed-syntactic information.
+
+These results are theorem-body additions.  They are not release certificates,
+submission checklists, audit wrappers, or manifest modules.
+
+
 ## v27.1 release-index additions checked by CI #180
 
 The CI #180 run checked the current release-facing path through:
@@ -1000,6 +1185,7 @@ stable inside Lean.
 | Local stopping correctness | `LocalStoppingCorrectness.lean`, `LocalStoppingRuleSemantics.lean`, `LocalStoppingFrameResidual.lean` |
 | Bounded finite stopping | `FiniteStoppingCore.lean`, `MeasureStoppingCriterion.lean`, `FiniteSaturationMeasure.lean`, `FiniteStoppingFrameResidual.lean`, `FiniteStoppedFrameAdequacy.lean` |
 | Observed syntactic concept object | `ObservedSyntacticConcept.lean`, `ObservedSyntacticCongruence.lean` |
+| Residual-concept nucleus, adequacy, and observed factor-map invariance | `ResidualConceptNucleus.lean`, `PointwiseAdequacy.lean`, `UniformAdequacy.lean`, `ObservedQuotientResidual.lean`, `ObservedQuotientClosure.lean`, `ObservedQuotientClosureImage.lean`, `ObservedSyntacticSaturation.lean`, `ObservedFactorMinimality.lean` |
 | Canonical residual closure system | `CanonicalResidualClosureSystem.lean`, `ObservedSyntacticResidualCorollaries.lean` |
 | Syntactic-block adequacy | `ObservedSyntacticBlockAdequacyCorollaries.lean`, `ObservedSyntacticPaperCorollaries.lean` |
 | K4 adequacy witness | `K4ResidualAdequacyExample.lean`, `K4AdequacyStrictness.lean`, `K4ConceptCollapse.lean`, `K4AdequacyPaperSummary.lean`, `AdequacyBridgeSummary.lean` |
@@ -1045,7 +1231,12 @@ with the following additional verified facts:
 - observed subset equality and observed membership transcripts transport canonical points, canonical frames, frame residuals, single-block predicates, observed relations, and point-frame incidence;
 - observed-membership equivalence is formalized as a reusable transport interface;
 - finite residual-basis facts are packaged and transported along observed-membership equivalence;
-- the v27.1 release-facing audit target `ICSubmissionSummary_v11` imports the observed-learning, point-frame, finite-basis, and release-index packages.
+- the v27.1 release-facing audit target `ICSubmissionSummary_v11` imports the observed-learning, point-frame, finite-basis, and release-index packages;
+- residual concept closure is multiplicative/nuclear with respect to subset product;
+- pointwise residual adequacy is equivalent to common-context equality and residual coverage;
+- uniform residual adequacy is equivalent to singleton adequacy and to the single observed-syntactic-block condition;
+- residuals, common contexts, concept closures, point concepts, and concept products are preserved by exact surjective multiplicative observed factor maps;
+- exact image-pullback preservation is equivalent to factor-map fibers being contained in the observed syntactic congruence.
 
 ---
 
@@ -1075,21 +1266,27 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked at commit 0e6dbb5 by GitHub
-Actions Lean CI #184, pushed by growupkuriyama-hub.  The top-level
-paper-facing target is LeanCfgProject.ICSubmissionSummary_v14.  The earlier
-release-index checkpoint was commit c6c1705 / Lean CI #180.  The development
-verifies the descriptor architecture, residual concept semantics, carrier
-saturation correctness, bounded finite-stopping results, observed syntactic
-congruence and maximality, the canonical residual closure system, K4 adequacy
-witnesses, carrier-level observed-block adequacy, the finite observed-learning
-layer, the canonical point-frame incidence core for the reduced representation
-viewpoint, and the v27.1/v27.2 paper-facing release, certificate, and
-final-index packages for observed-subset transport, point-frame transport,
-finite residual-basis transport, artifact audit, theorem/file indexing, and
-FORMALIZATION supplement consistency.  The artifact intentionally does not
-claim a full formalization of the paper, the full abstract universal
-representation theorem, or an unrestricted adequacy theorem.
+The accompanying Lean 4 artifact was checked at commit b1e651e by GitHub
+Actions Lean CI #195, pushed by growupkuriyama-hub.  The current
+theorem-body target is LeanCfgProject.ObservedFactorMinimality.  The previous
+paper-facing final-index target LeanCfgProject.ICSubmissionSummary_v14 was
+checked at commit 0e6dbb5 / Lean CI #184, with the earlier release-index
+checkpoint at commit c6c1705 / Lean CI #180.  The development verifies the
+descriptor architecture, residual concept semantics, carrier saturation
+correctness, bounded finite-stopping results, observed syntactic congruence and
+maximality, the canonical residual closure system, K4 adequacy witnesses,
+carrier-level observed-block adequacy, the finite observed-learning layer, the
+canonical point-frame incidence core for the reduced representation viewpoint,
+and the v27.1/v27.2 paper-facing release, certificate, and final-index packages.
+The CI #195 theorem-body extension additionally verifies the multiplicative
+nucleus property of residual concept closure, pointwise and uniform adequacy
+equivalences, abstract factor-map invariance for residuals/common
+contexts/concept closures/point concepts/concept products, and the equivalence
+between exact observed image-pullback preservation and fiber containment in the
+observed syntactic congruence.  The artifact intentionally does not claim a full
+formalization of the paper, the full abstract universal representation theorem,
+an actual quotient-monoid instance for every presentation inside Lean, or an
+unrestricted adequacy theorem.
 ```
 
 ---
@@ -1105,6 +1302,6 @@ Natural next targets include:
 5. formalizing endpoint-monoid non-coset witnesses;
 6. formalizing the normal-coset and mod-`k` adequacy families;
 7. formalizing more concrete faithful-representative examples for observed learning;
-8. investigating quotient invariance of the observed syntactic concept object;
+8. formalizing the actual quotient monoid/congruence instance for `SameObservedSyntactic`, beyond the currently checked abstract factor-map invariance theorem;
 9. developing restricted adequacy theorems for additional controlled subclasses;
 10. keeping future extensions modular and preserving the current CI discipline.

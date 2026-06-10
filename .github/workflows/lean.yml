@@ -36,41 +36,52 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current theorem-body experiment targets only.
+      # Current finite-example experiment target only.
       #
       # Active purpose:
-      #   Check item 1 and item 2 from the paper's planned formalization
-      #   targets.  No release-certificate / summary / package targets are
-      #   active in this workflow.
+      #   Check finite example (1): diamond meet-semilattice monoid.
+      #   No release-certificate / summary / package / audit / metadata /
+      #   checklist / smoke-test target is active in this workflow.
       # ------------------------------------------------------------------
 
-      - name: Check ResidualConceptNucleus item 1
-        run: lake build LeanCfgProject.ResidualConceptNucleus
+      - name: Check DiamondSemilatticeAdequacy finite example
+        run: lake build LeanCfgProject.DiamondSemilatticeAdequacy
 
-      - name: Check PointwiseAdequacy item 2
-        run: lake build LeanCfgProject.PointwiseAdequacy
+      # ------------------------------------------------------------------
+      # Previous theorem-body experiment targets.
+      # Temporarily commented out so that this workflow tests only the
+      # diamond finite example.
+      # ------------------------------------------------------------------
 
-      - name: Check UniformAdequacy item 3
-        run: lake build LeanCfgProject.UniformAdequacy
+      # - name: Check ResidualConceptNucleus item 1
+      #   run: lake build LeanCfgProject.ResidualConceptNucleus
+      #
+      # - name: Check PointwiseAdequacy item 2
+      #   run: lake build LeanCfgProject.PointwiseAdequacy
+      #
+      # - name: Check UniformAdequacy item 3
+      #   run: lake build LeanCfgProject.UniformAdequacy
+      #
+      # - name: Check ObservedQuotientResidual item 4a
+      #   run: lake build LeanCfgProject.ObservedQuotientResidual
+      #
+      # - name: Check ObservedQuotientClosure item 4bc
+      #   run: lake build LeanCfgProject.ObservedQuotientClosure
+      #
+      # - name: Check ObservedQuotientClosureImage item 4c
+      #   run: lake build LeanCfgProject.ObservedQuotientClosureImage
+      #
+      # - name: Check ObservedSyntacticSaturation item 4
+      #   run: lake build LeanCfgProject.ObservedSyntacticSaturation
+      #
+      # - name: Check ObservedFactorMinimality item 4
+      #   run: lake build LeanCfgProject.ObservedFactorMinimality
+      #
 
-      - name: Check ObservedQuotientResidual item 4a
-        run: lake build LeanCfgProject.ObservedQuotientResidual
-
-      - name: Check ObservedQuotientClosure item 4bc
-        run: lake build LeanCfgProject.ObservedQuotientClosure
-
-      - name: Check ObservedQuotientClosureImage item 4c
-        run: lake build LeanCfgProject.ObservedQuotientClosureImage
-
-      - name: Check ObservedSyntacticSaturation item 4
-        run: lake build LeanCfgProject.ObservedSyntacticSaturation
-
-      - name: Check ObservedSyntacticSaturation item 4
-        run: lake build LeanCfgProject.ObservedSyntacticSaturation
-
-      - name: Check ObservedFactorMinimality item 4
-        run: lake build LeanCfgProject.ObservedFactorMinimality
-
+      # ------------------------------------------------------------------
+      # Original archived/commented targets retained from uploaded lean.yml.
+      # They remain commented out during the finite-example experiment.
+      # ------------------------------------------------------------------
 
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
