@@ -54,6 +54,12 @@ jobs:
       - name: Check ObservedSyntacticQuotientPaperSummary
         run: lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
 
+      - name: Check ObservedSyntacticExactQuotient
+        run: lake build LeanCfgProject.ObservedSyntacticExactQuotient
+
+      - name: Check ObservedSyntacticExactQuotientUniversal
+        run: lake build LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+
       # ------------------------------------------------------------------
       # Current experiment subtargets.
       # Keep commented out during the first pass because the summary target
