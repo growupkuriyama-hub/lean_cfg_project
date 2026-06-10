@@ -71,6 +71,9 @@ jobs:
       - name: Check ICSubmissionSummary v14 module
         run: lake build LeanCfgProject.ICSubmissionSummary_v14
 
+      - name: Check ResidualConceptNucleus item 1
+        run: lake build LeanCfgProject.ResidualConceptNucleus
+
       # ------------------------------------------------------------------
       # Archived active experiment targets from the uploaded lean.yml.
       # Temporarily commented out during the current push9 experiment.

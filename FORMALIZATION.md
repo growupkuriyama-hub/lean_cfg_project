@@ -7,8 +7,8 @@ Lean 4 artifact for the paper:
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Current checked artifact snapshot: commit `c6c1705`  
-GitHub Actions: Lean CI #180 passed  
+Current checked artifact snapshot: commit `0e6dbb5`  
+GitHub Actions: Lean CI #184 passed  
 Pushed by: `growupkuriyama-hub`
 
 ---
@@ -34,21 +34,26 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 The current checked snapshot is:
 
 ```text
-commit: c6c1705
-CI run: Lean CI #180
+commit: 0e6dbb5
+CI run: Lean CI #184
 pushed by: growupkuriyama-hub
 status: passed
-active top-level target: LeanCfgProject.ICSubmissionSummary_v11
-CI log: Built LeanCfgProject.ICSubmissionSummary_v11; build completed successfully, 8607 jobs
+active top-level target: LeanCfgProject.ICSubmissionSummary_v14
+latest checked extension: v27.2 final-index push9
+previous passed release-index snapshot: commit c6c1705 / Lean CI #180
+previous passed targets: LeanCfgProject.ICSubmissionSummary_v11, LeanCfgProject.ICSubmissionSummary_v12, LeanCfgProject.ICSubmissionSummary_v13
+latest layer: paper-claim index, theorem-table index, frozen-artifact index, dependency certificate, FORMALIZATION certificate, submission checklist, final smoke test
 ```
 
 The current fast paper-facing target is:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v11
+lake build LeanCfgProject.ICSubmissionSummary_v14
 ```
 
-The precise commit hash should be recorded from the corresponding GitHub Actions run or release tag when preparing the final archived artifact.
+
+
+The earlier release-index checkpoint `c6c1705` / Lean CI #180 remains useful as a historical base point, but the current paper-facing top-level target is now checked at commit `0e6dbb5` by Lean CI #184.
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
 
@@ -79,7 +84,9 @@ At the current checked snapshot, the artifact verifies the following major group
 - the finite observed-learning layer: canonical observed frame structures, decidability wrappers, finite observed frame bases, finite-set reconstruction, faithful-representative reconstruction, and observed-concept identification wrappers;
 - the canonical point-frame incidence core: singleton concept/frame incidence, equality of point concepts exactly as observed syntactic equivalence, and the paper-facing universal-frame-model core;
 - v27.1 reduced-frame and observed-concept release layers: point-frame corollaries, lightweight reduced frame-model core definitions, canonical frame-model corollaries, observed subset stability, point-frame learning transport, observed-membership equivalence, point-frame incidence transport, finite residual-basis transport, observed-learning release theorems, point-frame release theorems, finite-basis release theorems, and the artifact release-index target;
-- paper-facing summary, audit, release-index, and appendix-index targets for reproducibility.
+- v27.2 release-regression and release-certificate layers: observed-learning release regression, point-frame release regression, finite-basis release regression, release manifest, CI #180 reproducibility index, artifact metadata capsule, release certificate, observed-learning certificate, point-frame certificate, finite-basis certificate, and paper formalization bridge;
+- v27.2 final-index layer: paper-claim index, theorem-table index, frozen artifact index, dependency certificate, FORMALIZATION supplement certificate, paper submission checklist, final smoke test, and the top-level target `ICSubmissionSummary_v14`;
+- paper-facing summary, audit, release-index, final-index, and appendix-index targets for reproducibility.
 
 ---
 
@@ -88,24 +95,49 @@ At the current checked snapshot, the artifact verifies the following major group
 From the repository root, run:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v11
+lake build LeanCfgProject.ICSubmissionSummary_v14
 ```
 
-For a broader paper-facing import check around the current release-index layer, run:
+For a broader paper-facing import check around the current final-index layer, run:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v11
-lake build LeanCfgProject.ICArtifactAudit_v27
-lake build LeanCfgProject.ICFormalizationReleaseIndex_v27
+lake build LeanCfgProject.ICSubmissionSummary_v14
+lake build LeanCfgProject.ICFinalSmokeTest_v27_2
+lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
+lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
+lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
 ```
 
-Older broad paper-facing targets such as `ICFullPaperSummary_v2`, `ICArtifactFreezeIndex`, and `ICReproducibilitySummary` are still useful for historical regression checks, but the current release-index path is centered on `ICSubmissionSummary_v11`.
+Older broad paper-facing targets such as `ICFullPaperSummary_v2`, `ICArtifactFreezeIndex`, and `ICReproducibilitySummary` are still useful for historical regression checks, but the current final-index path is centered on `ICSubmissionSummary_v14`.
 
 For ordinary development, the repository uses a lightweight CI strategy: instead of explicitly building every historical experimental target one by one, it builds high-level summary modules whose imports force Lean to check the relevant dependency graph.
 
 The current top-level paper-facing summary modules include:
 
 ```text
+LeanCfgProject/ICSubmissionSummary_v14.lean
+LeanCfgProject/ICFinalSmokeTest_v27_2.lean
+LeanCfgProject/ICPaperSubmissionChecklist_v27_2.lean
+LeanCfgProject/ICFormalizationSupplementCertificate_v27_2.lean
+LeanCfgProject/ICDependencyCertificate_v27_2.lean
+LeanCfgProject/ICFrozenArtifactIndex_v27_2.lean
+LeanCfgProject/ICTheoremTableIndex_v27_2.lean
+LeanCfgProject/ICPaperClaimIndex_v27_2.lean
+LeanCfgProject/ICSubmissionSummary_v13.lean
+LeanCfgProject/ICReleaseSmokeTest_v27_2.lean
+LeanCfgProject/ICAppendixReleaseIndex_v27_2.lean
+LeanCfgProject/ICPaperFormalizationBridge_v27_2.lean
+LeanCfgProject/FiniteBasisCertificate_v27_2.lean
+LeanCfgProject/PointFrameCertificate_v27_2.lean
+LeanCfgProject/ObservedLearningCertificate_v27_2.lean
+LeanCfgProject/ICReleaseCertificate_v27_2.lean
+LeanCfgProject/ICArtifactMetadata_ci180.lean
+LeanCfgProject/ICSubmissionSummary_v12.lean
+LeanCfgProject/ICReproducibilityIndex_ci180.lean
+LeanCfgProject/ICReleaseManifest_v27_2.lean
+LeanCfgProject/FiniteBasisReleaseRegression_v27_2.lean
+LeanCfgProject/PointFrameReleaseRegression_v27_2.lean
+LeanCfgProject/ObservedLearningReleaseRegression_v27_2.lean
 LeanCfgProject/ICSubmissionSummary_v11.lean
 LeanCfgProject/ICFormalizationReleaseIndex_v27.lean
 LeanCfgProject/ICArtifactAudit_v27.lean
@@ -141,7 +173,6 @@ LeanCfgProject/FaithfulRepresentativeCorollaries.lean
 LeanCfgProject/ObservedLearningQueryModel.lean
 LeanCfgProject/ReducedFrameModelCoreDefs.lean
 LeanCfgProject/PointFrameCorollaries.lean
-LeanCfgProject/ICSubmissionSummary_v11.lean
 LeanCfgProject/ObservedLearningPaperSummary_v2.lean
 LeanCfgProject/ObservedLearningConstructibilitySummary.lean
 LeanCfgProject/UniversalFrameModelCore.lean
@@ -850,7 +881,6 @@ LeanCfgProject/PointFrameReleaseTheorems_v27.lean
 LeanCfgProject/FiniteBasisReleaseTheorems_v27.lean
 LeanCfgProject/ICArtifactAudit_v27.lean
 LeanCfgProject/ICFormalizationReleaseIndex_v27.lean
-LeanCfgProject/ICSubmissionSummary_v11.lean
 ```
 
 These modules are intentionally lightweight.  Their role is to give stable paper-facing import targets, appendix-index targets, and fast CI targets.
@@ -858,10 +888,10 @@ These modules are intentionally lightweight.  Their role is to give stable paper
 The current recommended top-level target is:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v11
+LeanCfgProject.ICSubmissionSummary_v14
 ```
 
-If this module builds, Lean has checked the current v27.1 release-index import graph, including the observed-learning layer, canonical point-frame incidence core, finite residual-basis transport layer, and release-facing audit targets, through the normal dependency system.
+If this module builds, Lean has checked the current v27.2 final-index import graph, including the observed-learning layer, canonical point-frame incidence core, finite residual-basis transport layer, release-facing audit targets, release-regression and certificate layers, theorem-table index, frozen artifact index, FORMALIZATION supplement certificate, submission checklist, and final smoke test, through the normal dependency system.
 
 ---
 
@@ -870,7 +900,7 @@ If this module builds, Lean has checked the current v27.1 release-index import g
 The CI #180 run checked the current release-facing path through:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v11
+LeanCfgProject.ICSubmissionSummary_v14
 LeanCfgProject.ICFormalizationReleaseIndex_v27
 LeanCfgProject.ICArtifactAudit_v27
 LeanCfgProject.ObservedLearningReleaseTheorems_v27
@@ -888,6 +918,68 @@ The release-index layer packages the recent v27.1 additions as paper-facing audi
 - the release-facing summary target `ICSubmissionSummary_v11` imports these packages through Lean's normal dependency graph.
 
 Warnings reported in CI #180 concern linter suggestions such as unused `Fintype` hypotheses in theorem statements; they do not indicate failed proof obligations.
+
+---
+
+## v27.2 release-certificate and final-index additions checked after CI #180
+
+After the CI #180 release-index state, the development was extended through
+the v27.2 release-regression, release-certificate, and final-index layers.  This
+extension is now checked at commit `0e6dbb5` by Lean CI #184.  The current
+checked top-level target is:
+
+```text
+LeanCfgProject.ICSubmissionSummary_v14
+```
+
+The v27.2 path includes the following paper-facing targets:
+
+```text
+LeanCfgProject.ICSubmissionSummary_v14
+LeanCfgProject.ICFinalSmokeTest_v27_2
+LeanCfgProject.ICPaperSubmissionChecklist_v27_2
+LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
+LeanCfgProject.ICDependencyCertificate_v27_2
+LeanCfgProject.ICFrozenArtifactIndex_v27_2
+LeanCfgProject.ICTheoremTableIndex_v27_2
+LeanCfgProject.ICPaperClaimIndex_v27_2
+LeanCfgProject.ICSubmissionSummary_v13
+LeanCfgProject.ICReleaseSmokeTest_v27_2
+LeanCfgProject.ICAppendixReleaseIndex_v27_2
+LeanCfgProject.ICPaperFormalizationBridge_v27_2
+LeanCfgProject.FiniteBasisCertificate_v27_2
+LeanCfgProject.PointFrameCertificate_v27_2
+LeanCfgProject.ObservedLearningCertificate_v27_2
+LeanCfgProject.ICReleaseCertificate_v27_2
+LeanCfgProject.ICArtifactMetadata_ci180
+LeanCfgProject.ICSubmissionSummary_v12
+LeanCfgProject.ICReproducibilityIndex_ci180
+LeanCfgProject.ICReleaseManifest_v27_2
+LeanCfgProject.FiniteBasisReleaseRegression_v27_2
+LeanCfgProject.PointFrameReleaseRegression_v27_2
+LeanCfgProject.ObservedLearningReleaseRegression_v27_2
+```
+
+The new layer records that:
+
+- the release metadata now records commit `0e6dbb5`, Lean CI #184, and
+  `growupkuriyama-hub` as pusher, while preserving `c6c1705` / CI #180 as the earlier release-index checkpoint;
+- the release-certificate layer collects the manifest, reproducibility index,
+  release index, and v12 submission target;
+- observed-learning, point-frame, and finite-basis certificate modules re-expose
+  the corresponding release-regression theorems under stable paper-facing names;
+- the paper formalization bridge connects the v27.2 paper text to the checked
+  CI #180/v12 artifact state;
+- the theorem-table index, frozen artifact index, dependency certificate, and
+  FORMALIZATION supplement certificate provide stable names for the paper
+  appendix and reproducibility supplement;
+- the final smoke test and `ICSubmissionSummary_v14` give a compact target for
+  the end-of-day artifact state.
+
+These v27.2 modules are deliberately conservative: they do not add new low-level
+mathematical assumptions.  Their role is to make the checked theorem/file
+correspondence, release metadata, and paper-facing top-level target explicit and
+stable inside Lean.
 
 ---
 
@@ -914,7 +1006,7 @@ Warnings reported in CI #180 concern linter suggestions such as unused `Fintype`
 | Carrier observed-block adequacy | `CarrierObservedAdequacy.lean`, `CarrierObservedAdequacyCorollaries.lean` |
 | Finite observed-learning layer | `ObservedFrameStructure.lean`, `ObservedFrameStructureDecidable.lean`, `FiniteObservedFrameBasis.lean`, `FiniteSetQueryReconstruction.lean`, `FaithfulRepresentatives.lean`, `ObservedLearningExamples.lean`, `FiniteObservedConceptIdentification.lean`, `ObservedLearningCorollaries.lean`, `ObservedLearningConstructibilitySummary.lean`, `ObservedLearningPaperSummary.lean`, `ObservedLearningPaperSummary_v2.lean` |
 | Canonical point-frame incidence and reduced-frame core | `SingletonClosureIncidence.lean`, `CanonicalPointFrame.lean`, `UniversalFrameModelCore.lean`, `PointFrameCorollaries.lean`, `ReducedFrameModelCoreDefs.lean`, `FrameModelCoreBasic.lean`, `CanonicalFrameModelCorollaries.lean`, `CanonicalPointFrameStablePackage_v27.lean`, `PointFrameIncidenceTransport_v27.lean`, `PointFrameTransportSummary_v27.lean`, `PointFrameReleaseTheorems_v27.lean` |
-| Paper-facing summary and release-index targets | `ICSubmissionSummary_v11.lean`, `ICFormalizationReleaseIndex_v27.lean`, `ICArtifactAudit_v27.lean`, `ICSubmissionSummary_v10.lean`, `ICSubmissionSummary_v9.lean`, `ICSubmissionSummary_v8.lean`, `ICSubmissionSummary_v7.lean`, `ICSubmissionSummary_v6.lean`, `ICSubmissionSummary_v11.lean`, `ObservedLearningPaperSummary_v2.lean`, `ICFullPaperSummary_v2.lean`, `ICFastCI_v2.lean`, `ICReproducibilitySummary.lean`, `ICArtifactFreezeIndex.lean`, `ICArtifactAppendixCoverage.lean` |
+| Paper-facing summary, release-index, release-certificate, and final-index targets | `ICSubmissionSummary_v14.lean`, `ICFinalSmokeTest_v27_2.lean`, `ICPaperSubmissionChecklist_v27_2.lean`, `ICFormalizationSupplementCertificate_v27_2.lean`, `ICDependencyCertificate_v27_2.lean`, `ICFrozenArtifactIndex_v27_2.lean`, `ICTheoremTableIndex_v27_2.lean`, `ICPaperClaimIndex_v27_2.lean`, `ICSubmissionSummary_v13.lean`, `ICReleaseCertificate_v27_2.lean`, `ICArtifactMetadata_ci180.lean`, `ICSubmissionSummary_v12.lean`, `ICSubmissionSummary_v11.lean`, `ICFormalizationReleaseIndex_v27.lean`, `ICArtifactAudit_v27.lean` |
 
 ---
 
@@ -983,21 +1075,21 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked by GitHub Actions Lean
-CI #180.  The CI log reports that the top-level paper-facing target
-LeanCfgProject.ICSubmissionSummary_v11 was built successfully and that the
-build completed successfully with 8607 jobs.  The development verifies the
-descriptor architecture, residual concept semantics, carrier saturation
-correctness, bounded finite-stopping results, observed syntactic congruence
-and maximality, the canonical residual closure system, K4 adequacy witnesses,
-carrier-level observed-block adequacy, the finite observed-learning layer,
-the canonical point-frame incidence core for the reduced representation
-viewpoint, and the v27.1 release-index packages for observed-subset transport,
-point-frame transport, finite residual-basis transport, and artifact audit.
-The artifact intentionally does not claim a full formalization of the paper,
-the full abstract universal representation theorem, or an unrestricted
-adequacy theorem.  The exact commit hash should be recorded from the
-corresponding GitHub Actions run or release tag in the final archived artifact.
+The accompanying Lean 4 artifact was checked at commit 0e6dbb5 by GitHub
+Actions Lean CI #184, pushed by growupkuriyama-hub.  The top-level
+paper-facing target is LeanCfgProject.ICSubmissionSummary_v14.  The earlier
+release-index checkpoint was commit c6c1705 / Lean CI #180.  The development
+verifies the descriptor architecture, residual concept semantics, carrier
+saturation correctness, bounded finite-stopping results, observed syntactic
+congruence and maximality, the canonical residual closure system, K4 adequacy
+witnesses, carrier-level observed-block adequacy, the finite observed-learning
+layer, the canonical point-frame incidence core for the reduced representation
+viewpoint, and the v27.1/v27.2 paper-facing release, certificate, and
+final-index packages for observed-subset transport, point-frame transport,
+finite residual-basis transport, artifact audit, theorem/file indexing, and
+FORMALIZATION supplement consistency.  The artifact intentionally does not
+claim a full formalization of the paper, the full abstract universal
+representation theorem, or an unrestricted adequacy theorem.
 ```
 
 ---
@@ -1006,7 +1098,7 @@ corresponding GitHub Actions run or release tag in the final archived artifact.
 
 Natural next targets include:
 
-1. preparing a public release tag corresponding to the CI #180 / `ICSubmissionSummary_v11` artifact snapshot;
+1. preparing a public release tag corresponding to the commit `0e6dbb5` / Lean CI #184 / `ICSubmissionSummary_v14` artifact snapshot;
 2. preparing an archived artifact snapshot with a persistent identifier;
 3. adding a lightweight online blueprint linking paper statements to declarations;
 4. formalizing the full abstract reduced-frame-model isomorphism theorem;
