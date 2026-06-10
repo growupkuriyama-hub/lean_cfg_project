@@ -184,6 +184,32 @@ theorem quotient_conceptClosure_image_eq
     exact (hS_pullback (ab.1 * gamma * ab.2)).mp hpre
 
 /--
+The image of a singleton is a singleton.
+Kept as an explicit lemma to avoid fragile `simpa` orientation in the point
+concept theorem.
+-/
+theorem quotient_image_singleton_eq
+    (π : Q → Qbar)
+    (gamma : Q) :
+    Set.image π ({gamma} : Set Q)
+      =
+    ({π gamma} : Set Qbar) := by
+  apply Set.ext
+  intro delta
+  constructor
+  · intro hdelta
+    rcases hdelta with ⟨x, hx, hdelta_eq⟩
+    have hx_eq : x = gamma := by
+      simpa using hx
+    have hdelta_goal : delta = π gamma :=
+      hdelta_eq.symm.trans (congrArg π hx_eq)
+    simpa using hdelta_goal
+  · intro hdelta
+    have hdelta_eq : delta = π gamma := by
+      simpa using hdelta
+    exact ⟨gamma, by simp, hdelta_eq.symm⟩
+
+/--
 Image preservation for point concepts.
 -/
 theorem quotient_pointConcept_image_eq
@@ -198,20 +224,8 @@ theorem quotient_pointConcept_image_eq
     ConceptClosure Sbar ({π gamma} : Set Qbar) := by
   rw [quotient_conceptClosure_image_eq
     π hπ_mul hπ_surj S Sbar hS_pullback ({gamma} : Set Q)]
-  apply congrArg (ConceptClosure Sbar)
-  apply Set.ext
-  intro delta
-  constructor
-  · intro hdelta
-    rcases hdelta with ⟨x, hx, hdelta_eq⟩
-    have hx_eq : x = gamma := by
-      simpa using hx
-    -- From `π x = delta` and `x = gamma`, prove `delta = π gamma`.
-    exact hdelta_eq.symm.trans (congrArg π hx_eq)
-  · intro hdelta
-    have hdelta_eq : delta = π gamma := by
-      simpa using hdelta
-    exact ⟨gamma, by simp, hdelta_eq.symm⟩
+  rw [quotient_image_singleton_eq π gamma]
+
 
 /--
 Image preservation for ConceptProduct.
