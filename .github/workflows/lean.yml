@@ -36,43 +36,53 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current experiment targets: v27.2 / CI #180 final-index push9.
+      # Current theorem-body experiment targets only.
       #
       # Active purpose:
-      #   Check the final-index layer after push8 passed, culminating in
-      #   ICSubmissionSummary_v14.
-      #
-      # Historical experiment records are preserved below as commented-out
-      # blocks.  Do not delete them; uncomment selected blocks for broader
-      # regression checks or release preparation.
+      #   Check item 1 and item 2 from the paper's planned formalization
+      #   targets.  No release-certificate / summary / package targets are
+      #   active in this workflow.
       # ------------------------------------------------------------------
-
-      - name: Check ICPaperClaimIndex v27.2 module
-        run: lake build LeanCfgProject.ICPaperClaimIndex_v27_2
-
-      - name: Check ICTheoremTableIndex v27.2 module
-        run: lake build LeanCfgProject.ICTheoremTableIndex_v27_2
-
-      - name: Check ICFrozenArtifactIndex v27.2 module
-        run: lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
-
-      - name: Check ICDependencyCertificate v27.2 module
-        run: lake build LeanCfgProject.ICDependencyCertificate_v27_2
-
-      - name: Check ICFormalizationSupplementCertificate v27.2 module
-        run: lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
-
-      - name: Check ICPaperSubmissionChecklist v27.2 module
-        run: lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
-
-      - name: Check ICFinalSmokeTest v27.2 module
-        run: lake build LeanCfgProject.ICFinalSmokeTest_v27_2
-
-      - name: Check ICSubmissionSummary v14 module
-        run: lake build LeanCfgProject.ICSubmissionSummary_v14
 
       - name: Check ResidualConceptNucleus item 1
         run: lake build LeanCfgProject.ResidualConceptNucleus
+
+      - name: Check PointwiseAdequacy item 2
+        run: lake build LeanCfgProject.PointwiseAdequacy
+
+      # ------------------------------------------------------------------
+      # Archived active lake-build targets from the uploaded lean.yml.
+      # Temporarily commented out so that only item 1 and item 2 are tested.
+      # ------------------------------------------------------------------
+
+      # - name: Check ICPaperClaimIndex v27.2 module
+      #   run: lake build LeanCfgProject.ICPaperClaimIndex_v27_2
+      #
+      # - name: Check ICTheoremTableIndex v27.2 module
+      #   run: lake build LeanCfgProject.ICTheoremTableIndex_v27_2
+      #
+      # - name: Check ICFrozenArtifactIndex v27.2 module
+      #   run: lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
+      #
+      # - name: Check ICDependencyCertificate v27.2 module
+      #   run: lake build LeanCfgProject.ICDependencyCertificate_v27_2
+      #
+      # - name: Check ICFormalizationSupplementCertificate v27.2 module
+      #   run: lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
+      #
+      # - name: Check ICPaperSubmissionChecklist v27.2 module
+      #   run: lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
+      #
+      # - name: Check ICFinalSmokeTest v27.2 module
+      #   run: lake build LeanCfgProject.ICFinalSmokeTest_v27_2
+      #
+      # - name: Check ICSubmissionSummary v14 module
+      #   run: lake build LeanCfgProject.ICSubmissionSummary_v14
+      #
+
+      # ------------------------------------------------------------------
+      # Original commented archive retained verbatim from uploaded lean.yml.
+      # ------------------------------------------------------------------
 
       # ------------------------------------------------------------------
       # Archived active experiment targets from the uploaded lean.yml.
