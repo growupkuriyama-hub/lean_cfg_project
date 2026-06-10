@@ -151,13 +151,30 @@ theorem residual_one_BB_eq :
   exact residual_one_BB_mem gamma
 
 /--
+The two point values AA and AB have the same Boolean S-membership under every
+two-sided endpoint context.
+-/
+theorem endpoint_AA_AB_inSBool_eq (alpha beta : Endpoint) :
+    inSBool (alpha * AA * beta) = inSBool (alpha * AB * beta) := by
+  cases alpha <;> cases beta <;> rfl
+
+/--
 AA and AB have the same two-sided S-membership tests.
 -/
 theorem sameObservedSyntactic_AA_AB :
     SameObservedSyntactic S eAA eAB := by
   intro alpha beta
-  cases alpha <;> cases beta <;>
-    simp [S, inSBool, endpointMul, eAA, eAB]
+  constructor
+  · intro h
+    change inSBool (alpha * AA * beta) = true at h
+    change inSBool (alpha * AB * beta) = true
+    rw [← endpoint_AA_AB_inSBool_eq alpha beta]
+    exact h
+  · intro h
+    change inSBool (alpha * AB * beta) = true at h
+    change inSBool (alpha * AA * beta) = true
+    rw [endpoint_AA_AB_inSBool_eq alpha beta]
+    exact h
 
 theorem sameObservedSyntactic_AB_AA :
     SameObservedSyntactic S eAB eAA := by
