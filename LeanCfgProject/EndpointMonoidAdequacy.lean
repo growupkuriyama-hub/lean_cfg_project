@@ -104,7 +104,7 @@ abbrev U : Set Endpoint := fun x => inUBool x = true
 
 theorem mem_S_iff (x : Endpoint) :
     x ∈ S ↔ x = eAA ∨ x = eAB := by
-  cases x <;> change (inSBool x = true ↔ x = eAA ∨ x = eAB) <;> decide
+  cases x <;> simp [S, inSBool, eAA, eAB]
 
 theorem eAA_mem_S : eAA ∈ S := by
   change inSBool AA = true
@@ -156,11 +156,8 @@ AA and AB have the same two-sided S-membership tests.
 theorem sameObservedSyntactic_AA_AB :
     SameObservedSyntactic S eAA eAB := by
   intro alpha beta
-  cases alpha <;> cases beta
-  all_goals
-    change (inSBool (alpha * AA * beta) = true ↔
-      inSBool (alpha * AB * beta) = true)
-    decide
+  cases alpha <;> cases beta <;>
+    simp [S, inSBool, endpointMul, eAA, eAB]
 
 theorem sameObservedSyntactic_AB_AA :
     SameObservedSyntactic S eAB eAA := by
