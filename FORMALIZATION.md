@@ -2,13 +2,13 @@
 
 Lean 4 artifact for the paper:
 
-**Residual Concept Representations for Two-Sided Monoid-Typed CFG Descriptors**
+**Observed Syntactic Concept Objects for Monoid-Typed CFG Presentations**
 
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
 Current checked artifact snapshot: commit `794dc20`  
-GitHub Actions: Lean CI #216 passed  
+GitHub Actions: Lean CI #216 passed; successful-log audit through Lean CI #217  
 Pushed by: `growupkuriyama-hub`
 
 ---
@@ -40,6 +40,14 @@ pushed by: growupkuriyama-hub
 status: passed
 latest checked theorem-body extension: normal-coset and zero-adjoined normal-coset consequences / item 6
 latest checked theorem-body target: LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+CI log audit:
+  archive: LeanLog1-217.zip
+  run-number range present in archive: #9--#217
+  successful run logs inspected: 103
+  core theorem-body targets found in successful logs: 20 / 20
+  missing core theorem-body targets: 0
+  unique LeanCfgProject.* targets detected from actual Run lake build lines: 158
+  latest successful run in archive: Lean CI #217 / commit 06ad84d
 current theorem-body chain:
   LeanCfgProject.ResidualConceptNucleus
   LeanCfgProject.PointwiseAdequacy
@@ -151,15 +159,78 @@ At the current checked snapshot, the artifact verifies the following major group
 
 ---
 
+## CI log audit through Lean CI #217
+
+After the theorem-body item1--item6 development was checked at commit `794dc20`
+by Lean CI #216, the downloaded GitHub Actions logs were audited through Lean CI
+#217.  The audit was based on the archive `LeanLog1-217.zip`.
+
+The audit result was:
+
+```text
+run-number range present in uploaded archive: #9--#217
+successful run logs inspected: 103
+downloaded successful log zip files inspected: 103
+core theorem-body targets checked: 20 / 20
+missing core theorem-body targets: 0
+unique LeanCfgProject.* targets detected from actual Run lake build lines: 158
+actual Run lake build lines detected after per-run de-duplication: 1260
+latest successful run in archive: Lean CI #217 / commit 06ad84d
+```
+
+The audit confirms that the core theorem-body chain listed in this supplement
+was not skipped in the successful CI history.  In particular, the following
+milestones were found in successful logs:
+
+```text
+Lean CI #195 / commit b1e651e:
+  item1--item4 theorem-body chain through
+  LeanCfgProject.ObservedFactorMinimality
+
+Lean CI #207 / commit 702dcf5:
+  finite examples through
+  LeanCfgProject.EndpointMonoidAdequacy
+
+Lean CI #216 / commit 794dc20:
+  normal-coset and zero-adjoined normal-coset consequence targets through
+  LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+
+Lean CI #217 / commit 06ad84d:
+  subsequent successful re-check of
+  LeanCfgProject.NormalCosetConsequences
+  LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+```
+
+Important limitation: the uploaded audit archive contains successful run logs
+only.  It is therefore evidence that each claimed core theorem-body target was
+successfully checked at least once, not a complete archive of every failed
+intermediate attempt.  This is the intended use of the audit: it supports the
+paper-facing claim that the listed theorem-body experiments are present in the
+successful GitHub Actions history.
+
+
 ## How to reproduce the current check
 
-From the repository root, run:
+There are two useful reproduction modes.
+
+First, to reproduce the current theorem-body item1--item6 endpoint checked by
+Lean CI #216, run from the repository root:
+
+```bash
+lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+```
+
+For a direct explicit check of the whole current theorem-body chain, run the
+twenty `lake build` commands listed in the current artifact status block above.
+
+Second, to reproduce the stable paper-facing final-index checkpoint checked at
+commit `0e6dbb5` by Lean CI #184, run:
 
 ```bash
 lake build LeanCfgProject.ICSubmissionSummary_v14
 ```
 
-For a broader paper-facing import check around the current final-index layer, run:
+For a broader paper-facing import check around the final-index layer, run:
 
 ```bash
 lake build LeanCfgProject.ICSubmissionSummary_v14
@@ -1316,8 +1387,6 @@ stable inside Lean.
 
 ---
 
----
-
 ### 12. Normal-coset and zero-adjoined normal-coset adequacy checked by CI #216
 
 Files:
@@ -1483,15 +1552,20 @@ A concise artifact statement for the paper could be:
 
 ```text
 The accompanying Lean 4 artifact was checked at commit 794dc20 by GitHub
-Actions Lean CI #216, pushed by growupkuriyama-hub.  The current
-theorem-body target is LeanCfgProject.ZeroAdjoinedNormalCosetConsequences.  The
-previous finite-example target LeanCfgProject.EndpointMonoidAdequacy was
-checked at commit 702dcf5 / Lean CI #207, and the earlier theorem-body
-item1--item4 target LeanCfgProject.ObservedFactorMinimality was checked at
-commit b1e651e / Lean CI #195.  The previous paper-facing final-index target
-LeanCfgProject.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 / Lean CI
-#184, with the earlier release-index checkpoint at commit c6c1705 / Lean CI
-#180.  The development verifies the descriptor architecture, residual concept
+Actions Lean CI #216, pushed by growupkuriyama-hub.  The current theorem-body
+endpoint is LeanCfgProject.ZeroAdjoinedNormalCosetConsequences.  A subsequent
+audit of downloaded successful GitHub Actions logs through Lean CI #217
+confirmed that all 20 expected core theorem-body targets appeared in successful
+workflow logs, with missing core targets equal to 0.  The audit archive contained
+successful run logs for run numbers #9--#217, including the theorem-body
+item1--item4 checkpoint b1e651e / Lean CI #195, the finite-example checkpoint
+702dcf5 / Lean CI #207, the normal-coset checkpoint 794dc20 / Lean CI #216, and
+a subsequent successful re-check at 06ad84d / Lean CI #217.  The previous
+paper-facing final-index target LeanCfgProject.ICSubmissionSummary_v14 was
+checked at commit 0e6dbb5 / Lean CI #184, with the earlier release-index
+checkpoint at commit c6c1705 / Lean CI #180.
+
+The development verifies the descriptor architecture, residual concept
 semantics, carrier saturation correctness, bounded finite-stopping results,
 observed syntactic congruence and maximality, the canonical residual closure
 system, K4 adequacy witnesses, carrier-level observed-block adequacy, the finite
@@ -1500,26 +1574,44 @@ reduced representation viewpoint, and the v27.1/v27.2 paper-facing release,
 certificate, and final-index packages.  The theorem-body extension additionally
 verifies the multiplicative nucleus property of residual concept closure,
 pointwise and uniform adequacy equivalences, abstract factor-map invariance for
-residuals/common contexts/concept closures/point concepts/concept products, the
-equivalence between exact observed image-pullback preservation and fiber
-containment in the observed syntactic congruence, three finite adequacy
+residuals, common contexts, concept closures, point concepts and concept
+products, the equivalence between exact observed image-pullback preservation and
+fiber containment in the observed syntactic congruence, three finite adequacy
 examples, and the normal-coset / zero-adjoined normal-coset adequacy family,
 including exact syntactic-block characterization, shifted residual formulas, and
-singleton/self-closure consequence layers.  The artifact intentionally does not
-claim a full formalization of the paper, the full abstract universal
-representation theorem, an actual quotient-monoid instance for every
-presentation inside Lean, or an unrestricted adequacy theorem.
+singleton/self-closure consequence layers.
+
+The artifact intentionally does not claim a full formalization of the paper, a
+complete abstract universal representation theorem for arbitrary reduced frame
+models, an actual quotient-monoid instance for every presentation inside Lean,
+or an unrestricted adequacy theorem.
 ```
 
----
+
+## Audit files associated with this supplement
+
+The local audit generated the following auxiliary files:
+
+```text
+LEAN_CI_AUDIT_REPORT.md
+core_expected_targets_audit.csv
+all_checked_targets.csv
+successful_runs_summary.csv
+missing_core_targets.txt
+```
+
+These files are not needed to build the Lean repository.  They are paper-facing
+reproducibility evidence for the claim that the listed theorem-body targets were
+found in successful GitHub Actions logs through Lean CI #217.
+
 
 ## Future formalization targets
 
 Natural next targets include:
 
-1. preparing a public release tag corresponding to the commit `0e6dbb5` / Lean CI #184 / `ICSubmissionSummary_v14` artifact snapshot;
-2. preparing an archived artifact snapshot with a persistent identifier;
-3. adding a lightweight online blueprint linking paper statements to declarations;
+1. preparing a public release tag corresponding to the current theorem-body snapshot `794dc20` / Lean CI #216, together with the successful-log audit through Lean CI #217;
+2. archiving the paper artifact, FORMALIZATION supplement, and CI log-audit report under a persistent identifier;
+3. adding a lightweight online blueprint linking paper statements to Lean declarations;
 4. formalizing the full abstract reduced-frame-model isomorphism theorem;
 5. formalizing the mod-`k` language family and its grammar-level saturation instance;
 6. formalizing more concrete faithful-representative examples for observed learning;
