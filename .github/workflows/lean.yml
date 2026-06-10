@@ -53,6 +53,9 @@ jobs:
       - name: Check UniformAdequacy item 3
         run: lake build LeanCfgProject.UniformAdequacy
 
+      - name: Check ObservedQuotientResidual item 4a
+        run: lake build LeanCfgProject.ObservedQuotientResidual
+
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
       # Temporarily commented out so that only item 1 and item 2 are tested.
