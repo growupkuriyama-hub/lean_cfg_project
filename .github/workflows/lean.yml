@@ -53,6 +53,12 @@ jobs:
       - name: Check ZeroAdjoinedNormalCosetAdequacy
         run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
 
+      - name: Check NormalCosetSyntacticCharacterization
+        run: lake build LeanCfgProject.NormalCosetSyntacticCharacterization
+
+      - name: Check ZeroAdjoinedNormalCosetCharacterization
+        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
+
       # ------------------------------------------------------------------
       # Previous finite-example experiment targets.
       # Temporarily commented out so that this workflow tests only the
