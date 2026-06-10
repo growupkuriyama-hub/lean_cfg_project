@@ -62,6 +62,12 @@ jobs:
       - name: Check ZeroAdjoinedNormalCosetCharacterization
         run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
 
+      - name: Check NormalCosetResidualFormula
+        run: lake build LeanCfgProject.NormalCosetResidualFormula
+
+      - name: Check ZeroAdjoinedNormalCosetResidualFormula
+        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
+
       # ------------------------------------------------------------------
       # Previous finite-example experiment targets.
       # Temporarily commented out so that this workflow tests only the
