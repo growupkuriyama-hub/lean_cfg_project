@@ -36,22 +36,50 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current theorem-body experiment targets only.
+      # Current theorem-body experiment target only.
       #
       # Active purpose:
-      #   Check normal-coset consequence layer:
-      #     - shifted coset self-closure / singleton generation
-      #     - zero-adjoined shifted lifted-coset consequence layer
+      #   Check the exact observed syntactic quotient layer:
+      #     - exact observed pullback
+      #     - residual preimage / image preservation
+      #     - common-context and concept-closure preservation
+      #     - point-concept and ConceptProduct preservation
+      #     - universal property for maps constant on observed-syntactic blocks
+      #     - multiplicative lift through an exact observed quotient map
       #
       # No release-certificate / summary / package / audit / metadata /
       # checklist / smoke-test target is active in this workflow.
       # ------------------------------------------------------------------
 
-      - name: Check NormalCosetConsequences
-        run: lake build LeanCfgProject.NormalCosetConsequences
+      - name: Check ObservedSyntacticQuotientPaperSummary
+        run: lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
 
-      - name: Check ZeroAdjoinedNormalCosetConsequences
-        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+      # ------------------------------------------------------------------
+      # Current experiment subtargets.
+      # Keep commented out during the first pass because the summary target
+      # imports them.  Uncomment one by one if the summary target fails and
+      # you want a narrower diagnostic target.
+      # ------------------------------------------------------------------
+
+      # - name: Check ObservedSyntacticExactQuotient
+      #   run: lake build LeanCfgProject.ObservedSyntacticExactQuotient
+      #
+      # - name: Check ObservedSyntacticExactQuotientUniversal
+      #   run: lake build LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+      #
+
+      # ------------------------------------------------------------------
+      # Previous normal-coset consequence-layer experiment targets.
+      # Temporarily commented out so that this workflow tests only the
+      # current exact-observed-quotient experiment.
+      # ------------------------------------------------------------------
+
+      # - name: Check NormalCosetConsequences
+      #   run: lake build LeanCfgProject.NormalCosetConsequences
+      #
+      # - name: Check ZeroAdjoinedNormalCosetConsequences
+      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+      #
 
       # ------------------------------------------------------------------
       # Previous normal-coset experiment targets.
