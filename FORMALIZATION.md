@@ -7,8 +7,8 @@ Lean 4 artifact for the paper:
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Current checked artifact snapshot: commit `702dcf5`  
-GitHub Actions: Lean CI #207 passed  
+Current checked artifact snapshot: commit `794dc20`  
+GitHub Actions: Lean CI #216 passed  
 Pushed by: `growupkuriyama-hub`
 
 ---
@@ -34,12 +34,12 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 The current checked snapshot is:
 
 ```text
-commit: 702dcf5
-CI run: Lean CI #207
+commit: 794dc20
+CI run: Lean CI #216
 pushed by: growupkuriyama-hub
 status: passed
-latest checked theorem-body extension: finite adequacy examples / item 5
-latest checked theorem-body target: LeanCfgProject.EndpointMonoidAdequacy
+latest checked theorem-body extension: normal-coset and zero-adjoined normal-coset consequences / item 6
+latest checked theorem-body target: LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
 current theorem-body chain:
   LeanCfgProject.ResidualConceptNucleus
   LeanCfgProject.PointwiseAdequacy
@@ -52,15 +52,25 @@ current theorem-body chain:
   LeanCfgProject.DiamondSemilatticeAdequacy
   LeanCfgProject.ZMod3FailureExample
   LeanCfgProject.EndpointMonoidAdequacy
-previous theorem-body snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedFactorMinimality
+  LeanCfgProject.NormalCosetAdequacy
+  LeanCfgProject.NormalCosetAdequacyCorollaries
+  LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
+  LeanCfgProject.NormalCosetSyntacticCharacterization
+  LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
+  LeanCfgProject.NormalCosetResidualFormula
+  LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
+  LeanCfgProject.NormalCosetConsequences
+  LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+previous theorem-body snapshot: commit 702dcf5 / Lean CI #207 / LeanCfgProject.EndpointMonoidAdequacy
+previous theorem-body item1--item4 snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedFactorMinimality
 previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ICSubmissionSummary_v14
 previous release-index snapshot: commit c6c1705 / Lean CI #180
 ```
 
-The current theorem-body development target checked by CI #207 is:
+The current theorem-body development target checked by CI #216 is:
 
 ```bash
-lake build LeanCfgProject.EndpointMonoidAdequacy
+lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
 ```
 
 The current stable paper-facing final-index target from the previous indexed
@@ -84,11 +94,20 @@ lake build LeanCfgProject.ObservedFactorMinimality
 lake build LeanCfgProject.DiamondSemilatticeAdequacy
 lake build LeanCfgProject.ZMod3FailureExample
 lake build LeanCfgProject.EndpointMonoidAdequacy
+lake build LeanCfgProject.NormalCosetAdequacy
+lake build LeanCfgProject.NormalCosetAdequacyCorollaries
+lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
+lake build LeanCfgProject.NormalCosetSyntacticCharacterization
+lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
+lake build LeanCfgProject.NormalCosetResidualFormula
+lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
+lake build LeanCfgProject.NormalCosetConsequences
+lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
 ```
 
 
 
-The earlier release-index checkpoint `c6c1705` / Lean CI #180, the final-index checkpoint `0e6dbb5` / Lean CI #184, and the theorem-body item1--item4 checkpoint `b1e651e` / Lean CI #195 remain useful historical base points.  The current theorem-body development state is checked at commit `702dcf5` by Lean CI #207.
+The earlier release-index checkpoint `c6c1705` / Lean CI #180, the final-index checkpoint `0e6dbb5` / Lean CI #184, the theorem-body item1--item4 checkpoint `b1e651e` / Lean CI #195, and the finite-example checkpoint `702dcf5` / Lean CI #207 remain useful historical base points.  The current theorem-body development state is checked at commit `794dc20` by Lean CI #216.
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
 
@@ -127,6 +146,7 @@ At the current checked snapshot, the artifact verifies the following major group
 - v27.2 release-regression and release-certificate layers: observed-learning release regression, point-frame release regression, finite-basis release regression, release manifest, CI #180 reproducibility index, artifact metadata capsule, release certificate, observed-learning certificate, point-frame certificate, finite-basis certificate, and paper formalization bridge;
 - v27.2 final-index layer: paper-claim index, theorem-table index, frozen artifact index, dependency certificate, FORMALIZATION supplement certificate, paper submission checklist, final smoke test, and the top-level target `ICSubmissionSummary_v14`;
 - finite adequacy examples for the diamond meet-semilattice, the three-element cyclic monoid/Z3 failure witness, and the endpoint monoid;
+- normal-coset and zero-adjoined normal-coset adequacy, syntactic-block characterization, residual formulas, and consequence layers;
 - paper-facing summary, audit, release-index, final-index, and appendix-index targets for reproducibility.
 
 ---
@@ -230,6 +250,15 @@ LeanCfgProject/ICArtifactFreezeIndex.lean
 LeanCfgProject/ICArtifactAppendixCoverage.lean
 LeanCfgProject/ICArtifactReleaseSummary.lean
 LeanCfgProject/ObservedSyntacticPaperSummary.lean
+LeanCfgProject/NormalCosetAdequacy.lean
+LeanCfgProject/NormalCosetAdequacyCorollaries.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetAdequacy.lean
+LeanCfgProject/NormalCosetSyntacticCharacterization.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetCharacterization.lean
+LeanCfgProject/NormalCosetResidualFormula.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
+LeanCfgProject/NormalCosetConsequences.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
 LeanCfgProject/ICSemanticBridgeSummary_v3.lean
 ```
 
@@ -937,13 +966,14 @@ If this module builds, Lean has checked the current v27.2 final-index import gra
 ---
 
 
-## Theorem-body item1--item5 additions checked by CI #207
+## Theorem-body item1--item6 additions checked by CI #216
 
 After the v27.2 final-index snapshot, the development was extended by a new
 theorem-body chain focused on the mathematical core of the paper rather than on
-release packaging.  Items 1--4 were checked at commit `b1e651e` by Lean CI #195.
-The current item 5 finite-example extension is checked at commit `702dcf5` by
-Lean CI #207.
+release packaging.  Items 1--4 were checked at commit `b1e651e` by Lean CI #195.  The item 5
+finite-example extension was checked at commit `702dcf5` by Lean CI #207.  The
+current item 6 normal-coset and zero-adjoined normal-coset extension is checked
+at commit `794dc20` by Lean CI #216.
 
 The checked theorem-body modules are:
 
@@ -956,6 +986,18 @@ LeanCfgProject/ObservedQuotientClosure.lean
 LeanCfgProject/ObservedQuotientClosureImage.lean
 LeanCfgProject/ObservedSyntacticSaturation.lean
 LeanCfgProject/ObservedFactorMinimality.lean
+LeanCfgProject/DiamondSemilatticeAdequacy.lean
+LeanCfgProject/ZMod3FailureExample.lean
+LeanCfgProject/EndpointMonoidAdequacy.lean
+LeanCfgProject/NormalCosetAdequacy.lean
+LeanCfgProject/NormalCosetAdequacyCorollaries.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetAdequacy.lean
+LeanCfgProject/NormalCosetSyntacticCharacterization.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetCharacterization.lean
+LeanCfgProject/NormalCosetResidualFormula.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
+LeanCfgProject/NormalCosetConsequences.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
 ```
 
 The main new checked declarations include:
@@ -1012,6 +1054,31 @@ sameObservedSyntactic_AA_AB
 S_single_observed_syntactic_block
 closure_singleton_AB_eq
 endpoint_monoid_aperiodic_adequacy_witness
+normalCoset_residual_single_observed_block
+normalCoset_residual_singleBlockOn
+normalCoset_uniformAdequacyOn_residual
+normalCoset_nonempty_subset_generates_residual
+normalCoset_singleton_generates_residual
+lifted_normalCoset_residual_singleBlockOn
+lifted_normalCoset_uniformAdequacyOn_residual
+lifted_normalCoset_nonempty_subset_generates_residual
+sameObservedSyntactic_normalCoset_iff_pair_difference_mem
+normalCoset_syntactic_characterization_package
+sameObservedSyntactic_lifted_normalCoset_iff_pair_difference_mem
+lifted_normalCoset_syntactic_characterization_package
+normalCoset_residual_mem_iff_leftCoset
+normalCoset_residual_eq_leftCoset
+normalCoset_residual_base_mem
+normalCoset_base_singleton_generates_residual
+lifted_normalCoset_residual_mem_iff_shifted_liftedCoset
+lifted_normalCoset_residual_eq_shifted_liftedCoset
+lifted_normalCoset_base_singleton_generates_residual
+normalCoset_nonempty_subset_of_shifted_leftCoset_generates_shifted_leftCoset
+normalCoset_shifted_leftCoset_self_closure
+normalCoset_singleton_in_shifted_leftCoset_generates_shifted_leftCoset
+lifted_normalCoset_nonempty_subset_of_shifted_liftedCoset_generates_shifted_liftedCoset
+lifted_normalCoset_shifted_liftedCoset_self_closure
+lifted_normalCoset_singleton_in_shifted_liftedCoset_generates_shifted_liftedCoset
 ```
 
 These modules add the following verified mathematical content.
@@ -1124,6 +1191,42 @@ aperiodic non-group monoid.
 These item 5 examples are theorem-body additions.  They are not release
 certificates, submission checklists, audit wrappers, or manifest modules.
 
+Seventh, the normal-coset family is now checked as a theorem-body layer.  For a
+group `G`, a set-level normal subgroup `N`, and the observed set `S=sN`, Lean
+checks that every normal-coset residual lies in a single observed-syntactic
+block and therefore satisfies uniform adequacy.  The exact observed-syntactic
+block is also characterized:
+
+```text
+SameObservedSyntactic(sN) x y  iff  x*y^{-1} ∈ N.
+```
+
+Lean also checks the residual formula
+
+```text
+Res_{sN}(a,b) = (a^{-1} s b^{-1})N,
+```
+
+the canonical base-point witness `a^{-1} s b^{-1}`, and the consequence that
+every nonempty subset of the shifted coset generates the shifted coset by
+residual concept closure.
+
+Eighth, the same normal-coset story is lifted to the zero-adjoined monoid.  For
+the monoid obtained by adjoining an absorbing zero to `G`, the lifted observed
+set omits zero and keeps the same coset on the nonzero component.  Lean checks
+the nonzero syntactic characterization, the lifted residual formula
+
+```text
+Res_{lift(sN)}(nz a,nz b) = lift((a^{-1} s b^{-1})N),
+```
+
+and the corresponding nonempty-subset, singleton, and self-closure consequences.
+This verifies that the normal-coset adequacy mechanism survives in a simple
+non-group monoid obtained by adjoining zero.
+
+These item 6 modules are theorem-body additions.  They are not release
+certificates, submission checklists, audit wrappers, or manifest modules.
+
 
 ## v27.1 release-index additions checked by CI #180
 
@@ -1213,6 +1316,70 @@ stable inside Lean.
 
 ---
 
+---
+
+### 12. Normal-coset and zero-adjoined normal-coset adequacy checked by CI #216
+
+Files:
+
+```text
+LeanCfgProject/NormalCosetAdequacy.lean
+LeanCfgProject/NormalCosetAdequacyCorollaries.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetAdequacy.lean
+LeanCfgProject/NormalCosetSyntacticCharacterization.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetCharacterization.lean
+LeanCfgProject/NormalCosetResidualFormula.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
+LeanCfgProject/NormalCosetConsequences.lean
+LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
+```
+
+This layer formalizes the normal-coset adequacy family and its zero-adjoined
+monoid variant.
+
+Representative declarations:
+
+```text
+NormalSubgroupSet
+LeftCosetSet
+normalCoset_residual_single_observed_block
+normalCoset_uniformAdequacyOn_residual
+normalCoset_nonempty_subset_generates_residual
+normalCoset_singleton_generates_residual
+sameObservedSyntactic_normalCoset_iff_pair_difference_mem
+normalCoset_syntactic_characterization_package
+normalCoset_residual_eq_leftCoset
+normalCoset_residual_base_mem
+normalCoset_base_singleton_generates_residual
+normalCoset_shifted_leftCoset_self_closure
+normalCoset_singleton_in_shifted_leftCoset_generates_shifted_leftCoset
+ZeroAdjoin
+LiftedCosetSet
+lifted_normalCoset_uniformAdequacyOn_residual
+sameObservedSyntactic_lifted_normalCoset_iff_pair_difference_mem
+lifted_normalCoset_residual_eq_shifted_liftedCoset
+lifted_normalCoset_shifted_liftedCoset_self_closure
+lifted_normalCoset_singleton_in_shifted_liftedCoset_generates_shifted_liftedCoset
+```
+
+The verified mathematical content is:
+
+- if `S=sN` for a normal subgroup `N`, then every residual `Res_S(a,b)` lies in a
+  single observed-syntactic block;
+- equivalently, every nonempty subset of such a residual generates the residual
+  by concept closure;
+- observed syntactic equivalence for `sN` is exactly equality modulo `N`, namely
+  `x ≈_S y` iff `x*y^{-1} ∈ N`;
+- every residual has the explicit shifted-coset form
+  `Res_{sN}(a,b) = (a^{-1} s b^{-1})N`;
+- the shifted coset is closed and every singleton inside it generates it;
+- adjoining an absorbing zero preserves these results on the nonzero component,
+  with residuals over nonzero frames equal to the lifted shifted cosets.
+
+This checks the paper's normal-coset adequacy mechanism as theorem-body Lean
+code, including a non-group zero-adjoined monoid variant.
+
+
 ## Main theorem/file correspondence
 
 | Paper-level component | Lean files |
@@ -1234,6 +1401,7 @@ stable inside Lean.
 | Canonical residual closure system | `CanonicalResidualClosureSystem.lean`, `ObservedSyntacticResidualCorollaries.lean` |
 | Syntactic-block adequacy | `ObservedSyntacticBlockAdequacyCorollaries.lean`, `ObservedSyntacticPaperCorollaries.lean` |
 | Finite adequacy examples | `DiamondSemilatticeAdequacy.lean`, `ZMod3FailureExample.lean`, `EndpointMonoidAdequacy.lean` |
+| Normal-coset and zero-adjoined normal-coset adequacy | `NormalCosetAdequacy.lean`, `NormalCosetAdequacyCorollaries.lean`, `ZeroAdjoinedNormalCosetAdequacy.lean`, `NormalCosetSyntacticCharacterization.lean`, `ZeroAdjoinedNormalCosetCharacterization.lean`, `NormalCosetResidualFormula.lean`, `ZeroAdjoinedNormalCosetResidualFormula.lean`, `NormalCosetConsequences.lean`, `ZeroAdjoinedNormalCosetConsequences.lean` |
 | K4 adequacy witness | `K4ResidualAdequacyExample.lean`, `K4AdequacyStrictness.lean`, `K4ConceptCollapse.lean`, `K4AdequacyPaperSummary.lean`, `AdequacyBridgeSummary.lean` |
 | Carrier observed-block adequacy | `CarrierObservedAdequacy.lean`, `CarrierObservedAdequacyCorollaries.lean` |
 | Finite observed-learning layer | `ObservedFrameStructure.lean`, `ObservedFrameStructureDecidable.lean`, `FiniteObservedFrameBasis.lean`, `FiniteSetQueryReconstruction.lean`, `FaithfulRepresentatives.lean`, `ObservedLearningExamples.lean`, `FiniteObservedConceptIdentification.lean`, `ObservedLearningCorollaries.lean`, `ObservedLearningConstructibilitySummary.lean`, `ObservedLearningPaperSummary.lean`, `ObservedLearningPaperSummary_v2.lean` |
@@ -1283,7 +1451,8 @@ with the following additional verified facts:
 - uniform residual adequacy is equivalent to singleton adequacy and to the single observed-syntactic-block condition;
 - residuals, common contexts, concept closures, point concepts, and concept products are preserved by exact surjective multiplicative observed factor maps;
 - exact image-pullback preservation is equivalent to factor-map fibers being contained in the observed syntactic congruence;
-- the diamond meet-semilattice, three-element cyclic monoid, and endpoint monoid give checked finite examples of residual-concept adequacy, failure of automatic residual coverage, and aperiodic single-block adequacy.
+- the diamond meet-semilattice, three-element cyclic monoid, and endpoint monoid give checked finite examples of residual-concept adequacy, failure of automatic residual coverage, and aperiodic single-block adequacy;
+- the normal-coset family is checked through uniform adequacy, exact observed-syntactic block characterization, residual shifted-coset formulas, singleton/self-closure consequences, and a zero-adjoined non-group monoid variant.
 
 ---
 
@@ -1298,7 +1467,7 @@ The current Lean artifact does **not** claim that:
 - all residual concepts are exactly realized by typed presentation states without additional hypotheses;
 - finite residual-concept bases have been constructed for broad classes of fixed-`h` substitutable CFLs;
 - the pointed-boundary theorem has been developed into a complete standalone regular-language theory;
-- the normal-coset and mod-`k` families have all been formalized;
+- the mod-`k` language family and its grammar-level saturation instantiation have all been formalized;
 - the full abstract complete-lattice isomorphism theorem for arbitrary reduced frame models has been formalized;
 - polynomial-time complexity bounds such as `O(|Q|^4)` have been formalized inside Lean.
 
@@ -1313,31 +1482,33 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked at commit 702dcf5 by GitHub
-Actions Lean CI #207, pushed by growupkuriyama-hub.  The current
-theorem-body target is LeanCfgProject.EndpointMonoidAdequacy.  The previous
-theorem-body item1--item4 target LeanCfgProject.ObservedFactorMinimality was
-checked at commit b1e651e / Lean CI #195.  The previous paper-facing final-index
-target LeanCfgProject.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 /
-Lean CI #184, with the earlier release-index checkpoint at commit c6c1705 /
-Lean CI #180.  The development verifies the descriptor architecture, residual
-concept semantics, carrier saturation correctness, bounded finite-stopping
-results, observed syntactic congruence and maximality, the canonical residual
-closure system, K4 adequacy witnesses, carrier-level observed-block adequacy,
-the finite observed-learning layer, the canonical point-frame incidence core
-for the reduced representation viewpoint, and the v27.1/v27.2 paper-facing
-release, certificate, and final-index packages.  The theorem-body extension
-additionally verifies the multiplicative nucleus property of residual concept
-closure, pointwise and uniform adequacy equivalences, abstract factor-map
-invariance for residuals/common contexts/concept closures/point concepts/concept
-products, the equivalence between exact observed image-pullback preservation and
-fiber containment in the observed syntactic congruence, and three finite
-adequacy examples: a diamond meet-semilattice witness, a three-element cyclic
-monoid / Z/3 failure witness, and an endpoint-monoid aperiodic adequacy witness.
-The artifact intentionally does not claim a full formalization of the paper, the
-full abstract universal representation theorem, an actual quotient-monoid
-instance for every presentation inside Lean, or an unrestricted adequacy
-theorem.
+The accompanying Lean 4 artifact was checked at commit 794dc20 by GitHub
+Actions Lean CI #216, pushed by growupkuriyama-hub.  The current
+theorem-body target is LeanCfgProject.ZeroAdjoinedNormalCosetConsequences.  The
+previous finite-example target LeanCfgProject.EndpointMonoidAdequacy was
+checked at commit 702dcf5 / Lean CI #207, and the earlier theorem-body
+item1--item4 target LeanCfgProject.ObservedFactorMinimality was checked at
+commit b1e651e / Lean CI #195.  The previous paper-facing final-index target
+LeanCfgProject.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 / Lean CI
+#184, with the earlier release-index checkpoint at commit c6c1705 / Lean CI
+#180.  The development verifies the descriptor architecture, residual concept
+semantics, carrier saturation correctness, bounded finite-stopping results,
+observed syntactic congruence and maximality, the canonical residual closure
+system, K4 adequacy witnesses, carrier-level observed-block adequacy, the finite
+observed-learning layer, the canonical point-frame incidence core for the
+reduced representation viewpoint, and the v27.1/v27.2 paper-facing release,
+certificate, and final-index packages.  The theorem-body extension additionally
+verifies the multiplicative nucleus property of residual concept closure,
+pointwise and uniform adequacy equivalences, abstract factor-map invariance for
+residuals/common contexts/concept closures/point concepts/concept products, the
+equivalence between exact observed image-pullback preservation and fiber
+containment in the observed syntactic congruence, three finite adequacy
+examples, and the normal-coset / zero-adjoined normal-coset adequacy family,
+including exact syntactic-block characterization, shifted residual formulas, and
+singleton/self-closure consequence layers.  The artifact intentionally does not
+claim a full formalization of the paper, the full abstract universal
+representation theorem, an actual quotient-monoid instance for every
+presentation inside Lean, or an unrestricted adequacy theorem.
 ```
 
 ---
@@ -1350,7 +1521,7 @@ Natural next targets include:
 2. preparing an archived artifact snapshot with a persistent identifier;
 3. adding a lightweight online blueprint linking paper statements to declarations;
 4. formalizing the full abstract reduced-frame-model isomorphism theorem;
-5. formalizing the normal-coset and mod-`k` adequacy families;
+5. formalizing the mod-`k` language family and its grammar-level saturation instance;
 6. formalizing more concrete faithful-representative examples for observed learning;
 7. formalizing the actual quotient monoid/congruence instance for `SameObservedSyntactic`, beyond the currently checked abstract factor-map invariance theorem;
 8. developing restricted adequacy theorems for additional controlled subclasses;
