@@ -1,6 +1,4 @@
 import LeanCfgProject.ObservedSyntacticConcept
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic
 
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
@@ -14,25 +12,50 @@ namespace ZMod3FailureExample
 Finite example (2): the Z/3 failure example.
 
 Representation choice:
-  We use `Multiplicative (ZMod 3)` so that the existing definitions
-  `TwoSidedResidual`, `ConceptClosure`, and `SameObservedSyntactic`, which are
-  written with `*`, interpret multiplication as addition in `ZMod 3`.
+  Instead of using `Multiplicative (ZMod 3)`, we use an explicit three-element
+  inductive type with the addition-mod-3 multiplication table.  This is more
+  robust for CI because all cases reduce by `cases`, `simp`, and `decide`.
 
-Important CI detail:
-  The observed set S and U are written as explicit decidable predicates rather
-  than set-builder abbreviations `{z0,z1}` and `{z0}`.  This lets `simp [S,U]`
-  expose membership as equality/disjunctions before `decide` is called.
+This file uses the existing definitions from ObservedSyntacticConcept.lean /
+ResidualConcept.lean:
+  TwoSidedResidual, CommonContexts, ElementsOfContexts, ConceptClosure,
+  SameObservedSyntactic.
+No residual, closure, or syntactic relation is redefined.
 -/
 
-abbrev Z3 : Type := Multiplicative (ZMod 3)
+inductive Z3 : Type
+  | C0
+  | C1
+  | C2
+  deriving DecidableEq, Repr, Fintype
 
-instance : DecidableEq Z3 := inferInstance
-instance : Fintype Z3 := inferInstance
-instance : Monoid Z3 := inferInstance
+open Z3
 
-def z0 : Z3 := Multiplicative.ofAdd (0 : ZMod 3)
-def z1 : Z3 := Multiplicative.ofAdd (1 : ZMod 3)
-def z2 : Z3 := Multiplicative.ofAdd (2 : ZMod 3)
+def z0 : Z3 := C0
+def z1 : Z3 := C1
+def z2 : Z3 := C2
+
+/-- Addition modulo 3, used as multiplication. -/
+def addMod3 : Z3 → Z3 → Z3
+  | C0, x => x
+  | x, C0 => x
+  | C1, C1 => C2
+  | C1, C2 => C0
+  | C2, C1 => C0
+  | C2, C2 => C1
+
+instance : Monoid Z3 where
+  mul := addMod3
+  one := C0
+  mul_assoc := by
+    intro x y z
+    cases x <;> cases y <;> cases z <;> rfl
+  one_mul := by
+    intro x
+    cases x <;> rfl
+  mul_one := by
+    intro x
+    cases x <;> rfl
 
 /-- The observed set S = {0,1}. -/
 def S : Set Z3 := fun x => x = z0 ∨ x = z1
@@ -40,30 +63,37 @@ def S : Set Z3 := fun x => x = z0 ∨ x = z1
 /-- The state image U = {0}. -/
 def U : Set Z3 := fun x => x = z0
 
+instance decidableMemS : DecidablePred S := by
+  intro x
+  unfold S
+  infer_instance
+
+instance decidableMemU : DecidablePred U := by
+  intro x
+  unfold U
+  infer_instance
+
 theorem z0_mem_S : z0 ∈ S := by
-  simp [S]
+  simp [S, z0, z1]
 
 theorem z1_mem_S : z1 ∈ S := by
-  simp [S]
+  simp [S, z0, z1]
 
 theorem z2_not_mem_S : z2 ∉ S := by
   simp [S, z0, z1, z2]
-  decide
 
 theorem z0_mem_U : z0 ∈ U := by
-  simp [U]
+  simp [U, z0]
 
 theorem z1_not_mem_U : z1 ∉ U := by
   simp [U, z0, z1]
-  decide
 
 theorem residual_zero_zero_mem :
     ∀ gamma : Z3,
       gamma ∈ TwoSidedResidual S z0 z0 ↔ gamma ∈ S := by
   intro gamma
-  fin_cases gamma <;>
-    simp [TwoSidedResidual, S, z0, z1, z2] <;>
-    decide
+  cases gamma <;>
+    simp [TwoSidedResidual, S, z0, z1, z2, addMod3]
 
 theorem residual_zero_zero_eq :
     TwoSidedResidual S z0 z0 = S := by
@@ -74,9 +104,9 @@ theorem closure_singleton_zero_mem :
     ∀ gamma : Z3,
       gamma ∈ ConceptClosure S U ↔ gamma ∈ U := by
   intro gamma
-  fin_cases gamma <;>
-    simp [ConceptClosure, ElementsOfContexts, CommonContexts, S, U,
-      z0, z1, z2] <;>
+  cases gamma <;>
+    simp [ConceptClosure, ElementsOfContexts, CommonContexts,
+      S, U, z0, z1, z2, addMod3] <;>
     decide
 
 theorem closure_singleton_zero_eq :
@@ -107,11 +137,9 @@ theorem not_sameObservedSyntactic_zero_one :
   intro h
   have hctx := h z1 z0
   have hleft : z1 * z0 * z0 ∈ S := by
-    simp [S, z0, z1, z2]
-    decide
+    simp [S, z0, z1, z2, addMod3]
   have hright : z1 * z1 * z0 ∉ S := by
-    simp [S, z0, z1, z2]
-    decide
+    simp [S, z0, z1, z2, addMod3]
   exact hright (hctx.mp hleft)
 
 /--
