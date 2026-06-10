@@ -50,6 +50,9 @@ jobs:
       - name: Check ZMod3FailureExample finite example
         run: lake build LeanCfgProject.ZMod3FailureExample
 
+      - name: Check EndpointMonoidAdequacy finite example
+        run: lake build LeanCfgProject.EndpointMonoidAdequacy
+
       # ------------------------------------------------------------------
       # Previous theorem-body experiment targets.
       # Temporarily commented out so that this workflow tests only the
