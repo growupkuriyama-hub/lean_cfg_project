@@ -65,6 +65,9 @@ jobs:
       - name: Check ObservedSyntacticSaturation item 4
         run: lake build LeanCfgProject.ObservedSyntacticSaturation
 
+      - name: Check ObservedSyntacticSaturation item 4
+        run: lake build LeanCfgProject.ObservedSyntacticSaturation
+
 
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
