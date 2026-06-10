@@ -25,11 +25,6 @@ Observed set:
 State image:
   U = {AB}.
 
-This file checks:
-  * Res_S(1,BB) = S,
-  * all elements of S lie in one SameObservedSyntactic block,
-  * ConceptClosure S {AB} = S.
-
 Existing definitions used:
   TwoSidedResidual, CommonContexts, ElementsOfContexts, ConceptClosure,
   SameObservedSyntactic.
@@ -102,6 +97,16 @@ abbrev S : Set Endpoint := fun x => inSBool x = true
 /-- The singleton state image U = {(a,b)}. -/
 abbrev U : Set Endpoint := fun x => inUBool x = true
 
+instance decidableMemS : DecidablePred S := by
+  intro x
+  unfold S
+  infer_instance
+
+instance decidableMemU : DecidablePred U := by
+  intro x
+  unfold U
+  infer_instance
+
 theorem mem_S_iff (x : Endpoint) :
     x ∈ S ↔ x = eAA ∨ x = eAB := by
   cases x <;> simp [S, inSBool, eAA, eAB]
@@ -133,16 +138,8 @@ theorem residual_one_BB_mem :
     ∀ gamma : Endpoint,
       gamma ∈ TwoSidedResidual S e1 eBB ↔ gamma ∈ S := by
   intro gamma
-  cases gamma
-  · change (inSBool (I * I * BB) = true ↔ inSBool I = true)
-    decide
-  · change (inSBool (I * AA * BB) = true ↔ inSBool AA = true)
-    decide
-  · change (inSBool (I * AB * BB) = true ↔ inSBool AB = true)
-    decide
-  · change (inSBool (I * BA * BB) = true ↔ inSBool BA = true)
-    decide
-  · change (inSBool (I * BB * BB) = true ↔ inSBool BB = true)
+  cases gamma <;>
+    simp [TwoSidedResidual, S, inSBool, endpointMul, e1, eBB] <;>
     decide
 
 theorem residual_one_BB_eq :
@@ -166,15 +163,19 @@ theorem sameObservedSyntactic_AA_AB :
   intro alpha beta
   constructor
   · intro h
-    change inSBool (alpha * AA * beta) = true at h
-    change inSBool (alpha * AB * beta) = true
-    rw [← endpoint_AA_AB_inSBool_eq alpha beta]
-    exact h
+    have hbool : inSBool (alpha * AA * beta) = true := by
+      simpa [S, eAA] using h
+    have hbool' : inSBool (alpha * AB * beta) = true := by
+      rw [← endpoint_AA_AB_inSBool_eq alpha beta]
+      exact hbool
+    simpa [S, eAB] using hbool'
   · intro h
-    change inSBool (alpha * AB * beta) = true at h
-    change inSBool (alpha * AA * beta) = true
-    rw [endpoint_AA_AB_inSBool_eq alpha beta]
-    exact h
+    have hbool : inSBool (alpha * AB * beta) = true := by
+      simpa [S, eAB] using h
+    have hbool' : inSBool (alpha * AA * beta) = true := by
+      rw [endpoint_AA_AB_inSBool_eq alpha beta]
+      exact hbool
+    simpa [S, eAA] using hbool'
 
 theorem sameObservedSyntactic_AB_AA :
     SameObservedSyntactic S eAB eAA := by
