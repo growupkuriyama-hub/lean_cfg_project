@@ -36,42 +36,55 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current theorem-body experiment target only.
+      # Current theorem-body experiment targets only.
       #
       # Active purpose:
-      #   Check normal-coset adequacy core.
-      #   No release-certificate / summary / package / audit / metadata /
-      #   checklist / smoke-test target is active in this workflow.
+      #   Check normal-coset consequence layer:
+      #     - shifted coset self-closure / singleton generation
+      #     - zero-adjoined shifted lifted-coset consequence layer
+      #
+      # No release-certificate / summary / package / audit / metadata /
+      # checklist / smoke-test target is active in this workflow.
       # ------------------------------------------------------------------
 
-      - name: Check NormalCosetAdequacy
-        run: lake build LeanCfgProject.NormalCosetAdequacy
+      - name: Check NormalCosetConsequences
+        run: lake build LeanCfgProject.NormalCosetConsequences
 
-      - name: Check NormalCosetAdequacyCorollaries
-        run: lake build LeanCfgProject.NormalCosetAdequacyCorollaries
+      - name: Check ZeroAdjoinedNormalCosetConsequences
+        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
 
-      - name: Check ZeroAdjoinedNormalCosetAdequacy
-        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
+      # ------------------------------------------------------------------
+      # Previous normal-coset experiment targets.
+      # Temporarily commented out so that this workflow tests only the
+      # current consequence-layer experiment.
+      # ------------------------------------------------------------------
 
-      - name: Check NormalCosetSyntacticCharacterization
-        run: lake build LeanCfgProject.NormalCosetSyntacticCharacterization
-
-      - name: Check ZeroAdjoinedNormalCosetCharacterization
-        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
-
-      - name: Check ZeroAdjoinedNormalCosetCharacterization
-        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
-
-      - name: Check NormalCosetResidualFormula
-        run: lake build LeanCfgProject.NormalCosetResidualFormula
-
-      - name: Check ZeroAdjoinedNormalCosetResidualFormula
-        run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
+      # - name: Check NormalCosetAdequacy
+      #   run: lake build LeanCfgProject.NormalCosetAdequacy
+      #
+      # - name: Check NormalCosetAdequacyCorollaries
+      #   run: lake build LeanCfgProject.NormalCosetAdequacyCorollaries
+      #
+      # - name: Check ZeroAdjoinedNormalCosetAdequacy
+      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
+      #
+      # - name: Check NormalCosetSyntacticCharacterization
+      #   run: lake build LeanCfgProject.NormalCosetSyntacticCharacterization
+      #
+      # - name: Check ZeroAdjoinedNormalCosetCharacterization
+      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
+      #
+      # - name: Check NormalCosetResidualFormula
+      #   run: lake build LeanCfgProject.NormalCosetResidualFormula
+      #
+      # - name: Check ZeroAdjoinedNormalCosetResidualFormula
+      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
+      #
 
       # ------------------------------------------------------------------
       # Previous finite-example experiment targets.
       # Temporarily commented out so that this workflow tests only the
-      # current NormalCosetAdequacy experiment.
+      # current consequence-layer experiment.
       # ------------------------------------------------------------------
 
       # - name: Check DiamondSemilatticeAdequacy finite example
@@ -87,7 +100,7 @@ jobs:
       # ------------------------------------------------------------------
       # Previous theorem-body experiment targets.
       # Temporarily commented out so that this workflow tests only the
-      # current NormalCosetAdequacy experiment.
+      # current consequence-layer experiment.
       # ------------------------------------------------------------------
 
       # - name: Check ResidualConceptNucleus item 1
@@ -116,13 +129,9 @@ jobs:
       #
 
       # ------------------------------------------------------------------
-      # Original archived/commented targets retained from uploaded lean.yml.
-      # They remain commented out during the finite-example experiment.
-      # ------------------------------------------------------------------
-
-      # ------------------------------------------------------------------
-      # Archived active lake-build targets from the uploaded lean.yml.
-      # Temporarily commented out so that only the current NormalCosetAdequacy experiment is tested.
+      # Archived paper-facing / release / certificate targets.
+      # Keep commented out during theorem-body experiments.
+      # Uncomment for wider regression checks or before tagging an artifact.
       # ------------------------------------------------------------------
 
       # - name: Check ICPaperClaimIndex v27.2 module
@@ -149,16 +158,6 @@ jobs:
       # - name: Check ICSubmissionSummary v14 module
       #   run: lake build LeanCfgProject.ICSubmissionSummary_v14
       #
-
-      # ------------------------------------------------------------------
-      # Original commented archive retained verbatim from uploaded lean.yml.
-      # ------------------------------------------------------------------
-
-      # ------------------------------------------------------------------
-      # Archived active experiment targets from the uploaded lean.yml.
-      # Temporarily commented out during the current NormalCosetAdequacy experiment.
-      # ------------------------------------------------------------------
-
       # - name: Check ICArtifactMetadata CI180 module
       #   run: lake build LeanCfgProject.ICArtifactMetadata_ci180
       #
@@ -186,18 +185,6 @@ jobs:
       # - name: Check ICSubmissionSummary v13 module
       #   run: lake build LeanCfgProject.ICSubmissionSummary_v13
       #
-
-      # ------------------------------------------------------------------
-      # Original commented archive retained verbatim from uploaded lean.yml.
-      # ------------------------------------------------------------------
-
-      # ------------------------------------------------------------------
-      # Original commented archive retained verbatim from uploaded lean.yml.
-      # ------------------------------------------------------------------
-
-      # ------------------------------------------------------------------
-      # Original commented archive retained verbatim from uploaded lean.yml.
-      # ------------------------------------------------------------------
 
       # ------------------------------------------------------------------
       # Previous paper-facing / recent-experiment targets.
