@@ -206,7 +206,8 @@ theorem quotient_pointConcept_image_eq
     rcases hdelta with ⟨x, hx, hdelta_eq⟩
     have hx_eq : x = gamma := by
       simpa using hx
-    simpa [hdelta_eq, hx_eq]
+    -- From `π x = delta` and `x = gamma`, prove `delta = π gamma`.
+    exact hdelta_eq.symm.trans (congrArg π hx_eq)
   · intro hdelta
     have hdelta_eq : delta = π gamma := by
       simpa using hdelta
