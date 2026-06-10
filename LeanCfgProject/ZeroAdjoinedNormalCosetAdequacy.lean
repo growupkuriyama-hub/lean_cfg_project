@@ -18,8 +18,9 @@ Zero-adjoined normal-coset adequacy.
 This module adds an absorbing zero to a group and lifts the normal-coset
 adequacy theorem to the nonzero part of the resulting monoid.
 
-The main correction from the first draft is that `ZeroAdjoin` is universe
-polymorphic, and the nonzero constructor is named `nz` rather than `of`.
+This version avoids fragile `simp` calls in the monoid laws and zero-context
+cases.  The zero cases are closed by definitional reduction (`rfl`) or by
+explicit `change False ↔ False`.
 -/
 
 universe u
@@ -44,14 +45,36 @@ instance [Group G] : Monoid (ZeroAdjoin G) where
   one := nz 1
   mul_assoc := by
     intro x y w
-    cases x <;> cases y <;> cases w <;>
-      simp [mul, mul_assoc]
+    change mul (mul x y) w = mul x (mul y w)
+    cases x with
+    | z =>
+        cases y <;> cases w <;> rfl
+    | nz xg =>
+        cases y with
+        | z =>
+            cases w <;> rfl
+        | nz yg =>
+            cases w with
+            | z => rfl
+            | nz zg =>
+                change nz ((xg * yg) * zg) = nz (xg * (yg * zg))
+                rw [mul_assoc]
   one_mul := by
     intro x
-    cases x <;> simp [mul]
+    change mul (nz 1) x = x
+    cases x with
+    | z => rfl
+    | nz xg =>
+        change nz (1 * xg) = nz xg
+        rw [one_mul]
   mul_one := by
     intro x
-    cases x <;> simp [mul]
+    change mul x (nz 1) = x
+    cases x with
+    | z => rfl
+    | nz xg =>
+        change nz (xg * 1) = nz xg
+        rw [mul_one]
 
 /--
 The lifted nonzero coset `sN` inside the zero-adjoined monoid.
@@ -86,11 +109,13 @@ theorem sameObservedSyntactic_of_same_lifted_normal_coset
   intro alpha beta
   cases alpha with
   | z =>
-      simp [LiftedCosetSet, mul]
+      change False ↔ False
+      rfl
   | nz alphaG =>
       cases beta with
       | z =>
-          simp [LiftedCosetSet, mul]
+          change False ↔ False
+          rfl
       | nz betaG =>
           change
             (s⁻¹ * (alphaG * x * betaG) ∈ N ↔
