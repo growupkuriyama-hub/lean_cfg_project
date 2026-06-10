@@ -12,61 +12,61 @@ namespace DiamondSemilatticeExample
 Finite example (1): the diamond meet-semilattice monoid.
 
 Representation choice:
-  Q is represented as `Fin 2 → Bool`, i.e. literally the powerset of a
-  two-element set.  Multiplication is pointwise Boolean conjunction, which is
-  set intersection; the unit is the full set.
+  We now use an explicit four-element inductive type `{O,A,B,E}`.
+  This is less elegant than `Fin 2 → Bool`, but it is much better for CI:
+  the multiplication table, monoid laws, and finite closure facts reduce by
+  `cases` and `decide` without fragile function extensionality or instance
+  search for decidability of function-valued sets.
 
-This file proves the finite witness propositions using the existing
-definitions from ResidualConcept.lean:
+This file uses the existing definitions from ResidualConcept.lean:
   TwoSidedResidual, CommonContexts, ConceptClosure.
+No closure/residual/syntactic notion is redefined.
 -/
 
-abbrev Diamond : Type := Fin 2 → Bool
+inductive Diamond : Type
+  | O
+  | A
+  | B
+  | E
+  deriving DecidableEq, Repr, Fintype
 
-instance : DecidableEq Diamond := inferInstance
-instance : Fintype Diamond := inferInstance
+open Diamond
 
-def O : Diamond := fun _ => false
-def E : Diamond := fun _ => true
-def A : Diamond := fun i => decide (i = (0 : Fin 2))
-def B : Diamond := fun i => decide (i = (1 : Fin 2))
-
-def meet (x y : Diamond) : Diamond :=
-  fun i => x i && y i
-
-instance : Mul Diamond where
-  mul := meet
-
-instance : One Diamond where
-  one := E
+/-- Meet in the diamond semilattice.  `E` is top/unit, `O` is bottom. -/
+def meet : Diamond → Diamond → Diamond
+  | O, _ => O
+  | _, O => O
+  | E, x => x
+  | x, E => x
+  | A, A => A
+  | B, B => B
+  | A, B => O
+  | B, A => O
 
 instance : Monoid Diamond where
   mul := meet
   one := E
   mul_assoc := by
     intro x y z
-    funext i
-    unfold meet
-    cases x i <;> cases y i <;> cases z i <;> rfl
+    cases x <;> cases y <;> cases z <;> rfl
   one_mul := by
     intro x
-    funext i
-    unfold meet E
-    cases x i <;> rfl
+    cases x <;> rfl
   mul_one := by
     intro x
-    funext i
-    unfold meet E
-    cases x i <;> rfl
+    cases x <;> rfl
 
+/-- The observed set S = {A}. -/
 def S : Set Diamond := {A}
 
+/-- The residual expected for Res_S(A,E): {E,A}. -/
 def R_A_E : Set Diamond := {E, A}
 
 theorem residual_A_E_mem :
     ∀ gamma : Diamond,
       gamma ∈ TwoSidedResidual S A E ↔ gamma ∈ R_A_E := by
-  decide
+  intro gamma
+  cases gamma <;> decide
 
 theorem residual_A_E_eq :
     TwoSidedResidual S A E = R_A_E := by
@@ -76,7 +76,8 @@ theorem residual_A_E_eq :
 theorem closure_singleton_E_mem :
     ∀ gamma : Diamond,
       gamma ∈ ConceptClosure S ({E} : Set Diamond) ↔ gamma ∈ R_A_E := by
-  decide
+  intro gamma
+  cases gamma <;> decide
 
 theorem closure_singleton_E_eq :
     ConceptClosure S ({E} : Set Diamond) = R_A_E := by
@@ -86,7 +87,8 @@ theorem closure_singleton_E_eq :
 theorem closure_singleton_A_mem :
     ∀ gamma : Diamond,
       gamma ∈ ConceptClosure S ({A} : Set Diamond) ↔ gamma ∈ ({A} : Set Diamond) := by
-  decide
+  intro gamma
+  cases gamma <;> decide
 
 theorem closure_singleton_A_eq :
     ConceptClosure S ({A} : Set Diamond) = ({A} : Set Diamond) := by

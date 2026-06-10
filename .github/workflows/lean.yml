@@ -47,6 +47,9 @@ jobs:
       - name: Check DiamondSemilatticeAdequacy finite example
         run: lake build LeanCfgProject.DiamondSemilatticeAdequacy
 
+      - name: Check ZMod3FailureExample finite example
+        run: lake build LeanCfgProject.ZMod3FailureExample
+
       # ------------------------------------------------------------------
       # Previous theorem-body experiment targets.
       # Temporarily commented out so that this workflow tests only the
