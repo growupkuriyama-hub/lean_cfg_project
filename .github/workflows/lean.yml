@@ -36,27 +36,37 @@ jobs:
           fi
 
       # ------------------------------------------------------------------
-      # Current finite-example experiment target only.
+      # Current theorem-body experiment target only.
       #
       # Active purpose:
-      #   Check finite example (1): diamond meet-semilattice monoid.
+      #   Check normal-coset adequacy core.
       #   No release-certificate / summary / package / audit / metadata /
       #   checklist / smoke-test target is active in this workflow.
       # ------------------------------------------------------------------
 
-      - name: Check DiamondSemilatticeAdequacy finite example
-        run: lake build LeanCfgProject.DiamondSemilatticeAdequacy
+      - name: Check NormalCosetAdequacy
+        run: lake build LeanCfgProject.NormalCosetAdequacy
 
-      - name: Check ZMod3FailureExample finite example
-        run: lake build LeanCfgProject.ZMod3FailureExample
+      # ------------------------------------------------------------------
+      # Previous finite-example experiment targets.
+      # Temporarily commented out so that this workflow tests only the
+      # current NormalCosetAdequacy experiment.
+      # ------------------------------------------------------------------
 
-      - name: Check EndpointMonoidAdequacy finite example
-        run: lake build LeanCfgProject.EndpointMonoidAdequacy
+      # - name: Check DiamondSemilatticeAdequacy finite example
+      #   run: lake build LeanCfgProject.DiamondSemilatticeAdequacy
+      #
+      # - name: Check ZMod3FailureExample finite example
+      #   run: lake build LeanCfgProject.ZMod3FailureExample
+      #
+      # - name: Check EndpointMonoidAdequacy finite example
+      #   run: lake build LeanCfgProject.EndpointMonoidAdequacy
+      #
 
       # ------------------------------------------------------------------
       # Previous theorem-body experiment targets.
       # Temporarily commented out so that this workflow tests only the
-      # diamond finite example.
+      # current NormalCosetAdequacy experiment.
       # ------------------------------------------------------------------
 
       # - name: Check ResidualConceptNucleus item 1
@@ -91,7 +101,7 @@ jobs:
 
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
-      # Temporarily commented out so that only item 1 and item 2 are tested.
+      # Temporarily commented out so that only the current NormalCosetAdequacy experiment is tested.
       # ------------------------------------------------------------------
 
       # - name: Check ICPaperClaimIndex v27.2 module
@@ -125,7 +135,7 @@ jobs:
 
       # ------------------------------------------------------------------
       # Archived active experiment targets from the uploaded lean.yml.
-      # Temporarily commented out during the current push9 experiment.
+      # Temporarily commented out during the current NormalCosetAdequacy experiment.
       # ------------------------------------------------------------------
 
       # - name: Check ICArtifactMetadata CI180 module

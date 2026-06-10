@@ -7,8 +7,8 @@ Lean 4 artifact for the paper:
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Current checked artifact snapshot: commit `b1e651e`  
-GitHub Actions: Lean CI #195 passed  
+Current checked artifact snapshot: commit `702dcf5`  
+GitHub Actions: Lean CI #207 passed  
 Pushed by: `growupkuriyama-hub`
 
 ---
@@ -34,12 +34,12 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 The current checked snapshot is:
 
 ```text
-commit: b1e651e
-CI run: Lean CI #195
+commit: 702dcf5
+CI run: Lean CI #207
 pushed by: growupkuriyama-hub
 status: passed
-latest checked theorem-body extension: observed factor minimality / item 4
-latest checked theorem-body target: LeanCfgProject.ObservedFactorMinimality
+latest checked theorem-body extension: finite adequacy examples / item 5
+latest checked theorem-body target: LeanCfgProject.EndpointMonoidAdequacy
 current theorem-body chain:
   LeanCfgProject.ResidualConceptNucleus
   LeanCfgProject.PointwiseAdequacy
@@ -49,14 +49,18 @@ current theorem-body chain:
   LeanCfgProject.ObservedQuotientClosureImage
   LeanCfgProject.ObservedSyntacticSaturation
   LeanCfgProject.ObservedFactorMinimality
+  LeanCfgProject.DiamondSemilatticeAdequacy
+  LeanCfgProject.ZMod3FailureExample
+  LeanCfgProject.EndpointMonoidAdequacy
+previous theorem-body snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedFactorMinimality
 previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ICSubmissionSummary_v14
 previous release-index snapshot: commit c6c1705 / Lean CI #180
 ```
 
-The current theorem-body development target checked by CI #195 is:
+The current theorem-body development target checked by CI #207 is:
 
 ```bash
-lake build LeanCfgProject.ObservedFactorMinimality
+lake build LeanCfgProject.EndpointMonoidAdequacy
 ```
 
 The current stable paper-facing final-index target from the previous indexed
@@ -77,11 +81,14 @@ lake build LeanCfgProject.ObservedQuotientClosure
 lake build LeanCfgProject.ObservedQuotientClosureImage
 lake build LeanCfgProject.ObservedSyntacticSaturation
 lake build LeanCfgProject.ObservedFactorMinimality
+lake build LeanCfgProject.DiamondSemilatticeAdequacy
+lake build LeanCfgProject.ZMod3FailureExample
+lake build LeanCfgProject.EndpointMonoidAdequacy
 ```
 
 
 
-The earlier release-index checkpoint `c6c1705` / Lean CI #180 and the final-index checkpoint `0e6dbb5` / Lean CI #184 remain useful historical base points.  The current theorem-body development state is checked at commit `b1e651e` by Lean CI #195.
+The earlier release-index checkpoint `c6c1705` / Lean CI #180, the final-index checkpoint `0e6dbb5` / Lean CI #184, and the theorem-body item1--item4 checkpoint `b1e651e` / Lean CI #195 remain useful historical base points.  The current theorem-body development state is checked at commit `702dcf5` by Lean CI #207.
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
 
@@ -119,6 +126,7 @@ At the current checked snapshot, the artifact verifies the following major group
 - v27.1 reduced-frame and observed-concept release layers: point-frame corollaries, lightweight reduced frame-model core definitions, canonical frame-model corollaries, observed subset stability, point-frame learning transport, observed-membership equivalence, point-frame incidence transport, finite residual-basis transport, observed-learning release theorems, point-frame release theorems, finite-basis release theorems, and the artifact release-index target;
 - v27.2 release-regression and release-certificate layers: observed-learning release regression, point-frame release regression, finite-basis release regression, release manifest, CI #180 reproducibility index, artifact metadata capsule, release certificate, observed-learning certificate, point-frame certificate, finite-basis certificate, and paper formalization bridge;
 - v27.2 final-index layer: paper-claim index, theorem-table index, frozen artifact index, dependency certificate, FORMALIZATION supplement certificate, paper submission checklist, final smoke test, and the top-level target `ICSubmissionSummary_v14`;
+- finite adequacy examples for the diamond meet-semilattice, the three-element cyclic monoid/Z3 failure witness, and the endpoint monoid;
 - paper-facing summary, audit, release-index, final-index, and appendix-index targets for reproducibility.
 
 ---
@@ -698,7 +706,7 @@ The verified phenomenon is that raw singleton images can be strict subsets of th
 
 ---
 
-### 12. Carrier-level observed-block adequacy
+### 13. Carrier-level observed-block adequacy
 
 Files:
 
@@ -729,7 +737,7 @@ This is checked both for the standard observation `h` and for observations facto
 ---
 
 
-### 13. Finite observed-learning layer
+### 14. Finite observed-learning layer
 
 Files:
 
@@ -794,7 +802,7 @@ This supports the paper's finite observed analogue of distributional learning: t
 
 ---
 
-### 14. Canonical point-frame incidence and universal-core layer
+### 15. Canonical point-frame incidence and universal-core layer
 
 Files:
 
@@ -851,7 +859,7 @@ The layer also verifies that equality of canonical point concepts is exactly the
 
 ---
 
-### 15. Summary, appendix, and reproducibility targets
+### 16. Summary, appendix, and reproducibility targets
 
 Files:
 
@@ -929,11 +937,13 @@ If this module builds, Lean has checked the current v27.2 final-index import gra
 ---
 
 
-## Theorem-body item1--item4 additions checked by CI #195
+## Theorem-body item1--item5 additions checked by CI #207
 
 After the v27.2 final-index snapshot, the development was extended by a new
 theorem-body chain focused on the mathematical core of the paper rather than on
-release packaging.  This chain is checked at commit `b1e651e` by Lean CI #195.
+release packaging.  Items 1--4 were checked at commit `b1e651e` by Lean CI #195.
+The current item 5 finite-example extension is checked at commit `702dcf5` by
+Lean CI #207.
 
 The checked theorem-body modules are:
 
@@ -988,6 +998,20 @@ image_pullback_iff_fibers_sameObservedSyntactic
 imagePullbackFactor_residual_image_eq
 imagePullbackFactor_conceptClosure_image_eq
 imagePullbackFactor_conceptProduct_image_eq
+residual_A_E_eq
+closure_singleton_E_eq
+closure_singleton_A_ne_residual_A_E
+diamond_two_block_pointwise_adequacy_witness
+residual_zero_zero_eq
+closure_singleton_zero_eq
+closure_singleton_zero_ne_residual_zero_zero
+not_sameObservedSyntactic_zero_one
+zmod3_failure_witness
+residual_one_BB_eq
+sameObservedSyntactic_AA_AB
+S_single_observed_syntactic_block
+closure_singleton_AB_eq
+endpoint_monoid_aperiodic_adequacy_witness
 ```
 
 These modules add the following verified mathematical content.
@@ -1076,8 +1100,29 @@ core of the statement that `SameObservedSyntactic` is the maximal kernel relatio
 compatible with the observed subset `S`, and that exact observed factor maps
 factor through the observed-syntactic information.
 
-These results are theorem-body additions.  They are not release certificates,
-submission checklists, audit wrappers, or manifest modules.
+Sixth, three finite adequacy examples are checked as theorem-body modules rather
+than as release wrappers.
+
+The diamond meet-semilattice example verifies a four-element monoid witness in
+which a two-sided residual `Res_S(A,E)` is `{E,A}`, the singleton closure
+`cl_S({E})` reaches that residual, while `cl_S({A})` remains smaller.  This is a
+finite checked example separating raw singleton images from residual-concept
+adequacy.
+
+The three-element cyclic monoid example, presented as a `Z/3` failure witness,
+verifies that for `S = {0,1}` and `U = {0}`, one has `Res_S(0,0)=S` but
+`cl_S(U)=U`, and also verifies `¬ SameObservedSyntactic S 0 1`.  This gives a
+small checked obstruction showing that nontrivial residual coverage is not
+automatic.
+
+The endpoint-monoid example verifies an aperiodic witness with
+`S = {AA,AB}` and `U = {AB}`.  Lean checks `Res_S(1,BB)=S`, that all elements of
+`S` lie in one `SameObservedSyntactic` block, and that `cl_S({AB})=S`.  This is
+the current checked finite example connecting single-block adequacy with an
+aperiodic non-group monoid.
+
+These item 5 examples are theorem-body additions.  They are not release
+certificates, submission checklists, audit wrappers, or manifest modules.
 
 
 ## v27.1 release-index additions checked by CI #180
@@ -1188,6 +1233,7 @@ stable inside Lean.
 | Residual-concept nucleus, adequacy, and observed factor-map invariance | `ResidualConceptNucleus.lean`, `PointwiseAdequacy.lean`, `UniformAdequacy.lean`, `ObservedQuotientResidual.lean`, `ObservedQuotientClosure.lean`, `ObservedQuotientClosureImage.lean`, `ObservedSyntacticSaturation.lean`, `ObservedFactorMinimality.lean` |
 | Canonical residual closure system | `CanonicalResidualClosureSystem.lean`, `ObservedSyntacticResidualCorollaries.lean` |
 | Syntactic-block adequacy | `ObservedSyntacticBlockAdequacyCorollaries.lean`, `ObservedSyntacticPaperCorollaries.lean` |
+| Finite adequacy examples | `DiamondSemilatticeAdequacy.lean`, `ZMod3FailureExample.lean`, `EndpointMonoidAdequacy.lean` |
 | K4 adequacy witness | `K4ResidualAdequacyExample.lean`, `K4AdequacyStrictness.lean`, `K4ConceptCollapse.lean`, `K4AdequacyPaperSummary.lean`, `AdequacyBridgeSummary.lean` |
 | Carrier observed-block adequacy | `CarrierObservedAdequacy.lean`, `CarrierObservedAdequacyCorollaries.lean` |
 | Finite observed-learning layer | `ObservedFrameStructure.lean`, `ObservedFrameStructureDecidable.lean`, `FiniteObservedFrameBasis.lean`, `FiniteSetQueryReconstruction.lean`, `FaithfulRepresentatives.lean`, `ObservedLearningExamples.lean`, `FiniteObservedConceptIdentification.lean`, `ObservedLearningCorollaries.lean`, `ObservedLearningConstructibilitySummary.lean`, `ObservedLearningPaperSummary.lean`, `ObservedLearningPaperSummary_v2.lean` |
@@ -1236,7 +1282,8 @@ with the following additional verified facts:
 - pointwise residual adequacy is equivalent to common-context equality and residual coverage;
 - uniform residual adequacy is equivalent to singleton adequacy and to the single observed-syntactic-block condition;
 - residuals, common contexts, concept closures, point concepts, and concept products are preserved by exact surjective multiplicative observed factor maps;
-- exact image-pullback preservation is equivalent to factor-map fibers being contained in the observed syntactic congruence.
+- exact image-pullback preservation is equivalent to factor-map fibers being contained in the observed syntactic congruence;
+- the diamond meet-semilattice, three-element cyclic monoid, and endpoint monoid give checked finite examples of residual-concept adequacy, failure of automatic residual coverage, and aperiodic single-block adequacy.
 
 ---
 
@@ -1251,7 +1298,7 @@ The current Lean artifact does **not** claim that:
 - all residual concepts are exactly realized by typed presentation states without additional hypotheses;
 - finite residual-concept bases have been constructed for broad classes of fixed-`h` substitutable CFLs;
 - the pointed-boundary theorem has been developed into a complete standalone regular-language theory;
-- the endpoint-monoid non-coset witness and the normal-coset / mod-`k` families have all been formalized;
+- the normal-coset and mod-`k` families have all been formalized;
 - the full abstract complete-lattice isomorphism theorem for arbitrary reduced frame models has been formalized;
 - polynomial-time complexity bounds such as `O(|Q|^4)` have been formalized inside Lean.
 
@@ -1266,27 +1313,31 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked at commit b1e651e by GitHub
-Actions Lean CI #195, pushed by growupkuriyama-hub.  The current
-theorem-body target is LeanCfgProject.ObservedFactorMinimality.  The previous
-paper-facing final-index target LeanCfgProject.ICSubmissionSummary_v14 was
-checked at commit 0e6dbb5 / Lean CI #184, with the earlier release-index
-checkpoint at commit c6c1705 / Lean CI #180.  The development verifies the
-descriptor architecture, residual concept semantics, carrier saturation
-correctness, bounded finite-stopping results, observed syntactic congruence and
-maximality, the canonical residual closure system, K4 adequacy witnesses,
-carrier-level observed-block adequacy, the finite observed-learning layer, the
-canonical point-frame incidence core for the reduced representation viewpoint,
-and the v27.1/v27.2 paper-facing release, certificate, and final-index packages.
-The CI #195 theorem-body extension additionally verifies the multiplicative
-nucleus property of residual concept closure, pointwise and uniform adequacy
-equivalences, abstract factor-map invariance for residuals/common
-contexts/concept closures/point concepts/concept products, and the equivalence
-between exact observed image-pullback preservation and fiber containment in the
-observed syntactic congruence.  The artifact intentionally does not claim a full
-formalization of the paper, the full abstract universal representation theorem,
-an actual quotient-monoid instance for every presentation inside Lean, or an
-unrestricted adequacy theorem.
+The accompanying Lean 4 artifact was checked at commit 702dcf5 by GitHub
+Actions Lean CI #207, pushed by growupkuriyama-hub.  The current
+theorem-body target is LeanCfgProject.EndpointMonoidAdequacy.  The previous
+theorem-body item1--item4 target LeanCfgProject.ObservedFactorMinimality was
+checked at commit b1e651e / Lean CI #195.  The previous paper-facing final-index
+target LeanCfgProject.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 /
+Lean CI #184, with the earlier release-index checkpoint at commit c6c1705 /
+Lean CI #180.  The development verifies the descriptor architecture, residual
+concept semantics, carrier saturation correctness, bounded finite-stopping
+results, observed syntactic congruence and maximality, the canonical residual
+closure system, K4 adequacy witnesses, carrier-level observed-block adequacy,
+the finite observed-learning layer, the canonical point-frame incidence core
+for the reduced representation viewpoint, and the v27.1/v27.2 paper-facing
+release, certificate, and final-index packages.  The theorem-body extension
+additionally verifies the multiplicative nucleus property of residual concept
+closure, pointwise and uniform adequacy equivalences, abstract factor-map
+invariance for residuals/common contexts/concept closures/point concepts/concept
+products, the equivalence between exact observed image-pullback preservation and
+fiber containment in the observed syntactic congruence, and three finite
+adequacy examples: a diamond meet-semilattice witness, a three-element cyclic
+monoid / Z/3 failure witness, and an endpoint-monoid aperiodic adequacy witness.
+The artifact intentionally does not claim a full formalization of the paper, the
+full abstract universal representation theorem, an actual quotient-monoid
+instance for every presentation inside Lean, or an unrestricted adequacy
+theorem.
 ```
 
 ---
@@ -1299,9 +1350,8 @@ Natural next targets include:
 2. preparing an archived artifact snapshot with a persistent identifier;
 3. adding a lightweight online blueprint linking paper statements to declarations;
 4. formalizing the full abstract reduced-frame-model isomorphism theorem;
-5. formalizing endpoint-monoid non-coset witnesses;
-6. formalizing the normal-coset and mod-`k` adequacy families;
-7. formalizing more concrete faithful-representative examples for observed learning;
-8. formalizing the actual quotient monoid/congruence instance for `SameObservedSyntactic`, beyond the currently checked abstract factor-map invariance theorem;
-9. developing restricted adequacy theorems for additional controlled subclasses;
-10. keeping future extensions modular and preserving the current CI discipline.
+5. formalizing the normal-coset and mod-`k` adequacy families;
+6. formalizing more concrete faithful-representative examples for observed learning;
+7. formalizing the actual quotient monoid/congruence instance for `SameObservedSyntactic`, beyond the currently checked abstract factor-map invariance theorem;
+8. developing restricted adequacy theorems for additional controlled subclasses;
+9. keeping future extensions modular and preserving the current CI discipline.
