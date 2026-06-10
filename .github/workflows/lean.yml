@@ -62,6 +62,10 @@ jobs:
       - name: Check ObservedQuotientClosureImage item 4c
         run: lake build LeanCfgProject.ObservedQuotientClosureImage
 
+      - name: Check ObservedSyntacticSaturation item 4
+        run: lake build LeanCfgProject.ObservedSyntacticSaturation
+
+
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
       # Temporarily commented out so that only item 1 and item 2 are tested.
