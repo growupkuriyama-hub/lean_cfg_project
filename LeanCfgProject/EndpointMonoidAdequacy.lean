@@ -163,19 +163,15 @@ theorem sameObservedSyntactic_AA_AB :
   intro alpha beta
   constructor
   · intro h
-    have hbool : inSBool (alpha * AA * beta) = true := by
-      simpa [S, eAA] using h
-    have hbool' : inSBool (alpha * AB * beta) = true := by
-      rw [← endpoint_AA_AB_inSBool_eq alpha beta]
-      exact hbool
-    simpa [S, eAB] using hbool'
+    change inSBool (alpha * AA * beta) = true at h
+    change inSBool (alpha * AB * beta) = true
+    rw [← endpoint_AA_AB_inSBool_eq alpha beta]
+    exact h
   · intro h
-    have hbool : inSBool (alpha * AB * beta) = true := by
-      simpa [S, eAB] using h
-    have hbool' : inSBool (alpha * AA * beta) = true := by
-      rw [endpoint_AA_AB_inSBool_eq alpha beta]
-      exact hbool
-    simpa [S, eAA] using hbool'
+    change inSBool (alpha * AB * beta) = true at h
+    change inSBool (alpha * AA * beta) = true
+    rw [endpoint_AA_AB_inSBool_eq alpha beta]
+    exact h
 
 theorem sameObservedSyntactic_AB_AA :
     SameObservedSyntactic S eAB eAA := by
