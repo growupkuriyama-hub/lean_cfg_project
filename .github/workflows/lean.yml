@@ -59,6 +59,9 @@ jobs:
       - name: Check ObservedQuotientClosure item 4bc
         run: lake build LeanCfgProject.ObservedQuotientClosure
 
+      - name: Check ObservedQuotientClosureImage item 4c
+        run: lake build LeanCfgProject.ObservedQuotientClosureImage
+
       # ------------------------------------------------------------------
       # Archived active lake-build targets from the uploaded lean.yml.
       # Temporarily commented out so that only item 1 and item 2 are tested.
