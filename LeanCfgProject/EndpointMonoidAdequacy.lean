@@ -109,7 +109,17 @@ instance decidableMemU : DecidablePred U := by
 
 theorem mem_S_iff (x : Endpoint) :
     x ∈ S ↔ x = eAA ∨ x = eAB := by
-  cases x <;> simp [S, inSBool, eAA, eAB]
+  cases x
+  · change (inSBool I = true ↔ I = eAA ∨ I = eAB)
+    decide
+  · change (inSBool AA = true ↔ AA = eAA ∨ AA = eAB)
+    decide
+  · change (inSBool AB = true ↔ AB = eAA ∨ AB = eAB)
+    decide
+  · change (inSBool BA = true ↔ BA = eAA ∨ BA = eAB)
+    decide
+  · change (inSBool BB = true ↔ BB = eAA ∨ BB = eAB)
+    decide
 
 theorem eAA_mem_S : eAA ∈ S := by
   change inSBool AA = true
@@ -138,8 +148,16 @@ theorem residual_one_BB_mem :
     ∀ gamma : Endpoint,
       gamma ∈ TwoSidedResidual S e1 eBB ↔ gamma ∈ S := by
   intro gamma
-  cases gamma <;>
-    simp [TwoSidedResidual, S, inSBool, endpointMul, e1, eBB] <;>
+  cases gamma
+  · change (inSBool (I * I * BB) = true ↔ inSBool I = true)
+    decide
+  · change (inSBool (I * AA * BB) = true ↔ inSBool AA = true)
+    decide
+  · change (inSBool (I * AB * BB) = true ↔ inSBool AB = true)
+    decide
+  · change (inSBool (I * BA * BB) = true ↔ inSBool BA = true)
+    decide
+  · change (inSBool (I * BB * BB) = true ↔ inSBool BB = true)
     decide
 
 theorem residual_one_BB_eq :
