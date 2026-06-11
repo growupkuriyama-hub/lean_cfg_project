@@ -8,9 +8,9 @@ universe u
 /-
 Observed two-sided contexts for the JALC algebra experiment.
 
-At this stage we do not formalize raw string contexts.  Instead, we
+At this stage we do not formalize raw string contexts. Instead, we
 formalize the finite h-observed contexts: the left and right monoid
-values surrounding a yield.  This is the finite object used by the
+values surrounding a yield. This is the finite object used by the
 paper's descriptor-level construction.
 -/
 
@@ -24,7 +24,36 @@ structure ObservedContext {Sigma : Type u}
     (Obs : FixedFiniteMonoidHom Sigma) where
   left : Obs.M
   right : Obs.M
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+
+/-- Equivalence between observed contexts and pairs of monoid values. -/
+def observedContextEquiv {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    ObservedContext Obs ≃ Obs.M × Obs.M where
+  toFun := fun c => (c.left, c.right)
+  invFun := fun p =>
+    {
+      left := p.1
+      right := p.2
+    }
+  left_inv := by
+    intro c
+    cases c
+    rfl
+  right_inv := by
+    intro p
+    rcases p with ⟨l, r⟩
+    rfl
+
+
+/-- Observed contexts are finite because the observer monoid is finite. -/
+noncomputable instance observedContextFintype {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    Fintype (ObservedContext Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  exact Fintype.ofEquiv (Obs.M × Obs.M)
+    (observedContextEquiv Obs).symm
 
 
 /-- The empty observed context. -/
@@ -101,11 +130,26 @@ theorem apply_composeContext {Sigma : Type u}
     applyContext (composeContext outer inner) m =
       applyContext outer (applyContext inner m) := by
   unfold applyContext composeContext
-  rw [Obs.mul_assoc]
-  rw [← Obs.mul_assoc inner.left m inner.right]
-  rw [Obs.mul_assoc outer.left inner.left (Obs.mul m inner.right)]
-  rw [Obs.mul_assoc outer.left (Obs.mul inner.left (Obs.mul m inner.right)) outer.right]
-  rw [Obs.mul_assoc inner.left m inner.right]
+  change
+    Obs.mul (Obs.mul outer.left inner.left)
+        (Obs.mul m (Obs.mul inner.right outer.right)) =
+      Obs.mul outer.left
+        (Obs.mul (Obs.mul inner.left (Obs.mul m inner.right)) outer.right)
+  calc
+    Obs.mul (Obs.mul outer.left inner.left)
+        (Obs.mul m (Obs.mul inner.right outer.right))
+        =
+      Obs.mul outer.left
+        (Obs.mul inner.left (Obs.mul m (Obs.mul inner.right outer.right))) := by
+          rw [Obs.mul_assoc]
+    _ =
+      Obs.mul outer.left
+        (Obs.mul inner.left (Obs.mul (Obs.mul m inner.right) outer.right)) := by
+          rw [← Obs.mul_assoc m inner.right outer.right]
+    _ =
+      Obs.mul outer.left
+        (Obs.mul (Obs.mul inner.left (Obs.mul m inner.right)) outer.right) := by
+          rw [← Obs.mul_assoc inner.left (Obs.mul m inner.right) outer.right]
 
 
 /-- The empty context is a left identity for context composition. -/
@@ -116,8 +160,7 @@ theorem empty_composeContext {Sigma : Type u}
   cases c with
   | mk l r =>
     unfold composeContext emptyContext
-    simp
-    constructor
+    apply ObservedContext.ext
     · exact Obs.one_mul l
     · exact Obs.mul_one r
 
@@ -130,17 +173,17 @@ theorem compose_emptyContext {Sigma : Type u}
   cases c with
   | mk l r =>
     unfold composeContext emptyContext
-    simp
-    constructor
+    apply ObservedContext.ext
     · exact Obs.mul_one l
     · exact Obs.one_mul r
 
 
 /-- Paper-facing finite universe of observed contexts. -/
-def allObservedContexts {Sigma : Type u}
-    (Obs : FixedFiniteMonoidHom Sigma) : Finset (ObservedContext Obs) :=
-  Finset.univ
-
+noncomputable def allObservedContexts {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) : Finset (ObservedContext Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  letI : Fintype (ObservedContext Obs) := observedContextFintype Obs
+  exact Finset.univ
 
 end JALC
 end LeanCfgProject
