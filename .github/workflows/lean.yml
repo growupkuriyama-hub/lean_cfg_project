@@ -39,29 +39,26 @@ jobs:
       # Current theorem-body experiment target only.
       #
       # Active purpose:
-      #   Check the concrete observed syntactic quotient specialization:
-      #     - quotient type by SameObservedSyntactic S
-      #     - quotient multiplication and semigroup law
-      #     - projection map, surjectivity, exact kernel
-      #     - residual / concept / point / product preservation
-      #     - universal property and multiplicative universal property
+      #   Check the concrete quotient concept-object round-trip layer:
+      #     - closed original extents map to closed quotient extents
+      #     - closed quotient extents pull back to closed original extents
+      #     - preimage-image round trip for original concept closures
+      #     - image-preimage round trip on the quotient side
+      #     - closure-form quotient-side round trip
       #
-      # This is intended to move "Actual quotient-monoid specialization"
-      # from a future target to a checked theorem-body target.
+      # This is intended to move "Concrete quotient concept-object isomorphism"
+      # closer to a checked theorem-body target.
       # ------------------------------------------------------------------
 
-      - name: Check ObservedSyntacticConcreteQuotientPaperSummary
-        run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotientPaperSummary
+      - name: Check ObservedSyntacticConcreteQuotientConceptIsoSummary
+        run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotientConceptIsoSummary
 
       # ------------------------------------------------------------------
-      # Current experiment subtargets.
+      # Current experiment subtarget.
       # Keep commented out during the first pass because the summary target
-      # imports them.  Uncomment one by one for narrower diagnostics.
+      # imports it.  Uncomment for narrower diagnostics.
       # ------------------------------------------------------------------
 
-      # - name: Check ObservedSyntacticConcreteQuotient
-      #   run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotient
-      #
-      # - name: Check ObservedSyntacticConcreteQuotientConsequences
-      #   run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotientConsequences
+      # - name: Check ObservedSyntacticConcreteQuotientConceptIso
+      #   run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotientConceptIso
       #
