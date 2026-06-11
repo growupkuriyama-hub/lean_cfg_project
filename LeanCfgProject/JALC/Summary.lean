@@ -45,8 +45,7 @@ def SummaryTypedNonterminal (N : Type u) {Sigma : Type v}
 
 /-- Summary item 5: finite descriptors are available. -/
 def SummaryFiniteDescriptor (N : Type u) {Sigma : Type v}
-    (Obs : FixedFiniteMonoidHom Sigma)
-    [Fintype N] [DecidableEq N] [Fintype Sigma] [DecidableEq Sigma] :=
+    (Obs : FixedFiniteMonoidHom Sigma) :=
   FiniteDescriptor N Obs
 
 
@@ -54,12 +53,12 @@ def SummaryFiniteDescriptor (N : Type u) {Sigma : Type v}
 def SummaryResidualConcept (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R] :=
+    (R : Incidence N Obs) :=
   ResidualConcept N Obs R
 
 
 /-- The paper-facing finite typed-state universe. -/
-def SummaryTypedStateUniverse (N : Type u) {Sigma : Type v}
+noncomputable def SummaryTypedStateUniverse (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N] :
     Finset (TypedState N Obs) :=
@@ -67,16 +66,16 @@ def SummaryTypedStateUniverse (N : Type u) {Sigma : Type v}
 
 
 /-- The paper-facing finite observed-context universe. -/
-def SummaryContextUniverse {Sigma : Type u}
+noncomputable def SummaryContextUniverse {Sigma : Type u}
     (Obs : FixedFiniteMonoidHom Sigma) :
     Finset (ContextState Obs) :=
   allContextStates Obs
 
 
 /-- The paper-facing full descriptor universe. -/
-def SummaryDescriptorUniverse (N : Type u) (Sigma : Type v)
+noncomputable def SummaryDescriptorUniverse (N : Type u) (Sigma : Type v)
     (Obs : FixedFiniteMonoidHom Sigma)
-    [Fintype N] [DecidableEq N] [Fintype Sigma] [DecidableEq Sigma] :
+    [Fintype N] [Fintype Sigma] :
     DescriptorUniverse N Sigma Obs :=
   fullDescriptorUniverse N Sigma Obs
 
@@ -87,9 +86,10 @@ A compact paper-facing statement:
 For finite nonterminals and a finite alphabet, the descriptor universe
 used by the JALC construction is a finite Lean object.
 -/
-def checked_finite_descriptor_universe (N : Type u) (Sigma : Type v)
+noncomputable def checked_finite_descriptor_universe
+    (N : Type u) (Sigma : Type v)
     (Obs : FixedFiniteMonoidHom Sigma)
-    [Fintype N] [DecidableEq N] [Fintype Sigma] [DecidableEq Sigma] :
+    [Fintype N] [Fintype Sigma] :
     DescriptorUniverse N Sigma Obs :=
   fullDescriptorUniverse N Sigma Obs
 
@@ -100,12 +100,12 @@ A compact paper-facing statement:
 The residual/concept layer is represented by finite extents and finite
 intents over typed states and observed contexts.
 -/
-def checked_residual_concept_layer (N : Type u) {Sigma : Type v}
+def checked_residual_concept_layer
+    (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R] :=
+    (R : Incidence N Obs) :=
   ResidualConcept N Obs R
-
 
 end JALC
 end LeanCfgProject
