@@ -1,4 +1,5 @@
-import Std
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Basic
 
 namespace LeanCfgProject
 namespace JALC
@@ -97,7 +98,7 @@ theorem transportMid_one_one {Sigma : Type u}
     (m : Obs.M) :
     transportMid Obs.one Obs.one m = m := by
   unfold transportMid
-  rw [Obs.one_mul, Obs.one_mul]
+  rw [Obs.mul_one, Obs.one_mul]
 
 
 /-- Transporting a type by unit boundaries preserves its middle component. -/
