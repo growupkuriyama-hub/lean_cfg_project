@@ -7,8 +7,9 @@ Lean 4 artifact for the paper:
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
 Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Current checked artifact snapshot: commit `794dc20`  
-GitHub Actions: Lean CI #216 passed; successful-log audit through Lean CI #217  
+Latest theorem-body CI check: Lean CI #219 passed / `LeanCfgProject.ObservedSyntacticQuotientPaperSummary`  
+Previous pinned theorem-body snapshot: commit `794dc20` / Lean CI #216  
+Successful-log audit: through Lean CI #217  
 Pushed by: `growupkuriyama-hub`
 
 ---
@@ -31,15 +32,23 @@ The formalization does **not** claim that CFG equivalence is solved or that a ca
 
 ## Current artifact status
 
-The current checked snapshot is:
+The latest theorem-body check is:
 
 ```text
-commit: 794dc20
-CI run: Lean CI #216
-pushed by: growupkuriyama-hub
+latest CI check: Lean CI #219
 status: passed
-latest checked theorem-body extension: normal-coset and zero-adjoined normal-coset consequences / item 6
-latest checked theorem-body target: LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+latest checked theorem-body extension: exact observed syntactic quotient invariance and universal property / item 7
+latest checked theorem-body target: LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+modules built in Lean CI #219:
+  LeanCfgProject.ObservedSyntacticExactQuotient
+  LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+  LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+commit for Lean CI #219: not recorded in the supplied log excerpt
+previous pinned theorem-body snapshot: commit 794dc20 / Lean CI #216 / LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+previous theorem-body snapshot: commit 702dcf5 / Lean CI #207 / LeanCfgProject.EndpointMonoidAdequacy
+previous theorem-body item1--item4 snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedFactorMinimality
+previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ICSubmissionSummary_v14
+previous release-index snapshot: commit c6c1705 / Lean CI #180
 CI log audit:
   archive: LeanLog1-217.zip
   run-number range present in archive: #9--#217
@@ -69,16 +78,15 @@ current theorem-body chain:
   LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
   LeanCfgProject.NormalCosetConsequences
   LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
-previous theorem-body snapshot: commit 702dcf5 / Lean CI #207 / LeanCfgProject.EndpointMonoidAdequacy
-previous theorem-body item1--item4 snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedFactorMinimality
-previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ICSubmissionSummary_v14
-previous release-index snapshot: commit c6c1705 / Lean CI #180
+  LeanCfgProject.ObservedSyntacticExactQuotient
+  LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+  LeanCfgProject.ObservedSyntacticQuotientPaperSummary
 ```
 
-The current theorem-body development target checked by CI #216 is:
+The latest theorem-body development target checked by CI #219 is:
 
 ```bash
-lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
 ```
 
 The current stable paper-facing final-index target from the previous indexed
@@ -88,7 +96,7 @@ snapshot remains:
 lake build LeanCfgProject.ICSubmissionSummary_v14
 ```
 
-The theorem-body item1--item4 chain can be checked explicitly by running:
+The theorem-body item1--item7 chain can be checked explicitly by running:
 
 ```bash
 lake build LeanCfgProject.ResidualConceptNucleus
@@ -111,11 +119,14 @@ lake build LeanCfgProject.NormalCosetResidualFormula
 lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
 lake build LeanCfgProject.NormalCosetConsequences
 lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+lake build LeanCfgProject.ObservedSyntacticExactQuotient
+lake build LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
 ```
 
 
 
-The earlier release-index checkpoint `c6c1705` / Lean CI #180, the final-index checkpoint `0e6dbb5` / Lean CI #184, the theorem-body item1--item4 checkpoint `b1e651e` / Lean CI #195, and the finite-example checkpoint `702dcf5` / Lean CI #207 remain useful historical base points.  The current theorem-body development state is checked at commit `794dc20` by Lean CI #216.
+The earlier release-index checkpoint `c6c1705` / Lean CI #180, the final-index checkpoint `0e6dbb5` / Lean CI #184, the theorem-body item1--item4 checkpoint `b1e651e` / Lean CI #195, and the finite-example checkpoint `702dcf5` / Lean CI #207 remain useful historical base points.  The item6 theorem-body development state is pinned at commit `794dc20` by Lean CI #216.  The subsequent exact observed quotient layer is checked by Lean CI #219.
 
 The CI also keeps repository-level checks that reject placeholder proof commands and project-level axiom declarations in Lean source files.
 
@@ -155,6 +166,7 @@ At the current checked snapshot, the artifact verifies the following major group
 - v27.2 final-index layer: paper-claim index, theorem-table index, frozen artifact index, dependency certificate, FORMALIZATION supplement certificate, paper submission checklist, final smoke test, and the top-level target `ICSubmissionSummary_v14`;
 - finite adequacy examples for the diamond meet-semilattice, the three-element cyclic monoid/Z3 failure witness, and the endpoint monoid;
 - normal-coset and zero-adjoined normal-coset adequacy, syntactic-block characterization, residual formulas, and consequence layers;
+- exact observed syntactic quotient invariance, residual/concept/product preservation, and universal-property lifting for maps constant on observed-syntactic blocks;
 - paper-facing summary, audit, release-index, final-index, and appendix-index targets for reproducibility.
 
 ---
@@ -209,6 +221,45 @@ paper-facing claim that the listed theorem-body experiments are present in the
 successful GitHub Actions history.
 
 
+
+## Exact observed quotient layer checked by Lean CI #219
+
+After the successful-log audit through Lean CI #217, the development was
+extended by an exact observed quotient layer.  The supplied Lean CI #219 log
+shows that the active target
+
+```bash
+lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+```
+
+completed successfully.  In that run, Lean built the following three new modules:
+
+```text
+LeanCfgProject.ObservedSyntacticExactQuotient
+LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+```
+
+The #219 log excerpt does not display the corresponding commit hash, so this
+supplement records the run number and target name, while preserving `794dc20` /
+Lean CI #216 as the last pinned commit-level theorem-body snapshot.
+
+The checked mathematical content of this layer is:
+
+- exact observed quotient maps have exact observed pullback;
+- two-sided residuals are preserved by preimage and image along such maps;
+- common contexts and concept closures are preserved by pullback;
+- concept closures, singleton point concepts, and concept products are preserved by image;
+- closed extents pull back to closed extents;
+- every map constant on `SameObservedSyntactic S` classes descends uniquely through an exact observed quotient map;
+- if the original map is multiplicative, then the descended map is multiplicative.
+
+This is not yet an internal construction of the quotient monoid `Q / SameObservedSyntactic S`.
+Rather, it is the theorem-body layer immediately below that construction: once
+a concrete quotient projection is provided, these theorems give the residual,
+concept, product, and universal-property consequences.
+
+
 ## How to reproduce the current check
 
 There are two useful reproduction modes.
@@ -221,7 +272,7 @@ lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
 ```
 
 For a direct explicit check of the whole current theorem-body chain, run the
-twenty `lake build` commands listed in the current artifact status block above.
+twenty-three `lake build` commands listed in the current artifact status block above.
 
 Second, to reproduce the stable paper-facing final-index checkpoint checked at
 commit `0e6dbb5` by Lean CI #184, run:
@@ -330,6 +381,9 @@ LeanCfgProject/NormalCosetResidualFormula.lean
 LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
 LeanCfgProject/NormalCosetConsequences.lean
 LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
+LeanCfgProject/ObservedSyntacticExactQuotient.lean
+LeanCfgProject/ObservedSyntacticExactQuotientUniversal.lean
+LeanCfgProject/ObservedSyntacticQuotientPaperSummary.lean
 LeanCfgProject/ICSemanticBridgeSummary_v3.lean
 ```
 
@@ -769,6 +823,55 @@ The verified mathematical content is:
 - if a frame residual lies in one observed syntactic block, then every nonempty sound state image inside that residual generates the whole residual by concept closure.
 
 This is the Lean counterpart of the paper's canonical residual closure system and syntactic-block adequacy theorem.
+
+---
+
+### 10a. Exact observed syntactic quotient invariance and universal property
+
+Files:
+
+```text
+LeanCfgProject/ObservedSyntacticExactQuotient.lean
+LeanCfgProject/ObservedSyntacticExactQuotientUniversal.lean
+LeanCfgProject/ObservedSyntacticQuotientPaperSummary.lean
+```
+
+This layer formalizes the exact quotient-map form of the observed syntactic
+quotient story.  It assumes a surjective multiplicative map `pi : Q -> Qbar`
+whose kernel is exactly `SameObservedSyntactic S` and verifies the consequences
+needed by the paper.
+
+Representative declarations:
+
+```text
+exactObservedQuotient_pullback_eq
+exactObservedQuotient_residual_preimage_eq
+exactObservedQuotient_residual_image_eq
+exactObservedQuotient_commonContexts_preimage_eq
+exactObservedQuotient_conceptClosure_preimage_eq
+exactObservedQuotient_conceptClosure_image_eq
+exactObservedQuotient_pointConcept_image_eq
+exactObservedQuotient_conceptProduct_image_eq
+exactObservedQuotient_preimage_isConceptExtent
+exactObservedQuotient_invariance_package
+RespectsSameObservedSyntactic
+exactObservedQuotientLift
+exactObservedQuotientLift_commutes
+exactObservedQuotientLift_unique
+exactObservedQuotient_universal_property
+exactObservedQuotientLift_mul
+exactObservedQuotient_multiplicative_universal_property
+observedSyntacticExactQuotient_paper_package
+observedSyntacticExactQuotient_universal_paper_package
+observedSyntacticExactQuotient_multiplicative_paper_package
+```
+
+The verified interpretation is that an exact observed quotient map preserves the
+residual/concept/product structure and satisfies the expected universal property
+for maps constant on observed-syntactic blocks.  The actual quotient type and
+monoid instance for `SameObservedSyntactic S` remain a future formalization
+target, but this layer checks the mathematical consequences expected from such a
+quotient projection.
 
 ---
 
@@ -1299,6 +1402,65 @@ These item 6 modules are theorem-body additions.  They are not release
 certificates, submission checklists, audit wrappers, or manifest modules.
 
 
+
+## Theorem-body item7 exact observed quotient extension checked by CI #219
+
+After item1--item6, the development was extended by the exact observed
+syntactic quotient layer.  This layer was checked by Lean CI #219 through the
+target:
+
+```text
+LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+```
+
+The checked theorem-body modules are:
+
+```text
+LeanCfgProject/ObservedSyntacticExactQuotient.lean
+LeanCfgProject/ObservedSyntacticExactQuotientUniversal.lean
+LeanCfgProject/ObservedSyntacticQuotientPaperSummary.lean
+```
+
+The main checked declarations include:
+
+```text
+exactObservedQuotient_pullback_eq
+exactObservedQuotient_residual_preimage_eq
+exactObservedQuotient_residual_image_eq
+exactObservedQuotient_commonContexts_preimage_eq
+exactObservedQuotient_conceptClosure_preimage_eq
+exactObservedQuotient_conceptClosure_image_eq
+exactObservedQuotient_pointConcept_image_eq
+exactObservedQuotient_conceptProduct_image_eq
+exactObservedQuotient_preimage_isConceptExtent
+exactObservedQuotient_invariance_package
+RespectsSameObservedSyntactic
+exactObservedQuotientLift
+exactObservedQuotientLift_commutes
+exactObservedQuotientLift_unique
+exactObservedQuotient_universal_property
+exactObservedQuotientLift_mul
+exactObservedQuotient_multiplicative_universal_property
+observedSyntacticExactQuotient_paper_package
+observedSyntacticExactQuotient_universal_paper_package
+observedSyntacticExactQuotient_multiplicative_paper_package
+```
+
+This item7 layer strengthens the quotient/factor-map part of the formalization.
+For any surjective multiplicative map `pi : Q -> Qbar` whose kernel is exactly
+`SameObservedSyntactic S`, Lean checks exact pullback of the observed subset,
+preimage and image preservation for residuals, pullback preservation for common
+contexts and concept closures, image preservation for concept closures, point
+concepts and concept products, and pullback preservation of closed extents.
+
+It also verifies the universal-property direction: every map that is constant
+on observed-syntactic blocks descends uniquely through the exact quotient map,
+and multiplicative maps descend multiplicatively.
+
+These item7 modules are theorem-body additions.  They are not release
+certificates, submission checklists, audit wrappers, or manifest modules.
+
+
 ## v27.1 release-index additions checked by CI #180
 
 The CI #180 run checked the current release-facing path through:
@@ -1467,6 +1629,7 @@ code, including a non-group zero-adjoined monoid variant.
 | Bounded finite stopping | `FiniteStoppingCore.lean`, `MeasureStoppingCriterion.lean`, `FiniteSaturationMeasure.lean`, `FiniteStoppingFrameResidual.lean`, `FiniteStoppedFrameAdequacy.lean` |
 | Observed syntactic concept object | `ObservedSyntacticConcept.lean`, `ObservedSyntacticCongruence.lean` |
 | Residual-concept nucleus, adequacy, and observed factor-map invariance | `ResidualConceptNucleus.lean`, `PointwiseAdequacy.lean`, `UniformAdequacy.lean`, `ObservedQuotientResidual.lean`, `ObservedQuotientClosure.lean`, `ObservedQuotientClosureImage.lean`, `ObservedSyntacticSaturation.lean`, `ObservedFactorMinimality.lean` |
+| Exact observed syntactic quotient invariance and universal property | `ObservedSyntacticExactQuotient.lean`, `ObservedSyntacticExactQuotientUniversal.lean`, `ObservedSyntacticQuotientPaperSummary.lean` |
 | Canonical residual closure system | `CanonicalResidualClosureSystem.lean`, `ObservedSyntacticResidualCorollaries.lean` |
 | Syntactic-block adequacy | `ObservedSyntacticBlockAdequacyCorollaries.lean`, `ObservedSyntacticPaperCorollaries.lean` |
 | Finite adequacy examples | `DiamondSemilatticeAdequacy.lean`, `ZMod3FailureExample.lean`, `EndpointMonoidAdequacy.lean` |
@@ -1519,6 +1682,8 @@ with the following additional verified facts:
 - pointwise residual adequacy is equivalent to common-context equality and residual coverage;
 - uniform residual adequacy is equivalent to singleton adequacy and to the single observed-syntactic-block condition;
 - residuals, common contexts, concept closures, point concepts, and concept products are preserved by exact surjective multiplicative observed factor maps;
+- exact observed quotient maps preserve residuals, common contexts, concept closures, point concepts, concept products, and closed extents;
+- maps constant on observed-syntactic blocks descend uniquely through exact observed quotient maps, and multiplicative maps descend multiplicatively;
 - exact image-pullback preservation is equivalent to factor-map fibers being contained in the observed syntactic congruence;
 - the diamond meet-semilattice, three-element cyclic monoid, and endpoint monoid give checked finite examples of residual-concept adequacy, failure of automatic residual coverage, and aperiodic single-block adequacy;
 - the normal-coset family is checked through uniform adequacy, exact observed-syntactic block characterization, residual shifted-coset formulas, singleton/self-closure consequences, and a zero-adjoined non-group monoid variant.
@@ -1538,6 +1703,7 @@ The current Lean artifact does **not** claim that:
 - the pointed-boundary theorem has been developed into a complete standalone regular-language theory;
 - the mod-`k` language family and its grammar-level saturation instantiation have all been formalized;
 - the full abstract complete-lattice isomorphism theorem for arbitrary reduced frame models has been formalized;
+- the actual quotient type and monoid instance for `SameObservedSyntactic S` have been constructed inside Lean;
 - polynomial-time complexity bounds such as `O(|Q|^4)` have been formalized inside Lean.
 
 The artifact verifies an unconditional bounded finite-stopping theorem only under both finite state and finite observation carrier assumptions.  It also verifies observed-syntactic-block adequacy only under the stated nonempty single-block hypothesis.
@@ -1551,19 +1717,28 @@ These boundaries are intentional: the paper separates checked formalization resu
 A concise artifact statement for the paper could be:
 
 ```text
-The accompanying Lean 4 artifact was checked at commit 794dc20 by GitHub
-Actions Lean CI #216, pushed by growupkuriyama-hub.  The current theorem-body
-endpoint is LeanCfgProject.ZeroAdjoinedNormalCosetConsequences.  A subsequent
-audit of downloaded successful GitHub Actions logs through Lean CI #217
-confirmed that all 20 expected core theorem-body targets appeared in successful
-workflow logs, with missing core targets equal to 0.  The audit archive contained
-successful run logs for run numbers #9--#217, including the theorem-body
-item1--item4 checkpoint b1e651e / Lean CI #195, the finite-example checkpoint
-702dcf5 / Lean CI #207, the normal-coset checkpoint 794dc20 / Lean CI #216, and
-a subsequent successful re-check at 06ad84d / Lean CI #217.  The previous
-paper-facing final-index target LeanCfgProject.ICSubmissionSummary_v14 was
-checked at commit 0e6dbb5 / Lean CI #184, with the earlier release-index
-checkpoint at commit c6c1705 / Lean CI #180.
+The accompanying Lean 4 artifact has a pinned theorem-body snapshot at commit
+794dc20 / Lean CI #216, pushed by growupkuriyama-hub, with endpoint
+LeanCfgProject.ZeroAdjoinedNormalCosetConsequences.  A subsequent audit of
+downloaded successful GitHub Actions logs through Lean CI #217 confirmed that
+all 20 expected core theorem-body targets appeared in successful workflow logs,
+with missing core targets equal to 0.  After that audit, the exact observed
+quotient layer was checked by Lean CI #219 through the target
+LeanCfgProject.ObservedSyntacticQuotientPaperSummary.  The supplied #219 log
+shows that Lean built LeanCfgProject.ObservedSyntacticExactQuotient,
+LeanCfgProject.ObservedSyntacticExactQuotientUniversal, and
+LeanCfgProject.ObservedSyntacticQuotientPaperSummary, and that the build
+completed successfully.  The #219 log excerpt does not display the corresponding
+commit hash, so the run number and target are recorded here while 794dc20 / #216
+remains the last pinned commit-level theorem-body snapshot.
+
+The previous finite-example target LeanCfgProject.EndpointMonoidAdequacy was
+checked at commit 702dcf5 / Lean CI #207, and the earlier theorem-body
+item1--item4 target LeanCfgProject.ObservedFactorMinimality was checked at
+commit b1e651e / Lean CI #195.  The previous paper-facing final-index target
+LeanCfgProject.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 / Lean CI
+#184, with the earlier release-index checkpoint at commit c6c1705 / Lean CI
+#180.
 
 The development verifies the descriptor architecture, residual concept
 semantics, carrier saturation correctness, bounded finite-stopping results,
@@ -1571,22 +1746,23 @@ observed syntactic congruence and maximality, the canonical residual closure
 system, K4 adequacy witnesses, carrier-level observed-block adequacy, the finite
 observed-learning layer, the canonical point-frame incidence core for the
 reduced representation viewpoint, and the v27.1/v27.2 paper-facing release,
-certificate, and final-index packages.  The theorem-body extension additionally
-verifies the multiplicative nucleus property of residual concept closure,
+certificate, and final-index packages.  The theorem-body extensions additionally
+verify the multiplicative nucleus property of residual concept closure,
 pointwise and uniform adequacy equivalences, abstract factor-map invariance for
 residuals, common contexts, concept closures, point concepts and concept
 products, the equivalence between exact observed image-pullback preservation and
 fiber containment in the observed syntactic congruence, three finite adequacy
-examples, and the normal-coset / zero-adjoined normal-coset adequacy family,
-including exact syntactic-block characterization, shifted residual formulas, and
-singleton/self-closure consequence layers.
+examples, the normal-coset / zero-adjoined normal-coset adequacy family, and the
+exact observed quotient-map layer, including residual/concept/product
+preservation and the universal property for maps constant on observed-syntactic
+blocks.
 
 The artifact intentionally does not claim a full formalization of the paper, a
 complete abstract universal representation theorem for arbitrary reduced frame
-models, an actual quotient-monoid instance for every presentation inside Lean,
-or an unrestricted adequacy theorem.
+models, an internal construction of the quotient monoid
+Q / SameObservedSyntactic S, an actual quotient-monoid instance for every
+presentation inside Lean, or an unrestricted adequacy theorem.
 ```
-
 
 ## Audit files associated with this supplement
 
@@ -1602,19 +1778,20 @@ missing_core_targets.txt
 
 These files are not needed to build the Lean repository.  They are paper-facing
 reproducibility evidence for the claim that the listed theorem-body targets were
-found in successful GitHub Actions logs through Lean CI #217.
+found in successful GitHub Actions logs through Lean CI #217.  The later exact
+observed quotient extension is recorded separately by Lean CI #219.
 
 
 ## Future formalization targets
 
 Natural next targets include:
 
-1. preparing a public release tag corresponding to the current theorem-body snapshot `794dc20` / Lean CI #216, together with the successful-log audit through Lean CI #217;
+1. preparing a public release tag corresponding to the pinned theorem-body snapshot `794dc20` / Lean CI #216, together with the successful-log audit through Lean CI #217 and the exact observed quotient check by Lean CI #219;
 2. archiving the paper artifact, FORMALIZATION supplement, and CI log-audit report under a persistent identifier;
 3. adding a lightweight online blueprint linking paper statements to Lean declarations;
 4. formalizing the full abstract reduced-frame-model isomorphism theorem;
 5. formalizing the mod-`k` language family and its grammar-level saturation instance;
 6. formalizing more concrete faithful-representative examples for observed learning;
-7. formalizing the actual quotient monoid/congruence instance for `SameObservedSyntactic`, beyond the currently checked abstract factor-map invariance theorem;
+7. formalizing the actual quotient monoid/congruence instance for `SameObservedSyntactic`, beyond the currently checked abstract factor-map invariance and exact quotient-map universal-property theorems;
 8. developing restricted adequacy theorems for additional controlled subclasses;
 9. keeping future extensions modular and preserving the current CI discipline.

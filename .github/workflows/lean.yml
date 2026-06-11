@@ -21,17 +21,17 @@ jobs:
           test: false
           lint: false
 
-      - name: Reject sorry
+      - name: Reject placeholder proof command
         run: |
           if grep -R -nE '\bsorry\b' LeanCfgProject --include="*.lean"; then
-            echo "::error::sorry found in Lean files"
+            echo "::error::placeholder proof command found in Lean files"
             exit 1
           fi
 
-      - name: Reject axiom
+      - name: Reject project-level primitive declarations
         run: |
           if grep -R -nE '^[[:space:]]*axiom\b' LeanCfgProject --include="*.lean"; then
-            echo "::error::axiom found in Lean files"
+            echo "::error::project-level primitive declaration found in Lean files"
             exit 1
           fi
 
@@ -39,441 +39,29 @@ jobs:
       # Current theorem-body experiment target only.
       #
       # Active purpose:
-      #   Check the exact observed syntactic quotient layer:
-      #     - exact observed pullback
-      #     - residual preimage / image preservation
-      #     - common-context and concept-closure preservation
-      #     - point-concept and ConceptProduct preservation
-      #     - universal property for maps constant on observed-syntactic blocks
-      #     - multiplicative lift through an exact observed quotient map
+      #   Check the concrete observed syntactic quotient specialization:
+      #     - quotient type by SameObservedSyntactic S
+      #     - quotient multiplication and semigroup law
+      #     - projection map, surjectivity, exact kernel
+      #     - residual / concept / point / product preservation
+      #     - universal property and multiplicative universal property
       #
-      # No release-certificate / summary / package / audit / metadata /
-      # checklist / smoke-test target is active in this workflow.
+      # This is intended to move "Actual quotient-monoid specialization"
+      # from a future target to a checked theorem-body target.
       # ------------------------------------------------------------------
 
-      - name: Check ObservedSyntacticQuotientPaperSummary
-        run: lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
-
-      - name: Check ObservedSyntacticExactQuotient
-        run: lake build LeanCfgProject.ObservedSyntacticExactQuotient
-
-      - name: Check ObservedSyntacticExactQuotientUniversal
-        run: lake build LeanCfgProject.ObservedSyntacticExactQuotientUniversal
+      - name: Check ObservedSyntacticConcreteQuotientPaperSummary
+        run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotientPaperSummary
 
       # ------------------------------------------------------------------
       # Current experiment subtargets.
       # Keep commented out during the first pass because the summary target
-      # imports them.  Uncomment one by one if the summary target fails and
-      # you want a narrower diagnostic target.
+      # imports them.  Uncomment one by one for narrower diagnostics.
       # ------------------------------------------------------------------
 
-      # - name: Check ObservedSyntacticExactQuotient
-      #   run: lake build LeanCfgProject.ObservedSyntacticExactQuotient
-      #
-      # - name: Check ObservedSyntacticExactQuotientUniversal
-      #   run: lake build LeanCfgProject.ObservedSyntacticExactQuotientUniversal
-      #
-
-      # ------------------------------------------------------------------
-      # Previous normal-coset consequence-layer experiment targets.
-      # Temporarily commented out so that this workflow tests only the
-      # current exact-observed-quotient experiment.
-      # ------------------------------------------------------------------
-
-      # - name: Check NormalCosetConsequences
-      #   run: lake build LeanCfgProject.NormalCosetConsequences
-      #
-      # - name: Check ZeroAdjoinedNormalCosetConsequences
-      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
-      #
-
-      # ------------------------------------------------------------------
-      # Previous normal-coset experiment targets.
-      # Temporarily commented out so that this workflow tests only the
-      # current consequence-layer experiment.
-      # ------------------------------------------------------------------
-
-      # - name: Check NormalCosetAdequacy
-      #   run: lake build LeanCfgProject.NormalCosetAdequacy
-      #
-      # - name: Check NormalCosetAdequacyCorollaries
-      #   run: lake build LeanCfgProject.NormalCosetAdequacyCorollaries
-      #
-      # - name: Check ZeroAdjoinedNormalCosetAdequacy
-      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
-      #
-      # - name: Check NormalCosetSyntacticCharacterization
-      #   run: lake build LeanCfgProject.NormalCosetSyntacticCharacterization
-      #
-      # - name: Check ZeroAdjoinedNormalCosetCharacterization
-      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
-      #
-      # - name: Check NormalCosetResidualFormula
-      #   run: lake build LeanCfgProject.NormalCosetResidualFormula
-      #
-      # - name: Check ZeroAdjoinedNormalCosetResidualFormula
-      #   run: lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
-      #
-
-      # ------------------------------------------------------------------
-      # Previous finite-example experiment targets.
-      # Temporarily commented out so that this workflow tests only the
-      # current consequence-layer experiment.
-      # ------------------------------------------------------------------
-
-      # - name: Check DiamondSemilatticeAdequacy finite example
-      #   run: lake build LeanCfgProject.DiamondSemilatticeAdequacy
-      #
-      # - name: Check ZMod3FailureExample finite example
-      #   run: lake build LeanCfgProject.ZMod3FailureExample
-      #
-      # - name: Check EndpointMonoidAdequacy finite example
-      #   run: lake build LeanCfgProject.EndpointMonoidAdequacy
-      #
-
-      # ------------------------------------------------------------------
-      # Previous theorem-body experiment targets.
-      # Temporarily commented out so that this workflow tests only the
-      # current consequence-layer experiment.
-      # ------------------------------------------------------------------
-
-      # - name: Check ResidualConceptNucleus item 1
-      #   run: lake build LeanCfgProject.ResidualConceptNucleus
-      #
-      # - name: Check PointwiseAdequacy item 2
-      #   run: lake build LeanCfgProject.PointwiseAdequacy
-      #
-      # - name: Check UniformAdequacy item 3
-      #   run: lake build LeanCfgProject.UniformAdequacy
-      #
-      # - name: Check ObservedQuotientResidual item 4a
-      #   run: lake build LeanCfgProject.ObservedQuotientResidual
-      #
-      # - name: Check ObservedQuotientClosure item 4bc
-      #   run: lake build LeanCfgProject.ObservedQuotientClosure
-      #
-      # - name: Check ObservedQuotientClosureImage item 4c
-      #   run: lake build LeanCfgProject.ObservedQuotientClosureImage
-      #
-      # - name: Check ObservedSyntacticSaturation item 4
-      #   run: lake build LeanCfgProject.ObservedSyntacticSaturation
-      #
-      # - name: Check ObservedFactorMinimality item 4
-      #   run: lake build LeanCfgProject.ObservedFactorMinimality
-      #
-
-      # ------------------------------------------------------------------
-      # Archived paper-facing / release / certificate targets.
-      # Keep commented out during theorem-body experiments.
-      # Uncomment for wider regression checks or before tagging an artifact.
-      # ------------------------------------------------------------------
-
-      # - name: Check ICPaperClaimIndex v27.2 module
-      #   run: lake build LeanCfgProject.ICPaperClaimIndex_v27_2
-      #
-      # - name: Check ICTheoremTableIndex v27.2 module
-      #   run: lake build LeanCfgProject.ICTheoremTableIndex_v27_2
-      #
-      # - name: Check ICFrozenArtifactIndex v27.2 module
-      #   run: lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
-      #
-      # - name: Check ICDependencyCertificate v27.2 module
-      #   run: lake build LeanCfgProject.ICDependencyCertificate_v27_2
-      #
-      # - name: Check ICFormalizationSupplementCertificate v27.2 module
-      #   run: lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
-      #
-      # - name: Check ICPaperSubmissionChecklist v27.2 module
-      #   run: lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
-      #
-      # - name: Check ICFinalSmokeTest v27.2 module
-      #   run: lake build LeanCfgProject.ICFinalSmokeTest_v27_2
-      #
-      # - name: Check ICSubmissionSummary v14 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v14
-      #
-      # - name: Check ICArtifactMetadata CI180 module
-      #   run: lake build LeanCfgProject.ICArtifactMetadata_ci180
-      #
-      # - name: Check ICReleaseCertificate v27.2 module
-      #   run: lake build LeanCfgProject.ICReleaseCertificate_v27_2
-      #
-      # - name: Check ObservedLearningCertificate v27.2 module
-      #   run: lake build LeanCfgProject.ObservedLearningCertificate_v27_2
-      #
-      # - name: Check PointFrameCertificate v27.2 module
-      #   run: lake build LeanCfgProject.PointFrameCertificate_v27_2
-      #
-      # - name: Check FiniteBasisCertificate v27.2 module
-      #   run: lake build LeanCfgProject.FiniteBasisCertificate_v27_2
-      #
-      # - name: Check ICPaperFormalizationBridge v27.2 module
-      #   run: lake build LeanCfgProject.ICPaperFormalizationBridge_v27_2
-      #
-      # - name: Check ICAppendixReleaseIndex v27.2 module
-      #   run: lake build LeanCfgProject.ICAppendixReleaseIndex_v27_2
-      #
-      # - name: Check ICReleaseSmokeTest v27.2 module
-      #   run: lake build LeanCfgProject.ICReleaseSmokeTest_v27_2
-      #
-      # - name: Check ICSubmissionSummary v13 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v13
-      #
-
-      # ------------------------------------------------------------------
-      # Previous paper-facing / recent-experiment targets.
-      # Temporarily commented out during the current experiment.
-      # Do not delete these blocks: uncomment them for wider regression checks.
-      # ------------------------------------------------------------------
-
-      # - name: Check SemanticBridgeSummary module
-      #   run: lake build LeanCfgProject.SemanticBridgeSummary
-      #
-      # - name: Check AttackSemanticBridgeSummary module
-      #   run: lake build LeanCfgProject.AttackSemanticBridgeSummary
-      #
-      # - name: Check ObservedSyntacticPaperSummary module
-      #   run: lake build LeanCfgProject.ObservedSyntacticPaperSummary
-      #
-      # - name: Check ICSemanticBridgeSummary v3 module
-      #   run: lake build LeanCfgProject.ICSemanticBridgeSummary_v3
-      #
-      # - name: Check ICPaperArtifactSummary module
-      #   run: lake build LeanCfgProject.ICPaperArtifactSummary
-      #
-      # - name: Check ICLeanAppendixIndex module
-      #   run: lake build LeanCfgProject.ICLeanAppendixIndex
-      #
-      # - name: Check ICSubmissionSummary v1 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v1
-      #
-      # - name: Check ICArtifactReleaseSummary module
-      #   run: lake build LeanCfgProject.ICArtifactReleaseSummary
-      #
-      # - name: Check ICArtifactAppendixCoverage module
-      #   run: lake build LeanCfgProject.ICArtifactAppendixCoverage
-      #
-      # - name: Check ICFastCI module
-      #   run: lake build LeanCfgProject.ICFastCI
-      #
-      # - name: Check ICFullPaperSummary v1 module
-      #   run: lake build LeanCfgProject.ICFullPaperSummary_v1
-      #
-      # - name: Check ICSubmissionSummary v2 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v2
-      #
-      # - name: Check ICArtifactFreezeIndex module
-      #   run: lake build LeanCfgProject.ICArtifactFreezeIndex
-      #
-      # - name: Check ICReproducibilitySummary module
-      #   run: lake build LeanCfgProject.ICReproducibilitySummary
-      #
-      # - name: Check ICFastCI v2 module
-      #   run: lake build LeanCfgProject.ICFastCI_v2
-      #
-      # - name: Check ICFullPaperSummary v2 module
-      #   run: lake build LeanCfgProject.ICFullPaperSummary_v2
-      #
-      # - name: Check ICSubmissionSummary v3 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v3
-      #
-      # - name: Check ObservedFrameStructure module
-      #   run: lake build LeanCfgProject.ObservedFrameStructure
-      #
-      # - name: Check ObservedFrameStructureDecidable module
-      #   run: lake build LeanCfgProject.ObservedFrameStructureDecidable
-      #
-      # - name: Check FiniteObservedFrameBasis module
-      #   run: lake build LeanCfgProject.FiniteObservedFrameBasis
-      #
-      # - name: Check FiniteSetQueryReconstruction module
-      #   run: lake build LeanCfgProject.FiniteSetQueryReconstruction
-      #
-      # - name: Check FaithfulRepresentatives module
-      #   run: lake build LeanCfgProject.FaithfulRepresentatives
-      #
-      # - name: Check ObservedLearningExamples module
-      #   run: lake build LeanCfgProject.ObservedLearningExamples
-      #
-      # - name: Check FiniteObservedConceptIdentification module
-      #   run: lake build LeanCfgProject.FiniteObservedConceptIdentification
-      #
-      # - name: Check ObservedLearningPaperSummary module
-      #   run: lake build LeanCfgProject.ObservedLearningPaperSummary
-      #
-      # - name: Check ICSubmissionSummary v4 module
-      #   run: lake build LeanCfgProject.ICSubmissionSummary_v4
-      #
-
-      # ------------------------------------------------------------------
-      # Optional full-regression targets.
-      # Uncomment these when preparing a release, before tagging an artifact,
-      # or when changing low-level definitions.  They are intentionally
-      # commented out during ordinary iteration to keep CI time under control.
-      # ------------------------------------------------------------------
-
-      # - name: Check Step25 module
-      #   run: lake build LeanCfgProject.Step25_Test
-      #
-      # - name: Check FullArchitecture module
-      #   run: lake build LeanCfgProject.FullArchitecture_Test
-      #
-      # - name: Check StateSemantics module
-      #   run: lake build LeanCfgProject.StateSemantics
-      #
-      # - name: Check ResidualConcept module
-      #   run: lake build LeanCfgProject.ResidualConcept
-      #
-      # - name: Check LanguageQuotient module
-      #   run: lake build LeanCfgProject.LanguageQuotient
-      #
-      # - name: Check DescriptorSemantics module
-      #   run: lake build LeanCfgProject.DescriptorSemantics
-      #
-      # - name: Check DescriptorResidualSemantics module
-      #   run: lake build LeanCfgProject.DescriptorResidualSemantics
-      #
-      # - name: Check ObservationCounterexample module
-      #   run: lake build LeanCfgProject.ObservationCounterexample
-      #
-      # - name: Check ObservationCounterexample v2 module
-      #   run: lake build LeanCfgProject.ObservationCounterexample_v2
-      #
-      # - name: Check ObservationFinite module
-      #   run: lake build LeanCfgProject.ObservationFinite
-      #
-      # - name: Check CarrierConceptSemantics module
-      #   run: lake build LeanCfgProject.CarrierConceptSemantics
-      #
-      # - name: Check FiniteSaturation module
-      #   run: lake build LeanCfgProject.FiniteSaturation
-      #
-      # - name: Check ObservationSignatureCounterexample module
-      #   run: lake build LeanCfgProject.ObservationSignatureCounterexample
-      #
-      # - name: Check FrameSoundness module
-      #   run: lake build LeanCfgProject.FrameSoundness
-      #
-      # - name: Check CarrierSaturationCorrectness module
-      #   run: lake build LeanCfgProject.CarrierSaturationCorrectness
-      #
-      # - name: Check SaturationFrameBridge module
-      #   run: lake build LeanCfgProject.SaturationFrameBridge
-      #
-      # - name: Check CarrierSaturationLeast module
-      #   run: lake build LeanCfgProject.CarrierSaturationLeast
-      #
-      # - name: Check CarrierSaturationConceptSoundness module
-      #   run: lake build LeanCfgProject.CarrierSaturationConceptSoundness
-      #
-      # - name: Check FrameIntentClosureBridge module
-      #   run: lake build LeanCfgProject.FrameIntentClosureBridge
-      #
-      # - name: Check ICSemanticBridgeSummary module
-      #   run: lake build LeanCfgProject.ICSemanticBridgeSummary
-      #
-      # - name: Check SaturationStability module
-      #   run: lake build LeanCfgProject.SaturationStability
-      #
-      # - name: Check ClosedStageConceptBridge module
-      #   run: lake build LeanCfgProject.ClosedStageConceptBridge
-      #
-      # - name: Check ClosedStageFrameBridge module
-      #   run: lake build LeanCfgProject.ClosedStageFrameBridge
-      #
-      # - name: Check SaturationMonotoneChain module
-      #   run: lake build LeanCfgProject.SaturationMonotoneChain
-      #
-      # - name: Check ClosedStageAlgorithmCorrectness module
-      #   run: lake build LeanCfgProject.ClosedStageAlgorithmCorrectness
-      #
-      # - name: Check ICSemanticBridgeSummary v2 module
-      #   run: lake build LeanCfgProject.ICSemanticBridgeSummary_v2
-      #
-      # - name: Check FiniteCoverageStopping module
-      #   run: lake build LeanCfgProject.FiniteCoverageStopping
-      #
-      # - name: Check ClosedStageEquivalences module
-      #   run: lake build LeanCfgProject.ClosedStageEquivalences
-      #
-      # - name: Check ClosedStageConceptStability module
-      #   run: lake build LeanCfgProject.ClosedStageConceptStability
-      #
-      # - name: Check ClosedStageFrameIntentStability module
-      #   run: lake build LeanCfgProject.ClosedStageFrameIntentStability
-      #
-      # - name: Check ClosedStageRuleSemantics module
-      #   run: lake build LeanCfgProject.ClosedStageRuleSemantics
-      #
-      # - name: Check LaterClosedStageClosure module
-      #   run: lake build LeanCfgProject.LaterClosedStageClosure
-      #
-      # - name: Check LocalStoppingCorrectness module
-      #   run: lake build LeanCfgProject.LocalStoppingCorrectness
-      #
-      # - name: Check LocalStoppingRuleSemantics module
-      #   run: lake build LeanCfgProject.LocalStoppingRuleSemantics
-      #
-      # - name: Check LocalStoppingFrameResidual module
-      #   run: lake build LeanCfgProject.LocalStoppingFrameResidual
-      #
-      # - name: Check FiniteStoppingCore module
-      #   run: lake build LeanCfgProject.FiniteStoppingCore
-      #
-      # - name: Check MeasureStoppingCriterion module
-      #   run: lake build LeanCfgProject.MeasureStoppingCriterion
-      #
-      # - name: Check FiniteSaturationMeasure module
-      #   run: lake build LeanCfgProject.FiniteSaturationMeasure
-      #
-      # - name: Check FiniteStoppingFrameResidual module
-      #   run: lake build LeanCfgProject.FiniteStoppingFrameResidual
-      #
-      # - name: Check FrameAdequacyCriterion module
-      #   run: lake build LeanCfgProject.FrameAdequacyCriterion
-      #
-      # - name: Check K4ResidualAdequacyExample module
-      #   run: lake build LeanCfgProject.K4ResidualAdequacyExample
-      #
-      # - name: Check K4AdequacyStrictness module
-      #   run: lake build LeanCfgProject.K4AdequacyStrictness
-      #
-      # - name: Check K4ConceptCollapse module
-      #   run: lake build LeanCfgProject.K4ConceptCollapse
-      #
-      # - name: Check FiniteStoppedFrameAdequacy module
-      #   run: lake build LeanCfgProject.FiniteStoppedFrameAdequacy
-      #
-      # - name: Check AdequacyBridgeSummary module
-      #   run: lake build LeanCfgProject.AdequacyBridgeSummary
-      #
-      # - name: Check ObservedSyntacticConcept module
-      #   run: lake build LeanCfgProject.ObservedSyntacticConcept
-      #
-      # - name: Check ObservedSyntacticCongruence module
-      #   run: lake build LeanCfgProject.ObservedSyntacticCongruence
-      #
-      # - name: Check CanonicalResidualClosureSystem module
-      #   run: lake build LeanCfgProject.CanonicalResidualClosureSystem
-      #
-      # - name: Check CarrierObservedAdequacy module
-      #   run: lake build LeanCfgProject.CarrierObservedAdequacy
-      #
-      # - name: Check ObservedSyntacticResidualCorollaries module
-      #   run: lake build LeanCfgProject.ObservedSyntacticResidualCorollaries
-      #
-      # - name: Check ObservedSyntacticBlockAdequacyCorollaries module
-      #   run: lake build LeanCfgProject.ObservedSyntacticBlockAdequacyCorollaries
-      #
-      # - name: Check ObservedSyntacticBridgeSummary module
-      #   run: lake build LeanCfgProject.ObservedSyntacticBridgeSummary
-      #
-      # - name: Check K4AdequacyPaperSummary module
-      #   run: lake build LeanCfgProject.K4AdequacyPaperSummary
-      #
-      # - name: Check ObservedSyntacticPaperCorollaries module
-      #   run: lake build LeanCfgProject.ObservedSyntacticPaperCorollaries
-      #
-      # - name: Check CarrierObservedAdequacyCorollaries module
-      #   run: lake build LeanCfgProject.CarrierObservedAdequacyCorollaries
+      # - name: Check ObservedSyntacticConcreteQuotient
+      #   run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotient
+      #
+      # - name: Check ObservedSyntacticConcreteQuotientConsequences
+      #   run: lake build LeanCfgProject.ObservedSyntacticConcreteQuotientConsequences
       #
