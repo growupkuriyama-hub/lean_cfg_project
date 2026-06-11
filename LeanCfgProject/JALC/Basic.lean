@@ -45,7 +45,35 @@ structure TwoSidedType {Sigma : Type u} (Obs : FixedFiniteMonoidHom Sigma) where
   left : Obs.M
   mid : Obs.M
   right : Obs.M
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+
+/-- Equivalence between two-sided types and triples of monoid values. -/
+def twoSidedTypeEquiv {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    TwoSidedType Obs ≃ Obs.M × Obs.M × Obs.M where
+  toFun := fun t => (t.left, t.mid, t.right)
+  invFun := fun p =>
+    {
+      left := p.1
+      mid := p.2.1
+      right := p.2.2
+    }
+  left_inv := by
+    intro t
+    cases t
+    rfl
+  right_inv := by
+    intro p
+    rcases p with ⟨l, m, r⟩
+    rfl
+
+
+/-- The two-sided type space is finite because the observer monoid is finite. -/
+noncomputable instance twoSidedTypeFintype {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    Fintype (TwoSidedType Obs) :=
+  Fintype.ofEquiv (Obs.M × Obs.M × Obs.M) (twoSidedTypeEquiv Obs).symm
 
 
 /-- A typed nonterminal: a nonterminal together with its two-sided type. -/
@@ -53,14 +81,69 @@ structure TypedNonterminal (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma) where
   nt : N
   ty : TwoSidedType Obs
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+
+/-- Equivalence between typed nonterminals and pairs of a nonterminal and a type. -/
+def typedNonterminalEquiv (N : Type u) {Sigma : Type v}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    TypedNonterminal N Obs ≃ N × TwoSidedType Obs where
+  toFun := fun q => (q.nt, q.ty)
+  invFun := fun p =>
+    {
+      nt := p.1
+      ty := p.2
+    }
+  left_inv := by
+    intro q
+    cases q
+    rfl
+  right_inv := by
+    intro p
+    rcases p with ⟨nt, ty⟩
+    rfl
+
+
+/-- Typed nonterminals are finite when the nonterminal set is finite. -/
+noncomputable instance typedNonterminalFintype (N : Type u) {Sigma : Type v}
+    (Obs : FixedFiniteMonoidHom Sigma) [Fintype N] :
+    Fintype (TypedNonterminal N Obs) :=
+  Fintype.ofEquiv (N × TwoSidedType Obs)
+    (typedNonterminalEquiv N Obs).symm
 
 
 /-- The untyped boundary pair surrounding a generated yield. -/
 structure BoundaryPair {Sigma : Type u} (Obs : FixedFiniteMonoidHom Sigma) where
   left : Obs.M
   right : Obs.M
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+
+/-- Equivalence between boundary pairs and pairs of monoid values. -/
+def boundaryPairEquiv {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    BoundaryPair Obs ≃ Obs.M × Obs.M where
+  toFun := fun b => (b.left, b.right)
+  invFun := fun p =>
+    {
+      left := p.1
+      right := p.2
+    }
+  left_inv := by
+    intro b
+    cases b
+    rfl
+  right_inv := by
+    intro p
+    rcases p with ⟨l, r⟩
+    rfl
+
+
+/-- Boundary pairs are finite because the observer monoid is finite. -/
+noncomputable instance boundaryPairFintype {Sigma : Type u}
+    (Obs : FixedFiniteMonoidHom Sigma) :
+    Fintype (BoundaryPair Obs) :=
+  Fintype.ofEquiv (Obs.M × Obs.M) (boundaryPairEquiv Obs).symm
 
 
 /-- Convert a two-sided type to its external boundary pair. -/
@@ -111,17 +194,16 @@ theorem transportType_one_one_mid {Sigma : Type u}
 
 
 /-- The finite universe of all two-sided types. -/
-def allTwoSidedTypes {Sigma : Type u}
+noncomputable def allTwoSidedTypes {Sigma : Type u}
     (Obs : FixedFiniteMonoidHom Sigma) : Finset (TwoSidedType Obs) :=
   Finset.univ
 
 
 /-- The finite universe of typed nonterminals. -/
-def allTypedNonterminals (N : Type u) {Sigma : Type v}
+noncomputable def allTypedNonterminals (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma) [Fintype N] [DecidableEq N] :
     Finset (TypedNonterminal N Obs) :=
   Finset.univ
-
 
 end JALC
 end LeanCfgProject
