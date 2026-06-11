@@ -16,10 +16,6 @@ The goal is paper-facing:
   * observed contexts form a finite carrier;
   * extents and intents are definable by finite filtering;
   * the resulting closure operators are mechanically well-typed.
-
-This is not yet a full formalization of the mathematical theory in the
-paper.  It is a Lean-checked finite architecture for the residual/concept
-layer.
 -/
 
 
@@ -42,18 +38,20 @@ abbrev Incidence (N : Type u) {Sigma : Type v}
 
 
 /-- The full finite typed-state universe. -/
-def allTypedStates (N : Type u) {Sigma : Type v}
+noncomputable def allTypedStates (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N] :
-    Finset (TypedState N Obs) :=
-  Finset.univ
+    Finset (TypedState N Obs) := by
+  letI : Fintype (TypedState N Obs) := typedNonterminalFintype N Obs
+  exact Finset.univ
 
 
 /-- The full finite context universe. -/
-def allContextStates {Sigma : Type u}
+noncomputable def allContextStates {Sigma : Type u}
     (Obs : FixedFiniteMonoidHom Sigma) :
-    Finset (ContextState Obs) :=
-  Finset.univ
+    Finset (ContextState Obs) := by
+  letI : Fintype (ContextState Obs) := observedContextFintype Obs
+  exact Finset.univ
 
 
 /-- The extent of a finite set of contexts.
@@ -61,13 +59,14 @@ def allContextStates {Sigma : Type u}
 A typed state belongs to the extent when it is incident with every
 context in the given finite context family.
 -/
-def extent (N : Type u) {Sigma : Type v}
+noncomputable def extent (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (C : Finset (ContextState Obs)) :
-    Finset (TypedState N Obs) :=
-  (allTypedStates N Obs).filter
+    Finset (TypedState N Obs) := by
+  classical
+  exact (allTypedStates N Obs).filter
     (fun q => ∀ c ∈ C, R q c)
 
 
@@ -76,31 +75,32 @@ def extent (N : Type u) {Sigma : Type v}
 A context belongs to the intent when every typed state in the given
 finite state family is incident with it.
 -/
-def intent (N : Type u) {Sigma : Type v}
+noncomputable def intent (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (S : Finset (TypedState N Obs)) :
-    Finset (ContextState Obs) :=
-  (allContextStates Obs).filter
+    Finset (ContextState Obs) := by
+  classical
+  exact (allContextStates Obs).filter
     (fun c => ∀ q ∈ S, R q c)
 
 
 /-- State-side concept closure: take the intent and then the extent. -/
-def stateClosure (N : Type u) {Sigma : Type v}
+noncomputable def stateClosure (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (S : Finset (TypedState N Obs)) :
     Finset (TypedState N Obs) :=
   extent N Obs R (intent N Obs R S)
 
 
 /-- Context-side concept closure: take the extent and then the intent. -/
-def contextClosure (N : Type u) {Sigma : Type v}
+noncomputable def contextClosure (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (C : Finset (ContextState Obs)) :
     Finset (ContextState Obs) :=
   intent N Obs R (extent N Obs R C)
@@ -111,7 +111,7 @@ together with the two closure equations. -/
 structure ResidualConcept (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R] where
+    (R : Incidence N Obs) where
   states : Finset (TypedState N Obs)
   contexts : Finset (ContextState Obs)
   states_closed : states = extent N Obs R contexts
@@ -163,48 +163,48 @@ theorem boundaryIncidence_self (N : Type u) {Sigma : Type v}
 theorem mem_extent_iff (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (C : Finset (ContextState Obs))
     (q : TypedState N Obs) :
     q ∈ extent N Obs R C ↔ ∀ c ∈ C, R q c := by
-  unfold extent allTypedStates
-  simp
+  classical
+  simp [extent, allTypedStates]
 
 
 /-- Membership characterization for the finite intent. -/
 theorem mem_intent_iff (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (S : Finset (TypedState N Obs))
     (c : ContextState Obs) :
     c ∈ intent N Obs R S ↔ ∀ q ∈ S, R q c := by
-  unfold intent allContextStates
-  simp
+  classical
+  simp [intent, allContextStates]
 
 
 /-- The extent is always a subset of the full typed-state universe. -/
 theorem extent_subset_univ (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (C : Finset (ContextState Obs)) :
     extent N Obs R C ⊆ allTypedStates N Obs := by
+  classical
   intro q hq
-  unfold extent
-  exact Finset.mem_of_mem_filter hq
+  simp [allTypedStates]
 
 
 /-- The intent is always a subset of the full observed-context universe. -/
 theorem intent_subset_univ (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     (S : Finset (TypedState N Obs)) :
     intent N Obs R S ⊆ allContextStates Obs := by
+  classical
   intro c hc
-  unfold intent
-  exact Finset.mem_of_mem_filter hc
+  simp [allContextStates]
 
 
 /-- Context families are contravariant with respect to extents.
@@ -215,10 +215,11 @@ satisfies all contexts in `C₁`.
 theorem extent_antitone (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     {C₁ C₂ : Finset (ContextState Obs)}
     (hsub : C₁ ⊆ C₂) :
     extent N Obs R C₂ ⊆ extent N Obs R C₁ := by
+  classical
   intro q hq
   rw [mem_extent_iff] at hq
   rw [mem_extent_iff]
@@ -234,16 +235,16 @@ satisfies all states in `S₁`.
 theorem intent_antitone (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma)
     [Fintype N] [DecidableEq N]
-    (R : Incidence N Obs) [DecidableRel R]
+    (R : Incidence N Obs)
     {S₁ S₂ : Finset (TypedState N Obs)}
     (hsub : S₁ ⊆ S₂) :
     intent N Obs R S₂ ⊆ intent N Obs R S₁ := by
+  classical
   intro c hc
   rw [mem_intent_iff] at hc
   rw [mem_intent_iff]
   intro q hq
   exact hc q (hsub hq)
-
 
 end JALC
 end LeanCfgProject
