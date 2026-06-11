@@ -1,5 +1,4 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Finset.Basic
+import Mathlib
 
 namespace LeanCfgProject
 namespace JALC
