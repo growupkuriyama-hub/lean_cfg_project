@@ -160,9 +160,7 @@ theorem empty_composeContext {Sigma : Type u}
   cases c with
   | mk l r =>
     unfold composeContext emptyContext
-    apply ObservedContext.ext
-    · exact Obs.one_mul l
-    · exact Obs.mul_one r
+    rw [Obs.one_mul, Obs.mul_one]
 
 
 /-- The empty context is a right identity for context composition. -/
@@ -173,9 +171,7 @@ theorem compose_emptyContext {Sigma : Type u}
   cases c with
   | mk l r =>
     unfold composeContext emptyContext
-    apply ObservedContext.ext
-    · exact Obs.mul_one l
-    · exact Obs.one_mul r
+    rw [Obs.mul_one, Obs.one_mul]
 
 
 /-- Paper-facing finite universe of observed contexts. -/
