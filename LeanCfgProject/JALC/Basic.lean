@@ -72,8 +72,10 @@ def twoSidedTypeEquiv {Sigma : Type u}
 /-- The two-sided type space is finite because the observer monoid is finite. -/
 noncomputable instance twoSidedTypeFintype {Sigma : Type u}
     (Obs : FixedFiniteMonoidHom Sigma) :
-    Fintype (TwoSidedType Obs) :=
-  Fintype.ofEquiv (Obs.M × Obs.M × Obs.M) (twoSidedTypeEquiv Obs).symm
+    Fintype (TwoSidedType Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  exact Fintype.ofEquiv (Obs.M × Obs.M × Obs.M)
+    (twoSidedTypeEquiv Obs).symm
 
 
 /-- A typed nonterminal: a nonterminal together with its two-sided type. -/
@@ -107,8 +109,10 @@ def typedNonterminalEquiv (N : Type u) {Sigma : Type v}
 /-- Typed nonterminals are finite when the nonterminal set is finite. -/
 noncomputable instance typedNonterminalFintype (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma) [Fintype N] :
-    Fintype (TypedNonterminal N Obs) :=
-  Fintype.ofEquiv (N × TwoSidedType Obs)
+    Fintype (TypedNonterminal N Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  letI : Fintype (TwoSidedType Obs) := twoSidedTypeFintype Obs
+  exact Fintype.ofEquiv (N × TwoSidedType Obs)
     (typedNonterminalEquiv N Obs).symm
 
 
@@ -142,8 +146,10 @@ def boundaryPairEquiv {Sigma : Type u}
 /-- Boundary pairs are finite because the observer monoid is finite. -/
 noncomputable instance boundaryPairFintype {Sigma : Type u}
     (Obs : FixedFiniteMonoidHom Sigma) :
-    Fintype (BoundaryPair Obs) :=
-  Fintype.ofEquiv (Obs.M × Obs.M) (boundaryPairEquiv Obs).symm
+    Fintype (BoundaryPair Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  exact Fintype.ofEquiv (Obs.M × Obs.M)
+    (boundaryPairEquiv Obs).symm
 
 
 /-- Convert a two-sided type to its external boundary pair. -/
@@ -195,15 +201,20 @@ theorem transportType_one_one_mid {Sigma : Type u}
 
 /-- The finite universe of all two-sided types. -/
 noncomputable def allTwoSidedTypes {Sigma : Type u}
-    (Obs : FixedFiniteMonoidHom Sigma) : Finset (TwoSidedType Obs) :=
-  Finset.univ
+    (Obs : FixedFiniteMonoidHom Sigma) : Finset (TwoSidedType Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  letI : Fintype (TwoSidedType Obs) := twoSidedTypeFintype Obs
+  exact Finset.univ
 
 
 /-- The finite universe of typed nonterminals. -/
 noncomputable def allTypedNonterminals (N : Type u) {Sigma : Type v}
     (Obs : FixedFiniteMonoidHom Sigma) [Fintype N] [DecidableEq N] :
-    Finset (TypedNonterminal N Obs) :=
-  Finset.univ
+    Finset (TypedNonterminal N Obs) := by
+  letI : Fintype Obs.M := Obs.instFintype
+  letI : Fintype (TwoSidedType Obs) := twoSidedTypeFintype Obs
+  letI : Fintype (TypedNonterminal N Obs) := typedNonterminalFintype N Obs
+  exact Finset.univ
 
 end JALC
 end LeanCfgProject
