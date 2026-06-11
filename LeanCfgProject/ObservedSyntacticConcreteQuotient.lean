@@ -16,11 +16,11 @@ Theorem-body experiment.
 
 Purpose:
   construct the concrete quotient type by SameObservedSyntactic S and install
-  its multiplication, semigroup law, projection map, exact kernel theorem, and
+  its multiplication, monoid law, projection map, exact kernel theorem, and
   projection homomorphism theorem.
 
-This file is meant to turn the paper's actual quotient-monoid specialization
-into a checked theorem-body layer.
+This file is meant to turn the paper's "actual quotient-monoid specialization"
+target from a future target into a checked theorem-body layer.
 -/
 
 variable {Q : Type u} [Monoid Q]
@@ -30,14 +30,11 @@ def observedSyntacticSetoid (S : Set Q) : Setoid Q where
   r x y := SameObservedSyntactic S x y
   iseqv := by
     refine ⟨?refl, ?symm, ?trans⟩
-    · intro x
-      intro a b
+    · intro x a b
       rfl
-    · intro x y hxy
-      intro a b
+    · intro x y hxy a b
       exact (hxy a b).symm
-    · intro x y z hxy hyz
-      intro a b
+    · intro x y z hxy hyz a b
       exact (hxy a b).trans (hyz a b)
 
 /-- The concrete observed syntactic quotient type. -/
@@ -79,14 +76,48 @@ protected def ObservedSyntacticQuotient.mul
   Quotient.lift₂
     (fun x y => observedSyntacticQuotientMap (Q := Q) S (x * y))
     (by
-      intro x x' hx y y' hy
+      intro a b c d hac hbd
       apply Quotient.sound
-      exact sameObservedSyntactic_mul_compat S hx hy)
+      exact sameObservedSyntactic_mul_compat S hac hbd)
 
-instance observedSyntacticQuotientMul
+/-- The unit on the concrete observed syntactic quotient. -/
+protected def ObservedSyntacticQuotient.one
     (S : Set Q) :
-    Mul (ObservedSyntacticQuotient (Q := Q) S) where
+    ObservedSyntacticQuotient (Q := Q) S :=
+  observedSyntacticQuotientMap (Q := Q) S 1
+
+instance observedSyntacticQuotientMonoid
+    (S : Set Q) :
+    Monoid (ObservedSyntacticQuotient (Q := Q) S) where
+  one := ObservedSyntacticQuotient.one (Q := Q) S
   mul := ObservedSyntacticQuotient.mul (Q := Q) S
+  mul_assoc := by
+    intro x y z
+    refine Quotient.inductionOn₃ x y z ?_
+    intro a b c
+    change
+      observedSyntacticQuotientMap (Q := Q) S ((a * b) * c)
+        =
+      observedSyntacticQuotientMap (Q := Q) S (a * (b * c))
+    rw [mul_assoc]
+  one_mul := by
+    intro x
+    refine Quotient.inductionOn x ?_
+    intro a
+    change
+      observedSyntacticQuotientMap (Q := Q) S (1 * a)
+        =
+      observedSyntacticQuotientMap (Q := Q) S a
+    rw [one_mul]
+  mul_one := by
+    intro x
+    refine Quotient.inductionOn x ?_
+    intro a
+    change
+      observedSyntacticQuotientMap (Q := Q) S (a * 1)
+        =
+      observedSyntacticQuotientMap (Q := Q) S a
+    rw [mul_one]
 
 @[simp]
 theorem observedSyntacticQuotient_mk_mul_mk
@@ -98,51 +129,17 @@ theorem observedSyntacticQuotient_mk_mul_mk
     observedSyntacticQuotientMap (Q := Q) S (x * y) := by
   rfl
 
-/-- Associativity of the concrete quotient multiplication. -/
-instance observedSyntacticQuotientSemigroup
+@[simp]
+theorem observedSyntacticQuotient_mk_one
     (S : Set Q) :
-    Semigroup (ObservedSyntacticQuotient (Q := Q) S) where
-  mul_assoc := by
-    intro x y z
-    refine Quotient.inductionOn x ?_
-    intro a
-    refine Quotient.inductionOn y ?_
-    intro b
-    refine Quotient.inductionOn z ?_
-    intro c
-    apply Quotient.sound
-    intro l r
-    simp [observedSyntacticQuotientMap, ObservedSyntacticQuotient.mul, mul_assoc]
+    observedSyntacticQuotientMap (Q := Q) S (1 : Q)
+      =
+    (1 : ObservedSyntacticQuotient (Q := Q) S) := by
+  rfl
 
-/-- Unit element of the concrete quotient. -/
-instance observedSyntacticQuotientOne
-    (S : Set Q) :
-    One (ObservedSyntacticQuotient (Q := Q) S) where
-  one := observedSyntacticQuotientMap (Q := Q) S 1
-
-/-- Left unit law for the concrete quotient multiplication. -/
-theorem observedSyntacticQuotient_one_mul
-    (S : Set Q)
-    (x : ObservedSyntacticQuotient (Q := Q) S) :
-    (1 : ObservedSyntacticQuotient (Q := Q) S) * x = x := by
-  refine Quotient.inductionOn x ?_
-  intro a
-  apply Quotient.sound
-  intro l r
-  simp [observedSyntacticQuotientMap, ObservedSyntacticQuotient.mul]
-
-/-- Right unit law for the concrete quotient multiplication. -/
-theorem observedSyntacticQuotient_mul_one
-    (S : Set Q)
-    (x : ObservedSyntacticQuotient (Q := Q) S) :
-    x * (1 : ObservedSyntacticQuotient (Q := Q) S) = x := by
-  refine Quotient.inductionOn x ?_
-  intro a
-  apply Quotient.sound
-  intro l r
-  simp [observedSyntacticQuotientMap, ObservedSyntacticQuotient.mul]
-
-/-- The quotient projection is multiplicative. -/
+/--
+The quotient projection is multiplicative.
+-/
 theorem observedSyntacticQuotientMap_mul
     (S : Set Q) (x y : Q) :
     observedSyntacticQuotientMap (Q := Q) S (x * y)
@@ -152,10 +149,12 @@ theorem observedSyntacticQuotientMap_mul
     observedSyntacticQuotientMap (Q := Q) S y := by
   rfl
 
-/-- The quotient projection preserves the unit. -/
+/--
+The quotient projection preserves the unit.
+-/
 theorem observedSyntacticQuotientMap_one
     (S : Set Q) :
-    observedSyntacticQuotientMap (Q := Q) S 1
+    observedSyntacticQuotientMap (Q := Q) S (1 : Q)
       =
     (1 : ObservedSyntacticQuotient (Q := Q) S) := by
   rfl
@@ -197,9 +196,9 @@ theorem observedSyntacticQuotientMap_exact_package
         *
       observedSyntacticQuotientMap (Q := Q) S y)
       ∧
-    (observedSyntacticQuotientMap (Q := Q) S 1
+    observedSyntacticQuotientMap (Q := Q) S (1 : Q)
       =
-      (1 : ObservedSyntacticQuotient (Q := Q) S))
+    (1 : ObservedSyntacticQuotient (Q := Q) S)
       ∧
     (∀ y : ObservedSyntacticQuotient (Q := Q) S,
       ∃ x : Q, observedSyntacticQuotientMap (Q := Q) S x = y)
