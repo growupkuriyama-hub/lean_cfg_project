@@ -71,8 +71,8 @@ theorem concreteObservedSyntacticQuotient_image_preimage_eq
   · intro hy
     rcases observedSyntacticQuotientMap_surjective (Q := Q) S y with ⟨x, hx⟩
     refine ⟨x, ?_, hx⟩
-    rw [hx]
-    exact hy
+    · change observedSyntacticQuotientMap (Q := Q) S x ∈ Ubar
+      exact hx ▸ hy
 
 /--
 Preimage-image round trip for concept closures.
