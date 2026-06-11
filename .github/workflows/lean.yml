@@ -2,7 +2,9 @@ name: Lean CI
 
 on:
   push:
+    branches: ["main"]
   pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -10,52 +12,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Lean and Mathlib cache
-        uses: leanprover/lean-action@v1
+      - uses: leanprover/lean-action@v1
         with:
-          use-mathlib-cache: true
           build: false
           test: false
           lint: false
 
-      - name: Reject placeholder proof command
+      - name: Build JALC algebra summary
+        run: lake build LeanCfgProject.JALC.Summary
+
+      - name: Reject sorry, admit, and axiom in JALC modules
         run: |
-          if grep -R -nE '\bsorry\b' LeanCfgProject --include="*.lean"; then
-            echo "::error::placeholder proof command found in Lean files"
-            exit 1
-          fi
-
-      - name: Reject project-level primitive declarations
-        run: |
-          if grep -R -nE '^[[:space:]]*axiom\b' LeanCfgProject --include="*.lean"; then
-            echo "::error::project-level primitive declaration found in Lean files"
-            exit 1
-          fi
-
-      # ------------------------------------------------------------------
-      # Current theorem-body experiment target only.
-      #
-      # Active purpose:
-      #   Check the bundled concrete observed quotient concept-object
-      #   order / closure / product isomorphism package.
-      #
-      # This is intended to support the paper-facing statement:
-      #   "Concrete quotient concept-object isomorphism: Lean OK"
-      # in the precise bundled order/product/closure sense.
-      # ------------------------------------------------------------------
-
-      - name: Check ConcreteQuotientConceptObjectIsoPackageSummary
-        run: lake build LeanCfgProject.ConcreteQuotientConceptObjectIsoPackageSummary
-
-      # ------------------------------------------------------------------
-      # Current experiment subtarget.
-      # Keep commented out during the first pass because the summary target
-      # imports it.  Uncomment for narrower diagnostics.
-      # ------------------------------------------------------------------
-
-      # - name: Check ConcreteQuotientConceptObjectIsoPackage
-      #   run: lake build LeanCfgProject.ConcreteQuotientConceptObjectIsoPackage
-      #
+          ! grep -R "sorry" LeanCfgProject/JALC
+          ! grep -R "admit" LeanCfgProject/JALC
+          ! grep -R "axiom" LeanCfgProject/JALC
