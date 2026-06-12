@@ -123,20 +123,26 @@ jobs:
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
 
-      - name: Build ORC package entrypoint
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.Basic
-
-      - name: Build cut adequacy core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
-
       - name: Build finite cut-observation core
         shell: bash
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptFiniteCutObservationCore
+
+      - name: Build closure homomorphism core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClosureHomCore
+
+      - name: Build word-image cut adequacy core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptWordImageCutAdequacyCore
+
+      - name: Build ORC package entrypoint
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.Basic
