@@ -131,19 +131,21 @@ theorem image_cl (U : Set W) :
     rcases hy with ⟨x, hx, rfl⟩
     rw [cl, Extent] at hx ⊢
     intro p hp
-    rcases e.surj p.1 with ⟨a, rfl⟩
-    rcases e.surj p.2 with ⟨b, rfl⟩
+    rcases e.surj p.1 with ⟨a, ha⟩
+    rcases e.surj p.2 with ⟨b, hb⟩
     have hIntent : (a, b) ∈ Intent L U := by
       intro u hu
-      have ht : e.toFun a * e.toFun u * e.toFun b ∈ S :=
-        hp (e.toFun u) ⟨u, hu, rfl⟩
+      have ht : e.toFun a * e.toFun u * e.toFun b ∈ S := by
+        simpa [ha, hb] using hp (e.toFun u) ⟨u, hu, rfl⟩
       have ht' : e.toFun (a * u * b) ∈ S := by
         simpa [e.map_mul3 a u b] using ht
       exact (e.mem_iff (a * u * b)).mp ht'
     have hs : a * x * b ∈ L := hx (a, b) hIntent
     have ht : e.toFun (a * x * b) ∈ S :=
       (e.mem_iff (a * x * b)).mpr hs
-    simpa [e.map_mul3 a x b] using ht
+    have ht' : e.toFun a * e.toFun x * e.toFun b ∈ S := by
+      simpa [e.map_mul3 a x b] using ht
+    simpa [ha, hb] using ht'
   · intro hy
     rcases e.surj y with ⟨x, rfl⟩
     refine ⟨x, ?_, rfl⟩
