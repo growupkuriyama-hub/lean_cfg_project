@@ -80,6 +80,7 @@ end WordCutOccurrence
 open WordCutOccurrence
 
 /-- The image of a singleton word set is the singleton of the image. -/
+omit [Monoid Q] in
 theorem image_singleton_word (q : W → Q) (w : W) :
     q '' ({w} : Set W) = ({q w} : Set Q) := by
   ext x
@@ -114,7 +115,8 @@ theorem word_cut_dense_generates_word_image
       hdense hsound hcontainsObs
   simpa [WordCutOccurrence.WordImageAdequate,
     WordCutOccurrence.WordImageSound,
-    WordCutOccurrence.residual] using hAdeq
+    WordCutOccurrence.residual,
+    ObservedCutPoint.AdequateImage] using hAdeq
 
 /-- One-cut word-image version of the universal adequacy equivalence.
 
@@ -150,6 +152,7 @@ theorem universal_word_image_adequacy_for_one_cut_iff_pointDense
       simpa [WordCutOccurrence.WordImageAdequate,
         WordCutOccurrence.residual,
         WordCutOccurrence.toObservedCutPoint,
+        ObservedCutPoint.AdequateImage,
         image_singleton_word q c.middle] using hAdeqWord
     exact (singleton_adequacy_iff_pointDense S (c.toObservedCutPoint q)).mp hAdeqObs
 
