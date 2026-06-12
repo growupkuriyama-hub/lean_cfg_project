@@ -134,3 +134,9 @@ jobs:
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
+
+      - name: Build finite cut-observation core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptFiniteCutObservationCore
