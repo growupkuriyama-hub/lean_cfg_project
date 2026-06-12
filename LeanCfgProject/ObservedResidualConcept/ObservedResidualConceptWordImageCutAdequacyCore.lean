@@ -80,7 +80,6 @@ end WordCutOccurrence
 open WordCutOccurrence
 
 /-- The image of a singleton word set is the singleton of the image. -/
-omit [Monoid Q] in
 theorem image_singleton_word (q : W → Q) (w : W) :
     q '' ({w} : Set W) = ({q w} : Set Q) := by
   ext x
