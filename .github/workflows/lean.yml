@@ -117,6 +117,12 @@ jobs:
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
 
+      - name: Build cut adequacy core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
+
       - name: Build ORC package entrypoint
         shell: bash
         run: |

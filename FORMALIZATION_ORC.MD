@@ -9,7 +9,8 @@ Repository: `growupkuriyama-hub/lean_cfg_project`
 Supplement path: `lean_cfg_project/FORMALIZATION_ORC.MD`  
 Latest historical theorem-body CI check before relocation: Lean CI #219 passed / `LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary`
 Latest post-relocation ORC theorem-batch CI check: ObservedResidualConcept Lean CI #246 succeeded / `LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems`
-Post-relocation namespace target: `LeanCfgProject.ObservedResidualConcept.*` / checked by ObservedResidualConcept Lean CI #246  
+Latest post-relocation ORC boundary-extension checks: Clark-collapse core, Dedekind lower-bound core, and pointed-boundary core succeeded after subsequent focused CI runs; exact final run number not recorded in this supplement
+Post-relocation namespace target: `LeanCfgProject.ObservedResidualConcept.*` / checked by ObservedResidualConcept Lean CI #246 and subsequent focused boundary-extension checks  
 Previous pinned theorem-body snapshot: commit `794dc20` / Lean CI #216  
 Successful-log audit: through Lean CI #217  
 Pushed by: `growupkuriyama-hub`
@@ -117,6 +118,12 @@ lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClassif
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReduced
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReducedClassification
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
 ```
 
 The final target imports the preceding theorem-package layers and is the
@@ -155,6 +162,29 @@ kernel of the point map, residual adjunctions and closed-form residuals, cyclic
 phase / Girard-style collapse, forward transport under observed-pair
 isomorphism, reduced reconstruction from point concepts, and the reduced reverse
 classification core.
+
+The subsequent boundary-extension experiments add three focused theorem-body
+modules:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptClarkCollapseCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptDedekindLowerBoundCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptPointedBoundaryCore.lean
+```
+
+These focused checks were run after the CI #246 theorem-package batch and were
+reported as passing after the corresponding repair commits.  The exact final run
+number is not recorded in this supplement.  Their checked content is:
+
+- Clark-collapse core: a surjective recognizing monoid observation transports
+  the marked membership set, residuals, closures, point concepts, concept
+  products, and observed syntactic equivalence;
+- Dedekind lower-bound core: lower sets are exactly the closed extents of the
+  lower-set context, and Boolean-cube lower sets inject into the corresponding
+  closed-extents object;
+- pointed-boundary core: pointed syntactic observation is exactly ordinary
+  two-sided syntactic equivalence intersected with the kernel of the monoid
+  observation.
 
 The latest historical theorem-body check before the namespace relocation was:
 
@@ -292,6 +322,7 @@ At the current checked snapshot, the artifact verifies the following major group
 - normal-coset and zero-adjoined normal-coset adequacy, syntactic-block characterization, residual formulas, and consequence layers;
 - exact observed syntactic quotient invariance, residual/concept/product preservation, and universal-property lifting for maps constant on observed-syntactic blocks;
 - the post-relocation ORC theorem-package batch: point-map homomorphism and kernel, residual adjunctions, closed-form residuals, cyclic phase collapse, forward classification transport, reduced reconstruction, and reduced reverse classification;
+- the post-relocation boundary-extension batch: Clark-collapse transport for surjective recognizing observations, Dedekind lower-bound combinatorial core, and pointed-boundary collapse to syntactic equivalence intersected with observation kernel;
 - paper-facing summary, audit, release-index, final-index, and appendix-index targets for reproducibility.
 
 ---
@@ -371,7 +402,7 @@ LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptReducedClassificat
 LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptMainTheorems.lean
 ```
 
-These are now claimed as checked for the current batch by ObservedResidualConcept Lean CI #246.  Clark collapse, Dedekind lower bounds, and a full internal quotient-monoid construction remain future targets.
+These are now claimed as checked for the current batch by ObservedResidualConcept Lean CI #246.  The subsequent focused boundary-extension checks add theorem-body cores for Clark collapse, Dedekind lower bounds, and the pointed boundary.  A full internal quotient-monoid construction remains a future target.
 
 
 ## ORC theorem-package batch checked by ObservedResidualConcept Lean CI #246
@@ -467,9 +498,10 @@ The checked mathematical content of this batch is:
 - the above results are bundled into paper-facing theorem packages in `ObservedResidualConceptMainTheorems.lean`.
 
 This batch deliberately avoids claiming the full quotient construction
-`Q / Approx S`, a bundled complete quantale isomorphism theorem, the Clark
-collapse theorem, or Dedekind-style lower bounds.  Those remain future
-formalization targets.
+`Q / Approx S` and a bundled complete quantale isomorphism theorem.  Clark
+collapse, Dedekind-style lower bounds, and the pointed boundary are handled by
+subsequent focused theorem-body modules listed below.  The full quotient type
+and bundled complete quantale isomorphism remain future formalization targets.
 
 
 ## CI log audit through Lean CI #217
@@ -574,6 +606,9 @@ lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClassif
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReduced
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReducedClassification
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
 ```
 
 First, to reproduce the current theorem-body item1--item6 endpoint checked by
@@ -1227,6 +1262,72 @@ closed forms, closed concept products satisfy residuation, cyclic observed sets
 admit a double-perp/Girard-style collapse, observed-pair isomorphisms transport
 the concept structure, and reduced observed pairs admit reconstruction and a
 reduced reverse-classification core.
+
+### 10c. Boundary-extension theorem-body cores: Clark collapse, Dedekind lower bound, and pointed boundary
+
+Files:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptClarkCollapseCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptDedekindLowerBoundCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptPointedBoundaryCore.lean
+```
+
+This layer records the focused boundary-extension experiments run after the
+CI #246 theorem-package batch.  These files are intentionally theorem-body
+cores rather than full formalizations of all surrounding language-theoretic
+corollaries.
+
+Representative declarations:
+
+```text
+SurjectiveRecognizingObservation
+preimage_observed_set
+image_observed_set
+preimage_Res
+image_Res
+image_cl
+image_point
+image_odot
+approx_iff
+clark_collapse_core_package
+IsORCLowerSet
+ORCLowerSet
+lowerSetClosure
+LowerContextClosedExtent
+lowerSetClosed_iff_isLowerSet
+lowerSet_closedExtent_equiv
+boolean_dedekind_lower_bound_core
+boolean_card_lowerSets_le_card_closedExtents
+MonoidObservation
+SyntacticEquiv
+ObservationKernel
+HTypedContextObservation
+RawObsEquiv
+PointedObs
+SynObs
+PointedSynObs
+pointedSynObs_iff_syntacticEquiv_and_kernel
+pointed_boundary_core_package
+```
+
+The checked Clark-collapse core states that a surjective recognizing monoid
+observation transports the observed membership set, two-sided residuals,
+closures, point concepts, concept products, and observed syntactic equivalence.
+This is the Lean-checked theorem-body core below the paper's second regular
+boundary.
+
+The checked Dedekind lower-bound core states that the closed extents of the
+lower-set context are equivalent to lower sets, and specializes this to Boolean
+cubes.  It supplies the combinatorial core of the paper's Dedekind-number
+lower-bound discussion without formalizing the full ORC-specific realization
+and asymptotic cardinal arithmetic.
+
+The checked pointed-boundary core states that the pointed syntactic
+stabilization of a monoid observation is exactly ordinary two-sided syntactic
+equivalence intersected with the observation kernel.  The finite-index /
+regular-language corollary remains in the paper text, since it invokes the
+usual Myhill--Nerode theorem for languages over finite alphabets.
 
 
 ### 11. K4 residual adequacy witness
