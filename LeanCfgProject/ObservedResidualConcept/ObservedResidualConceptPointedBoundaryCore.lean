@@ -162,10 +162,10 @@ theorem pointedSynObs_of_syntacticEquiv_and_kernel
     PointedSynObs L h x y := by
   intro a b
   have hsyn_ab : SyntacticEquiv L (a * x * b) (a * y * b) :=
-    syntacticEquiv_context (L := L) (h := h) hsyn a b
+    syntacticEquiv_context (L := L) hsyn a b
   refine ⟨?_, ?_, ?_⟩
   · exact observationKernel_context (h := h) hker a b
-  · exact hsyn_ab 1 1
+  · simpa using hsyn_ab 1 1
   · exact contextObservation_eq_of_syntacticEquiv (L := L) (h := h) hsyn_ab
 
 /-- First-boundary theorem-body core.
