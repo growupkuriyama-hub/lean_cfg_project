@@ -86,3 +86,9 @@ jobs:
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.Basic
+
+      - name: Build reduced reconstruction core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReduced
