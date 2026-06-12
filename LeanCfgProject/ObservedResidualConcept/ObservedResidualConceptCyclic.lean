@@ -80,9 +80,12 @@ theorem mem_Intent_iff_frameProduct_mem_Perp_of_cyclic
   constructor
   · intro hp
     intro u hu
-    exact (cyclic_rotate3 (S := S) hS p.1 u p.2).mp (hp u hu)
+    have h := (cyclic_rotate3 (S := S) hS p.1 u p.2).mp (hp u hu)
+    simpa [mul_assoc] using h
   · intro hp u hu
-    exact (cyclic_rotate3 (S := S) hS p.1 u p.2).mpr (hp u hu)
+    have h : u * p.2 * p.1 ∈ S := by
+      simpa [mul_assoc] using hp u hu
+    exact (cyclic_rotate3 (S := S) hS p.1 u p.2).mpr h
 
 /-- The Galois closure collapses to one-sided double orthogonality under
 cyclicity. -/
@@ -96,17 +99,21 @@ theorem cl_eq_doublePerp_of_cyclic {S : Set Q} (hS : CyclicSet S) (U : Set Q) :
       intro u hu
       have h := hd u hu
       simpa [mul_assoc] using h
-    have h := hg (1, d) hIntent
-    simpa [mul_assoc] using h
+    have hgd : g * d ∈ S := by
+      have h := hg (1, d) hIntent
+      simpa [mul_assoc] using h
+    exact (hS d g).mpr hgd
   · intro g hg
     rw [cl, Extent]
     intro p hp
     have hd : p.2 * p.1 ∈ Perp S U := by
       exact (mem_Intent_iff_frameProduct_mem_Perp_of_cyclic
         (S := S) (U := U) hS (p := p)).mp hp
-    have hgd : g * (p.2 * p.1) ∈ S := hg (p.2 * p.1) hd
-    exact (cyclic_rotate3 (S := S) hS p.1 g p.2).mpr
-      (by simpa [mul_assoc] using hgd)
+    have hdg : p.2 * p.1 * g ∈ S := by
+      have h := hg (p.2 * p.1) hd
+      simpa [mul_assoc] using h
+    have hfinal := (cyclic_rotate3 (S := S) hS p.2 p.1 g).mp hdg
+    simpa [mul_assoc] using hfinal
 
 /-- Closed extents are fixed by double orthogonality under cyclicity. -/
 theorem closed_eq_doublePerp_of_cyclic {S U : Set Q}
