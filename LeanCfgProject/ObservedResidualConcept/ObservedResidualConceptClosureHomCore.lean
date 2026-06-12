@@ -62,8 +62,27 @@ theorem cl_iUnion_cl_eq {ι : Sort w} (S : Set Q) (A : ι → Set Q) :
 /-- Binary union version of `cl_iUnion_cl_eq`. -/
 theorem cl_union_cl_eq (S A B : Set Q) :
     cl S (cl S A ∪ cl S B) = cl S (A ∪ B) := by
-  simpa [Set.iUnion_bool_eq, Bool.forall_bool, Bool.false_eq_true]
-    using (cl_iUnion_cl_eq (S := S) (A := fun b : Bool => cond b B A))
+  apply Set.Subset.antisymm
+  · have hsub : cl S A ∪ cl S B ⊆ cl S (A ∪ B) := by
+      intro x hx
+      rcases hx with hxA | hxB
+      · have hA : A ⊆ A ∪ B := by
+          intro y hy
+          exact Or.inl hy
+        exact cl_mono (S := S) hA hxA
+      · have hB : B ⊆ A ∪ B := by
+          intro y hy
+          exact Or.inr hy
+        exact cl_mono (S := S) hB hxB
+    have hcl : cl S (cl S A ∪ cl S B) ⊆ cl S (cl S (A ∪ B)) :=
+      cl_mono (S := S) hsub
+    simpa [cl_idem] using hcl
+  · have hsub : A ∪ B ⊆ cl S A ∪ cl S B := by
+      intro x hx
+      rcases hx with hxA | hxB
+      · exact Or.inl (subset_cl S A hxA)
+      · exact Or.inr (subset_cl S B hxB)
+    exact cl_mono (S := S) hsub
 
 /-- Multiplicative part of the closure quotient:
 closing the raw product is the same as multiplying the closed images by `odot`.
@@ -95,7 +114,7 @@ theorem cl_mulSet_cl_left_eq (S A B : Set Q) :
       cl_mono (S := S) hsub
     have h2 : cl S (mulSet (cl S A) (cl S B)) =
         cl S (mulSet A B) := by
-      rw [← cl_mulSet_eq_odot_cl_cl (S := S) (A := A) (B := B)]
+      simpa [odot] using (cl_mulSet_eq_odot_cl_cl (S := S) (A := A) (B := B)).symm
     simpa [h2] using h1
   · have hsub : mulSet A B ⊆ mulSet (cl S A) B :=
       mulSet_mono (subset_cl S A) (by intro x hx; exact hx)
@@ -112,7 +131,7 @@ theorem cl_mulSet_cl_right_eq (S A B : Set Q) :
       cl_mono (S := S) hsub
     have h2 : cl S (mulSet (cl S A) (cl S B)) =
         cl S (mulSet A B) := by
-      rw [← cl_mulSet_eq_odot_cl_cl (S := S) (A := A) (B := B)]
+      simpa [odot] using (cl_mulSet_eq_odot_cl_cl (S := S) (A := A) (B := B)).symm
     simpa [h2] using h1
   · have hsub : mulSet A B ⊆ mulSet A (cl S B) :=
       mulSet_mono (by intro x hx; exact hx) (subset_cl S B)
@@ -122,7 +141,7 @@ theorem cl_mulSet_cl_right_eq (S A B : Set Q) :
 closed product. -/
 theorem cl_mulSet_cl_cl_eq (S A B : Set Q) :
     cl S (mulSet (cl S A) (cl S B)) = cl S (mulSet A B) := by
-  rw [← cl_mulSet_eq_odot_cl_cl (S := S) (A := A) (B := B)]
+  simpa [odot] using (cl_mulSet_eq_odot_cl_cl (S := S) (A := A) (B := B)).symm
 
 /-- Paper-facing closure-homomorphism package. -/
 theorem closure_hom_core_package (S A B : Set Q) :
