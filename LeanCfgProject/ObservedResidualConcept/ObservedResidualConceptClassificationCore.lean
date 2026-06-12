@@ -62,13 +62,11 @@ variable {S₁ : Set Q₁} {S₂ : Set Q₂} (e : ObservedPairIso S₁ S₂)
 theorem map_mul3 (a x b : Q₁) :
     e.toFun (a * x * b) = e.toFun a * e.toFun x * e.toFun b := by
   rw [e.map_mul, e.map_mul]
-  simp [mul_assoc]
 
 /-- `invFun` maps a triple product to the triple product of inverse images. -/
 theorem inv_map_mul3 (a x b : Q₂) :
     e.invFun (a * x * b) = e.invFun a * e.invFun x * e.invFun b := by
   rw [e.inv_map_mul, e.inv_map_mul]
-  simp [mul_assoc]
 
 /-- Membership of an image triple is equivalent to membership of the original
 triple. -/
