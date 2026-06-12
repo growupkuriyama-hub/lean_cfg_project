@@ -1,6 +1,5 @@
-import LeanCfgProject.ObservedLearningSubmissionAudit_v27
-import LeanCfgProject.ObservedConceptObjectReleaseIndex_v27
-
+import LeanCfgProject.ObservedResidualConcept.ObservedLearningSubmissionAudit_v27
+import LeanCfgProject.ObservedResidualConcept.ObservedConceptObjectReleaseIndex_v27
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

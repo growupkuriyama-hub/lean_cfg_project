@@ -1,8 +1,7 @@
-import LeanCfgProject.ObservedSyntacticPaperSummary
-import LeanCfgProject.ICSemanticBridgeSummary_v3
-import LeanCfgProject.FiniteStoppingFrameResidual
-import LeanCfgProject.FiniteStoppedFrameAdequacy
-
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticPaperSummary
+import LeanCfgProject.ObservedResidualConcept.ICSemanticBridgeSummary_v3
+import LeanCfgProject.ObservedResidualConcept.FiniteStoppingFrameResidual
+import LeanCfgProject.ObservedResidualConcept.FiniteStoppedFrameAdequacy
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

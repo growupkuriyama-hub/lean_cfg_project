@@ -1,5 +1,4 @@
-import LeanCfgProject.ObservedSyntacticResidualCorollaries
-
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticResidualCorollaries
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

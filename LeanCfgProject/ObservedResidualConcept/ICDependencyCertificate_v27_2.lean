@@ -1,5 +1,4 @@
-import LeanCfgProject.ICFrozenArtifactIndex_v27_2
-
+import LeanCfgProject.ObservedResidualConcept.ICFrozenArtifactIndex_v27_2
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

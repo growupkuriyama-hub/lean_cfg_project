@@ -1,4 +1,4 @@
-import LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
+import LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetResidualFormula
 import Mathlib.Tactic
 
 set_option linter.unusedVariables false

@@ -1,6 +1,5 @@
-import LeanCfgProject.FaithfulRepresentatives
-import LeanCfgProject.FiniteObservedFrameBasis
-
+import LeanCfgProject.ObservedResidualConcept.FaithfulRepresentatives
+import LeanCfgProject.ObservedResidualConcept.FiniteObservedFrameBasis
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

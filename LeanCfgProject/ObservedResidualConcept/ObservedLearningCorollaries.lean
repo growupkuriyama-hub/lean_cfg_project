@@ -1,5 +1,4 @@
-import LeanCfgProject.FiniteObservedConceptIdentification
-
+import LeanCfgProject.ObservedResidualConcept.FiniteObservedConceptIdentification
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

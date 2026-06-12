@@ -1,4 +1,4 @@
-import LeanCfgProject.NormalCosetAdequacyCorollaries
+import LeanCfgProject.ObservedResidualConcept.NormalCosetAdequacyCorollaries
 import Mathlib.Tactic
 
 set_option linter.unusedVariables false

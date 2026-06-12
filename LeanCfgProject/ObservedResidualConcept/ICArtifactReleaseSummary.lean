@@ -1,7 +1,6 @@
-import LeanCfgProject.ICSubmissionSummary_v1
-import LeanCfgProject.ObservedSyntacticPaperSummary
-import LeanCfgProject.ICPaperArtifactSummary
-
+import LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v1
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticPaperSummary
+import LeanCfgProject.ObservedResidualConcept.ICPaperArtifactSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

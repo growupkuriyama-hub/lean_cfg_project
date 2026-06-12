@@ -1,6 +1,5 @@
-import LeanCfgProject.FullArchitecture_Test
-import LeanCfgProject.ResidualConcept
-
+import LeanCfgProject.ObservedResidualConcept.FullArchitecture_Test
+import LeanCfgProject.ObservedResidualConcept.ResidualConcept
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

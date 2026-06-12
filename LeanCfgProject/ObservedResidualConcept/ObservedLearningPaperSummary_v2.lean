@@ -1,6 +1,5 @@
-import LeanCfgProject.ObservedLearningConstructibilitySummary
-import LeanCfgProject.ObservedLearningPaperSummary
-
+import LeanCfgProject.ObservedResidualConcept.ObservedLearningConstructibilitySummary
+import LeanCfgProject.ObservedResidualConcept.ObservedLearningPaperSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,7 +1,6 @@
-import LeanCfgProject.ObservedLearningCertificate_v27_2
-import LeanCfgProject.PointFrameCertificate_v27_2
-import LeanCfgProject.FiniteBasisCertificate_v27_2
-
+import LeanCfgProject.ObservedResidualConcept.ObservedLearningCertificate_v27_2
+import LeanCfgProject.ObservedResidualConcept.PointFrameCertificate_v27_2
+import LeanCfgProject.ObservedResidualConcept.FiniteBasisCertificate_v27_2
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

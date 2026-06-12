@@ -1,7 +1,6 @@
-import LeanCfgProject.PointFrameLearningBridge
-import LeanCfgProject.FiniteObservedBasisCorollaries
-import LeanCfgProject.FrameModelCoreBasic
-
+import LeanCfgProject.ObservedResidualConcept.PointFrameLearningBridge
+import LeanCfgProject.ObservedResidualConcept.FiniteObservedBasisCorollaries
+import LeanCfgProject.ObservedResidualConcept.FrameModelCoreBasic
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

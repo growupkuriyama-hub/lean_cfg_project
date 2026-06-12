@@ -1,7 +1,6 @@
-import LeanCfgProject.ICSubmissionSummary_v4
-import LeanCfgProject.ObservedLearningPaperSummary_v2
-import LeanCfgProject.UniversalFrameModelCore
-
+import LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v4
+import LeanCfgProject.ObservedResidualConcept.ObservedLearningPaperSummary_v2
+import LeanCfgProject.ObservedResidualConcept.UniversalFrameModelCore
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

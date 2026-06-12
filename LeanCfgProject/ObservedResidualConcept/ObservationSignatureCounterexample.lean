@@ -1,6 +1,5 @@
-import LeanCfgProject.ObservationFinite
-import LeanCfgProject.ObservationCounterexample_v2
-
+import LeanCfgProject.ObservedResidualConcept.ObservationFinite
+import LeanCfgProject.ObservedResidualConcept.ObservationCounterexample_v2
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

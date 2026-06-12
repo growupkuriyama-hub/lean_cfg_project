@@ -1,5 +1,4 @@
-import LeanCfgProject.Step25_Test
-
+import LeanCfgProject.ObservedResidualConcept.Step25_Test
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

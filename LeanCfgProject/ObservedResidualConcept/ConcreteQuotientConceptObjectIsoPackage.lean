@@ -1,5 +1,4 @@
-import LeanCfgProject.ObservedSyntacticConcreteQuotientConceptIsoSummary
-
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticConcreteQuotientConceptIsoSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

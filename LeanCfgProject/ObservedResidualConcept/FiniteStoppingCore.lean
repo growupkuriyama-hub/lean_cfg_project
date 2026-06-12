@@ -1,6 +1,5 @@
 import Mathlib.Tactic
-import LeanCfgProject.FiniteSaturation
-
+import LeanCfgProject.ObservedResidualConcept.FiniteSaturation
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

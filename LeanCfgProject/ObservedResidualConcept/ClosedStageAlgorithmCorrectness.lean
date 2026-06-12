@@ -1,7 +1,6 @@
-import LeanCfgProject.ClosedStageConceptBridge
-import LeanCfgProject.ClosedStageFrameBridge
-import LeanCfgProject.SaturationMonotoneChain
-
+import LeanCfgProject.ObservedResidualConcept.ClosedStageConceptBridge
+import LeanCfgProject.ObservedResidualConcept.ClosedStageFrameBridge
+import LeanCfgProject.ObservedResidualConcept.SaturationMonotoneChain
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

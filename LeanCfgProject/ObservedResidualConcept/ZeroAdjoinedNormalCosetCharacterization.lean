@@ -1,5 +1,5 @@
-import LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
-import LeanCfgProject.NormalCosetSyntacticCharacterization
+import LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetAdequacy
+import LeanCfgProject.ObservedResidualConcept.NormalCosetSyntacticCharacterization
 import Mathlib.Tactic
 
 set_option linter.unusedVariables false

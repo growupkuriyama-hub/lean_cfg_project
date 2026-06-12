@@ -1,6 +1,5 @@
-import LeanCfgProject.AdequacyBridgeSummary
-import LeanCfgProject.K4ConceptCollapse
-
+import LeanCfgProject.ObservedResidualConcept.AdequacyBridgeSummary
+import LeanCfgProject.ObservedResidualConcept.K4ConceptCollapse
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
