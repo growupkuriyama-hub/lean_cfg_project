@@ -75,6 +75,12 @@ jobs:
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCyclic
 
+      - name: Build classification transport core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClassificationCore
+
       - name: Build ORC package entrypoint
         shell: bash
         run: |
