@@ -198,7 +198,7 @@ theorem approxQuotientLift_unique (S : Set Q) (f : Q →* R)
   refine Quotient.inductionOn X ?_
   intro x
   change g (approxClass S x) = approxQuotientLift S f hcompat (approxClass S x)
-  simpa [approxQuotientLift] using hg x
+  exact (hg x).trans (approxQuotientLift_class S f hcompat x).symm
 
 /-- Universal property of the quotient map. -/
 theorem approxQuotient_universal
