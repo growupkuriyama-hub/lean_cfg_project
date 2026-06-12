@@ -98,3 +98,9 @@ jobs:
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReducedClassification
+
+      - name: Build ORC main theorem packages
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems
