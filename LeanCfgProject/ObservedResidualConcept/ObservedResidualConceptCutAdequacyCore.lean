@@ -99,7 +99,8 @@ theorem cut_dense_point_generates_sound_image
       cl_mono (S := S) hsound
     have hclosed : cl S (c.residual S) = c.residual S :=
       Res_closed S c.left c.right
-    simpa [ObservedCutPoint.residual, hclosed] using hcl
+    rw [hclosed] at hcl
+    simpa [ObservedCutPoint.residual] using hcl
   · have hsingleton : ({c.middle} : Set Q) ⊆ U := by
       intro x hx
       simp at hx
