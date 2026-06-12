@@ -134,7 +134,9 @@ theorem cl_idem (S U : Set Q) :
   · intro g hg
     rw [cl, Extent] at hg ⊢
     intro p hp
-    exact hg p ((intent_cl_eq_intent S U).2 hp)
+    exact hg p (by
+      rw [intent_cl_eq_intent S U]
+      exact hp)
   · exact subset_cl S (cl S U)
 
 /-- Closed membership may be tested by all accepting frames. -/
@@ -179,7 +181,7 @@ theorem mulSet_singleton_singleton (x y : Q) :
     simp at ha hb
     subst a
     subst b
-    simpa using hmul
+    exact hmul.symm
   · intro hz
     simp at hz
     subst z

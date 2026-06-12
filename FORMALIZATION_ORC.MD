@@ -2,12 +2,13 @@
 
 Lean 4 artifact for the paper:
 
-**Observed Syntactic Concept Objects for Monoid-Typed CFG Presentations**
+**Observed Residual Concept Quantales for Context-Free Presentations: Canonicity, Adequacy, and Two Regular Boundaries**
 
 Author: Takayuki Kuriyama  
 Repository: `growupkuriyama-hub/lean_cfg_project`  
-Supplement path: `lean_cfg_project/FORMALIZATION.MD`  
-Latest theorem-body CI check: Lean CI #219 passed / `LeanCfgProject.ObservedSyntacticQuotientPaperSummary`  
+Supplement path: `lean_cfg_project/FORMALIZATION_ORC.MD`  
+Latest historical theorem-body CI check before relocation: Lean CI #219 passed / `LeanCfgProject.ObservedSyntacticQuotientPaperSummary`
+Post-relocation namespace target: `LeanCfgProject.ObservedResidualConcept.*` / pending new CI check  
 Previous pinned theorem-body snapshot: commit `794dc20` / Lean CI #216  
 Successful-log audit: through Lean CI #217  
 Pushed by: `growupkuriyama-hub`
@@ -28,26 +29,114 @@ Here `E_h(G)` is a two-sided fixed-`h` presentation descriptor, `q : Sigma* -> Q
 
 The formalization does **not** claim that CFG equivalence is solved or that a canonical CFG presentation has been constructed.  The verified claim is more precise: the Lean artifact checks substantial parts of the semantic bridge from two-sided fixed-`h` CFG descriptors to powerset semantics, residual concept semantics, finite saturation, observed syntactic concepts, and checked adequacy criteria.
 
+
 ---
 
-## Current artifact status
+## 2026-06-12 namespace and file-layout relocation
 
-The latest theorem-body check is:
+The artifact has now been separated from the JALC-specific namespace and placed
+under the venue-neutral directory:
+
+```text
+lean_cfg_project/LeanCfgProject/ObservedResidualConcept/
+```
+
+In Lean module notation, the relocated namespace is:
+
+```text
+LeanCfgProject.ObservedResidualConcept
+```
+
+The uploaded relocation package contains `178` Lean files under
+`ObservedResidualConcept/`.  Representative paths are:
+
+```text
+  ObservedResidualConcept/AdequacyBridgeSummary.lean
+  ObservedResidualConcept/AttackSemanticBridgeSummary.lean
+  ObservedResidualConcept/Basic.lean
+  ObservedResidualConcept/CanonicalFrameModelCorollaries.lean
+  ObservedResidualConcept/CanonicalPointFrame.lean
+  ObservedResidualConcept/CanonicalPointFrameStablePackage_v27.lean
+  ObservedResidualConcept/CanonicalResidualClosureSystem.lean
+  ObservedResidualConcept/CarrierConceptSemantics.lean
+  ObservedResidualConcept/CarrierObservedAdequacy.lean
+  ObservedResidualConcept/CarrierObservedAdequacyCorollaries.lean
+  ObservedResidualConcept/CarrierSaturationConceptSoundness.lean
+  ObservedResidualConcept/CarrierSaturationCorrectness.lean
+  ObservedResidualConcept/CarrierSaturationLeast.lean
+  ObservedResidualConcept/ClosedStageAlgorithmCorrectness.lean
+  ObservedResidualConcept/ClosedStageConceptBridge.lean
+  ObservedResidualConcept/ClosedStageConceptStability.lean
+  ObservedResidualConcept/ClosedStageEquivalences.lean
+  ObservedResidualConcept/ClosedStageFrameBridge.lean
+  ObservedResidualConcept/ClosedStageFrameIntentStability.lean
+  ObservedResidualConcept/ClosedStageRuleSemantics.lean
+  ...
+```
+
+The main post-relocation experiment target introduced for the residual concept
+quantale core is:
+
+```bash
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
+```
+
+The historical item7 theorem-body target should now be addressed, after import
+migration, as:
+
+```bash
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
+```
+
+The previous paper-facing final-index target should now be addressed, after
+import migration, as:
+
+```bash
+lake build LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
+```
+
+Important status note: the CI numbers recorded below remain valid historical
+checks for the pre-relocation module names.  After moving the files into
+`LeanCfgProject/ObservedResidualConcept/`, a fresh CI run is required before the
+relocated namespace can be cited as checked.  In the uploaded relocation package,
+many internal imports still have the old form `import LeanCfgProject.X`; these
+should be rewritten to `import LeanCfgProject.ObservedResidualConcept.X` for
+modules that have moved into this directory.
+
+### Recommended CI command after relocation
+
+For the current experiment, the recommended GitHub Actions step is:
+
+```bash
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
+find LeanCfgProject/ObservedResidualConcept -name '*.lean' -type f   | sort   | sed 's#/#.#g; s#\.lean$##'   | xargs -n 20 lake build
+```
+
+This first checks the new core file explicitly and then builds every relocated
+`ObservedResidualConcept` module.  If the first failure is an import error, it
+should be treated as a namespace-migration issue rather than a mathematical
+failure.
+
+---
+
+## Current post-relocation artifact status
+
+The latest historical theorem-body check before the namespace relocation was:
 
 ```text
 latest CI check: Lean CI #219
 status: passed
 latest checked theorem-body extension: exact observed syntactic quotient invariance and universal property / item 7
-latest checked theorem-body target: LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+latest checked theorem-body target: LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 modules built in Lean CI #219:
-  LeanCfgProject.ObservedSyntacticExactQuotient
-  LeanCfgProject.ObservedSyntacticExactQuotientUniversal
-  LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotient
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotientUniversal
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 commit for Lean CI #219: not recorded in the supplied log excerpt
-previous pinned theorem-body snapshot: commit 794dc20 / Lean CI #216 / LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
-previous theorem-body snapshot: commit 702dcf5 / Lean CI #207 / LeanCfgProject.EndpointMonoidAdequacy
-previous theorem-body item1--item4 snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedFactorMinimality
-previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ICSubmissionSummary_v14
+previous pinned theorem-body snapshot: commit 794dc20 / Lean CI #216 / LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences
+previous theorem-body snapshot: commit 702dcf5 / Lean CI #207 / LeanCfgProject.ObservedResidualConcept.EndpointMonoidAdequacy
+previous theorem-body item1--item4 snapshot: commit b1e651e / Lean CI #195 / LeanCfgProject.ObservedResidualConcept.ObservedFactorMinimality
+previous paper-facing final-index snapshot: commit 0e6dbb5 / Lean CI #184 / LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
 previous release-index snapshot: commit c6c1705 / Lean CI #180
 CI log audit:
   archive: LeanLog1-217.zip
@@ -58,70 +147,70 @@ CI log audit:
   unique LeanCfgProject.* targets detected from actual Run lake build lines: 158
   latest successful run in archive: Lean CI #217 / commit 06ad84d
 current theorem-body chain:
-  LeanCfgProject.ResidualConceptNucleus
-  LeanCfgProject.PointwiseAdequacy
-  LeanCfgProject.UniformAdequacy
-  LeanCfgProject.ObservedQuotientResidual
-  LeanCfgProject.ObservedQuotientClosure
-  LeanCfgProject.ObservedQuotientClosureImage
-  LeanCfgProject.ObservedSyntacticSaturation
-  LeanCfgProject.ObservedFactorMinimality
-  LeanCfgProject.DiamondSemilatticeAdequacy
-  LeanCfgProject.ZMod3FailureExample
-  LeanCfgProject.EndpointMonoidAdequacy
-  LeanCfgProject.NormalCosetAdequacy
-  LeanCfgProject.NormalCosetAdequacyCorollaries
-  LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
-  LeanCfgProject.NormalCosetSyntacticCharacterization
-  LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
-  LeanCfgProject.NormalCosetResidualFormula
-  LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
-  LeanCfgProject.NormalCosetConsequences
-  LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
-  LeanCfgProject.ObservedSyntacticExactQuotient
-  LeanCfgProject.ObservedSyntacticExactQuotientUniversal
-  LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+  LeanCfgProject.ObservedResidualConcept.ResidualConceptNucleus
+  LeanCfgProject.ObservedResidualConcept.PointwiseAdequacy
+  LeanCfgProject.ObservedResidualConcept.UniformAdequacy
+  LeanCfgProject.ObservedResidualConcept.ObservedQuotientResidual
+  LeanCfgProject.ObservedResidualConcept.ObservedQuotientClosure
+  LeanCfgProject.ObservedResidualConcept.ObservedQuotientClosureImage
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticSaturation
+  LeanCfgProject.ObservedResidualConcept.ObservedFactorMinimality
+  LeanCfgProject.ObservedResidualConcept.DiamondSemilatticeAdequacy
+  LeanCfgProject.ObservedResidualConcept.ZMod3FailureExample
+  LeanCfgProject.ObservedResidualConcept.EndpointMonoidAdequacy
+  LeanCfgProject.ObservedResidualConcept.NormalCosetAdequacy
+  LeanCfgProject.ObservedResidualConcept.NormalCosetAdequacyCorollaries
+  LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetAdequacy
+  LeanCfgProject.ObservedResidualConcept.NormalCosetSyntacticCharacterization
+  LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetCharacterization
+  LeanCfgProject.ObservedResidualConcept.NormalCosetResidualFormula
+  LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetResidualFormula
+  LeanCfgProject.ObservedResidualConcept.NormalCosetConsequences
+  LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotient
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotientUniversal
+  LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 ```
 
 The latest theorem-body development target checked by CI #219 is:
 
 ```bash
-lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 ```
 
 The current stable paper-facing final-index target from the previous indexed
 snapshot remains:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v14
+lake build LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
 ```
 
 The theorem-body item1--item7 chain can be checked explicitly by running:
 
 ```bash
-lake build LeanCfgProject.ResidualConceptNucleus
-lake build LeanCfgProject.PointwiseAdequacy
-lake build LeanCfgProject.UniformAdequacy
-lake build LeanCfgProject.ObservedQuotientResidual
-lake build LeanCfgProject.ObservedQuotientClosure
-lake build LeanCfgProject.ObservedQuotientClosureImage
-lake build LeanCfgProject.ObservedSyntacticSaturation
-lake build LeanCfgProject.ObservedFactorMinimality
-lake build LeanCfgProject.DiamondSemilatticeAdequacy
-lake build LeanCfgProject.ZMod3FailureExample
-lake build LeanCfgProject.EndpointMonoidAdequacy
-lake build LeanCfgProject.NormalCosetAdequacy
-lake build LeanCfgProject.NormalCosetAdequacyCorollaries
-lake build LeanCfgProject.ZeroAdjoinedNormalCosetAdequacy
-lake build LeanCfgProject.NormalCosetSyntacticCharacterization
-lake build LeanCfgProject.ZeroAdjoinedNormalCosetCharacterization
-lake build LeanCfgProject.NormalCosetResidualFormula
-lake build LeanCfgProject.ZeroAdjoinedNormalCosetResidualFormula
-lake build LeanCfgProject.NormalCosetConsequences
-lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
-lake build LeanCfgProject.ObservedSyntacticExactQuotient
-lake build LeanCfgProject.ObservedSyntacticExactQuotientUniversal
-lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+lake build LeanCfgProject.ObservedResidualConcept.ResidualConceptNucleus
+lake build LeanCfgProject.ObservedResidualConcept.PointwiseAdequacy
+lake build LeanCfgProject.ObservedResidualConcept.UniformAdequacy
+lake build LeanCfgProject.ObservedResidualConcept.ObservedQuotientResidual
+lake build LeanCfgProject.ObservedResidualConcept.ObservedQuotientClosure
+lake build LeanCfgProject.ObservedResidualConcept.ObservedQuotientClosureImage
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticSaturation
+lake build LeanCfgProject.ObservedResidualConcept.ObservedFactorMinimality
+lake build LeanCfgProject.ObservedResidualConcept.DiamondSemilatticeAdequacy
+lake build LeanCfgProject.ObservedResidualConcept.ZMod3FailureExample
+lake build LeanCfgProject.ObservedResidualConcept.EndpointMonoidAdequacy
+lake build LeanCfgProject.ObservedResidualConcept.NormalCosetAdequacy
+lake build LeanCfgProject.ObservedResidualConcept.NormalCosetAdequacyCorollaries
+lake build LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetAdequacy
+lake build LeanCfgProject.ObservedResidualConcept.NormalCosetSyntacticCharacterization
+lake build LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetCharacterization
+lake build LeanCfgProject.ObservedResidualConcept.NormalCosetResidualFormula
+lake build LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetResidualFormula
+lake build LeanCfgProject.ObservedResidualConcept.NormalCosetConsequences
+lake build LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotient
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotientUniversal
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 ```
 
 
@@ -171,6 +260,85 @@ At the current checked snapshot, the artifact verifies the following major group
 
 ---
 
+
+## New residual-concept core experiment
+
+A new core module has been added for the residual concept quantale experiment:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptCore.lean
+```
+
+Expected module name:
+
+```text
+LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
+```
+
+The module is intended to cover the paper-level planned core around closed-form
+residuals and the point homomorphism.  Its representative declarations include:
+
+```text
+Res
+Intent
+Extent
+cl
+Closed
+point
+mulSet
+odot
+Approx
+ldiv
+rdiv
+subset_cl
+cl_mono
+intent_cl_eq_intent
+cl_idem
+Res_closed
+S_closed
+mul_cl_subset_cl_mul
+point_mul
+point_eq_iff_Approx
+point_homomorphism_kernel
+mem_ldiv_closed_iff
+mem_rdiv_closed_iff
+odot_subset_iff_rdiv
+odot_subset_iff_ldiv
+Res_eq_singleton_division
+Res_eq_point_division
+Approx_refl
+Approx_symm
+Approx_trans
+Approx_mul_left
+Approx_mul_right
+Approx_mul
+```
+
+This target is deliberately thinner than the full classification or Clark
+collapse theorem.  Its role is to provide a compact theorem-body layer for:
+
+- concept closure as the Galois closure of two-sided frames;
+- multiplicative/nuclear behavior of closure under subset multiplication;
+- exact multiplicativity of singleton point concepts;
+- the kernel of the point map as observed syntactic equivalence;
+- closed-form left and right residual tests against closed extents;
+- the basic residuation adjunctions for the closed product;
+- residuals as divisions of the membership object `S`, both by singletons and by point concepts.
+
+Once this module passes in the relocated namespace, the next natural theorem-body
+modules are:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedClassification.lean
+LeanCfgProject/ObservedResidualConcept/ClarkCollapse.lean
+LeanCfgProject/ObservedResidualConcept/CyclicGirard.lean
+LeanCfgProject/ObservedResidualConcept/DedekindLowerBound.lean
+```
+
+These are not claimed as checked unless and until corresponding CI logs are
+recorded.
+
+
 ## CI log audit through Lean CI #217
 
 After the theorem-body item1--item6 development was checked at commit `794dc20`
@@ -197,20 +365,20 @@ milestones were found in successful logs:
 ```text
 Lean CI #195 / commit b1e651e:
   item1--item4 theorem-body chain through
-  LeanCfgProject.ObservedFactorMinimality
+  LeanCfgProject.ObservedResidualConcept.ObservedFactorMinimality
 
 Lean CI #207 / commit 702dcf5:
   finite examples through
-  LeanCfgProject.EndpointMonoidAdequacy
+  LeanCfgProject.ObservedResidualConcept.EndpointMonoidAdequacy
 
 Lean CI #216 / commit 794dc20:
   normal-coset and zero-adjoined normal-coset consequence targets through
-  LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+  LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences
 
 Lean CI #217 / commit 06ad84d:
   subsequent successful re-check of
-  LeanCfgProject.NormalCosetConsequences
-  LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+  LeanCfgProject.ObservedResidualConcept.NormalCosetConsequences
+  LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences
 ```
 
 Important limitation: the uploaded audit archive contains successful run logs
@@ -229,15 +397,15 @@ extended by an exact observed quotient layer.  The supplied Lean CI #219 log
 shows that the active target
 
 ```bash
-lake build LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+lake build LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 ```
 
 completed successfully.  In that run, Lean built the following three new modules:
 
 ```text
-LeanCfgProject.ObservedSyntacticExactQuotient
-LeanCfgProject.ObservedSyntacticExactQuotientUniversal
-LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotient
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotientUniversal
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 ```
 
 The #219 log excerpt does not display the corresponding commit hash, so this
@@ -268,7 +436,7 @@ First, to reproduce the current theorem-body item1--item6 endpoint checked by
 Lean CI #216, run from the repository root:
 
 ```bash
-lake build LeanCfgProject.ZeroAdjoinedNormalCosetConsequences
+lake build LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences
 ```
 
 For a direct explicit check of the whole current theorem-body chain, run the
@@ -278,17 +446,17 @@ Second, to reproduce the stable paper-facing final-index checkpoint checked at
 commit `0e6dbb5` by Lean CI #184, run:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v14
+lake build LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
 ```
 
 For a broader paper-facing import check around the final-index layer, run:
 
 ```bash
-lake build LeanCfgProject.ICSubmissionSummary_v14
-lake build LeanCfgProject.ICFinalSmokeTest_v27_2
-lake build LeanCfgProject.ICPaperSubmissionChecklist_v27_2
-lake build LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
-lake build LeanCfgProject.ICFrozenArtifactIndex_v27_2
+lake build LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
+lake build LeanCfgProject.ObservedResidualConcept.ICFinalSmokeTest_v27_2
+lake build LeanCfgProject.ObservedResidualConcept.ICPaperSubmissionChecklist_v27_2
+lake build LeanCfgProject.ObservedResidualConcept.ICFormalizationSupplementCertificate_v27_2
+lake build LeanCfgProject.ObservedResidualConcept.ICFrozenArtifactIndex_v27_2
 ```
 
 Older broad paper-facing targets such as `ICFullPaperSummary_v2`, `ICArtifactFreezeIndex`, and `ICReproducibilitySummary` are still useful for historical regression checks, but the current final-index path is centered on `ICSubmissionSummary_v14`.
@@ -298,93 +466,93 @@ For ordinary development, the repository uses a lightweight CI strategy: instead
 The current top-level paper-facing summary modules include:
 
 ```text
-LeanCfgProject/ICSubmissionSummary_v14.lean
-LeanCfgProject/ICFinalSmokeTest_v27_2.lean
-LeanCfgProject/ICPaperSubmissionChecklist_v27_2.lean
-LeanCfgProject/ICFormalizationSupplementCertificate_v27_2.lean
-LeanCfgProject/ICDependencyCertificate_v27_2.lean
-LeanCfgProject/ICFrozenArtifactIndex_v27_2.lean
-LeanCfgProject/ICTheoremTableIndex_v27_2.lean
-LeanCfgProject/ICPaperClaimIndex_v27_2.lean
-LeanCfgProject/ICSubmissionSummary_v13.lean
-LeanCfgProject/ICReleaseSmokeTest_v27_2.lean
-LeanCfgProject/ICAppendixReleaseIndex_v27_2.lean
-LeanCfgProject/ICPaperFormalizationBridge_v27_2.lean
-LeanCfgProject/FiniteBasisCertificate_v27_2.lean
-LeanCfgProject/PointFrameCertificate_v27_2.lean
-LeanCfgProject/ObservedLearningCertificate_v27_2.lean
-LeanCfgProject/ICReleaseCertificate_v27_2.lean
-LeanCfgProject/ICArtifactMetadata_ci180.lean
-LeanCfgProject/ICSubmissionSummary_v12.lean
-LeanCfgProject/ICReproducibilityIndex_ci180.lean
-LeanCfgProject/ICReleaseManifest_v27_2.lean
-LeanCfgProject/FiniteBasisReleaseRegression_v27_2.lean
-LeanCfgProject/PointFrameReleaseRegression_v27_2.lean
-LeanCfgProject/ObservedLearningReleaseRegression_v27_2.lean
-LeanCfgProject/ICSubmissionSummary_v11.lean
-LeanCfgProject/ICFormalizationReleaseIndex_v27.lean
-LeanCfgProject/ICArtifactAudit_v27.lean
-LeanCfgProject/FiniteBasisReleaseTheorems_v27.lean
-LeanCfgProject/PointFrameReleaseTheorems_v27.lean
-LeanCfgProject/ObservedLearningReleaseTheorems_v27.lean
-LeanCfgProject/ICSubmissionSummary_v10.lean
-LeanCfgProject/ObservedConceptSubmissionIndex_v27.lean
-LeanCfgProject/ObservedLearningSubmissionAudit_v27.lean
-LeanCfgProject/PointFrameTransportSummary_v27.lean
-LeanCfgProject/ObservedSubsetTransportPackage_v27.lean
-LeanCfgProject/ICSubmissionSummary_v9.lean
-LeanCfgProject/ObservedConceptObjectReleaseIndex_v27.lean
-LeanCfgProject/FiniteResidualBasisTransport_v27.lean
-LeanCfgProject/PointFrameIncidenceTransport_v27.lean
-LeanCfgProject/ObservedMembershipEquivalence_v27.lean
-LeanCfgProject/ICSubmissionSummary_v8.lean
-LeanCfgProject/ICSubmissionSafeExpansion_v27.lean
-LeanCfgProject/ObservedFiniteBasisStablePackage_v27.lean
-LeanCfgProject/CanonicalPointFrameStablePackage_v27.lean
-LeanCfgProject/ObservedLearningStablePackage_v27.lean
-LeanCfgProject/ICSubmissionSummary_v7.lean
-LeanCfgProject/ICPaperFormalizationSummary_v28.lean
-LeanCfgProject/ReducedFrameModelPaperSummary.lean
-LeanCfgProject/PointFrameLearningBridge.lean
-LeanCfgProject/ObservedSubsetStability.lean
-LeanCfgProject/CanonicalFrameModelCorollaries.lean
-LeanCfgProject/FrameModelCoreBasic.lean
-LeanCfgProject/ICSubmissionSummary_v6.lean
-LeanCfgProject/ICPaperFormalizationSummary_v27.lean
-LeanCfgProject/FiniteObservedBasisCorollaries.lean
-LeanCfgProject/FaithfulRepresentativeCorollaries.lean
-LeanCfgProject/ObservedLearningQueryModel.lean
-LeanCfgProject/ReducedFrameModelCoreDefs.lean
-LeanCfgProject/PointFrameCorollaries.lean
-LeanCfgProject/ObservedLearningPaperSummary_v2.lean
-LeanCfgProject/ObservedLearningConstructibilitySummary.lean
-LeanCfgProject/UniversalFrameModelCore.lean
-LeanCfgProject/CanonicalPointFrame.lean
-LeanCfgProject/SingletonClosureIncidence.lean
-LeanCfgProject/ICSubmissionSummary_v4.lean
-LeanCfgProject/ObservedLearningPaperSummary.lean
-LeanCfgProject/FiniteObservedConceptIdentification.lean
-LeanCfgProject/ICSubmissionSummary_v3.lean
-LeanCfgProject/ICFullPaperSummary_v2.lean
-LeanCfgProject/ICFastCI_v2.lean
-LeanCfgProject/ICReproducibilitySummary.lean
-LeanCfgProject/ICArtifactFreezeIndex.lean
-LeanCfgProject/ICArtifactAppendixCoverage.lean
-LeanCfgProject/ICArtifactReleaseSummary.lean
-LeanCfgProject/ObservedSyntacticPaperSummary.lean
-LeanCfgProject/NormalCosetAdequacy.lean
-LeanCfgProject/NormalCosetAdequacyCorollaries.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetAdequacy.lean
-LeanCfgProject/NormalCosetSyntacticCharacterization.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetCharacterization.lean
-LeanCfgProject/NormalCosetResidualFormula.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
-LeanCfgProject/NormalCosetConsequences.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
-LeanCfgProject/ObservedSyntacticExactQuotient.lean
-LeanCfgProject/ObservedSyntacticExactQuotientUniversal.lean
-LeanCfgProject/ObservedSyntacticQuotientPaperSummary.lean
-LeanCfgProject/ICSemanticBridgeSummary_v3.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v14.lean
+LeanCfgProject/ObservedResidualConcept/ICFinalSmokeTest_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperSubmissionChecklist_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICFormalizationSupplementCertificate_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICDependencyCertificate_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICFrozenArtifactIndex_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICTheoremTableIndex_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperClaimIndex_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v13.lean
+LeanCfgProject/ObservedResidualConcept/ICReleaseSmokeTest_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICAppendixReleaseIndex_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperFormalizationBridge_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/FiniteBasisCertificate_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameCertificate_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningCertificate_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICReleaseCertificate_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactMetadata_ci180.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v12.lean
+LeanCfgProject/ObservedResidualConcept/ICReproducibilityIndex_ci180.lean
+LeanCfgProject/ObservedResidualConcept/ICReleaseManifest_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/FiniteBasisReleaseRegression_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameReleaseRegression_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningReleaseRegression_v27_2.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v11.lean
+LeanCfgProject/ObservedResidualConcept/ICFormalizationReleaseIndex_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactAudit_v27.lean
+LeanCfgProject/ObservedResidualConcept/FiniteBasisReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v10.lean
+LeanCfgProject/ObservedResidualConcept/ObservedConceptSubmissionIndex_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningSubmissionAudit_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameTransportSummary_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSubsetTransportPackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v9.lean
+LeanCfgProject/ObservedResidualConcept/ObservedConceptObjectReleaseIndex_v27.lean
+LeanCfgProject/ObservedResidualConcept/FiniteResidualBasisTransport_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameIncidenceTransport_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedMembershipEquivalence_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v8.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSafeExpansion_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedFiniteBasisStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalPointFrameStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v7.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperFormalizationSummary_v28.lean
+LeanCfgProject/ObservedResidualConcept/ReducedFrameModelPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameLearningBridge.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSubsetStability.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalFrameModelCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/FrameModelCoreBasic.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v6.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperFormalizationSummary_v27.lean
+LeanCfgProject/ObservedResidualConcept/FiniteObservedBasisCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/FaithfulRepresentativeCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningQueryModel.lean
+LeanCfgProject/ObservedResidualConcept/ReducedFrameModelCoreDefs.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningPaperSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningConstructibilitySummary.lean
+LeanCfgProject/ObservedResidualConcept/UniversalFrameModelCore.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalPointFrame.lean
+LeanCfgProject/ObservedResidualConcept/SingletonClosureIncidence.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v4.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/FiniteObservedConceptIdentification.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v3.lean
+LeanCfgProject/ObservedResidualConcept/ICFullPaperSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/ICFastCI_v2.lean
+LeanCfgProject/ObservedResidualConcept/ICReproducibilitySummary.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactFreezeIndex.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactAppendixCoverage.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactReleaseSummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetAdequacyCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetSyntacticCharacterization.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetCharacterization.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetResidualFormula.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetResidualFormula.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetConsequences.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetConsequences.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticExactQuotient.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticExactQuotientUniversal.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticQuotientPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICSemanticBridgeSummary_v3.lean
 ```
 
 When preparing a release tag or an archived artifact, the individually listed lower-level modules can also be built explicitly as a full regression check.
@@ -400,8 +568,8 @@ The Lean development is best read as a layered formalization.
 Files:
 
 ```text
-LeanCfgProject/Step25_Test.lean
-LeanCfgProject/FullArchitecture_Test.lean
+LeanCfgProject/ObservedResidualConcept/Step25_Test.lean
+LeanCfgProject/ObservedResidualConcept/FullArchitecture_Test.lean
 ```
 
 This layer formalizes the fixed finite monoid typing infrastructure:
@@ -427,11 +595,11 @@ This is the presentation-level architecture behind finite two-sided monoid-typed
 Files:
 
 ```text
-LeanCfgProject/LanguageQuotient.lean
-LeanCfgProject/ObservationFinite.lean
-LeanCfgProject/ObservationCounterexample.lean
-LeanCfgProject/ObservationCounterexample_v2.lean
-LeanCfgProject/ObservationSignatureCounterexample.lean
+LeanCfgProject/ObservedResidualConcept/LanguageQuotient.lean
+LeanCfgProject/ObservedResidualConcept/ObservationFinite.lean
+LeanCfgProject/ObservedResidualConcept/ObservationCounterexample.lean
+LeanCfgProject/ObservedResidualConcept/ObservationCounterexample_v2.lean
+LeanCfgProject/ObservedResidualConcept/ObservationSignatureCounterexample.lean
 ```
 
 This layer defines language-level observation relations and their stabilized variants.  Representative declarations include:
@@ -473,7 +641,7 @@ This justifies the paper's distinction between raw finite observation, syntactic
 File:
 
 ```text
-LeanCfgProject/StateSemantics.lean
+LeanCfgProject/ObservedResidualConcept/StateSemantics.lean
 ```
 
 This layer defines abstract powerset-valued semantics for languages and grammar states under a multiplicative word observation `q : Sigma* -> Q`.
@@ -506,7 +674,7 @@ Consequently, terminal and binary CFG rules are interpreted soundly by singleton
 File:
 
 ```text
-LeanCfgProject/ResidualConcept.lean
+LeanCfgProject/ObservedResidualConcept/ResidualConcept.lean
 ```
 
 This layer formalizes two-sided residuals, common contexts, concept closure, concept extents, and concept products over an abstract monoid carrier `Q`.
@@ -549,10 +717,10 @@ The module verifies that this incidence induces a Galois-style residual concept 
 Files:
 
 ```text
-LeanCfgProject/FiniteSaturation.lean
-LeanCfgProject/CarrierSaturationCorrectness.lean
-LeanCfgProject/CarrierSaturationLeast.lean
-LeanCfgProject/CarrierSaturationConceptSoundness.lean
+LeanCfgProject/ObservedResidualConcept/FiniteSaturation.lean
+LeanCfgProject/ObservedResidualConcept/CarrierSaturationCorrectness.lean
+LeanCfgProject/ObservedResidualConcept/CarrierSaturationLeast.lean
+LeanCfgProject/ObservedResidualConcept/CarrierSaturationConceptSoundness.lean
 ```
 
 The generic saturation module defines an inflationary one-step saturation operator and its iterates:
@@ -590,9 +758,9 @@ This verifies that carrier saturation computes carrier state semantics and that 
 Files:
 
 ```text
-LeanCfgProject/DescriptorSemantics.lean
-LeanCfgProject/DescriptorResidualSemantics.lean
-LeanCfgProject/CarrierConceptSemantics.lean
+LeanCfgProject/ObservedResidualConcept/DescriptorSemantics.lean
+LeanCfgProject/ObservedResidualConcept/DescriptorResidualSemantics.lean
+LeanCfgProject/ObservedResidualConcept/CarrierConceptSemantics.lean
 ```
 
 This layer connects descriptor-level terminal and binary rules to powerset-valued and residual concept semantics.
@@ -630,13 +798,13 @@ E_h(G) -> P(Q) -> Concepts(Q, q[L])
 Files:
 
 ```text
-LeanCfgProject/FrameSoundness.lean
-LeanCfgProject/SaturationFrameBridge.lean
-LeanCfgProject/FrameIntentClosureBridge.lean
-LeanCfgProject/ClosedStageFrameBridge.lean
-LeanCfgProject/ClosedStageFrameIntentStability.lean
-LeanCfgProject/LocalStoppingFrameResidual.lean
-LeanCfgProject/FiniteStoppingFrameResidual.lean
+LeanCfgProject/ObservedResidualConcept/FrameSoundness.lean
+LeanCfgProject/ObservedResidualConcept/SaturationFrameBridge.lean
+LeanCfgProject/ObservedResidualConcept/FrameIntentClosureBridge.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageFrameBridge.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageFrameIntentStability.lean
+LeanCfgProject/ObservedResidualConcept/LocalStoppingFrameResidual.lean
+LeanCfgProject/ObservedResidualConcept/FiniteStoppingFrameResidual.lean
 ```
 
 This layer verifies that the two-sided frame carried by typed descriptor states is semantically active rather than decorative.
@@ -670,18 +838,18 @@ The verified interpretation is that typed two-sided frames persist as residual b
 Files:
 
 ```text
-LeanCfgProject/SaturationStability.lean
-LeanCfgProject/ClosedStageConceptBridge.lean
-LeanCfgProject/SaturationMonotoneChain.lean
-LeanCfgProject/ClosedStageAlgorithmCorrectness.lean
-LeanCfgProject/FiniteCoverageStopping.lean
-LeanCfgProject/ClosedStageEquivalences.lean
-LeanCfgProject/ClosedStageConceptStability.lean
-LeanCfgProject/ClosedStageRuleSemantics.lean
-LeanCfgProject/LaterClosedStageClosure.lean
-LeanCfgProject/LocalStoppingCorrectness.lean
-LeanCfgProject/LocalStoppingRuleSemantics.lean
-LeanCfgProject/LocalStoppingFrameResidual.lean
+LeanCfgProject/ObservedResidualConcept/SaturationStability.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageConceptBridge.lean
+LeanCfgProject/ObservedResidualConcept/SaturationMonotoneChain.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageAlgorithmCorrectness.lean
+LeanCfgProject/ObservedResidualConcept/FiniteCoverageStopping.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageEquivalences.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageConceptStability.lean
+LeanCfgProject/ObservedResidualConcept/ClosedStageRuleSemantics.lean
+LeanCfgProject/ObservedResidualConcept/LaterClosedStageClosure.lean
+LeanCfgProject/ObservedResidualConcept/LocalStoppingCorrectness.lean
+LeanCfgProject/ObservedResidualConcept/LocalStoppingRuleSemantics.lean
+LeanCfgProject/ObservedResidualConcept/LocalStoppingFrameResidual.lean
 ```
 
 This layer proves that a closed saturation stage computes the semantic object intended by the paper.  It also packages the checkable local stopping condition:
@@ -721,11 +889,11 @@ This gives the algorithmic reading: if a saturation stage is closed, or if the l
 Files:
 
 ```text
-LeanCfgProject/FiniteStoppingCore.lean
-LeanCfgProject/MeasureStoppingCriterion.lean
-LeanCfgProject/FiniteSaturationMeasure.lean
-LeanCfgProject/FiniteStoppingFrameResidual.lean
-LeanCfgProject/FiniteStoppedFrameAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/FiniteStoppingCore.lean
+LeanCfgProject/ObservedResidualConcept/MeasureStoppingCriterion.lean
+LeanCfgProject/ObservedResidualConcept/FiniteSaturationMeasure.lean
+LeanCfgProject/ObservedResidualConcept/FiniteStoppingFrameResidual.lean
+LeanCfgProject/ObservedResidualConcept/FiniteStoppedFrameAdequacy.lean
 ```
 
 This layer proves a bounded finite-stopping theorem for saturation over a finite state set and a finite observation carrier.
@@ -772,12 +940,12 @@ The finite-state hypothesis is essential and should not be omitted.
 Files:
 
 ```text
-LeanCfgProject/ObservedSyntacticConcept.lean
-LeanCfgProject/ObservedSyntacticCongruence.lean
-LeanCfgProject/CanonicalResidualClosureSystem.lean
-LeanCfgProject/ObservedSyntacticResidualCorollaries.lean
-LeanCfgProject/ObservedSyntacticBlockAdequacyCorollaries.lean
-LeanCfgProject/ObservedSyntacticPaperCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticConcept.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticCongruence.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalResidualClosureSystem.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticResidualCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticBlockAdequacyCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticPaperCorollaries.lean
 ```
 
 This layer formalizes the canonical observed-syntactic object used in the current paper draft.
@@ -831,9 +999,9 @@ This is the Lean counterpart of the paper's canonical residual closure system an
 Files:
 
 ```text
-LeanCfgProject/ObservedSyntacticExactQuotient.lean
-LeanCfgProject/ObservedSyntacticExactQuotientUniversal.lean
-LeanCfgProject/ObservedSyntacticQuotientPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticExactQuotient.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticExactQuotientUniversal.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticQuotientPaperSummary.lean
 ```
 
 This layer formalizes the exact quotient-map form of the observed syntactic
@@ -880,12 +1048,12 @@ quotient projection.
 Files:
 
 ```text
-LeanCfgProject/FrameAdequacyCriterion.lean
-LeanCfgProject/K4ResidualAdequacyExample.lean
-LeanCfgProject/K4AdequacyStrictness.lean
-LeanCfgProject/K4ConceptCollapse.lean
-LeanCfgProject/K4AdequacyPaperSummary.lean
-LeanCfgProject/AdequacyBridgeSummary.lean
+LeanCfgProject/ObservedResidualConcept/FrameAdequacyCriterion.lean
+LeanCfgProject/ObservedResidualConcept/K4ResidualAdequacyExample.lean
+LeanCfgProject/ObservedResidualConcept/K4AdequacyStrictness.lean
+LeanCfgProject/ObservedResidualConcept/K4ConceptCollapse.lean
+LeanCfgProject/ObservedResidualConcept/K4AdequacyPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/AdequacyBridgeSummary.lean
 ```
 
 This layer provides a finite worked example showing that residual concept closure is doing genuine work.
@@ -914,8 +1082,8 @@ The verified phenomenon is that raw singleton images can be strict subsets of th
 Files:
 
 ```text
-LeanCfgProject/CarrierObservedAdequacy.lean
-LeanCfgProject/CarrierObservedAdequacyCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/CarrierObservedAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/CarrierObservedAdequacyCorollaries.lean
 ```
 
 This layer lifts abstract observed-syntactic-block adequacy back to CFG descriptor semantics.
@@ -945,17 +1113,17 @@ This is checked both for the standard observation `h` and for observations facto
 Files:
 
 ```text
-LeanCfgProject/ObservedFrameStructure.lean
-LeanCfgProject/ObservedFrameStructureDecidable.lean
-LeanCfgProject/FiniteObservedFrameBasis.lean
-LeanCfgProject/FiniteSetQueryReconstruction.lean
-LeanCfgProject/FaithfulRepresentatives.lean
-LeanCfgProject/ObservedLearningExamples.lean
-LeanCfgProject/FiniteObservedConceptIdentification.lean
-LeanCfgProject/ObservedLearningCorollaries.lean
-LeanCfgProject/ObservedLearningConstructibilitySummary.lean
-LeanCfgProject/ObservedLearningPaperSummary.lean
-LeanCfgProject/ObservedLearningPaperSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/ObservedFrameStructure.lean
+LeanCfgProject/ObservedResidualConcept/ObservedFrameStructureDecidable.lean
+LeanCfgProject/ObservedResidualConcept/FiniteObservedFrameBasis.lean
+LeanCfgProject/ObservedResidualConcept/FiniteSetQueryReconstruction.lean
+LeanCfgProject/ObservedResidualConcept/FaithfulRepresentatives.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningExamples.lean
+LeanCfgProject/ObservedResidualConcept/FiniteObservedConceptIdentification.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningConstructibilitySummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningPaperSummary_v2.lean
 ```
 
 This layer corresponds to the paper's finite observed-learning section.  The target is not the original language itself, but the observed frame-concept data determined by the finite observed subset `S = q[L]`.
@@ -1010,17 +1178,17 @@ This supports the paper's finite observed analogue of distributional learning: t
 Files:
 
 ```text
-LeanCfgProject/SingletonClosureIncidence.lean
-LeanCfgProject/CanonicalPointFrame.lean
-LeanCfgProject/UniversalFrameModelCore.lean
-LeanCfgProject/PointFrameCorollaries.lean
-LeanCfgProject/ReducedFrameModelCoreDefs.lean
-LeanCfgProject/FrameModelCoreBasic.lean
-LeanCfgProject/CanonicalFrameModelCorollaries.lean
-LeanCfgProject/CanonicalPointFrameStablePackage_v27.lean
-LeanCfgProject/PointFrameIncidenceTransport_v27.lean
-LeanCfgProject/PointFrameTransportSummary_v27.lean
-LeanCfgProject/PointFrameReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/SingletonClosureIncidence.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalPointFrame.lean
+LeanCfgProject/ObservedResidualConcept/UniversalFrameModelCore.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ReducedFrameModelCoreDefs.lean
+LeanCfgProject/ObservedResidualConcept/FrameModelCoreBasic.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalFrameModelCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalPointFrameStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameIncidenceTransport_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameTransportSummary_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameReleaseTheorems_v27.lean
 ```
 
 This layer corresponds to the paper's canonical reduced frame representation discussion, including the Ganter--Wille/FCA-inspired representation viewpoint specialized to the two-sided monoid incidence induced by `(Q,S)`.
@@ -1067,72 +1235,72 @@ The layer also verifies that equality of canonical point concepts is exactly the
 Files:
 
 ```text
-LeanCfgProject/SemanticBridgeSummary.lean
-LeanCfgProject/ICSemanticBridgeSummary.lean
-LeanCfgProject/ICSemanticBridgeSummary_v2.lean
-LeanCfgProject/AttackSemanticBridgeSummary.lean
-LeanCfgProject/ObservedSyntacticBridgeSummary.lean
-LeanCfgProject/ICSemanticBridgeSummary_v3.lean
-LeanCfgProject/ObservedSyntacticPaperSummary.lean
-LeanCfgProject/ICPaperArtifactSummary.lean
-LeanCfgProject/ICLeanAppendixIndex.lean
-LeanCfgProject/ICSubmissionSummary_v1.lean
-LeanCfgProject/ICArtifactReleaseSummary.lean
-LeanCfgProject/ICArtifactAppendixCoverage.lean
-LeanCfgProject/ICFastCI.lean
-LeanCfgProject/ICFullPaperSummary_v1.lean
-LeanCfgProject/ICSubmissionSummary_v2.lean
-LeanCfgProject/ICArtifactFreezeIndex.lean
-LeanCfgProject/ICReproducibilitySummary.lean
-LeanCfgProject/ICFastCI_v2.lean
-LeanCfgProject/ICFullPaperSummary_v2.lean
-LeanCfgProject/ICSubmissionSummary_v3.lean
-LeanCfgProject/ICSubmissionSummary_v4.lean
-LeanCfgProject/ObservedLearningPaperSummary.lean
-LeanCfgProject/ObservedLearningPaperSummary_v2.lean
-LeanCfgProject/ICSubmissionSummary_v11.lean
-LeanCfgProject/PointFrameCorollaries.lean
-LeanCfgProject/ReducedFrameModelCoreDefs.lean
-LeanCfgProject/ObservedLearningQueryModel.lean
-LeanCfgProject/FaithfulRepresentativeCorollaries.lean
-LeanCfgProject/FiniteObservedBasisCorollaries.lean
-LeanCfgProject/ICPaperFormalizationSummary_v27.lean
-LeanCfgProject/ICSubmissionSummary_v6.lean
-LeanCfgProject/FrameModelCoreBasic.lean
-LeanCfgProject/CanonicalFrameModelCorollaries.lean
-LeanCfgProject/ObservedSubsetStability.lean
-LeanCfgProject/PointFrameLearningBridge.lean
-LeanCfgProject/ReducedFrameModelPaperSummary.lean
-LeanCfgProject/ICPaperFormalizationSummary_v28.lean
-LeanCfgProject/ICSubmissionSummary_v7.lean
-LeanCfgProject/ObservedLearningStablePackage_v27.lean
-LeanCfgProject/CanonicalPointFrameStablePackage_v27.lean
-LeanCfgProject/ObservedFiniteBasisStablePackage_v27.lean
-LeanCfgProject/ICSubmissionSafeExpansion_v27.lean
-LeanCfgProject/ICSubmissionSummary_v8.lean
-LeanCfgProject/ObservedMembershipEquivalence_v27.lean
-LeanCfgProject/PointFrameIncidenceTransport_v27.lean
-LeanCfgProject/FiniteResidualBasisTransport_v27.lean
-LeanCfgProject/ObservedConceptObjectReleaseIndex_v27.lean
-LeanCfgProject/ICSubmissionSummary_v9.lean
-LeanCfgProject/ObservedSubsetTransportPackage_v27.lean
-LeanCfgProject/PointFrameTransportSummary_v27.lean
-LeanCfgProject/ObservedLearningSubmissionAudit_v27.lean
-LeanCfgProject/ObservedConceptSubmissionIndex_v27.lean
-LeanCfgProject/ICSubmissionSummary_v10.lean
-LeanCfgProject/ObservedLearningReleaseTheorems_v27.lean
-LeanCfgProject/PointFrameReleaseTheorems_v27.lean
-LeanCfgProject/FiniteBasisReleaseTheorems_v27.lean
-LeanCfgProject/ICArtifactAudit_v27.lean
-LeanCfgProject/ICFormalizationReleaseIndex_v27.lean
+LeanCfgProject/ObservedResidualConcept/SemanticBridgeSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICSemanticBridgeSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICSemanticBridgeSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/AttackSemanticBridgeSummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticBridgeSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICSemanticBridgeSummary_v3.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperArtifactSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICLeanAppendixIndex.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v1.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactReleaseSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactAppendixCoverage.lean
+LeanCfgProject/ObservedResidualConcept/ICFastCI.lean
+LeanCfgProject/ObservedResidualConcept/ICFullPaperSummary_v1.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactFreezeIndex.lean
+LeanCfgProject/ObservedResidualConcept/ICReproducibilitySummary.lean
+LeanCfgProject/ObservedResidualConcept/ICFastCI_v2.lean
+LeanCfgProject/ObservedResidualConcept/ICFullPaperSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v3.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v4.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningPaperSummary_v2.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v11.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ReducedFrameModelCoreDefs.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningQueryModel.lean
+LeanCfgProject/ObservedResidualConcept/FaithfulRepresentativeCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/FiniteObservedBasisCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperFormalizationSummary_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v6.lean
+LeanCfgProject/ObservedResidualConcept/FrameModelCoreBasic.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalFrameModelCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSubsetStability.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameLearningBridge.lean
+LeanCfgProject/ObservedResidualConcept/ReducedFrameModelPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ICPaperFormalizationSummary_v28.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v7.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/CanonicalPointFrameStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedFiniteBasisStablePackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSafeExpansion_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v8.lean
+LeanCfgProject/ObservedResidualConcept/ObservedMembershipEquivalence_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameIncidenceTransport_v27.lean
+LeanCfgProject/ObservedResidualConcept/FiniteResidualBasisTransport_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedConceptObjectReleaseIndex_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v9.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSubsetTransportPackage_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameTransportSummary_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningSubmissionAudit_v27.lean
+LeanCfgProject/ObservedResidualConcept/ObservedConceptSubmissionIndex_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICSubmissionSummary_v10.lean
+LeanCfgProject/ObservedResidualConcept/ObservedLearningReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/PointFrameReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/FiniteBasisReleaseTheorems_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICArtifactAudit_v27.lean
+LeanCfgProject/ObservedResidualConcept/ICFormalizationReleaseIndex_v27.lean
 ```
 
 These modules are intentionally lightweight.  Their role is to give stable paper-facing import targets, appendix-index targets, and fast CI targets.
 
-The current recommended top-level target is:
+The current recommended top-level target after relocation is:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v14
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
 ```
 
 If this module builds, Lean has checked the current v27.2 final-index import graph, including the observed-learning layer, canonical point-frame incidence core, finite residual-basis transport layer, release-facing audit targets, release-regression and certificate layers, theorem-table index, frozen artifact index, FORMALIZATION supplement certificate, submission checklist, and final smoke test, through the normal dependency system.
@@ -1152,26 +1320,26 @@ at commit `794dc20` by Lean CI #216.
 The checked theorem-body modules are:
 
 ```text
-LeanCfgProject/ResidualConceptNucleus.lean
-LeanCfgProject/PointwiseAdequacy.lean
-LeanCfgProject/UniformAdequacy.lean
-LeanCfgProject/ObservedQuotientResidual.lean
-LeanCfgProject/ObservedQuotientClosure.lean
-LeanCfgProject/ObservedQuotientClosureImage.lean
-LeanCfgProject/ObservedSyntacticSaturation.lean
-LeanCfgProject/ObservedFactorMinimality.lean
-LeanCfgProject/DiamondSemilatticeAdequacy.lean
-LeanCfgProject/ZMod3FailureExample.lean
-LeanCfgProject/EndpointMonoidAdequacy.lean
-LeanCfgProject/NormalCosetAdequacy.lean
-LeanCfgProject/NormalCosetAdequacyCorollaries.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetAdequacy.lean
-LeanCfgProject/NormalCosetSyntacticCharacterization.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetCharacterization.lean
-LeanCfgProject/NormalCosetResidualFormula.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
-LeanCfgProject/NormalCosetConsequences.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
+LeanCfgProject/ObservedResidualConcept/ResidualConceptNucleus.lean
+LeanCfgProject/ObservedResidualConcept/PointwiseAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/UniformAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/ObservedQuotientResidual.lean
+LeanCfgProject/ObservedResidualConcept/ObservedQuotientClosure.lean
+LeanCfgProject/ObservedResidualConcept/ObservedQuotientClosureImage.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticSaturation.lean
+LeanCfgProject/ObservedResidualConcept/ObservedFactorMinimality.lean
+LeanCfgProject/ObservedResidualConcept/DiamondSemilatticeAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/ZMod3FailureExample.lean
+LeanCfgProject/ObservedResidualConcept/EndpointMonoidAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetAdequacyCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetSyntacticCharacterization.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetCharacterization.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetResidualFormula.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetResidualFormula.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetConsequences.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetConsequences.lean
 ```
 
 The main new checked declarations include:
@@ -1410,15 +1578,15 @@ syntactic quotient layer.  This layer was checked by Lean CI #219 through the
 target:
 
 ```text
-LeanCfgProject.ObservedSyntacticQuotientPaperSummary
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary
 ```
 
 The checked theorem-body modules are:
 
 ```text
-LeanCfgProject/ObservedSyntacticExactQuotient.lean
-LeanCfgProject/ObservedSyntacticExactQuotientUniversal.lean
-LeanCfgProject/ObservedSyntacticQuotientPaperSummary.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticExactQuotient.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticExactQuotientUniversal.lean
+LeanCfgProject/ObservedResidualConcept/ObservedSyntacticQuotientPaperSummary.lean
 ```
 
 The main checked declarations include:
@@ -1466,12 +1634,12 @@ certificates, submission checklists, audit wrappers, or manifest modules.
 The CI #180 run checked the current release-facing path through:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v14
-LeanCfgProject.ICFormalizationReleaseIndex_v27
-LeanCfgProject.ICArtifactAudit_v27
-LeanCfgProject.ObservedLearningReleaseTheorems_v27
-LeanCfgProject.PointFrameReleaseTheorems_v27
-LeanCfgProject.FiniteBasisReleaseTheorems_v27
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
+LeanCfgProject.ObservedResidualConcept.ICFormalizationReleaseIndex_v27
+LeanCfgProject.ObservedResidualConcept.ICArtifactAudit_v27
+LeanCfgProject.ObservedResidualConcept.ObservedLearningReleaseTheorems_v27
+LeanCfgProject.ObservedResidualConcept.PointFrameReleaseTheorems_v27
+LeanCfgProject.ObservedResidualConcept.FiniteBasisReleaseTheorems_v27
 ```
 
 The release-index layer packages the recent v27.1 additions as paper-facing audit targets.  In particular, it records that:
@@ -1495,35 +1663,35 @@ extension is now checked at commit `0e6dbb5` by Lean CI #184.  The current
 checked top-level target is:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v14
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
 ```
 
 The v27.2 path includes the following paper-facing targets:
 
 ```text
-LeanCfgProject.ICSubmissionSummary_v14
-LeanCfgProject.ICFinalSmokeTest_v27_2
-LeanCfgProject.ICPaperSubmissionChecklist_v27_2
-LeanCfgProject.ICFormalizationSupplementCertificate_v27_2
-LeanCfgProject.ICDependencyCertificate_v27_2
-LeanCfgProject.ICFrozenArtifactIndex_v27_2
-LeanCfgProject.ICTheoremTableIndex_v27_2
-LeanCfgProject.ICPaperClaimIndex_v27_2
-LeanCfgProject.ICSubmissionSummary_v13
-LeanCfgProject.ICReleaseSmokeTest_v27_2
-LeanCfgProject.ICAppendixReleaseIndex_v27_2
-LeanCfgProject.ICPaperFormalizationBridge_v27_2
-LeanCfgProject.FiniteBasisCertificate_v27_2
-LeanCfgProject.PointFrameCertificate_v27_2
-LeanCfgProject.ObservedLearningCertificate_v27_2
-LeanCfgProject.ICReleaseCertificate_v27_2
-LeanCfgProject.ICArtifactMetadata_ci180
-LeanCfgProject.ICSubmissionSummary_v12
-LeanCfgProject.ICReproducibilityIndex_ci180
-LeanCfgProject.ICReleaseManifest_v27_2
-LeanCfgProject.FiniteBasisReleaseRegression_v27_2
-LeanCfgProject.PointFrameReleaseRegression_v27_2
-LeanCfgProject.ObservedLearningReleaseRegression_v27_2
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14
+LeanCfgProject.ObservedResidualConcept.ICFinalSmokeTest_v27_2
+LeanCfgProject.ObservedResidualConcept.ICPaperSubmissionChecklist_v27_2
+LeanCfgProject.ObservedResidualConcept.ICFormalizationSupplementCertificate_v27_2
+LeanCfgProject.ObservedResidualConcept.ICDependencyCertificate_v27_2
+LeanCfgProject.ObservedResidualConcept.ICFrozenArtifactIndex_v27_2
+LeanCfgProject.ObservedResidualConcept.ICTheoremTableIndex_v27_2
+LeanCfgProject.ObservedResidualConcept.ICPaperClaimIndex_v27_2
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v13
+LeanCfgProject.ObservedResidualConcept.ICReleaseSmokeTest_v27_2
+LeanCfgProject.ObservedResidualConcept.ICAppendixReleaseIndex_v27_2
+LeanCfgProject.ObservedResidualConcept.ICPaperFormalizationBridge_v27_2
+LeanCfgProject.ObservedResidualConcept.FiniteBasisCertificate_v27_2
+LeanCfgProject.ObservedResidualConcept.PointFrameCertificate_v27_2
+LeanCfgProject.ObservedResidualConcept.ObservedLearningCertificate_v27_2
+LeanCfgProject.ObservedResidualConcept.ICReleaseCertificate_v27_2
+LeanCfgProject.ObservedResidualConcept.ICArtifactMetadata_ci180
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v12
+LeanCfgProject.ObservedResidualConcept.ICReproducibilityIndex_ci180
+LeanCfgProject.ObservedResidualConcept.ICReleaseManifest_v27_2
+LeanCfgProject.ObservedResidualConcept.FiniteBasisReleaseRegression_v27_2
+LeanCfgProject.ObservedResidualConcept.PointFrameReleaseRegression_v27_2
+LeanCfgProject.ObservedResidualConcept.ObservedLearningReleaseRegression_v27_2
 ```
 
 The new layer records that:
@@ -1554,15 +1722,15 @@ stable inside Lean.
 Files:
 
 ```text
-LeanCfgProject/NormalCosetAdequacy.lean
-LeanCfgProject/NormalCosetAdequacyCorollaries.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetAdequacy.lean
-LeanCfgProject/NormalCosetSyntacticCharacterization.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetCharacterization.lean
-LeanCfgProject/NormalCosetResidualFormula.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetResidualFormula.lean
-LeanCfgProject/NormalCosetConsequences.lean
-LeanCfgProject/ZeroAdjoinedNormalCosetConsequences.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetAdequacyCorollaries.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetAdequacy.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetSyntacticCharacterization.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetCharacterization.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetResidualFormula.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetResidualFormula.lean
+LeanCfgProject/ObservedResidualConcept/NormalCosetConsequences.lean
+LeanCfgProject/ObservedResidualConcept/ZeroAdjoinedNormalCosetConsequences.lean
 ```
 
 This layer formalizes the normal-coset adequacy family and its zero-adjoined
@@ -1719,24 +1887,24 @@ A concise artifact statement for the paper could be:
 ```text
 The accompanying Lean 4 artifact has a pinned theorem-body snapshot at commit
 794dc20 / Lean CI #216, pushed by growupkuriyama-hub, with endpoint
-LeanCfgProject.ZeroAdjoinedNormalCosetConsequences.  A subsequent audit of
+LeanCfgProject.ObservedResidualConcept.ZeroAdjoinedNormalCosetConsequences.  A subsequent audit of
 downloaded successful GitHub Actions logs through Lean CI #217 confirmed that
 all 20 expected core theorem-body targets appeared in successful workflow logs,
 with missing core targets equal to 0.  After that audit, the exact observed
 quotient layer was checked by Lean CI #219 through the target
-LeanCfgProject.ObservedSyntacticQuotientPaperSummary.  The supplied #219 log
-shows that Lean built LeanCfgProject.ObservedSyntacticExactQuotient,
-LeanCfgProject.ObservedSyntacticExactQuotientUniversal, and
-LeanCfgProject.ObservedSyntacticQuotientPaperSummary, and that the build
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary.  The supplied #219 log
+shows that Lean built LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotient,
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticExactQuotientUniversal, and
+LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary, and that the build
 completed successfully.  The #219 log excerpt does not display the corresponding
 commit hash, so the run number and target are recorded here while 794dc20 / #216
 remains the last pinned commit-level theorem-body snapshot.
 
-The previous finite-example target LeanCfgProject.EndpointMonoidAdequacy was
+The previous finite-example target LeanCfgProject.ObservedResidualConcept.EndpointMonoidAdequacy was
 checked at commit 702dcf5 / Lean CI #207, and the earlier theorem-body
-item1--item4 target LeanCfgProject.ObservedFactorMinimality was checked at
+item1--item4 target LeanCfgProject.ObservedResidualConcept.ObservedFactorMinimality was checked at
 commit b1e651e / Lean CI #195.  The previous paper-facing final-index target
-LeanCfgProject.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 / Lean CI
+LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v14 was checked at commit 0e6dbb5 / Lean CI
 #184, with the earlier release-index checkpoint at commit c6c1705 / Lean CI
 #180.
 
