@@ -197,6 +197,7 @@ theorem approxQuotientLift_unique (S : Set Q) (f : Q →* R)
   ext X
   refine Quotient.inductionOn X ?_
   intro x
+  change g (approxClass S x) = approxQuotientLift S f hcompat (approxClass S x)
   simpa [approxQuotientLift] using hg x
 
 /-- Universal property of the quotient map. -/
@@ -211,7 +212,7 @@ theorem approxQuotient_universal
     apply approxQuotientLift_unique S f hcompat
     intro x
     have hx := congrArg (fun h : Q →* R => h x) hg
-    simpa using hx
+    simpa [approxQuotientMap] using hx
 
 /-- Paper-facing quotient core package. -/
 theorem approx_quotient_core_package
