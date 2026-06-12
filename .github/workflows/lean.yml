@@ -110,3 +110,9 @@ jobs:
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.Basic
+
+      - name: Build Dedekind lower-bound core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
