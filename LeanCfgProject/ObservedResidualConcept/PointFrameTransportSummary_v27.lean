@@ -1,6 +1,5 @@
-import LeanCfgProject.PointFrameLearningBridge
-import LeanCfgProject.ObservedSubsetTransportPackage_v27
-
+import LeanCfgProject.ObservedResidualConcept.PointFrameLearningBridge
+import LeanCfgProject.ObservedResidualConcept.ObservedSubsetTransportPackage_v27
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,6 +1,5 @@
-import LeanCfgProject.ClosedStageConceptBridge
-import LeanCfgProject.FrameIntentClosureBridge
-
+import LeanCfgProject.ObservedResidualConcept.ClosedStageConceptBridge
+import LeanCfgProject.ObservedResidualConcept.FrameIntentClosureBridge
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

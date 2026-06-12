@@ -1,6 +1,5 @@
-import LeanCfgProject.ObservedFiniteBasisStablePackage_v27
-import LeanCfgProject.ObservedMembershipEquivalence_v27
-
+import LeanCfgProject.ObservedResidualConcept.ObservedFiniteBasisStablePackage_v27
+import LeanCfgProject.ObservedResidualConcept.ObservedMembershipEquivalence_v27
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

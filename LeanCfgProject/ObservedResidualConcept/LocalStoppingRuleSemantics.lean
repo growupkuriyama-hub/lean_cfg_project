@@ -1,7 +1,6 @@
-import LeanCfgProject.LocalStoppingCorrectness
-import LeanCfgProject.ClosedStageRuleSemantics
-import LeanCfgProject.LaterClosedStageClosure
-
+import LeanCfgProject.ObservedResidualConcept.LocalStoppingCorrectness
+import LeanCfgProject.ObservedResidualConcept.ClosedStageRuleSemantics
+import LeanCfgProject.ObservedResidualConcept.LaterClosedStageClosure
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

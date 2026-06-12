@@ -1,5 +1,4 @@
-import LeanCfgProject.ICFullPaperSummary_v2
-
+import LeanCfgProject.ObservedResidualConcept.ICFullPaperSummary_v2
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,7 +1,6 @@
-import LeanCfgProject.ICArtifactFreezeIndex
-import LeanCfgProject.ObservedSyntacticPaperSummary
-import LeanCfgProject.ICSemanticBridgeSummary_v3
-
+import LeanCfgProject.ObservedResidualConcept.ICArtifactFreezeIndex
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticPaperSummary
+import LeanCfgProject.ObservedResidualConcept.ICSemanticBridgeSummary_v3
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

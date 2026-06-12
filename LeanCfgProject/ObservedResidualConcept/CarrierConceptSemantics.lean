@@ -1,5 +1,4 @@
-import LeanCfgProject.DescriptorResidualSemantics
-
+import LeanCfgProject.ObservedResidualConcept.DescriptorResidualSemantics
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

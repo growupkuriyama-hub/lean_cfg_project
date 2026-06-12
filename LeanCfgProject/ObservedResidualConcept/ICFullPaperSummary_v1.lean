@@ -1,9 +1,8 @@
-import LeanCfgProject.ICFastCI
-import LeanCfgProject.SemanticBridgeSummary
-import LeanCfgProject.AttackSemanticBridgeSummary
-import LeanCfgProject.ObservedSyntacticBridgeSummary
-import LeanCfgProject.ObservedSyntacticPaperSummary
-
+import LeanCfgProject.ObservedResidualConcept.ICFastCI
+import LeanCfgProject.ObservedResidualConcept.SemanticBridgeSummary
+import LeanCfgProject.ObservedResidualConcept.AttackSemanticBridgeSummary
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticBridgeSummary
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticPaperSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,4 +1,4 @@
-import LeanCfgProject.Step25_Test
+import LeanCfgProject.ObservedResidualConcept.Step25_Test
 import Mathlib.CategoryTheory.Functor.Basic
 import Mathlib.Tactic
 

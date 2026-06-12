@@ -1,5 +1,4 @@
-import LeanCfgProject.ObservedQuotientClosure
-
+import LeanCfgProject.ObservedResidualConcept.ObservedQuotientClosure
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

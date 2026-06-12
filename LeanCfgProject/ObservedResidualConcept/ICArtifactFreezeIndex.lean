@@ -1,7 +1,6 @@
-import LeanCfgProject.ICSubmissionSummary_v2
-import LeanCfgProject.ICArtifactReleaseSummary
-import LeanCfgProject.ICArtifactAppendixCoverage
-
+import LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v2
+import LeanCfgProject.ObservedResidualConcept.ICArtifactReleaseSummary
+import LeanCfgProject.ObservedResidualConcept.ICArtifactAppendixCoverage
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

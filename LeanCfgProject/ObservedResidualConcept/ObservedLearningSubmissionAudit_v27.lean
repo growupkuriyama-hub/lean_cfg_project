@@ -1,6 +1,5 @@
-import LeanCfgProject.PointFrameTransportSummary_v27
-import LeanCfgProject.ICSubmissionSummary_v5
-
+import LeanCfgProject.ObservedResidualConcept.PointFrameTransportSummary_v27
+import LeanCfgProject.ObservedResidualConcept.ICSubmissionSummary_v5
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

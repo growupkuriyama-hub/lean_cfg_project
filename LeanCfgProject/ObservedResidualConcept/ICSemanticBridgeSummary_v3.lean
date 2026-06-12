@@ -1,6 +1,5 @@
-import LeanCfgProject.AttackSemanticBridgeSummary
-import LeanCfgProject.ObservedSyntacticBridgeSummary
-
+import LeanCfgProject.ObservedResidualConcept.AttackSemanticBridgeSummary
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticBridgeSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

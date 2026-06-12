@@ -1,6 +1,5 @@
-import LeanCfgProject.ICPaperFormalizationSummary_v27
-import LeanCfgProject.ReducedFrameModelPaperSummary
-
+import LeanCfgProject.ObservedResidualConcept.ICPaperFormalizationSummary_v27
+import LeanCfgProject.ObservedResidualConcept.ReducedFrameModelPaperSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

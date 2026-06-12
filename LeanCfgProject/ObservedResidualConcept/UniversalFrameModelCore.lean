@@ -1,6 +1,5 @@
-import LeanCfgProject.CanonicalPointFrame
-import LeanCfgProject.ObservedFrameStructure
-
+import LeanCfgProject.ObservedResidualConcept.CanonicalPointFrame
+import LeanCfgProject.ObservedResidualConcept.ObservedFrameStructure
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

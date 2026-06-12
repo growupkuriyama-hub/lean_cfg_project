@@ -1,6 +1,5 @@
-import LeanCfgProject.CanonicalFrameModelCorollaries
-import LeanCfgProject.ObservedLearningQueryModel
-
+import LeanCfgProject.ObservedResidualConcept.CanonicalFrameModelCorollaries
+import LeanCfgProject.ObservedResidualConcept.ObservedLearningQueryModel
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

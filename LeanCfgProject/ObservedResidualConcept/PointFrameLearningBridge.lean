@@ -1,6 +1,5 @@
-import LeanCfgProject.ObservedSubsetStability
-import LeanCfgProject.FaithfulRepresentativeCorollaries
-
+import LeanCfgProject.ObservedResidualConcept.ObservedSubsetStability
+import LeanCfgProject.ObservedResidualConcept.FaithfulRepresentativeCorollaries
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,8 +1,7 @@
-import LeanCfgProject.ICPaperArtifactSummary
-import LeanCfgProject.K4AdequacyPaperSummary
-import LeanCfgProject.ObservedSyntacticPaperCorollaries
-import LeanCfgProject.CarrierObservedAdequacyCorollaries
-
+import LeanCfgProject.ObservedResidualConcept.ICPaperArtifactSummary
+import LeanCfgProject.ObservedResidualConcept.K4AdequacyPaperSummary
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticPaperCorollaries
+import LeanCfgProject.ObservedResidualConcept.CarrierObservedAdequacyCorollaries
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

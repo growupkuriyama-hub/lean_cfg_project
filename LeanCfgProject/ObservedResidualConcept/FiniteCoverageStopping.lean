@@ -1,6 +1,5 @@
-import LeanCfgProject.ClosedStageAlgorithmCorrectness
-import LeanCfgProject.ClosedStageFrameBridge
-
+import LeanCfgProject.ObservedResidualConcept.ClosedStageAlgorithmCorrectness
+import LeanCfgProject.ObservedResidualConcept.ClosedStageFrameBridge
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

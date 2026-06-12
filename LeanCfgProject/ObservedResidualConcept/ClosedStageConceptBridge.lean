@@ -1,6 +1,5 @@
-import LeanCfgProject.SaturationStability
-import LeanCfgProject.CarrierSaturationConceptSoundness
-
+import LeanCfgProject.ObservedResidualConcept.SaturationStability
+import LeanCfgProject.ObservedResidualConcept.CarrierSaturationConceptSoundness
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,5 +1,4 @@
-import LeanCfgProject.PointwiseAdequacy
-
+import LeanCfgProject.ObservedResidualConcept.PointwiseAdequacy
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

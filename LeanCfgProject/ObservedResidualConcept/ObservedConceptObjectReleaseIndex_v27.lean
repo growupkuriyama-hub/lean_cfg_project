@@ -1,7 +1,6 @@
-import LeanCfgProject.PointFrameIncidenceTransport_v27
-import LeanCfgProject.FiniteResidualBasisTransport_v27
-import LeanCfgProject.ICSubmissionSafeExpansion_v27
-
+import LeanCfgProject.ObservedResidualConcept.PointFrameIncidenceTransport_v27
+import LeanCfgProject.ObservedResidualConcept.FiniteResidualBasisTransport_v27
+import LeanCfgProject.ObservedResidualConcept.ICSubmissionSafeExpansion_v27
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

@@ -1,7 +1,6 @@
-import LeanCfgProject.ICFastCI_v2
-import LeanCfgProject.ICFullPaperSummary_v1
-import LeanCfgProject.ObservedSyntacticPaperSummary
-
+import LeanCfgProject.ObservedResidualConcept.ICFastCI_v2
+import LeanCfgProject.ObservedResidualConcept.ICFullPaperSummary_v1
+import LeanCfgProject.ObservedResidualConcept.ObservedSyntacticPaperSummary
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false

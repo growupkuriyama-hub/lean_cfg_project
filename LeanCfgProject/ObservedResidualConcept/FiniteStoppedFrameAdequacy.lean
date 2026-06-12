@@ -1,7 +1,6 @@
-import LeanCfgProject.FrameAdequacyCriterion
-import LeanCfgProject.FiniteStoppingFrameResidual
-import LeanCfgProject.LocalStoppingFrameResidual
-
+import LeanCfgProject.ObservedResidualConcept.FrameAdequacyCriterion
+import LeanCfgProject.ObservedResidualConcept.FiniteStoppingFrameResidual
+import LeanCfgProject.ObservedResidualConcept.LocalStoppingFrameResidual
 set_option linter.unusedVariables false
 set_option linter.unusedTactic false
 set_option linter.unusedSimpArgs false
