@@ -81,12 +81,6 @@ jobs:
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClassificationCore
 
-      - name: Build ORC package entrypoint
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.Basic
-
       - name: Build reduced reconstruction core
         shell: bash
         run: |
@@ -104,3 +98,15 @@ jobs:
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems
+
+      - name: Build Clark collapse core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
+
+      - name: Build ORC package entrypoint
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.Basic
