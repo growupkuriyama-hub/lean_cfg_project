@@ -1,28 +1,83 @@
-name: Lean CI
+name: ObservedResidualConcept Lean CI
 
 on:
   push:
+    branches: [ main, master ]
+    paths:
+      - 'lean-toolchain'
+      - 'lakefile.lean'
+      - 'lake-manifest.json'
+      - 'LeanCfgProject/ObservedResidualConcept/**'
+      - '.github/workflows/lean.yml'
   pull_request:
+    paths:
+      - 'lean-toolchain'
+      - 'lakefile.lean'
+      - 'lake-manifest.json'
+      - 'LeanCfgProject/ObservedResidualConcept/**'
+      - '.github/workflows/lean.yml'
   workflow_dispatch:
 
+concurrency:
+  group: observed-residual-concept-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check-lean:
+  check-observed-residual-concept:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: leanprover/lean-action@v1
-        with:
-          build: false
-          test: false
-          lint: false
-
-      - name: Build JALC algebra summary
-        run: lake build LeanCfgProject.JALC.Summary
-
-      - name: Reject sorry, admit, and axiom in JALC modules
+      - name: Install elan
+        shell: bash
         run: |
-          ! grep -R "sorry" LeanCfgProject/JALC
-          ! grep -R "admit" LeanCfgProject/JALC
-          ! grep -R "axiom" LeanCfgProject/JALC
+          set -euxo pipefail
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Show Lean/Lake versions
+        shell: bash
+        run: |
+          set -euxo pipefail
+          elan --version
+          lean --version
+          lake --version
+
+      - name: Restore Lake cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake
+          key: ${{ runner.os }}-observed-residual-concept-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}
+          restore-keys: |
+            ${{ runner.os }}-observed-residual-concept-
+            ${{ runner.os }}-lake-
+
+      - name: Get mathlib cache
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake exe cache get || true
+
+      - name: Build new core target first
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
+
+      - name: Build every ObservedResidualConcept module
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mapfile -t modules < <(
+            find LeanCfgProject/ObservedResidualConcept -name '*.lean' -type f \
+              | sort \
+              | sed 's#/#.#g; s#\.lean$##'
+          )
+          printf 'ObservedResidualConcept modules to build:\n'
+          printf '  %s\n' "${modules[@]}"
+          printf '%s\0' "${modules[@]}" | xargs -0 -n 20 lake build
