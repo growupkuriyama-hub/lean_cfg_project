@@ -63,21 +63,20 @@ jobs:
           set -euxo pipefail
           lake exe cache get || true
 
-      - name: Build new core target first
+      - name: Build ORC core
         shell: bash
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
 
-      - name: Build every ObservedResidualConcept module
+      - name: Build cyclic phase-collapse experiment
         shell: bash
         run: |
           set -euxo pipefail
-          mapfile -t modules < <(
-            find LeanCfgProject/ObservedResidualConcept -name '*.lean' -type f \
-              | sort \
-              | sed 's#/#.#g; s#\.lean$##'
-          )
-          printf 'ObservedResidualConcept modules to build:\n'
-          printf '  %s\n' "${modules[@]}"
-          printf '%s\0' "${modules[@]}" | xargs -0 -n 20 lake build
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCyclic
+
+      - name: Build ORC package entrypoint
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.Basic
