@@ -205,7 +205,8 @@ theorem pointDense_of_residual_single_Approx_block
       cl_mono (S := S) hsingleton
     have hclosed : cl S (c.residual S) = c.residual S :=
       Res_closed S c.left c.right
-    simpa [ObservedCutPoint.PointDense, ObservedCutPoint.residual, point, hclosed]
+    rw [hclosed] at hcl
+    simpa [ObservedCutPoint.PointDense, ObservedCutPoint.residual, point]
       using hcl
   · intro x hx
     have hApprox : Approx S x c.middle := hBlock x hx
