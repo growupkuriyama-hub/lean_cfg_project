@@ -105,14 +105,20 @@ jobs:
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
 
-      - name: Build ORC package entrypoint
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.Basic
-
       - name: Build Dedekind lower-bound core
         shell: bash
         run: |
           set -euxo pipefail
           lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
+
+      - name: Build pointed boundary core
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
+
+      - name: Build ORC package entrypoint
+        shell: bash
+        run: |
+          set -euxo pipefail
+          lake build LeanCfgProject.ObservedResidualConcept.Basic
