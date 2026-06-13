@@ -26,6 +26,9 @@ jobs:
       - name: Build JALC bracketing nonrigidity check
         run: lake build LeanCfgProject.JALC.Bracketing
 
+      - name: Build JALC productive-first witness
+        run: lake build LeanCfgProject.JALC.ProductiveFirst
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
