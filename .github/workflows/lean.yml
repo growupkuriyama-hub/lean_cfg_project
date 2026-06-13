@@ -80,3 +80,6 @@ jobs:
 
       - name: Build JALC iterator trace-boundary target
         run: lake build LeanCfgProject.JALC.PaperFacingIteratorTraceBoundary
+
+      - name: Build JALC productive-reachable iterator certificate target
+        run: lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
