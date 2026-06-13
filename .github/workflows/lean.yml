@@ -29,6 +29,9 @@ jobs:
       - name: Build JALC productive-first witness
         run: lake build LeanCfgProject.JALC.ProductiveFirst
 
+      - name: Build JALC paper-facing checks
+        run: lake build LeanCfgProject.JALC.PaperFacing
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
