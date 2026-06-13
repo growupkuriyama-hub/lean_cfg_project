@@ -77,3 +77,6 @@ jobs:
 
       - name: Build JALC closure trace-list target
         run: lake build LeanCfgProject.JALC.PaperFacingClosureTraceList
+
+      - name: Build JALC iterator trace-boundary target
+        run: lake build LeanCfgProject.JALC.PaperFacingIteratorTraceBoundary
