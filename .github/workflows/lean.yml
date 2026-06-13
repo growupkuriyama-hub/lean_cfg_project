@@ -32,6 +32,15 @@ jobs:
       - name: Build JALC kept-correctness paper-facing checks
         run: lake build LeanCfgProject.JALC.PaperFacingKeptCorrectness
 
+      - name: Build JALC full-refinement kernel
+        run: lake build LeanCfgProject.JALC.FullRefinementKernel
+
+      - name: Build JALC full-refinement language kernel
+        run: lake build LeanCfgProject.JALC.FullRefinementLanguageKernel
+
+      - name: Build JALC full-refinement paper-facing checks
+        run: lake build LeanCfgProject.JALC.PaperFacingFullRefinement
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
