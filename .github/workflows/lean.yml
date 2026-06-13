@@ -29,6 +29,9 @@ jobs:
       - name: Build JALC full main theorem package
         run: lake build LeanCfgProject.JALC.PaperFacingFullMain
 
+      - name: Build JALC full finite main package
+        run: lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
