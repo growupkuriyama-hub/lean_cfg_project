@@ -7,8 +7,8 @@ namespace ProductiveReachableClosureKernel
 /-
 Productivity and reachability closure kernels.
 
-This module instantiates the abstract finite closure certificate mechanism for
-two closure operators used by the extraction procedure: productivity and
+This module instantiates the finite closure certificate mechanism for two
+closure operators used by the extraction procedure: productivity and
 reachability inside the productive part.
 -/
 
@@ -95,9 +95,9 @@ def ReachableStep {α : Type u}
     R x ∨
     (productive x ∧ start x) ∨
     (productive x ∧
-      ∃ p y z, R p ∧ binary p x z ∧ productive z) ∨
+      ∃ p z, R p ∧ binary p x z ∧ productive z) ∨
     (productive x ∧
-      ∃ p y z, R p ∧ binary p y x ∧ productive y)
+      ∃ p y, R p ∧ binary p y x ∧ productive y)
 
 
 /-- Reachability step is monotone in the current reachable predicate. -/
@@ -111,12 +111,12 @@ theorem reachableStep_monotone
   rcases hx with hr | hstart | hleft | hright
   · exact Or.inl (hsub x hr)
   · exact Or.inr (Or.inl hstart)
-  · rcases hleft with ⟨hxprod, p, y, z, hp, hbin, hzprod⟩
+  · rcases hleft with ⟨hxprod, p, z, hp, hbin, hzprod⟩
     exact Or.inr (Or.inr (Or.inl
-      ⟨hxprod, p, y, z, hsub p hp, hbin, hzprod⟩))
-  · rcases hright with ⟨hxprod, p, y, z, hp, hbin, hyprod⟩
+      ⟨hxprod, p, z, hsub p hp, hbin, hzprod⟩))
+  · rcases hright with ⟨hxprod, p, y, hp, hbin, hyprod⟩
     exact Or.inr (Or.inr (Or.inr
-      ⟨hxprod, p, y, z, hsub p hp, hbin, hyprod⟩))
+      ⟨hxprod, p, y, hsub p hp, hbin, hyprod⟩))
 
 
 /-- Certificate type for a finite reachability closure. -/
@@ -214,7 +214,7 @@ theorem computedKept_productive_fixed
     (binary : α → α → α → Prop)
     (start : α → Prop)
     (pc : ProductiveCertificate terminal binary)
-    (rc : ReachableCertificate start binary
+    (_rc : ReachableCertificate start binary
       (ProductiveClosure terminal binary pc)) :
     PredFixed (ProductiveStep terminal binary)
       (ProductiveClosure terminal binary pc) :=
