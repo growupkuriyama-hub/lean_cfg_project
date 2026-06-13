@@ -68,16 +68,16 @@ theorem checked_fullAlgorithmicComputedKept_agrees
 theorem checked_closed_algorithmic_full_bridge_kernel
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
-    (E : CertifiedExtraction (fullExtractionRuleData tau G))
-    (T : StateTyping V M)
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
+    (E : CertifiedExtraction (fullExtractionRuleData tau G))
+    (T : StateTyping V M)
     (comp : TypingCompatible tau T G)
     (sound : UntypedYieldSound tau T G)
     (red : UntypedReduced G) :
     AlgorithmicFullBridge E T tau G comp sound red
       (fullAlgorithmicComputedKept_agrees tau G E) :=
-  closed_algorithmic_full_bridge_kernel E T tau G comp sound red
+  closed_algorithmic_full_bridge_kernel tau G E T comp sound red
 
 end PaperFacingFullAlgorithmicAgreement
 end JALC

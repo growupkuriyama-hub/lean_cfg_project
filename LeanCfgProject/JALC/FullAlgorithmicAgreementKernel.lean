@@ -63,7 +63,8 @@ theorem full_typedProductive_prefixed
   · rcases hbin with ⟨y, z, hb, hy, hz⟩
     rcases hy with ⟨u, dy⟩
     rcases hz with ⟨v, dz⟩
-    exact ⟨u ++ v, TypedRuleDeriv.binary hb dy dz⟩
+    exact ⟨u ++ v, by
+      simpa using (TypedRuleDeriv.binary hb dy dz)⟩
 
 
 /--
@@ -88,22 +89,22 @@ theorem full_computedProductive_agrees
   · intro h
     rcases h with ⟨word, d⟩
     induction d with
-    | terminal ht =>
+    | terminal r ht =>
         have hstep :
             ProductiveStep
               (fullExtractionRuleData tau G).terminal
               (fullExtractionRuleData tau G).binary
-              (computedProductive E) _ := by
-          exact Or.inr (Or.inl ⟨_, ht⟩)
-        exact (computedProductive_fixed E _).1 hstep
-    | binary hb left right ihLeft ihRight =>
+              (computedProductive E) r.lhs := by
+          exact Or.inr (Or.inl ⟨r.terminal, ht⟩)
+        exact (computedProductive_fixed E r.lhs).1 hstep
+    | binary br hb left right ihLeft ihRight =>
         have hstep :
             ProductiveStep
               (fullExtractionRuleData tau G).terminal
               (fullExtractionRuleData tau G).binary
-              (computedProductive E) _ := by
-          exact Or.inr (Or.inr ⟨_, _, hb, ihLeft, ihRight⟩)
-        exact (computedProductive_fixed E _).1 hstep
+              (computedProductive E) br.parent := by
+          exact Or.inr (Or.inr ⟨br.left, br.right, hb, ihLeft, ihRight⟩)
+        exact (computedProductive_fixed E br.parent).1 hstep
 
 
 /--
@@ -172,7 +173,8 @@ theorem full_parent_productive_of_children
     TypedProductive (fullTypedStructure tau G) br.parent := by
   rcases hleft with ⟨u, du⟩
   rcases hright with ⟨v, dv⟩
-  exact ⟨u ++ v, TypedRuleDeriv.binary hb du dv⟩
+  exact ⟨u ++ v, by
+    simpa using (TypedRuleDeriv.binary hb du dv)⟩
 
 
 /--
@@ -191,19 +193,19 @@ theorem full_productiveReachable_to_computedReachable_of_productive
       computedReachable E s := by
   intro s hr
   induction hr with
-  | start hs =>
+  | start sr hs =>
       intro hp
-      have hprod : computedProductive E _ :=
-        (full_computedProductive_agrees tau G E _).2 hp
+      have hprod : computedProductive E sr.state :=
+        (full_computedProductive_agrees tau G E sr.state).2 hp
       have hstep :
           ReachableStep
             (fullExtractionRuleData tau G).start
             (fullExtractionRuleData tau G).binary
             (computedProductive E)
-            (computedReachable E) _ := by
+            (computedReachable E) sr.state := by
         exact Or.inr (Or.inl ⟨hprod, hs⟩)
-      exact (computedReachable_fixed E _).1 hstep
-  | left (r := br) hb parent rightProd ih =>
+      exact (computedReachable_fixed E sr.state).1 hstep
+  | left br hb parentReach rightProd ih =>
       intro hpLeft
       have hpParent :
           TypedProductive (fullTypedStructure tau G) br.parent :=
@@ -222,7 +224,7 @@ theorem full_productiveReachable_to_computedReachable_of_productive
         exact Or.inr (Or.inr (Or.inl
           ⟨hLeftComp, br.parent, br.right, hParentReach, hb, hRightComp⟩))
       exact (computedReachable_fixed E br.left).1 hstep
-  | right (r := br) hb parent leftProd ih =>
+  | right br hb parentReach leftProd ih =>
       intro hpRight
       have hpParent :
           TypedProductive (fullTypedStructure tau G) br.parent :=
@@ -276,10 +278,10 @@ data.
 theorem closed_algorithmic_full_bridge_kernel
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
-    (E : CertifiedExtraction (fullExtractionRuleData tau G))
-    (T : StateTyping V M)
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
+    (E : CertifiedExtraction (fullExtractionRuleData tau G))
+    (T : StateTyping V M)
     (comp : TypingCompatible tau T G)
     (sound : UntypedYieldSound tau T G)
     (red : UntypedReduced G) :
