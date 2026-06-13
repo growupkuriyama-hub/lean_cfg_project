@@ -44,6 +44,12 @@ jobs:
       - name: Build JALC full algorithmic agreement kernel
         run: lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 
+      - name: Build JALC final artifact target
+        run: lake build LeanCfgProject.JALC.PaperFacingFinalArtifact
+
+
+      - name: Build JALC experiment closure target
+        run: lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
