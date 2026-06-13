@@ -38,6 +38,15 @@ jobs:
       - name: Build JALC round-trip kernel
         run: lake build LeanCfgProject.JALC.RoundTripKernel
 
+      - name: Build JALC intended-copy equivalence
+        run: lake build LeanCfgProject.JALC.IntendedCopyEquiv
+
+      - name: Build JALC rule-lift summary
+        run: lake build LeanCfgProject.JALC.RuleLiftSummary
+
+      - name: Build JALC state-rule kernel
+        run: lake build LeanCfgProject.JALC.StateRuleIsoKernel
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
