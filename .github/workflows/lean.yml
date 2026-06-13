@@ -23,11 +23,11 @@ jobs:
       - name: Build JALC transport invariants
         run: lake build LeanCfgProject.JALC.Transport
 
+      - name: Build JALC bracketing nonrigidity check
+        run: lake build LeanCfgProject.JALC.Bracketing
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
           ! grep -R "admit" LeanCfgProject/JALC
           ! grep -R "axiom" LeanCfgProject/JALC
-
-      - name: Build JALC bracketing nonrigidity check
-        run: lake build LeanCfgProject.JALC.Bracketing
