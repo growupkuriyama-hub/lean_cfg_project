@@ -6,6 +6,9 @@ namespace FiniteRepresentationBundle
 
 /-
 A compact bundle collecting the finite representation checks.
+
+The bundle structures explicitly carry the finite-input assumptions needed for
+the cardinality fields.
 -/
 
 universe u v w
@@ -17,7 +20,8 @@ open FiniteRepresentationKernel FiniteCardinalityKernel
 
 /-- Bundle of finite representation data for typed universes. -/
 structure TypedFiniteBundle
-    (V : Type u) (M : Type v) (Sigma : Type w) : Prop where
+    (V : Type u) (M : Type v) (Sigma : Type w)
+    [Fintype V] [Fintype M] [Fintype Sigma] : Prop where
   finite_universes :
     FiniteTypedUniverses V M Sigma
   card_kernel :
@@ -35,7 +39,9 @@ structure TypedFiniteBundle
 /-- Bundle of finite representation data for kept universes. -/
 structure KeptFiniteBundle
     {V : Type u} {M : Type v} (Sigma : Type w)
-    (Kept : TypedState V M → Prop) : Prop where
+    (Kept : TypedState V M → Prop)
+    [Fintype V] [Fintype M] [Fintype Sigma] [DecidablePred Kept] :
+    Prop where
   finite_universes :
     FiniteKeptUniverses Sigma Kept
   card_kernel :
