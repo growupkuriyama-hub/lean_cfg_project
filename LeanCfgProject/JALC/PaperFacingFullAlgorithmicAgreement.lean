@@ -13,6 +13,8 @@ universe u v w
 open InverseKernel RoundTripKernel
 open ReachableProductiveKernel
 open FullRefinementKernel
+open FullYieldKernel
+open FullFrameReachabilityKernel
 open FullKeptCorrectnessKernel
 open AlgorithmicExtractionKernel AlgorithmicFullBridgeKernel
 open FullAlgorithmicAgreementKernel
