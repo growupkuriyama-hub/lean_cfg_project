@@ -28,3 +28,6 @@ jobs:
           ! grep -R "sorry" LeanCfgProject/JALC
           ! grep -R "admit" LeanCfgProject/JALC
           ! grep -R "axiom" LeanCfgProject/JALC
+
+      - name: Build JALC bracketing nonrigidity check
+        run: lake build LeanCfgProject.JALC.Bracketing
