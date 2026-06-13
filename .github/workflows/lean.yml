@@ -55,6 +55,9 @@ jobs:
       - name: Build JALC stage decidability target
         run: lake build LeanCfgProject.JALC.PaperFacingStageDecidability
 
+      - name: Build JALC rule-stage boundary target
+        run: lake build LeanCfgProject.JALC.PaperFacingRuleStageBoundary
+
 
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
