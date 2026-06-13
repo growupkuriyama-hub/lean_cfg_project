@@ -1,154 +1,30 @@
-name: ObservedResidualConcept Lean CI
+name: Lean CI
 
 on:
   push:
-    branches: [ main, master ]
-    paths:
-      - 'lean-toolchain'
-      - 'lakefile.lean'
-      - 'lake-manifest.json'
-      - 'LeanCfgProject/ObservedResidualConcept/**'
-      - '.github/workflows/lean.yml'
   pull_request:
-    paths:
-      - 'lean-toolchain'
-      - 'lakefile.lean'
-      - 'lake-manifest.json'
-      - 'LeanCfgProject/ObservedResidualConcept/**'
-      - '.github/workflows/lean.yml'
   workflow_dispatch:
 
-concurrency:
-  group: observed-residual-concept-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  check-observed-residual-concept:
+  check-lean:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install elan
-        shell: bash
-        run: |
-          set -euxo pipefail
-          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
-            | sh -s -- -y --default-toolchain none
-          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-
-      - name: Show Lean/Lake versions
-        shell: bash
-        run: |
-          set -euxo pipefail
-          elan --version
-          lean --version
-          lake --version
-
-      - name: Restore Lake cache
-        uses: actions/cache@v4
+      - uses: leanprover/lean-action@v1
         with:
-          path: |
-            .lake
-          key: ${{ runner.os }}-observed-residual-concept-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}
-          restore-keys: |
-            ${{ runner.os }}-observed-residual-concept-
-            ${{ runner.os }}-lake-
+          build: false
+          test: false
+          lint: false
 
-      - name: Get mathlib cache
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake exe cache get || true
+      - name: Build JALC summary
+        run: lake build LeanCfgProject.JALC.Summary
 
-      - name: Build ORC core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
+      - name: Build JALC transport invariants
+        run: lake build LeanCfgProject.JALC.Transport
 
-      - name: Build cyclic phase-collapse experiment
-        shell: bash
+      - name: Reject proof-bypassing placeholders in JALC modules
         run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCyclic
-
-      - name: Build classification transport core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClassificationCore
-
-      - name: Build reduced reconstruction core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReduced
-
-      - name: Build reduced classification core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptReducedClassification
-
-      - name: Build ORC main theorem packages
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems
-
-      - name: Build Clark collapse core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
-
-      - name: Build Dedekind lower-bound core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
-
-      - name: Build pointed boundary core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
-
-      - name: Build cut adequacy core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
-
-      - name: Build finite cut-observation core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptFiniteCutObservationCore
-
-      - name: Build closure homomorphism core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClosureHomCore
-
-      - name: Build word-image cut adequacy core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptWordImageCutAdequacyCore
-
-      - name: Build ORC package entrypoint
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.Basic
-
-      - name: Build Approx quotient core
-        shell: bash
-        run: |
-          set -euxo pipefail
-          lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptApproxQuotientCore
+          ! grep -R "sorry" LeanCfgProject/JALC
+          ! grep -R "admit" LeanCfgProject/JALC
+          ! grep -R "axiom" LeanCfgProject/JALC

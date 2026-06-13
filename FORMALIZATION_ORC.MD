@@ -9,8 +9,8 @@ Repository: `growupkuriyama-hub/lean_cfg_project`
 Supplement path: `lean_cfg_project/FORMALIZATION_ORC.MD`  
 Latest historical theorem-body CI check before relocation: Lean CI #219 passed / `LeanCfgProject.ObservedResidualConcept.ObservedSyntacticQuotientPaperSummary`
 Latest post-relocation ORC theorem-batch CI check: ObservedResidualConcept Lean CI #246 succeeded / `LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainTheorems`
-Latest post-relocation ORC boundary-extension checks: Clark-collapse core, Dedekind lower-bound core, and pointed-boundary core succeeded after subsequent focused CI runs; exact final run number not recorded in this supplement
-Post-relocation namespace target: `LeanCfgProject.ObservedResidualConcept.*` / checked by ObservedResidualConcept Lean CI #246 and subsequent focused boundary-extension checks  
+Latest post-relocation ORC extension checks: Clark-collapse core, Dedekind lower-bound core, pointed-boundary core, cut-adequacy core, finite cut-observation core, closure-homomorphism core, and word-image cut-adequacy core succeeded after subsequent focused CI runs; exact final run numbers are not recorded in this supplement.  Approx-quotient core is prepared and patched, but CI confirmation is still pending in this record
+Post-relocation namespace target: `LeanCfgProject.ObservedResidualConcept.*` / checked by ObservedResidualConcept Lean CI #246 and subsequent focused ORC extension checks  
 Previous pinned theorem-body snapshot: commit `794dc20` / Lean CI #216  
 Successful-log audit: through Lean CI #217  
 Pushed by: `growupkuriyama-hub`
@@ -108,8 +108,8 @@ supplement.
 
 ### Recommended CI command after relocation
 
-For the current ORC theorem-package experiment, the recommended GitHub Actions
-steps are the explicit module checks:
+For the current focused ORC experiment, the recommended GitHub Actions steps are
+the explicit module checks:
 
 ```bash
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCore
@@ -121,15 +121,23 @@ lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainThe
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
-lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
-lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
-lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptFiniteCutObservationCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClosureHomCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptWordImageCutAdequacyCore
+lake build LeanCfgProject.ObservedResidualConcept.Basic
 ```
 
-The final target imports the preceding theorem-package layers and is the
-paper-facing capstone for the current batch.  A broad `find | xargs lake build`
-check is useful as a separate repository regression test, but it is no longer
-the recommended paper-facing CI step for this focused ORC batch.
+The following target is valuable and has been prepared, but this supplement does
+not yet claim it as CI-confirmed:
+
+```bash
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptApproxQuotientCore
+```
+
+A broad `find | xargs lake build` check is useful as a separate repository
+regression test, but it is no longer the recommended paper-facing CI step for
+this focused ORC batch.
 
 ---
 
@@ -171,6 +179,41 @@ LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptClarkCollapseCore.
 LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptDedekindLowerBoundCore.lean
 LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptPointedBoundaryCore.lean
 ```
+
+The subsequent cut-adequacy and semantic-bridge experiments add four further
+focused theorem-body modules:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptCutAdequacyCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptFiniteCutObservationCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptClosureHomCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptWordImageCutAdequacyCore.lean
+```
+
+These focused checks were reported as passing after the corresponding repair
+commits.  The exact final run numbers are not recorded in this supplement.  Their
+checked content is:
+
+- cut-adequacy core: cut density is equivalent to universal adequacy for sound
+  observed images containing the occupied cut point;
+- finite cut-observation core: for finite observation carriers, observed images
+  and observed cut relations are finite data;
+- closure-homomorphism core: residual closure sends raw set product to the
+  residual concept product, and multiplicative observations commute with
+  language/set product after observation;
+- word-image cut adequacy core: the abstract cut-adequacy theorem is lifted to
+  word-level observed images `q '' Y`.
+
+A fifth quotient-focused module has been prepared:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptApproxQuotientCore.lean
+```
+
+It constructs the intended quotient carrier `Q / Approx_S`, its monoid
+structure, quotient map, descended observed membership object, and universal
+property for compatible monoid morphisms.  This supplement records it as
+prepared and patched, but not yet CI-confirmed.
 
 These focused checks were run after the CI #246 theorem-package batch and were
 reported as passing after the corresponding repair commits.  The exact final run
@@ -609,6 +652,17 @@ lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptMainThe
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClarkCollapseCore
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptDedekindLowerBoundCore
 lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptPointedBoundaryCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptCutAdequacyCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptFiniteCutObservationCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptClosureHomCore
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptWordImageCutAdequacyCore
+lake build LeanCfgProject.ObservedResidualConcept.Basic
+```
+
+The currently prepared but not-yet-confirmed quotient target is:
+
+```bash
+lake build LeanCfgProject.ObservedResidualConcept.ObservedResidualConceptApproxQuotientCore
 ```
 
 First, to reproduce the current theorem-body item1--item6 endpoint checked by
@@ -1328,6 +1382,98 @@ stabilization of a monoid observation is exactly ordinary two-sided syntactic
 equivalence intersected with the observation kernel.  The finite-index /
 regular-language corollary remains in the paper text, since it invokes the
 usual Myhill--Nerode theorem for languages over finite alphabets.
+
+
+### 10d. Cut adequacy, finite cut observation, closure homomorphism, and word-image bridge
+
+Files:
+
+```text
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptCutAdequacyCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptFiniteCutObservationCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptClosureHomCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptWordImageCutAdequacyCore.lean
+LeanCfgProject/ObservedResidualConcept/ObservedResidualConceptApproxQuotientCore.lean   # prepared; CI confirmation pending
+```
+
+This layer records the focused experiments added after the boundary-extension
+batch.  The first four files are theorem-body cores that were reported as
+passing in subsequent focused ORC CI checks.  The quotient file is included as a
+prepared target but should not be cited as checked until a successful CI run is
+recorded.
+
+Representative declarations:
+
+```text
+ObservedCutPoint
+ObservedCutPoint.Occupied
+ObservedCutPoint.PointDense
+ObservedCutPoint.SoundImage
+ObservedCutPoint.AdequateImage
+CutDense
+cut_dense_point_generates_sound_image
+singleton_adequacy_iff_pointDense
+universal_adequacy_iff_cut_density_core
+pointDense_of_residual_single_Approx_block
+cut_adequacy_core_package
+FinObsImage
+ObservedCutTriple
+CutFactor
+FinObsCutImage
+finObsImage_finite_of_fintype
+finObsCutImage_finite_of_fintype
+finite_observation_collapse_core_package
+cl_iUnion_cl_eq
+cl_union_cl_eq
+cl_mulSet_eq_odot_cl_cl
+closure_hom_core_package
+MultiplicativeObservation
+obsImage_mulSet_eq_mulSet_obsImage
+cl_obsImage_mulSet_eq_odot_cl_obsImage
+WordCutOccurrence
+word_cut_dense_generates_word_image
+universal_word_image_adequacy_for_one_cut_iff_pointDense
+universal_word_image_adequacy_iff_word_cut_density
+word_image_cut_adequacy_core_package
+ApproxSetoid
+ApproxQuotient
+approxQuotientMap
+approxQuotientMap_eq_iff_Approx
+approxObservedSet_class_iff
+approxQuotientLift
+approxQuotient_universal
+approx_quotient_core_package
+```
+
+The checked cut-adequacy core states that, for an occupied observed cut point,
+point density is equivalent to universal adequacy for all sound observed images
+containing the cut middle.  This is the set-theoretic core of the paper's cut
+adequacy theorem.  The CFG-specific cut-realization construction and the
+construction of reduced binary presentations remain paper-level.
+
+The checked finite cut-observation core states that, once the observation
+carrier `Q` is finite, observed language images and observed cut relations in
+`Q^3` are finite data.  This supports the finite-observation collapse discussion
+without claiming that finite observation captures context-freeness.
+
+The checked closure-homomorphism core states that residual closure is compatible
+with powerset multiplication and the residual concept product.  It also verifies
+the multiplicative observation identity `q '' (A B) = (q '' A) (q '' B)` and the
+composite law `cl_S(q '' (A B)) = cl_S(q '' A) ⊙ cl_S(q '' B)`.  This is the
+Lean-checked algebraic bridge beneath the paper's concept semantics and optional
+initial-semantics discussion.
+
+The checked word-image cut adequacy core lifts the abstract cut theorem to
+word-level observed images `q '' Y`.  It verifies that cut density is equivalent
+to universal adequacy for sound observed word images containing the cut middle
+word.
+
+The prepared quotient core is intended to construct the quotient monoid
+`Q / Approx_S`, prove that the quotient-map kernel is exactly `Approx S`, show
+that the observed membership object descends to the quotient, and prove the
+universal property for compatible monoid morphisms.  As of this supplement
+update, the file is prepared and patched but not recorded as CI-confirmed.
+
 
 
 ### 11. K4 residual adequacy witness
