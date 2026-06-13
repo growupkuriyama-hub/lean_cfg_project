@@ -193,56 +193,54 @@ theorem full_productiveReachable_to_computedReachable_of_productive
       computedReachable E s := by
   intro s hr
   induction hr with
-  | start sr hs =>
+  | start hs =>
       intro hp
-      have hprod : computedProductive E sr.state :=
-        (full_computedProductive_agrees tau G E sr.state).2 hp
+      have hprod :=
+        (full_computedProductive_agrees tau G E _).2 hp
       have hstep :
           ReachableStep
             (fullExtractionRuleData tau G).start
             (fullExtractionRuleData tau G).binary
             (computedProductive E)
-            (computedReachable E) sr.state := by
+            (computedReachable E) _ := by
         exact Or.inr (Or.inl ⟨hprod, hs⟩)
-      exact (computedReachable_fixed E sr.state).1 hstep
-  | left br hb parentReach rightProd ih =>
+      exact (computedReachable_fixed E _).1 hstep
+  | left hb parentReach rightProd ih =>
       intro hpLeft
-      have hpParent :
-          TypedProductive (fullTypedStructure tau G) br.parent :=
+      have hpParent :=
         full_parent_productive_of_children tau G hb hpLeft rightProd
-      have hParentReach : computedReachable E br.parent := ih hpParent
-      have hLeftComp : computedProductive E br.left :=
-        (full_computedProductive_agrees tau G E br.left).2 hpLeft
-      have hRightComp : computedProductive E br.right :=
-        (full_computedProductive_agrees tau G E br.right).2 rightProd
+      have hParentReach := ih hpParent
+      have hLeftComp :=
+        (full_computedProductive_agrees tau G E _).2 hpLeft
+      have hRightComp :=
+        (full_computedProductive_agrees tau G E _).2 rightProd
       have hstep :
           ReachableStep
             (fullExtractionRuleData tau G).start
             (fullExtractionRuleData tau G).binary
             (computedProductive E)
-            (computedReachable E) br.left := by
+            (computedReachable E) _ := by
         exact Or.inr (Or.inr (Or.inl
-          ⟨hLeftComp, br.parent, br.right, hParentReach, hb, hRightComp⟩))
-      exact (computedReachable_fixed E br.left).1 hstep
-  | right br hb parentReach leftProd ih =>
+          ⟨hLeftComp, _, _, hParentReach, hb, hRightComp⟩))
+      exact (computedReachable_fixed E _).1 hstep
+  | right hb parentReach leftProd ih =>
       intro hpRight
-      have hpParent :
-          TypedProductive (fullTypedStructure tau G) br.parent :=
+      have hpParent :=
         full_parent_productive_of_children tau G hb leftProd hpRight
-      have hParentReach : computedReachable E br.parent := ih hpParent
-      have hLeftComp : computedProductive E br.left :=
-        (full_computedProductive_agrees tau G E br.left).2 leftProd
-      have hRightComp : computedProductive E br.right :=
-        (full_computedProductive_agrees tau G E br.right).2 hpRight
+      have hParentReach := ih hpParent
+      have hLeftComp :=
+        (full_computedProductive_agrees tau G E _).2 leftProd
+      have hRightComp :=
+        (full_computedProductive_agrees tau G E _).2 hpRight
       have hstep :
           ReachableStep
             (fullExtractionRuleData tau G).start
             (fullExtractionRuleData tau G).binary
             (computedProductive E)
-            (computedReachable E) br.right := by
+            (computedReachable E) _ := by
         exact Or.inr (Or.inr (Or.inr
-          ⟨hRightComp, br.parent, br.left, hParentReach, hb, hLeftComp⟩))
-      exact (computedReachable_fixed E br.right).1 hstep
+          ⟨hRightComp, _, _, hParentReach, hb, hLeftComp⟩))
+      exact (computedReachable_fixed E _).1 hstep
 
 
 /--
