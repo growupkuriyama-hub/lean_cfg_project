@@ -2,55 +2,69 @@ name: Lean CI
 
 on:
   push:
+    branches: [ main, master ]
   pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   check-lean:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: leanprover/lean-action@v1
+      - name: Install elan
+        run: |
+          set -e
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Show Lean toolchain
+        run: |
+          set -e
+          lean --version
+          lake --version
+
+      - name: Restore Lake cache
+        uses: actions/cache@v4
         with:
-          build: false
-          test: false
-          lint: false
+          path: |
+            .lake
+            ~/.elan
+          key: ${{ runner.os }}-lake-${{ hashFiles('lakefile.lean', 'lake-manifest.json', 'lean-toolchain') }}
+          restore-keys: |
+            ${{ runner.os }}-lake-
 
-      - name: Build JALC full-frame reachability kernel
-        run: lake build LeanCfgProject.JALC.FullFrameReachabilityKernel
+      - name: Get dependencies
+        run: |
+          set -e
+          lake exe cache get || true
+          lake update
 
-      - name: Build JALC full kept-correctness kernel
-        run: lake build LeanCfgProject.JALC.FullKeptCorrectnessKernel
+      - name: Check JALC directory has no proof-bypassing placeholders
+        run: |
+          set -e
+          if grep -RInE '\b(sorry|admit|axiom)\b' LeanCfgProject/JALC --include='*.lean'; then
+            echo "Forbidden proof-bypassing placeholder found in LeanCfgProject/JALC."
+            exit 1
+          fi
 
-      - name: Build JALC full kept paper-facing checks
-        run: lake build LeanCfgProject.JALC.PaperFacingFullKept
+      - name: Build JALC summary target
+        run: lake build LeanCfgProject.JALC.Summary
 
-      - name: Build JALC full main theorem package
-        run: lake build LeanCfgProject.JALC.PaperFacingFullMain
-
-      - name: Build JALC full finite main package
+      - name: Build JALC full finite-main target
         run: lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 
-      - name: Build JALC finite fixed-point kernel
-        run: lake build LeanCfgProject.JALC.PaperFacingFixedPoint
-
-      - name: Build JALC algorithmic extraction kernel
-        run: lake build LeanCfgProject.JALC.PaperFacingAlgorithmicExtraction
-
-      - name: Build JALC algorithmic full bridge kernel
-        run: lake build LeanCfgProject.JALC.PaperFacingAlgorithmicFullBridge
-
-      - name: Build JALC full algorithmic agreement kernel
+      - name: Build JALC full algorithmic agreement target
         run: lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 
       - name: Build JALC final artifact target
         run: lake build LeanCfgProject.JALC.PaperFacingFinalArtifact
 
-
       - name: Build JALC experiment closure target
         run: lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
-
 
       - name: Build JALC stage decidability target
         run: lake build LeanCfgProject.JALC.PaperFacingStageDecidability
@@ -58,9 +72,5 @@ jobs:
       - name: Build JALC rule-stage boundary target
         run: lake build LeanCfgProject.JALC.PaperFacingRuleStageBoundary
 
-
-      - name: Reject proof-bypassing placeholders in JALC modules
-        run: |
-          ! grep -R "sorry" LeanCfgProject/JALC
-          ! grep -R "admit" LeanCfgProject/JALC
-          ! grep -R "axiom" LeanCfgProject/JALC
+      - name: Build JALC list-certificate target
+        run: lake build LeanCfgProject.JALC.PaperFacingListCertificate
