@@ -41,6 +41,9 @@ jobs:
       - name: Build JALC algorithmic full bridge kernel
         run: lake build LeanCfgProject.JALC.PaperFacingAlgorithmicFullBridge
 
+      - name: Build JALC full algorithmic agreement kernel
+        run: lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
