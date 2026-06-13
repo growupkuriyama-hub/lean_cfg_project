@@ -74,6 +74,15 @@ jobs:
       - name: Build JALC kept-representation kernel
         run: lake build LeanCfgProject.JALC.KeptRepresentationKernel
 
+      - name: Build JALC finite-universe kernel
+        run: lake build LeanCfgProject.JALC.FiniteUniverseKernel
+
+      - name: Build JALC finite-representation kernel
+        run: lake build LeanCfgProject.JALC.FiniteRepresentationKernel
+
+      - name: Build JALC finite paper-facing checks
+        run: lake build LeanCfgProject.JALC.PaperFacingFinite
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
