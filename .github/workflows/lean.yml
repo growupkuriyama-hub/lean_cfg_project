@@ -62,6 +62,18 @@ jobs:
       - name: Build JALC advanced paper-facing checks
         run: lake build LeanCfgProject.JALC.PaperFacingAdvanced
 
+      - name: Build JALC kept-structure kernel
+        run: lake build LeanCfgProject.JALC.KeptStructureKernel
+
+      - name: Build JALC kept-derivation kernel
+        run: lake build LeanCfgProject.JALC.KeptDerivationKernel
+
+      - name: Build JALC kept-start-language kernel
+        run: lake build LeanCfgProject.JALC.KeptStartLanguageKernel
+
+      - name: Build JALC kept-representation kernel
+        run: lake build LeanCfgProject.JALC.KeptRepresentationKernel
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
