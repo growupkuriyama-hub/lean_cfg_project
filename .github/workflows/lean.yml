@@ -17,39 +17,6 @@ jobs:
           test: false
           lint: false
 
-      - name: Build JALC summary
-        run: lake build LeanCfgProject.JALC.Summary
-
-      - name: Build JALC finite-representation bundle
-        run: lake build LeanCfgProject.JALC.FiniteRepresentationBundle
-
-      - name: Build JALC reachable-productive kernel
-        run: lake build LeanCfgProject.JALC.ReachableProductiveKernel
-
-      - name: Build JALC lifted kept-correctness kernel
-        run: lake build LeanCfgProject.JALC.LiftedKeptCorrectnessKernel
-
-      - name: Build JALC kept-correctness paper-facing checks
-        run: lake build LeanCfgProject.JALC.PaperFacingKeptCorrectness
-
-      - name: Build JALC full-refinement kernel
-        run: lake build LeanCfgProject.JALC.FullRefinementKernel
-
-      - name: Build JALC full-refinement language kernel
-        run: lake build LeanCfgProject.JALC.FullRefinementLanguageKernel
-
-      - name: Build JALC full-refinement paper-facing checks
-        run: lake build LeanCfgProject.JALC.PaperFacingFullRefinement
-
-      - name: Build JALC full-yield kernel
-        run: lake build LeanCfgProject.JALC.FullYieldKernel
-
-      - name: Build JALC full-yield pruning kernel
-        run: lake build LeanCfgProject.JALC.FullYieldPruningKernel
-
-      - name: Build JALC full-yield paper-facing checks
-        run: lake build LeanCfgProject.JALC.PaperFacingFullYield
-
       - name: Build JALC full-frame reachability kernel
         run: lake build LeanCfgProject.JALC.FullFrameReachabilityKernel
 

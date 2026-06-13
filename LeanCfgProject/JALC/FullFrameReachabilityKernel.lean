@@ -8,7 +8,7 @@ namespace FullFrameReachabilityKernel
 Frame-reachability kernel for the full all-copy typed refinement.
 
 This module captures reachability inside the productive part of the full
-typed refinement.  The key result is that such reachability forces the left and
+typed refinement. The key result is that such reachability forces the left and
 right frame components of a typed copy to agree with the intended frame of its
 underlying label.
 -/
@@ -34,7 +34,7 @@ Reachability in the productive part of the full all-copy typed refinement.
 
 For a binary step to a left child, the right sibling is required to be
 productive; for a step to a right child, the left sibling is required to be
-productive.  This is the inductive form of reachability after the first
+productive. This is the inductive form of reachability after the first
 productivity filter has been applied.
 -/
 inductive ProductiveReachableFull
@@ -107,83 +107,78 @@ theorem productiveReachableFull_frame_correct
     (h : ProductiveReachableFull tau G s) :
     FrameCorrectCopy T s := by
   induction h with
-  | start hs =>
+  | start (r := sr) hs =>
       rcases hs with ⟨r, hr, hstate, hlt, hrt⟩
       rcases comp.start r hr with ⟨hltT, hrtT⟩
       constructor
       · calc
-          _ = (1 : M) := hlt
+          sr.state.lt = (1 : M) := hlt
           _ = T.lt r.state := hltT.symm
-          _ = T.lt _ := by simpa [hstate]
+          _ = T.lt sr.state.label := by simpa [hstate]
       · calc
-          _ = (1 : M) := hrt
+          sr.state.rt = (1 : M) := hrt
           _ = T.rt r.state := hrtT.symm
-          _ = T.rt _ := by simpa [hstate]
-  | left hb parent right_productive ih =>
+          _ = T.rt sr.state.label := by simpa [hstate]
+  | left (r := br) hb parent right_productive ih =>
       rcases hb with
         ⟨r, hr, hparent, hleft, hright, hyield,
           hll, hlr, hrl, hrr⟩
       let bc := comp.binary r hr
       have right_yield :
-          right_productive.s.yt = T.yt right_productive.s.label := by
-        exact full_productive_copy_correct_yield T tau G sound
+          br.right.yt = T.yt br.right.label :=
+        full_productive_copy_correct_yield T tau G sound
           right_productive
-      have c_lt :
-          T.lt right_productive.s.label =
-            T.lt right_productive.s.label := rfl
-      have parent_lt : parent.s.lt = T.lt parent.s.label := ih.1
-      have parent_rt : parent.s.rt = T.rt parent.s.label := ih.2
-      have target_lt :
-          T.lt parent.s.label = T.lt right_productive.s.label → True := by
-        intro _
-        trivial
+      have parent_lt : br.parent.lt = T.lt br.parent.label := ih.1
+      have parent_rt : br.parent.rt = T.rt br.parent.label := ih.2
       have compat_left_lt :
-          T.lt parent.s.label = T.lt _ := by
-        have c := bc.left_left_eq
-        simpa [hleft, hparent] using c.symm
+          T.lt br.parent.label = T.lt br.left.label := by
+        have c := bc.left_left_eq.symm
+        simpa [hleft, hparent] using c
       have compat_left_rt :
-          T.rt _ = T.yt right_productive.s.label * T.rt parent.s.label := by
-        have c := bc.left_right_eq
+          T.yt br.right.label * T.rt br.parent.label =
+            T.rt br.left.label := by
+        have c := bc.left_right_eq.symm
         simpa [hleft, hright, hparent] using c
       constructor
       · calc
-          _ = parent.s.lt := hll
-          _ = T.lt parent.s.label := parent_lt
-          _ = T.lt _ := compat_left_lt
+          br.left.lt = br.parent.lt := hll
+          _ = T.lt br.parent.label := parent_lt
+          _ = T.lt br.left.label := compat_left_lt
       · calc
-          _ = right_productive.s.yt * parent.s.rt := hlr
-          _ = T.yt right_productive.s.label * T.rt parent.s.label := by
+          br.left.rt = br.right.yt * br.parent.rt := hlr
+          _ = T.yt br.right.label * T.rt br.parent.label := by
               rw [right_yield, parent_rt]
-          _ = T.rt _ := compat_left_rt.symm
-  | right hb parent left_productive ih =>
+          _ = T.rt br.left.label := compat_left_rt
+  | right (r := br) hb parent left_productive ih =>
       rcases hb with
         ⟨r, hr, hparent, hleft, hright, hyield,
           hll, hlr, hrl, hrr⟩
       let bc := comp.binary r hr
       have left_yield :
-          left_productive.s.yt = T.yt left_productive.s.label := by
-        exact full_productive_copy_correct_yield T tau G sound
+          br.left.yt = T.yt br.left.label :=
+        full_productive_copy_correct_yield T tau G sound
           left_productive
-      have parent_lt : parent.s.lt = T.lt parent.s.label := ih.1
-      have parent_rt : parent.s.rt = T.rt parent.s.label := ih.2
+      have parent_lt : br.parent.lt = T.lt br.parent.label := ih.1
+      have parent_rt : br.parent.rt = T.rt br.parent.label := ih.2
       have compat_right_lt :
-          T.lt _ = T.lt parent.s.label * T.yt left_productive.s.label := by
-        have c := bc.right_left_eq
+          T.lt br.parent.label * T.yt br.left.label =
+            T.lt br.right.label := by
+        have c := bc.right_left_eq.symm
         simpa [hleft, hright, hparent] using c
       have compat_right_rt :
-          T.rt parent.s.label = T.rt _ := by
-        have c := bc.right_right_eq
-        simpa [hright, hparent] using c.symm
+          T.rt br.parent.label = T.rt br.right.label := by
+        have c := bc.right_right_eq.symm
+        simpa [hright, hparent] using c
       constructor
       · calc
-          _ = parent.s.lt * left_productive.s.yt := hrl
-          _ = T.lt parent.s.label * T.yt left_productive.s.label := by
+          br.right.lt = br.parent.lt * br.left.yt := hrl
+          _ = T.lt br.parent.label * T.yt br.left.label := by
               rw [parent_lt, left_yield]
-          _ = T.lt _ := compat_right_lt.symm
+          _ = T.lt br.right.label := compat_right_lt
       · calc
-          _ = parent.s.rt := hrr
-          _ = T.rt parent.s.label := parent_rt
-          _ = T.rt _ := compat_right_rt
+          br.right.rt = br.parent.rt := hrr
+          _ = T.rt br.parent.label := parent_rt
+          _ = T.rt br.right.label := compat_right_rt
 
 end FullFrameReachabilityKernel
 end JALC
