@@ -50,6 +50,12 @@ jobs:
 
       - name: Build JALC experiment closure target
         run: lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
+
+
+      - name: Build JALC stage decidability target
+        run: lake build LeanCfgProject.JALC.PaperFacingStageDecidability
+
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
