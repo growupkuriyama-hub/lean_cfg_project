@@ -85,8 +85,10 @@ theorem full_derivation_reflected
       rcases h with
         ⟨r, hr, hparent, hleft, hright, hyield,
           hll, hlr, hrl, hrr⟩
-      simpa [hparent, hleft, hright] using
-        (UntypedDeriv.binary hr ihLeft ihRight)
+      have ihLeft' := hleft.symm ▸ ihLeft
+      have ihRight' := hright.symm ▸ ihRight
+      have dparent := UntypedDeriv.binary hr ihLeft' ihRight'
+      simpa [hparent] using dparent
 
 
 /-- Soundness of an untyped structure with respect to the intended yield map. -/
