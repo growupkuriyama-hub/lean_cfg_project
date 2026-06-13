@@ -23,6 +23,15 @@ jobs:
       - name: Build JALC finite-representation bundle
         run: lake build LeanCfgProject.JALC.FiniteRepresentationBundle
 
+      - name: Build JALC reachable-productive kernel
+        run: lake build LeanCfgProject.JALC.ReachableProductiveKernel
+
+      - name: Build JALC lifted kept-correctness kernel
+        run: lake build LeanCfgProject.JALC.LiftedKeptCorrectnessKernel
+
+      - name: Build JALC kept-correctness paper-facing checks
+        run: lake build LeanCfgProject.JALC.PaperFacingKeptCorrectness
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
