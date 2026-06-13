@@ -18,6 +18,7 @@ can be transported to the computed predicate.
 universe u v w
 
 open InverseKernel RoundTripKernel
+open ReachableProductiveKernel
 open FullRefinementKernel
 open FullYieldKernel
 open FullFrameReachabilityKernel FullKeptCorrectnessKernel
