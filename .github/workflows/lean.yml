@@ -47,6 +47,12 @@ jobs:
       - name: Build JALC state-rule kernel
         run: lake build LeanCfgProject.JALC.StateRuleIsoKernel
 
+      - name: Build JALC derivation-lift kernel
+        run: lake build LeanCfgProject.JALC.DerivationLiftKernel
+
+      - name: Build JALC start-language kernel
+        run: lake build LeanCfgProject.JALC.StartLanguageKernel
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
