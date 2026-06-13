@@ -195,13 +195,15 @@ def displayedFullReachable (c : Copy) : Prop :=
 /-- The wrong-yield parent is reached in the displayed full-refinement path. -/
 theorem wrongParentX_displayed_reachable :
     displayedFullReachable wrongParentX := by
-  decide
+  unfold displayedFullReachable
+  exact Or.inl rfl
 
 
 /-- The wrong-frame Y copy is reached in the displayed full-refinement path. -/
 theorem spuriousY_displayed_reachable :
     displayedFullReachable spuriousY := by
-  decide
+  unfold displayedFullReachable
+  exact Or.inr (Or.inl rfl)
 
 
 /--
@@ -217,19 +219,22 @@ def productiveFirstReachable (c : Copy) : Prop :=
 /-- The intended X copy remains. -/
 theorem intendedX_productive_first_reachable :
     productiveFirstReachable intendedX := by
-  decide
+  unfold productiveFirstReachable
+  exact Or.inl rfl
 
 
 /-- The intended Y copy remains. -/
 theorem intendedY_productive_first_reachable :
     productiveFirstReachable intendedY := by
-  decide
+  unfold productiveFirstReachable
+  exact Or.inr (Or.inl rfl)
 
 
 /-- The intended Z copy remains. -/
 theorem intendedZ_productive_first_reachable :
     productiveFirstReachable intendedZ := by
-  decide
+  unfold productiveFirstReachable
+  exact Or.inr (Or.inr rfl)
 
 
 /--
@@ -241,6 +246,7 @@ which is removed before reachability is recomputed.
 -/
 theorem spuriousY_not_productive_first_reachable :
     ¬ productiveFirstReachable spuriousY := by
+  unfold productiveFirstReachable spuriousY intendedX intendedY intendedZ
   decide
 
 
@@ -254,7 +260,9 @@ theorem productive_first_counterexample_kernel :
     displayedFullReachable spuriousY ∧
     fullProductiveCopy spuriousY ∧
     ¬ productiveFirstReachable spuriousY := by
-  decide
+  exact ⟨spuriousY_displayed_reachable,
+    spuriousY_full_productive,
+    spuriousY_not_productive_first_reachable⟩
 
 
 /--
@@ -266,7 +274,8 @@ productive-first trimming.
 theorem productive_first_keeps_intended_not_spurious :
     productiveFirstReachable intendedY ∧
     ¬ productiveFirstReachable spuriousY := by
-  decide
+  exact ⟨intendedY_productive_first_reachable,
+    spuriousY_not_productive_first_reachable⟩
 
 end ProductiveFirst
 end JALC
