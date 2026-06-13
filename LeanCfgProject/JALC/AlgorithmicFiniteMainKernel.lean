@@ -1,102 +1,87 @@
 import LeanCfgProject.JALC.FullKeptDecidabilityKernel
-import LeanCfgProject.JALC.FullFiniteMainKernel
+import LeanCfgProject.JALC.PaperFacingFullFiniteMain
 
 namespace LeanCfgProject
 namespace JALC
 namespace AlgorithmicFiniteMainKernel
 
 /-
-Algorithmic finite-main package.
+Algorithmic finite-main boundary.
 
-This module uses the checked Algorithm 1 / FullKept agreement to supply the
-FullKept decidability needed by the finite full-main theorem package, provided
-the certified computed kept predicate is decidable.
+The completed finite-main theorem package still expects decidability of
+FullKept.  The CI #304 agreement theorem allows this boundary to be moved to
+the computed kept predicate of a certified Algorithm 1 run.
+
+This module intentionally avoids rebuilding FullFiniteMainKernel.  It records
+the exact decidability transfer needed to use that package algorithmically.
 -/
 
 universe u v w
 
 open InverseKernel RoundTripKernel
-open ReachableProductiveKernel
 open FullRefinementKernel
 open FullYieldKernel
 open FullKeptCorrectnessKernel
-open FullTrimmedLanguageKernel FullMainTheoremKernel
 open AlgorithmicExtractionKernel
 open AlgorithmicFullBridgeKernel
 open FullAlgorithmicAgreementKernel
 open FullKeptDecidabilityKernel
-open FiniteRepresentationBundle
-open FullFiniteMainKernel
 
 
 /--
-Algorithmic finite-main package with the decidability boundary moved to the
-computed predicate of the certified Algorithm 1 run.
+Boundary package: a certified Algorithm 1 run over the concrete full rule data
+agrees with FullKept and supplies FullKept decidability when its computed kept
+predicate is decidable.
 -/
-structure AlgorithmicFiniteMainPackage
+structure AlgorithmicFiniteMainBoundary
     {V : Type u} {M : Type v} {Sigma : Type w}
-    [Monoid M] [Fintype V] [Fintype M] [Fintype Sigma]
-    (T : StateTyping V M)
+    [Monoid M]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
-    (comp : TypingCompatible tau T G)
-    (sound : UntypedYieldSound tau T G)
-    (red : UntypedReduced G)
     (E : CertifiedExtraction (fullExtractionRuleData tau G)) : Prop where
   agreement :
     ComputedAgreesWithFullKept E tau G
   fullkept_decidable :
     Nonempty (DecidablePred (FullKept tau G))
-  typed_finite :
-    TypedFiniteBundle V M Sigma
-  kept_finite :
-    KeptFiniteBundle Sigma (FullKept tau G)
-  language :
-    ∀ word : List Sigma,
-      KeptStartLanguage (fullKeptStructure T tau G comp red) word ↔
-        StartLanguageKernel.UntypedStartLanguage G word
-  representation :
-    RepresentationKernel.RepresentationKernel T G (FullKept tau G)
 
 
-/-- Build the algorithmic finite-main package from a decidable certified run. -/
-theorem algorithmic_finite_main_package
+/-- Construct the boundary package from a decidable certified run. -/
+theorem algorithmic_finite_main_boundary
     {V : Type u} {M : Type v} {Sigma : Type w}
-    [Monoid M] [Fintype V] [Fintype M] [Fintype Sigma]
-    (T : StateTyping V M)
+    [Monoid M]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
-    (comp : TypingCompatible tau T G)
-    (sound : UntypedYieldSound tau T G)
-    (red : UntypedReduced G)
     (E : CertifiedExtraction (fullExtractionRuleData tau G))
-    [DecidablePred (computedKept E)] :
-    AlgorithmicFiniteMainPackage T tau G comp sound red E := by
-  letI : DecidablePred (FullKept tau G) :=
-    fullKeptDecidable_of_fullExtraction tau G E
+    (dec : DecidablePred (computedKept E)) :
+    AlgorithmicFiniteMainBoundary tau G E := by
   exact
     { agreement := fullAlgorithmicComputedKept_agrees tau G E,
-      fullkept_decidable := ⟨inferInstance⟩,
-      typed_finite := typedFiniteBundle_of_finite V M Sigma,
-      kept_finite := keptFiniteBundle_of_finite Sigma (FullKept tau G),
-      language := full_finite_main_language T tau G comp sound red,
-      representation := full_refinement_main_representation T tau G comp sound red }
+      fullkept_decidable :=
+        fullKept_decidable_from_certified_run tau G E dec }
 
 
-/-- Kept finiteness component supplied from Algorithm 1 decidability. -/
-theorem algorithmic_finite_main_kept_finite
+/-- Extract the decidability component needed by finite-main theorem packages. -/
+theorem algorithmic_finite_main_fullkept_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
-    [Monoid M] [Fintype V] [Fintype M] [Fintype Sigma]
-    (T : StateTyping V M)
+    [Monoid M]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
-    (comp : TypingCompatible tau T G)
-    (sound : UntypedYieldSound tau T G)
-    (red : UntypedReduced G)
     (E : CertifiedExtraction (fullExtractionRuleData tau G))
-    [DecidablePred (computedKept E)] :
-    KeptFiniteBundle Sigma (FullKept tau G) :=
-  (algorithmic_finite_main_package T tau G comp sound red E).kept_finite
+    (dec : DecidablePred (computedKept E)) :
+    Nonempty (DecidablePred (FullKept tau G)) :=
+  (algorithmic_finite_main_boundary tau G E dec).fullkept_decidable
+
+
+/-- Extract the Algorithm 1 / FullKept agreement component. -/
+theorem algorithmic_finite_main_agreement
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : UntypedStructure V Sigma)
+    (E : CertifiedExtraction (fullExtractionRuleData tau G))
+    (dec : DecidablePred (computedKept E)) :
+    ComputedAgreesWithFullKept E tau G :=
+  (algorithmic_finite_main_boundary tau G E dec).agreement
 
 end AlgorithmicFiniteMainKernel
 end JALC

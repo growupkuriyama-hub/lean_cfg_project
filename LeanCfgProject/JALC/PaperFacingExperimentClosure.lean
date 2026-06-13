@@ -8,18 +8,9 @@ namespace PaperFacingExperimentClosure
 /-
 Paper-facing closure target for the current Lean experiment sequence.
 
-This target imports:
-
-* the final artifact aggregation target;
-* the decidability-transfer kernel;
-* the algorithmic finite-main wrapper;
-* the executable payload boundary;
-* the descriptor reconstruction wrapper;
-* the context-closure future-phase marker;
-* the shortlex witness future-phase marker.
-
-It is intended to close the current round of experiments without starting a new
-large formalization phase.
+This target imports the final artifact aggregation target and the experiment
+closure kernels.  It is intended to close the current round of experiments
+without starting a new large formalization phase.
 -/
 
 open FinalArtifactKernel

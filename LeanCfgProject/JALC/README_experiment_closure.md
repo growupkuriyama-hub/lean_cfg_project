@@ -1,6 +1,30 @@
-# JALC Lean experiment closure package
+# JALC Lean experiment closure package, fixed
 
-This package corresponds to the six recommended experiment directions:
+This package fixes the previous AlgorithmicFiniteMainKernel failure by making
+the finite-main part a boundary package rather than rebuilding the existing
+FullFiniteMainKernel record internally.
+
+The key checked point is:
+
+```text
+DecidablePred (computedKept E)
++ fullAlgorithmicComputedKept_agrees tau G E
+⇒ Nonempty (DecidablePred (FullKept tau G))
+```
+
+Thus the decidability boundary needed by the finite-main theorem package is
+moved from abstract FullKept to the computed kept predicate of a certified
+Algorithm 1 run.
+
+## Placement
+
+Copy the `.lean` files into:
+
+```text
+LeanCfgProject/JALC/
+```
+
+Use the fixed files to replace the previous versions:
 
 ```text
 FullKeptDecidabilityKernel.lean
@@ -9,36 +33,7 @@ ExecutableFullKeptExtraction.lean
 DescriptorReconstructionKernel.lean
 ContextClosureCoincidenceKernel.lean
 ShortlexWitnessKernel.lean
-```
-
-It also adds:
-
-```text
 PaperFacingExperimentClosure.lean
-```
-
-## Intended interpretation
-
-The first two modules use the CI #304 Algorithm 1 / FullKept agreement to move
-the finite-main decidability boundary from `FullKept` to the computed kept
-predicate of a certified Algorithm 1 run.
-
-The third module isolates the exact payload that a later executable extraction
-phase would need to produce.
-
-The fourth module packages the full-kept kept-state structure as the current
-descriptor-level output.
-
-The fifth and sixth modules deliberately record context-closure coincidence and
-shortlex witness normalization as future phases rather than opening another
-large proof campaign now.
-
-## Placement
-
-Copy all `.lean` files into:
-
-```text
-LeanCfgProject/JALC/
 ```
 
 ## CI command
@@ -51,5 +46,5 @@ LeanCfgProject/JALC/
 ## Suggested commit message
 
 ```text
-Add JALC experiment closure kernels
+Fix JALC experiment closure boundary kernels
 ```
