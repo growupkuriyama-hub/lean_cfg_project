@@ -8,7 +8,7 @@ namespace FullKeptCorrectnessKernel
 Full kept-correctness kernel.
 
 This module combines full-refinement productivity with reachability inside the
-productive part.  The result is that kept full-refinement copies are intended
+productive part. The result is that kept full-refinement copies are intended
 copies, under yield soundness and rule-typing compatibility.
 -/
 
@@ -51,11 +51,11 @@ theorem fullCorrectCopy_isIntended
   refine ⟨s.label, ?_⟩
   cases s with
   | mk label yt lt rt =>
-      simp [YieldCorrectCopy, FrameCorrectCopy, intendedCopy] at hy hlt hrt ⊢
+      simp [YieldCorrectCopy, intendedCopy] at hy hlt hrt ⊢
       cases hy
       cases hlt
       cases hrt
-      rfl
+      exact ⟨rfl, rfl, rfl⟩
 
 
 /-- Every full kept copy is fully correct. -/
