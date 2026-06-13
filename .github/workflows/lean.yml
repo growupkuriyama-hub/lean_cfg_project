@@ -50,6 +50,15 @@ jobs:
       - name: Build JALC full-yield paper-facing checks
         run: lake build LeanCfgProject.JALC.PaperFacingFullYield
 
+      - name: Build JALC full-frame reachability kernel
+        run: lake build LeanCfgProject.JALC.FullFrameReachabilityKernel
+
+      - name: Build JALC full kept-correctness kernel
+        run: lake build LeanCfgProject.JALC.FullKeptCorrectnessKernel
+
+      - name: Build JALC full kept paper-facing checks
+        run: lake build LeanCfgProject.JALC.PaperFacingFullKept
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
