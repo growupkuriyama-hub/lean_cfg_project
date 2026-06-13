@@ -12,6 +12,7 @@ full-kept representation package.
 universe u v w
 
 open InverseKernel RoundTripKernel
+open ReachableProductiveKernel
 open FullRefinementKernel
 open FullYieldKernel
 open FullKeptCorrectnessKernel
