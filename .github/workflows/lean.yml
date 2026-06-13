@@ -74,3 +74,6 @@ jobs:
 
       - name: Build JALC list-certificate target
         run: lake build LeanCfgProject.JALC.PaperFacingListCertificate
+
+      - name: Build JALC closure trace-list target
+        run: lake build LeanCfgProject.JALC.PaperFacingClosureTraceList
