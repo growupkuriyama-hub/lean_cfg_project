@@ -9,7 +9,7 @@ Yield-type kernels for the full all-copy typed refinement.
 
 This module proves that every typed derivation in the full all-copy refinement
 has a terminal word whose finite type equals the yield component of the typed
-left-hand state.  It also reflects such typed derivations back to untyped
+left-hand state. It also reflects such typed derivations back to untyped
 derivations.
 -/
 
@@ -85,13 +85,8 @@ theorem full_derivation_reflected
       rcases h with
         ⟨r, hr, hparent, hleft, hright, hyield,
           hll, hlr, hrl, hrr⟩
-      have dleft : UntypedDeriv G r.left _ := by
-        simpa [hleft] using ihLeft
-      have dright : UntypedDeriv G r.right _ := by
-        simpa [hright] using ihRight
-      have dparent : UntypedDeriv G r.parent _ :=
-        UntypedDeriv.binary hr dleft dright
-      simpa [hparent] using dparent
+      simpa [hparent, hleft, hright] using
+        (UntypedDeriv.binary hr ihLeft ihRight)
 
 
 /-- Soundness of an untyped structure with respect to the intended yield map. -/
