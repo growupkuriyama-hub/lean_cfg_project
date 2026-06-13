@@ -32,6 +32,9 @@ jobs:
       - name: Build JALC full finite main package
         run: lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 
+      - name: Build JALC finite fixed-point kernel
+        run: lake build LeanCfgProject.JALC.PaperFacingFixedPoint
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC

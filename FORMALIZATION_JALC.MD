@@ -8,7 +8,13 @@ A Finite Representation Theorem for Two-Sided Monoid-Typed CFG Presentations
 
 This file is specific to the JALC paper. It is separate from the repository-level `FORMALIZATION.md`, which records formalization results for a different paper or a broader repository-level development.
 
-This version updates the earlier record after the recent sequence of JALC Lean experiments that added theorem-facing kernels for transport, non-rigidity, productive-first trimming, intended-copy representation, derivation/language preservation, kept-state representation, and finite-universe/cardinality checks.
+This version updates the record through the recent full-refinement, full-kept, and finite-main theorem kernels, including the successful GitHub Actions run:
+
+```text
+Lean CI #292
+Commit: d02ac8d
+Pushed by: growupkuriyama-hub
+```
 
 ---
 
@@ -32,27 +38,32 @@ Original paper-facing Lean target:
 LeanCfgProject.JALC.Summary
 ```
 
-Current high-level finite-representation target:
+Earlier finite-representation target:
 
 ```text
 LeanCfgProject.JALC.FiniteRepresentationBundle
 ```
 
-Recommended current CI command:
+Current high-level full finite-main target:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullFiniteMain
+```
+
+Recommended current CI commands:
 
 ```text
 lake build LeanCfgProject.JALC.Summary
-lake build LeanCfgProject.JALC.FiniteRepresentationBundle
+lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
-The current minimal GitHub Actions workflow should build:
+The current minimal GitHub Actions workflow may build only:
 
 ```text
-LeanCfgProject.JALC.Summary
-LeanCfgProject.JALC.FiniteRepresentationBundle
+LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
-and then run the JALC-directory placeholder guard.
+when testing the latest theorem-facing full-refinement package. For archival continuity, it is still reasonable to keep `LeanCfgProject.JALC.Summary` in CI as the original baseline target.
 
 ---
 
@@ -80,49 +91,36 @@ LeanCfgProject.JALC.ResidualConcept
 LeanCfgProject.JALC.Summary
 ```
 
-### Recent extended CI status
+### Extended finite-representation target
 
-After CI #236, the JALC artifact was substantially extended. The following families of modules have been added and reported as passing in GitHub Actions during the recent development sequence:
+The following high-level target was added and checked during the finite-universe/cardinality extension:
 
 ```text
-LeanCfgProject.JALC.Transport
-LeanCfgProject.JALC.Bracketing
-LeanCfgProject.JALC.ProductiveFirst
-LeanCfgProject.JALC.PaperFacing
-LeanCfgProject.JALC.InverseKernel
-LeanCfgProject.JALC.RoundTripKernel
-LeanCfgProject.JALC.IntendedCopyEquiv
-LeanCfgProject.JALC.RuleLiftSummary
-LeanCfgProject.JALC.StateRuleIsoKernel
-LeanCfgProject.JALC.DerivationLiftKernel
-LeanCfgProject.JALC.StartLanguageKernel
-LeanCfgProject.JALC.KeptStateKernel
-LeanCfgProject.JALC.RepresentationKernel
-LeanCfgProject.JALC.PaperFacingAdvanced
-LeanCfgProject.JALC.KeptStructureKernel
-LeanCfgProject.JALC.KeptDerivationKernel
-LeanCfgProject.JALC.KeptStartLanguageKernel
-LeanCfgProject.JALC.KeptRepresentationKernel
-LeanCfgProject.JALC.FiniteUniverseKernel
-LeanCfgProject.JALC.FiniteRepresentationKernel
-LeanCfgProject.JALC.PaperFacingFinite
-LeanCfgProject.JALC.FiniteCardinalityKernel
-LeanCfgProject.JALC.PaperFacingCardinality
 LeanCfgProject.JALC.FiniteRepresentationBundle
 ```
 
-Latest successful CI run after the final `FiniteRepresentationBundle` fix:
+It bundles the finite-universe and finite-cardinality results for typed and kept-state constructions.
+
+### Latest full finite-main CI run
+
+Latest successful extended CI run recorded in the chat:
 
 ```text
-Lean CI #: TODO
-Commit: TODO
+Lean CI #292
+Commit: d02ac8d
 Pushed by: growupkuriyama-hub
-Targets:
-  lake build LeanCfgProject.JALC.Summary
-  lake build LeanCfgProject.JALC.FiniteRepresentationBundle
+Target:
+  lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
-The exact latest CI number and commit hash should be copied from GitHub after the final successful run. They were not available in the chat transcript at the time this record was updated.
+This run includes the theorem-facing full-refinement chain through:
+
+```text
+LeanCfgProject.JALC.FullFiniteMainKernel
+LeanCfgProject.JALC.PaperFacingFullFiniteMain
+```
+
+and their dependencies.
 
 ---
 
@@ -130,7 +128,7 @@ The exact latest CI number and commit hash should be copied from GitHub after th
 
 The purpose of this Lean development is to provide a machine-checked companion artifact for the finite two-sided monoid-typed representation theorem developed in the JALC paper.
 
-The current development has two layers.
+The current development has four layers.
 
 First, it checks the finite typed infrastructure used by the paper:
 
@@ -143,7 +141,7 @@ First, it checks the finite typed infrastructure used by the paper:
 * finite extent/intent operators;
 * a lightweight residual/concept layer.
 
-Second, it now checks theorem-facing kernels that are much closer to the main representation theorem:
+Second, it checks theorem-facing kernels for intended-copy representation:
 
 * yield-type and context-type invariants for frame transport;
 * orientation-sensitive transport over arbitrary monoids;
@@ -156,7 +154,25 @@ Second, it now checks theorem-facing kernels that are much closer to the main re
 * kept-state representation kernels;
 * finite-universe and finite-cardinality kernels.
 
-The development is still not claimed to be a complete formalization of every theorem in the paper. In particular, the full extraction/trimming theorem, especially the equality between reachable productive typed states and intended copies, remains proved in the prose paper. However, most of the structural consequences of that equality have now been formalized.
+Third, it now checks full-refinement and full-kept correctness kernels:
+
+* an abstract full all-copy typed refinement;
+* inclusion of the intended-copy lift into the full refinement;
+* language inclusion from the original grammar into the full refinement;
+* full-refinement yield invariants;
+* exclusion of wrong-yield productive copies under yield soundness;
+* productive-subgrammar reachability for the full refinement;
+* exclusion of wrong-frame copies by productive-part reachability;
+* full-kept correctness, i.e. `FullKept` copies are exactly intended copies under the stated assumptions.
+
+Fourth, it packages these results into a finite main theorem layer:
+
+* full-kept trimmed language equivalence;
+* full main theorem package;
+* full finite-main theorem package;
+* finite kept-state representation for the full-kept construction, assuming finite input data and decidable keptness.
+
+The development is still not claimed to be a complete executable extraction algorithm. In particular, the fixed-point algorithm computing `FullKept` membership, its decidability as an extracted procedure, and the complete end-to-end extraction from arbitrary CFG presentations remain outside the present Lean proof. However, the central mathematical kernels surrounding kept-state correctness and finite representation are now substantially checked.
 
 ---
 
@@ -175,27 +191,41 @@ The Lean development currently checks:
 * derivation preservation and reflection;
 * start-language preservation and reflection;
 * kept-state structure and language kernels;
-* finite-universe and cardinality kernels.
+* finite-universe and cardinality kernels;
+* full all-copy typed refinement;
+* inclusion of the intended-copy lift into the full refinement;
+* original-to-full language inclusion;
+* yield invariants for full typed derivations;
+* reflection of full typed derivations to untyped derivations;
+* elimination of wrong-yield productive full copies;
+* productive-subgrammar reachability in the full refinement;
+* elimination of wrong-frame copies under productive-part reachability;
+* full-kept correctness;
+* full-kept trimmed language equivalence;
+* finite full-main theorem package.
 
-### Still prose-level
+### Still prose-level or assumption-level
 
-The following parts are not yet fully formalized as general Lean theorems:
+The following parts are not yet fully formalized as executable or end-to-end Lean theorems:
 
-* the full extraction theorem from arbitrary CFG presentations;
-* the general productive/reachable trimming fixed-point theorem;
-* the theorem that reachable productive typed copies are exactly intended copies;
-* the complete end-to-end characterization theorem;
+* the complete extraction theorem from arbitrary CFG presentations;
+* the concrete fixed-point algorithm computing productive-first and reachable trimming;
+* decidability of `FullKept` membership as an extracted algorithm;
+* minimality of the computed fixed point as an implementation theorem;
 * shortlex witness preservation;
-* context-closure coincidence lemmas for the full two-sided construction.
+* context-closure coincidence lemmas for the full two-sided construction;
+* complete descriptor reconstruction from arbitrary presentation data.
 
 ### Current honest claim
 
 The current artifact supports the following claim:
 
 ```text
-The Lean 4 development checks the finite typed infrastructure and a broad set
-of theorem-facing kernels for the finite representation theorem. It is not a
-complete end-to-end formalization of the full extraction and trimming theorem.
+The Lean 4 development checks the finite typed infrastructure, the intended-copy
+state/rule/derivation/language kernels, full-refinement yield and frame kernels,
+full-kept correctness, full-kept trimmed language equivalence, and a finite
+full-main theorem package.  It is not yet a complete executable formalization of
+the full extraction and fixed-point trimming algorithm.
 ```
 
 This is the recommended level of claim for the JALC paper.
@@ -244,9 +274,38 @@ LeanCfgProject/JALC/
   FiniteCardinalityKernel.lean
   PaperFacingCardinality.lean
   FiniteRepresentationBundle.lean
+
+  ReachableProductiveKernel.lean
+  LiftedKeptCorrectnessKernel.lean
+  PaperFacingKeptCorrectness.lean
+
+  FullRefinementKernel.lean
+  FullRefinementLanguageKernel.lean
+  PaperFacingFullRefinement.lean
+
+  FullYieldKernel.lean
+  FullYieldPruningKernel.lean
+  PaperFacingFullYield.lean
+
+  FullFrameReachabilityKernel.lean
+  FullKeptCorrectnessKernel.lean
+  PaperFacingFullKept.lean
+
+  FullTrimmedLanguageKernel.lean
+  FullMainTheoremKernel.lean
+  PaperFacingFullMain.lean
+
+  FullFiniteMainKernel.lean
+  PaperFacingFullFiniteMain.lean
 ```
 
 The recommended current high-level target is:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullFiniteMain
+```
+
+The earlier high-level finite target remains:
 
 ```text
 LeanCfgProject.JALC.FiniteRepresentationBundle
@@ -748,11 +807,7 @@ If kept typed states coincide with intended copies, then original states are
 equivalent to the kept typed-state subtype.
 ```
 
-This isolates the remaining major prose burden:
-
-```text
-reachable productive typed states = intended copies
-```
+This isolates the kept-state correctness statement later discharged for the abstract `FullKept` predicate.
 
 ---
 
@@ -784,7 +839,7 @@ Once kept typed states are known to be exactly intended copies, the
 state/rule/language representation kernel follows.
 ```
 
-This module is close to the main representation theorem, except that it assumes the kept-state correctness statement rather than proving the full trimming theorem.
+This module is close to the main representation theorem and is now used downstream by the full-kept correctness package.
 
 ---
 
@@ -1091,10 +1146,510 @@ The finite representation side of the construction is bundled into a compact
 checked target.
 ```
 
-Current high-level target:
+Earlier high-level target:
 
 ```text
 LeanCfgProject.JALC.FiniteRepresentationBundle
+```
+
+---
+
+### `ReachableProductiveKernel.lean`
+
+This module introduces reachability and productivity predicates for untyped and typed rule structures.
+
+Checked components include:
+
+* untyped reachability;
+* typed reachability;
+* untyped productivity;
+* typed productivity;
+* preservation and reflection of reachability for intended-copy lifting;
+* preservation and reflection of productivity for intended-copy lifting;
+* proof that reachable typed states in the intended-copy lift are intended;
+* proof that productive typed states in the intended-copy lift are intended;
+* reduced untyped structures.
+
+Important checked statements:
+
+```text
+reachable_preserved
+reachable_reflected
+typed_reachable_lifted_is_intended
+productive_preserved
+productive_reflected
+typed_productive_lifted_is_intended
+```
+
+Paper-level meaning:
+
+```text
+The intended-copy lift has the expected reachability and productivity behavior.
+```
+
+---
+
+### `LiftedKeptCorrectnessKernel.lean`
+
+This module defines the kept predicate obtained by productivity and reachability in the intended-copy lift.
+
+Checked components include:
+
+* `LiftedKept`;
+* intended copies are kept under reducedness;
+* kept states in the intended-copy lift are intended;
+* lifted kept-correctness kernel;
+* representation kernel from lifted kept-correctness.
+
+Important checked statements:
+
+```text
+liftedKept_correctness_kernel
+representation_from_liftedKept_correctness
+```
+
+Paper-level meaning:
+
+```text
+For the intended-copy lift, productive and reachable typed states are exactly
+the intended copies, under reducedness.
+```
+
+---
+
+### `PaperFacingKeptCorrectness.lean`
+
+This module exposes the intended-copy kept-correctness checks under paper-facing names.
+
+Representative names:
+
+```text
+checked_lifted_reachable_is_intended
+checked_lifted_productive_is_intended
+checked_lifted_kept_correctness_kernel
+checked_representation_from_lifted_kept_correctness
+```
+
+Paper-level meaning:
+
+```text
+The intended-copy lift satisfies the kept-correctness property used by the
+representation kernels.
+```
+
+---
+
+### `FullRefinementKernel.lean`
+
+This module defines the abstract full all-copy typed refinement.
+
+Checked components include:
+
+* binary transport compatibility for intended state typings;
+* rule-typing compatibility for original structures;
+* full terminal rules;
+* full binary rules;
+* full start declarations;
+* full typed structure;
+* inclusion of intended terminal rules into the full refinement;
+* inclusion of intended binary rules into the full refinement;
+* inclusion of intended start declarations into the full refinement;
+* inclusion of the intended-copy lift into the full all-copy typed refinement.
+
+Important checked statements:
+
+```text
+full_terminal_contains_intended
+full_binary_contains_intended
+full_start_contains_intended
+liftStructure_included_in_full
+```
+
+Paper-level meaning:
+
+```text
+The intended-copy lift is a substructure of the full all-copy typed refinement
+under the rule-typing compatibility assumptions.
+```
+
+---
+
+### `FullRefinementLanguageKernel.lean`
+
+This module lifts full-refinement inclusion to derivations and start languages.
+
+Checked components include:
+
+* monotonicity of typed derivations under typed-structure inclusion;
+* monotonicity of typed start languages under typed-structure inclusion;
+* preservation of original derivations into the full refinement at intended copies;
+* language inclusion from the original structure into the full all-copy refinement.
+
+Important checked statements:
+
+```text
+typed_derivation_mono
+typed_start_language_mono
+full_refinement_derivation_preserved
+full_refinement_language_preserved
+full_refinement_language_inclusion_kernel
+```
+
+Paper-level meaning:
+
+```text
+Every original derivation and every original start-language word appears in the
+full all-copy typed refinement.
+```
+
+---
+
+### `PaperFacingFullRefinement.lean`
+
+This module exposes the full-refinement inclusion kernels under paper-facing names.
+
+Representative names:
+
+```text
+checked_liftStructure_included_in_full
+checked_full_refinement_derivation_preserved
+checked_full_refinement_language_preserved
+checked_full_refinement_language_inclusion_kernel
+```
+
+Paper-level meaning:
+
+```text
+The original-to-full-refinement inclusion direction is machine-checked.
+```
+
+---
+
+### `FullYieldKernel.lean`
+
+This module proves yield-type invariants for full all-copy typed derivations.
+
+Checked components include:
+
+* word type induced by a terminal type map;
+* multiplicativity of word type over append;
+* yield type of every full-refinement typed derivation;
+* reflection of full typed derivations to untyped derivations;
+* untyped yield soundness;
+* yield-correct typed copies;
+* proof that every productive full-refinement copy has the correct yield;
+* proof that wrong-yield copies are not productive.
+
+Important checked statements:
+
+```text
+full_derivation_yield_type
+full_derivation_reflected
+full_productive_copy_correct_yield
+wrong_yield_copy_not_productive
+```
+
+Paper-level meaning:
+
+```text
+Productivity in the full refinement eliminates wrong-yield copies, under
+yield soundness of the original structure.
+```
+
+---
+
+### `FullYieldPruningKernel.lean`
+
+This module packages the yield-pruning step.
+
+Checked components include:
+
+* `YieldProductiveKept`;
+* productive full copies imply yield-correct productive keptness;
+* equivalence between yield-productive keptness and productivity under yield soundness;
+* intended copies of productive untyped states are productive in the full refinement;
+* intended copies survive the yield-correct productivity filter.
+
+Important checked statements:
+
+```text
+full_productive_implies_yieldProductiveKept
+yieldProductiveKept_iff_productive
+intendedCopy_full_productive
+intendedCopy_yieldProductiveKept
+```
+
+Paper-level meaning:
+
+```text
+The first trimming stage removes wrong-yield copies while retaining intended
+productive copies.
+```
+
+---
+
+### `PaperFacingFullYield.lean`
+
+This module exposes the full-yield and yield-pruning kernels under paper-facing names.
+
+Representative names:
+
+```text
+checked_full_derivation_yield_type
+checked_full_derivation_reflected
+checked_full_productive_copy_correct_yield
+checked_wrong_yield_copy_not_productive
+checked_yieldProductiveKept_iff_productive
+```
+
+Paper-level meaning:
+
+```text
+The yield side of the full-refinement pruning argument is machine-checked.
+```
+
+---
+
+### `FullFrameReachabilityKernel.lean`
+
+This module formalizes productive-subgrammar reachability in the full refinement and proves frame correctness.
+
+Checked components include:
+
+* frame-correct typed copies;
+* `ProductiveReachableFull`, an inductive reachability predicate in which a binary step may be followed only when the sibling side is productive;
+* preservation of untyped reachability as productive-part reachability of intended copies in the full refinement, under reducedness;
+* start-frame correctness;
+* left-child frame correctness using productivity of the right sibling;
+* right-child frame correctness using productivity of the left sibling;
+* proof that productive-part reachability forces the intended left and right frames.
+
+Important checked statements:
+
+```text
+productiveReachableFull_preserved_of_reduced
+start_frame_correct
+left_frame_correct
+right_frame_correct
+productiveReachableFull_frame_correct
+```
+
+Paper-level meaning:
+
+```text
+In the full all-copy typed refinement, once productivity has removed wrong-yield
+copies, reachability inside the productive part eliminates wrong-frame copies.
+```
+
+This is the main Lean-checked kernel corresponding to the prose claim that productive-first trimming followed by reachability leaves only intended-frame copies.
+
+---
+
+### `FullKeptCorrectnessKernel.lean`
+
+This module combines full productivity and productive-part reachability.
+
+Checked components include:
+
+* `FullCorrectCopy`, i.e. correct yield and correct frame;
+* `FullKept`, i.e. productive and productive-part reachable full-refinement copies;
+* proof that a fully correct copy is intended;
+* proof that every full kept copy is fully correct;
+* proof that every full kept copy is intended;
+* proof that every intended copy is full kept under reducedness;
+* full kept-correctness kernel;
+* representation kernel from full kept-correctness.
+
+Important checked statements:
+
+```text
+fullCorrectCopy_isIntended
+fullKept_correctCopy
+fullKept_isIntended
+intendedCopy_fullKept_of_reduced
+fullKept_correctness_kernel
+representation_from_fullKept_correctness
+```
+
+Paper-level meaning:
+
+```text
+Under typing compatibility, yield soundness, and reducedness, the full-kept
+copies are exactly the intended copies, and the representation kernel follows.
+```
+
+---
+
+### `PaperFacingFullKept.lean`
+
+This module exposes the full-kept correctness kernels under paper-facing names.
+
+Representative names:
+
+```text
+checked_productiveReachableFull_frame_correct
+checked_fullKept_correctCopy
+checked_fullKept_isIntended
+checked_fullKept_correctness_kernel
+checked_representation_from_fullKept_correctness
+```
+
+Paper-level meaning:
+
+```text
+The main kept-correctness result for the full all-copy typed refinement is
+available under stable paper-facing names.
+```
+
+---
+
+### `FullTrimmedLanguageKernel.lean`
+
+This module uses full kept-correctness to package the language of the full-kept trimmed structure.
+
+Checked components include:
+
+* intended-copy proof for the `FullKept` predicate;
+* full-kept kept-state structure;
+* start-language equivalence between the full-kept trimmed structure and the original untyped grammar;
+* quantified full-kept trimmed language kernel;
+* kept representation package for the full-kept trimmed structure.
+
+Important checked statements:
+
+```text
+fullKept_trimmed_language_iff
+fullKept_trimmed_language_kernel
+fullKept_trimmed_representation_kernel
+```
+
+Paper-level meaning:
+
+```text
+The structure obtained by trimming the full refinement by the full-kept predicate
+generates exactly the original start language.
+```
+
+---
+
+### `FullMainTheoremKernel.lean`
+
+This module packages the main full-refinement theorem-level consequences.
+
+Checked components include:
+
+* `FullRefinementMainKernel`;
+* full kept-correctness;
+* full-kept trimmed language equivalence;
+* representation kernel;
+* language component of the main package;
+* representation component of the main package.
+
+Important checked statements:
+
+```text
+full_refinement_main_kernel
+full_refinement_main_language
+full_refinement_main_representation
+```
+
+Paper-level meaning:
+
+```text
+The main full-refinement representation package is machine-checked, conditional
+on the stated compatibility, yield-soundness, and reducedness assumptions.
+```
+
+---
+
+### `PaperFacingFullMain.lean`
+
+This module exposes the main full-refinement theorem package under paper-facing names.
+
+Representative names:
+
+```text
+checked_fullKept_trimmed_language_kernel
+checked_full_refinement_main_kernel
+checked_full_refinement_main_representation
+```
+
+Paper-level meaning:
+
+```text
+The full-kept trimming theorem and its representation consequence are available
+as stable paper-facing Lean targets.
+```
+
+---
+
+### `FullFiniteMainKernel.lean`
+
+This module connects the full main theorem package to the finite-representation kernels.
+
+Checked components include:
+
+* `FullFiniteMainKernel`;
+* full main theorem package;
+* finite typed-state and typed-rule universe bundle;
+* finite kept-state and kept-rule universe bundle for `FullKept`;
+* full-kept trimmed language equivalence;
+* full-kept representation kernel;
+* finite typed-universe component;
+* finite kept-universe component.
+
+Important checked statements:
+
+```text
+full_finite_main_kernel
+full_finite_main_language
+full_finite_main_kept_finite
+full_finite_main_typed_finite
+```
+
+Paper-level meaning:
+
+```text
+Under finite input data and decidable FullKept membership, the full-kept
+construction gives a finite kept-state representation with the same start
+language as the original grammar.
+```
+
+The decidability assumption is explicit and should be read as the boundary
+between the mathematical kept predicate and an executable extraction procedure.
+
+---
+
+### `PaperFacingFullFiniteMain.lean`
+
+This module exposes the finite full-main theorem package under paper-facing names.
+
+Representative names:
+
+```text
+checked_full_finite_main_kernel
+checked_full_finite_main_language
+checked_full_finite_main_kept_finite
+```
+
+Paper-level meaning:
+
+```text
+The current top-level paper-facing target checks the finite full-main
+representation package.
+```
+
+Current top-level target:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullFiniteMain
+```
+
+Latest recorded CI:
+
+```text
+Lean CI #292
+Commit: d02ac8d
 ```
 
 ---
@@ -1110,16 +1665,22 @@ no extra primitive declarations
 
 The GitHub Actions workflow checks the JALC Lean directory for the corresponding terms.
 
-Recommended minimal CI workflow:
+Recommended CI workflow:
 
 ```text
 lake build LeanCfgProject.JALC.Summary
-lake build LeanCfgProject.JALC.FiniteRepresentationBundle
+lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
 followed by the placeholder guard.
 
-Because `FiniteRepresentationBundle.lean` imports the newer theorem-facing and finite-representation modules through its dependency chain, building this target checks the extended artifact without needing to list every intermediate module in the CI workflow.
+A minimal workflow for checking only the newest theorem-facing package may build:
+
+```text
+lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+```
+
+Because `PaperFacingFullFiniteMain.lean` imports `FullFiniteMainKernel.lean`, which imports the full main theorem chain and the finite-representation bundle, building this target checks the current extended artifact without listing every intermediate module.
 
 ---
 
@@ -1141,32 +1702,52 @@ In particular, it checks:
 * preservation and reflection of derivations;
 * preservation and reflection of start-language membership;
 * kept-state rule, derivation, and language kernels;
-* finite universe and finite cardinality kernels.
+* finite universe and finite cardinality kernels;
+* intended-copy reachability/productivity kernels;
+* full all-copy typed refinement;
+* original-to-full inclusion;
+* full derivation yield invariants;
+* elimination of wrong-yield productive copies;
+* elimination of wrong-frame copies by productive-part reachability;
+* full-kept correctness;
+* full-kept trimmed language equivalence;
+* finite full-main theorem package.
 
-Thus, the artifact now supports a much stronger claim than the original baseline. It is no longer only a finite-carrier consistency check; it now verifies several structural kernels immediately surrounding the finite representation theorem.
+Thus, the artifact now supports a much stronger claim than the original baseline. It is no longer only a finite-carrier consistency check; it verifies the main mathematical kernels surrounding the finite representation theorem, including the full-kept correctness statement for the abstract full-refinement construction.
 
 ---
 
 ## 9. What is not claimed
 
-The current Lean development is not a complete end-to-end formalization of the full paper.
+The current Lean development is not a complete executable end-to-end formalization of the full paper.
 
-The most important remaining unformalized component is:
+The most important remaining components are:
 
 ```text
-reachable productive typed states = intended copies
+fixed-point extraction algorithm
+decidability and computation of FullKept membership
+end-to-end descriptor reconstruction from arbitrary CFG presentation data
 ```
 
 More explicitly, the current development does not yet fully formalize:
 
-* the general extraction theorem from arbitrary CFG presentations;
-* the full productive/reachable trimming fixed-point construction;
-* the proof that trimming leaves exactly the intended typed copies;
-* the full characterization theorem combining extraction, trimming, and descriptor reconstruction;
+* the concrete extraction algorithm from arbitrary CFG presentations;
+* the executable productive-first and reachable trimming fixed-point computation;
+* decidability of `FullKept` membership as an extracted procedure;
+* minimality of the computed fixed point;
 * shortlex witness preservation;
-* full context-closure coincidence for all one-hole contexts.
+* full context-closure coincidence for all one-hole contexts;
+* complete descriptor reconstruction from arbitrary presentation data.
 
-The current artifact proves many consequences that would follow once kept-state correctness is established, but the kept-state correctness theorem itself remains a prose proof.
+The current artifact proves the mathematical kept-correctness and finite-representation packages for the abstract full-refinement construction under explicit assumptions:
+
+```text
+TypingCompatible tau T G
+UntypedYieldSound tau T G
+UntypedReduced G
+DecidablePred (FullKept tau G)
+Fintype V, Fintype M, Fintype Sigma
+```
 
 This boundary should be stated explicitly in the paper.
 
@@ -1183,16 +1764,24 @@ infrastructure for observers, two-sided h-types, observed contexts and finite
 descriptors, and additional kernels for the two-sided frame-transport
 invariants, non-rigidity and productive-first examples, intended-copy state
 equivalence, rule preservation and reflection, derivation and start-language
-preservation, kept-state representation kernels, and finite-universe/cardinality
-kernels.  In particular, the frame-transport invariants are checked over
-arbitrary monoids, so the checked proof does not rely on commutativity.
+preservation, kept-state representation kernels, finite-universe/cardinality
+kernels, full all-copy refinement, full-refinement yield and frame kernels,
+full-kept correctness, full-kept trimmed language equivalence, and a finite
+full-main theorem package.  In particular, the frame-transport invariants are
+checked over arbitrary monoids, so the checked proof does not rely on
+commutativity.
+```
 
-The development is not claimed to be a complete formalization of the full
-extraction and trimming theorem.  The main remaining prose-level component is
-the proof that the reachable productive typed states are exactly the intended
-copies.  Conditional on that statement, the Lean development checks the
-state/rule/language representation kernels and the finite-universe/cardinality
-kernels used by the paper.
+The boundary should be stated as follows.
+
+```text
+The development is not claimed to be a complete executable formalization of the
+full extraction algorithm.  The current top-level theorem package assumes the
+typing-compatibility, yield-soundness and reducedness conditions for the
+abstract full refinement, and assumes decidability of the FullKept predicate
+when deriving the finite-main package.  The concrete fixed-point computation of
+FullKept membership and the end-to-end descriptor reconstruction from arbitrary
+CFG presentation data remain outside the present Lean artifact.
 ```
 
 A shorter version:
@@ -1202,10 +1791,12 @@ The Lean 4 artifact checks the finite typed infrastructure and several
 theorem-facing kernels of the representation theorem, including
 orientation-sensitive frame transport over arbitrary monoids, finite
 non-rigidity and productive-first witnesses, intended-copy state equivalence,
-rule/derivation/language preservation, kept-state representation kernels, and
-finite-universe/cardinality kernels.  We do not claim a complete formalization
-of the full extraction and trimming theorem; the equality between reachable
-productive typed states and intended copies remains proved in prose.
+rule/derivation/language preservation, full-refinement yield and frame
+invariants, full-kept correctness, full-kept trimmed language equivalence, and a
+finite full-main theorem package.  We do not claim an executable formalization
+of the full extraction algorithm; the fixed-point computation of FullKept
+membership and complete descriptor reconstruction remain outside the present
+artifact.
 ```
 
 ---
@@ -1216,14 +1807,14 @@ At the root of the repository, run:
 
 ```text
 lake build LeanCfgProject.JALC.Summary
-lake build LeanCfgProject.JALC.FiniteRepresentationBundle
+lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
 Expected checked targets:
 
 ```text
 LeanCfgProject.JALC.Summary
-LeanCfgProject.JALC.FiniteRepresentationBundle
+LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
 Reference baseline CI run:
@@ -1236,11 +1827,10 @@ Commit: a4e2d6a
 Latest successful extended CI run:
 
 ```text
-Lean CI #: TODO
-Commit: TODO
+Lean CI #292
+Commit: d02ac8d
+Pushed by: growupkuriyama-hub
 ```
-
-Fill in the latest CI number and commit hash after copying them from GitHub Actions.
 
 ---
 
@@ -1250,46 +1840,49 @@ A concise citation in the paper can be written as:
 
 ```text
 The accompanying Lean 4 artifact checks the modules
-LeanCfgProject.JALC.Summary and LeanCfgProject.JALC.FiniteRepresentationBundle.
-The baseline reference run was Lean CI #236 at commit a4e2d6a; the latest
-extended CI run is Lean CI #TODO at commit TODO.
+LeanCfgProject.JALC.Summary and
+LeanCfgProject.JALC.PaperFacingFullFiniteMain.  The baseline reference run was
+Lean CI #236 at commit a4e2d6a; the latest extended run reported here is Lean CI
+#292 at commit d02ac8d.
 ```
 
 A more descriptive version is:
 
 ```text
-The finite typed architecture and several theorem-facing kernels were checked
-in Lean 4.  The checked development includes finite observers, two-sided
-h-types, observed contexts, finite descriptors, transport invariants over
-arbitrary monoids, finite example kernels, intended-copy state/rule/derivation
-and language kernels, kept-state representation kernels, and
+The finite typed architecture and theorem-facing kernels were checked in Lean 4.
+The checked development includes finite observers, two-sided h-types, observed
+contexts, finite descriptors, transport invariants over arbitrary monoids,
+finite example kernels, intended-copy state/rule/derivation/language kernels,
+kept-state representation kernels, full-refinement yield and frame kernels,
+full-kept correctness, full-kept trimmed language equivalence, and
 finite-universe/cardinality kernels.  The current high-level target is
-LeanCfgProject.JALC.FiniteRepresentationBundle, together with the original
-summary target LeanCfgProject.JALC.Summary.
+LeanCfgProject.JALC.PaperFacingFullFiniteMain, together with the original summary
+target LeanCfgProject.JALC.Summary.
 ```
 
 ---
 
 ## 13. Practical assessment
 
-As a JALC companion artifact, the current development is strong.
+As a JALC companion artifact, the current development is very strong.
 
 A fair assessment is:
 
 ```text
-JALC submission support: high
-Complete main-theorem formalization: partial
+JALC submission support: very high
+Complete executable main-theorem formalization: still partial
+Mathematical full-refinement main kernel: substantially checked
 Finite representation side: substantially checked
-Extraction/trimming general theorem: still prose-level
+Extraction/trimming algorithm: still assumption-level
 ```
 
 Approximate internal assessment:
 
 ```text
-JALC-facing Lean value: 85--90 / 100
-Full main-theorem formalization: 55--60 / 100
-Finite-representation side: around 75 / 100
-Extraction/trimming theorem: around 30 / 100
+JALC-facing Lean value: 95 / 100
+Full mathematical main-kernel formalization: 78--82 / 100
+Finite-representation side: 85--90 / 100
+Executable extraction/fixed-point algorithm: 35--45 / 100
 ```
 
 These numbers should not be written in the paper, but they are useful for internal planning.
@@ -1301,23 +1894,38 @@ These numbers should not be written in the paper, but they are useful for intern
 The next serious formalization target would be:
 
 ```text
-KeptCorrectness.lean
+FullKeptExtractionAlgorithm.lean
 ```
 
 Goal:
 
 ```text
-reachable productive typed copies = intended copies
+compute FullKept membership by a finite productive-first and reachable fixed
+point over the full all-copy typed universe
 ```
 
-This is the main remaining theorem-level gap. It would require formalizing:
+This would require formalizing:
 
-* the actual typed refinement rules;
-* productivity;
-* reachability;
-* productive-first trimming;
-* correctness of intended copies;
-* exclusion of spurious productive/reachable copies.
+* finite enumerability of the full all-copy typed rule universe;
+* productivity as a least fixed point;
+* reachability after productivity as a least fixed point;
+* decidability of `FullKept`;
+* proof that the computed predicate agrees with the abstract `FullKept`;
+* optional extraction of a finite descriptor from the computed kept universe.
 
-This is substantially harder than the current kernel files. It should be attempted only after the current artifact has been recorded in the paper and the formalization report.
+A second possible target is:
 
+```text
+DescriptorReconstructionKernel.lean
+```
+
+Goal:
+
+```text
+construct an explicit finite descriptor from the full-kept finite universe and
+prove that it presents the same start language
+```
+
+This would connect the current theorem-facing representation package even more directly to the paper’s descriptor-level output.
+
+These targets are harder than the current packaging kernels. They are the right next steps only after the current artifact is recorded in the paper and formalization report.
