@@ -32,6 +32,12 @@ jobs:
       - name: Build JALC paper-facing checks
         run: lake build LeanCfgProject.JALC.PaperFacing
 
+      - name: Build JALC inverse kernel
+        run: lake build LeanCfgProject.JALC.InverseKernel
+
+      - name: Build JALC round-trip kernel
+        run: lake build LeanCfgProject.JALC.RoundTripKernel
+
       - name: Reject proof-bypassing placeholders in JALC modules
         run: |
           ! grep -R "sorry" LeanCfgProject/JALC
