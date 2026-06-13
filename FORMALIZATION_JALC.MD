@@ -8,12 +8,24 @@ A Finite Representation Theorem for Two-Sided Monoid-Typed CFG Presentations
 
 This file is specific to the JALC paper. It is separate from the repository-level `FORMALIZATION.md`, which records formalization results for a different paper or a broader repository-level development.
 
-This version updates the record through the recent full-refinement, full-kept, and finite-main theorem kernels, including the successful GitHub Actions run:
+This version updates the record through the recent full-refinement, full-kept,
+finite-main theorem, certified fixed-point extraction, algorithmic bridge, and
+full algorithmic agreement kernels, including the successful GitHub Actions run:
+
+```text
+Lean CI #304
+Commit: a434bb3
+Pushed by: growupkuriyama-hub
+Target: LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
+It also retains the earlier full finite-main reference run:
 
 ```text
 Lean CI #292
 Commit: d02ac8d
 Pushed by: growupkuriyama-hub
+Target: LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
 ---
@@ -50,20 +62,27 @@ Current high-level full finite-main target:
 LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
+Current high-level algorithmic agreement target:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
 Recommended current CI commands:
 
 ```text
 lake build LeanCfgProject.JALC.Summary
 lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
 The current minimal GitHub Actions workflow may build only:
 
 ```text
-LeanCfgProject.JALC.PaperFacingFullFiniteMain
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
-when testing the latest theorem-facing full-refinement package. For archival continuity, it is still reasonable to keep `LeanCfgProject.JALC.Summary` in CI as the original baseline target.
+when testing the newest theorem-facing algorithmic agreement package. For archival continuity, it is still reasonable to keep both `LeanCfgProject.JALC.Summary` and `LeanCfgProject.JALC.PaperFacingFullFiniteMain` in CI as earlier high-level targets.
 
 ---
 
@@ -122,13 +141,48 @@ LeanCfgProject.JALC.PaperFacingFullFiniteMain
 
 and their dependencies.
 
+### Latest algorithmic agreement CI run
+
+Latest successful algorithmic agreement CI run recorded in the chat:
+
+```text
+Lean CI #304
+Commit: a434bb3
+Pushed by: growupkuriyama-hub
+Target:
+  lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
+This run includes the certified fixed-point extraction and algorithmic agreement chain through:
+
+```text
+LeanCfgProject.JALC.FiniteClosureKernel
+LeanCfgProject.JALC.ProductiveReachableClosureKernel
+LeanCfgProject.JALC.PaperFacingFixedPoint
+
+LeanCfgProject.JALC.AlgorithmicExtractionKernel
+LeanCfgProject.JALC.PaperFacingAlgorithmicExtraction
+
+LeanCfgProject.JALC.AlgorithmicFullBridgeKernel
+LeanCfgProject.JALC.PaperFacingAlgorithmicFullBridge
+
+LeanCfgProject.JALC.FullAlgorithmicAgreementKernel
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
+and their dependencies.  In particular, the previous conditional bridge from a
+computed kept predicate to the full-kept theorem package is closed for the
+concrete full all-copy rule data: a certified run of Algorithm 1 over
+`fullExtractionRuleData tau G` computes exactly the abstract `FullKept tau G`
+predicate.
+
 ---
 
 ## 3. Purpose of the formalization
 
 The purpose of this Lean development is to provide a machine-checked companion artifact for the finite two-sided monoid-typed representation theorem developed in the JALC paper.
 
-The current development has four layers.
+The current development has five layers.
 
 First, it checks the finite typed infrastructure used by the paper:
 
@@ -172,7 +226,16 @@ Fourth, it packages these results into a finite main theorem layer:
 * full finite-main theorem package;
 * finite kept-state representation for the full-kept construction, assuming finite input data and decidable keptness.
 
-The development is still not claimed to be a complete executable extraction algorithm. In particular, the fixed-point algorithm computing `FullKept` membership, its decidability as an extracted procedure, and the complete end-to-end extraction from arbitrary CFG presentations remain outside the present Lean proof. However, the central mathematical kernels surrounding kept-state correctness and finite representation are now substantially checked.
+Fifth, it now checks the certified algorithmic-extraction layer corresponding to
+Algorithm 1 in the paper:
+
+* abstract finite-closure certificates for monotone predicate iteration;
+* productivity closure and productive-part reachability closure;
+* a certified Algorithm 1 package computing `computedProductive`, `computedReachable`, and `computedKept`;
+* a bridge from the computed kept predicate to the full-kept theorem package;
+* a direct agreement theorem showing that, for the concrete full all-copy rule data `fullExtractionRuleData tau G`, a certified run of Algorithm 1 computes exactly `FullKept tau G`.
+
+The development is still not claimed to be a complete executable extraction algorithm.  In particular, it does not yet provide an extracted implementation that automatically enumerates the full rule universe and constructs the fixed-point certificates from finite input data.  However, the previous assumption-level gap between the Algorithm 1 predicate and the abstract `FullKept` predicate has now been closed at the theorem-facing certified-kernel level.
 
 ---
 
@@ -202,16 +265,20 @@ The Lean development currently checks:
 * elimination of wrong-frame copies under productive-part reachability;
 * full-kept correctness;
 * full-kept trimmed language equivalence;
-* finite full-main theorem package.
+* finite full-main theorem package;
+* finite fixed-point closure certificates;
+* certified productivity and productive-part reachability closures;
+* certified Algorithm 1 extraction package;
+* bridge from computed keptness to full-kept correctness/language/representation kernels;
+* direct agreement theorem: Algorithm 1 over the concrete full all-copy rule data computes exactly `FullKept`.
 
 ### Still prose-level or assumption-level
 
 The following parts are not yet fully formalized as executable or end-to-end Lean theorems:
 
 * the complete extraction theorem from arbitrary CFG presentations;
-* the concrete fixed-point algorithm computing productive-first and reachable trimming;
-* decidability of `FullKept` membership as an extracted algorithm;
-* minimality of the computed fixed point as an implementation theorem;
+* an extracted implementation that automatically enumerates the full all-copy rule universe and constructs the fixed-point certificates;
+* decidability of `FullKept` membership as an extracted algorithm from finite data;
 * shortlex witness preservation;
 * context-closure coincidence lemmas for the full two-sided construction;
 * complete descriptor reconstruction from arbitrary presentation data.
@@ -223,9 +290,13 @@ The current artifact supports the following claim:
 ```text
 The Lean 4 development checks the finite typed infrastructure, the intended-copy
 state/rule/derivation/language kernels, full-refinement yield and frame kernels,
-full-kept correctness, full-kept trimmed language equivalence, and a finite
-full-main theorem package.  It is not yet a complete executable formalization of
-the full extraction and fixed-point trimming algorithm.
+full-kept correctness, full-kept trimmed language equivalence, a finite
+full-main theorem package, and certified Algorithm 1 kernels.  In particular,
+for the concrete full all-copy rule data, the artifact checks that a certified
+Algorithm 1 run computes exactly the abstract `FullKept` predicate used in the
+main theorem.  It is still not an extracted executable implementation that
+constructs the fixed-point certificates and descriptors automatically from
+arbitrary CFG presentation data.
 ```
 
 This is the recommended level of claim for the JALC paper.
@@ -297,9 +368,28 @@ LeanCfgProject/JALC/
 
   FullFiniteMainKernel.lean
   PaperFacingFullFiniteMain.lean
+
+  FiniteClosureKernel.lean
+  ProductiveReachableClosureKernel.lean
+  PaperFacingFixedPoint.lean
+
+  AlgorithmicExtractionKernel.lean
+  PaperFacingAlgorithmicExtraction.lean
+
+  AlgorithmicFullBridgeKernel.lean
+  PaperFacingAlgorithmicFullBridge.lean
+
+  FullAlgorithmicAgreementKernel.lean
+  PaperFacingFullAlgorithmicAgreement.lean
 ```
 
-The recommended current high-level target is:
+The recommended current high-level algorithmic target is:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
+The recommended full finite-main target remains:
 
 ```text
 LeanCfgProject.JALC.PaperFacingFullFiniteMain
@@ -1639,18 +1729,313 @@ The current top-level paper-facing target checks the finite full-main
 representation package.
 ```
 
-Current top-level target:
+Earlier full finite-main top-level target:
 
 ```text
 LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
 
-Latest recorded CI:
+Recorded full finite-main CI:
 
 ```text
 Lean CI #292
 Commit: d02ac8d
 ```
+
+The newer algorithmic agreement target is recorded below in
+`PaperFacingFullAlgorithmicAgreement.lean`.
+
+---
+
+### `FiniteClosureKernel.lean`
+
+This module introduces a small general-purpose finite-closure certificate layer
+for monotone predicate iteration.
+
+Checked components include:
+
+* predicate inclusion;
+* monotonicity;
+* pre-fixed and fixed predicates;
+* finite iteration certificates;
+* certified closure;
+* fixedness of the certified closure;
+* least-pre-fixedness of the certified closure.
+
+Important checked statements:
+
+```text
+certifiedClosure_fixed
+certifiedClosure_least_prefixed
+```
+
+Paper-level meaning:
+
+```text
+The fixed-point part of Algorithm 1 is represented by a reusable certified
+closure kernel.
+```
+
+This is not yet an extracted iterator that constructs certificates
+automatically; it is a theorem-facing certificate interface for finite
+fixed-point computations.
+
+---
+
+### `ProductiveReachableClosureKernel.lean`
+
+This module instantiates the finite-closure certificate layer for the two stages
+of Algorithm 1.
+
+Checked components include:
+
+* productivity step from terminal and binary rule predicates;
+* monotonicity of the productivity step;
+* certified productivity closure;
+* reachability step inside a fixed productive predicate;
+* monotonicity of productive-part reachability;
+* certified reachable closure;
+* computed keptness as the intersection of computed productivity and computed reachability.
+
+Important checked statements:
+
+```text
+productiveClosure_fixed
+productiveClosure_least_prefixed
+reachableClosure_fixed
+reachableClosure_least_prefixed
+computedKept_productive
+computedKept_reachable
+```
+
+Paper-level meaning:
+
+```text
+The productive-first and productive-part reachability structure of Algorithm 1
+is machine-checked at the certified fixed-point level.
+```
+
+---
+
+### `PaperFacingFixedPoint.lean`
+
+This module exposes the finite fixed-point and productive/reachable closure
+kernels under stable paper-facing names.
+
+Representative names:
+
+```text
+checked_productiveClosure_fixed
+checked_reachableClosure_fixed
+checked_computedKept_productive
+checked_computedKept_reachable
+```
+
+Paper-level meaning:
+
+```text
+The fixed-point skeleton used by Algorithm 1 is available as a paper-facing
+Lean target.
+```
+
+---
+
+### `AlgorithmicExtractionKernel.lean`
+
+This module packages the fixed-point closure kernels in the shape of Algorithm 1.
+
+Checked components include:
+
+* `ExtractionRuleData`, consisting of terminal, binary, and start predicates;
+* `CertifiedExtraction`, consisting of a productivity certificate followed by a productive-part reachability certificate;
+* `computedProductive`;
+* `computedReachable`;
+* `computedKept`;
+* fixedness and least-pre-fixedness of both computed stages;
+* keptness as the intersection of the two computed stages;
+* bundled certified extraction kernel.
+
+Important checked statements:
+
+```text
+computedProductive_fixed
+computedProductive_least_prefixed
+computedReachable_fixed
+computedReachable_least_prefixed
+computedKept_iff
+certifiedExtractionKernel_holds
+algorithmic_extraction_kernel
+```
+
+Paper-level meaning:
+
+```text
+Algorithm 1 is represented as a certified two-stage fixed-point extraction
+package.
+```
+
+---
+
+### `PaperFacingAlgorithmicExtraction.lean`
+
+This module exposes the certified Algorithm 1 extraction package under stable
+paper-facing names.
+
+Representative names:
+
+```text
+checked_algorithmic_productive_fixed
+checked_algorithmic_reachable_fixed
+checked_algorithmic_kept_iff
+checked_algorithmic_extraction_kernel
+checked_certifiedExtractionKernel_holds
+```
+
+Paper-level meaning:
+
+```text
+The paper-facing artifact includes a certified Algorithm 1 kernel.
+```
+
+---
+
+### `AlgorithmicFullBridgeKernel.lean`
+
+This module bridges the certified Algorithm 1 package to the full-kept theorem
+package.
+
+Checked components include:
+
+* `ComputedAgreesWithFullKept`;
+* transfer of intended-copy keptness from `FullKept` to computed keptness under agreement;
+* transfer of intendedness of computed kept states under agreement;
+* representation kernel for the computed kept predicate under agreement;
+* computed kept-state structure;
+* computed trimmed language equivalence under agreement;
+* bundled algorithmic/full bridge.
+
+Important checked statements:
+
+```text
+computed_kept_correctness_kernel
+representation_from_computed_agreement
+computed_trimmed_language_kernel
+algorithmic_full_bridge_kernel
+```
+
+Paper-level meaning:
+
+```text
+Once a computed kept predicate is identified with the abstract FullKept
+predicate, the existing full-kept correctness, language, and representation
+kernels transfer to the computed predicate.
+```
+
+---
+
+### `PaperFacingAlgorithmicFullBridge.lean`
+
+This module exposes the algorithmic/full bridge under stable paper-facing names.
+
+Representative names:
+
+```text
+checked_computed_kept_correctness_kernel
+checked_computed_trimmed_language_kernel
+checked_representation_from_computed_agreement
+checked_algorithmic_full_bridge_kernel
+```
+
+Paper-level meaning:
+
+```text
+The conditional bridge from Algorithm 1 output to the full-kept theorem package
+is available as a paper-facing target.
+```
+
+---
+
+### `FullAlgorithmicAgreementKernel.lean`
+
+This module closes the previous bridge for the concrete full all-copy typed rule
+data.
+
+Checked components include:
+
+* `fullExtractionRuleData`, the Algorithm 1 rule data induced by `fullTypedStructure tau G`;
+* pre-fixedness of typed productivity for the full rule data;
+* agreement between computed productivity and `TypedProductive (fullTypedStructure tau G)`;
+* pre-fixedness of productive-part reachability for the computed productive predicate;
+* inclusion from computed reachability to `ProductiveReachableFull`;
+* helper lemmas for terminal, binary, start, left-child, and right-child steps;
+* inclusion from `ProductiveReachableFull` back to computed reachability for productive states;
+* direct agreement theorem between computed keptness and `FullKept`;
+* closed algorithmic/full bridge theorem for the concrete full rule data.
+
+Important checked statements:
+
+```text
+fullExtractionRuleData
+full_computedProductive_agrees
+full_computedReachable_to_productiveReachable
+full_productiveReachable_to_computedReachable_of_productive
+fullAlgorithmicComputedKept_agrees
+closed_algorithmic_full_bridge_kernel
+```
+
+Paper-level meaning:
+
+```text
+For the concrete terminal, binary, and start predicates of the full all-copy
+typed refinement, a certified run of Algorithm 1 computes exactly the abstract
+FullKept predicate used in the main theorem.
+```
+
+This removes the previous assumption-level bridge condition
+`ComputedAgreesWithFullKept` for the concrete full rule data.  The remaining
+algorithmic boundary is not this agreement theorem, but the extraction of an
+actual executable fixed-point implementation and automatic construction of the
+certificates from finite data.
+
+---
+
+### `PaperFacingFullAlgorithmicAgreement.lean`
+
+This module exposes the direct full algorithmic agreement result under stable
+paper-facing names.
+
+Representative names:
+
+```text
+checked_fullExtractionRuleData
+checked_full_computedProductive_agrees
+checked_full_computedReachable_to_productiveReachable
+checked_fullAlgorithmicComputedKept_agrees
+checked_closed_algorithmic_full_bridge_kernel
+```
+
+Paper-level meaning:
+
+```text
+This is the current high-level algorithmic target.  It checks that Algorithm 1,
+when instantiated with the concrete full all-copy rule data, computes exactly
+the FullKept predicate and therefore closes the algorithmic/full bridge.
+```
+
+Current high-level algorithmic target:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
+Latest recorded CI:
+
+```text
+Lean CI #304
+Commit: a434bb3
+Pushed by: growupkuriyama-hub
+```
+
 
 ---
 
@@ -1670,6 +2055,7 @@ Recommended CI workflow:
 ```text
 lake build LeanCfgProject.JALC.Summary
 lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
 followed by the placeholder guard.
@@ -1677,10 +2063,10 @@ followed by the placeholder guard.
 A minimal workflow for checking only the newest theorem-facing package may build:
 
 ```text
-lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
-Because `PaperFacingFullFiniteMain.lean` imports `FullFiniteMainKernel.lean`, which imports the full main theorem chain and the finite-representation bundle, building this target checks the current extended artifact without listing every intermediate module.
+Because `PaperFacingFullAlgorithmicAgreement.lean` imports the full algorithmic agreement kernel, which imports the certified extraction, full bridge, full-kept, and full finite-main dependencies, building this target checks the newest extended artifact without listing every intermediate module.  `PaperFacingFullFiniteMain.lean` should still be kept as a stable full finite-main theorem target.
 
 ---
 
@@ -1711,7 +2097,12 @@ In particular, it checks:
 * elimination of wrong-frame copies by productive-part reachability;
 * full-kept correctness;
 * full-kept trimmed language equivalence;
-* finite full-main theorem package.
+* finite full-main theorem package;
+* finite fixed-point closure certificates;
+* certified productivity and productive-part reachability closures;
+* certified Algorithm 1 extraction package;
+* bridge from computed keptness to full-kept correctness/language/representation kernels;
+* direct agreement theorem: Algorithm 1 over the concrete full all-copy rule data computes exactly `FullKept`.
 
 Thus, the artifact now supports a much stronger claim than the original baseline. It is no longer only a finite-carrier consistency check; it verifies the main mathematical kernels surrounding the finite representation theorem, including the full-kept correctness statement for the abstract full-refinement construction.
 
@@ -1724,22 +2115,23 @@ The current Lean development is not a complete executable end-to-end formalizati
 The most important remaining components are:
 
 ```text
-fixed-point extraction algorithm
-decidability and computation of FullKept membership
+extracted implementation of the fixed-point algorithm
+automatic construction of fixed-point certificates from finite input data
+decidability and computation of FullKept membership as executable code
 end-to-end descriptor reconstruction from arbitrary CFG presentation data
 ```
 
 More explicitly, the current development does not yet fully formalize:
 
 * the concrete extraction algorithm from arbitrary CFG presentations;
-* the executable productive-first and reachable trimming fixed-point computation;
+* an extracted executable productive-first and reachable trimming procedure;
+* automatic construction of the fixed-point certificates used by `CertifiedExtraction`;
 * decidability of `FullKept` membership as an extracted procedure;
-* minimality of the computed fixed point;
 * shortlex witness preservation;
 * full context-closure coincidence for all one-hole contexts;
 * complete descriptor reconstruction from arbitrary presentation data.
 
-The current artifact proves the mathematical kept-correctness and finite-representation packages for the abstract full-refinement construction under explicit assumptions:
+The current artifact proves the mathematical kept-correctness, finite-representation, and certified algorithmic agreement packages for the abstract full-refinement construction under explicit assumptions:
 
 ```text
 TypingCompatible tau T G
@@ -1747,7 +2139,10 @@ UntypedYieldSound tau T G
 UntypedReduced G
 DecidablePred (FullKept tau G)
 Fintype V, Fintype M, Fintype Sigma
+CertifiedExtraction (fullExtractionRuleData tau G)
 ```
+
+The last assumption is a certificate-level formulation of the two fixed-point computations in Algorithm 1.  It is weaker than an extracted executable implementation, but stronger than a prose-level algorithmic claim: the artifact proves that any certified run over the concrete full all-copy rule data computes exactly `FullKept`.
 
 This boundary should be stated explicitly in the paper.
 
@@ -1766,10 +2161,12 @@ invariants, non-rigidity and productive-first examples, intended-copy state
 equivalence, rule preservation and reflection, derivation and start-language
 preservation, kept-state representation kernels, finite-universe/cardinality
 kernels, full all-copy refinement, full-refinement yield and frame kernels,
-full-kept correctness, full-kept trimmed language equivalence, and a finite
-full-main theorem package.  In particular, the frame-transport invariants are
-checked over arbitrary monoids, so the checked proof does not rely on
-commutativity.
+full-kept correctness, full-kept trimmed language equivalence, a finite
+full-main theorem package, certified fixed-point extraction kernels, and a
+direct agreement theorem showing that Algorithm 1 over the concrete full
+all-copy rule data computes exactly the abstract FullKept predicate.  In
+particular, the frame-transport invariants are checked over arbitrary monoids,
+so the checked proof does not rely on commutativity.
 ```
 
 The boundary should be stated as follows.
@@ -1778,10 +2175,11 @@ The boundary should be stated as follows.
 The development is not claimed to be a complete executable formalization of the
 full extraction algorithm.  The current top-level theorem package assumes the
 typing-compatibility, yield-soundness and reducedness conditions for the
-abstract full refinement, and assumes decidability of the FullKept predicate
-when deriving the finite-main package.  The concrete fixed-point computation of
-FullKept membership and the end-to-end descriptor reconstruction from arbitrary
-CFG presentation data remain outside the present Lean artifact.
+abstract full refinement, assumes decidability of the FullKept predicate when
+deriving the finite-main package, and represents Algorithm 1 by certified
+fixed-point closures rather than by extracted executable code.  The automatic
+construction of these certificates and the end-to-end descriptor reconstruction
+from arbitrary CFG presentation data remain outside the present Lean artifact.
 ```
 
 A shorter version:
@@ -1793,10 +2191,11 @@ orientation-sensitive frame transport over arbitrary monoids, finite
 non-rigidity and productive-first witnesses, intended-copy state equivalence,
 rule/derivation/language preservation, full-refinement yield and frame
 invariants, full-kept correctness, full-kept trimmed language equivalence, and a
-finite full-main theorem package.  We do not claim an executable formalization
-of the full extraction algorithm; the fixed-point computation of FullKept
-membership and complete descriptor reconstruction remain outside the present
-artifact.
+finite full-main theorem package, and certified Algorithm 1 kernels proving
+that the concrete full all-copy rule data computes the abstract FullKept
+predicate.  We do not claim an extracted executable implementation of the full
+extraction algorithm; automatic certificate construction and complete descriptor
+reconstruction remain outside the present artifact.
 ```
 
 ---
@@ -1808,6 +2207,7 @@ At the root of the repository, run:
 ```text
 lake build LeanCfgProject.JALC.Summary
 lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
 Expected checked targets:
@@ -1815,6 +2215,7 @@ Expected checked targets:
 ```text
 LeanCfgProject.JALC.Summary
 LeanCfgProject.JALC.PaperFacingFullFiniteMain
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
 Reference baseline CI run:
@@ -1824,11 +2225,19 @@ Lean CI #236
 Commit: a4e2d6a
 ```
 
-Latest successful extended CI run:
+Latest successful full finite-main CI run:
 
 ```text
 Lean CI #292
 Commit: d02ac8d
+Pushed by: growupkuriyama-hub
+```
+
+Latest successful algorithmic agreement CI run:
+
+```text
+Lean CI #304
+Commit: a434bb3
 Pushed by: growupkuriyama-hub
 ```
 
@@ -1840,10 +2249,11 @@ A concise citation in the paper can be written as:
 
 ```text
 The accompanying Lean 4 artifact checks the modules
-LeanCfgProject.JALC.Summary and
-LeanCfgProject.JALC.PaperFacingFullFiniteMain.  The baseline reference run was
-Lean CI #236 at commit a4e2d6a; the latest extended run reported here is Lean CI
-#292 at commit d02ac8d.
+LeanCfgProject.JALC.Summary, LeanCfgProject.JALC.PaperFacingFullFiniteMain, and
+LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement.  The baseline
+reference run was Lean CI #236 at commit a4e2d6a; the full finite-main run was
+Lean CI #292 at commit d02ac8d; and the latest algorithmic agreement run
+reported here is Lean CI #304 at commit a434bb3.
 ```
 
 A more descriptive version is:
@@ -1855,9 +2265,12 @@ contexts, finite descriptors, transport invariants over arbitrary monoids,
 finite example kernels, intended-copy state/rule/derivation/language kernels,
 kept-state representation kernels, full-refinement yield and frame kernels,
 full-kept correctness, full-kept trimmed language equivalence, and
-finite-universe/cardinality kernels.  The current high-level target is
-LeanCfgProject.JALC.PaperFacingFullFiniteMain, together with the original summary
-target LeanCfgProject.JALC.Summary.
+finite-universe/cardinality kernels, certified fixed-point extraction kernels,
+and a direct agreement kernel proving that Algorithm 1 over the concrete
+full all-copy rule data computes FullKept.  The current high-level algorithmic
+target is LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement, together with
+the full finite-main target LeanCfgProject.JALC.PaperFacingFullFiniteMain and
+the original summary target LeanCfgProject.JALC.Summary.
 ```
 
 ---
@@ -1873,16 +2286,17 @@ JALC submission support: very high
 Complete executable main-theorem formalization: still partial
 Mathematical full-refinement main kernel: substantially checked
 Finite representation side: substantially checked
-Extraction/trimming algorithm: still assumption-level
+Extraction/trimming algorithm: certified-kernel level, not executable-code level
 ```
 
 Approximate internal assessment:
 
 ```text
-JALC-facing Lean value: 95 / 100
-Full mathematical main-kernel formalization: 78--82 / 100
-Finite-representation side: 85--90 / 100
-Executable extraction/fixed-point algorithm: 35--45 / 100
+JALC-facing Lean value: 97 / 100
+Full mathematical main-kernel formalization: 84--88 / 100
+Finite-representation side: 88--92 / 100
+Certified Algorithm 1 / FullKept agreement: 85--90 / 100
+Executable extraction/fixed-point implementation: 45--55 / 100
 ```
 
 These numbers should not be written in the paper, but they are useful for internal planning.
@@ -1894,23 +2308,31 @@ These numbers should not be written in the paper, but they are useful for intern
 The next serious formalization target would be:
 
 ```text
-FullKeptExtractionAlgorithm.lean
+ExecutableFullKeptExtraction.lean
 ```
 
 Goal:
 
 ```text
-compute FullKept membership by a finite productive-first and reachable fixed
-point over the full all-copy typed universe
+construct the fixed-point certificates used by CertifiedExtraction from finite
+input data, yielding an executable productive-first and reachable trimming
+procedure over the full all-copy typed universe
 ```
 
-This would require formalizing:
+The agreement theorem itself is now checked by:
 
-* finite enumerability of the full all-copy typed rule universe;
-* productivity as a least fixed point;
-* reachability after productivity as a least fixed point;
-* decidability of `FullKept`;
-* proof that the computed predicate agrees with the abstract `FullKept`;
+```text
+FullAlgorithmicAgreementKernel.lean
+PaperFacingFullAlgorithmicAgreement.lean
+```
+
+The remaining executable target would require formalizing:
+
+* finite enumeration of the full all-copy typed rule universe;
+* decidable terminal, binary, and start predicates for `fullExtractionRuleData`;
+* construction of productivity fixed-point certificates;
+* construction of productive-part reachability fixed-point certificates;
+* extraction of a decidable `FullKept` predicate from these certificates;
 * optional extraction of a finite descriptor from the computed kept universe.
 
 A second possible target is:
