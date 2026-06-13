@@ -94,6 +94,7 @@ def binaryTransport (parent left right : Copy) : Prop :=
 /-- The intended binary rule has the intended children. -/
 theorem intended_binary_transport :
     binaryTransport intendedX intendedY intendedZ := by
+  unfold binaryTransport intendedX intendedY intendedZ
   decide
 
 
@@ -104,6 +105,7 @@ This is the exact finite path responsible for the failure of naive trimming.
 -/
 theorem spurious_binary_transport :
     binaryTransport wrongParentX spuriousY spuriousZSibling := by
+  unfold binaryTransport wrongParentX spuriousY spuriousZSibling
   decide
 
 
@@ -120,12 +122,14 @@ def fullStartCopy (c : Copy) : Prop :=
 /-- The intended X copy is a full start copy. -/
 theorem intendedX_full_start :
     fullStartCopy intendedX := by
+  unfold fullStartCopy intendedX
   decide
 
 
 /-- The wrong-yield X copy is also a full start copy. -/
 theorem wrongParentX_full_start :
     fullStartCopy wrongParentX := by
+  unfold fullStartCopy wrongParentX
   decide
 
 
@@ -144,18 +148,21 @@ def fullProductiveCopy (c : Copy) : Prop :=
 /-- The intended X copy is productive. -/
 theorem intendedX_full_productive :
     fullProductiveCopy intendedX := by
+  unfold fullProductiveCopy intendedX
   decide
 
 
 /-- The intended Y copy is productive. -/
 theorem intendedY_full_productive :
     fullProductiveCopy intendedY := by
+  unfold fullProductiveCopy intendedY
   decide
 
 
 /-- The intended Z copy is productive. -/
 theorem intendedZ_full_productive :
     fullProductiveCopy intendedZ := by
+  unfold fullProductiveCopy intendedZ
   decide
 
 
@@ -166,6 +173,7 @@ This is the dangerous point: productivity alone does not remove it.
 -/
 theorem spuriousY_full_productive :
     fullProductiveCopy spuriousY := by
+  unfold fullProductiveCopy spuriousY
   decide
 
 
@@ -177,6 +185,7 @@ computed.
 -/
 theorem wrongParentX_not_full_productive :
     ¬ fullProductiveCopy wrongParentX := by
+  unfold fullProductiveCopy wrongParentX
   decide
 
 
