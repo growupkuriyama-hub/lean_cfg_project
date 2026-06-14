@@ -101,3 +101,6 @@ jobs:
 
       - name: Build JALC concrete bounded-witness bridge target
         run: lake build LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+
+      - name: Build JALC concrete two-stage bounded search target
+        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageBoundedSearch

@@ -39,10 +39,17 @@ Target chain including:
 Status: succeeded
 ```
 
-The latest user-reported successful target is:
+The latest user-reported successful target before the later executable-limit extension was:
 
 ```text
 Target: LeanCfgProject.JALC.PaperFacingStepDecidability
+Status: succeeded
+```
+
+The latest user-reported successful target after the bounded-search and concrete bounded-witness bridge extension is:
+
+```text
+Target: LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
 Status: succeeded
 ```
 
@@ -54,6 +61,141 @@ Commit: d02ac8d
 Pushed by: growupkuriyama-hub
 Target: LeanCfgProject.JALC.PaperFacingFullFiniteMain
 ```
+
+---
+
+## Latest update: executable-limit, list-stability, bounded-search, and concrete bounded-witness bridge
+
+This update records the later successful Lean targets added after the previously
+recorded `PaperFacingStepDecidability` milestone.
+
+The following additional paper-facing targets were reported as successfully
+passing in the conversation:
+
+```text
+LeanCfgProject.JALC.PaperFacingExecutableLimit
+LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+```
+
+A temporary target
+
+```text
+LeanCfgProject.JALC.PaperFacingListStabilityDecision
+```
+
+was also checked during the development of the list-stability decision layer.
+The later bounded-search target was deliberately simplified so that the generic
+bounded-search kernel does not depend on this temporary paper-facing target.
+
+The currently most advanced user-reported successful target is therefore:
+
+```text
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+```
+
+This target verifies a thin bridge from generic bounded list-stability witnesses
+back to the concrete full all-copy extraction interface.  In particular, it
+checks that, if productive and reachable list-stability witnesses are supplied
+for the concrete full all-copy rule data, then they can be converted into
+`ConcreteListStabilityData`, and hence into the already checked
+`CertifiedExtraction` and `FullKept` decidability chain.
+
+The newly added executable-interface modules are:
+
+```text
+StepPreservationKernel.lean
+ConcreteStepPreservationKernel.lean
+PaperFacingFullIteratorCertificate.lean
+ActualListIteratorKernel.lean
+FiniteStabilizationBoundaryKernel.lean
+DescriptorReconstructionBoundaryKernel.lean
+PaperFacingExecutableLimit.lean
+
+ListStabilityKernel.lean
+ConcreteListStabilityKernel.lean
+PaperFacingListStabilityExtraction.lean
+
+BoundedListStabilitySearchKernel.lean
+PaperFacingBoundedStabilitySearch.lean
+
+ConcreteBoundedWitnessBridgeKernel.lean
+PaperFacingConcreteBoundedWitnessBridge.lean
+```
+
+The main new verified chain is:
+
+```text
+finite universe support
++ finite list-stability witness
+=> StableAt
+=> ClosureCertificate
+=> CertifiedExtraction
+
+generic bounded search
+=> Option ListStabilityWitness
+
+productive ListStabilityWitness
++ reachable ListStabilityWitness
++ concrete full-rule universes and rule decisions
+=> ConcreteListStabilityData
+=> CertifiedExtraction
+=> FullKept decidability
+```
+
+The current artifact is still not claimed to be a complete executable extraction
+algorithm.  The remaining executable gap is the automatic proof that the bounded
+search succeeds within a specific finite bound, together with an end-to-end
+construction of the concrete rule decisions and descriptor reconstruction from
+arbitrary finite CFG presentation data.
+
+Recommended newest CI commands:
+
+```text
+lake build LeanCfgProject.JALC.PaperFacingExecutableLimit
+lake build LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+lake build LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+lake build LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+```
+
+Recommended current high-level CI suite:
+
+```text
+lake build LeanCfgProject.JALC.Summary
+lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
+lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
+lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+lake build LeanCfgProject.JALC.PaperFacingStepDecidability
+lake build LeanCfgProject.JALC.PaperFacingExecutableLimit
+lake build LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+lake build LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+lake build LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+lake build LeanCfgProject.JALC.PaperFacingExecutableLimit
+lake build LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+lake build LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+lake build LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+```
+
+Recommended current paper-level claim:
+
+```text
+The Lean 4 development verifies the theorem-facing finite representation
+kernels, the full all-copy/full-kept correctness interface, and the direct
+agreement between the certified Algorithm 1 kept predicate and the abstract
+FullKept predicate.  It also checks a substantial executable-interface chain:
+finite rule/list certificates, step decidability, concrete step preservation,
+finite list-stability certificates, generic bounded search for list-stability
+witnesses, and the bridge from productive/reachable bounded witnesses to
+concrete certified extraction and FullKept decidability.  The artifact is not
+yet a full extracted implementation that automatically finds the finite
+fixed-point heights and reconstructs descriptors from arbitrary CFG
+presentation data.
+```
+
+---
 
 ---
 
@@ -95,10 +237,14 @@ Current high-level algorithmic agreement target:
 LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
-Current high-level executable-interface target:
+Current high-level executable-interface targets:
 
 ```text
 LeanCfgProject.JALC.PaperFacingStepDecidability
+LeanCfgProject.JALC.PaperFacingExecutableLimit
+LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
 ```
 
 Recommended current CI commands:
@@ -111,6 +257,10 @@ lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
 lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
 lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
 lake build LeanCfgProject.JALC.PaperFacingStepDecidability
+LeanCfgProject.JALC.PaperFacingExecutableLimit
+LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
 ```
 
 The current minimal GitHub Actions workflow may build only:
@@ -234,7 +384,7 @@ LeanCfgProject.JALC.PaperFacingStepDecidability
 The currently most advanced checked target is:
 
 ```text
-LeanCfgProject.JALC.PaperFacingStepDecidability
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
 ```
 
 This target checks the generic recursion principle that if a predicate
@@ -361,7 +511,13 @@ The Lean development currently checks:
 * iterator trace boundary bundling rule-list and closure-trace data;
 * productive/reachable iterator certificate boundary;
 * finite-universe filtering interface for building iterator outputs from decidable iterates;
-* generic finite-iterate decidability from a decidability-preserving step.
+* generic finite-iterate decidability from a decidability-preserving step;
+* concrete preservation of decidability for the productive and reachable steps;
+* executable-limit bridge from concrete step-preservation data to FullKept decidability;
+* finite list-stability data to certified extraction;
+* generic bounded search producing finite list-stability witnesses;
+* conversion of bounded productive/reachable witnesses into concrete list-stability data;
+* bridge from concrete bounded witnesses to certified extraction and FullKept decidability.
 
 ### Still prose-level or assumption-level
 
@@ -510,6 +666,24 @@ LeanCfgProject/JALC/
   IterDecidabilityKernel.lean
   ProductiveReachableStepDecidabilityKernel.lean
   PaperFacingStepDecidability.lean
+
+  StepPreservationKernel.lean
+  ConcreteStepPreservationKernel.lean
+  PaperFacingFullIteratorCertificate.lean
+  ActualListIteratorKernel.lean
+  FiniteStabilizationBoundaryKernel.lean
+  DescriptorReconstructionBoundaryKernel.lean
+  PaperFacingExecutableLimit.lean
+
+  ListStabilityKernel.lean
+  ConcreteListStabilityKernel.lean
+  PaperFacingListStabilityExtraction.lean
+
+  BoundedListStabilitySearchKernel.lean
+  PaperFacingBoundedStabilitySearch.lean
+
+  ConcreteBoundedWitnessBridgeKernel.lean
+  PaperFacingConcreteBoundedWitnessBridge.lean
 ```
 
 The recommended current high-level algorithmic target is:
@@ -2907,8 +3081,8 @@ More explicitly, the current development does not yet fully formalize:
 * the concrete extraction algorithm from arbitrary CFG presentations;
 * an extracted executable productive-first and reachable trimming procedure;
 * automatic construction of the fixed-point certificates used by `CertifiedExtraction`;
-* proof that the concrete `ProductiveStep` and `ReachableStep` preserve
-  decidability from concrete terminal/start/binary predicate decisions;
+* proof that a concrete bounded search necessarily succeeds within a specified
+  finite support bound;
 * an extracted terminating list-based fixed-point iterator;
 * decidability of `FullKept` membership as an extracted procedure;
 * shortlex witness preservation;
@@ -3341,3 +3515,388 @@ using terminal/start/binary rule-predicate decisions
 
 These targets would reduce the remaining executable-interface assumptions even
 further, without yet requiring a complete terminating extracted implementation.
+
+
+---
+
+## 10. Later executable-interface modules after `PaperFacingStepDecidability`
+
+### `StepPreservationKernel.lean`
+
+This module proves the generic finite-search deciders needed to show that the
+productive and reachable closure steps preserve predicate decidability over a
+complete finite universe list.
+
+Checked components include:
+
+* finite existential search over a complete universe list;
+* decidability of productive witnesses for binary rules;
+* decidability preservation for `ProductiveStep`;
+* decidability preservation for `ReachableStep`.
+
+Paper-level meaning:
+
+```text
+The concrete fixed-point steps used by Algorithm 1 preserve decidability when
+terminal/start/binary predicates and the current productive predicate are
+decidable over a finite universe.
+```
+
+---
+
+### `ConcreteStepPreservationKernel.lean`
+
+This module specializes the generic step-preservation lemmas to the concrete
+full all-copy rule data.
+
+Checked components include:
+
+* construction of concrete productive-step decidability preservation;
+* construction of concrete reachable-step decidability preservation;
+* conversion from concrete rule-universe/rule-decision data to the previous
+  step-decidability interface;
+* transfer to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+Concrete finite rule data and rule-predicate decisions are sufficient to supply
+the step-preservation assumptions required by the finite-iterate decidability
+chain.
+```
+
+---
+
+### `PaperFacingFullIteratorCertificate.lean`
+
+This module exposes the concrete step-preservation boundary under paper-facing
+names.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingFullIteratorCertificate
+```
+
+Paper-level meaning:
+
+```text
+The concrete full all-copy rule data can feed the finite iterator certificate
+chain through checked step-preservation data.
+```
+
+---
+
+### `ActualListIteratorKernel.lean`
+
+This module packages the actual list-iterator interface from concrete
+step-preservation data.
+
+Checked components include:
+
+* construction of productive/reachable iterator certificate data from concrete
+  step-preservation data;
+* transfer from this iterator certificate data to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+Concrete rule-universe and rule-decision data can be routed through the iterator
+certificate interface to obtain FullKept decidability.
+```
+
+---
+
+### `FiniteStabilizationBoundaryKernel.lean`
+
+This module keeps the stable-height boundary explicit.
+
+Checked components include:
+
+* `StableHeightData`;
+* conversion from stable productive/reachable heights into a
+  `CertifiedExtraction`;
+* certified extraction kernel for those stable heights.
+
+Paper-level meaning:
+
+```text
+If stable heights for the productive and reachable closures are supplied, they
+produce the certified extraction object used by the Algorithm 1 chain.
+```
+
+This module does not yet prove that a particular finite bound always supplies
+such stable heights.
+
+---
+
+### `DescriptorReconstructionBoundaryKernel.lean`
+
+This module records a finite descriptor-output boundary connected to the current
+executable chain.
+
+Checked components include:
+
+* minimal finite descriptor-output interface;
+* boundary data combining concrete step-preservation data with descriptor output;
+* transfer from descriptor-boundary data to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+Descriptor reconstruction remains a separated output phase, but the current
+executable chain can already be connected to a finite descriptor-output
+interface.
+```
+
+---
+
+### `PaperFacingExecutableLimit.lean`
+
+This module exposes the executable-limit package under a paper-facing target.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingExecutableLimit
+```
+
+Paper-level meaning:
+
+```text
+The artifact has reached the boundary at which concrete rule decisions and
+finite universes can feed the certified iterator/FullKept decidability chain,
+while automatic stable-height discovery and descriptor reconstruction remain
+outside the current end-to-end implementation.
+```
+
+---
+
+### `ListStabilityKernel.lean`
+
+This module introduces list-stability over a complete finite universe list.
+
+Checked components include:
+
+* `AgreeOnList`;
+* conversion from list agreement over a complete universe list to global
+  predicate agreement;
+* conversion from list stability of `F (Iter F n)` and `Iter F n` to
+  `StableAt F n`;
+* construction of closure certificates from list-stability data;
+* two-stage productive/reachable list-stability data;
+* conversion from list-stability data to `CertifiedExtraction`.
+
+Paper-level meaning:
+
+```text
+A finite support equality check at a proposed fixed-point height is enough to
+produce the stable-height certificate required by Algorithm 1.
+```
+
+---
+
+### `ConcreteListStabilityKernel.lean`
+
+This module specializes the generic list-stability interface to the concrete
+full all-copy rule data.
+
+Checked components include:
+
+* concrete productive list-stability data;
+* concrete reachable list-stability data;
+* conversion from concrete list-stability data to `CertifiedExtraction`;
+* transfer from concrete list-stability data to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+Finite support-stability proofs for the concrete productive and reachable stages
+are sufficient to build the certified extraction object and recover FullKept
+decidability.
+```
+
+---
+
+### `PaperFacingListStabilityExtraction.lean`
+
+This module exposes the concrete list-stability extraction package.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+```
+
+Paper-level meaning:
+
+```text
+The finite support-stability interface is connected to certified extraction and
+FullKept decidability under stable paper-facing names.
+```
+
+---
+
+### `BoundedListStabilitySearchKernel.lean`
+
+This module introduces a generic bounded search for list-stability witnesses.
+
+Checked components include:
+
+* decidability of finite list agreement from decidable predicates;
+* fixed-height decidability of list stability;
+* `ListStabilityWitness`;
+* bounded search over candidate heights up to a supplied fuel;
+* conversion from a successful bounded-search witness to `ClosureCertificate`
+  and `StableAt`.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+```
+
+Paper-level meaning:
+
+```text
+Given a finite list-stability decision procedure and a fuel bound, the artifact
+can search for a finite witness of stability and convert any successful result
+into the closure certificate required by the fixed-point interface.
+```
+
+This is a bounded-search interface.  It does not yet prove that a particular
+fuel always succeeds.
+
+---
+
+### `PaperFacingBoundedStabilitySearch.lean`
+
+This module exposes the generic bounded-search interface under paper-facing
+names.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+```
+
+Paper-level meaning:
+
+```text
+The generic finite bounded-search layer is checked independently of the concrete
+full-rule extraction layer.
+```
+
+---
+
+### `ConcreteBoundedWitnessBridgeKernel.lean`
+
+This module reconnects the generic bounded-search witnesses to the concrete
+full all-copy extraction interface.
+
+Checked components include:
+
+* concrete productive stage operator;
+* concrete reachable stage operator after fixing the productive height;
+* `ConcreteBoundedWitnessData`;
+* conversion from productive/reachable bounded witnesses to
+  `ConcreteListStabilityData`;
+* construction of `CertifiedExtraction` from bounded-witness data;
+* transfer from bounded-witness data to `FullKept` decidability.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+```
+
+Paper-level meaning:
+
+```text
+If bounded search supplies productive and reachable list-stability witnesses for
+the concrete full all-copy rule data, then these witnesses are accepted by the
+existing concrete list-stability/certified-extraction/FullKept decidability
+chain.
+```
+
+---
+
+### `PaperFacingConcreteBoundedWitnessBridge.lean`
+
+This module exposes the concrete bounded-witness bridge under paper-facing names.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
+```
+
+Latest status:
+
+```text
+Status: succeeded
+Reported by user after fixing the universe level of
+ConcreteBoundedWitnessData.
+```
+
+Paper-level meaning:
+
+```text
+The current most advanced executable-interface target checks the bridge from
+generic bounded fixed-point witnesses back to the concrete full all-copy
+Algorithm 1 extraction package.
+```
+
+---
+
+## 11. Updated honest status after the bounded-witness bridge
+
+### Newly checked after `PaperFacingStepDecidability`
+
+The later development additionally checks:
+
+* concrete productive-step and reachable-step preservation of decidability;
+* conversion from concrete step-preservation data to the iterator certificate
+  chain;
+* executable-limit bridge from concrete step data to `FullKept` decidability;
+* finite list-stability checks as sufficient data for `StableAt`;
+* conversion from finite list-stability data to `CertifiedExtraction`;
+* generic bounded search for list-stability witnesses;
+* conversion from bounded-search witnesses to closure certificates;
+* concrete bridge from bounded productive/reachable witnesses to
+  `ConcreteListStabilityData`;
+* transfer from concrete bounded witnesses to `CertifiedExtraction` and
+  `FullKept` decidability.
+
+### Still not yet checked
+
+The following remain outside the current checked artifact:
+
+* proof that bounded search succeeds within a specific finite bound, such as the
+  length of the finite support;
+* automatic construction of productive and reachable bounded witnesses from
+  arbitrary finite CFG presentation data;
+* end-to-end extracted fixed-point iterator returning successful witnesses;
+* automatic enumeration of all concrete full-rule universes from arbitrary
+  input data;
+* final descriptor reconstruction from computed kept states and rules;
+* full context-closure coincidence and shortlex witness normalization.
+
+### Updated honest claim
+
+The current artifact supports the following stronger but still honest claim:
+
+```text
+The Lean 4 development checks the theorem-facing finite representation kernels,
+the full-kept correctness theorem, the certified Algorithm 1 agreement theorem,
+and a substantial executable-interface chain.  In addition to finite
+rule/list-certificate and step-decidability interfaces, it now verifies
+concrete step-preservation, finite list-stability certificates, generic bounded
+search for list-stability witnesses, and a bridge from bounded
+productive/reachable witnesses to concrete certified extraction and FullKept
+decidability.  The remaining gap is not the agreement between Algorithm 1 and
+FullKept, but the fully automatic construction of successful bounded witnesses,
+fixed-point certificates, and final finite descriptors from arbitrary finite CFG
+presentation data.
+```
+
