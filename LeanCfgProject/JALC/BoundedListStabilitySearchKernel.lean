@@ -1,4 +1,4 @@
-import LeanCfgProject.JALC.PaperFacingListStabilityDecision
+import LeanCfgProject.JALC.ListStabilityDecisionKernel
 
 namespace LeanCfgProject
 namespace JALC
