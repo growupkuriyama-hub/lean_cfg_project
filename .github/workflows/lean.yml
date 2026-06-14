@@ -83,3 +83,6 @@ jobs:
 
       - name: Build JALC productive-reachable iterator certificate target
         run: lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+
+      - name: Build JALC iterator-from-decidable-iterates target
+        run: lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
