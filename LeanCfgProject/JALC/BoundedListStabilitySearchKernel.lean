@@ -1,11 +1,15 @@
-import LeanCfgProject.JALC.ListStabilityDecisionKernel
+import LeanCfgProject.JALC.ConcreteListStabilityKernel
 
 namespace LeanCfgProject
 namespace JALC
 namespace BoundedListStabilitySearchKernel
 
 /-
-Bounded search for finite list-stability witnesses.
+Self-contained bounded search for finite list-stability witnesses.
+
+This version deliberately does not import ListStabilityDecisionKernel.  The
+finite decision procedures needed for bounded search are included here, avoiding
+an extra file dependency.
 -/
 
 universe u v w
@@ -15,10 +19,70 @@ open ProductiveReachableClosureKernel
 open AlgorithmicExtractionKernel
 open FiniteUniverseListEnumerationKernel
 open ListStabilityKernel
-open ListStabilityDecisionKernel
 open ConcreteListStabilityKernel
+open ConcreteStepPreservationKernel
 open FullAlgorithmicAgreementKernel
 open InverseKernel RoundTripKernel
+
+
+/-- Finite list agreement is decidable when both predicates are decidable. -/
+def decidableAgreeOnListForSearch
+    {α : Type u}
+    (xs : List α)
+    (P Q : α → Prop)
+    (Pdec : DecidablePred P)
+    (Qdec : DecidablePred Q) :
+    Decidable (AgreeOnList xs P Q) :=
+  match xs with
+  | [] =>
+      isTrue (by
+        intro x hx
+        cases hx)
+  | a :: rest =>
+      letI : Decidable (P a) := Pdec a
+      letI : Decidable (Q a) := Qdec a
+      match inferInstanceAs (Decidable (P a ↔ Q a)) with
+      | isFalse hneq =>
+          isFalse (by
+            intro h
+            exact hneq (h a (List.mem_cons.mpr (Or.inl rfl))))
+      | isTrue ha =>
+          match decidableAgreeOnListForSearch rest P Q Pdec Qdec with
+          | isTrue hrest =>
+              isTrue (by
+                intro x hx
+                have hx' : x = a ∨ x ∈ rest := List.mem_cons.mp hx
+                cases hx' with
+                | inl heq =>
+                    subst x
+                    exact ha
+                | inr hmem =>
+                    exact hrest x hmem)
+          | isFalse hbad =>
+              isFalse (by
+                intro h
+                exact hbad (by
+                  intro x hx
+                  exact h x (List.mem_cons.mpr (Or.inr hx))))
+
+
+/-- List-stability at a fixed height is decidable from predicate deciders. -/
+def decidableListStabilityAtForSearch
+    {α : Type u}
+    (U : UniverseList α)
+    (F : (α → Prop) → α → Prop)
+    (n : Nat)
+    (nextDec : DecidablePred (F (Iter F n)))
+    (iterDec : DecidablePred (Iter F n)) :
+    Decidable
+      (AgreeOnList U.support
+        (F (Iter F n))
+        (Iter F n)) :=
+  decidableAgreeOnListForSearch U.support
+    (F (Iter F n))
+    (Iter F n)
+    nextDec
+    iterDec
 
 
 /-- A witness that `F` has stabilized at height `n` on a finite universe list. -/
@@ -43,8 +107,7 @@ def closureCertificate_of_listStabilityWitness
 
 
 /--
-Search for a list-stability witness up to a given fuel.  This is a bounded
-search; it does not assert that a witness must be found.
+Search for a list-stability witness up to a given fuel.
 -/
 def findListStabilityWitness
     {α : Type u}
@@ -116,19 +179,57 @@ abbrev ReachableFullStepAt
     (Iter (ProductiveFullStep tau G) productive_height)
 
 
-/-- Turn bounded-search data into fixed-height decision data. -/
-def decisionDataAt
+/-- Productive-step preservation induced by bounded-search data. -/
+@[reducible]
+def productivePreserves_of_boundedData
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : UntypedStructure V Sigma)
+    (B : ConcreteBoundedSearchData tau G) :
+    PreservesDecidablePred (ProductiveFullStep tau G) :=
+  productiveStep_preserves_decidable_of_universe
+    B.rule_universes.states
+    (fullExtractionRuleData tau G).terminal
+    (fullExtractionRuleData tau G).binary
+    B.rule_decisions.terminal_decidable
+    (curriedBinaryDecidable_of_triple
+      (fullExtractionRuleData tau G)
+      B.rule_decisions.binary_decidable)
+
+
+/-- Decider for the productive iterate at a chosen height. -/
+@[reducible]
+def productiveIterDecidableAt
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
     (B : ConcreteBoundedSearchData tau G)
-    (productive_height reachable_height : Nat) :
-    ConcreteListStabilityDecisionData tau G :=
-  { rule_universes := B.rule_universes,
-    rule_decisions := B.rule_decisions,
-    productive_height := productive_height,
-    reachable_height := reachable_height }
+    (productive_height : Nat) :
+    DecidablePred
+      (Iter (ProductiveFullStep tau G) productive_height) :=
+  decidablePred_iter
+    (ProductiveFullStep tau G)
+    (productivePreserves_of_boundedData tau G B)
+    productive_height
+
+
+/-- Decider for the next productive-stage predicate. -/
+@[reducible]
+def productiveNextDecidableAt
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : UntypedStructure V Sigma)
+    (B : ConcreteBoundedSearchData tau G)
+    (productive_height : Nat) :
+    DecidablePred
+      (ProductiveFullStep tau G
+        (Iter (ProductiveFullStep tau G) productive_height)) :=
+  (productivePreserves_of_boundedData tau G B)
+    (Iter (ProductiveFullStep tau G) productive_height)
+    (productiveIterDecidableAt tau G B productive_height)
 
 
 /-- Decider for productive list-stability at a chosen height. -/
@@ -144,8 +245,12 @@ def productiveStabilityDecidableAt
         (ProductiveFullStep tau G
           (Iter (ProductiveFullStep tau G) productive_height))
         (Iter (ProductiveFullStep tau G) productive_height)) :=
-  productiveListStabilityDecidable tau G
-    (decisionDataAt tau G B productive_height 0)
+  decidableListStabilityAtForSearch
+    B.rule_universes.states
+    (ProductiveFullStep tau G)
+    productive_height
+    (productiveNextDecidableAt tau G B productive_height)
+    (productiveIterDecidableAt tau G B productive_height)
 
 
 /-- Bounded search for a productive stability witness. -/
@@ -167,7 +272,64 @@ def findProductiveStabilityWitness
     fuel
 
 
-/-- Decider for reachable list-stability at chosen productive/reachable heights. -/
+/-- Reachable-step preservation induced by bounded-search data. -/
+@[reducible]
+def reachablePreserves_of_boundedData
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : UntypedStructure V Sigma)
+    (B : ConcreteBoundedSearchData tau G)
+    (productive_height : Nat) :
+    PreservesDecidablePred
+      (ReachableFullStepAt tau G productive_height) :=
+  reachableStep_preserves_decidable_of_universe
+    B.rule_universes.states
+    (fullExtractionRuleData tau G).start
+    (fullExtractionRuleData tau G).binary
+    (Iter (ProductiveFullStep tau G) productive_height)
+    B.rule_decisions.start_decidable
+    (curriedBinaryDecidable_of_triple
+      (fullExtractionRuleData tau G)
+      B.rule_decisions.binary_decidable)
+    (productiveIterDecidableAt tau G B productive_height)
+
+
+/-- Decider for the reachable iterate at a chosen height. -/
+@[reducible]
+def reachableIterDecidableAt
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : UntypedStructure V Sigma)
+    (B : ConcreteBoundedSearchData tau G)
+    (productive_height reachable_height : Nat) :
+    DecidablePred
+      (Iter (ReachableFullStepAt tau G productive_height) reachable_height) :=
+  decidablePred_iter
+    (ReachableFullStepAt tau G productive_height)
+    (reachablePreserves_of_boundedData tau G B productive_height)
+    reachable_height
+
+
+/-- Decider for the next reachable-stage predicate. -/
+@[reducible]
+def reachableNextDecidableAt
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : UntypedStructure V Sigma)
+    (B : ConcreteBoundedSearchData tau G)
+    (productive_height reachable_height : Nat) :
+    DecidablePred
+      (ReachableFullStepAt tau G productive_height
+        (Iter (ReachableFullStepAt tau G productive_height) reachable_height)) :=
+  (reachablePreserves_of_boundedData tau G B productive_height)
+    (Iter (ReachableFullStepAt tau G productive_height) reachable_height)
+    (reachableIterDecidableAt tau G B productive_height reachable_height)
+
+
+/-- Decider for reachable list-stability at chosen heights. -/
 def reachableStabilityDecidableAt
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
@@ -180,8 +342,12 @@ def reachableStabilityDecidableAt
         (ReachableFullStepAt tau G productive_height
           (Iter (ReachableFullStepAt tau G productive_height) reachable_height))
         (Iter (ReachableFullStepAt tau G productive_height) reachable_height)) :=
-  reachableListStabilityDecidable tau G
-    (decisionDataAt tau G B productive_height reachable_height)
+  decidableListStabilityAtForSearch
+    B.rule_universes.states
+    (ReachableFullStepAt tau G productive_height)
+    reachable_height
+    (reachableNextDecidableAt tau G B productive_height reachable_height)
+    (reachableIterDecidableAt tau G B productive_height reachable_height)
 
 
 /-- Bounded search for a reachable stability witness after fixing productivity. -/
