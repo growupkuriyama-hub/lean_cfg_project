@@ -92,3 +92,6 @@ jobs:
 
       - name: Build JALC executable-limit target
         run: lake build LeanCfgProject.JALC.PaperFacingExecutableLimit
+
+      - name: Build JALC list-stability extraction target
+        run: lake build LeanCfgProject.JALC.PaperFacingListStabilityExtraction
