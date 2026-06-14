@@ -81,8 +81,7 @@ theorem findConcreteBoundedWitnessData_some_of_component_success
   by
     unfold findConcreteBoundedWitnessData
     rw [hP]
-    rw [hR]
-    rfl
+    simpa [hR, boundedWitnessData_of_componentWitnesses]
 
 
 /--
