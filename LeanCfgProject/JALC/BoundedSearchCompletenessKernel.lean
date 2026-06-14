@@ -122,10 +122,9 @@ theorem closureCertificate_exists_of_stable_at_fuel
   by
     rcases
       findListStabilityWitness_exists_of_stable_at_fuel
-        U F dec fuel hstable with
-    | ⟨W, hW⟩ =>
-        exact
-          ⟨W, hW, stableAt_of_listStabilityWitness W⟩
+        U F dec fuel hstable with ⟨W, hW⟩
+    exact
+      ⟨W, hW, stableAt_of_listStabilityWitness W⟩
 
 
 /--
