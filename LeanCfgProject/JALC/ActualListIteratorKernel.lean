@@ -42,7 +42,7 @@ def productiveReachableIteratorCertificate_of_concreteStepData
 theorem concreteData_iteratorCertificate_to_fullKept_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
-    [DecidableEq (TypedState V M)]
+    [DecidableEq (InverseKernel.TypedState V M)]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
     (E : CertifiedExtraction (fullExtractionRuleData tau G))

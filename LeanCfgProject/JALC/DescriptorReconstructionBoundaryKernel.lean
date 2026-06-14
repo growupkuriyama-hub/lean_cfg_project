@@ -46,16 +46,16 @@ structure DescriptorReconstructionBoundaryData
     ConcreteStepPreservationData tau G E
   descriptor :
     FiniteDescriptorOutput
-      (TypedState V M)
-      (TypedState V M × TypedState V M × TypedState V M)
-      (TypedState V M)
+      (InverseKernel.TypedState V M)
+      (InverseKernel.TypedState V M × InverseKernel.TypedState V M × InverseKernel.TypedState V M)
+      (InverseKernel.TypedState V M)
 
 
 /-- The descriptor boundary still carries the checked iterator certificate. -/
 theorem descriptorBoundary_to_fullKept_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
-    [DecidableEq (TypedState V M)]
+    [DecidableEq (InverseKernel.TypedState V M)]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma)
     (E : CertifiedExtraction (fullExtractionRuleData tau G))
