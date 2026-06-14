@@ -56,3 +56,6 @@ jobs:
 
       - name: Build JALC concrete two-stage search certificate target
         run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchCertificate
+
+      - name: Build JALC concrete two-stage search certificate target
+        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchCertificate
