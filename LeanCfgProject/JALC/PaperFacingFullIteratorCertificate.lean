@@ -24,8 +24,14 @@ theorem checked_previous_final_artifact_from_full_iterator_certificate :
   final_artifact_checked
 
 
-/-- Paper-facing concrete productive-step decidability preservation. -/
-theorem checked_concrete_productive_preserves_decidable
+/--
+Paper-facing concrete productive-step decidability preservation.
+
+This is a definition, not a theorem, because `PreservesDecidablePred` is
+type-valued: it packages a decision procedure rather than stating a proposition.
+-/
+@[reducible]
+def checked_concrete_productive_preserves_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
     (tau : Sigma → M)

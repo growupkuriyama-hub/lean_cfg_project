@@ -66,6 +66,7 @@ def concreteRuleLists
 
 
 /-- ProductiveStep preserves decidability for the concrete full rule data. -/
+@[reducible]
 def concrete_productive_preserves_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
@@ -88,6 +89,7 @@ def concrete_productive_preserves_decidable
 
 
 /-- The concrete computed productive predicate is decidable. -/
+@[reducible]
 def concrete_computedProductive_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
@@ -105,6 +107,7 @@ def concrete_computedProductive_decidable
 
 
 /-- ReachableStep preserves decidability for the concrete full rule data. -/
+@[reducible]
 def concrete_reachable_preserves_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]

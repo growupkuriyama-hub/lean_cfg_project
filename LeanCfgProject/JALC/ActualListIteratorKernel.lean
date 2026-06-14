@@ -19,6 +19,7 @@ open FullAlgorithmicAgreementKernel
 open AlgorithmicExtractionKernel
 open ProductiveReachableIteratorCertificateKernel
 open ProductiveReachableStepDecidabilityKernel
+open IteratorFromDecidableIteratesKernel
 open ConcreteStepPreservationKernel
 
 
@@ -31,7 +32,7 @@ def productiveReachableIteratorCertificate_of_concreteStepData
     (E : CertifiedExtraction (fullExtractionRuleData tau G))
     (D : ConcreteStepPreservationData tau G E) :
     ProductiveReachableIteratorCertificateData tau G :=
-  ProductiveReachableIteratorCertificateKernel.productiveReachableIteratorCertificate_of_iterateDecisionData
+  IteratorFromDecidableIteratesKernel.productiveReachableIteratorCertificate_of_iterateDecisionData
     tau G
     (ProductiveReachableStepDecidabilityKernel.iterateDecisionData_of_stepDecidabilityData
       tau G E (stepDecidabilityData_of_concrete tau G E D))
