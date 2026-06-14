@@ -95,3 +95,6 @@ jobs:
 
       - name: Build JALC list-stability extraction target
         run: lake build LeanCfgProject.JALC.PaperFacingListStabilityExtraction
+
+      - name: Build JALC bounded stability search target
+        run: lake build LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
