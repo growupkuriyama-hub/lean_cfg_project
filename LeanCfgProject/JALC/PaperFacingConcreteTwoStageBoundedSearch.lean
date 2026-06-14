@@ -88,7 +88,7 @@ def checked_fullKeptDecidableOption_of_search
     (G : RoundTripKernel.UntypedStructure V Sigma)
     (I : ConcreteTwoStageBoundedSearchInput tau G)
     (productive_fuel reachable_fuel : Nat) :
-    Option (Nonempty (DecidablePred (FullKeptCorrectnessKernel.FullKept tau G))) :=
+    Option (PLift (Nonempty (DecidablePred (FullKeptCorrectnessKernel.FullKept tau G)))) :=
   fullKeptDecidableOption_of_search
     tau G I productive_fuel reachable_fuel
 

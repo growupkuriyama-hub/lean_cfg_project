@@ -21,6 +21,7 @@ the reachable search.
 universe u v w
 
 open InverseKernel RoundTripKernel
+open FiniteClosureKernel
 open ListStabilityKernel
 open BoundedListStabilitySearchKernel
 open ConcreteBoundedWitnessBridgeKernel
@@ -164,12 +165,12 @@ def fullKeptDecidableOption_of_search
     (G : UntypedStructure V Sigma)
     (I : ConcreteTwoStageBoundedSearchInput tau G)
     (productive_fuel reachable_fuel : Nat) :
-    Option (Nonempty (DecidablePred (FullKeptCorrectnessKernel.FullKept tau G))) :=
+    Option (PLift (Nonempty (DecidablePred (FullKeptCorrectnessKernel.FullKept tau G)))) :=
   match findConcreteBoundedWitnessData tau G I productive_fuel reachable_fuel with
   | none =>
       none
   | some B =>
-      some (boundedWitnessData_to_fullKept_decidable tau G B)
+      some (PLift.up (boundedWitnessData_to_fullKept_decidable tau G B))
 
 
 /--
