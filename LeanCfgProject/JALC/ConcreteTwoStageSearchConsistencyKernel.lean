@@ -7,9 +7,11 @@ namespace ConcreteTwoStageSearchConsistencyKernel
 /-
 Consistency layer for the option-valued concrete two-stage search.
 
-The certificate layer packages a successful `some` branch as an explicit
-certificate.  This file records the small but useful round-trip facts connecting
-the optional certificate constructor back to the underlying option-valued search.
+The optional certificate constructor in the previous file is implemented by a
+dependent match, because the certificate stores the equation witnessing the
+successful search result.  To keep this layer robust, the main consistency facts
+below avoid rewriting through that dependent match.  Instead, they use the
+explicit constructor `certificate_of_search_eq`.
 -/
 
 universe u v w
@@ -32,31 +34,10 @@ theorem searchCertificate_result_eq
 
 
 /--
-If the optional certificate constructor returns a certificate, then the
-underlying two-stage search returned the bounded-witness data stored in that
-certificate.
+If the underlying two-stage search returns bounded-witness data, then there is
+an explicit successful-run certificate with that result.
 -/
-theorem certificateOption_some_result_eq
-    {V : Type u} {M : Type v} {Sigma : Type w}
-    [Monoid M]
-    (tau : Sigma → M)
-    (G : RoundTripKernel.UntypedStructure V Sigma)
-    (input : ConcreteTwoStageBoundedSearchInput tau G)
-    (productive_fuel reachable_fuel : Nat)
-    {C : ConcreteTwoStageSearchCertificate tau G}
-    (_h :
-      certificateOption_of_search
-        tau G input productive_fuel reachable_fuel = some C) :
-    findConcreteBoundedWitnessData
-      tau G C.input C.productive_fuel C.reachable_fuel = some C.result :=
-  C.result_eq
-
-
-/--
-If the underlying search returns bounded-witness data, then the optional
-certificate constructor returns some successful-run certificate.
--/
-theorem certificateOption_exists_of_search_some
+theorem search_some_to_certificate_exists
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
     (tau : Sigma → M)
@@ -68,40 +49,42 @@ theorem certificateOption_exists_of_search_some
       findConcreteBoundedWitnessData
         tau G input productive_fuel reachable_fuel = some B) :
     ∃ C : ConcreteTwoStageSearchCertificate tau G,
-      certificateOption_of_search
-        tau G input productive_fuel reachable_fuel = some C ∧
+      C.input = input ∧
+      C.productive_fuel = productive_fuel ∧
+      C.reachable_fuel = reachable_fuel ∧
       C.result = B :=
   by
-    unfold certificateOption_of_search
-    rw [h]
-    simp
+    let C :=
+      certificate_of_search_eq
+        tau G input productive_fuel reachable_fuel h
+    exact ⟨C, rfl, rfl, rfl, rfl⟩
 
 
 /--
-If the underlying search returns no data, then the optional certificate
-constructor returns none.
+The certificate constructed from a successful-search equation stores the same
+search equation.
 -/
-theorem certificateOption_none_of_search_none
+theorem certificate_of_search_eq_result_eq
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
     (tau : Sigma → M)
     (G : RoundTripKernel.UntypedStructure V Sigma)
     (input : ConcreteTwoStageBoundedSearchInput tau G)
     (productive_fuel reachable_fuel : Nat)
+    {B : ConcreteBoundedWitnessData tau G}
     (h :
       findConcreteBoundedWitnessData
-        tau G input productive_fuel reachable_fuel = none) :
-    certificateOption_of_search
-      tau G input productive_fuel reachable_fuel = none :=
-  by
-    unfold certificateOption_of_search
-    rw [h]
-    rfl
+        tau G input productive_fuel reachable_fuel = some B) :
+    searchCertificate_result_eq
+      tau G
+      (certificate_of_search_eq
+        tau G input productive_fuel reachable_fuel h) = h :=
+  rfl
 
 
 /--
-The optional certificate constructor is complete for successful search branches:
-a successful search gives a certificate that routes to FullKept decidability.
+A successful search branch gives a successful-run certificate, and that
+certificate feeds the FullKept-decidability chain.
 -/
 theorem search_some_to_certificate_fullKept_decidable
     {V : Type u} {M : Type v} {Sigma : Type w}
@@ -117,11 +100,57 @@ theorem search_some_to_certificate_fullKept_decidable
         tau G input productive_fuel reachable_fuel = some B) :
     Nonempty (DecidablePred (FullKeptCorrectnessKernel.FullKept tau G)) :=
   by
-    rcases
-      certificateOption_exists_of_search_some
-        tau G input productive_fuel reachable_fuel h with
-    | ⟨C, _hC, _hres⟩ =>
-        exact searchCertificate_to_fullKept_decidable tau G C
+    let C :=
+      certificate_of_search_eq
+        tau G input productive_fuel reachable_fuel h
+    exact searchCertificate_to_fullKept_decidable tau G C
+
+
+/--
+A successful search branch also gives a certified extraction through the
+constructed certificate.
+-/
+def certifiedExtraction_of_search_some
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : RoundTripKernel.UntypedStructure V Sigma)
+    (input : ConcreteTwoStageBoundedSearchInput tau G)
+    (productive_fuel reachable_fuel : Nat)
+    {B : ConcreteBoundedWitnessData tau G}
+    (h :
+      findConcreteBoundedWitnessData
+        tau G input productive_fuel reachable_fuel = some B) :
+    AlgorithmicExtractionKernel.CertifiedExtraction
+      (FullAlgorithmicAgreementKernel.fullExtractionRuleData tau G) :=
+  certifiedExtraction_of_searchCertificate
+    tau G
+    (certificate_of_search_eq
+      tau G input productive_fuel reachable_fuel h)
+
+
+/--
+The certified extraction obtained from a successful search branch satisfies the
+certified-extraction kernel.
+-/
+theorem certifiedExtraction_of_search_some_kernel
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : RoundTripKernel.UntypedStructure V Sigma)
+    (input : ConcreteTwoStageBoundedSearchInput tau G)
+    (productive_fuel reachable_fuel : Nat)
+    {B : ConcreteBoundedWitnessData tau G}
+    (h :
+      findConcreteBoundedWitnessData
+        tau G input productive_fuel reachable_fuel = some B) :
+    AlgorithmicExtractionKernel.CertifiedExtractionKernel
+      (certifiedExtraction_of_search_some
+        tau G input productive_fuel reachable_fuel h) :=
+  searchCertificate_certifiedExtractionKernel
+    tau G
+    (certificate_of_search_eq
+      tau G input productive_fuel reachable_fuel h)
 
 end ConcreteTwoStageSearchConsistencyKernel
 end JALC

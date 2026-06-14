@@ -5,8 +5,8 @@ namespace JALC
 namespace PaperFacingConcreteTwoStageSearchConsistency
 
 /-
-Paper-facing target for consistency of the option-valued two-stage search and
-its successful-run certificate object.
+Paper-facing target for consistency of the concrete two-stage search and the
+successful-run certificate object.
 -/
 
 universe u v w
@@ -29,8 +29,8 @@ theorem checked_searchCertificate_result_eq
   searchCertificate_result_eq tau G C
 
 
-/-- Paper-facing completeness of optional certificate construction on success. -/
-theorem checked_certificateOption_exists_of_search_some
+/-- Paper-facing certificate existence from a successful search branch. -/
+theorem checked_search_some_to_certificate_exists
     {V : Type u} {M : Type v} {Sigma : Type w}
     [Monoid M]
     (tau : Sigma → M)
@@ -42,27 +42,11 @@ theorem checked_certificateOption_exists_of_search_some
       findConcreteBoundedWitnessData
         tau G input productive_fuel reachable_fuel = some B) :
     ∃ C : ConcreteTwoStageSearchCertificate tau G,
-      certificateOption_of_search
-        tau G input productive_fuel reachable_fuel = some C ∧
+      C.input = input ∧
+      C.productive_fuel = productive_fuel ∧
+      C.reachable_fuel = reachable_fuel ∧
       C.result = B :=
-  certificateOption_exists_of_search_some
-    tau G input productive_fuel reachable_fuel h
-
-
-/-- Paper-facing none branch consistency. -/
-theorem checked_certificateOption_none_of_search_none
-    {V : Type u} {M : Type v} {Sigma : Type w}
-    [Monoid M]
-    (tau : Sigma → M)
-    (G : RoundTripKernel.UntypedStructure V Sigma)
-    (input : ConcreteTwoStageBoundedSearchInput tau G)
-    (productive_fuel reachable_fuel : Nat)
-    (h :
-      findConcreteBoundedWitnessData
-        tau G input productive_fuel reachable_fuel = none) :
-    certificateOption_of_search
-      tau G input productive_fuel reachable_fuel = none :=
-  certificateOption_none_of_search_none
+  search_some_to_certificate_exists
     tau G input productive_fuel reachable_fuel h
 
 
@@ -81,6 +65,43 @@ theorem checked_search_some_to_certificate_fullKept_decidable
         tau G input productive_fuel reachable_fuel = some B) :
     Nonempty (DecidablePred (FullKeptCorrectnessKernel.FullKept tau G)) :=
   search_some_to_certificate_fullKept_decidable
+    tau G input productive_fuel reachable_fuel h
+
+
+/-- Paper-facing certified extraction from a successful search branch. -/
+def checked_certifiedExtraction_of_search_some
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : RoundTripKernel.UntypedStructure V Sigma)
+    (input : ConcreteTwoStageBoundedSearchInput tau G)
+    (productive_fuel reachable_fuel : Nat)
+    {B : ConcreteBoundedWitnessData tau G}
+    (h :
+      findConcreteBoundedWitnessData
+        tau G input productive_fuel reachable_fuel = some B) :
+    AlgorithmicExtractionKernel.CertifiedExtraction
+      (FullAlgorithmicAgreementKernel.fullExtractionRuleData tau G) :=
+  certifiedExtraction_of_search_some
+    tau G input productive_fuel reachable_fuel h
+
+
+/-- Paper-facing certified-extraction kernel from a successful search branch. -/
+theorem checked_certifiedExtraction_of_search_some_kernel
+    {V : Type u} {M : Type v} {Sigma : Type w}
+    [Monoid M]
+    (tau : Sigma → M)
+    (G : RoundTripKernel.UntypedStructure V Sigma)
+    (input : ConcreteTwoStageBoundedSearchInput tau G)
+    (productive_fuel reachable_fuel : Nat)
+    {B : ConcreteBoundedWitnessData tau G}
+    (h :
+      findConcreteBoundedWitnessData
+        tau G input productive_fuel reachable_fuel = some B) :
+    AlgorithmicExtractionKernel.CertifiedExtractionKernel
+      (certifiedExtraction_of_search_some
+        tau G input productive_fuel reachable_fuel h) :=
+  certifiedExtraction_of_search_some_kernel
     tau G input productive_fuel reachable_fuel h
 
 end PaperFacingConcreteTwoStageSearchConsistency
