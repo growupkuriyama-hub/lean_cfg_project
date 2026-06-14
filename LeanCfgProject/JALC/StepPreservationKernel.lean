@@ -31,7 +31,7 @@ def decidableExistsInList
     (xs : List α)
     (Q : α → Prop)
     (decQ : DecidablePred Q) :
-    Decidable (∃ x, x ∈ xs ∧ Q x) :=
+    Decidable (∃ x : α, x ∈ xs ∧ Q x) :=
   match xs with
   | [] =>
       isFalse (by
@@ -67,7 +67,7 @@ def decidableExistsInUniverse
     (U : UniverseList α)
     (Q : α → Prop)
     (decQ : DecidablePred Q) :
-    Decidable (∃ x, Q x) :=
+    Decidable (∃ x : α, Q x) :=
   match decidableExistsInList U.support Q decQ with
   | isTrue h =>
       isTrue (by
@@ -89,12 +89,12 @@ def productiveWitnessDecidable
     {P : α → Prop}
     (Pdec : DecidablePred P)
     (x : α) :
-    Decidable (∃ y, ∃ z, binary x y z ∧ P y ∧ P z) :=
+    Decidable (∃ y : α, ∃ z : α, binary x y z ∧ P y ∧ P z) :=
   decidableExistsInUniverse U
-    (fun y => ∃ z, binary x y z ∧ P y ∧ P z)
+    (fun y : α => ∃ z : α, binary x y z ∧ P y ∧ P z)
     (fun y =>
       decidableExistsInUniverse U
-        (fun z => binary x y z ∧ P y ∧ P z)
+        (fun z : α => binary x y z ∧ P y ∧ P z)
         (fun z =>
           letI : Decidable (binary x y z) := binaryDec x y z
           letI : Decidable (P y) := Pdec y
@@ -105,6 +105,7 @@ def productiveWitnessDecidable
 /--
 Productivity step preserves decidability over a complete finite universe list.
 -/
+@[reducible]
 def productiveStep_preserves_decidable_of_universe
     {α : Type u}
     (U : UniverseList α)
@@ -114,12 +115,11 @@ def productiveStep_preserves_decidable_of_universe
     (binaryDec : ∀ x y z : α, Decidable (binary x y z)) :
     PreservesDecidablePred (ProductiveStep terminal binary) := by
   intro P Pdec x
-  change Decidable
-    (P x ∨ terminal x ∨ ∃ y, ∃ z, binary x y z ∧ P y ∧ P z)
+  unfold ProductiveStep
   letI : Decidable (P x) := Pdec x
   letI : Decidable (terminal x) := terminalDec x
   letI :
-      Decidable (∃ y, ∃ z, binary x y z ∧ P y ∧ P z) :=
+      Decidable (∃ y : α, ∃ z : α, binary x y z ∧ P y ∧ P z) :=
     productiveWitnessDecidable U binaryDec Pdec x
   exact inferInstance
 
@@ -136,15 +136,18 @@ def reachableLeftWitnessDecidable
     (Rdec : DecidablePred R)
     (x : α) :
     Decidable
-      (∃ p, ∃ y, ∃ z, R p ∧ binary p x z ∧ productive z) :=
+      (∃ p : α, ∃ y : α, ∃ z : α,
+        R p ∧ binary p x z ∧ productive z) :=
   decidableExistsInUniverse U
-    (fun p => ∃ y, ∃ z, R p ∧ binary p x z ∧ productive z)
+    (fun p : α => ∃ y : α, ∃ z : α,
+      R p ∧ binary p x z ∧ productive z)
     (fun p =>
       decidableExistsInUniverse U
-        (fun y => ∃ z, R p ∧ binary p x z ∧ productive z)
+        (fun y : α => ∃ z : α,
+          R p ∧ binary p x z ∧ productive z)
         (fun y =>
           decidableExistsInUniverse U
-            (fun z => R p ∧ binary p x z ∧ productive z)
+            (fun z : α => R p ∧ binary p x z ∧ productive z)
             (fun z =>
               letI : Decidable (R p) := Rdec p
               letI : Decidable (binary p x z) := binaryDec p x z
@@ -164,15 +167,18 @@ def reachableRightWitnessDecidable
     (Rdec : DecidablePred R)
     (x : α) :
     Decidable
-      (∃ p, ∃ y, ∃ z, R p ∧ binary p y x ∧ productive y) :=
+      (∃ p : α, ∃ y : α, ∃ z : α,
+        R p ∧ binary p y x ∧ productive y) :=
   decidableExistsInUniverse U
-    (fun p => ∃ y, ∃ z, R p ∧ binary p y x ∧ productive y)
+    (fun p : α => ∃ y : α, ∃ z : α,
+      R p ∧ binary p y x ∧ productive y)
     (fun p =>
       decidableExistsInUniverse U
-        (fun y => ∃ z, R p ∧ binary p y x ∧ productive y)
+        (fun y : α => ∃ z : α,
+          R p ∧ binary p y x ∧ productive y)
         (fun y =>
           decidableExistsInUniverse U
-            (fun z => R p ∧ binary p y x ∧ productive y)
+            (fun z : α => R p ∧ binary p y x ∧ productive y)
             (fun z =>
               letI : Decidable (R p) := Rdec p
               letI : Decidable (binary p y x) := binaryDec p y x
@@ -183,6 +189,7 @@ def reachableRightWitnessDecidable
 /--
 Reachability step preserves decidability over a complete finite universe list.
 -/
+@[reducible]
 def reachableStep_preserves_decidable_of_universe
     {α : Type u}
     (U : UniverseList α)
@@ -194,23 +201,19 @@ def reachableStep_preserves_decidable_of_universe
     (productiveDec : DecidablePred productive) :
     PreservesDecidablePred (ReachableStep start binary productive) := by
   intro R Rdec x
-  change Decidable
-    (R x ∨
-      (productive x ∧ start x) ∨
-      (productive x ∧
-        ∃ p, ∃ y, ∃ z, R p ∧ binary p x z ∧ productive z) ∨
-      (productive x ∧
-        ∃ p, ∃ y, ∃ z, R p ∧ binary p y x ∧ productive y))
+  unfold ReachableStep
   letI : Decidable (R x) := Rdec x
   letI : Decidable (productive x) := productiveDec x
   letI : Decidable (start x) := startDec x
   letI :
       Decidable
-        (∃ p, ∃ y, ∃ z, R p ∧ binary p x z ∧ productive z) :=
+        (∃ p : α, ∃ y : α, ∃ z : α,
+          R p ∧ binary p x z ∧ productive z) :=
     reachableLeftWitnessDecidable U binaryDec productiveDec Rdec x
   letI :
       Decidable
-        (∃ p, ∃ y, ∃ z, R p ∧ binary p y x ∧ productive y) :=
+        (∃ p : α, ∃ y : α, ∃ z : α,
+          R p ∧ binary p y x ∧ productive y) :=
     reachableRightWitnessDecidable U binaryDec productiveDec Rdec x
   exact inferInstance
 
