@@ -68,7 +68,7 @@ structure ConcreteBoundedWitnessData
     [Monoid M]
     (tau : Sigma → M)
     (G : UntypedStructure V Sigma) :
-    Type (max (u + 1) (max v w)) where
+    Type (max (u + 1) (max (v + 1) (w + 1))) where
   rule_universes :
     FullRuleUniverseLists V M
   rule_decisions :
