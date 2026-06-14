@@ -98,3 +98,6 @@ jobs:
 
       - name: Build JALC bounded stability search target
         run: lake build LeanCfgProject.JALC.PaperFacingBoundedStabilitySearch
+
+      - name: Build JALC concrete bounded-witness bridge target
+        run: lake build LeanCfgProject.JALC.PaperFacingConcreteBoundedWitnessBridge
