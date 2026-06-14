@@ -20,6 +20,7 @@ open ProductiveReachableClosureKernel
 open AlgorithmicExtractionKernel
 open FullAlgorithmicAgreementKernel
 open ListCertificateKernel
+open ListIterateCertificateKernel
 open FiniteUniverseListEnumerationKernel
 open MonotoneListIteratorKernel
 open IteratorFromDecidableIteratesKernel
@@ -31,7 +32,7 @@ predicate to a decidable predicate.
 -/
 abbrev PreservesDecidablePred
     {α : Type u}
-    (F : (α → Prop) → α → Prop) : Prop :=
+    (F : (α → Prop) → α → Prop) : Type u :=
   ∀ P : α → Prop, DecidablePred P → DecidablePred (F P)
 
 
@@ -39,6 +40,7 @@ abbrev PreservesDecidablePred
 If a step preserves decidability, then every finite iterate of the step is
 decidable.
 -/
+@[reducible]
 def decidablePred_iter
     {α : Type u}
     (F : (α → Prop) → α → Prop)
@@ -82,7 +84,7 @@ decidability-preserving step supply an iterator output for every finite height.
 structure GenericDecidableIteratorData
     {α : Type u}
     (F : (α → Prop) → α → Prop) : Type u where
-  universe :
+  univ_list :
     UniverseList α
   preserves_decidable :
     PreservesDecidablePred F
@@ -96,7 +98,7 @@ def GenericDecidableIteratorData.output
     (n : Nat) :
     ListIteratorOutput F n :=
   listIteratorOutput_of_preservesDecidable
-    D.universe F D.preserves_decidable n
+    D.univ_list F D.preserves_decidable n
 
 
 /-- The output of generic decidable iterator data gives a list certificate. -/
