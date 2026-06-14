@@ -65,3 +65,6 @@ jobs:
 
       - name: Build JALC concrete two-stage search consistency target
         run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchConsistency
+
+      - name: Build JALC concrete two-stage search success target
+        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchSuccess
