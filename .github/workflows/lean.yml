@@ -68,3 +68,6 @@ jobs:
 
       - name: Build JALC concrete two-stage search success target
         run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchSuccess
+
+      - name: Build JALC bounded-search offset completeness target
+        run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchOffsetCompleteness
