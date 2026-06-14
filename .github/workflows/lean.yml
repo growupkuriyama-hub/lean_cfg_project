@@ -62,3 +62,6 @@ jobs:
 
       - name: Build JALC bounded-search completeness target
         run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchCompleteness
+
+      - name: Build JALC concrete two-stage search consistency target
+        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchConsistency
