@@ -41,13 +41,13 @@ def decidableExistsInList
   | a :: rest =>
       match decQ a with
       | isTrue ha =>
-          isTrue ⟨a, List.mem_cons_self a rest, ha⟩
+          isTrue ⟨a, List.mem_cons.mpr (Or.inl rfl), ha⟩
       | isFalse hna =>
           match decidableExistsInList rest Q decQ with
           | isTrue hrest =>
               isTrue (by
                 rcases hrest with ⟨x, hx, hq⟩
-                exact ⟨x, List.mem_cons_of_mem a hx, hq⟩)
+                exact ⟨x, List.mem_cons.mpr (Or.inr hx), hq⟩)
           | isFalse hnrest =>
               isFalse (by
                 intro h
