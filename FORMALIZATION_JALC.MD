@@ -8,15 +8,42 @@ A Finite Representation Theorem for Two-Sided Monoid-Typed CFG Presentations
 
 This file is specific to the JALC paper. It is separate from the repository-level `FORMALIZATION.md`, which records formalization results for a different paper or a broader repository-level development.
 
-This version updates the record through the recent full-refinement, full-kept,
-finite-main theorem, certified fixed-point extraction, algorithmic bridge, and
-full algorithmic agreement kernels, including the successful GitHub Actions run:
+This version updates the record through the full-refinement, full-kept,
+finite-main theorem, certified fixed-point extraction, algorithmic bridge,
+full algorithmic agreement kernels, and the later executable-interface
+experiments through finite list certificates, closure trace lists, iterator
+trace boundaries, finite-universe filtering, and finite-iterate decidability.
+
+The main previously recorded algorithmic agreement reference run remains:
 
 ```text
 Lean CI #304
 Commit: a434bb3
 Pushed by: growupkuriyama-hub
 Target: LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+```
+
+The later executable-interface chain includes the following confirmed runs:
+
+```text
+Lean CI #307
+Commit: 2cde4a4
+Pushed by: growupkuriyama-hub
+Target: LeanCfgProject.JALC.PaperFacingExperimentClosure
+```
+
+```text
+Lean CI #314
+Target chain including:
+  LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+Status: succeeded
+```
+
+The latest user-reported successful target is:
+
+```text
+Target: LeanCfgProject.JALC.PaperFacingStepDecidability
+Status: succeeded
 ```
 
 It also retains the earlier full finite-main reference run:
@@ -68,12 +95,22 @@ Current high-level algorithmic agreement target:
 LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
 ```
 
+Current high-level executable-interface target:
+
+```text
+LeanCfgProject.JALC.PaperFacingStepDecidability
+```
+
 Recommended current CI commands:
 
 ```text
 lake build LeanCfgProject.JALC.Summary
 lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
+lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+lake build LeanCfgProject.JALC.PaperFacingStepDecidability
 ```
 
 The current minimal GitHub Actions workflow may build only:
@@ -176,6 +213,35 @@ concrete full all-copy rule data: a certified run of Algorithm 1 over
 `fullExtractionRuleData tau G` computes exactly the abstract `FullKept tau G`
 predicate.
 
+### Post-#304 executable-interface CI runs
+
+After the direct algorithmic agreement target, the development was extended
+toward an executable fixed-point extraction boundary.  The following later
+targets were introduced and checked in the conversation.
+
+```text
+LeanCfgProject.JALC.PaperFacingExperimentClosure
+LeanCfgProject.JALC.PaperFacingStageDecidability
+LeanCfgProject.JALC.PaperFacingRuleStageBoundary
+LeanCfgProject.JALC.PaperFacingListCertificate
+LeanCfgProject.JALC.PaperFacingClosureTraceList
+LeanCfgProject.JALC.PaperFacingIteratorTraceBoundary
+LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+LeanCfgProject.JALC.PaperFacingStepDecidability
+```
+
+The currently most advanced checked target is:
+
+```text
+LeanCfgProject.JALC.PaperFacingStepDecidability
+```
+
+This target checks the generic recursion principle that if a predicate
+transformer preserves decidability, then all of its finite iterates are
+decidable, and specializes this boundary to the productive and reachable
+closure steps used by the certified Algorithm 1 package.
+
 ---
 
 ## 3. Purpose of the formalization
@@ -235,7 +301,24 @@ Algorithm 1 in the paper:
 * a bridge from the computed kept predicate to the full-kept theorem package;
 * a direct agreement theorem showing that, for the concrete full all-copy rule data `fullExtractionRuleData tau G`, a certified run of Algorithm 1 computes exactly `FullKept tau G`.
 
-The development is still not claimed to be a complete executable extraction algorithm.  In particular, it does not yet provide an extracted implementation that automatically enumerates the full rule universe and constructs the fixed-point certificates from finite input data.  However, the previous assumption-level gap between the Algorithm 1 predicate and the abstract `FullKept` predicate has now been closed at the theorem-facing certified-kernel level.
+Sixth, it now checks an executable-interface chain for the fixed-point
+extraction boundary:
+
+* transfer from computed keptness decidability to `FullKept` decidability;
+* reduction of computed keptness decidability to decidability of the productive
+  and reachable stages;
+* finite list certificates for predicates and their use in producing
+  `DecidablePred` instances;
+* closure trace-list certificates at the certified productivity and reachability
+  heights;
+* iterator trace payloads bundling terminal, start, binary, productive-trace,
+  and reachable-trace finite list certificates;
+* productive/reachable iterator certificate payloads;
+* construction of iterator outputs by filtering complete finite universe lists
+  when the target iterate predicates are decidable;
+* generic finite-iterate decidability from a step preserving decidability.
+
+The development is still not claimed to be a complete executable extraction algorithm.  In particular, it does not yet provide an extracted implementation that automatically enumerates the full rule universe and constructs the fixed-point certificates from finite input data.  However, the previous assumption-level gap between the Algorithm 1 predicate and the abstract `FullKept` predicate has now been closed at the theorem-facing certified-kernel level, and the executable-interface boundary has been substantially refined.
 
 ---
 
@@ -270,7 +353,15 @@ The Lean development currently checks:
 * certified productivity and productive-part reachability closures;
 * certified Algorithm 1 extraction package;
 * bridge from computed keptness to full-kept correctness/language/representation kernels;
-* direct agreement theorem: Algorithm 1 over the concrete full all-copy rule data computes exactly `FullKept`.
+* direct agreement theorem: Algorithm 1 over the concrete full all-copy rule data computes exactly `FullKept`;
+* decidability transfer from `computedKept` to `FullKept`;
+* reduction of `computedKept` decidability to `computedProductive` and `computedReachable` decidability;
+* finite list certificate interface for predicate decidability;
+* closure trace-list certificate interface for the certified productivity and reachability heights;
+* iterator trace boundary bundling rule-list and closure-trace data;
+* productive/reachable iterator certificate boundary;
+* finite-universe filtering interface for building iterator outputs from decidable iterates;
+* generic finite-iterate decidability from a decidability-preserving step.
 
 ### Still prose-level or assumption-level
 
@@ -381,6 +472,44 @@ LeanCfgProject/JALC/
 
   FullAlgorithmicAgreementKernel.lean
   PaperFacingFullAlgorithmicAgreement.lean
+
+  FullKeptDecidabilityKernel.lean
+  AlgorithmicFiniteMainKernel.lean
+  ExecutableFullKeptExtraction.lean
+  DescriptorReconstructionKernel.lean
+  ContextClosureCoincidenceKernel.lean
+  ShortlexWitnessKernel.lean
+  PaperFacingExperimentClosure.lean
+
+  StageDecidabilityKernel.lean
+  PaperFacingStageDecidability.lean
+
+  StagePayloadBridgeKernel.lean
+  RuleStageBoundaryKernel.lean
+  PaperFacingRuleStageBoundary.lean
+
+  ListCertificateKernel.lean
+  PaperFacingListCertificate.lean
+
+  ClosureTraceListKernel.lean
+  PaperFacingClosureTraceList.lean
+
+  IteratorTraceBoundaryKernel.lean
+  PaperFacingIteratorTraceBoundary.lean
+
+  ListIterateCertificateKernel.lean
+  MonotoneListIteratorKernel.lean
+  FiniteUniverseListEnumerationKernel.lean
+  RulePredicateListCertificateKernel.lean
+  ProductiveReachableIteratorCertificateKernel.lean
+  PaperFacingProductiveReachableIteratorCertificate.lean
+
+  IteratorFromDecidableIteratesKernel.lean
+  PaperFacingIteratorFromDecidableIterates.lean
+
+  IterDecidabilityKernel.lean
+  ProductiveReachableStepDecidabilityKernel.lean
+  PaperFacingStepDecidability.lean
 ```
 
 The recommended current high-level algorithmic target is:
@@ -2039,6 +2168,646 @@ Pushed by: growupkuriyama-hub
 
 ---
 
+
+### `FullKeptDecidabilityKernel.lean`
+
+This module records the decidability-transfer boundary from the computed kept
+predicate to the abstract `FullKept` predicate.
+
+Checked components include:
+
+* a decidability package for `computedKept`;
+* transfer of decidability along the checked agreement theorem;
+* production of `Nonempty (DecidablePred (FullKept tau G))` from a certified
+  run whose computed-kept predicate is decidable.
+
+Paper-level meaning:
+
+```text
+If the certified Algorithm 1 run supplies a decidable computed-kept predicate,
+then the abstract FullKept predicate used in the main theorem is decidable.
+```
+
+---
+
+### `AlgorithmicFiniteMainKernel.lean`
+
+This module connects certified algorithmic decidability to the finite-main
+theorem layer.
+
+Checked components include:
+
+* a boundary package connecting Algorithm 1 output to the finite-main theorem;
+* transfer from executable/certified keptness data to the full finite-main
+  theorem package.
+
+Paper-level meaning:
+
+```text
+The finite-main representation package can be reached from the certified
+Algorithm 1 boundary once the required keptness decidability is supplied.
+```
+
+---
+
+### `ExecutableFullKeptExtraction.lean`
+
+This module introduces the executable-payload boundary for `FullKept`
+extraction.
+
+Checked components include:
+
+* an executable-style payload consisting of a certified extraction and a
+  decidable computed-kept predicate;
+* transfer from this payload to the algorithmic finite-main boundary.
+
+Paper-level meaning:
+
+```text
+This is the first executable-facing interface: a certified extraction plus a
+decidable computed-kept predicate is enough to reach the finite representation
+package.
+```
+
+It is not yet a construction of the payload from arbitrary finite input data.
+
+---
+
+### `DescriptorReconstructionKernel.lean`
+
+This module records descriptor-reconstruction as a future boundary.
+
+Checked components include:
+
+* theorem-facing markers separating descriptor reconstruction from the current
+  certified extraction chain.
+
+Paper-level meaning:
+
+```text
+Descriptor reconstruction from the computed kept universe remains a later
+implementation/formalization phase.
+```
+
+---
+
+### `ContextClosureCoincidenceKernel.lean`
+
+This module records context-closure coincidence as a future boundary.
+
+Checked components include:
+
+* theorem-facing markers for the context-closure coincidence phase.
+
+Paper-level meaning:
+
+```text
+Full context-closure coincidence for arbitrary one-hole contexts remains outside
+the present artifact.
+```
+
+---
+
+### `ShortlexWitnessKernel.lean`
+
+This module records shortlex witness normalization as a future boundary.
+
+Checked components include:
+
+* theorem-facing markers for shortlex witness preservation/normalization.
+
+Paper-level meaning:
+
+```text
+Shortlex witness normalization is recognized as a future phase and is not
+claimed as part of the current checked theorem package.
+```
+
+---
+
+### `PaperFacingExperimentClosure.lean`
+
+This module exposes the final-artifact and experiment-closure boundary under a
+paper-facing target.
+
+Representative checked target:
+
+```text
+LeanCfgProject.JALC.PaperFacingExperimentClosure
+```
+
+Recorded CI:
+
+```text
+Lean CI #307
+Commit: 2cde4a4
+Target: LeanCfgProject.JALC.PaperFacingExperimentClosure
+```
+
+Paper-level meaning:
+
+```text
+The theorem-facing certified Algorithm 1 agreement is connected to a finite
+decidability/extraction boundary, while descriptor reconstruction,
+context-closure coincidence, and shortlex normalization are explicitly separated
+as future phases.
+```
+
+---
+
+### `StageDecidabilityKernel.lean`
+
+This module reduces computed-kept decidability to the two stage decisions of
+Algorithm 1.
+
+Checked components include:
+
+* construction of `DecidablePred (computedKept E)` from
+  `DecidablePred (computedProductive E)` and
+  `DecidablePred (computedReachable E)`;
+* a `StageDecidableCertifiedRun` payload;
+* transfer from a stage-decidable certified run to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+The kept-state decision problem splits into the productive and reachable stage
+decisions of Algorithm 1.
+```
+
+---
+
+### `PaperFacingStageDecidability.lean`
+
+This module exposes the stage-decidability boundary under stable paper-facing
+names.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingStageDecidability
+```
+
+Paper-level meaning:
+
+```text
+A certified Algorithm 1 run with decidable productive and reachable stages
+supplies decidable FullKept membership.
+```
+
+---
+
+### `StagePayloadBridgeKernel.lean`
+
+This module connects a stage-decidable certified run to the executable payload
+boundary.
+
+Checked components include:
+
+* construction of `ExecutableFullKeptExtractionData tau G` from a
+  `StageDecidableCertifiedRun tau G`;
+* transfer to the algorithmic finite-main boundary.
+
+Paper-level meaning:
+
+```text
+The two stage decisions provide the executable-facing computed-kept decision
+payload.
+```
+
+---
+
+### `RuleStageBoundaryKernel.lean`
+
+This module records a richer rule-stage payload.
+
+Checked components include:
+
+* decidable terminal, start, and binary predicates for the concrete full rule
+  data;
+* decidable computed productive and reachable stages;
+* transfer from this richer payload to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+This records the rule-predicate decisions that a later finite enumerator should
+supply, while still using the stage-decidability boundary for the closure
+stages.
+```
+
+---
+
+### `PaperFacingRuleStageBoundary.lean`
+
+This module exposes the rule-stage boundary under stable paper-facing names.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingRuleStageBoundary
+```
+
+Paper-level meaning:
+
+```text
+Decidable rule predicates and decidable productive/reachable stages are a
+sufficient certified boundary for FullKept decidability.
+```
+
+---
+
+### `ListCertificateKernel.lean`
+
+This module introduces finite list certificates for predicates.
+
+Checked components include:
+
+* `ListPredicateCertificate P`, consisting of a finite support list, soundness,
+  and completeness;
+* construction of `DecidablePred P` from a list certificate;
+* binary-triple predicates for curried binary rule predicates;
+* construction of stage-list and rule-list boundary payloads from list
+  certificates.
+
+Paper-level meaning:
+
+```text
+A finite list exactly representing a predicate gives a machine-checked
+decidability package for that predicate.
+```
+
+---
+
+### `PaperFacingListCertificate.lean`
+
+This module exposes the list-certificate boundary under a paper-facing target.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingListCertificate
+```
+
+Paper-level meaning:
+
+```text
+Finite list certificates for computedProductive and computedReachable are enough
+to obtain FullKept decidability.
+```
+
+---
+
+### `ClosureTraceListKernel.lean`
+
+This module connects list certificates to the certified closure heights inside a
+`CertifiedExtraction`.
+
+Checked components include:
+
+* productive trace-list certificates at `E.productiveCert.height`;
+* reachable trace-list certificates at `E.reachableCert.height`;
+* conversion of these trace-list certificates into list certificates for
+  `computedProductive E` and `computedReachable E`;
+* transfer from trace-list data to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+Finite lists representing the certified closure iterates at the two Algorithm 1
+heights are enough to recover decidable productive/reachable stage predicates.
+```
+
+---
+
+### `PaperFacingClosureTraceList.lean`
+
+This module exposes the closure trace-list boundary.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingClosureTraceList
+```
+
+Paper-level meaning:
+
+```text
+The certified productivity and reachability closure heights are connected to
+finite list certificates.
+```
+
+---
+
+### `IteratorTraceBoundaryKernel.lean`
+
+This module bundles rule-list data and closure-trace data into one iterator
+trace payload.
+
+Checked components include:
+
+* `IteratorTraceBoundaryData`, containing terminal, start, binary, productive
+  trace, and reachable trace list certificates;
+* transfer to `StageTraceListBoundaryData`;
+* transfer to `RuleListBoundaryData`;
+* two independent routes to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+The finite output that a later iterator should return is organized as a single
+payload that reaches FullKept decidability.
+```
+
+---
+
+### `PaperFacingIteratorTraceBoundary.lean`
+
+This module exposes the iterator trace boundary.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingIteratorTraceBoundary
+```
+
+Paper-level meaning:
+
+```text
+Rule-list certificates and closure-trace list certificates combine into a
+single finite iterator-output boundary.
+```
+
+---
+
+### `ListIterateCertificateKernel.lean`
+
+This module introduces list certificates for finite iterates.
+
+Checked components include:
+
+* `ListIterateCertificate F n`;
+* productive iterate certificates at the certified productivity height;
+* reachable iterate certificates at the certified reachability height;
+* conversion to the previous closure trace-list boundary;
+* transfer from iterate-list data to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+Finite list certificates for specific finite iterates are the immediate output
+format expected from a later list-based iterator.
+```
+
+---
+
+### `MonotoneListIteratorKernel.lean`
+
+This module records the output interface for a list iterator.
+
+Checked components include:
+
+* `ListIteratorOutput F n`;
+* productive and reachable iterator output abbreviations;
+* conversion from iterator outputs to iterate-list boundary data;
+* transfer from stage iterator outputs to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+A list iterator that outputs certificates for the two certified closure heights
+is enough to feed the existing FullKept decidability chain.
+```
+
+---
+
+### `FiniteUniverseListEnumerationKernel.lean`
+
+This module records complete finite universe lists and filtering.
+
+Checked components include:
+
+* `UniverseList α`, a finite list containing all elements of `α`;
+* conversion of a decidable predicate and a complete universe list into a
+  `ListPredicateCertificate`;
+* typed-state and binary-triple universe-list aliases;
+* bundled state/triple universe lists for rule predicates.
+
+Recorded CI:
+
+```text
+Lean CI #314
+Status: succeeded
+```
+
+Paper-level meaning:
+
+```text
+Once a finite universe is listed and a predicate is decidable, filtering the
+universe gives a finite list certificate for the predicate.
+```
+
+---
+
+### `RulePredicateListCertificateKernel.lean`
+
+This module constructs rule-predicate list certificates from finite universe
+lists and rule-predicate decisions.
+
+Checked components include:
+
+* decidability payload for terminal, start, and binary rule predicates;
+* terminal-list certificate by filtering the state universe;
+* start-list certificate by filtering the state universe;
+* binary-list certificate by filtering the binary-triple universe;
+* bundled `FullRuleListCertificates`.
+
+Paper-level meaning:
+
+```text
+The terminal, start, and binary rule predicates of the concrete full rule data
+can be represented by finite list certificates when supplied with finite
+universe lists and predicate decisions.
+```
+
+---
+
+### `ProductiveReachableIteratorCertificateKernel.lean`
+
+This module combines rule-list certificates and iterator outputs into the final
+pre-implementation payload.
+
+Checked components include:
+
+* `ProductiveReachableIteratorCertificateData`;
+* conversion to `IteratorTraceBoundaryData`;
+* transfer to `FullKept` decidability through both trace-list and rule-list
+  routes;
+* exposure of productive/reachable list certificates.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+```
+
+Paper-level meaning:
+
+```text
+Rule-list certificates plus productive/reachable iterator outputs form the
+pre-implementation payload that reaches FullKept decidability.
+```
+
+---
+
+### `PaperFacingProductiveReachableIteratorCertificate.lean`
+
+This module exposes the productive/reachable iterator certificate boundary.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+```
+
+Paper-level meaning:
+
+```text
+This target checks the final finite-output interface immediately before
+implementing the fixed-point iterator itself.
+```
+
+---
+
+### `IteratorFromDecidableIteratesKernel.lean`
+
+This module builds iterator outputs from decidable iterates by filtering a
+complete finite state universe.
+
+Checked components include:
+
+* construction of `ListIteratorOutput F n` from a complete universe list and
+  `DecidablePred (Iter F n)`;
+* `ProductiveReachableIterateDecisionData`;
+* construction of productive and reachable iterator outputs from iterate
+  decisions;
+* transfer to `ProductiveReachableIteratorCertificateData`;
+* transfer to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+If the productive and reachable iterate predicates at the certified heights are
+decidable, then complete finite state-universe lists can be filtered to produce
+the required iterator outputs.
+```
+
+---
+
+### `PaperFacingIteratorFromDecidableIterates.lean`
+
+This module exposes the iterator-from-decidable-iterates boundary.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+```
+
+Paper-level meaning:
+
+```text
+Decidable productive/reachable iterates can be converted into finite iterator
+outputs by finite-universe filtering.
+```
+
+---
+
+### `IterDecidabilityKernel.lean`
+
+This module proves the generic finite-iterate decidability recursion.
+
+Checked components include:
+
+* `PreservesDecidablePred F`;
+* recursive construction of `DecidablePred (Iter F n)` for every finite `n`
+  when `F` preserves decidability;
+* construction of list-iterator output from a decidability-preserving step and
+  a complete finite universe list;
+* a generic decidable iterator data package.
+
+Important checked statements:
+
+```text
+decidablePred_iter
+decidablePred_iter_nonempty
+listIteratorOutput_of_preservesDecidable
+```
+
+Paper-level meaning:
+
+```text
+A finite iterate does not need decidability as a separate assumption if the step
+itself preserves decidability.
+```
+
+---
+
+### `ProductiveReachableStepDecidabilityKernel.lean`
+
+This module specializes finite-iterate decidability to the productive and
+reachable closure steps.
+
+Checked components include:
+
+* `ProductiveReachableStepDecidabilityData`;
+* productive iterate decidability from productive-step decidability
+  preservation;
+* reachable iterate decidability from reachable-step decidability preservation;
+* conversion to the previous iterate-decision data;
+* transfer to `FullKept` decidability.
+
+Paper-level meaning:
+
+```text
+If the productive and reachable closure steps preserve decidability, then the
+certified productive/reachable iterates are decidable and the FullKept
+decidability chain follows.
+```
+
+---
+
+### `PaperFacingStepDecidability.lean`
+
+This module exposes the most recent executable-interface theorem.
+
+Representative target:
+
+```text
+LeanCfgProject.JALC.PaperFacingStepDecidability
+```
+
+Latest status:
+
+```text
+Status: succeeded
+Reported by user after fixing IterDecidabilityKernel.lean
+```
+
+Paper-level meaning:
+
+```text
+The current artifact has reached the point where finite-iterate decidability is
+reduced to decidability preservation of the productive and reachable steps.
+```
+
+This is still not a full executable fixed-point implementation.  The next
+natural target is to prove that the concrete `ProductiveStep` and
+`ReachableStep` preserve decidability from decidable terminal, start, binary,
+and previous-stage predicates.
+
+---
+
 ## 7. Current CI guard
 
 The intended policy for the JALC Lean directory remains:
@@ -2056,6 +2825,10 @@ Recommended CI workflow:
 lake build LeanCfgProject.JALC.Summary
 lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
+lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+lake build LeanCfgProject.JALC.PaperFacingStepDecidability
 ```
 
 followed by the placeholder guard.
@@ -2102,7 +2875,15 @@ In particular, it checks:
 * certified productivity and productive-part reachability closures;
 * certified Algorithm 1 extraction package;
 * bridge from computed keptness to full-kept correctness/language/representation kernels;
-* direct agreement theorem: Algorithm 1 over the concrete full all-copy rule data computes exactly `FullKept`.
+* direct agreement theorem: Algorithm 1 over the concrete full all-copy rule data computes exactly `FullKept`;
+* decidability transfer from `computedKept` to `FullKept`;
+* reduction of `computedKept` decidability to `computedProductive` and `computedReachable` decidability;
+* finite list certificate interface for predicate decidability;
+* closure trace-list certificate interface for the certified productivity and reachability heights;
+* iterator trace boundary bundling rule-list and closure-trace data;
+* productive/reachable iterator certificate boundary;
+* finite-universe filtering interface for building iterator outputs from decidable iterates;
+* generic finite-iterate decidability from a decidability-preserving step.
 
 Thus, the artifact now supports a much stronger claim than the original baseline. It is no longer only a finite-carrier consistency check; it verifies the main mathematical kernels surrounding the finite representation theorem, including the full-kept correctness statement for the abstract full-refinement construction.
 
@@ -2126,6 +2907,9 @@ More explicitly, the current development does not yet fully formalize:
 * the concrete extraction algorithm from arbitrary CFG presentations;
 * an extracted executable productive-first and reachable trimming procedure;
 * automatic construction of the fixed-point certificates used by `CertifiedExtraction`;
+* proof that the concrete `ProductiveStep` and `ReachableStep` preserve
+  decidability from concrete terminal/start/binary predicate decisions;
+* an extracted terminating list-based fixed-point iterator;
 * decidability of `FullKept` membership as an extracted procedure;
 * shortlex witness preservation;
 * full context-closure coincidence for all one-hole contexts;
@@ -2208,6 +2992,10 @@ At the root of the repository, run:
 lake build LeanCfgProject.JALC.Summary
 lake build LeanCfgProject.JALC.PaperFacingFullFiniteMain
 lake build LeanCfgProject.JALC.PaperFacingFullAlgorithmicAgreement
+lake build LeanCfgProject.JALC.PaperFacingExperimentClosure
+lake build LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+lake build LeanCfgProject.JALC.PaperFacingStepDecidability
 ```
 
 Expected checked targets:
@@ -2239,6 +3027,29 @@ Latest successful algorithmic agreement CI run:
 Lean CI #304
 Commit: a434bb3
 Pushed by: growupkuriyama-hub
+```
+
+Latest recorded experiment-closure CI run:
+
+```text
+Lean CI #307
+Commit: 2cde4a4
+Pushed by: growupkuriyama-hub
+Target: LeanCfgProject.JALC.PaperFacingExperimentClosure
+```
+
+Latest recorded finite-universe filtering / iterator-boundary CI run:
+
+```text
+Lean CI #314
+Status: succeeded
+```
+
+Latest user-reported executable-interface target:
+
+```text
+LeanCfgProject.JALC.PaperFacingStepDecidability
+Status: succeeded
 ```
 
 ---
@@ -2292,11 +3103,12 @@ Extraction/trimming algorithm: certified-kernel level, not executable-code level
 Approximate internal assessment:
 
 ```text
-JALC-facing Lean value: 97 / 100
-Full mathematical main-kernel formalization: 84--88 / 100
-Finite-representation side: 88--92 / 100
-Certified Algorithm 1 / FullKept agreement: 85--90 / 100
-Executable extraction/fixed-point implementation: 45--55 / 100
+JALC-facing Lean value: 98--99 / 100
+Full mathematical main-kernel formalization: 88--91 / 100
+Finite-representation side: 90--93 / 100
+Certified Algorithm 1 / FullKept agreement: 91--94 / 100
+Executable extraction/fixed-point implementation: 58--65 / 100
+Executable-interface boundary toward fixed-point extraction: 78--84 / 100
 ```
 
 These numbers should not be written in the paper, but they are useful for internal planning.
@@ -2351,3 +3163,181 @@ prove that it presents the same start language
 This would connect the current theorem-facing representation package even more directly to the paper’s descriptor-level output.
 
 These targets are harder than the current packaging kernels. They are the right next steps only after the current artifact is recorded in the paper and formalization report.
+
+
+---
+
+## 15. Update after CI #304: executable-interface chain through step decidability
+
+This section records the Lean work added after the `PaperFacingFullAlgorithmicAgreement`
+target.
+
+### 15.1 Confirmed targets
+
+The post-#304 executable-interface chain introduced and checked the following
+paper-facing targets:
+
+```text
+LeanCfgProject.JALC.PaperFacingExperimentClosure
+LeanCfgProject.JALC.PaperFacingStageDecidability
+LeanCfgProject.JALC.PaperFacingRuleStageBoundary
+LeanCfgProject.JALC.PaperFacingListCertificate
+LeanCfgProject.JALC.PaperFacingClosureTraceList
+LeanCfgProject.JALC.PaperFacingIteratorTraceBoundary
+LeanCfgProject.JALC.PaperFacingProductiveReachableIteratorCertificate
+LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+LeanCfgProject.JALC.PaperFacingStepDecidability
+```
+
+The most recent target reported successful by the user is:
+
+```text
+LeanCfgProject.JALC.PaperFacingStepDecidability
+```
+
+### 15.2 Conceptual chain now checked
+
+The checked executable-interface chain can be summarized as:
+
+```text
+CertifiedExtraction (fullExtractionRuleData tau G)
++ computedProductive / computedReachable stage decisions
+  => computedKept decision
+  => FullKept decision
+```
+
+Then:
+
+```text
+finite list certificates for computedProductive/computedReachable
+  => stage decisions
+  => computedKept decision
+  => FullKept decision
+```
+
+Then:
+
+```text
+trace-list certificates at E.productiveCert.height and E.reachableCert.height
+  => finite list certificates for computedProductive/computedReachable
+```
+
+Then:
+
+```text
+iterator outputs for productive/reachable finite iterates
+  => trace-list certificates
+  => FullKept decision
+```
+
+Then:
+
+```text
+complete finite state-universe list
++ decidability of the productive/reachable iterate predicates
+  => iterator outputs by filtering
+```
+
+Finally:
+
+```text
+PreservesDecidablePred F
+  => DecidablePred (Iter F n) for every finite n
+```
+
+Specialized to the two Algorithm 1 stages, this gives:
+
+```text
+productive step preserves decidability
++ reachable step preserves decidability
+  => decidability of the certified productive/reachable iterates
+  => iterator outputs
+  => FullKept decidability
+```
+
+### 15.3 What this improves
+
+Before this chain, the artifact had a theorem-facing certified Algorithm 1
+agreement result, but the executable side still had a large gap between a
+certified fixed-point closure and a finite-data implementation.
+
+After this chain, the remaining executable gap is much narrower:
+
+```text
+prove ProductiveStep and ReachableStep preserve decidability
+from concrete rule-predicate decisions
+```
+
+and then:
+
+```text
+construct the finite iterator/certificates automatically
+from finite input data
+```
+
+Thus the artifact has moved from:
+
+```text
+certified Algorithm 1 as an assumption-level fixed-point package
+```
+
+toward:
+
+```text
+a staged finite-data interface for an executable fixed-point extraction
+```
+
+### 15.4 Current honest boundary
+
+The current artifact still does not claim:
+
+```text
+a complete extracted implementation of Algorithm 1
+automatic construction of closure certificates
+automatic descriptor reconstruction
+```
+
+The current artifact can honestly claim:
+
+```text
+The Lean development checks the theorem-facing full-refinement and
+FullKept correctness kernels, the certified Algorithm 1 agreement theorem for
+the concrete full all-copy rule data, and a staged executable-interface chain.
+This chain proves that finite rule/list/trace certificates and finite iterate
+decidability feed into FullKept decidability, and that finite iterate
+decidability follows from a generic decidability-preservation principle for the
+closure step.
+```
+
+### 15.5 Best next Lean target
+
+The next mathematically natural target is:
+
+```text
+StepPreservationKernel.lean
+```
+
+Goal:
+
+```text
+ProductiveStep preserves decidability
+ReachableStep preserves decidability
+```
+
+from the relevant decidable rule predicates and previous-stage predicates.
+
+A likely next target after that is:
+
+```text
+ConcreteProductiveReachableStepKernel.lean
+```
+
+Goal:
+
+```text
+instantiate the step-preservation lemmas for fullExtractionRuleData tau G
+using terminal/start/binary rule-predicate decisions
+```
+
+These targets would reduce the remaining executable-interface assumptions even
+further, without yet requiring a complete terminating extracted implementation.

@@ -89,3 +89,6 @@ jobs:
 
       - name: Build JALC step-decidability target
         run: lake build LeanCfgProject.JALC.PaperFacingStepDecidability
+
+      - name: Build JALC executable-limit target
+        run: lake build LeanCfgProject.JALC.PaperFacingExecutableLimit
