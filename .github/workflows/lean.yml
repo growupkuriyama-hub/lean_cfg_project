@@ -86,3 +86,6 @@ jobs:
 
       - name: Build JALC iterator-from-decidable-iterates target
         run: lake build LeanCfgProject.JALC.PaperFacingIteratorFromDecidableIterates
+
+      - name: Build JALC step-decidability target
+        run: lake build LeanCfgProject.JALC.PaperFacingStepDecidability
