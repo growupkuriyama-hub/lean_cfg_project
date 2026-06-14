@@ -136,23 +136,17 @@ def reachableLeftWitnessDecidable
     (Rdec : DecidablePred R)
     (x : α) :
     Decidable
-      (∃ p : α, ∃ y : α, ∃ z : α,
-        R p ∧ binary p x z ∧ productive z) :=
+      (∃ p : α, ∃ z : α, R p ∧ binary p x z ∧ productive z) :=
   decidableExistsInUniverse U
-    (fun p : α => ∃ y : α, ∃ z : α,
-      R p ∧ binary p x z ∧ productive z)
+    (fun p : α => ∃ z : α, R p ∧ binary p x z ∧ productive z)
     (fun p =>
       decidableExistsInUniverse U
-        (fun y : α => ∃ z : α,
-          R p ∧ binary p x z ∧ productive z)
-        (fun y =>
-          decidableExistsInUniverse U
-            (fun z : α => R p ∧ binary p x z ∧ productive z)
-            (fun z =>
-              letI : Decidable (R p) := Rdec p
-              letI : Decidable (binary p x z) := binaryDec p x z
-              letI : Decidable (productive z) := productiveDec z
-              inferInstance)))
+        (fun z : α => R p ∧ binary p x z ∧ productive z)
+        (fun z =>
+          letI : Decidable (R p) := Rdec p
+          letI : Decidable (binary p x z) := binaryDec p x z
+          letI : Decidable (productive z) := productiveDec z
+          inferInstance))
 
 
 /-- Decide the right-child reachability witness used by ReachableStep. -/
@@ -167,23 +161,17 @@ def reachableRightWitnessDecidable
     (Rdec : DecidablePred R)
     (x : α) :
     Decidable
-      (∃ p : α, ∃ y : α, ∃ z : α,
-        R p ∧ binary p y x ∧ productive y) :=
+      (∃ p : α, ∃ y : α, R p ∧ binary p y x ∧ productive y) :=
   decidableExistsInUniverse U
-    (fun p : α => ∃ y : α, ∃ z : α,
-      R p ∧ binary p y x ∧ productive y)
+    (fun p : α => ∃ y : α, R p ∧ binary p y x ∧ productive y)
     (fun p =>
       decidableExistsInUniverse U
-        (fun y : α => ∃ z : α,
-          R p ∧ binary p y x ∧ productive y)
+        (fun y : α => R p ∧ binary p y x ∧ productive y)
         (fun y =>
-          decidableExistsInUniverse U
-            (fun z : α => R p ∧ binary p y x ∧ productive y)
-            (fun z =>
-              letI : Decidable (R p) := Rdec p
-              letI : Decidable (binary p y x) := binaryDec p y x
-              letI : Decidable (productive y) := productiveDec y
-              inferInstance)))
+          letI : Decidable (R p) := Rdec p
+          letI : Decidable (binary p y x) := binaryDec p y x
+          letI : Decidable (productive y) := productiveDec y
+          inferInstance))
 
 
 /--
@@ -207,12 +195,12 @@ def reachableStep_preserves_decidable_of_universe
   letI : Decidable (start x) := startDec x
   letI :
       Decidable
-        (∃ p : α, ∃ y : α, ∃ z : α,
+        (∃ p : α, ∃ z : α,
           R p ∧ binary p x z ∧ productive z) :=
     reachableLeftWitnessDecidable U binaryDec productiveDec Rdec x
   letI :
       Decidable
-        (∃ p : α, ∃ y : α, ∃ z : α,
+        (∃ p : α, ∃ y : α,
           R p ∧ binary p y x ∧ productive y) :=
     reachableRightWitnessDecidable U binaryDec productiveDec Rdec x
   exact inferInstance
