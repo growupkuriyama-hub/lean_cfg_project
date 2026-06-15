@@ -71,3 +71,6 @@ jobs:
 
       - name: Build JALC bounded-search offset completeness target
         run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchOffsetCompleteness
+
+      - name: Build JALC bounded-search within-bound target
+        run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchWithinBound
