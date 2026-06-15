@@ -80,3 +80,6 @@ jobs:
 
       - name: Build JALC concrete no-strict-growth search success target
         run: lake build LeanCfgProject.JALC.PaperFacingConcreteNoStrictGrowthSearchSuccess
+
+      - name: Build JALC strict-growth witness freshness target
+        run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthWitnessFreshness
