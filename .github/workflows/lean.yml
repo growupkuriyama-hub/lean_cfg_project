@@ -74,3 +74,6 @@ jobs:
 
       - name: Build JALC bounded-search within-bound target
         run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchWithinBound
+
+      - name: Build JALC list-growth stabilization target
+        run: lake build LeanCfgProject.JALC.PaperFacingListGrowthStabilization
