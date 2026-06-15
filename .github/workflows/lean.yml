@@ -51,53 +51,5 @@ jobs:
             exit 1
           fi
 
-      - name: Build JALC concrete two-stage bounded search target
-        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageBoundedSearch
-
-      - name: Build JALC concrete two-stage search certificate target
-        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchCertificate
-
-      - name: Build JALC concrete two-stage search certificate target
-        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchCertificate
-
-      - name: Build JALC bounded-search completeness target
-        run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchCompleteness
-
-      - name: Build JALC concrete two-stage search consistency target
-        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchConsistency
-
-      - name: Build JALC concrete two-stage search success target
-        run: lake build LeanCfgProject.JALC.PaperFacingConcreteTwoStageSearchSuccess
-
-      - name: Build JALC bounded-search offset completeness target
-        run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchOffsetCompleteness
-
-      - name: Build JALC bounded-search within-bound target
-        run: lake build LeanCfgProject.JALC.PaperFacingBoundedSearchWithinBound
-
-      - name: Build JALC list-growth stabilization target
-        run: lake build LeanCfgProject.JALC.PaperFacingListGrowthStabilization
-
-      - name: Build JALC concrete no-strict-growth search success target
-        run: lake build LeanCfgProject.JALC.PaperFacingConcreteNoStrictGrowthSearchSuccess
-
-      - name: Build JALC strict-growth witness freshness target
-        run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthWitnessFreshness
-
-      - name: Build JALC strict-growth witness freshness target
-        run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthWitnessFreshness
-
-      - name: Build JALC strict-growth counting interface target
-        run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthCountingInterface
-
-      - name: Build JALC fresh-family Fin embedding target
-        run: lake build LeanCfgProject.JALC.PaperFacingFreshFamilyFinEmbedding
-
-      - name: Build JALC small-support obstruction target
-        run: lake build LeanCfgProject.JALC.PaperFacingSmallSupportObstruction
-
-      - name: Build JALC doubleton support obstruction target
-        run: lake build LeanCfgProject.JALC.PaperFacingDoubletonSupportObstruction
-
-      - name: Build JALC collision obstruction bridge target
-        run: lake build LeanCfgProject.JALC.PaperFacingCollisionObstructionBridge
+      - name: Build JALC finite obstruction via collision target
+        run: lake build LeanCfgProject.JALC.PaperFacingFiniteObstructionViaCollision
