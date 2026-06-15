@@ -16,6 +16,7 @@ open ListStabilityKernel
 open BoundedListStabilitySearchKernel
 open ConcreteBoundedWitnessBridgeKernel
 open ConcreteTwoStageBoundedSearchKernel
+open ListGrowthStabilizationKernel
 open ConcreteNoStrictGrowthSearchSuccessKernel
 
 
