@@ -147,6 +147,30 @@ theorem collisionObstruction_doubleton
 
 
 /--
+Transport a collision obstruction along equality of support lists.
+-/
+theorem collisionObstruction_of_support_eq
+    {α : Type u}
+    {xs ys : List α}
+    {fuel : Nat}
+    (hxy : xs = ys)
+    (H : CollisionObstruction ys fuel) :
+    CollisionObstruction xs fuel :=
+  by
+    refine ⟨?_⟩
+    intro E
+    rcases
+      H.collision
+        { elem := E.elem,
+          elem_mem :=
+            by
+              intro i
+              simpa [hxy] using E.elem_mem i,
+          elem_injective := E.elem_injective } with ⟨i, j, hij, heq⟩
+    exact ⟨i, j, hij, heq⟩
+
+
+/--
 Empty support gives bounded-search success through the collision interface.
 -/
 theorem boundedSearch_nil_via_collision
@@ -166,9 +190,9 @@ theorem boundedSearch_nil_via_collision
       findListStabilityWitness U F dec fuel = some W :=
   boundedSearch_of_collisionObstruction
     U F mono dec fuel
-    (by
-      cases hsupport
-      exact collisionObstruction_nil fuel)
+    (collisionObstruction_of_support_eq
+      hsupport
+      (collisionObstruction_nil fuel))
 
 
 /--
@@ -193,9 +217,9 @@ theorem boundedSearch_singleton_via_collision
       findListStabilityWitness U F dec fuel = some W :=
   boundedSearch_of_collisionObstruction
     U F mono dec fuel
-    (by
-      cases hsupport
-      exact collisionObstruction_singleton a hfuel)
+    (collisionObstruction_of_support_eq
+      hsupport
+      (collisionObstruction_singleton a hfuel))
 
 
 /--
@@ -220,9 +244,9 @@ theorem boundedSearch_doubleton_via_collision
       findListStabilityWitness U F dec fuel = some W :=
   boundedSearch_of_collisionObstruction
     U F mono dec fuel
-    (by
-      cases hsupport
-      exact collisionObstruction_doubleton a b hfuel)
+    (collisionObstruction_of_support_eq
+      hsupport
+      (collisionObstruction_doubleton a b hfuel))
 
 end FiniteObstructionViaCollisionKernel
 end JALC

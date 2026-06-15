@@ -30,6 +30,17 @@ theorem checked_collisionObstruction_of_finEmbeddingImpossible
   collisionObstruction_of_finEmbeddingImpossible himp
 
 
+/-- Paper-facing support equality transports collision obstructions. -/
+theorem checked_collisionObstruction_of_support_eq
+    {α : Type u}
+    {xs ys : List α}
+    {fuel : Nat}
+    (hxy : xs = ys)
+    (H : CollisionObstruction ys fuel) :
+    CollisionObstruction xs fuel :=
+  collisionObstruction_of_support_eq hxy H
+
+
 /-- Paper-facing bounded-search success via collision from embedding impossibility. -/
 theorem checked_boundedSearch_of_finEmbeddingImpossible_via_collision
     {α : Type u}
