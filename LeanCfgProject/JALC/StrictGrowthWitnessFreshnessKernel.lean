@@ -90,7 +90,7 @@ structure StrictGrowthWitnessAt
 
 
 /-- Extract a named witness from strict growth at a height. -/
-def strictGrowthWitnessAt_of_strictGrowthAt
+noncomputable def strictGrowthWitnessAt_of_strictGrowthAt
     {α : Type u}
     {xs : List α}
     {F : (α → Prop) → α → Prop}
@@ -123,7 +123,6 @@ strict-growth height.
 -/
 theorem later_witness_not_equal_earlier_added
     {α : Type u}
-    {xs : List α}
     {F : (α → Prop) → α → Prop}
     (mono : PredMonotone F)
     {i j : Nat}
@@ -243,7 +242,7 @@ structure StrictGrowthWitnessSelector
 
 
 /-- The canonical selector obtained by extracting witnesses from strict growth. -/
-def canonicalStrictGrowthWitnessSelector
+noncomputable def canonicalStrictGrowthWitnessSelector
     {α : Type u}
     (xs : List α)
     (F : (α → Prop) → α → Prop)
