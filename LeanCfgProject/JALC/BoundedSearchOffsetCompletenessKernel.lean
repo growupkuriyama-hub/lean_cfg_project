@@ -74,7 +74,9 @@ theorem findListStabilityWitness_some_monotone_add
         findListStabilityWitness U F dec (n + k) = some W'
   | 0 =>
       by
-        exact ⟨W, by simpa using h⟩
+        exact ⟨W, by
+          rw [Nat.add_zero]
+          exact h⟩
   | Nat.succ k =>
       by
         rcases
@@ -83,7 +85,9 @@ theorem findListStabilityWitness_some_monotone_add
         rcases
           findListStabilityWitness_some_monotone_succ
             U F dec (n + k) hWk with ⟨Wnext, hnext⟩
-        exact ⟨Wnext, by simpa [Nat.add_succ] using hnext⟩
+        exact ⟨Wnext, by
+          rw [Nat.add_succ]
+          exact hnext⟩
 
 
 /--
