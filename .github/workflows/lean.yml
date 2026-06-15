@@ -77,3 +77,6 @@ jobs:
 
       - name: Build JALC list-growth stabilization target
         run: lake build LeanCfgProject.JALC.PaperFacingListGrowthStabilization
+
+      - name: Build JALC concrete no-strict-growth search success target
+        run: lake build LeanCfgProject.JALC.PaperFacingConcreteNoStrictGrowthSearchSuccess
