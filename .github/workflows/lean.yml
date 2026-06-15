@@ -92,3 +92,6 @@ jobs:
 
       - name: Build JALC fresh-family Fin embedding target
         run: lake build LeanCfgProject.JALC.PaperFacingFreshFamilyFinEmbedding
+
+      - name: Build JALC small-support obstruction target
+        run: lake build LeanCfgProject.JALC.PaperFacingSmallSupportObstruction
