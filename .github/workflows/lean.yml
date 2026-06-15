@@ -89,3 +89,6 @@ jobs:
 
       - name: Build JALC strict-growth counting interface target
         run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthCountingInterface
+
+      - name: Build JALC fresh-family Fin embedding target
+        run: lake build LeanCfgProject.JALC.PaperFacingFreshFamilyFinEmbedding
