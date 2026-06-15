@@ -11,6 +11,9 @@ Paper-facing target for fresh-family finite-index embeddings.
 universe u
 
 open FiniteClosureKernel
+open FiniteUniverseListEnumerationKernel
+open ListStabilityKernel
+open BoundedListStabilitySearchKernel
 open ListGrowthStabilizationKernel
 open StrictGrowthWitnessFreshnessKernel
 open StrictGrowthCountingInterfaceKernel
@@ -86,20 +89,19 @@ theorem checked_freshFamilyImpossible_of_finEmbeddingImpossible
 /-- Paper-facing finite-index embedding obstruction gives bounded-search success. -/
 theorem checked_boundedSearch_of_finEmbeddingImpossible
     {α : Type u}
-    (U : FiniteUniverseListEnumerationKernel.UniverseList α)
+    (U : UniverseList α)
     (F : (α → Prop) → α → Prop)
     (mono : PredMonotone F)
     (dec :
       ∀ k : Nat,
         Decidable
-          (ListStabilityKernel.AgreeOnList U.support
-            (F (FiniteClosureKernel.Iter F k))
-            (FiniteClosureKernel.Iter F k)))
+          (AgreeOnList U.support
+            (F (Iter F k))
+            (Iter F k)))
     (fuel : Nat)
     (himp : FinEmbeddingImpossible U.support fuel) :
-    ∃ W : ListStabilityKernel.ListStabilityWitness U F,
-      BoundedListStabilitySearchKernel.findListStabilityWitness
-        U F dec fuel = some W :=
+    ∃ W : ListStabilityWitness U F,
+      findListStabilityWitness U F dec fuel = some W :=
   boundedSearch_of_finEmbeddingImpossible
     U F mono dec fuel himp
 

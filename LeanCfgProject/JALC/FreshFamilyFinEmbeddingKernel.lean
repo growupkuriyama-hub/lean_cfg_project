@@ -17,6 +17,9 @@ This is the exact shape needed for the next pigeonhole/cardinality layer.
 universe u
 
 open FiniteClosureKernel
+open FiniteUniverseListEnumerationKernel
+open ListStabilityKernel
+open BoundedListStabilitySearchKernel
 open ListGrowthStabilizationKernel
 open StrictGrowthWitnessFreshnessKernel
 open StrictGrowthCountingInterfaceKernel
@@ -182,7 +185,7 @@ def FinEmbeddingImpossible
     {α : Type u}
     (xs : List α)
     (fuel : Nat) : Prop :=
-  ∀ E : FreshFamilyFinEmbedding xs fuel, False
+  ∀ _E : FreshFamilyFinEmbedding xs fuel, False
 
 
 /--
@@ -221,21 +224,20 @@ If no finite-index embedding into the support exists, bounded search succeeds.
 -/
 theorem boundedSearch_of_finEmbeddingImpossible
     {α : Type u}
-    (U : FiniteUniverseListEnumerationKernel.UniverseList α)
+    (U : UniverseList α)
     (F : (α → Prop) → α → Prop)
     (mono : PredMonotone F)
     (dec :
       ∀ k : Nat,
         Decidable
-          (ListStabilityKernel.AgreeOnList U.support
-            (F (FiniteClosureKernel.Iter F k))
-            (FiniteClosureKernel.Iter F k)))
+          (AgreeOnList U.support
+            (F (Iter F k))
+            (Iter F k)))
     (fuel : Nat)
     (himp : FinEmbeddingImpossible U.support fuel) :
-    ∃ W : ListStabilityKernel.ListStabilityWitness U F,
-      BoundedListStabilitySearchKernel.findListStabilityWitness
-        U F dec fuel = some W :=
-  StrictGrowthCountingInterfaceKernel.boundedSearch_of_freshFamilyImpossible
+    ∃ W : ListStabilityWitness U F,
+      findListStabilityWitness U F dec fuel = some W :=
+  boundedSearch_of_freshFamilyImpossible
     U F mono dec fuel
     (freshFamilyImpossible_of_finEmbeddingImpossible himp)
 
