@@ -95,3 +95,6 @@ jobs:
 
       - name: Build JALC small-support obstruction target
         run: lake build LeanCfgProject.JALC.PaperFacingSmallSupportObstruction
+
+      - name: Build JALC doubleton support obstruction target
+        run: lake build LeanCfgProject.JALC.PaperFacingDoubletonSupportObstruction
