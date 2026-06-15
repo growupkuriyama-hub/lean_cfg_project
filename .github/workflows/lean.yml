@@ -86,3 +86,6 @@ jobs:
 
       - name: Build JALC strict-growth witness freshness target
         run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthWitnessFreshness
+
+      - name: Build JALC strict-growth counting interface target
+        run: lake build LeanCfgProject.JALC.PaperFacingStrictGrowthCountingInterface
