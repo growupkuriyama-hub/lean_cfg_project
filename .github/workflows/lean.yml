@@ -98,3 +98,6 @@ jobs:
 
       - name: Build JALC doubleton support obstruction target
         run: lake build LeanCfgProject.JALC.PaperFacingDoubletonSupportObstruction
+
+      - name: Build JALC collision obstruction bridge target
+        run: lake build LeanCfgProject.JALC.PaperFacingCollisionObstructionBridge
