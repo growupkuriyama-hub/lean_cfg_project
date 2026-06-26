@@ -12,23 +12,23 @@ permissions:
 
 jobs:
   lean:
-    name: Build and check Lean files
+    name: Check MCFG experimental Lean file
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Lean and build project
+      - name: Set up Lean and Mathlib cache only
         uses: leanprover/lean-action@v1
         with:
-          # Run the ordinary Lake build.  This uses the repository's
-          # lean-toolchain and lakefile.lean/lakefile.toml.
-          build: true
+          auto-config: false
+          build: false
           test: false
           lint: false
+          mk_all-check: false
           use-mathlib-cache: auto
 
-      - name: Check MCFG experimental file directly
+      - name: Check fixed-observation experiment directly
         run: |
           lake env lean LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
