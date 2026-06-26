@@ -123,13 +123,20 @@ theorem evalObs_refines (r : Refines obs obs') (w : Word α) :
   | nil =>
       simp [evalObs]
   | cons a w ih =>
-      simp [evalObs, r.comm a, ih]
+      change r.map (obs' a * evalObs obs' w) = obs a * evalObs obs w
+      rw [map_mul, r.comm a, ih]
+
+/-- Pointwise version of componentwise tuple-type compatibility. -/
+theorem tupleType_refines_apply {d : Nat} (r : Refines obs obs')
+    (x : Tuple α d) (i : Fin d) :
+    r.map (tupleType obs' x i) = tupleType obs x i := by
+  exact evalObs_refines r (x i)
 
 /-- Componentwise tuple types commute with refinement. -/
 theorem tupleType_refines {d : Nat} (r : Refines obs obs') (x : Tuple α d) :
     (fun i : Fin d => r.map (tupleType obs' x i)) = tupleType obs x := by
-  ext i
-  exact evalObs_refines r (x i)
+  funext i
+  exact tupleType_refines_apply r x i
 
 variable {Ctx : Nat → Type z}
 variable (fill : ∀ d : Nat, Ctx d → Tuple α d → Word α)
@@ -145,16 +152,16 @@ theorem fixedTupleSubstitutable_of_refines
     (hL : FixedTupleSubstitutable fill f obs L) :
     FixedTupleSubstitutable fill f obs' L := by
   intro d hd hpos x y htype hshare
-  apply hL hd hpos x y
-  · -- Transport equality of the finer tuple types through the refinement map.
-    calc
-      tupleType obs x = (fun i : Fin d => r.map (tupleType obs' x i)) := by
-        exact (tupleType_refines r x).symm
-      _ = (fun i : Fin d => r.map (tupleType obs' y i)) := by
-        rw [htype]
-      _ = tupleType obs y := by
-        exact tupleType_refines r y
-  · exact hshare
+  have hcoarse : tupleType obs x = tupleType obs y := by
+    funext i
+    have hx : tupleType obs x i = r.map (tupleType obs' x i) :=
+      (tupleType_refines_apply r x i).symm
+    have hxy : r.map (tupleType obs' x i) = r.map (tupleType obs' y i) := by
+      exact congrArg r.map (congrFun htype i)
+    have hy : r.map (tupleType obs' y i) = tupleType obs y i :=
+      tupleType_refines_apply r y i
+    exact hx.trans (hxy.trans hy)
+  exact hL hd hpos x y hcoarse hshare
 
 end Refinement
 
