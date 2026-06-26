@@ -44,34 +44,71 @@ def TextFor (t : Text α) (L : Set (Word α)) : Prop :=
   (∀ n : Nat, t n ∈ L) ∧
   (∀ w : Word α, w ∈ L → ∃ n : Nat, t n = w)
 
-/-- The finite sample seen in the first `n` positions of a text.  We use
-`Finset.range n`, so positions are `0, ..., n-1`. -/
-def PrefixSample (t : Text α) (n : Nat) : Finset (Word α) :=
-  (Finset.range n).image t
+/-- The finite sample seen in the first `n` positions of a text.
+
+We use a recursive definition rather than `Finset.image`, because the latter is
+not part of the small import surface used by this project.  Thus
+`PrefixSample t n` contains exactly the values `t 0, ..., t (n-1)`, with
+duplicates removed by the `Finset` structure. -/
+def PrefixSample (t : Text α) : Nat → Finset (Word α)
+  | 0 => ∅
+  | n + 1 => insert (t n) (PrefixSample t n)
 
 /-- Every prefix sample of a text for `L` is positive for `L`. -/
 theorem prefixSample_positive
     {t : Text α} {L : Set (Word α)}
-    (ht : TextFor t L) (n : Nat) :
-    PositiveForLanguage (PrefixSample t n) L := by
-  intro w hw
-  unfold PrefixSample at hw
-  rcases Finset.mem_image.mp hw with ⟨i, _hi, htw⟩
-  rw [← htw]
-  exact ht.1 i
+    (ht : TextFor t L) :
+    ∀ n : Nat, PositiveForLanguage (PrefixSample t n) L := by
+  intro n
+  induction n with
+  | zero =>
+      intro w hw
+      simp [PrefixSample] at hw
+  | succ n ih =>
+      intro w hw
+      simp [PrefixSample] at hw
+      rcases hw with htw | hw
+      · rw [htw]
+        exact ht.1 n
+      · exact ih w hw
+
+/-- A word occurring at stage `i` is present in the prefix of length `i+1`. -/
+theorem mem_prefixSample_succ_self
+    (t : Text α) (i : Nat) :
+    t i ∈ PrefixSample t (i + 1) := by
+  simp [PrefixSample]
 
 /-- Prefix samples are monotone with respect to the prefix length. -/
 theorem prefixSample_extends_mono
-    {t : Text α} {m n : Nat}
-    (hmn : m ≤ n) :
-    SampleExtends (PrefixSample t m) (PrefixSample t n) := by
-  intro w hw
-  unfold PrefixSample at hw ⊢
-  rcases Finset.mem_image.mp hw with ⟨i, hi, htw⟩
-  apply Finset.mem_image.mpr
-  refine ⟨i, ?_, htw⟩
-  exact Finset.mem_range.mpr
-    (Nat.lt_of_lt_of_le (Finset.mem_range.mp hi) hmn)
+    {t : Text α} :
+    ∀ {m n : Nat}, m ≤ n → SampleExtends (PrefixSample t m) (PrefixSample t n) := by
+  intro m n hmn
+  induction n generalizing m with
+  | zero =>
+      have hm0 : m = 0 := Nat.eq_zero_of_le_zero hmn
+      subst m
+      exact SampleExtends.refl (PrefixSample t 0)
+  | succ n ih =>
+      cases m with
+      | zero =>
+          intro w hw
+          simp [PrefixSample] at hw
+      | succ m =>
+          have hmle : m ≤ n := Nat.succ_le_succ_iff.mp hmn
+          intro w hw
+          simp [PrefixSample] at hw ⊢
+          rcases hw with hwlast | hwold
+          · by_cases hmn_eq : m = n
+            · left
+              rw [hwlast, hmn_eq]
+            · have hlt : m < n := lt_of_le_of_ne hmle hmn_eq
+              have hle_succ : m + 1 ≤ n := Nat.succ_le_of_lt hlt
+              right
+              exact ih hle_succ w (by
+                rw [hwlast]
+                exact mem_prefixSample_succ_self t m)
+          · right
+            exact ih hmle w hwold
 
 /-- A finite positive sample eventually appears in every text for the target.
 
@@ -107,12 +144,15 @@ theorem text_eventually_contains_finite_sample
       have hw' := Finset.mem_insert.mp hw
       rcases hw' with hwa | hwS
       · rw [hwa]
-        unfold PrefixSample
-        apply Finset.mem_image.mpr
-        refine ⟨ia, ?_, hia⟩
-        exact Finset.mem_range.mpr
-          (Nat.lt_of_lt_of_le (Nat.lt_succ_self ia)
-            (le_trans (Nat.le_max_left (ia + 1) N) hn))
+        have ha_prefix : a ∈ PrefixSample t (ia + 1) := by
+          rw [← hia]
+          exact mem_prefixSample_succ_self t ia
+        exact prefixSample_extends_mono
+          (t := t)
+          (m := ia + 1)
+          (n := n)
+          (le_trans (Nat.le_max_left (ia + 1) N) hn)
+          a ha_prefix
       · exact hN n (le_trans (Nat.le_max_right (ia + 1) N) hn) w hwS
 
 end Texts
