@@ -19,6 +19,9 @@ jobs:
           build: false
           use-mathlib-cache: true
 
+      - name: Check project root directly
+        run: lake env lean LeanCfgProject.lean
+
       - name: Check MCFG Basic directly
         run: lake env lean LeanCfgProject/MCFG/Basic.lean
 
