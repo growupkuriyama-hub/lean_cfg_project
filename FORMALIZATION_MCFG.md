@@ -4,36 +4,69 @@ This note documents the current Lean companion for the paper
 
 > **Fixed-Monoid Tuple Substitution for Positive-Data Learning of Multiple Context-Free Grammars**
 
-The purpose of the Lean development at this stage is deliberately limited: it formalizes the **fixed finite-monoid observation layer** used in the paper, including tuple types, abstract tuple distributions, the semantic fixed-observation substitutability condition, refinement of observations, and the monotonicity theorem under refinement. It does **not** yet formalize the full MCFG reconstruction theorem.
+The Lean development is a companion formalization of the paper's core
+bookkeeping layers around fixed finite observations, named sentence contexts,
+tuple distributions, positive samples, unit-rule closure, and a
+distribution-level reconstruction/stabilization skeleton.
 
-The current checked file is:
+It should be read with the following scope in mind.
+
+- The current development **does formalize** the fixed-observation substrate,
+  named sentence contexts, a working MCFG syntax layer, a first derivation
+  semantics layer, sample-safe context transport, learner unit closure,
+  distribution-level reconstruction certificates, and a Gold-style stabilization
+  wrapper.
+- The current development **does not yet formalize** the full
+  presentation-relative characteristic-sample construction, the full canonical
+  MCFG learner grammar, the hybrid filling lemma in its final paper form, the
+  no-advice non-identifiability theorem, or the bounded-spine polynomial-data
+  theorem.
+
+The latest checked CI status is:
 
 ```text
-LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
+Lean CI #377
+commit: 591118a
+repository: growupkuriyama-hub/lean_cfg_project
+status: succeeded
 ```
 
-The file was checked by GitHub Actions Lean CI at commit
+The top formalization layer at that point is:
 
 ```text
-b0d10d1
+LeanCfgProject/MCFG/FI_v2_1_GoldStabilization.lean
 ```
 
-as reported by `Lean CI #369` in the repository `growupkuriyama-hub/lean_cfg_project`.
+The aggregate MCFG import file is:
+
+```text
+LeanCfgProject/MCFG/Basic.lean
+```
 
 ---
 
 ## 1. Repository layout
 
-The current MCFG formalization layer is organized as follows.
+The current MCFG formalization is organized as a sequence of small layers.
 
 ```text
 LeanCfgProject.lean
 LeanCfgProject/MCFG/Basic.lean
+
 LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
+LeanCfgProject/MCFG/FI_v2_1_NamedSentenceContext.lean
+LeanCfgProject/MCFG/FI_v2_1_MCFG_Syntax.lean
+LeanCfgProject/MCFG/FI_v2_1_MCFG_Derivation.lean
+LeanCfgProject/MCFG/FI_v2_1_MCFG_ContextualSemantics.lean
+LeanCfgProject/MCFG/FI_v2_1_LearnerUnitClosure.lean
+LeanCfgProject/MCFG/FI_v2_1_LearnerDistribution.lean
+LeanCfgProject/MCFG/FI_v2_1_ReconstructionCertificate.lean
+LeanCfgProject/MCFG/FI_v2_1_GoldStabilization.lean
+
 .github/workflows/lean.yml
 ```
 
-The intended import chain is:
+The intended root import chain is:
 
 ```lean
 -- LeanCfgProject.lean
@@ -43,55 +76,52 @@ import LeanCfgProject.MCFG.Basic
 ```lean
 -- LeanCfgProject/MCFG/Basic.lean
 import LeanCfgProject.MCFG.FI_v2_1_FixedObservation
+import LeanCfgProject.MCFG.FI_v2_1_NamedSentenceContext
+import LeanCfgProject.MCFG.FI_v2_1_MCFG_Syntax
+import LeanCfgProject.MCFG.FI_v2_1_MCFG_Derivation
+import LeanCfgProject.MCFG.FI_v2_1_MCFG_ContextualSemantics
+import LeanCfgProject.MCFG.FI_v2_1_LearnerUnitClosure
+import LeanCfgProject.MCFG.FI_v2_1_LearnerDistribution
+import LeanCfgProject.MCFG.FI_v2_1_ReconstructionCertificate
+import LeanCfgProject.MCFG.FI_v2_1_GoldStabilization
 ```
 
-The CI workflow builds the MCFG fixed-observation module and then the project root through Lake. A typical local check is:
+A typical local check is:
 
 ```bash
-lake build LeanCfgProject.MCFG.FI_v2_1_FixedObservation
+lake build LeanCfgProject.MCFG.FI_v2_1_GoldStabilization
 lake build LeanCfgProject.MCFG.Basic
 lake build LeanCfgProject
 ```
 
-The GitHub CI run used Lean 4 through Lake/mathlib. In the observed CI log, the Lean toolchain was `leanprover/lean4:v4.31.0-rc1`.
+The GitHub Actions workflow checks the Lean files through Lake. The latest
+successful run reported the Lean CI success at commit `591118a`.
 
 ---
 
-## 2. Scope of the current formalization
+## 2. Layer-by-layer status
 
-The current file formalizes the preliminary observation-theoretic part of the paper. In paper terminology, it corresponds mainly to the fixed observation morphism, componentwise tuple typing, tuple distributions, fixed-`h` tuple substitutability, and monotonicity under refinement of the observation morphism.
+The formalization is deliberately organized so that each layer can be understood
+without committing to the whole reconstruction theorem at once.
 
-The current formalization is intentionally abstract in two places.
+| Layer | File | Main role | Status |
+|---|---|---|---|
+| 1 | `FI_v2_1_FixedObservation.lean` | Words, tuples, observation evaluation, fixed-`h` substitutability, refinement monotonicity | checked |
+| 2 | `FI_v2_1_NamedSentenceContext.lean` | Concrete named sentence contexts and named filling | checked |
+| 3 | `FI_v2_1_MCFG_Syntax.lean` | Working binary MCFG syntax: templates, rules, fan-out, nondeleting side conditions | checked |
+| 4 | `FI_v2_1_MCFG_Derivation.lean` | First derivation semantics: tuple and string languages | checked |
+| 5 | `FI_v2_1_MCFG_ContextualSemantics.lean` | Exposed tuples, grammar named distributions, sample-safe merge soundness | checked |
+| 6 | `FI_v2_1_LearnerUnitClosure.lean` | Learner unit edges, unit reachability, soundness of unit-rule closure | checked |
+| 7 | `FI_v2_1_LearnerDistribution.lean` | Transported contexts and learner approximate distributions | checked |
+| 8 | `FI_v2_1_ReconstructionCertificate.lean` | Distribution-level reconstruction certificates and characteristic-sample skeleton | checked |
+| 9 | `FI_v2_1_GoldStabilization.lean` | Texts, prefix samples, eventual containment, Gold-style stabilization | checked |
 
-First, contexts are not yet represented as concrete named sentence contexts with permutations. Instead, the file assumes an arity-indexed context type family
-
-```lean
-Ctx : Nat → Type
-```
-
-and an abstract filling operation
-
-```lean
-fill : ∀ d : Nat, Ctx d → Tuple α d → Word α
-```
-
-This makes it possible to state and prove the fixed-observation substitutability layer independently of the eventual concrete representation of named holes.
-
-Second, refinement of observations is represented by an explicit Lean structure rather than by mathlib's bundled monoid homomorphism notation. This was chosen to keep the first CI experiment robust.
-
-```lean
-structure Refines (obs : α → M) (obs' : α → M') where
-  map : M' → M
-  map_one : map 1 = 1
-  map_mul : ∀ x y : M', map (x * y) = map x * map y
-  comm : ∀ a : α, map (obs' a) = obs a
-```
-
-Mathematically, this is the same data as a monoid homomorphism from the finer observation monoid to the coarser one, commuting with the two letter observations.
+This is not yet a full formal proof of the paper's main theorem, but it now
+covers a substantial part of the formal infrastructure around the main theorem.
 
 ---
 
-## 3. Formalized definitions
+## 3. What is currently formalized
 
 ### 3.1 Words and tuples
 
@@ -107,41 +137,36 @@ A tuple of arity `d` is a `Fin d`-indexed family of words.
 abbrev Tuple (α : Type u) (d : Nat) := Fin d → Word α
 ```
 
-This matches the paper's convention that an MCFG nonterminal of fan-out `d` derives a `d`-tuple of strings.
+This matches the paper's convention that an MCFG nonterminal of fan-out `d`
+derives a `d`-tuple of strings.
 
-### 3.2 Letter observations and word observations
+---
 
-A letter observation is a function
+### 3.2 Fixed observations and tuple types
+
+A letter observation is represented as a function
 
 ```lean
 obs : α → M
 ```
 
-where `M` is a monoid. It is extended multiplicatively to words by:
+where `M` is a monoid. It is extended multiplicatively to words:
 
 ```lean
 def evalObs (obs : α → M) : Word α → M
-  | [] => 1
-  | a :: w => obs a * evalObs obs w
 ```
 
-The file proves the basic append law:
+The file proves the append law:
 
 ```lean
 theorem evalObs_append (obs : α → M) (u v : Word α) :
     evalObs obs (u ++ v) = evalObs obs u * evalObs obs v
 ```
 
-This is the Lean counterpart of extending a finite observation morphism
-`h : Σ* → M` from letters to words.
-
-### 3.3 Componentwise tuple type
-
-The componentwise observation type of a tuple is formalized as:
+The componentwise type of a tuple is:
 
 ```lean
-def tupleType {d : Nat} (obs : α → M) (x : Tuple α d) : Fin d → M :=
-  fun i => evalObs obs (x i)
+def tupleType {d : Nat} (obs : α → M) (x : Tuple α d) : Fin d → M
 ```
 
 This corresponds to the paper's notation
@@ -150,72 +175,30 @@ This corresponds to the paper's notation
 h^{(d)}(w_1, ..., w_d) = (h(w_1), ..., h(w_d)).
 ```
 
-### 3.4 Tuple distributions and shared contexts
-
-Given an abstract filling operation, the distribution of a tuple is the set of contexts that accept it.
-
-```lean
-def Distribution {d : Nat} (L : Set (Word α)) (x : Tuple α d) : Set (Ctx d) :=
-  { c | fill d c x ∈ L }
-```
-
-Two tuples share an accepting context if there exists a context that accepts both.
-
-```lean
-def SharesContext {d : Nat} (L : Set (Word α)) (x y : Tuple α d) : Prop :=
-  ∃ c : Ctx d, fill d c x ∈ L ∧ fill d c y ∈ L
-```
-
-This is the abstract Lean version of the paper's shared sentence-context condition.
-
-### 3.5 Fixed-observation tuple substitutability
-
-The semantic fixed-observation substitutability condition is formalized as:
-
-```lean
-def FixedTupleSubstitutable (f : Nat) (obs : α → M) (L : Set (Word α)) : Prop :=
-  ∀ {d : Nat}, d ≤ f → 0 < d →
-    ∀ x y : Tuple α d,
-      tupleType obs x = tupleType obs y →
-      SharesContext fill L x y →
-      Distribution fill L x = Distribution fill L y
-```
-
-This directly mirrors the paper's condition:
-
-> equality of componentwise fixed observation type plus one shared accepting sentence context implies equality of all accepting sentence contexts.
-
-The Lean statement is parameterized by an arbitrary context family and filling operation; concrete named sentence contexts will be introduced in a later layer.
-
 ---
 
-## 4. Formalized theorems
+### 3.3 Refinement of observations
 
-### 4.1 Multiplicativity of observation evaluation
-
-The file proves that the extended observation of a concatenation is the product of the observations.
+The formalization uses an explicit refinement structure.
 
 ```lean
-theorem evalObs_append (obs : α → M) (u v : Word α) :
-    evalObs obs (u ++ v) = evalObs obs u * evalObs obs v
+structure Refines (obs : α → M) (obs' : α → M') where
+  map : M' → M
+  map_one : map 1 = 1
+  map_mul : ∀ x y : M', map (x * y) = map x * map y
+  comm : ∀ a : α, map (obs' a) = obs a
 ```
 
-This is a basic algebraic lemma used to justify reading `evalObs` as a monoid morphism from the free monoid of words.
+Mathematically, this is the same data as a monoid homomorphism from the finer
+observation monoid to the coarser one, commuting with the two letter
+observations.
 
-### 4.2 Compatibility of word observations with refinement
-
-Given a refinement map from a finer observation to a coarser one, evaluation commutes with refinement.
+The key checked compatibility lemmas are:
 
 ```lean
 theorem evalObs_refines (r : Refines obs obs') (w : Word α) :
     r.map (evalObs obs' w) = evalObs obs w
 ```
-
-This says that evaluating a word in the finer observation and then projecting to the coarser monoid is the same as evaluating the word directly in the coarser observation.
-
-### 4.3 Compatibility of tuple types with refinement
-
-The pointwise form is:
 
 ```lean
 theorem tupleType_refines_apply {d : Nat} (r : Refines obs obs')
@@ -223,18 +206,46 @@ theorem tupleType_refines_apply {d : Nat} (r : Refines obs obs')
     r.map (tupleType obs' x i) = tupleType obs x i
 ```
 
-The componentwise functional form is:
+---
+
+### 3.4 Fixed-observation tuple substitutability
+
+The semantic fixed-observation substitutability condition is formalized first
+for an abstract context interface and then specialized to named sentence
+contexts.
+
+At the abstract level, a context family and filling operation are parameters.
 
 ```lean
-theorem tupleType_refines {d : Nat} (r : Refines obs obs') (x : Tuple α d) :
-    (fun i : Fin d => r.map (tupleType obs' x i)) = tupleType obs x
+Ctx : Nat → Type
+fill : ∀ d : Nat, Ctx d → Tuple α d → Word α
 ```
 
-These lemmas provide the Lean bridge from finer tuple equality to coarser tuple equality.
+The distribution of a tuple is the set of contexts accepting it.
 
-### 4.4 Monotonicity under refinement
+```lean
+def Distribution {d : Nat} (L : Set (Word α)) (x : Tuple α d) : Set (Ctx d)
+```
 
-The main theorem currently formalized is:
+Two tuples share an accepting context if some context accepts both.
+
+```lean
+def SharesContext {d : Nat} (L : Set (Word α)) (x y : Tuple α d) : Prop
+```
+
+The fixed-observation substitutability predicate is:
+
+```lean
+def FixedTupleSubstitutable
+    (f : Nat) (obs : α → M) (L : Set (Word α)) : Prop
+```
+
+It formalizes the paper's implication:
+
+> same componentwise observation type + one shared accepting context  
+> implies equality of all accepting contexts.
+
+The monotonicity theorem under refinement is checked:
 
 ```lean
 theorem fixedTupleSubstitutable_of_refines
@@ -244,201 +255,461 @@ theorem fixedTupleSubstitutable_of_refines
     FixedTupleSubstitutable fill f obs' L
 ```
 
-This is the Lean version of the paper's monotonicity proposition:
-
-> If the observation morphism `h'` refines `h`, then every `(f,h)`-tuple-substitutable language is also `(f,h')`-tuple-substitutable.
-
-Mathematically, the reason is simple. If two tuples have the same finer type, then after applying the refinement map componentwise they have the same coarser type. Therefore the coarser substitutability hypothesis applies.
-
-This theorem is one of the safest early targets for machine checking because it is central to the observation-parameter story but does not require formalizing MCFG derivation trees.
-
-### 4.5 Characteristic sample skeleton
-
-The file also contains a small abstract skeleton for the positive-data learning argument.
-
-A hypothesis interpretation is represented as:
-
-```lean
-abbrev HypLanguage (α : Type u) (Hyp : Type v) := Hyp → Set (Word α)
-```
-
-A characteristic sample is represented as:
-
-```lean
-def CharacteristicSample
-    [DecidableEq α]
-    (lang : HypLanguage α Hyp)
-    (learner : Finset (Word α) → Hyp)
-    (S : Finset (Word α))
-    (L : Set (Word α)) : Prop :=
-  (S : Set (Word α)) ⊆ L ∧
-  ∀ K : Finset (Word α),
-    (S : Set (Word α)) ⊆ (K : Set (Word α)) →
-    (K : Set (Word α)) ⊆ L →
-    lang (learner K) = L
-```
-
-The file proves the immediate correctness lemma:
-
-```lean
-theorem characteristicSample_correct
-    [DecidableEq α]
-    (lang : HypLanguage α Hyp)
-    (learner : Finset (Word α) → Hyp)
-    {S K : Finset (Word α)} {L : Set (Word α)}
-    (hS : CharacteristicSample lang learner S L)
-    (hSK : (S : Set (Word α)) ⊆ (K : Set (Word α)))
-    (hKL : (K : Set (Word α)) ⊆ L) :
-    lang (learner K) = L
-```
-
-This does not yet formalize texts, computability, or Gold identification. It records the finite-sample implication used by the paper's characteristic-sample argument.
+This corresponds to the paper's refinement monotonicity proposition.
 
 ---
 
-## 5. Sandbox fan-out-one context layer
+### 3.5 Named sentence contexts
 
-The file includes a small sandbox for ordinary one-hole string contexts.
+The second layer introduces concrete named sentence contexts.
+
+The formalization distinguishes raw contexts from well-formed named contexts.
+This makes the representation extensible and avoids making later MCFG
+bookkeeping depend on a brittle concrete encoding too early.
+
+Main declarations include:
 
 ```lean
-abbrev TwoSidedContext (α : Type u) := Word α × Word α
+RawNamedSentenceContext
+RawNamedSentenceContext.WellFormed
+NamedSentenceContext
+rawNamedFill
+namedFill
+NamedDistribution
+NamedSharesContext
+FixedNamedTupleSubstitutable
+fixedNamedTupleSubstitutable_of_refines
 ```
 
-The filling operation is:
-
-```lean
-def fillOne (c : TwoSidedContext α) (x : Tuple α 1) : Word α :=
-  c.1 ++ x finOne ++ c.2
-```
-
-This is not the final MCFG context representation. It is included only as a check that the abstract context interface can specialize to the ordinary fan-out-one, two-sided context case.
+This is the Lean counterpart of the paper's arity-`d` sentence contexts with
+named holes. The layer is meant to support contexts where tuple components may
+be exposed in non-left-to-right order.
 
 ---
 
-## 6. Correspondence with the paper
+### 3.6 MCFG syntax
 
-The following table summarizes the current correspondence between paper notions and Lean declarations.
+The syntax layer introduces a working binary linear MCFG presentation skeleton.
+
+Main declarations include:
+
+```lean
+TemplateAtom
+TemplateWord
+evalTemplateAtom
+evalTemplateWord
+TemplateTuple
+evalTemplateTuple
+TemplateTuple.Nondeleting
+StartRule
+TerminalRule
+BinaryRule
+BinaryRule.apply
+WorkingMCFG
+WorkingMCFG.FanoutAtMost
+WorkingMCFG.BasicWorkingConditions
+```
+
+This corresponds to the paper's definition of working binary linear nondeleting
+MCFG rules. The goal of this layer is to make the template and rule
+bookkeeping explicit before proving reconstruction statements.
+
+---
+
+### 3.7 Derivation semantics
+
+The derivation layer introduces a first semantics for tuple derivability and
+string languages.
+
+Main declarations include:
+
+```lean
+castTuple
+singletonTuple
+StartRule.WellTyped
+WorkingMCFG.StartRulesWellTyped
+WorkingMCFG.SemanticWorkingConditions
+DerivesTuple
+TupleLanguage
+StringLanguage
+```
+
+This is not yet a full derivation-tree development with occurrence tracking,
+but it gives a checked inductive semantics for generated tuple languages and
+the start string language.
+
+---
+
+### 3.8 Contextual semantics and sample-safe merge
+
+The contextual-semantics layer connects derivations with named sentence
+contexts and positive samples.
+
+Main declarations include:
+
+```lean
+ExposedWithContext
+GrammarNamedDistribution
+GrammarNamedSharesContext
+grammarNamedSharesContext_of_two_exposures
+grammarNamedDistribution_eq_of_fixed_substitutable
+grammarNamedDistribution_eq_of_two_exposures
+
+PositiveSample
+SampleNamedDistribution
+SampleNamedSharesContext
+ObservedInSampleWithContext
+observedInSample_to_exposedWithContext
+
+SampleSafeMerge
+sampleSafeMerge_sound_for_grammar
+sampleObservedExposures_sound_for_grammar
+```
+
+The most important checked idea here is:
+
+> If two tuples are observed in a positive sample with the same fixed observation
+> type and a shared sample context, then the fixed-substitutability promise makes
+> the corresponding grammar-level named distributions equal.
+
+This is the formalized core of the safety of the learner's unit-rule merging
+step.
+
+---
+
+### 3.9 Learner unit-rule closure
+
+The unit-closure layer formalizes the soundness of repeatedly applying
+sample-safe unit edges.
+
+Main declarations include:
+
+```lean
+PositiveForLanguage
+sampleSafeMerge_sound_for_language
+
+LearnerUnitEdge
+LearnerUnitEdge.sound_for_language
+
+LearnerUnitReach
+LearnerUnitReach.sound_for_language
+LearnerUnitReach.mem_namedDistribution_of_reachable
+LearnerUnitReach.mem_namedDistribution_iff_of_reachable
+
+LearnerUnitHypothesis
+LearnerUnitHypothesis.reach_sound_for_language
+```
+
+The checked content is:
+
+> Finite-sample safe unit edges preserve target named-context distributions, and
+> this preservation remains true after taking the reflexive-transitive closure
+> of those unit edges.
+
+This is the distributional soundness half of the learner's unit-rule closure.
+
+---
+
+### 3.10 Learner transported distributions
+
+The learner-distribution layer defines contexts licensed by observation and
+unit transport.
+
+Main declarations include:
+
+```lean
+LearnerLicensedContext
+LearnerApproxDistribution
+DistributionComplete
+
+sampleSafeMerge_symm
+LearnerUnitEdge.reverse
+LearnerUnitReach.symm
+
+learnerApproxDistribution_sound_for_language
+learnerApproxDistribution_exact_of_complete
+
+LearnerObservedNode
+LearnerObservedNode.transported_context_sound_for_language
+```
+
+The key checked statement is:
+
+> A context observed in the sample can be transported along safe unit reachability
+> to another tuple without leaving the target distribution.
+
+This is a formalized version of the context-transport step used in the
+reconstruction proof.
+
+---
+
+### 3.11 Reconstruction certificates
+
+The reconstruction-certificate layer abstracts the point where the paper's
+presentation-relative characteristic sample enters.
+
+Main declarations include:
+
+```lean
+DistributionReconstructionCertificate
+LearnerDistributionExact
+TargetContextsLicensed
+TargetContextsTransportWitnessed
+DistributionCharacteristicSample
+DistributionCharacteristicSample.exact_after_extending
+exact_for_grammar_after_characteristic_sample
+```
+
+This layer proves a distribution-level version of the characteristic-sample
+argument:
+
+> If a finite sample is rich enough to license all target contexts relevant to
+> the tuples under consideration, then the learner's transported distribution
+> equals the target distribution.
+
+The important limitation is that this layer assumes the relevant reconstruction
+certificate. It does not yet construct that certificate from an arbitrary
+working MCFG presentation.
+
+---
+
+### 3.12 Gold-style stabilization
+
+The latest layer formalizes the abstract Gold-style stabilization argument for
+finite characteristic samples.
+
+Main declarations include:
+
+```lean
+Text
+TextFor
+PrefixSample
+prefixSample_positive
+prefixSample_extends_mono
+text_eventually_contains_finite_sample
+
+DistributionIdentifiesInLimit
+distributionCharacteristicSample_identifiesInLimit
+eventually_licensed_iff_target_context
+
+TextForGrammar
+DistributionIdentifiesInLimitForGrammar
+distributionCharacteristicSample_identifiesGrammarInLimit
+eventually_licensed_iff_grammar_context
+```
+
+This layer proves the standard finite-characteristic-sample implication:
+
+> If a finite characteristic sample exists, then along every text for the target
+> language, some finite prefix eventually contains it, and all later prefix
+> samples satisfy the corresponding reconstruction condition.
+
+This is a distribution-level Gold identification wrapper. It is not yet the full
+grammar-level exact reconstruction theorem, but it formalizes the final
+stabilization step once the characteristic sample has been obtained.
+
+---
+
+## 4. Correspondence with the paper
+
+The following table summarizes the current correspondence between paper notions
+and Lean declarations.
 
 | Paper notion | Lean declaration | Status |
 |---|---|---|
 | alphabet `Σ` | type variable `α` | formalized abstractly |
 | word over `Σ` | `Word α := List α` | formalized |
 | tuple of arity `d` | `Tuple α d := Fin d → Word α` | formalized |
-| letter observation | `obs : α → M` | formalized |
+| fixed observation on letters | `obs : α → M` | formalized |
 | extension to words | `evalObs obs` | formalized |
 | componentwise tuple type | `tupleType obs x` | formalized |
-| arity-indexed sentence contexts | `Ctx : Nat → Type` | abstracted |
-| context filling | `fill : ∀ d, Ctx d → Tuple α d → Word α` | abstracted |
-| tuple distribution `D_L(x)` | `Distribution fill L x` | formalized abstractly |
-| shared accepting context | `SharesContext fill L x y` | formalized abstractly |
-| `(f,h)`-tuple substitutability | `FixedTupleSubstitutable fill f obs L` | formalized abstractly |
-| refinement `h ≼ h'` | `Refines obs obs'` | formalized |
+| refinement of observations | `Refines obs obs'` | formalized |
 | monotonicity under refinement | `fixedTupleSubstitutable_of_refines` | proved |
-| characteristic sample condition | `CharacteristicSample` | formalized abstractly |
-| finite-sample correctness from characteristic sample | `characteristicSample_correct` | proved |
+| named sentence contexts | `NamedSentenceContext` | formalized |
+| named context filling | `namedFill` | formalized |
+| named tuple distribution | `NamedDistribution` | formalized |
+| fixed named tuple substitutability | `FixedNamedTupleSubstitutable` | formalized |
+| MCFG templates | `TemplateAtom`, `TemplateWord`, `TemplateTuple` | formalized |
+| nondeleting templates | `TemplateTuple.Nondeleting` | formalized |
+| start, terminal, binary rules | `StartRule`, `TerminalRule`, `BinaryRule` | formalized |
+| working MCFG presentation skeleton | `WorkingMCFG` | formalized |
+| tuple derivability | `DerivesTuple` | formalized |
+| tuple and string languages | `TupleLanguage`, `StringLanguage` | formalized |
+| exposed tuple with context | `ExposedWithContext` | formalized |
+| sample-safe merge | `SampleSafeMerge` | formalized |
+| unit-rule closure | `LearnerUnitReach` | formalized |
+| learner transported distribution | `LearnerApproxDistribution` | formalized |
+| reconstruction certificate | `DistributionReconstructionCertificate` | formalized abstractly |
+| characteristic sample skeleton | `DistributionCharacteristicSample` | formalized abstractly |
+| text and prefix sample | `Text`, `PrefixSample` | formalized |
+| eventual containment of finite sample | `text_eventually_contains_finite_sample` | proved |
+| distribution-level identification in the limit | `DistributionIdentifiesInLimit` | formalized |
+| full canonical learner grammar | not yet formalized | pending |
+| full exact reconstruction theorem | not yet formalized | pending |
+| no-advice non-identifiability | not yet formalized | pending |
+| bounded-spine polynomial-data theorem | not yet formalized | pending |
 
 ---
 
-## 7. What is not formalized yet
+## 5. What is not formalized yet
 
-The current Lean development should not be described as a formalization of the full paper. The following parts are not yet formalized.
+The current Lean development should not be described as a complete
+machine-checked proof of the paper. The following parts remain outside the
+formalization.
 
-1. **Concrete named sentence contexts.**
-   The paper's contexts have named holes, possible component permutation, and intervening terminal material. The current Lean file keeps contexts abstract through `Ctx` and `fill`.
+1. **Construction of the presentation-relative characteristic sample.**  
+   The current certificate layer assumes a distribution-level reconstruction
+   certificate. It does not yet prove that the paper's finite characteristic
+   sample can be extracted from every witnessing working MCFG presentation.
 
-2. **MCFG syntax and derivation semantics.**
-   The current file does not yet define working binary linear nondeleting MCFGs, rules, derivation trees, tuple languages of nonterminals, or start-separated presentations.
+2. **The full canonical learner grammar.**  
+   Unit-rule closure and transported distributions are formalized, but the full
+   canonical hypothesis grammar, including all extracted binary rules and start
+   rules, is not yet formalized.
 
-3. **Output-type refinement of grammars.**
-   The paper's construction that refines nonterminals by componentwise output type is not yet formalized.
+3. **The hybrid filling lemma in final grammar form.**  
+   The context-transport and distribution-level soundness statements are checked,
+   but the full MCFG hybrid filling argument for arbitrary binary derivation
+   contexts is not yet formalized.
 
-4. **Canonical learner grammar.**
-   The current file does not yet construct the canonical grammar from a finite positive sample.
+4. **Output-type refinement of grammars.**  
+   The monoid typing layer is formalized, but the grammar-level construction
+   refining nonterminals by componentwise output type is still pending.
 
-5. **Exact reconstruction theorem.**
-   The main reconstruction theorem of the paper is not yet formalized.
+5. **Productivity, reachability, and reducedness closure.**  
+   The current MCFG syntax and derivation semantics include basic working
+   conditions, but not the full reducedness and closure infrastructure used in
+   the paper.
 
-6. **Existence of presentation-relative characteristic samples.**
-   The file contains an abstract characteristic-sample predicate and its immediate consequence, but not the proof that the paper's characteristic sample exists.
+6. **No-advice non-identifiability.**  
+   The superfinite-chain argument for the union over all finite observations is
+   not yet formalized.
 
-7. **Gold-style identification from texts.**
-   Infinite texts, computability of the learner, and eventual stabilization are not yet encoded.
+7. **Polynomial-time and polynomial-data statements.**  
+   Complexity bounds, enumeration bounds, characteristic-sample size bounds, and
+   fixed-parameter polynomiality are not yet formalized.
 
-8. **No-advice non-identifiability.**
-   The superfinite chain argument for the union over all observations is not yet formalized.
+8. **Compression lower bound and bounded spine width.**  
+   The unary singleton compression example, bounded-spine-width definitions, and
+   polynomial-data recovery theorem are not yet formalized.
 
-9. **Polynomial-time and polynomial-data statements.**
-   Complexity bounds, sample-size bounds, and fixed-parameter polynomiality are not yet formalized.
+9. **Yoshinaka comparison and examples.**  
+   The ordered-context comparison, parallel-agreement examples, cross-serial
+   examples, finite-kernel comparison, conservativity proposition, and slope
+   counterexample are not yet formalized.
 
-10. **Compression lower bound and bounded spine width.**
-    The singleton compression example, bounded-spine definitions, and polynomial-data recovery theorem are not yet formalized.
-
-11. **Yoshinaka comparison and examples.**
-    The ordered-context comparison, parallel-agreement examples, cross-serial examples, and finite-kernel comparison are not yet formalized.
-
-12. **Finiteness and explicitness of the monoid.**
-    The current monotonicity theorem does not require `M` to be finite, so the Lean file assumes only `[Monoid M]`. The paper's finite and explicit monoid assumptions are mathematically important for learning and computation, but they are not needed for the currently formalized refinement theorem.
+10. **Finiteness and explicitness of the monoid.**  
+    Many currently checked lemmas require only `[Monoid M]`, not `[Fintype M]`.
+    This is mathematically appropriate for those algebraic lemmas. The paper's
+    finite and explicit monoid hypotheses are essential for learning and
+    algorithmic construction, but not for the already checked refinement and
+    distribution-preservation statements.
 
 ---
 
-## 8. Suggested wording for the paper
+## 6. Suggested wording for the paper
 
-A safe way to refer to the current Lean development in the paper is the following.
+A safe paragraph for the paper is:
 
 ```latex
-A Lean companion formalizes the fixed-observation layer used in the paper:
-words as lists, arity-indexed tuples, componentwise observation types,
-abstract tuple distributions, fixed-observation tuple substitutability,
-refinement of observations, and the monotonicity theorem under refinement.
-The formalization is intentionally preliminary: the full MCFG reconstruction
-argument, the canonical learner, the no-advice boundary, and the bounded-spine
-polynomial-data theorem are not yet machine-checked.
+A preliminary Lean companion formalizes the main bookkeeping substrate of the
+paper: fixed observation morphisms, tuple types, named sentence contexts,
+working MCFG syntax and a first derivation semantics, sample-safe distributional
+merging, unit-rule closure, transported learner distributions, and a
+distribution-level Gold stabilization wrapper.  The formalization is not yet a
+machine-checked proof of the full reconstruction theorem: the construction of
+the presentation-relative characteristic sample, the complete canonical learner
+grammar, the no-advice boundary, and the bounded-spine polynomial-data theorem
+remain outside the current Lean development.
 ```
 
-A slightly shorter version suitable for a footnote is:
+A shorter footnote version is:
 
 ```latex
-A preliminary Lean companion checks the fixed-observation layer, including the
-monotonicity of $(f,h)$-tuple substitutability under refinement of the finite
-observation morphism.  The full MCFG reconstruction theorem is not yet
+A preliminary Lean companion checks the fixed-observation and distributional
+bookkeeping layers, including named sentence contexts, MCFG syntax and
+derivation skeletons, safe unit-rule closure, transported learner
+distributions, reconstruction certificates, and a Gold-style stabilization
+wrapper.  The full presentation-relative reconstruction theorem is not yet
 machine-checked.
 ```
 
-This wording is intentionally conservative. It avoids suggesting that the full paper is already formalized.
+An even shorter version for the introduction is:
+
+```latex
+A Lean companion is available for the core bookkeeping layers of the
+construction; it currently reaches a distribution-level reconstruction and
+Gold-style stabilization skeleton, but not the full canonical-grammar
+reconstruction theorem.
+```
+
+These statements are intentionally conservative. They emphasize what is checked
+without suggesting that the entire paper is already formalized.
 
 ---
 
-## 9. Suggested next formalization milestones
+## 7. Suggested next formalization milestones
 
-A natural next sequence is:
+The most valuable next milestones are:
 
-1. Define concrete named sentence contexts.
-2. Prove that ordinary two-sided contexts are the arity-one special case.
-3. Define MCFG templates and simultaneous substitution.
-4. Define working binary linear nondeleting MCFG presentations.
-5. Define derivation trees and tuple languages of nonterminals.
-6. Formalize output-type refinement of a grammar.
-7. Formalize sample occurrences and extracted rules.
-8. Prove sample consistency: every positive sample word is generated by the canonical hypothesis.
-9. Prove the hybrid filling lemma used in exact reconstruction.
-10. Prove the exact reconstruction theorem under the semantic fixed-observation substitutability promise.
+1. **Output-type refinement of working MCFGs.**  
+   Define the refinement of a nonterminal by componentwise observation type and
+   prove that typed derivations preserve the intended tuple type.
 
-For FI submission purposes, the most valuable next milestone is not the no-advice theorem or complexity theory, but the core MCFG bookkeeping: named holes, tuple filling, template substitution, and the hybrid filling lemma. Those are exactly the places where machine checking reduces the risk of hidden indexing or permutation errors.
+2. **Occurrence witnesses in derivation trees.**  
+   Strengthen `ExposedWithContext` into a derivation-tree occurrence notion
+   connecting nonterminal occurrences to named sentence contexts.
+
+3. **Extracted sample rules.**  
+   Formalize how terminal, binary, start, and unit rules are extracted from a
+   finite positive sample.
+
+4. **Canonical learner grammar.**  
+   Define the full learner grammar rather than only transported distributions.
+
+5. **Sample consistency.**  
+   Prove that every positive sample word is generated by the learner grammar.
+
+6. **Hybrid filling lemma.**  
+   Prove that replacing a tuple by a distribution-equivalent tuple inside a
+   binary derivation context preserves target membership.
+
+7. **Exact reconstruction theorem.**  
+   Combine output-type refinement, characteristic sample coverage, unit
+   transport, and hybrid filling to prove the grammar-level exact reconstruction
+   theorem.
+
+8. **No-advice boundary.**  
+   Formalize the superfinite chain
+   \(\{a^n b^n \mid 1 \le n \le k\} \uparrow
+     \{a^n b^n \mid n \ge 1\}\).
+
+For FI submission purposes, the most valuable next step is still not the
+complexity theory, but the core MCFG bookkeeping: output-type refinement,
+occurrence witnesses, extracted rules, and the hybrid filling lemma.
 
 ---
 
-## 10. Current formalization status summary
-
-Current status:
+## 8. Current status summary
 
 ```text
-Checked by CI: yes, at commit b0d10d1 as reported by Lean CI #369
-Current main file: LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
-Main checked theorem: fixedTupleSubstitutable_of_refines
-Scope: fixed-observation layer only
+Checked by CI: yes
+Latest CI: Lean CI #377
+Latest commit reported by user: 591118a
+Top checked module: LeanCfgProject.MCFG.FI_v2_1_GoldStabilization
+Aggregate import: LeanCfgProject.MCFG.Basic
+Scope: fixed-observation, named-context, MCFG syntax/semantics, sample-safe
+       distribution transport, reconstruction certificates, and Gold-style
+       stabilization skeleton
 Full MCFG reconstruction theorem checked: no
+No-advice theorem checked: no
+Bounded-spine theorem checked: no
 ```
 
 In one sentence:
 
-> The current Lean development machine-checks the fixed-observation substrate of the paper, especially refinement monotonicity, and provides a stable starting point for later formalization of named sentence contexts and the MCFG reconstruction argument.
+> The current Lean development machine-checks the main fixed-observation and
+> distributional bookkeeping layers of the paper up through a
+> distribution-level reconstruction certificate and Gold-style stabilization
+> skeleton, while leaving the full presentation-relative canonical-grammar
+> reconstruction theorem for future formalization.
