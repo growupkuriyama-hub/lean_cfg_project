@@ -13,17 +13,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Lean and Lake
+      # Install Lean/Lake and restore the mathlib cache, but do not let the
+      # action run its default `lake build`/direct checks for us.
+      - name: Set up Lean
         uses: leanprover/lean-action@v1
         with:
           build: false
-          use-mathlib-cache: true
 
-      - name: Check project root directly
-        run: lake env lean LeanCfgProject.lean
-
-      - name: Check MCFG Basic directly
-        run: lake env lean LeanCfgProject/MCFG/Basic.lean
-
-      - name: Check FI v2.1 fixed-observation file directly
-        run: lake env lean LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
+      # Do not run `lake env lean LeanCfgProject.lean` directly here.
+      # Direct `lean` expects imported modules to already have .olean files.
+      # Lake builds the dependency chain in the right order and creates them.
+      - name: Build MCFG experiment modules
+        run: |
+          lake build LeanCfgProject.MCFG.FI_v2_1_FixedObservation
+          lake build LeanCfgProject.MCFG.Basic
+          lake build LeanCfgProject
