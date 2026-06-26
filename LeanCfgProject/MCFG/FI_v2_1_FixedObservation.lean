@@ -8,25 +8,9 @@ import Mathlib.Algebra.Group.Defs
   FI v2.1 Lean experiment: fixed finite-monoid observations and tuple
   substitutability.
 
-  This file is intentionally the first, small formalization layer for the paper
-
-    Fixed-Monoid Tuple Substitution for Positive-Data Learning of
-    Multiple Context-Free Grammars
-
-  It formalizes the observation morphism as a letter observation `obs : α → M`,
-  extended to words by multiplication.  This avoids committing, at this early
-  stage, to a concrete encoding of the free monoid.  A tuple is represented as
-  `Fin d → List α`, and sentence contexts are abstracted by a family `Ctx d`
-  together with a filling operation.
-
-  The main checked target in this first file is the paper's monotonicity under
-  refinement of the observation morphism:
-
-      if obs' refines obs, then (f, obs)-tuple-substitutability implies
-      (f, obs')-tuple-substitutability.
-
-  Next files can refine the abstract `Ctx` into named sentence contexts and then
-  add the canonical grammar construction.
+  This is a deliberately small first formalization layer for the paper.
+  It avoids mathlib's bundled monoid-hom notation in the refinement structure,
+  so that the file is robust as an early CI experiment.
 -/
 
 namespace FIv21
@@ -73,11 +57,12 @@ section Contexts
 variable {α : Type u} {M : Type v} [Monoid M]
 variable {Ctx : Nat → Type w}
 
-/-- A filling operation for arity-indexed contexts.
-
-For the paper's named sentence contexts, `Ctx d` will later be instantiated by a
-record containing named holes, an exposure order/permutation, and intervening
-terminal material.  This first file keeps that representation abstract. -/
+/-
+A filling operation for arity-indexed contexts.  For the paper's named sentence
+contexts, `Ctx d` will later be instantiated by a record containing named holes,
+an exposure order/permutation, and intervening terminal material.  This file
+keeps that representation abstract.
+-/
 variable (fill : ∀ d : Nat, Ctx d → Tuple α d → Word α)
 
 /-- The distribution of an arity-`d` tuple: all contexts that accept it. -/
@@ -108,10 +93,15 @@ variable {α : Type u}
 variable {M : Type v} {M' : Type w}
 variable [Monoid M] [Monoid M']
 
-/-- `obs'` refines `obs` if there is a monoid map from the finer monoid to the
-coarser monoid that commutes with the letter observations. -/
+/-- `obs'` refines `obs` if there is a multiplication-preserving map from the
+finer monoid to the coarser monoid that commutes with letter observations.
+
+We use an explicit structure rather than `M' →* M` in this sandbox file to keep
+CI independent of bundled-hom notation/import details. -/
 structure Refines (obs : α → M) (obs' : α → M') where
-  map : M' →* M
+  map : M' → M
+  map_one : map 1 = 1
+  map_mul : ∀ x y : M', map (x * y) = map x * map y
   comm : ∀ a : α, map (obs' a) = obs a
 
 variable {obs : α → M} {obs' : α → M'}
@@ -121,10 +111,10 @@ theorem evalObs_refines (r : Refines obs obs') (w : Word α) :
     r.map (evalObs obs' w) = evalObs obs w := by
   induction w with
   | nil =>
-      simp [evalObs]
+      exact r.map_one
   | cons a w ih =>
       change r.map (obs' a * evalObs obs' w) = obs a * evalObs obs w
-      rw [map_mul, r.comm a, ih]
+      rw [r.map_mul, r.comm a, ih]
 
 /-- Pointwise version of componentwise tuple-type compatibility. -/
 theorem tupleType_refines_apply {d : Nat} (r : Refines obs obs')
