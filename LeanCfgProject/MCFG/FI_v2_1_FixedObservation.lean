@@ -1,3 +1,9 @@
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fin.Basic
+import Mathlib.Data.List.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Algebra.Group.Defs
+
 /-
   FI v2.1 Lean experiment: fixed finite-monoid observations and tuple
   substitutability.
@@ -22,12 +28,6 @@
   Next files can refine the abstract `Ctx` into named sentence contexts and then
   add the canonical grammar construction.
 -/
-
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fin.Basic
-import Mathlib.Data.List.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Algebra.Group.Defs
 
 namespace FIv21
 
@@ -128,7 +128,7 @@ theorem evalObs_refines (r : Refines obs obs') (w : Word α) :
 /-- Componentwise tuple types commute with refinement. -/
 theorem tupleType_refines {d : Nat} (r : Refines obs obs') (x : Tuple α d) :
     (fun i : Fin d => r.map (tupleType obs' x i)) = tupleType obs x := by
-  funext i
+  ext i
   exact evalObs_refines r (x i)
 
 variable {Ctx : Nat → Type z}
@@ -146,16 +146,14 @@ theorem fixedTupleSubstitutable_of_refines
     FixedTupleSubstitutable fill f obs' L := by
   intro d hd hpos x y htype hshare
   apply hL hd hpos x y
-  · funext i
-    have hi : evalObs obs' (x i) = evalObs obs' (y i) := by
-      exact congrFun htype i
+  · -- Transport equality of the finer tuple types through the refinement map.
     calc
-      evalObs obs (x i) = r.map (evalObs obs' (x i)) := by
-        exact (evalObs_refines r (x i)).symm
-      _ = r.map (evalObs obs' (y i)) := by
-        rw [hi]
-      _ = evalObs obs (y i) := by
-        exact evalObs_refines r (y i)
+      tupleType obs x = (fun i : Fin d => r.map (tupleType obs' x i)) := by
+        exact (tupleType_refines r x).symm
+      _ = (fun i : Fin d => r.map (tupleType obs' y i)) := by
+        rw [htype]
+      _ = tupleType obs y := by
+        exact tupleType_refines r y
   · exact hshare
 
 end Refinement
