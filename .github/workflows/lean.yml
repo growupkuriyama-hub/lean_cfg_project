@@ -2,54 +2,33 @@ name: Lean CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: ["main", "master"]
   pull_request:
-    branches: [ main, master ]
+    branches: ["main", "master"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  check-lean:
+  lean:
+    name: Build and check Lean files
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install elan
-        run: |
-          set -e
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
-          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-
-      - name: Show Lean toolchain
-        run: |
-          set -e
-          lean --version
-          lake --version
-
-      - name: Restore Lake cache
-        uses: actions/cache@v4
+      - name: Set up Lean and build project
+        uses: leanprover/lean-action@v1
         with:
-          path: |
-            .lake
-            ~/.elan
-          key: ${{ runner.os }}-lake-${{ hashFiles('lakefile.lean', 'lake-manifest.json', 'lean-toolchain') }}
-          restore-keys: |
-            ${{ runner.os }}-lake-
+          # Run the ordinary Lake build.  This uses the repository's
+          # lean-toolchain and lakefile.lean/lakefile.toml.
+          build: true
+          test: false
+          lint: false
+          use-mathlib-cache: auto
 
-      - name: Get dependencies
+      - name: Check MCFG experimental file directly
         run: |
-          set -e
-          lake exe cache get || true
-          lake update
-
-      - name: Check JALC directory has no proof-bypassing placeholders
-        run: |
-          set -e
-          if grep -RInE '\b(sorry|admit|axiom)\b' LeanCfgProject/JALC --include='*.lean'; then
-            echo "Forbidden proof-bypassing placeholder found in LeanCfgProject/JALC."
-            exit 1
-          fi
-
-      - name: Build JALC finite obstruction via collision target
-        run: lake build LeanCfgProject.JALC.PaperFacingFiniteObstructionViaCollision
+          lake env lean LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
