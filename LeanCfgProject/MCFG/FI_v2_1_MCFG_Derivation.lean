@@ -161,6 +161,18 @@ def StringLanguage (G : WorkingMCFG N α) : Set (Word α) :=
   { w | ∃ h : 1 = G.arity G.start,
       DerivesTuple G G.start (castTuple h (singletonTuple w)) }
 
+namespace WorkingMCFG
+
+/-- Namespace alias for the generated string language.
+
+This alias enables projection notation such as `G.StringLanguage` in later
+files while keeping the original definition `FIv21.StringLanguage` available as
+the canonical top-level declaration. -/
+abbrev StringLanguage (G : WorkingMCFG N α) : Set (Word α) :=
+  FIv21.StringLanguage G
+
+end WorkingMCFG
+
 /-- If the start symbol derives the singleton tuple corresponding to `w`, then
 `w` belongs to the string language. -/
 theorem mem_StringLanguage_of_start_derives
