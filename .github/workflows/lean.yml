@@ -2,33 +2,25 @@ name: Lean CI
 
 on:
   push:
-    branches: ["main", "master"]
   pull_request:
-    branches: ["main", "master"]
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
-  lean:
-    name: Check MCFG experimental Lean file
+  build:
+    name: Build and check Lean files
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Lean and Mathlib cache only
+      - name: Set up Lean and Lake
         uses: leanprover/lean-action@v1
         with:
-          auto-config: false
           build: false
-          test: false
-          lint: false
-          mk_all-check: false
-          use-mathlib-cache: auto
+          use-mathlib-cache: true
 
-      - name: Check fixed-observation experiment directly
-        run: |
-          lake env lean LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
+      - name: Check MCFG Basic directly
+        run: lake env lean LeanCfgProject/MCFG/Basic.lean
+
+      - name: Check FI v2.1 fixed-observation file directly
+        run: lake env lean LeanCfgProject/MCFG/FI_v2_1_FixedObservation.lean
