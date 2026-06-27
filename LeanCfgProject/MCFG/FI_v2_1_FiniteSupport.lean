@@ -107,7 +107,14 @@ theorem listedUnitEdge_reach
     {d : Nat} {x y : Tuple α d}
     (hxy : S.SupportsUnitEdge x y) :
     LearnerUnitReach S.sample obs f x y := by
-  exact LearnerUnitReach.step (S.toLearnerUnitEdge hsafe hxy)
+  rcases hsafe hxy with ⟨hd, hpos, hmerge⟩
+  exact LearnerUnitReach.step
+    { d := d
+      hd := hd
+      hpos := hpos
+      src := x
+      tgt := y
+      merge := hmerge }
 
 /-- Soundness of a single listed safe unit edge for a target language. -/
 theorem listedUnitEdge_sound_for_language
