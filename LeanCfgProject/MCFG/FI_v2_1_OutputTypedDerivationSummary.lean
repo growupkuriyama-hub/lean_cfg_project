@@ -96,27 +96,37 @@ theorem actualRefinedNonterminal_iff_derives
   · intro h
     exact derives_actualRefinedNonterminal h
 
-/-- Every tuple in the untyped language is covered by its actual refined
-nonterminal, namely the base nonterminal together with the tuple's actual
-componentwise observation type.
+/-- Every tuple in the untyped language is covered at its actual output type.
 
-The statement intentionally keeps the final typed derivation at
-`actualRefinedNonterminal G obs A x`.  Writing it as
-`DerivesOutputTypedTuple G obs R x` for an arbitrary existentially-bound `R`
-would require dependent transport along `R.base = A`, since the tuple arity in
-`DerivesOutputTypedTuple` is indexed by `G.arity R.base`. -/
+A tempting alternative is to existentially quantify an arbitrary refined
+nonterminal `R` and then assert `R.base = A`, `R.outTy = tupleType obs x`, and
+`DerivesOutputTypedTuple G obs R x`.  In Lean this creates dependent-arity
+transport obligations, because the type of `R.outTy` and the tuple arity in
+`DerivesOutputTypedTuple` depend on `R.base`.  The statement below keeps the
+refined nonterminal definitionally equal to the actual one, avoiding those
+spurious transports while expressing the same semantic coverage fact. -/
 theorem tupleLanguage_covered_by_outputTypes
+    (G : WorkingMCFG N α) (obs : α → M)
+    (A : N) (x : Tuple α (G.arity A))
+    (hx : x ∈ TupleLanguage G A) :
+    x ∈ OutputTypedTupleLanguage G obs
+      (actualRefinedNonterminal G obs A x) := by
+  exact derives_actualRefinedNonterminal hx
+
+/-- A packaged version of `tupleLanguage_covered_by_outputTypes` retaining the
+actual refined nonterminal as data.  The typed derivation is intentionally kept
+at the definitionally equal actual nonterminal, rather than at an arbitrary
+existential variable, to avoid dependent arity transport. -/
+theorem tupleLanguage_covered_by_actual_outputType
     (G : WorkingMCFG N α) (obs : α → M)
     (A : N) (x : Tuple α (G.arity A))
     (hx : x ∈ TupleLanguage G A) :
     ∃ R : RefinedNonterminal G M,
       R = actualRefinedNonterminal G obs A x ∧
-      R.base = A ∧
-      R.outTy = tupleType obs x ∧
-      DerivesOutputTypedTuple G obs
-        (actualRefinedNonterminal G obs A x) x := by
-  refine ⟨actualRefinedNonterminal G obs A x, rfl, rfl, rfl, ?_⟩
-  exact derives_actualRefinedNonterminal hx
+      x ∈ OutputTypedTupleLanguage G obs
+        (actualRefinedNonterminal G obs A x) := by
+  refine ⟨actualRefinedNonterminal G obs A x, rfl, ?_⟩
+  exact tupleLanguage_covered_by_outputTypes G obs A x hx
 
 /-- Output-type refinement is semantically conservative at the tuple level:
 forgetting the output type of any refined derivation yields an ordinary
