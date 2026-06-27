@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarGold
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListSpecificationGold
