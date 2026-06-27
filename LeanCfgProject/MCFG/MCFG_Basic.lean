@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_CanonicalEnumerationBoundGold
+import LeanCfgProject.MCFG.FI_v2_1_PolynomialBoundGold
