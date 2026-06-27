@@ -9,7 +9,10 @@ bookkeeping infrastructure around fixed finite observations, named sentence
 contexts, MCFG derivations, sample-safe unit closure, transported distributions,
 finite-hypothesis certificates, output-type refinement, finite enumeration
 plans, concrete sample-extraction certificates, sample consistency witnesses,
-learner-side word semantics, and a canonical learner grammar package interface.
+learner-side word semantics, canonical learner grammar package interfaces,
+rule-list specifications, counting and enumeration-bound profiles, polynomial
+and parameter-profile witnesses, bounded-data/presentation-recovery interfaces,
+and a main-theorem style Gold-identification summary.
 
 This document is intended to be self-contained: a reader should be able to
 understand the current scope of the Lean experiment, its CI status, the layers
@@ -22,22 +25,23 @@ alone.
 
 ```text
 Repository: growupkuriyama-hub/lean_cfg_project
-Latest checked CI: Lean CI #408
-Latest commit reported by user: 8f598b9
+Latest checked CI: Lean CI #417
+Latest commit reported by user: 7734721
 Status: succeeded
-Top checked module: LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarGold
+Top checked module: LeanCfgProject.MCFG.FI_v2_1_MainTheoremGold
 Aggregate import: LeanCfgProject.MCFG.Basic
 ```
 
 The current CI chain checks all MCFG companion files through Lake.  The top
-currently checked layer is no longer merely the finite-monoid rule-enumeration
-plan: it now reaches a **canonical learner grammar package interface** with
-exactness and Gold-style wrappers.
+currently checked layer now reaches a **main-theorem style interface**:
+presentation-relative characteristic-sample certificates are bundled with
+post-threshold exact recovery and Gold-style distributional identification
+wrappers.
 
 A typical local check is:
 
 ```bash
-lake build LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarGold
+lake build LeanCfgProject.MCFG.FI_v2_1_MainTheoremGold
 lake build LeanCfgProject.MCFG.Basic
 lake build LeanCfgProject
 ```
@@ -76,23 +80,34 @@ bookkeeping infrastructure:
 - learner-side sample-word generation interfaces;
 - packaged learner word-semantics certificates;
 - canonical learner grammar package interfaces;
-- exactness and Gold-style wrappers for these package interfaces.
+- canonical rule-list specifications;
+- rule-count summaries;
+- enumeration-bound certificates;
+- abstract polynomial-bound witnesses;
+- parameter profiles for sample size, monoid size, and related bounds;
+- shape / bounded-spine placeholder profiles;
+- bounded-data recovery profile certificates;
+- presentation-relative recovery profile certificates;
+- main-theorem style interfaces connecting presentation-relative characteristic
+  samples to post-threshold exactness and Gold-style identification.
 
-The current development **does not yet formalize** the full paper theorem.
-In particular, it does not yet construct the actual canonical MCFG learner as a
-concrete `WorkingMCFG`, does not yet implement the full sample-extracted
-terminal/binary/start/unit rule generation algorithm, does not yet construct the
-presentation-relative characteristic sample from an arbitrary witnessing
-presentation, and does not yet prove the hybrid filling lemma, no-advice
-non-identifiability theorem, or bounded-spine polynomial-data theorem.
+The current development **does not yet formalize** the full paper theorem in
+its concrete grammar-construction form.  In particular, it does not yet
+construct the actual canonical MCFG learner as a concrete `WorkingMCFG`, does
+not yet implement the full sample-extracted terminal/binary/start/unit rule
+generation algorithm, does not yet construct the presentation-relative
+characteristic sample from an arbitrary witnessing presentation, and does not
+yet prove the hybrid filling lemma, no-advice non-identifiability theorem, or
+bounded-spine polynomial-data theorem.
 
 A safe one-sentence summary is:
 
 > The Lean companion currently machine-checks the fixed-observation,
 > distributional, finite-hypothesis, output-type-refinement, finite-enumeration,
-> sample-extraction, consistency, learner-word-semantics, and canonical learner
-> package infrastructure for the MCFG learning construction, while the full
-> concrete canonical-grammar reconstruction theorem remains future work.
+> sample-extraction, consistency, learner-word-semantics, canonical learner
+> package, recovery-profile, and main-theorem-interface infrastructure for the
+> MCFG learning construction, while the full concrete canonical-grammar
+> reconstruction theorem remains future work.
 
 ---
 
@@ -156,6 +171,33 @@ LeanCfgProject/MCFG/FI_v2_1_LearnerWordSemanticsGold.lean
 LeanCfgProject/MCFG/FI_v2_1_CanonicalLearnerGrammarInterface.lean
 LeanCfgProject/MCFG/FI_v2_1_CanonicalLearnerGrammarExact.lean
 LeanCfgProject/MCFG/FI_v2_1_CanonicalLearnerGrammarGold.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalRuleListSpecification.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalRuleListSpecificationExact.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalRuleListSpecificationGold.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalRuleListCounting.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalRuleListCountingExact.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalRuleListCountingGold.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalEnumerationBoundInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalEnumerationBoundExact.lean
+LeanCfgProject/MCFG/FI_v2_1_CanonicalEnumerationBoundGold.lean
+LeanCfgProject/MCFG/FI_v2_1_PolynomialBoundInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_PolynomialBoundExact.lean
+LeanCfgProject/MCFG/FI_v2_1_PolynomialBoundGold.lean
+LeanCfgProject/MCFG/FI_v2_1_ParameterProfileInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_ParameterProfileExact.lean
+LeanCfgProject/MCFG/FI_v2_1_ParameterProfileGold.lean
+LeanCfgProject/MCFG/FI_v2_1_ShapeProfileInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_ShapeProfileExact.lean
+LeanCfgProject/MCFG/FI_v2_1_ShapeProfileGold.lean
+LeanCfgProject/MCFG/FI_v2_1_BoundedDataRecoveryInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_BoundedDataRecoveryExact.lean
+LeanCfgProject/MCFG/FI_v2_1_BoundedDataRecoveryGold.lean
+LeanCfgProject/MCFG/FI_v2_1_PresentationRecoveryInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_PresentationRecoveryExact.lean
+LeanCfgProject/MCFG/FI_v2_1_PresentationRecoveryGold.lean
+LeanCfgProject/MCFG/FI_v2_1_MainTheoremInterface.lean
+LeanCfgProject/MCFG/FI_v2_1_MainTheoremExact.lean
+LeanCfgProject/MCFG/FI_v2_1_MainTheoremGold.lean
 
 .github/workflows/lean.yml
 ```
@@ -223,6 +265,33 @@ import LeanCfgProject.MCFG.FI_v2_1_LearnerWordSemanticsGold
 import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarInterface
 import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarExact
 import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarGold
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListSpecification
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListSpecificationExact
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListSpecificationGold
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListCounting
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListCountingExact
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListCountingGold
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalEnumerationBoundInterface
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalEnumerationBoundExact
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalEnumerationBoundGold
+import LeanCfgProject.MCFG.FI_v2_1_PolynomialBoundInterface
+import LeanCfgProject.MCFG.FI_v2_1_PolynomialBoundExact
+import LeanCfgProject.MCFG.FI_v2_1_PolynomialBoundGold
+import LeanCfgProject.MCFG.FI_v2_1_ParameterProfileInterface
+import LeanCfgProject.MCFG.FI_v2_1_ParameterProfileExact
+import LeanCfgProject.MCFG.FI_v2_1_ParameterProfileGold
+import LeanCfgProject.MCFG.FI_v2_1_ShapeProfileInterface
+import LeanCfgProject.MCFG.FI_v2_1_ShapeProfileExact
+import LeanCfgProject.MCFG.FI_v2_1_ShapeProfileGold
+import LeanCfgProject.MCFG.FI_v2_1_BoundedDataRecoveryInterface
+import LeanCfgProject.MCFG.FI_v2_1_BoundedDataRecoveryExact
+import LeanCfgProject.MCFG.FI_v2_1_BoundedDataRecoveryGold
+import LeanCfgProject.MCFG.FI_v2_1_PresentationRecoveryInterface
+import LeanCfgProject.MCFG.FI_v2_1_PresentationRecoveryExact
+import LeanCfgProject.MCFG.FI_v2_1_PresentationRecoveryGold
+import LeanCfgProject.MCFG.FI_v2_1_MainTheoremInterface
+import LeanCfgProject.MCFG.FI_v2_1_MainTheoremExact
+import LeanCfgProject.MCFG.FI_v2_1_MainTheoremGold
 ```
 
 ---
@@ -283,16 +352,46 @@ import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarGold
 | 50 | `FI_v2_1_CanonicalLearnerGrammarInterface.lean` | Canonical learner grammar package interface | checked |
 | 51 | `FI_v2_1_CanonicalLearnerGrammarExact.lean` | Exactness certificate for canonical learner grammar packages | checked |
 | 52 | `FI_v2_1_CanonicalLearnerGrammarGold.lean` | Gold wrapper for canonical learner grammar packages | checked |
+| 53 | `FI_v2_1_CanonicalRuleListSpecification.lean` | Rule-list coverage and plan-support specification for canonical learner packages | checked |
+| 54 | `FI_v2_1_CanonicalRuleListSpecificationExact.lean` | Exact canonical package plus rule-list specification | checked |
+| 55 | `FI_v2_1_CanonicalRuleListSpecificationGold.lean` | Gold wrapper preserving rule-list specification after the characteristic sample | checked |
+| 56 | `FI_v2_1_CanonicalRuleListCounting.lean` | Counting summaries for ordinary and refined rule lists | checked |
+| 57 | `FI_v2_1_CanonicalRuleListCountingExact.lean` | Exact canonical package plus rule-list counting summary | checked |
+| 58 | `FI_v2_1_CanonicalRuleListCountingGold.lean` | Gold wrapper preserving rule-count summaries after the characteristic sample | checked |
+| 59 | `FI_v2_1_CanonicalEnumerationBoundInterface.lean` | External enumeration-bound certificates for refined rule counts and related finite data | checked |
+| 60 | `FI_v2_1_CanonicalEnumerationBoundExact.lean` | Exact canonical package plus enumeration-bound certificate | checked |
+| 61 | `FI_v2_1_CanonicalEnumerationBoundGold.lean` | Gold wrapper preserving enumeration bounds after the characteristic sample | checked |
+| 62 | `FI_v2_1_PolynomialBoundInterface.lean` | Abstract polynomial-bound witness interface for enumeration bounds | checked |
+| 63 | `FI_v2_1_PolynomialBoundExact.lean` | Exact canonical package plus polynomial-bound witnesses | checked |
+| 64 | `FI_v2_1_PolynomialBoundGold.lean` | Gold wrapper preserving polynomial-bound witnesses after the characteristic sample | checked |
+| 65 | `FI_v2_1_ParameterProfileInterface.lean` | Parameter profile interface for sample size, monoid size, fanout placeholders, and total bounds | checked |
+| 66 | `FI_v2_1_ParameterProfileExact.lean` | Exact canonical package plus parameter profile | checked |
+| 67 | `FI_v2_1_ParameterProfileGold.lean` | Gold wrapper preserving parameter profiles after the characteristic sample | checked |
+| 68 | `FI_v2_1_ShapeProfileInterface.lean` | Shape/bounded-spine placeholder profile interface | checked |
+| 69 | `FI_v2_1_ShapeProfileExact.lean` | Exact canonical package plus shape profile | checked |
+| 70 | `FI_v2_1_ShapeProfileGold.lean` | Gold wrapper preserving shape profiles after the characteristic sample | checked |
+| 71 | `FI_v2_1_BoundedDataRecoveryInterface.lean` | Bounded-data recovery profile interface above shape profiles | checked |
+| 72 | `FI_v2_1_BoundedDataRecoveryExact.lean` | Exact canonical package plus bounded-data recovery profile | checked |
+| 73 | `FI_v2_1_BoundedDataRecoveryGold.lean` | Gold wrapper preserving bounded-data recovery profiles after the characteristic sample | checked |
+| 74 | `FI_v2_1_PresentationRecoveryInterface.lean` | Presentation-relative recovery profile interface | checked |
+| 75 | `FI_v2_1_PresentationRecoveryExact.lean` | Exact canonical package plus presentation-relative recovery profile | checked |
+| 76 | `FI_v2_1_PresentationRecoveryGold.lean` | Gold wrapper preserving presentation-relative recovery profiles | checked |
+| 77 | `FI_v2_1_MainTheoremInterface.lean` | Main-theorem style package from presentation-relative characteristic samples to identification | checked |
+| 78 | `FI_v2_1_MainTheoremExact.lean` | Post-threshold exact recovery interface for samples containing the characteristic sample | checked |
+| 79 | `FI_v2_1_MainTheoremGold.lean` | Gold-style main-theorem summary package | checked |
 
 The development has grown from a distribution-level skeleton into a broad
-formal infrastructure for output-type refined MCFG learning.  It still avoids
-claiming a complete machine-checked proof of the final learner grammar theorem.
+formal infrastructure for output-type refined MCFG learning.  The current top
+layer packages the already-checked infrastructure in a main-theorem style
+statement, but it still avoids claiming a complete machine-checked proof of the
+final concrete learner grammar theorem.
 
 ---
 
 ## 4. What is currently formalized
 
 ### 4.1 Core fixed-observation substrate
+
 Main checked layers: `FixedObservation`, `NamedSentenceContext`, `MCFG_Syntax`,
 `MCFG_Derivation`, `MCFG_ContextualSemantics`.
 
@@ -318,6 +417,7 @@ version of the same idea.  It also introduces working MCFG syntax with terminal,
 binary, and start rules, plus a first tuple/string derivation semantics.
 
 ### 4.2 Sample-safe context transport and unit closure
+
 Main checked layers: `LearnerUnitClosure`, `LearnerDistribution`,
 `ReconstructionCertificate`, `GoldStabilization`.
 
@@ -343,6 +443,7 @@ text prefix, the certified approximate distribution stabilizes to the target
 distribution.
 
 ### 4.3 Finite hypotheses and finite-hypothesis Gold wrappers
+
 Main checked layers: `IdentificationSummary`, `FiniteSupport`,
 `FiniteHypothesis`, `FiniteHypothesisGold`.
 
@@ -368,6 +469,7 @@ identifies in the Gold sense once a finite characteristic sample guarantees
 exactness.
 
 ### 4.4 Output-type refinement infrastructure
+
 Main checked layers: `OutputTypeRefinement`, `RefinedRules`,
 `OutputTypedDerivationSummary`, `RefinedGrammar`.
 
@@ -403,6 +505,7 @@ and that refined derivations forget to ordinary derivations while preserving the
 advertised output type.
 
 ### 4.5 Finite refined grammars and finite output-type enumeration
+
 Main checked layers: `FiniteRefinedGrammar`, `FiniteOutputTypeEnumeration`,
 `FiniteEnumerationSummary`, `FintypeOutputEnumeration`,
 `FintypeEnumerationCertificate`.
@@ -431,6 +534,7 @@ each output-type vector type `Fin d → M` can be enumerated using
 `Fintype.elems`, giving a Lean certificate for finite output-type support.
 
 ### 4.6 Finite rule-enumeration plans and concrete refined-rule certificates
+
 Main checked layers: `FiniteBaseRuleSupport`, `FiniteRuleEnumerationPlan`,
 `FintypeRuleEnumerationPlan`, `ConcreteRuleEnumerationSkeleton`,
 `ConcreteRuleEnumerationCertificate`, `FintypeConcreteRuleEnumeration`.
@@ -458,6 +562,7 @@ rule-list generation must satisfy.  This still does not implement the full
 formalizes the support and packaging needed by that future implementation.
 
 ### 4.7 Relative and concrete sample extraction
+
 Main checked layers: `RelativeSampleExtraction`, `RelativeSampleExtractionExact`,
 `RelativeSampleExtractionGold`, `ConcreteExtractedSampleData`,
 `ConcreteExtractedSampleExact`, `ConcreteExtractedSampleGold`.
@@ -490,6 +595,7 @@ finite sample
 is available in Lean as a certificate pipeline.
 
 ### 4.8 Sample-context, sample-word, and start-witness consistency
+
 Main checked layers: `ConcreteSampleConsistency`,
 `ConcreteSampleConsistencyExact`, `ConcreteSampleConsistencyGold`,
 `SampleWordConsistencySkeleton`, `SampleWordConsistencyExact`,
@@ -521,6 +627,7 @@ yet a proof that a fully constructed learner grammar generates every sample
 word.
 
 ### 4.9 Learner-side word consistency and packaged learner semantics
+
 Main checked layers: `LearnerWordConsistencySkeleton`,
 `LearnerWordConsistencyExact`, `LearnerWordConsistencyGold`,
 `LearnerWordSemanticsInterface`, `LearnerWordSemanticsExact`,
@@ -547,6 +654,7 @@ witnesses, learner-side sample-word generation, and Gold-style distributional
 identification.
 
 ### 4.10 Canonical learner grammar package interface
+
 Main checked layers: `CanonicalLearnerGrammarInterface`,
 `CanonicalLearnerGrammarExact`, `CanonicalLearnerGrammarGold`.
 
@@ -566,19 +674,154 @@ CanonicalLearnerGrammarCharacteristicSample
 CanonicalLearnerGrammarLearner
 ```
 
-This is the current top block of the Lean experiment.  It packages concrete
-extracted sample data together with learner-side word semantics as a
-sample-indexed canonical learner grammar package.  The exactness layer says that
-such a package is exact for a target grammar when its distributions match the
-target, sample words have target start-derivation witnesses, and sample words
-are generated by the packaged learner-side word semantics.  The Gold layer then
-lifts characteristic-sample witnesses to the canonical learner grammar package
-level.
+This packages concrete extracted sample data together with learner-side word
+semantics as a sample-indexed canonical learner grammar package.  The exactness
+layer says that such a package is exact for a target grammar when its
+distributions match the target, sample words have target start-derivation
+witnesses, and sample words are generated by the packaged learner-side word
+semantics.  The Gold layer then lifts characteristic-sample witnesses to the
+canonical learner grammar package level.
 
 This is still an interface layer.  It does not yet define the actual canonical
 learner grammar as a concrete `WorkingMCFG` with extracted terminal, binary,
 start, and unit rules.
 
+### 4.11 Rule-list specifications and counting summaries
+
+Main checked layers: `CanonicalRuleListSpecification`,
+`CanonicalRuleListSpecificationExact`, `CanonicalRuleListSpecificationGold`,
+`CanonicalRuleListCounting`, `CanonicalRuleListCountingExact`,
+`CanonicalRuleListCountingGold`.
+
+Representative declarations:
+
+```lean
+CanonicalRuleListSpecification
+CanonicalRuleListSpecification.ofPackage
+
+CanonicalLearnerGrammarExactWithRuleLists
+CanonicalRuleListCharacteristicSample
+
+CanonicalRuleListCountingSpecification
+CanonicalLearnerGrammarExactWithCounts
+CanonicalRuleListCountingCharacteristicSample
+```
+
+These layers make explicit what the finite refined rule lists inside a
+canonical learner package are supposed to satisfy.  The rule lists must cover
+ordinary output-type rule refinements and be supported by the finite-monoid
+rule-enumeration plan.  The counting layers add named summaries for ordinary
+and refined terminal/binary/start rule counts, giving later complexity
+interfaces something concrete to refer to.
+
+### 4.12 Enumeration, polynomial, parameter, and shape profiles
+
+Main checked layers: `CanonicalEnumerationBoundInterface`,
+`CanonicalEnumerationBoundExact`, `CanonicalEnumerationBoundGold`,
+`PolynomialBoundInterface`, `PolynomialBoundExact`, `PolynomialBoundGold`,
+`ParameterProfileInterface`, `ParameterProfileExact`, `ParameterProfileGold`,
+`ShapeProfileInterface`, `ShapeProfileExact`, `ShapeProfileGold`.
+
+Representative declarations:
+
+```lean
+CanonicalEnumerationBounds
+CanonicalLearnerGrammarExactWithEnumerationBounds
+CanonicalEnumerationBoundCharacteristicSample
+
+PolynomialBoundWitness
+CanonicalPolynomialBounds
+CanonicalLearnerGrammarExactWithPolynomialBounds
+CanonicalPolynomialBoundCharacteristicSample
+
+CanonicalParameterProfile
+CanonicalLearnerGrammarExactWithParameterProfile
+CanonicalParameterProfileCharacteristicSample
+
+CanonicalShapeProfile
+CanonicalLearnerGrammarExactWithShapeProfile
+CanonicalShapeProfileCharacteristicSample
+```
+
+These layers do not prove a concrete polynomial-time theorem.  Instead, they
+define the certificate slots needed for such a theorem.  Enumeration bounds
+control refined rule counts and related finite data; polynomial witnesses mark
+bounds as polynomially controlled in an abstract way; parameter profiles record
+sample size, monoid cardinality, and fanout/size placeholders; shape profiles
+provide a future place for bounded-spine or bounded-derivation-shape
+parameters.
+
+### 4.13 Bounded-data and presentation-relative recovery profiles
+
+Main checked layers: `BoundedDataRecoveryInterface`,
+`BoundedDataRecoveryExact`, `BoundedDataRecoveryGold`,
+`PresentationRecoveryInterface`, `PresentationRecoveryExact`,
+`PresentationRecoveryGold`.
+
+Representative declarations:
+
+```lean
+CanonicalBoundedDataRecoveryProfile
+CanonicalLearnerGrammarExactWithBoundedDataRecovery
+CanonicalBoundedDataRecoveryCharacteristicSample
+
+CanonicalPresentationRecoveryProfile
+CanonicalLearnerGrammarExactWithPresentationRecovery
+CanonicalPresentationRecoveryCharacteristicSample
+```
+
+The bounded-data recovery layers extend shape profiles with recovery bounds.
+The presentation-recovery layers then add presentation-relative bounds and
+certificate data.  These layers are deliberately phrased as certificate
+interfaces: they do not yet construct the characteristic sample from an
+arbitrary witnessing presentation, but they specify what such a construction
+should provide to connect to the rest of the Lean development.
+
+### 4.14 Main-theorem style interface
+
+Current top checked layers: `MainTheoremInterface`, `MainTheoremExact`,
+`MainTheoremGold`.
+
+Representative declarations:
+
+```lean
+FixedMonoidMCFGLearningMainPackage
+FixedMonoidMCFGLearningMainPackage.toFiniteHypothesisLearner
+FixedMonoidMCFGLearningMainPackage.characteristicSample
+FixedMonoidMCFGLearningMainPackage.identifiesInLimit
+FixedMonoidMCFGLearningMainPackage.eventuallyCorrectContexts
+FixedMonoidMCFGLearningMainPackage.characteristicSample_positive
+
+FixedMonoidMCFGLearningPostThresholdSample
+FixedMonoidMCFGLearningPostThresholdSample.exactWithPresentation
+FixedMonoidMCFGLearningPostThresholdSample.approxDistribution_exact
+FixedMonoidMCFGLearningPostThresholdSample.sample_word_generated_by_learner
+FixedMonoidMCFGLearningPostThresholdSample.sample_word_start_derives
+FixedMonoidMCFGLearningPostThresholdSample.refinedRuleLists_coverAll
+FixedMonoidMCFGLearningPostThresholdSample.refinedRuleCount_le_totalPresentationBound
+
+FixedMonoidMCFGLearningGoldTheorem
+FixedMonoidMCFGLearningGoldTheorem.learner
+FixedMonoidMCFGLearningGoldTheorem.characteristicSample
+FixedMonoidMCFGLearningGoldTheorem.identifiesInLimit
+FixedMonoidMCFGLearningGoldTheorem.eventuallyCorrectContexts
+FixedMonoidMCFGLearningGoldTheorem.postThresholdSample
+```
+
+This is the current top block of the Lean experiment.  It bundles the already
+checked infrastructure into a statement that resembles the paper's main theorem
+at the certificate level:
+
+```text
+presentation-relative characteristic-sample certificate
+→ post-threshold exact recovery package
+→ Gold-style distributional identification
+```
+
+This is still not the final theorem in concrete grammar form.  It is a
+main-theorem style interface showing that, once the remaining concrete
+construction obligations are supplied, the existing Lean infrastructure carries
+them to exactness and Gold-style identification.
 
 ---
 
@@ -638,12 +881,21 @@ start, and unit rules.
 | learner-side sample-word generation | `FiniteHypothesisSampleWordConsistent` | formalized as interface |
 | packaged learner word semantics | `ConcreteExtractedSampleWordSemanticsCertificate` | formalized as interface |
 | canonical learner grammar package | `CanonicalLearnerGrammarPackage` | formalized as interface |
-| canonical learner grammar exactness package | `CanonicalLearnerGrammarExactForGrammar` | formalized as interface |
-| canonical learner grammar Gold wrapper | `CanonicalLearnerGrammarCharacteristicSample` | formalized |
+| rule-list specification for packages | `CanonicalRuleListSpecification` | formalized as interface |
+| rule-count summaries | `CanonicalRuleListCountingSpecification` | formalized |
+| enumeration-bound certificates | `CanonicalEnumerationBounds` | formalized as interface |
+| polynomial-bound witnesses | `PolynomialBoundWitness`, `CanonicalPolynomialBounds` | formalized as abstract interface |
+| parameter profiles | `CanonicalParameterProfile` | formalized as interface |
+| bounded-shape / bounded-spine placeholder profiles | `CanonicalShapeProfile` | formalized as interface |
+| bounded-data recovery profile | `CanonicalBoundedDataRecoveryProfile` | formalized as interface |
+| presentation-relative recovery profile | `CanonicalPresentationRecoveryProfile` | formalized as interface |
+| main theorem package | `FixedMonoidMCFGLearningMainPackage` | formalized as certificate interface |
+| post-threshold exact recovery package | `FixedMonoidMCFGLearningPostThresholdSample` | formalized as interface |
+| Gold-style main theorem summary | `FixedMonoidMCFGLearningGoldTheorem` | formalized as interface |
 | actual concrete refined rule lists via `List.bind` | not yet formalized | pending |
 | actual sample-extracted rule generation algorithm | not yet formalized | pending |
 | full concrete canonical learner grammar as `WorkingMCFG` | not yet formalized | pending |
-| full exact reconstruction theorem | not yet formalized | pending |
+| full grammar-level exact reconstruction theorem | not yet formalized | pending |
 | no-advice non-identifiability | not yet formalized | pending |
 | bounded-spine polynomial-data theorem | not yet formalized | pending |
 
@@ -667,15 +919,15 @@ the current formalization.
    finite positive sample is not yet implemented.
 
 3. **Concrete canonical learner grammar as a `WorkingMCFG`.**  
-   The current top layer defines a canonical learner grammar package interface.
-   It is a disciplined place to plug in a future grammar construction, but it is
-   not itself the full concrete learner grammar.
+   The current top layers define canonical learner grammar package and main
+   theorem interfaces.  They are disciplined places to plug in a future grammar
+   construction, but they are not themselves the full concrete learner grammar.
 
 4. **Construction of the presentation-relative characteristic sample.**  
-   The certificate layers assume distribution-level, finite-hypothesis, or
-   package-level characteristic-sample witnesses.  They do not yet prove that
-   the paper's finite characteristic sample can be extracted from every
-   witnessing working MCFG presentation.
+   The certificate layers assume distribution-level, finite-hypothesis,
+   package-level, or presentation-recovery characteristic-sample witnesses.
+   They do not yet prove that the paper's finite characteristic sample can be
+   extracted from every witnessing working MCFG presentation.
 
 5. **Occurrence witnesses in derivation trees.**  
    `ExposedWithContext` is currently abstract.  A full derivation-tree
@@ -692,8 +944,9 @@ the current formalization.
 
 8. **Full grammar-level exact reconstruction theorem.**  
    The development does not yet combine output-type refinement, characteristic
-   sample coverage, extracted rules, unit transport, and hybrid filling into the
-   final theorem that the learned grammar has exactly the target language.
+   sample coverage, extracted rules, unit transport, sample consistency, and
+   hybrid filling into the final theorem that the learned concrete grammar has
+   exactly the target language.
 
 9. **Productivity, reachability, and reducedness closure.**  
    The syntax and derivation layers include basic working conditions, but not
@@ -704,13 +957,16 @@ the current formalization.
     The superfinite-chain argument for the union over all finite observations is
     not yet formalized.
 
-11. **Polynomial-time and polynomial-data statements.**  
-    Complexity bounds, enumeration size bounds, characteristic-sample size
-    bounds, and fixed-parameter polynomiality are not yet formalized.
+11. **Concrete polynomial-time and polynomial-data statements.**  
+    The development now contains enumeration-bound, polynomial-bound,
+    parameter-profile, shape-profile, and bounded-data recovery interfaces.
+    These are certificate slots, not a proof of concrete polynomial complexity
+    bounds.
 
 12. **Compression lower bound and bounded spine width.**  
     The unary singleton compression example, bounded-spine-width definitions,
-    and polynomial-data recovery theorem are not yet formalized.
+    and polynomial-data recovery theorem are not yet formalized.  Current
+    shape-profile layers are placeholders for such future work.
 
 13. **Comparison examples.**  
     The Yoshinaka comparison, ordered-context examples, parallel-agreement
@@ -733,26 +989,28 @@ stabilization wrappers, finite-hypothesis certificates, output-type refined
 rule and grammar skeletons, finite refined-grammar certificates, finite
 rule-enumeration plans derived from a finite observation monoid, concrete
 sample-extraction certificate interfaces, sample-context and sample-word
-consistency wrappers, learner-side word-semantics certificates, and a canonical
-learner grammar package interface with exactness and Gold-style wrappers.  The
-formalization is not yet a machine-checked proof of the full reconstruction
-theorem: the concrete canonical learner grammar, the actual sample-extracted
-rule-generation algorithm, the presentation-relative characteristic-sample
-construction, the hybrid filling lemma, the no-advice boundary, and the
-bounded-spine polynomial-data theorem remain outside the current Lean
-development.
+consistency wrappers, learner-side word-semantics certificates, canonical
+learner grammar package interfaces, rule-list specifications, enumeration and
+parameter-profile certificates, presentation-relative recovery interfaces, and
+a main-theorem style Gold-identification wrapper.  The formalization is not yet
+a machine-checked proof of the full concrete reconstruction theorem: the
+concrete canonical learner grammar, the actual sample-extracted rule-generation
+algorithm, the presentation-relative characteristic-sample construction, the
+hybrid filling lemma, the no-advice boundary, and the bounded-spine
+polynomial-data theorem remain outside the current Lean development.
 ```
 
 A shorter footnote version is:
 
 ```latex
 A Lean companion checks the fixed-observation and distributional bookkeeping
-layers of the construction, including named contexts, MCFG syntax and derivation
-skeletons, safe unit-rule closure, transported distributions, finite-hypothesis
-wrappers, output-type refinement, finite refined-grammar certificates, finite
-rule-enumeration plans for finite observation monoids, concrete extraction and
-consistency certificate interfaces, learner-side word semantics, and a
-canonical learner grammar package interface.  The full concrete
+layers of the construction, including named contexts, MCFG syntax and
+derivation skeletons, safe unit-rule closure, transported distributions,
+finite-hypothesis wrappers, output-type refinement, finite refined-grammar
+certificates, finite rule-enumeration plans for finite observation monoids,
+concrete extraction and consistency certificate interfaces, learner-side word
+semantics, canonical learner package interfaces, presentation-recovery
+interfaces, and a main-theorem style Gold wrapper.  The full concrete
 canonical-grammar reconstruction theorem is not yet machine-checked.
 ```
 
@@ -760,9 +1018,9 @@ An even shorter introduction version is:
 
 ```latex
 A Lean companion is available for the main bookkeeping infrastructure of the
-construction.  It currently reaches a canonical learner grammar package
-interface with exactness and Gold-style wrappers, while the full concrete
-canonical-grammar reconstruction theorem remains future work.
+construction.  It currently reaches a main-theorem style certificate interface
+for presentation-relative recovery and Gold identification, while the full
+concrete canonical-grammar reconstruction theorem remains future work.
 ```
 
 These statements are intentionally conservative.  They emphasize what is
@@ -774,53 +1032,49 @@ checked without implying that the entire paper has been formalized.
 
 The most valuable next milestones are now:
 
-1. **Canonical rule-list specification.**  
-   Specify exactly what terminal, binary, start, and unit rule lists inside a
-   canonical learner grammar package must contain.
-
-2. **Actual concrete refined rule lists.**  
+1. **Actual concrete refined rule lists.**  
    Implement refined terminal, binary, and start rule lists using `List.bind` or
    suitable finite-list combinators from the finite rule-enumeration plan.
 
-3. **Finite refined grammar generated from the plan.**  
+2. **Finite refined grammar generated from the plan.**  
    Construct an actual `FiniteOutputTypeRefinedGrammar` from the concrete
    refined rule lists and prove that it covers all ordinary rule refinements.
 
-4. **Sample-extracted rule lists.**  
+3. **Sample-extracted rule lists.**  
    Formalize terminal, binary, start, and unit rule extraction from a finite
    positive sample.
 
-5. **Concrete canonical learner grammar.**  
+4. **Concrete canonical learner grammar.**  
    Define the full learner grammar as a concrete grammar object, not only a
    package interface.
 
-6. **Occurrence witnesses in derivation trees.**  
+5. **Occurrence witnesses in derivation trees.**  
    Strengthen `ExposedWithContext` into a derivation-tree occurrence notion.
 
-7. **Sample consistency for the concrete learner grammar.**  
+6. **Sample consistency for the concrete learner grammar.**  
    Prove that every positive sample word is generated by the learner grammar.
 
-8. **Hybrid filling lemma.**  
+7. **Hybrid filling lemma.**  
    Prove that replacing a tuple by a distribution-equivalent tuple inside a
    derivation context preserves target membership.
 
-9. **Exact reconstruction theorem.**  
+8. **Exact reconstruction theorem.**  
    Combine output-type refinement, characteristic-sample coverage, extracted
    rules, unit transport, sample consistency, and hybrid filling into the
    grammar-level exact reconstruction theorem.
 
-10. **No-advice boundary.**  
-    Formalize the superfinite chain
-    `({a^n b^n | 1 ≤ n ≤ k})_k` converging to `{a^n b^n | n ≥ 1}`.
+9. **No-advice boundary.**  
+   Formalize the superfinite chain
+   `({a^n b^n | 1 ≤ n ≤ k})_k` converging to `{a^n b^n | n ≥ 1}`.
 
-11. **Polynomial and bounded-spine results.**  
-    Formalize enumeration bounds and then the bounded-spine polynomial-data
-    theorem.
+10. **Concrete polynomial and bounded-spine results.**  
+    Replace the current polynomial/parameter/shape/recovery certificate
+    interfaces with actual enumeration-size estimates and then the bounded-spine
+    polynomial-data theorem.
 
 For the paper's credibility, the highest-value next step is still the concrete
-grammar-building part: canonical rule-list specifications, concrete refined
-rule lists, sample-extracted rules, occurrence witnesses, and the hybrid filling
-lemma.
+grammar-building part: concrete refined rule lists, sample-extracted rules,
+occurrence witnesses, sample consistency, and the hybrid filling lemma.
 
 ---
 
@@ -828,10 +1082,10 @@ lemma.
 
 ```text
 Checked by CI: yes
-Latest CI: Lean CI #408
-Latest commit reported by user: 8f598b9
+Latest CI: Lean CI #417
+Latest commit reported by user: 7734721
 Repository: growupkuriyama-hub/lean_cfg_project
-Top checked module: LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerGrammarGold
+Top checked module: LeanCfgProject.MCFG.FI_v2_1_MainTheoremGold
 Aggregate import: LeanCfgProject.MCFG.Basic
 
 Current scope:
@@ -857,8 +1111,14 @@ Current scope:
   target-side start-symbol derivation witnesses;
   learner-side sample-word generation interfaces;
   packaged learner word semantics;
-  canonical learner grammar package interface;
-  exactness and Gold-style wrappers for canonical learner packages.
+  canonical learner grammar package interfaces;
+  rule-list specifications and counting summaries;
+  enumeration-bound and polynomial-bound interfaces;
+  parameter and shape profiles;
+  bounded-data recovery and presentation-relative recovery profiles;
+  main-theorem style interface;
+  post-threshold exact recovery interface;
+  Gold-style main theorem summary.
 
 Full concrete canonical learner grammar checked: no
 Actual sample-extracted rule-generation algorithm checked: no
@@ -874,7 +1134,8 @@ In one sentence:
 
 > The current Lean development machine-checks the fixed-observation,
 > distributional, finite-hypothesis, output-type-refinement, finite-enumeration,
-> sample-extraction, consistency, learner-word-semantics, and canonical learner
-> package infrastructure of the MCFG learning construction through CI #408 /
-> commit `8f598b9`, while leaving the full concrete presentation-relative
-> canonical-grammar reconstruction theorem for future formalization.
+> sample-extraction, consistency, learner-word-semantics, canonical learner
+> package, recovery-profile, and main-theorem-interface infrastructure of the
+> MCFG learning construction through CI #417 / commit `7734721`, while leaving
+> the full concrete presentation-relative canonical-grammar reconstruction
+> theorem for future formalization.
