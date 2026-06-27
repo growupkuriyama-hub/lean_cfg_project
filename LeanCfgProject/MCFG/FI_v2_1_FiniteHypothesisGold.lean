@@ -189,14 +189,14 @@ theorem GrammarFiniteHypothesisCharacteristicSample.identifiesInLimit
     {A : FiniteHypothesisLearner α M} {G : WorkingMCFG N α}
     (C : GrammarFiniteHypothesisCharacteristicSample A G) :
     FiniteHypothesisIdentifiesGrammarInLimit A G := by
-  exact C.identifiesInLimit
+  exact FiniteHypothesisCharacteristicSample.identifiesInLimit C
 
 /-- Grammar-target pointwise context form. -/
 theorem GrammarFiniteHypothesisCharacteristicSample.eventuallyCorrectContexts
     {A : FiniteHypothesisLearner α M} {G : WorkingMCFG N α}
     (C : GrammarFiniteHypothesisCharacteristicSample A G) :
     FiniteHypothesisEventuallyCorrectContexts A G.StringLanguage := by
-  exact C.eventuallyCorrectContexts
+  exact FiniteHypothesisCharacteristicSample.eventuallyCorrectContexts C
 
 /-- Grammar-class finite-hypothesis telltales. -/
 def GrammarFiniteHypothesisTelltaleClass
@@ -216,7 +216,7 @@ theorem GrammarFiniteHypothesisTelltaleClass.identifies
     FiniteHypothesisIdentifiesGrammarClass C A := by
   intro G hG
   rcases hC G hG with ⟨S, _htriv⟩
-  exact S.identifiesInLimit
+  exact GrammarFiniteHypothesisCharacteristicSample.identifiesInLimit S
 
 end GrammarFiniteHypothesisGold
 
