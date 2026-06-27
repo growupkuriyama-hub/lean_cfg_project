@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SubwordUnitEdgeEnumerationGold
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerNonterminalGold
