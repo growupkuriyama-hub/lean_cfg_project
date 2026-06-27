@@ -240,12 +240,19 @@ theorem derives_refinedStart {G : WorkingMCFG N α}
   constructor
   · exact DerivesTuple.start ρ hρ hwt x
       (DerivesOutputTypedTuple.derives hx)
-  · calc
-      tupleType obs (castTuple hwt x)
-          = castOutputType hwt (tupleType obs x) :=
-              tupleType_castTuple obs hwt x
-      _ = castOutputType hwt childTy := by
-              rw [DerivesOutputTypedTuple.has_output_type hx]
+  · -- Make the equality hidden in `StartRule.WellTyped` explicit.  This avoids
+    -- fragile dot-notation/typeclass-transparency behavior around casts.
+    let hEq : G.arity ρ.child = G.arity G.start := hwt
+    change tupleType obs (castTuple hEq x) =
+      castOutputType hEq childTy
+    calc
+      tupleType obs (castTuple hEq x)
+          = castOutputType hEq (tupleType obs x) :=
+              tupleType_castTuple obs hEq x
+      _ = castOutputType hEq childTy :=
+              congrArg (castOutputType hEq)
+                (DerivesOutputTypedTuple.has_output_type hx)
+
 
 end StartRule
 
