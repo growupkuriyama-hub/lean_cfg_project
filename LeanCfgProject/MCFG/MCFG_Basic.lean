@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_ParameterProfileGold
+import LeanCfgProject.MCFG.FI_v2_1_ShapeProfileGold
