@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Pi
 import LeanCfgProject.MCFG.FI_v2_1_FiniteEnumerationSummary
 
 /-!
