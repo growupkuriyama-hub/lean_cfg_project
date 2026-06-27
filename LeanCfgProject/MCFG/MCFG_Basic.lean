@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_RawSampleDecompositionGold
+import LeanCfgProject.MCFG.FI_v2_1_RawSampleDecompositionGenerationGold
