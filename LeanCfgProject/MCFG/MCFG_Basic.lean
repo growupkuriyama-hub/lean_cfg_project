@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_LearnerWordConsistencyGold
+import LeanCfgProject.MCFG.FI_v2_1_LearnerWordSemanticsGold
