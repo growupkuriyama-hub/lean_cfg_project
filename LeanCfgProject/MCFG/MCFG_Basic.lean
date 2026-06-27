@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_PolynomialBoundGold
+import LeanCfgProject.MCFG.FI_v2_1_ParameterProfileGold
