@@ -5,47 +5,86 @@ This note documents the current Lean companion for the paper
 > **Fixed-Monoid Tuple Substitution for Positive-Data Learning of Multiple Context-Free Grammars**
 
 The Lean development is a companion formalization of the paper's core
-bookkeeping layers around fixed finite observations, named sentence contexts,
-tuple distributions, positive samples, unit-rule closure, and a
-distribution-level reconstruction/stabilization skeleton.
+bookkeeping infrastructure around fixed finite observations, named sentence
+contexts, MCFG derivations, sample-safe unit closure, transported distributions,
+finite-hypothesis certificates, output-type refinement, and finite enumeration
+plans.
 
-It should be read with the following scope in mind.
-
-- The current development **does formalize** the fixed-observation substrate,
-  named sentence contexts, a working MCFG syntax layer, a first derivation
-  semantics layer, sample-safe context transport, learner unit closure,
-  distribution-level reconstruction certificates, and a Gold-style stabilization
-  wrapper.
-- The current development **does not yet formalize** the full
-  presentation-relative characteristic-sample construction, the full canonical
-  MCFG learner grammar, the hybrid filling lemma in its final paper form, the
-  no-advice non-identifiability theorem, or the bounded-spine polynomial-data
-  theorem.
-
-The latest checked CI status is:
-
-```text
-Lean CI #377
-commit: 591118a
-repository: growupkuriyama-hub/lean_cfg_project
-status: succeeded
-```
-
-The top formalization layer at that point is:
-
-```text
-LeanCfgProject/MCFG/FI_v2_1_GoldStabilization.lean
-```
-
-The aggregate MCFG import file is:
-
-```text
-LeanCfgProject/MCFG/Basic.lean
-```
+This document is intended to be self-contained: a reader should be able to
+understand the current scope of the Lean experiment, its CI status, and the
+remaining formalization gap from this file alone.
 
 ---
 
-## 1. Repository layout
+## 0. Current CI status
+
+```text
+Repository: growupkuriyama-hub/lean_cfg_project
+Latest checked CI: Lean CI #398
+Latest commit reported by user: 83aa08d
+Status: succeeded
+Top checked module: LeanCfgProject.MCFG.FI_v2_1_FintypeRuleEnumerationPlan
+Aggregate import: LeanCfgProject.MCFG.Basic
+```
+
+The current CI chain checks all MCFG companion files through Lake.  The top
+currently checked layer is no longer merely the Gold-stabilization skeleton; it
+now reaches a finite-monoid rule-enumeration plan for output-type refined
+grammar infrastructure.
+
+A typical local check is:
+
+```bash
+lake build LeanCfgProject.MCFG.FI_v2_1_FintypeRuleEnumerationPlan
+lake build LeanCfgProject.MCFG.Basic
+lake build LeanCfgProject
+```
+
+Warnings about unused section variables or unused simp arguments may remain in
+some files.  They are linter warnings, not failed proof obligations.
+
+---
+
+## 1. Scope statement
+
+The current development **does formalize** substantial parts of the
+paper's bookkeeping infrastructure:
+
+- fixed monoid observations on words and tuples;
+- fixed-observation tuple substitutability and refinement monotonicity;
+- named sentence contexts and named filling;
+- a working MCFG syntax layer and first tuple/string derivation semantics;
+- grammar-level and sample-level named tuple distributions;
+- sample-safe merging and unit-rule closure soundness;
+- transported learner distributions;
+- reconstruction certificates and Gold-style stabilization wrappers;
+- class-level and finite-hypothesis identification wrappers;
+- finite support for sample-derived learner nodes and unit edges;
+- output-type refinement substrate for MCFG rules;
+- refined terminal, binary, and start rule skeletons;
+- refined derivation and refined grammar skeletons;
+- finite refined grammar certificates;
+- finite output-type enumeration certificates;
+- construction of output-type enumeration from `[Fintype M]`;
+- finite base-rule support and finite-monoid rule-enumeration plans.
+
+The current development **does not yet formalize** the full paper theorem.
+In particular, it does not yet prove the full presentation-relative canonical
+MCFG learner, the full construction of a characteristic sample from an arbitrary
+witnessing presentation, the hybrid filling lemma in its final derivation-tree
+form, the no-advice non-identifiability theorem, or the bounded-spine
+polynomial-data theorem.
+
+A safe one-sentence summary is:
+
+> The Lean companion currently machine-checks the fixed-observation,
+> distributional, finite-hypothesis, output-type-refinement, and finite
+> enumeration-plan infrastructure for the MCFG learning construction, while the
+> full canonical-grammar reconstruction theorem remains future work.
+
+---
+
+## 2. Repository layout
 
 The current MCFG formalization is organized as a sequence of small layers.
 
@@ -62,6 +101,22 @@ LeanCfgProject/MCFG/FI_v2_1_LearnerUnitClosure.lean
 LeanCfgProject/MCFG/FI_v2_1_LearnerDistribution.lean
 LeanCfgProject/MCFG/FI_v2_1_ReconstructionCertificate.lean
 LeanCfgProject/MCFG/FI_v2_1_GoldStabilization.lean
+LeanCfgProject/MCFG/FI_v2_1_IdentificationSummary.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteSupport.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteHypothesis.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteHypothesisGold.lean
+LeanCfgProject/MCFG/FI_v2_1_OutputTypeRefinement.lean
+LeanCfgProject/MCFG/FI_v2_1_RefinedRules.lean
+LeanCfgProject/MCFG/FI_v2_1_OutputTypedDerivationSummary.lean
+LeanCfgProject/MCFG/FI_v2_1_RefinedGrammar.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteRefinedGrammar.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteOutputTypeEnumeration.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteEnumerationSummary.lean
+LeanCfgProject/MCFG/FI_v2_1_FintypeOutputEnumeration.lean
+LeanCfgProject/MCFG/FI_v2_1_FintypeEnumerationCertificate.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteBaseRuleSupport.lean
+LeanCfgProject/MCFG/FI_v2_1_FiniteRuleEnumerationPlan.lean
+LeanCfgProject/MCFG/FI_v2_1_FintypeRuleEnumerationPlan.lean
 
 .github/workflows/lean.yml
 ```
@@ -72,6 +127,8 @@ The intended root import chain is:
 -- LeanCfgProject.lean
 import LeanCfgProject.MCFG.Basic
 ```
+
+The aggregate file imports all current MCFG companion layers:
 
 ```lean
 -- LeanCfgProject/MCFG/Basic.lean
@@ -84,46 +141,65 @@ import LeanCfgProject.MCFG.FI_v2_1_LearnerUnitClosure
 import LeanCfgProject.MCFG.FI_v2_1_LearnerDistribution
 import LeanCfgProject.MCFG.FI_v2_1_ReconstructionCertificate
 import LeanCfgProject.MCFG.FI_v2_1_GoldStabilization
+import LeanCfgProject.MCFG.FI_v2_1_IdentificationSummary
+import LeanCfgProject.MCFG.FI_v2_1_FiniteSupport
+import LeanCfgProject.MCFG.FI_v2_1_FiniteHypothesis
+import LeanCfgProject.MCFG.FI_v2_1_FiniteHypothesisGold
+import LeanCfgProject.MCFG.FI_v2_1_OutputTypeRefinement
+import LeanCfgProject.MCFG.FI_v2_1_RefinedRules
+import LeanCfgProject.MCFG.FI_v2_1_OutputTypedDerivationSummary
+import LeanCfgProject.MCFG.FI_v2_1_RefinedGrammar
+import LeanCfgProject.MCFG.FI_v2_1_FiniteRefinedGrammar
+import LeanCfgProject.MCFG.FI_v2_1_FiniteOutputTypeEnumeration
+import LeanCfgProject.MCFG.FI_v2_1_FiniteEnumerationSummary
+import LeanCfgProject.MCFG.FI_v2_1_FintypeOutputEnumeration
+import LeanCfgProject.MCFG.FI_v2_1_FintypeEnumerationCertificate
+import LeanCfgProject.MCFG.FI_v2_1_FiniteBaseRuleSupport
+import LeanCfgProject.MCFG.FI_v2_1_FiniteRuleEnumerationPlan
+import LeanCfgProject.MCFG.FI_v2_1_FintypeRuleEnumerationPlan
 ```
-
-A typical local check is:
-
-```bash
-lake build LeanCfgProject.MCFG.FI_v2_1_GoldStabilization
-lake build LeanCfgProject.MCFG.Basic
-lake build LeanCfgProject
-```
-
-The GitHub Actions workflow checks the Lean files through Lake. The latest
-successful run reported the Lean CI success at commit `591118a`.
 
 ---
 
-## 2. Layer-by-layer status
-
-The formalization is deliberately organized so that each layer can be understood
-without committing to the whole reconstruction theorem at once.
+## 3. Layer-by-layer status
 
 | Layer | File | Main role | Status |
-|---|---|---|---|
-| 1 | `FI_v2_1_FixedObservation.lean` | Words, tuples, observation evaluation, fixed-`h` substitutability, refinement monotonicity | checked |
-| 2 | `FI_v2_1_NamedSentenceContext.lean` | Concrete named sentence contexts and named filling | checked |
+|---:|---|---|---|
+| 1 | `FI_v2_1_FixedObservation.lean` | Words, tuples, observation evaluation, tuple types, fixed-`h` substitutability, refinement monotonicity | checked |
+| 2 | `FI_v2_1_NamedSentenceContext.lean` | Raw and well-formed named sentence contexts, named filling | checked |
 | 3 | `FI_v2_1_MCFG_Syntax.lean` | Working binary MCFG syntax: templates, rules, fan-out, nondeleting side conditions | checked |
 | 4 | `FI_v2_1_MCFG_Derivation.lean` | First derivation semantics: tuple and string languages | checked |
-| 5 | `FI_v2_1_MCFG_ContextualSemantics.lean` | Exposed tuples, grammar named distributions, sample-safe merge soundness | checked |
+| 5 | `FI_v2_1_MCFG_ContextualSemantics.lean` | Exposed tuples, grammar/sample named distributions, sample-safe merge soundness | checked |
 | 6 | `FI_v2_1_LearnerUnitClosure.lean` | Learner unit edges, unit reachability, soundness of unit-rule closure | checked |
 | 7 | `FI_v2_1_LearnerDistribution.lean` | Transported contexts and learner approximate distributions | checked |
 | 8 | `FI_v2_1_ReconstructionCertificate.lean` | Distribution-level reconstruction certificates and characteristic-sample skeleton | checked |
 | 9 | `FI_v2_1_GoldStabilization.lean` | Texts, prefix samples, eventual containment, Gold-style stabilization | checked |
+| 10 | `FI_v2_1_IdentificationSummary.lean` | Class-level identification wrappers from characteristic samples | checked |
+| 11 | `FI_v2_1_FiniteSupport.lean` | Finite sample support for tuples, contexts, and listed unit edges | checked |
+| 12 | `FI_v2_1_FiniteHypothesis.lean` | Finite learner hypothesis object, soundness, completeness-to-exactness certificate | checked |
+| 13 | `FI_v2_1_FiniteHypothesisGold.lean` | Finite-hypothesis Gold wrapper and telltale-style class summaries | checked |
+| 14 | `FI_v2_1_OutputTypeRefinement.lean` | Output-type computation for templates and rule applications | checked |
+| 15 | `FI_v2_1_RefinedRules.lean` | Refined terminal, binary, and start rule skeletons | checked |
+| 16 | `FI_v2_1_OutputTypedDerivationSummary.lean` | Output-typed tuple language and tuple-level conservativity summaries | checked |
+| 17 | `FI_v2_1_RefinedGrammar.lean` | Predicate-style output-type refined grammar skeleton and refined derivations | checked |
+| 18 | `FI_v2_1_FiniteRefinedGrammar.lean` | Finite refined grammar certificate using explicit finite rule lists | checked |
+| 19 | `FI_v2_1_FiniteOutputTypeEnumeration.lean` | Certificate interface for finite enumeration of output-type vectors | checked |
+| 20 | `FI_v2_1_FiniteEnumerationSummary.lean` | Bundles finite refined grammar certificates with output-type enumeration support | checked |
+| 21 | `FI_v2_1_FintypeOutputEnumeration.lean` | Builds output-type enumeration from `[Fintype M]` via `Fintype.elems` | checked |
+| 22 | `FI_v2_1_FintypeEnumerationCertificate.lean` | Finite-monoid output-type refinement certificates | checked |
+| 23 | `FI_v2_1_FiniteBaseRuleSupport.lean` | Explicit finite support for ordinary terminal, binary, and start rules | checked |
+| 24 | `FI_v2_1_FiniteRuleEnumerationPlan.lean` | Finite rule-enumeration plans from base rules plus output-type lists | checked |
+| 25 | `FI_v2_1_FintypeRuleEnumerationPlan.lean` | Canonical rule-enumeration plans when the observation monoid is finite | checked |
 
-This is not yet a full formal proof of the paper's main theorem, but it now
-covers a substantial part of the formal infrastructure around the main theorem.
+The development has grown from a distribution-level skeleton into a broader
+formal infrastructure for output-type refined MCFG bookkeeping.  It still avoids
+claiming a complete learner grammar reconstruction theorem.
 
 ---
 
-## 3. What is currently formalized
+## 4. What is currently formalized
 
-### 3.1 Words and tuples
+### 4.1 Words, tuples, and fixed observations
 
 Words over an alphabet are represented by lists.
 
@@ -137,26 +213,19 @@ A tuple of arity `d` is a `Fin d`-indexed family of words.
 abbrev Tuple (α : Type u) (d : Nat) := Fin d → Word α
 ```
 
-This matches the paper's convention that an MCFG nonterminal of fan-out `d`
-derives a `d`-tuple of strings.
-
----
-
-### 3.2 Fixed observations and tuple types
-
-A letter observation is represented as a function
+A letter observation is represented as:
 
 ```lean
 obs : α → M
 ```
 
-where `M` is a monoid. It is extended multiplicatively to words:
+where `M` is a monoid.  It is extended multiplicatively to words.
 
 ```lean
 def evalObs (obs : α → M) : Word α → M
 ```
 
-The file proves the append law:
+The append law is checked:
 
 ```lean
 theorem evalObs_append (obs : α → M) (u v : Word α) :
@@ -169,15 +238,12 @@ The componentwise type of a tuple is:
 def tupleType {d : Nat} (obs : α → M) (x : Tuple α d) : Fin d → M
 ```
 
-This corresponds to the paper's notation
-
-```text
-h^{(d)}(w_1, ..., w_d) = (h(w_1), ..., h(w_d)).
-```
+This corresponds to the paper's observation vector
+`h^{(d)}(w_1,...,w_d)`.
 
 ---
 
-### 3.3 Refinement of observations
+### 4.2 Refinement of observations
 
 The formalization uses an explicit refinement structure.
 
@@ -188,10 +254,6 @@ structure Refines (obs : α → M) (obs' : α → M') where
   map_mul : ∀ x y : M', map (x * y) = map x * map y
   comm : ∀ a : α, map (obs' a) = obs a
 ```
-
-Mathematically, this is the same data as a monoid homomorphism from the finer
-observation monoid to the coarser one, commuting with the two letter
-observations.
 
 The key checked compatibility lemmas are:
 
@@ -206,13 +268,12 @@ theorem tupleType_refines_apply {d : Nat} (r : Refines obs obs')
     r.map (tupleType obs' x i) = tupleType obs x i
 ```
 
+The refinement monotonicity theorem for fixed-observation substitutability is
+also checked.
+
 ---
 
-### 3.4 Fixed-observation tuple substitutability
-
-The semantic fixed-observation substitutability condition is formalized first
-for an abstract context interface and then specialized to named sentence
-contexts.
+### 4.3 Fixed-observation tuple substitutability
 
 At the abstract level, a context family and filling operation are parameters.
 
@@ -227,12 +288,6 @@ The distribution of a tuple is the set of contexts accepting it.
 def Distribution {d : Nat} (L : Set (Word α)) (x : Tuple α d) : Set (Ctx d)
 ```
 
-Two tuples share an accepting context if some context accepts both.
-
-```lean
-def SharesContext {d : Nat} (L : Set (Word α)) (x y : Tuple α d) : Prop
-```
-
 The fixed-observation substitutability predicate is:
 
 ```lean
@@ -240,32 +295,19 @@ def FixedTupleSubstitutable
     (f : Nat) (obs : α → M) (L : Set (Word α)) : Prop
 ```
 
-It formalizes the paper's implication:
+It formalizes the implication:
 
-> same componentwise observation type + one shared accepting context  
+> same componentwise observation type + one shared accepting context
 > implies equality of all accepting contexts.
 
-The monotonicity theorem under refinement is checked:
-
-```lean
-theorem fixedTupleSubstitutable_of_refines
-    {f : Nat} {L : Set (Word α)}
-    (r : Refines obs obs')
-    (hL : FixedTupleSubstitutable fill f obs L) :
-    FixedTupleSubstitutable fill f obs' L
-```
-
-This corresponds to the paper's refinement monotonicity proposition.
+The named-context version is also checked through
+`FixedNamedTupleSubstitutable`.
 
 ---
 
-### 3.5 Named sentence contexts
+### 4.4 Named sentence contexts
 
 The second layer introduces concrete named sentence contexts.
-
-The formalization distinguishes raw contexts from well-formed named contexts.
-This makes the representation extensible and avoids making later MCFG
-bookkeeping depend on a brittle concrete encoding too early.
 
 Main declarations include:
 
@@ -281,15 +323,14 @@ FixedNamedTupleSubstitutable
 fixedNamedTupleSubstitutable_of_refines
 ```
 
-This is the Lean counterpart of the paper's arity-`d` sentence contexts with
-named holes. The layer is meant to support contexts where tuple components may
-be exposed in non-left-to-right order.
+This supports arity-indexed contexts with named holes and avoids baking in a
+fragile concrete encoding too early.
 
 ---
 
-### 3.6 MCFG syntax
+### 4.5 Working MCFG syntax
 
-The syntax layer introduces a working binary linear MCFG presentation skeleton.
+The syntax layer introduces a binary linear MCFG presentation skeleton.
 
 Main declarations include:
 
@@ -310,13 +351,12 @@ WorkingMCFG.FanoutAtMost
 WorkingMCFG.BasicWorkingConditions
 ```
 
-This corresponds to the paper's definition of working binary linear nondeleting
-MCFG rules. The goal of this layer is to make the template and rule
-bookkeeping explicit before proving reconstruction statements.
+The point of this layer is to make terminal, binary, and start rules explicit
+before reconstruction statements are considered.
 
 ---
 
-### 3.7 Derivation semantics
+### 4.6 Derivation semantics
 
 The derivation layer introduces a first semantics for tuple derivability and
 string languages.
@@ -334,15 +374,15 @@ TupleLanguage
 StringLanguage
 ```
 
-This is not yet a full derivation-tree development with occurrence tracking,
-but it gives a checked inductive semantics for generated tuple languages and
-the start string language.
+This is not yet a full derivation-tree occurrence formalization, but it gives a
+checked inductive semantics for generated tuple languages and the start string
+language.
 
 ---
 
-### 3.8 Contextual semantics and sample-safe merge
+### 4.7 Contextual semantics and sample-safe merge
 
-The contextual-semantics layer connects derivations with named sentence
+The contextual semantics layer connects derivations with named sentence
 contexts and positive samples.
 
 Main declarations include:
@@ -366,18 +406,15 @@ sampleSafeMerge_sound_for_grammar
 sampleObservedExposures_sound_for_grammar
 ```
 
-The most important checked idea here is:
+The key checked idea is:
 
 > If two tuples are observed in a positive sample with the same fixed observation
 > type and a shared sample context, then the fixed-substitutability promise makes
 > the corresponding grammar-level named distributions equal.
 
-This is the formalized core of the safety of the learner's unit-rule merging
-step.
-
 ---
 
-### 3.9 Learner unit-rule closure
+### 4.8 Learner unit-rule closure
 
 The unit-closure layer formalizes the soundness of repeatedly applying
 sample-safe unit edges.
@@ -402,18 +439,15 @@ LearnerUnitHypothesis.reach_sound_for_language
 
 The checked content is:
 
-> Finite-sample safe unit edges preserve target named-context distributions, and
-> this preservation remains true after taking the reflexive-transitive closure
-> of those unit edges.
-
-This is the distributional soundness half of the learner's unit-rule closure.
+> Sample-safe unit edges preserve target named-context distributions, and this
+> preservation remains true after taking reflexive-transitive closure.
 
 ---
 
-### 3.10 Learner transported distributions
+### 4.9 Learner transported distributions
 
-The learner-distribution layer defines contexts licensed by observation and
-unit transport.
+The learner-distribution layer defines contexts licensed by observation and unit
+transport.
 
 Main declarations include:
 
@@ -435,15 +469,12 @@ LearnerObservedNode.transported_context_sound_for_language
 
 The key checked statement is:
 
-> A context observed in the sample can be transported along safe unit reachability
-> to another tuple without leaving the target distribution.
-
-This is a formalized version of the context-transport step used in the
-reconstruction proof.
+> A context observed in the sample can be transported along safe unit
+> reachability to another tuple without leaving the target distribution.
 
 ---
 
-### 3.11 Reconstruction certificates
+### 4.10 Reconstruction certificates
 
 The reconstruction-certificate layer abstracts the point where the paper's
 presentation-relative characteristic sample enters.
@@ -460,23 +491,21 @@ DistributionCharacteristicSample.exact_after_extending
 exact_for_grammar_after_characteristic_sample
 ```
 
-This layer proves a distribution-level version of the characteristic-sample
-argument:
+This layer proves a distribution-level certificate statement:
 
 > If a finite sample is rich enough to license all target contexts relevant to
 > the tuples under consideration, then the learner's transported distribution
 > equals the target distribution.
 
-The important limitation is that this layer assumes the relevant reconstruction
-certificate. It does not yet construct that certificate from an arbitrary
-working MCFG presentation.
+The layer assumes the relevant reconstruction certificate; it does not yet
+construct that certificate from an arbitrary MCFG presentation.
 
 ---
 
-### 3.12 Gold-style stabilization
+### 4.11 Gold-style stabilization
 
-The latest layer formalizes the abstract Gold-style stabilization argument for
-finite characteristic samples.
+The Gold layer formalizes the finite-characteristic-sample-to-eventual-
+stabilization argument.
 
 Main declarations include:
 
@@ -498,22 +527,403 @@ distributionCharacteristicSample_identifiesGrammarInLimit
 eventually_licensed_iff_grammar_context
 ```
 
-This layer proves the standard finite-characteristic-sample implication:
+It proves the standard implication:
 
-> If a finite characteristic sample exists, then along every text for the target
-> language, some finite prefix eventually contains it, and all later prefix
-> samples satisfy the corresponding reconstruction condition.
-
-This is a distribution-level Gold identification wrapper. It is not yet the full
-grammar-level exact reconstruction theorem, but it formalizes the final
-stabilization step once the characteristic sample has been obtained.
+> If a finite characteristic sample exists, then every text for the target
+> language eventually contains it, and all later prefix samples satisfy the
+> reconstruction condition.
 
 ---
 
-## 4. Correspondence with the paper
+### 4.12 Class-level and finite-hypothesis wrappers
 
-The following table summarizes the current correspondence between paper notions
-and Lean declarations.
+The identification-summary and finite-hypothesis layers connect the abstract
+certificate story to finite learner objects.
+
+Main declarations include:
+
+```lean
+DistributionTelltaleClass
+DistributionIdentifiesLanguageClass
+DistributionTargetWitness
+
+GrammarDistributionTelltaleClass
+DistributionIdentifiesGrammarClass
+GrammarDistributionTargetWitness
+```
+
+and:
+
+```lean
+FiniteLearnerSupport
+FiniteLearnerHypothesis
+FiniteLearnerHypothesis.UnitReach
+FiniteLearnerHypothesis.ApproxDistribution
+FiniteLearnerHypothesis.LicensedContext
+FiniteLearnerHypothesis.CompleteForLanguage
+FiniteLearnerHypothesis.ExactForLanguage
+```
+
+The finite-hypothesis Gold wrapper adds:
+
+```lean
+FiniteHypothesisLearner
+FiniteHypothesisIdentifiesInLimit
+FiniteHypothesisEventuallyCorrectContexts
+FiniteHypothesisCharacteristicSample
+FiniteHypothesisTelltaleClass
+GrammarFiniteHypothesisCharacteristicSample
+GrammarFiniteHypothesisTelltaleClass
+```
+
+Together these layers formalize:
+
+> If finite samples give finite hypotheses that become exact after a finite
+> characteristic sample, then the finite-hypothesis learner stabilizes in the
+> Gold sense.
+
+---
+
+### 4.13 Output-type computation for templates
+
+The output-type refinement layer computes the observation type of rule outputs
+from the template and child tuple types.
+
+Main declarations include:
+
+```lean
+templateAtomType
+templateWordType
+templateTupleType
+
+evalTemplateAtom_type
+evalTemplateWord_type
+evalTemplateTuple_type
+
+TerminalRule.outputType
+TerminalRule.outputTuple_type
+
+BinaryRule.outputType
+BinaryRule.apply_tupleType
+BinaryRule.apply_has_outputType
+```
+
+This formalizes the basic bookkeeping behind nonterminals of the form
+
+```text
+A^(p_1,...,p_d)
+```
+
+in the paper: the parent output type is determined by the rule template and the
+child output types.
+
+---
+
+### 4.14 Refined nonterminals and refined rules
+
+The refined-rule layer introduces output-typed nonterminals and refined rule
+skeletons.
+
+Main declarations include:
+
+```lean
+OutputTypedNonterminal
+RefinedNonterminal
+OutputTypedNonterminal.AcceptsTuple
+OutputTypedNonterminal.TypedTuple
+
+DerivesOutputTypedTuple
+binary_step_has_output_type
+
+RefinedTerminalRule
+RefinedBinaryRule
+RefinedStartRule
+
+TerminalRule.refinedLHS
+BinaryRule.refinedLeft
+BinaryRule.refinedRight
+BinaryRule.refinedLHS
+StartRule.refinedChild
+StartRule.refinedStart
+```
+
+The checked content is:
+
+> Terminal, binary, and start rule steps can be lifted to output-typed rule
+> skeletons, and the resulting tuple has the advertised output type.
+
+---
+
+### 4.15 Output-typed derivation summaries
+
+The output-typed derivation summary layer connects ordinary tuple derivations
+to actual refined nonterminals determined by their observed tuple type.
+
+Main declarations include:
+
+```lean
+OutputTypedTupleLanguage
+actualRefinedNonterminal
+derives_actualRefinedNonterminal
+tupleLanguage_covered_by_outputTypes
+OutputTypeRefinementConservative
+outputTypeRefinementConservative
+```
+
+The checked summary is:
+
+> Every ordinary tuple derivation is covered by the refined nonterminal whose
+> output type is the actual observation type of the derived tuple.
+
+This is a tuple-level conservativity statement.  It is not yet a full grammar
+transformation theorem.
+
+---
+
+### 4.16 Predicate-style refined grammar skeleton
+
+The refined-grammar layer bundles refined terminal, binary, and start rules into
+a predicate-style refined grammar.
+
+Main declarations include:
+
+```lean
+OutputTypeRefinedGrammar
+OutputTypeRefinedGrammar.all
+OutputTypeRefinedGrammar.ContainsAllOrdinaryRuleRefinements
+
+RefinedDerivesTuple
+RefinedDerivesTuple.sound
+RefinedDerivesTuple.forgets_to_derivation
+RefinedDerivesTuple.has_output_type
+
+OutputTypeRefinedGrammar.TupleLanguage
+OutputTypeRefinedGrammar.tupleLanguage_sound
+OutputTypeRefinedGrammar.tupleLanguage_forgets_to_base
+OutputTypeRefinedGrammar.tupleLanguage_has_output_type
+```
+
+The checked content is:
+
+> Refined derivations forget to ordinary derivations and preserve the advertised
+> output type.
+
+The `OutputTypeRefinedGrammar.all` construction represents the fully inclusive
+predicate-style refined grammar skeleton.
+
+---
+
+### 4.17 Finite refined grammar certificates
+
+The finite-refined-grammar layer replaces the predicate-style grammar with
+explicit finite lists of refined rules.
+
+Main declarations include:
+
+```lean
+FiniteOutputTypeRefinedGrammar
+FiniteOutputTypeRefinedGrammar.toOutputTypeRefinedGrammar
+
+FiniteOutputTypeRefinedGrammar.CoversAllOrdinaryRuleRefinements
+FiniteOutputTypeRefinedGrammar.coversAll_to_containsAll
+
+FiniteOutputTypeRefinedGrammar.TupleLanguage
+FiniteOutputTypeRefinedGrammar.tupleLanguage_sound
+FiniteOutputTypeRefinedGrammar.tupleLanguage_forgets_to_base
+FiniteOutputTypeRefinedGrammar.tupleLanguage_has_output_type
+
+FiniteOutputTypeRefinementCertificate
+```
+
+This layer formalizes a finite certificate interface:
+
+> If explicit finite refined rule lists cover all ordinary rule refinements,
+> then they induce the corresponding predicate-style refined grammar behavior.
+
+---
+
+### 4.18 Finite output-type enumeration certificates
+
+The finite output-type enumeration layer isolates the finite enumeration of
+output-type vectors.
+
+Main declarations include:
+
+```lean
+OutputTypeEnumeration
+OutputTypeEnumeration.types
+OutputTypeEnumeration.complete
+OutputTypeEnumeration.SupportsRefinedNonterminal
+OutputTypeEnumeration.SupportsRefinedBinaryRule
+OutputTypeEnumeration.SupportsRefinedStartRule
+
+GrammarOutputTypeEnumeration
+GrammarOutputTypeEnumeration.supports_refinedNonterminal
+GrammarOutputTypeEnumeration.supports_actualRefinedNonterminal
+GrammarOutputTypeEnumeration.supports_refinedBinaryRule
+GrammarOutputTypeEnumeration.supports_refinedStartRule
+```
+
+This expresses the certificate form of:
+
+> For each arity `d`, all output types `Fin d → M` are available from a finite
+> list.
+
+---
+
+### 4.19 Fintype-derived output-type enumeration
+
+The `FintypeOutputEnumeration` layer connects the certificate interface to
+Lean's finite-type infrastructure.
+
+Main declarations include:
+
+```lean
+fintypeOutputTypeList
+mem_fintypeOutputTypeList
+fintypeOutputTypeCount
+
+OutputTypeEnumeration.ofFintype
+OutputTypeEnumeration.ofFintype_complete
+OutputTypeEnumeration.ofFintype_supports_refinedNonterminal
+OutputTypeEnumeration.ofFintype_supports_refinedBinaryRule
+OutputTypeEnumeration.ofFintype_supports_refinedStartRule
+
+GrammarOutputTypeEnumeration.ofFintype
+GrammarOutputTypeEnumeration.ofFintype_supports_actualRefinedNonterminal
+```
+
+The important checked point is:
+
+> If `M` is finite, represented as `[Fintype M]`, then each output-type vector
+> type `Fin d → M` can be enumerated using `Fintype.elems`.
+
+This is one of the Lean points closest to the paper's fixed finite monoid
+hypothesis.
+
+---
+
+### 4.20 Finite-monoid enumeration certificates
+
+The `FintypeEnumerationCertificate` layer bundles the output-type enumeration
+from `[Fintype M]` with a finite refined grammar certificate.
+
+Main declarations include:
+
+```lean
+FintypeOutputTypeRefinementCertificate
+FintypeOutputTypeRefinementCertificate.outputTypes
+FintypeOutputTypeRefinementCertificate.grammar
+FintypeOutputTypeRefinementCertificate.toEnumerationCertificate
+FintypeOutputTypeRefinementCertificate.toOutputTypeRefinedGrammar
+
+FintypeOutputTypeRefinementCertificate.containsAllOrdinaryRuleRefinements
+FintypeOutputTypeRefinementCertificate.listedBinaryRule_supported
+FintypeOutputTypeRefinementCertificate.listedStartRule_supported
+FintypeOutputTypeRefinementCertificate.refinedNonterminal_supported
+
+FintypeOutputTypeRefinementCertificate.TupleLanguage
+FintypeOutputTypeRefinementCertificate.tupleLanguage_sound
+FintypeOutputTypeRefinementCertificate.tupleLanguage_forgets_to_base
+FintypeOutputTypeRefinementCertificate.tupleLanguage_has_output_type
+```
+
+This says, in certificate form:
+
+> Once the observation monoid is finite, output-type refinement can be supported
+> by finite output-type enumeration certificates.
+
+---
+
+### 4.21 Finite base-rule support
+
+The finite base-rule support layer records that the base `WorkingMCFG` already
+carries ordinary rules as finite lists.
+
+Main declarations include:
+
+```lean
+WorkingMCFG.terminalRuleCount
+WorkingMCFG.binaryRuleCount
+WorkingMCFG.startRuleCount
+WorkingMCFG.ordinaryRuleCount
+
+FiniteBaseRuleSupport
+FiniteBaseRuleSupport.canonical
+
+FiniteBaseRuleSupport.SupportsTerminalRule
+FiniteBaseRuleSupport.SupportsBinaryRule
+FiniteBaseRuleSupport.SupportsStartRule
+```
+
+This formalizes the ordinary finite input side of the enumeration story:
+
+> The terminal, binary, and start rules of the base presentation are finite
+> listed data.
+
+---
+
+### 4.22 Finite rule-enumeration plans
+
+The finite rule-enumeration plan layer combines base rule support with output
+type enumeration.
+
+Main declarations include:
+
+```lean
+FiniteRuleEnumerationPlan
+FiniteRuleEnumerationPlan.terminalRuleCount
+FiniteRuleEnumerationPlan.binaryRuleCount
+FiniteRuleEnumerationPlan.startRuleCount
+FiniteRuleEnumerationPlan.outputTypeCount
+
+FiniteRuleEnumerationPlan.binaryTypeChoiceCount
+FiniteRuleEnumerationPlan.startTypeChoiceCount
+
+FiniteRuleEnumerationPlan.supports_terminal_rule
+FiniteRuleEnumerationPlan.supports_binary_rule
+FiniteRuleEnumerationPlan.supports_start_rule
+FiniteRuleEnumerationPlan.supports_binary_type_choices
+FiniteRuleEnumerationPlan.supports_start_type_choice
+```
+
+This is not yet the actual `List.bind` construction of all refined rules, but it
+formalizes the finite plan:
+
+> Ordinary finite rule lists plus finite output-type lists give finite data
+> sufficient to plan the refined rule enumeration.
+
+---
+
+### 4.23 Fintype rule-enumeration plans
+
+The latest layer constructs the canonical finite rule-enumeration plan when the
+observation monoid is finite.
+
+Main declarations include:
+
+```lean
+FiniteRuleEnumerationPlan.ofFintype
+
+FiniteRuleEnumerationPlan.ofFintype_supports_terminal_rule
+FiniteRuleEnumerationPlan.ofFintype_supports_binary_rule
+FiniteRuleEnumerationPlan.ofFintype_supports_start_rule
+FiniteRuleEnumerationPlan.ofFintype_lists_output_type
+FiniteRuleEnumerationPlan.ofFintype_supports_binary_type_choices
+FiniteRuleEnumerationPlan.ofFintype_supports_start_type_choice
+```
+
+The checked statement is:
+
+> Given a finite observation monoid `[Fintype M]` and the finite rule lists of
+> the base working grammar, Lean can build a finite plan that supports the
+> output-type choices needed for refined terminal, binary, and start rules.
+
+This is the current top layer of the Lean experiment.
+
+---
+
+## 5. Correspondence with paper notions
 
 | Paper notion | Lean declaration | Status |
 |---|---|---|
@@ -535,7 +945,7 @@ and Lean declarations.
 | working MCFG presentation skeleton | `WorkingMCFG` | formalized |
 | tuple derivability | `DerivesTuple` | formalized |
 | tuple and string languages | `TupleLanguage`, `StringLanguage` | formalized |
-| exposed tuple with context | `ExposedWithContext` | formalized |
+| exposed tuple with context | `ExposedWithContext` | formalized abstractly |
 | sample-safe merge | `SampleSafeMerge` | formalized |
 | unit-rule closure | `LearnerUnitReach` | formalized |
 | learner transported distribution | `LearnerApproxDistribution` | formalized |
@@ -544,6 +954,23 @@ and Lean declarations.
 | text and prefix sample | `Text`, `PrefixSample` | formalized |
 | eventual containment of finite sample | `text_eventually_contains_finite_sample` | proved |
 | distribution-level identification in the limit | `DistributionIdentifiesInLimit` | formalized |
+| finite learner support | `FiniteLearnerSupport` | formalized |
+| finite learner hypothesis | `FiniteLearnerHypothesis` | formalized |
+| finite-hypothesis Gold wrapper | `FiniteHypothesisCharacteristicSample` and related declarations | formalized |
+| output-type computation for templates | `templateWordType`, `templateTupleType` | formalized |
+| output type of terminal rules | `TerminalRule.outputType` | formalized |
+| output type of binary rules | `BinaryRule.outputType` | formalized |
+| refined nonterminal | `RefinedNonterminal` | formalized |
+| refined terminal/binary/start rules | `RefinedTerminalRule`, `RefinedBinaryRule`, `RefinedStartRule` | formalized |
+| refined grammar skeleton | `OutputTypeRefinedGrammar` | formalized |
+| refined derivation | `RefinedDerivesTuple` | formalized |
+| finite refined grammar certificate | `FiniteOutputTypeRefinedGrammar` | formalized |
+| finite output-type enumeration | `OutputTypeEnumeration` | formalized |
+| output-type enumeration from finite monoid | `OutputTypeEnumeration.ofFintype` | formalized |
+| finite base rule support | `FiniteBaseRuleSupport` | formalized |
+| finite rule-enumeration plan | `FiniteRuleEnumerationPlan` | formalized |
+| finite-monoid rule-enumeration plan | `FiniteRuleEnumerationPlan.ofFintype` | formalized |
+| actual concrete refined rule lists via `List.bind` | not yet formalized | pending |
 | full canonical learner grammar | not yet formalized | pending |
 | full exact reconstruction theorem | not yet formalized | pending |
 | no-advice non-identifiability | not yet formalized | pending |
@@ -551,165 +978,204 @@ and Lean declarations.
 
 ---
 
-## 5. What is not formalized yet
+## 6. What is not formalized yet
 
 The current Lean development should not be described as a complete
-machine-checked proof of the paper. The following parts remain outside the
-formalization.
+machine-checked proof of the paper.  The following major parts remain outside
+the current formalization.
 
-1. **Construction of the presentation-relative characteristic sample.**  
-   The current certificate layer assumes a distribution-level reconstruction
-   certificate. It does not yet prove that the paper's finite characteristic
-   sample can be extracted from every witnessing working MCFG presentation.
+1. **Concrete refined rule-list construction.**  
+   The development now has finite rule-enumeration plans, but it does not yet
+   implement the actual `List.bind`/cartesian-product construction of all
+   refined terminal, binary, and start rules.
 
-2. **The full canonical learner grammar.**  
-   Unit-rule closure and transported distributions are formalized, but the full
-   canonical hypothesis grammar, including all extracted binary rules and start
-   rules, is not yet formalized.
+2. **Construction of the presentation-relative characteristic sample.**  
+   The certificate layers assume distribution-level or finite-hypothesis
+   reconstruction witnesses.  They do not yet prove that the paper's finite
+   characteristic sample can be extracted from every witnessing working MCFG
+   presentation.
 
-3. **The hybrid filling lemma in final grammar form.**  
-   The context-transport and distribution-level soundness statements are checked,
-   but the full MCFG hybrid filling argument for arbitrary binary derivation
-   contexts is not yet formalized.
+3. **The full canonical learner grammar.**  
+   Unit-rule closure, transported distributions, finite hypotheses, and refined
+   grammar infrastructure are formalized, but the full canonical learner grammar
+   with all extracted terminal, binary, start, and unit rules is not yet
+   formalized.
 
-4. **Output-type refinement of grammars.**  
-   The monoid typing layer is formalized, but the grammar-level construction
-   refining nonterminals by componentwise output type is still pending.
+4. **Occurrence witnesses in derivation trees.**  
+   `ExposedWithContext` is currently abstract.  A full derivation-tree occurrence
+   notion connecting nonterminal occurrences to named contexts remains pending.
 
-5. **Productivity, reachability, and reducedness closure.**  
-   The current MCFG syntax and derivation semantics include basic working
-   conditions, but not the full reducedness and closure infrastructure used in
-   the paper.
+5. **The hybrid filling lemma in final grammar form.**  
+   Distributional transport is checked, but the full MCFG hybrid replacement
+   lemma for arbitrary binary derivation contexts is not yet formalized.
 
-6. **No-advice non-identifiability.**  
+6. **Sample consistency for the full learner grammar.**  
+   The development does not yet prove that every word in a positive sample is
+   generated by the full canonical learner grammar.
+
+7. **Full grammar-level exact reconstruction theorem.**  
+   The development does not yet combine output-type refinement, characteristic
+   sample coverage, unit transport, extracted rules, and hybrid filling into the
+   final theorem that the learned grammar has exactly the target language.
+
+8. **Productivity, reachability, and reducedness closure.**  
+   The syntax and derivation layers include basic working conditions, but not
+   the full reducedness/productivity/reachability infrastructure used in a
+   polished paper proof.
+
+9. **No-advice non-identifiability.**  
    The superfinite-chain argument for the union over all finite observations is
    not yet formalized.
 
-7. **Polynomial-time and polynomial-data statements.**  
-   Complexity bounds, enumeration bounds, characteristic-sample size bounds, and
-   fixed-parameter polynomiality are not yet formalized.
+10. **Polynomial-time and polynomial-data statements.**  
+    Complexity bounds, enumeration size bounds, characteristic-sample size
+    bounds, and fixed-parameter polynomiality are not yet formalized.
 
-8. **Compression lower bound and bounded spine width.**  
-   The unary singleton compression example, bounded-spine-width definitions, and
-   polynomial-data recovery theorem are not yet formalized.
+11. **Compression lower bound and bounded spine width.**  
+    The unary singleton compression example, bounded-spine-width definitions,
+    and polynomial-data recovery theorem are not yet formalized.
 
-9. **Yoshinaka comparison and examples.**  
-   The ordered-context comparison, parallel-agreement examples, cross-serial
-   examples, finite-kernel comparison, conservativity proposition, and slope
-   counterexample are not yet formalized.
-
-10. **Finiteness and explicitness of the monoid.**  
-    Many currently checked lemmas require only `[Monoid M]`, not `[Fintype M]`.
-    This is mathematically appropriate for those algebraic lemmas. The paper's
-    finite and explicit monoid hypotheses are essential for learning and
-    algorithmic construction, but not for the already checked refinement and
-    distribution-preservation statements.
+12. **Comparison examples.**  
+    The Yoshinaka comparison, ordered-context examples, parallel-agreement
+    examples, cross-serial examples, finite-kernel comparison, conservativity
+    proposition, and slope counterexample are not yet formalized.
 
 ---
 
-## 6. Suggested wording for the paper
+## 7. Suggested wording for the paper
 
-A safe paragraph for the paper is:
+A safe current paragraph is:
 
 ```latex
-A preliminary Lean companion formalizes the main bookkeeping substrate of the
-paper: fixed observation morphisms, tuple types, named sentence contexts,
-working MCFG syntax and a first derivation semantics, sample-safe distributional
-merging, unit-rule closure, transported learner distributions, and a
-distribution-level Gold stabilization wrapper.  The formalization is not yet a
-machine-checked proof of the full reconstruction theorem: the construction of
-the presentation-relative characteristic sample, the complete canonical learner
-grammar, the no-advice boundary, and the bounded-spine polynomial-data theorem
-remain outside the current Lean development.
+A Lean companion formalizes substantial bookkeeping infrastructure for the
+fixed-observation MCFG construction.  The checked development includes fixed
+monoid observations on words and tuples, named sentence contexts, a working MCFG
+syntax and derivation skeleton, sample-safe unit closure, transported learner
+distributions, distribution-level reconstruction certificates, Gold-style
+stabilization wrappers, finite-hypothesis certificates, output-type refined
+rule and grammar skeletons, finite refined-grammar certificates, and finite
+rule-enumeration plans derived from a finite observation monoid.  The
+formalization is not yet a machine-checked proof of the full reconstruction
+theorem: the concrete canonical learner grammar, the presentation-relative
+characteristic-sample construction, the hybrid filling lemma, the no-advice
+boundary, and the bounded-spine polynomial-data theorem remain outside the
+current Lean development.
 ```
 
 A shorter footnote version is:
 
 ```latex
-A preliminary Lean companion checks the fixed-observation and distributional
-bookkeeping layers, including named sentence contexts, MCFG syntax and
-derivation skeletons, safe unit-rule closure, transported learner
-distributions, reconstruction certificates, and a Gold-style stabilization
-wrapper.  The full presentation-relative reconstruction theorem is not yet
-machine-checked.
+A Lean companion checks the fixed-observation and distributional bookkeeping
+layers of the construction, including named contexts, MCFG syntax and
+derivation skeletons, safe unit-rule closure, transported distributions,
+finite-hypothesis wrappers, output-type refinement, finite refined-grammar
+certificates, and finite rule-enumeration plans for finite observation monoids.
+The full canonical-grammar reconstruction theorem is not yet machine-checked.
 ```
 
-An even shorter version for the introduction is:
+An even shorter introduction version is:
 
 ```latex
-A Lean companion is available for the core bookkeeping layers of the
-construction; it currently reaches a distribution-level reconstruction and
-Gold-style stabilization skeleton, but not the full canonical-grammar
-reconstruction theorem.
+A Lean companion is available for the main bookkeeping infrastructure of the
+construction.  It currently reaches finite output-type refinement and
+finite-monoid rule-enumeration plans, while the full canonical-grammar
+reconstruction theorem remains future work.
 ```
 
-These statements are intentionally conservative. They emphasize what is checked
-without suggesting that the entire paper is already formalized.
+These statements are intentionally conservative.  They emphasize what is
+checked without implying that the entire paper has been formalized.
 
 ---
 
-## 7. Suggested next formalization milestones
+## 8. Suggested next formalization milestones
 
-The most valuable next milestones are:
+The most valuable next milestones are now:
 
-1. **Output-type refinement of working MCFGs.**  
-   Define the refinement of a nonterminal by componentwise observation type and
-   prove that typed derivations preserve the intended tuple type.
+1. **Concrete refined rule lists.**  
+   Implement refined terminal, binary, and start rule lists using `List.bind`
+   or suitable finite-list combinators from the finite rule-enumeration plan.
 
-2. **Occurrence witnesses in derivation trees.**  
-   Strengthen `ExposedWithContext` into a derivation-tree occurrence notion
-   connecting nonterminal occurrences to named sentence contexts.
+2. **Finite refined grammar generated from the plan.**  
+   Construct an actual `FiniteOutputTypeRefinedGrammar` from the concrete
+   refined rule lists and prove that it covers all ordinary rule refinements.
 
-3. **Extracted sample rules.**  
-   Formalize how terminal, binary, start, and unit rules are extracted from a
-   finite positive sample.
+3. **Sample-extracted rule skeleton.**  
+   Formalize terminal, binary, start, and unit rule extraction from a finite
+   positive sample.
 
-4. **Canonical learner grammar.**  
-   Define the full learner grammar rather than only transported distributions.
+4. **Occurrence witnesses in derivation trees.**  
+   Strengthen `ExposedWithContext` into a derivation-tree occurrence notion.
 
 5. **Sample consistency.**  
    Prove that every positive sample word is generated by the learner grammar.
 
 6. **Hybrid filling lemma.**  
    Prove that replacing a tuple by a distribution-equivalent tuple inside a
-   binary derivation context preserves target membership.
+   derivation context preserves target membership.
 
-7. **Exact reconstruction theorem.**  
-   Combine output-type refinement, characteristic sample coverage, unit
-   transport, and hybrid filling to prove the grammar-level exact reconstruction
-   theorem.
+7. **Canonical learner grammar.**  
+   Define the full learner grammar, not only transported distributions or finite
+   hypotheses.
 
-8. **No-advice boundary.**  
+8. **Exact reconstruction theorem.**  
+   Combine output-type refinement, characteristic-sample coverage, extracted
+   rules, unit transport, and hybrid filling into the grammar-level exact
+   reconstruction theorem.
+
+9. **No-advice boundary.**  
    Formalize the superfinite chain
-   \(\{a^n b^n \mid 1 \le n \le k\} \uparrow
-     \{a^n b^n \mid n \ge 1\}\).
+   `({a^n b^n | 1 ≤ n ≤ k})_k` converging to `{a^n b^n | n ≥ 1}`.
 
-For FI submission purposes, the most valuable next step is still not the
-complexity theory, but the core MCFG bookkeeping: output-type refinement,
-occurrence witnesses, extracted rules, and the hybrid filling lemma.
+10. **Polynomial and bounded-spine results.**  
+    Formalize enumeration bounds and then the bounded-spine polynomial-data
+    theorem.
+
+For the paper's credibility, the highest-value next step is not the complexity
+part but the concrete grammar-building part: concrete refined rule lists,
+sample-extracted rules, occurrence witnesses, and the hybrid filling lemma.
 
 ---
 
-## 8. Current status summary
+## 9. Current status summary
 
 ```text
 Checked by CI: yes
-Latest CI: Lean CI #377
-Latest commit reported by user: 591118a
-Top checked module: LeanCfgProject.MCFG.FI_v2_1_GoldStabilization
+Latest CI: Lean CI #398
+Latest commit reported by user: 83aa08d
+Repository: growupkuriyama-hub/lean_cfg_project
+Top checked module: LeanCfgProject.MCFG.FI_v2_1_FintypeRuleEnumerationPlan
 Aggregate import: LeanCfgProject.MCFG.Basic
-Scope: fixed-observation, named-context, MCFG syntax/semantics, sample-safe
-       distribution transport, reconstruction certificates, and Gold-style
-       stabilization skeleton
-Full MCFG reconstruction theorem checked: no
+
+Current scope:
+  fixed observations;
+  named contexts;
+  MCFG syntax and first derivation semantics;
+  sample-safe distribution transport;
+  unit-rule closure;
+  reconstruction certificates;
+  Gold-style stabilization;
+  finite learner support and finite hypotheses;
+  output-type refinement;
+  refined rules and refined grammar skeletons;
+  finite refined grammar certificates;
+  output-type enumeration;
+  Fintype-derived finite output-type enumeration;
+  finite base-rule support;
+  finite-monoid rule-enumeration plans.
+
+Full MCFG canonical learner checked: no
+Full grammar-level reconstruction theorem checked: no
+Concrete refined rule-list construction checked: no
+Presentation-relative characteristic-sample construction checked: no
+Hybrid filling lemma checked: no
 No-advice theorem checked: no
 Bounded-spine theorem checked: no
 ```
 
 In one sentence:
 
-> The current Lean development machine-checks the main fixed-observation and
-> distributional bookkeeping layers of the paper up through a
-> distribution-level reconstruction certificate and Gold-style stabilization
-> skeleton, while leaving the full presentation-relative canonical-grammar
-> reconstruction theorem for future formalization.
+> The current Lean development machine-checks the fixed-observation,
+> distributional, finite-hypothesis, output-type-refinement, and finite
+> enumeration-plan infrastructure of the MCFG learning construction through
+> CI #398 / commit `83aa08d`, while leaving the full presentation-relative
+> canonical-grammar reconstruction theorem for future formalization.
