@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_CanonicalRuleListCountingGold
+import LeanCfgProject.MCFG.FI_v2_1_CanonicalEnumerationBoundGold
