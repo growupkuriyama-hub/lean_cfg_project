@@ -81,26 +81,26 @@ choice of output types. -/
 def ContainsAllOrdinaryRuleRefinements
     {G : WorkingMCFG N α} {obs : α → M}
     (RG : OutputTypeRefinedGrammar G obs) : Prop :=
-  (∀ (ρ : TerminalRule N α), ρ ∈ G.terminalRules →
+  (∀ (ρ : TerminalRule N α) (hρ : ρ ∈ G.terminalRules),
       ∀ hwt : ρ.WellTyped G.arity,
         RG.HasTerminal
           { rule := ρ
-            mem := ‹ρ ∈ G.terminalRules›
+            mem := hρ
             wellTyped := hwt }) ∧
-  (∀ (ρ : BinaryRule N α G.arity), ρ ∈ G.binaryRules →
+  (∀ (ρ : BinaryRule N α G.arity) (hρ : ρ ∈ G.binaryRules),
       ∀ leftTy : Fin (G.arity ρ.left) → M,
       ∀ rightTy : Fin (G.arity ρ.right) → M,
         RG.HasBinary
           { rule := ρ
-            mem := ‹ρ ∈ G.binaryRules›
+            mem := hρ
             leftTy := leftTy
             rightTy := rightTy }) ∧
-  (∀ (ρ : StartRule N), ρ ∈ G.startRules →
+  (∀ (ρ : StartRule N) (hρ : ρ ∈ G.startRules),
       ∀ hwt : ρ.WellTyped G,
       ∀ childTy : Fin (G.arity ρ.child) → M,
         RG.HasStart
           { rule := ρ
-            mem := ‹ρ ∈ G.startRules›
+            mem := hρ
             wellTyped := hwt
             childTy := childTy })
 
