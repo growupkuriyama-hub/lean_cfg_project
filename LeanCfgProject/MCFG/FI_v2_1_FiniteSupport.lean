@@ -153,8 +153,10 @@ theorem sample_context_transport_sound_for_listed_edge
     c ∈ NamedDistribution L y := by
   have hreach : LearnerUnitReach S.sample obs f x y :=
     S.listedUnitEdge_reach hsafe hxy
+  have hcL : c ∈ NamedDistribution L x :=
+    sampleNamedDistribution_subset_namedDistribution S.sample hK x hc
   exact LearnerUnitReach.mem_namedDistribution_of_reachable
-    hK hL hreach hc
+    hK hL hreach hcL
 
 end FiniteLearnerSupport
 
