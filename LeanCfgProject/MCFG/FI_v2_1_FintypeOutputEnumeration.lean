@@ -37,7 +37,8 @@ theorem mem_fintypeOutputTypeList [Fintype M]
     {d : Nat} (ty : Fin d → M) :
     ty ∈ fintypeOutputTypeList (M := M) d := by
   classical
-  simp [fintypeOutputTypeList]
+  have h : ty ∈ (Fintype.elems : Finset (Fin d → M)) := Fintype.complete ty
+  simpa [fintypeOutputTypeList] using h
 
 /-- The number of output-type vectors listed at arity `d`. -/
 noncomputable def fintypeOutputTypeCount [Fintype M] (d : Nat) : Nat :=
