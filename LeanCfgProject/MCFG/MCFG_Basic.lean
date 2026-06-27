@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_CanonicalLearnerNonterminalGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedRuleSkeletonGold
