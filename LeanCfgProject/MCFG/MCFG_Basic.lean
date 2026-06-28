@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedTerminalEnumerationGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedConcatEnumerationGold
