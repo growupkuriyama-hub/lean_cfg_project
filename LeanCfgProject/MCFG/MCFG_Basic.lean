@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedLinearParseConstructionGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedPrefixChainGold
