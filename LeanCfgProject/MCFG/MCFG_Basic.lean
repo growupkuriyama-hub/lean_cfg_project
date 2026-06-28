@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedPrefixChainGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedPrefixNodeEnumerationGold
