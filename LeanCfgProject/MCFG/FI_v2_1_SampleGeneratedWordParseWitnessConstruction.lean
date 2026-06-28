@@ -1,0 +1,147 @@
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedWordParseWitnessGold
+
+/-!
+# FI v2.1 Lean experiment: constructing word-parse witnesses from prefix-node enumerations
+
+The previous layer introduced word-level parse witnesses and sample-level parse
+witness packages.  This file adds the small but useful constructor layer which
+turns prefix-node enumerations into those word-level witnesses, and turns a
+family of prefix-node enumerations for all sample words into a sample-consistency
+package.
+
+This is still certificate-driven: it does not synthesize prefix-node enumerations
+from the raw word alone.  It removes one layer of manual packaging between the
+prefix-node enumeration machinery and the sample-consistency theorem for the
+generated terminal+concat `WorkingMCFG` shell.
+-/
+
+namespace FIv21
+
+universe u v w
+
+section SampleGeneratedWordParseWitnessConstruction
+
+variable {N : Type w} {α : Type u}
+variable [DecidableEq α]
+variable {M : Type v} [Monoid M] [Fintype M]
+
+/-- Construction data for a word-level parse witness: a sample word together
+with a prefix-node enumeration for that word. -/
+structure SampleGeneratedWordParseWitnessConstruction
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    (R : SampleGeneratedRuleSkeleton G obs K) (w : Word α) where
+  sample_mem : w ∈ K
+  prefixEnumeration : SampleGeneratedPrefixNodeEnumeration (M := M) R w
+
+namespace SampleGeneratedWordParseWitnessConstruction
+
+/-- Turn construction data into the previously defined word-level parse
+witness. -/
+def toWordParseWitness
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K} {w : Word α}
+    (C : SampleGeneratedWordParseWitnessConstruction (M := M) R w) :
+    SampleGeneratedWordParseWitness (M := M) R w :=
+  { sample_mem := C.sample_mem
+    parse := C.prefixEnumeration }
+
+/-- The endpoint listed node of the constructed parse. -/
+def endpoint
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K} {w : Word α}
+    (C : SampleGeneratedWordParseWitnessConstruction (M := M) R w) :
+    ListedSampleGeneratedDecompositionNode R :=
+  C.prefixEnumeration.endpoint
+
+/-- The endpoint exposes exactly the indexed word. -/
+theorem endpoint_middle_eq
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K} {w : Word α}
+    (C : SampleGeneratedWordParseWitnessConstruction (M := M) R w) :
+    C.endpoint.middle = w := by
+  exact C.prefixEnumeration.endpoint_middle_eq
+
+/-- The endpoint context is licensed by the sample named distribution. -/
+theorem endpoint_context_mem_sampleDistribution
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K} {w : Word α}
+    (C : SampleGeneratedWordParseWitnessConstruction (M := M) R w) :
+    C.endpoint.context ∈ SampleNamedDistribution K C.endpoint.tuple := by
+  exact C.endpoint.context_mem_sampleDistribution
+
+/-- Construction data gives membership in the generated terminal+concat grammar
+shell. -/
+theorem word_mem_stringLanguage
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K} {w : Word α}
+    (C : SampleGeneratedWordParseWitnessConstruction (M := M) R w) :
+    w ∈ (terminalConcatEnumeratedRuleListPackage (M := M) R).toWorkingMCFG.StringLanguage := by
+  exact C.prefixEnumeration.word_mem_stringLanguage (M := M)
+
+end SampleGeneratedWordParseWitnessConstruction
+
+/-- A constructor package for all sample words: every word in `K` is assigned a
+prefix-node enumeration, and hence a word-level parse witness. -/
+structure SampleGeneratedSampleParseWitnessConstruction
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    (R : SampleGeneratedRuleSkeleton G obs K) where
+  prefixEnumeration :
+    ∀ w : Word α, w ∈ K → SampleGeneratedPrefixNodeEnumeration (M := M) R w
+
+namespace SampleGeneratedSampleParseWitnessConstruction
+
+/-- Word-level construction for a sample word. -/
+def wordConstructionOfMem
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K}
+    (C : SampleGeneratedSampleParseWitnessConstruction (M := M) R)
+    {w : Word α} (hw : w ∈ K) :
+    SampleGeneratedWordParseWitnessConstruction (M := M) R w :=
+  { sample_mem := hw
+    prefixEnumeration := C.prefixEnumeration w hw }
+
+/-- Convert a sample-level construction into the previously defined sample
+parse-witness package. -/
+def toSampleParseWitnesses
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K}
+    (C : SampleGeneratedSampleParseWitnessConstruction (M := M) R) :
+    SampleGeneratedSampleParseWitnesses (M := M) R :=
+  { witness := fun w hw =>
+      (C.wordConstructionOfMem (M := M) hw).toWordParseWitness }
+
+/-- Every sample word is generated by the terminal+concat grammar shell. -/
+theorem sample_subset_stringLanguage
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K}
+    (C : SampleGeneratedSampleParseWitnessConstruction (M := M) R) :
+    ∀ w : Word α,
+      w ∈ K →
+        w ∈ (terminalConcatEnumeratedRuleListPackage (M := M) R).toWorkingMCFG.StringLanguage := by
+  intro w hw
+  exact (C.wordConstructionOfMem (M := M) hw).word_mem_stringLanguage (M := M)
+
+/-- Endpoint equality for the constructed witness associated with a sample word. -/
+theorem endpoint_middle_eq_of_mem
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K}
+    (C : SampleGeneratedSampleParseWitnessConstruction (M := M) R)
+    {w : Word α} (hw : w ∈ K) :
+    (C.wordConstructionOfMem (M := M) hw).endpoint.middle = w := by
+  exact (C.wordConstructionOfMem (M := M) hw).endpoint_middle_eq
+
+/-- Sample-distribution licensing for the endpoint associated with a sample word. -/
+theorem endpoint_context_mem_sampleDistribution_of_mem
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    {R : SampleGeneratedRuleSkeleton G obs K}
+    (C : SampleGeneratedSampleParseWitnessConstruction (M := M) R)
+    {w : Word α} (hw : w ∈ K) :
+    (C.wordConstructionOfMem (M := M) hw).endpoint.context ∈
+      SampleNamedDistribution K (C.wordConstructionOfMem (M := M) hw).endpoint.tuple := by
+  exact (C.wordConstructionOfMem (M := M) hw).endpoint_context_mem_sampleDistribution
+
+end SampleGeneratedSampleParseWitnessConstruction
+
+end SampleGeneratedWordParseWitnessConstruction
+
+end FIv21

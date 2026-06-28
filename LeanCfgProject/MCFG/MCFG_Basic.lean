@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedWordParseWitnessGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedWordParseWitnessConstructionGold
