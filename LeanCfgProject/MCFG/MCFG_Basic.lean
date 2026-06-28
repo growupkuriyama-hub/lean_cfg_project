@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedPackageToSemanticsGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedCanonicalPackageExactGold
