@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedPrefixEnumerationFamilyGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedNonemptySampleConsistencyGold
