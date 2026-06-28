@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedWorkingGrammarGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedWorkingGrammarDerivationGold
