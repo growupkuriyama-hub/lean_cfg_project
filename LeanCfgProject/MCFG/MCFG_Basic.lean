@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedRecursiveDerivationGold
+import LeanCfgProject.MCFG.FI_v2_1_SampleGeneratedLinearParseGold
