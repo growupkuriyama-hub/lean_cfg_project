@@ -86,7 +86,7 @@ def ofWordConsistency
     (C : ConcreteExtractedSampleWordConsistencyForGrammar E) :
     ConcreteExtractedSampleStartWitnessForGrammar E :=
   { witnesses :=
-      SampleStartDerivationWitnesses.ofSampleWordStartConsistency C }
+      SampleStartDerivationWitnesses.ofSampleWordStartConsistency C.words }
 
 /-- Construct target start witnesses from the exact/context/word package. -/
 def ofExactContextWord
@@ -116,7 +116,7 @@ theorem positiveSample
     {E : ConcreteExtractedSampleData G obs K}
     (C : ConcreteExtractedSampleStartWitnessForGrammar E) :
     PositiveSample G K := by
-  exact C.witnesses.positiveSample
+  exact SampleStartDerivationWitnesses.positiveSample C.witnesses
 
 /-- Pointwise membership of a sampled word in the target string language. -/
 theorem sample_word_in_stringLanguage
@@ -125,7 +125,7 @@ theorem sample_word_in_stringLanguage
     (C : ConcreteExtractedSampleStartWitnessForGrammar E)
     (w : Word α) (hw : w ∈ K) :
     w ∈ G.StringLanguage := by
-  exact C.witnesses.sample_word_in_stringLanguage w hw
+  exact SampleStartDerivationWitnesses.sample_word_in_stringLanguage C.witnesses w hw
 
 end ConcreteExtractedSampleStartWitnessForGrammar
 
