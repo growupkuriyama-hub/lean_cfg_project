@@ -44,16 +44,18 @@ theorem holds
     ConcreteExtractedSampleContextConsistency E := by
   refine ⟨?_⟩
   intro d x c hc
-  have hsample : E.toFiniteLearnerHypothesis.sampleSet = K :=
-    E.finiteHypothesis_sampleSet
+  have hsample :
+      E.toRelativeSampleExtraction.toFiniteLearnerHypothesis.sampleSet = K :=
+    E.toRelativeSampleExtraction.finiteHypothesis_sampleSet
   have hcH : c ∈ SampleNamedDistribution
-      E.toFiniteLearnerHypothesis.sampleSet x := by
+      E.toRelativeSampleExtraction.toFiniteLearnerHypothesis.sampleSet x := by
     simpa [hsample] using hc
-  have hlic : c ∈ E.toFiniteLearnerHypothesis.ApproxDistribution x := by
+  have hlic :
+      c ∈ E.toRelativeSampleExtraction.toFiniteLearnerHypothesis.ApproxDistribution x := by
     exact sample_context_subset_learnerApproxDistribution
-      E.toFiniteLearnerHypothesis.sampleSet
-      E.toFiniteLearnerHypothesis.obs
-      E.toFiniteLearnerHypothesis.f
+      E.toRelativeSampleExtraction.toFiniteLearnerHypothesis.sampleSet
+      E.toRelativeSampleExtraction.toFiniteLearnerHypothesis.obs
+      E.toRelativeSampleExtraction.toFiniteLearnerHypothesis.f
       x hcH
   simpa [ConcreteExtractedSampleData.ApproxDistribution,
     RelativeSampleExtraction.ApproxDistribution] using hlic
