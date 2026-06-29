@@ -132,7 +132,7 @@ theorem ordinaryRuleCount_le
   exact B.ordinaryCount_le
 
 /-- The output-type count at arity `d` is below the supplied arity-wise bound. -/
-theorem outputTypeCount_le
+theorem outputTypeCount_le_bound
     {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
     {P : CanonicalLearnerGrammarPackage G obs K}
     (B : CanonicalEnumerationBounds P) (d : Nat) :
@@ -141,7 +141,7 @@ theorem outputTypeCount_le
 
 /-- The binary type-choice count for an ordinary binary rule is below the
 supplied local bound. -/
-theorem binaryTypeChoiceCount_le
+theorem binaryTypeChoiceCount_le_bound
     {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
     {P : CanonicalLearnerGrammarPackage G obs K}
     (B : CanonicalEnumerationBounds P)
@@ -151,7 +151,7 @@ theorem binaryTypeChoiceCount_le
 
 /-- The start type-choice count for an ordinary start rule is below the supplied
 local bound. -/
-theorem startTypeChoiceCount_le
+theorem startTypeChoiceCount_le_bound
     {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
     {P : CanonicalLearnerGrammarPackage G obs K}
     (B : CanonicalEnumerationBounds P)
