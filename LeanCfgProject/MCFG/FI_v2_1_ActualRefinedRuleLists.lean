@@ -47,8 +47,8 @@ def actualRefinedBinaryRules
     {G : WorkingMCFG N α} {obs : α → M}
     (P : FiniteRuleEnumerationPlan G obs) :
     List (RefinedBinaryRule G obs) :=
-  G.binaryRules.attach.bind fun ρ =>
-    (P.outputTypes.types (G.arity ρ.val.left)).bind fun leftTy =>
+  (G.binaryRules.attach).flatMap fun ρ =>
+    (P.outputTypes.types (G.arity ρ.val.left)).flatMap fun leftTy =>
       (P.outputTypes.types (G.arity ρ.val.right)).map fun rightTy =>
         { rule := ρ.val
           mem := ρ.property
@@ -64,7 +64,7 @@ def actualRefinedStartRules
     (P : FiniteRuleEnumerationPlan G obs)
     (hStart : G.StartRulesWellTyped) :
     List (RefinedStartRule G obs) :=
-  G.startRules.attach.bind fun ρ =>
+  (G.startRules.attach).flatMap fun ρ =>
     (P.outputTypes.types (G.arity ρ.val.child)).map fun childTy =>
       { rule := ρ.val
         mem := ρ.property
@@ -103,10 +103,10 @@ theorem mem_actualRefinedBinaryRules
        rightTy := rightTy } : RefinedBinaryRule G obs) ∈
       actualRefinedBinaryRules P := by
   classical
-  apply List.mem_bind.mpr
+  apply List.mem_flatMap.mpr
   refine ⟨⟨ρ, hρ⟩, ?_, ?_⟩
   · simp
-  · apply List.mem_bind.mpr
+  · apply List.mem_flatMap.mpr
     refine ⟨leftTy, P.outputTypes.complete leftTy, ?_⟩
     apply List.mem_map.mpr
     refine ⟨rightTy, P.outputTypes.complete rightTy, ?_⟩
@@ -126,7 +126,7 @@ theorem mem_actualRefinedStartRules
        childTy := childTy } : RefinedStartRule G obs) ∈
       actualRefinedStartRules P hStart := by
   classical
-  apply List.mem_bind.mpr
+  apply List.mem_flatMap.mpr
   refine ⟨⟨ρ, hρ⟩, ?_, ?_⟩
   · simp
   · apply List.mem_map.mpr
