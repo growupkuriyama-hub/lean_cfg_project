@@ -90,7 +90,7 @@ namespace ConcreteExtractedSampleLearnerWordSemanticsCertificate
 
 /-- The one-sample word-semantics certificate obtained by evaluating a
 sample-indexed semantics certificate at `K`. -/
-def at
+def atSample
     {G : WorkingMCFG N α} {obs : α → M}
     {A : ConcreteExtractedSampleLearner G obs}
     (C : ConcreteExtractedSampleLearnerWordSemanticsCertificate A)
@@ -107,7 +107,7 @@ theorem sample_word_generated
     (K : Finset (Word α))
     (w : Word α) (hw : w ∈ K) :
     w ∈ C.wordLanguage K := by
-  exact (C.at K).sample_word_generated w hw
+  exact (C.atSample K).sample_word_generated w hw
 
 /-- View a semantics certificate as the older bare sample-indexed semantics
 function. -/

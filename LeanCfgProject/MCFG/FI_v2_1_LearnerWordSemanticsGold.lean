@@ -58,7 +58,7 @@ def exact_with_word_semantics_after
     (hPos : PositiveForLanguage K G.StringLanguage) :
     ConcreteExtractedSampleExactWithWordSemanticsForGrammar (A K) :=
   { exact_start := C.startWitness.exact_context_word_start_after K hExt hPos
-    semantics := C.semantics.at K }
+    semantics := C.semantics.atSample K }
 
 /-- Post-threshold learner-side generation of a sampled word by the packaged
 semantics at sample `K`. -/
