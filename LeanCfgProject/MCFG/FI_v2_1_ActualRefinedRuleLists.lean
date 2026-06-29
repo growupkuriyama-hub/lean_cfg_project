@@ -87,8 +87,6 @@ theorem mem_actualRefinedTerminalRules
   refine ⟨⟨ρ, hρ⟩, ?_, ?_⟩
   · simp
   · dsimp [actualRefinedTerminalRules]
-    have hProof : hTerm ρ hρ = hwt := proof_irrel _ _
-    simp [hProof]
 
 /-- Every ordinary binary-rule refinement occurs in the actual binary list. -/
 theorem mem_actualRefinedBinaryRules
@@ -132,8 +130,6 @@ theorem mem_actualRefinedStartRules
   · apply List.mem_map.mpr
     refine ⟨childTy, P.outputTypes.complete childTy, ?_⟩
     dsimp [actualRefinedStartRules]
-    have hProof : hStart ρ hρ = hwt := proof_irrel _ _
-    simp [hProof]
 
 /-- The finite refined grammar actually generated from a finite plan. -/
 def actualFiniteOutputTypeRefinedGrammar
