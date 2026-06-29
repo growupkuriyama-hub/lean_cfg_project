@@ -32,12 +32,12 @@ structure CanonicalPresentationRecoveryCharacteristicSample
   base : CanonicalBoundedDataRecoveryCharacteristicSample A
   presentation_after :
     ∀ (K : Finset (Word α)),
-      SampleExtends base.base.base.base.base.base.startWitness.base.sample K →
+      SampleExtends base.base.base.base.base.base.base.base.startWitness.base.sample K →
       PositiveForLanguage K G.StringLanguage →
       CanonicalPresentationRecoveryProfile (A K)
   presentation_recovery_agrees_after :
     ∀ (K : Finset (Word α))
-      (hExt : SampleExtends base.base.base.base.base.base.startWitness.base.sample K)
+      (hExt : SampleExtends base.base.base.base.base.base.base.base.startWitness.base.sample K)
       (hPos : PositiveForLanguage K G.StringLanguage),
       (presentation_after K hExt hPos).recoveryProfile =
         base.recovery_after K hExt hPos
@@ -75,7 +75,7 @@ def exact_with_presentation_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     CanonicalLearnerGrammarExactWithPresentationRecovery (A K) :=
   { exactWithRecovery := C.base.exact_with_recovery_after K hExt hPos
@@ -89,7 +89,7 @@ theorem approxDistribution_exact_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage)
     {d : Nat} (x : Tuple α d) :
     (A K).ApproxDistribution x = NamedDistribution G.StringLanguage x := by
@@ -101,7 +101,7 @@ theorem sample_word_generated_by_learner_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage)
     (w : Word α) (hw : w ∈ K) :
     w ∈ (A K).wordLanguage := by
@@ -113,7 +113,7 @@ theorem sample_word_start_derives_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage)
     (w : Word α) (hw : w ∈ K) :
     ∃ h : 1 = G.arity G.start,
@@ -126,7 +126,7 @@ theorem refinedRuleLists_coverAll_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     (A K).finiteRefinedGrammar.CoversAllOrdinaryRuleRefinements := by
   exact (C.exact_with_presentation_after K hExt hPos).refinedRuleLists_coverAll
@@ -137,7 +137,7 @@ theorem refinedRuleLists_supportedByPlan_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     (A K).finiteRefinedGrammar.AllRulesSupportedByPlan
       (A K).ruleEnumerationPlan := by
@@ -149,7 +149,7 @@ theorem refinedRuleCount_le_totalPresentationBound_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     (A K).refinedRuleCount ≤
       (C.presentation_after K hExt hPos).totalPresentationBound := by
@@ -161,7 +161,7 @@ theorem totalRecoveryBound_le_totalPresentationBound_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     (C.presentation_after K hExt hPos).recoveryProfile.totalRecoveryBound ≤
       (C.presentation_after K hExt hPos).totalPresentationBound := by
@@ -173,7 +173,7 @@ theorem sampleSize_eq_card_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     (C.presentation_after K hExt hPos).recoveryProfile.shapeProfile.parameterProfile.sampleSize =
       K.card := by
@@ -185,7 +185,7 @@ theorem monoidCardinality_eq_fintypeCard_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     (C.presentation_after K hExt hPos).recoveryProfile.shapeProfile.parameterProfile.monoidCardinality =
       Fintype.card M := by
@@ -198,7 +198,7 @@ def totalPresentationPolynomialWitness_after
     {A : CanonicalLearnerGrammarLearner G obs}
     (C : CanonicalPresentationRecoveryCharacteristicSample A)
     (K : Finset (Word α))
-    (hExt : SampleExtends C.base.base.base.base.base.base.startWitness.base.sample K)
+    (hExt : SampleExtends C.base.base.base.base.base.base.base.base.startWitness.base.sample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     PolynomialBoundWitness
       (C.presentation_after K hExt hPos).totalPresentationBound :=

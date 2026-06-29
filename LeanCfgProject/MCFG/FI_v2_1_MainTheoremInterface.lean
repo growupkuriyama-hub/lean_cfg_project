@@ -50,7 +50,7 @@ def characteristicSample
     {G : WorkingMCFG N α} {obs : α → M}
     (C : FixedMonoidMCFGLearningMainPackage G obs) :
     Finset (Word α) :=
-  C.characteristic.base.base.base.base.base.base.startWitness.base.sample
+  C.characteristic.base.base.base.base.base.base.base.base.startWitness.base.sample
 
 /-- Forget to the presentation-relative characteristic-sample certificate. -/
 def toPresentationRecoveryCharacteristicSample
@@ -86,7 +86,7 @@ theorem characteristicSample_positive
     {G : WorkingMCFG N α} {obs : α → M}
     (C : FixedMonoidMCFGLearningMainPackage G obs) :
     PositiveForLanguage C.characteristicSample G.StringLanguage := by
-  exact C.characteristic.base.base.base.base.base.base.startWitness.base.positive
+  exact C.characteristic.base.base.base.base.base.base.base.base.startWitness.base.positive
 
 end FixedMonoidMCFGLearningMainPackage
 
