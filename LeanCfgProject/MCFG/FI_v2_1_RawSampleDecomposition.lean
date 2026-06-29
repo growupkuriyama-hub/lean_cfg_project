@@ -330,7 +330,7 @@ noncomputable def UnitReach
     {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
     (D : RawSampleDecompositionData G obs K)
     {d : Nat} (x y : Tuple α d) : Prop :=
-  D.toObservedSampleAtoms.UnitReach x y
+  D.toObservedSampleAtoms.toSampleExtractedRuleLists.UnitReach x y
 
 /-- Refined tuple language carried by the actual grammar-side rule lists. -/
 noncomputable def RefinedTupleLanguage
