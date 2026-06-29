@@ -26,8 +26,8 @@ structure FixedMonoidMCFGLearningPostThresholdSample
     {G : WorkingMCFG N α} {obs : α → M}
     (C : FixedMonoidMCFGLearningMainPackage G obs)
     (K : Finset (Word α)) where
-  extends : SampleExtends C.characteristicSample K
-  positive : PositiveForLanguage K G.StringLanguage
+  sampleExtends : SampleExtends C.characteristicSample K
+  samplePositive : PositiveForLanguage K G.StringLanguage
 
 namespace FixedMonoidMCFGLearningPostThresholdSample
 
@@ -38,7 +38,7 @@ def exactWithPresentation
     {K : Finset (Word α)}
     (S : FixedMonoidMCFGLearningPostThresholdSample C K) :
     CanonicalLearnerGrammarExactWithPresentationRecovery (C.learner K) :=
-  C.characteristic.exact_with_presentation_after K S.extends S.positive
+  C.characteristic.exact_with_presentation_after K S.sampleExtends S.samplePositive
 
 /-- Exact equality of the learner approximate distribution and the target named
 context distribution after the threshold. -/

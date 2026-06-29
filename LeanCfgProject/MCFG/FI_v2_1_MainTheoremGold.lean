@@ -79,8 +79,8 @@ def postThresholdSample
     (hExt : SampleExtends T.characteristicSample K)
     (hPos : PositiveForLanguage K G.StringLanguage) :
     FixedMonoidMCFGLearningPostThresholdSample T.package K :=
-  { extends := hExt
-    positive := hPos }
+  { sampleExtends := hExt
+    samplePositive := hPos }
 
 /-- Post-threshold exact distribution equality, theorem-style form. -/
 theorem approxDistribution_exact_after
