@@ -264,9 +264,14 @@ theorem rawUnitEdgeWitness_mem_of_typedPair_mem
     rawUnitEdgeWitnessOfSubwordPair (α := α) obs D.f D.hfanout P
         (typedSameContextSubwordPairs_property (α := α) hP) ∈
       D.toSubwordContextDecompositionData.unitEdgeWitnesses := by
-  simpa [unitEdgeWitnesses] using
-    (_root_.FIv21.rawUnitEdgeWitness_mem_of_typedPair_mem (α := α) (f := D.f)
-      (hfanout := D.hfanout) (Ss := D.subwordDecompositions) hP)
+  change
+    rawUnitEdgeWitnessOfSubwordPair (α := α) obs D.f D.hfanout P
+        (typedSameContextSubwordPairs_property (α := α) hP) ∈
+      rawUnitEdgeWitnessesOfSubwordPairs
+        (α := α) obs D.f D.hfanout D.subwordDecompositions
+  exact _root_.FIv21.rawUnitEdgeWitness_mem_of_typedPair_mem
+    (α := α) (f := D.f) (hfanout := D.hfanout)
+    (Ss := D.subwordDecompositions) hP
 
 /-- A filtered same-context/same-type pair gives unit reachability in the induced
 sample-extracted rule-list object. -/
