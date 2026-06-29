@@ -1,1 +1,1 @@
-import LeanCfgProject.MCFG.FI_v2_1_SampleSupportExtractionGold
+import LeanCfgProject.MCFG.FI_v2_1_ObservedSampleAtomsGold
