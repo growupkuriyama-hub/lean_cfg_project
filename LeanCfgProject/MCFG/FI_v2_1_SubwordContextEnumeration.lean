@@ -21,7 +21,7 @@ namespace FIv21
 
 universe u v w
 
-section SubwordContextEnumeration
+noncomputable section SubwordContextEnumeration
 
 variable {N : Type w} {α : Type u}
 variable [DecidableEq α]
@@ -29,15 +29,15 @@ variable {M : Type v} [Monoid M] [Fintype M]
 
 /-- A prefix/suffix cut of a fixed word. -/
 structure PrefixSuffixCut (w : Word α) where
-  prefix : Word α
-  suffix : Word α
-  eq_append : prefix ++ suffix = w
+  pre : Word α
+  suf : Word α
+  eq_append : pre ++ suf = w
 
 namespace PrefixSuffixCut
 
 /-- The word reconstructed from a prefix/suffix cut. -/
 theorem append_eq {w : Word α} (C : PrefixSuffixCut (α := α) w) :
-    C.prefix ++ C.suffix = w :=
+    C.pre ++ C.suf = w :=
   C.eq_append
 
 end PrefixSuffixCut
@@ -49,16 +49,16 @@ The definition is recursive and concrete.  For `a :: xs`, it contains the cut
 part. -/
 def prefixSuffixCuts : (w : Word α) → List (PrefixSuffixCut (α := α) w)
   | [] =>
-      [{ prefix := []
-         suffix := []
+      [{ pre := []
+         suf := []
          eq_append := by simp }]
   | a :: xs =>
-      { prefix := []
-        suffix := a :: xs
+      { pre := []
+        suf := a :: xs
         eq_append := by simp } ::
       (prefixSuffixCuts xs).map (fun C =>
-        { prefix := a :: C.prefix
-          suffix := C.suffix
+        { pre := a :: C.pre
+          suf := C.suf
           eq_append := by
             simpa [C.eq_append] })
 
@@ -66,7 +66,7 @@ def prefixSuffixCuts : (w : Word α) → List (PrefixSuffixCut (α := α) w)
 theorem prefixSuffixCuts_sound
     {w : Word α} {C : PrefixSuffixCut (α := α) w}
     (_hC : C ∈ prefixSuffixCuts (α := α) w) :
-    C.prefix ++ C.suffix = w := by
+    C.pre ++ C.suf = w := by
   exact C.eq_append
 
 /-- A two-sided subword cut of a fixed word. -/
@@ -103,17 +103,17 @@ end SubwordCut
 /-- Enumerate two-sided subword cuts by first cutting the word into
 `left ++ rest`, then cutting `rest` into `middle ++ right`. -/
 def subwordCuts (w : Word α) : List (SubwordCut (α := α) w) :=
-  (prefixSuffixCuts (α := α) w).bind (fun LR =>
-    (prefixSuffixCuts (α := α) LR.suffix).map (fun MR =>
-      { left := LR.prefix
-        middle := MR.prefix
-        right := MR.suffix
+  (prefixSuffixCuts (α := α) w).flatMap (fun LR =>
+    (prefixSuffixCuts (α := α) LR.suf).map (fun MR =>
+      { left := LR.pre
+        middle := MR.pre
+        right := MR.suf
         eq_append := by
           calc
-            LR.prefix ++ MR.prefix ++ MR.suffix
-                = LR.prefix ++ (MR.prefix ++ MR.suffix) := by
+            LR.pre ++ MR.pre ++ MR.suf
+                = LR.pre ++ (MR.pre ++ MR.suf) := by
                     simp [List.append_assoc]
-            _ = LR.prefix ++ LR.suffix := by
+            _ = LR.pre ++ LR.suf := by
                     simpa [MR.eq_append]
             _ = w := LR.eq_append }))
 
@@ -158,11 +158,11 @@ theorem subwordSampleDecomposition_mem_of_cut_mem
 We include the whole-word decompositions first, then all enumerated two-sided
 cuts.  This preserves the previously checked guarantee that every sample word
 has at least one listed decomposition. -/
-def enumeratedSubwordDecompositions
+noncomputable def enumeratedSubwordDecompositions
     (K : Finset (Word α)) :
     List (SubwordSampleDecomposition (α := α) K) :=
   wholeWordSubwordDecompositions (α := α) K ++
-    K.attach.toList.bind (fun w => subwordDecompositionsForWord (α := α) K w)
+    K.attach.toList.flatMap (fun w => subwordDecompositionsForWord (α := α) K w)
 
 /-- A whole-word decomposition is included in the enumerated subword list. -/
 theorem wholeWordSubwordDecomposition_mem_enumerated
@@ -182,7 +182,7 @@ theorem subwordSampleDecomposition_mem_enumerated_of_cut_mem
       enumeratedSubwordDecompositions (α := α) K := by
   unfold enumeratedSubwordDecompositions
   apply List.mem_append_right
-  exact List.mem_bind.mpr
+  exact List.mem_flatMap.mpr
     ⟨w, by simp, subwordSampleDecomposition_mem_of_cut_mem (α := α) hC⟩
 
 /-- Every sample word has a listed whole-word representative inside the full
