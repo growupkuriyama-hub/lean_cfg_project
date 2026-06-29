@@ -49,8 +49,7 @@ def identityNamedContext : NamedSentenceContext α 1 :=
 @[simp] theorem namedFill_identityNamedContext_singletonTuple
     (w : Word α) :
     namedFill 1 (identityNamedContext (α := α)) (singletonTuple w) = w := by
-  simpa [identityNamedContext, namedFill, singletonTuple] using
-    (rawNamedFill_twoSided ([] : Word α) ([] : Word α) (singletonTuple w))
+  simp [identityNamedContext, namedFill, rawNamedFill, fillNamedAux, singletonTuple]
 
 /-- The canonical trivial raw decomposition of a sampled word. -/
 def singletonRawSampleDecomposition
