@@ -80,7 +80,12 @@ def toRawSampleDecomposition {K : Finset (Word α)}
     sampleWord := S.sampleWord
     sampleWord_mem := S.sampleWord_mem
     filled_eq := by
-      simpa [tuple, context] using S.sampleWord_eq }
+      change
+        namedFill 1 (twoSidedNamedContext S.left S.right)
+          (singletonTuple S.middle) = S.sampleWord
+      exact Eq.trans
+        (namedFill_twoSidedNamedContext_singletonTuple S.left S.middle S.right)
+        S.sampleWord_eq }
 
 /-- Filling the exposed tuple in the exposed context returns the sampled word. -/
 theorem filled_eq_sampleWord {K : Finset (Word α)}
