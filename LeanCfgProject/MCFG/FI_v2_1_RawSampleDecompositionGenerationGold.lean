@@ -88,8 +88,7 @@ theorem unitEdge_reaches_in_sampleExtractedRuleLists_after
     {E : RawSampleUnitEdgeWitness (α := α) K obs (A K).f}
     (hE : E ∈ (A K).unitEdgeWitnesses) :
     (A K).toSampleExtractedRuleLists.UnitReach E.src E.tgt := by
-  exact (C.exact_after_extending K hExt hPos)
-    .unitEdge_reaches_in_sampleExtractedRuleLists_exact hE
+  exact (C.exact_after_extending K hExt hPos).unitEdge_reaches_in_sampleExtractedRuleLists_exact hE
 
 /-- After the threshold, source and target of a listed raw unit-edge witness have
 matching observation type. -/
