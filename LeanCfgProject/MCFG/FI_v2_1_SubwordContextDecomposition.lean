@@ -31,21 +31,20 @@ variable {M : Type v} [Monoid M] [Fintype M]
 def twoSidedNamedContext (left right : Word α) : NamedSentenceContext α 1 :=
   { val := rawTwoSidedAsNamed left right
     property := by
-      constructor
-      · rfl
-      constructor
-      · simp [rawTwoSidedAsNamed]
+      refine ⟨rfl, ?_, ?_⟩
+      · simp [rawTwoSidedAsNamed, finOne]
       · intro i
-        have hi : i = finOne := by
-          apply Fin.ext
-          simpa [finOne] using Nat.eq_zero_of_lt_one i.isLt
-        simp [rawTwoSidedAsNamed, hi] }
+        fin_cases i
+        simp [rawTwoSidedAsNamed, finOne] }
 
 @[simp] theorem namedFill_twoSidedNamedContext_singletonTuple
     (left middle right : Word α) :
     namedFill 1 (twoSidedNamedContext (α := α) left right)
       (singletonTuple middle) = left ++ middle ++ right := by
-  simp [twoSidedNamedContext, namedFill, rawNamedFill, fillNamedAux, singletonTuple]
+  change rawNamedFill (rawTwoSidedAsNamed left right) (singletonTuple middle) =
+    left ++ middle ++ right
+  rw [rawNamedFill_twoSided]
+  simp [singletonTuple, finOne]
 
 /-- A concrete two-sided subword decomposition of a sampled word.
 
