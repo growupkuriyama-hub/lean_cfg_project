@@ -42,7 +42,7 @@ namespace FixedMonoidMCFGLearningMainPackage
 def toFiniteHypothesisLearner
     {G : WorkingMCFG N α} {obs : α → M}
     (C : FixedMonoidMCFGLearningMainPackage G obs) :
-    FiniteHypothesisLearner α :=
+    FiniteHypothesisLearner α M :=
   C.learner.toFiniteHypothesisLearner
 
 /-- The finite characteristic sample displayed by the underlying certificate. -/

@@ -52,7 +52,7 @@ def characteristicSample
 def toFiniteHypothesisLearner
     {G : WorkingMCFG N α} {obs : α → M}
     (T : FixedMonoidMCFGLearningGoldTheorem G obs) :
-    FiniteHypothesisLearner α :=
+    FiniteHypothesisLearner α M :=
   T.package.toFiniteHypothesisLearner
 
 /-- Main conservative Gold-style identification statement. -/
