@@ -34,10 +34,8 @@ def twoSidedNamedContext (left right : Word α) : NamedSentenceContext α 1 :=
       refine ⟨rfl, ?_, ?_⟩
       · simp [rawTwoSidedAsNamed, finOne]
       · intro i
-        have hi : i = finOne := by
-          apply Fin.ext
-          simpa [finOne] using Nat.eq_zero_of_lt_one i.isLt
-        simp [rawTwoSidedAsNamed, hi] }
+        show i ∈ [finOne]
+        exact List.mem_singleton.mpr (Subsingleton.elim i finOne) }
 
 @[simp] theorem namedFill_twoSidedNamedContext_singletonTuple
     (left middle right : Word α) :
@@ -227,11 +225,10 @@ theorem subword_filled_mem_support_sample
     {S : SubwordSampleDecomposition (α := α) K}
     (_hS : S ∈ D.subwordDecompositions) :
     namedFill 1 S.context S.tuple ∈ D.support.sample := by
-  change namedFill S.toRawSampleDecomposition.d
-      S.toRawSampleDecomposition.context S.toRawSampleDecomposition.tuple ∈
-    D.toRawSampleDecompositionData.support.sample
-  exact RawSampleDecomposition.filled_mem_support_sample
-    D.toRawSampleDecompositionData.support_sample_eq S.toRawSampleDecomposition
+  simpa [SubwordSampleDecomposition.toRawSampleDecomposition,
+    SubwordSampleDecomposition.context, SubwordSampleDecomposition.tuple]
+    using RawSampleDecomposition.filled_mem_support_sample
+      D.toRawSampleDecompositionData.support_sample_eq S.toRawSampleDecomposition
 
 /-- Forget to the observed-atom layer through raw decomposition data. -/
 noncomputable def toObservedSampleAtoms
