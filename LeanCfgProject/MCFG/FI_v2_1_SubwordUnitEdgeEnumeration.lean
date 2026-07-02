@@ -294,7 +294,11 @@ theorem typedPair_unitReach
     (hP : P ∈ typedSameContextSubwordPairs (α := α) obs D.subwordDecompositions) :
     D.toSubwordContextDecompositionData.toSampleExtractedRuleLists.UnitReach
       P.src.tuple P.tgt.tuple := by
-  simpa [rawUnitEdgeWitnessOfSubwordPair] using
+  change
+    D.toSubwordContextDecompositionData.toRawSampleDecompositionData
+      |>.toSampleExtractedRuleLists
+      |>.UnitReach P.src.tuple P.tgt.tuple
+  exact
     RawSampleDecompositionData.unitEdge_reaches_in_sampleExtractedRuleLists
       D.toSubwordContextDecompositionData.toRawSampleDecompositionData
       (D.rawUnitEdgeWitness_mem_of_typedPair_mem hP)
