@@ -58,7 +58,7 @@ def subwordDecompositionPairs
     {K : Finset (Word α)}
     (Ss : List (SubwordSampleDecomposition (α := α) K)) :
     List (SubwordDecompositionPair (α := α) K) :=
-  Ss.bind (fun S => Ss.map (fun T => { src := S, tgt := T }))
+  Ss.flatMap (fun S => Ss.map (fun T => { src := S, tgt := T }))
 
 /-- If source and target are listed, their ordered pair is listed. -/
 theorem subwordDecompositionPair_mem
@@ -69,7 +69,7 @@ theorem subwordDecompositionPair_mem
     ({ src := S, tgt := T } : SubwordDecompositionPair (α := α) K) ∈
       subwordDecompositionPairs (α := α) Ss := by
   unfold subwordDecompositionPairs
-  exact List.mem_bind.mpr ⟨S, hS, List.mem_map.mpr ⟨T, hT, rfl⟩⟩
+  exact List.mem_flatMap.mpr ⟨S, hS, List.mem_map.mpr ⟨T, hT, rfl⟩⟩
 
 /-- Predicate selecting the ordered subword pairs that can generate a unit edge:
 the same context is observed on both sides and the exposed singleton tuples have
@@ -102,7 +102,7 @@ theorem typedSameContextSubwordPairs_property
     SubwordUnitEdgePredicate (α := α) obs P := by
   classical
   unfold typedSameContextSubwordPairs at hP
-  exact (List.mem_filter.mp hP).2
+  exact of_decide_eq_true (List.mem_filter.mp hP).2
 
 /-- A filtered pair is still a pair drawn from the original subword list. -/
 theorem typedSameContextSubwordPairs_mem_pairs
@@ -254,6 +254,21 @@ theorem subword_context_mem_sampleDistribution
     S.context ∈ SampleNamedDistribution K S.tuple := by
   exact D.toSubwordContextDecompositionData.subword_context_mem_sampleDistribution hS
 
+/-- A filtered same-context/same-type pair gives a raw unit-edge witness in
+the locally generated witness list. -/
+theorem unitEdgeWitness_mem_of_typedPair_mem
+    {G : WorkingMCFG N α} {obs : α → M} {K : Finset (Word α)}
+    (D : SubwordUnitEdgeEnumerationData G obs K)
+    {P : SubwordDecompositionPair (α := α) K}
+    (hP : P ∈ typedSameContextSubwordPairs (α := α) obs D.subwordDecompositions) :
+    rawUnitEdgeWitnessOfSubwordPair (α := α) obs D.f D.hfanout P
+        (typedSameContextSubwordPairs_property (α := α) hP) ∈
+      D.unitEdgeWitnesses := by
+  unfold unitEdgeWitnesses
+  exact _root_.FIv21.rawUnitEdgeWitness_mem_of_typedPair_mem
+    (α := α) (f := D.f) (hfanout := D.hfanout)
+    (Ss := D.subwordDecompositions) hP
+
 /-- A filtered same-context/same-type pair gives a raw unit-edge witness in the
 induced subword-context data. -/
 theorem rawUnitEdgeWitness_mem_of_typedPair_mem
@@ -267,11 +282,8 @@ theorem rawUnitEdgeWitness_mem_of_typedPair_mem
   change
     rawUnitEdgeWitnessOfSubwordPair (α := α) obs D.f D.hfanout P
         (typedSameContextSubwordPairs_property (α := α) hP) ∈
-      rawUnitEdgeWitnessesOfSubwordPairs
-        (α := α) obs D.f D.hfanout D.subwordDecompositions
-  exact _root_.FIv21.rawUnitEdgeWitness_mem_of_typedPair_mem
-    (α := α) (f := D.f) (hfanout := D.hfanout)
-    (Ss := D.subwordDecompositions) hP
+      D.unitEdgeWitnesses
+  exact D.unitEdgeWitness_mem_of_typedPair_mem hP
 
 /-- A filtered same-context/same-type pair gives unit reachability in the induced
 sample-extracted rule-list object. -/
@@ -282,9 +294,10 @@ theorem typedPair_unitReach
     (hP : P ∈ typedSameContextSubwordPairs (α := α) obs D.subwordDecompositions) :
     D.toSubwordContextDecompositionData.toSampleExtractedRuleLists.UnitReach
       P.src.tuple P.tgt.tuple := by
-  exact RawSampleDecompositionData.unitEdge_reaches_in_sampleExtractedRuleLists
-    D.toSubwordContextDecompositionData.toRawSampleDecompositionData
-    (D.rawUnitEdgeWitness_mem_of_typedPair_mem hP)
+  simpa [rawUnitEdgeWitnessOfSubwordPair] using
+    RawSampleDecompositionData.unitEdge_reaches_in_sampleExtractedRuleLists
+      D.toSubwordContextDecompositionData.toRawSampleDecompositionData
+      (D.rawUnitEdgeWitness_mem_of_typedPair_mem hP)
 
 /-- Forget to the finite-hypothesis layer. -/
 noncomputable def toFiniteLearnerHypothesis
