@@ -3,7 +3,7 @@
 Lean formalization log and roadmap for the MCFG fixed finite-observation paper.
 
 Last updated: 2026-07-04  
-Current confirmed CI point: Lean CI #502, commit `1ac7d43`, pushed by `growupkuriyama-hub`.
+Current confirmed CI point: Lean CI #511, commit `ad9754b`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -15,7 +15,7 @@ This experiment restarts the Lean verification of the paper
 
 from a clean baseline.
 
-The previous zip contained many useful experimental files from an earlier paper version, but the experiment procedure had mistakes and the behavior of the old Lean chain was not fully trustworthy.  Therefore, this restart follows a conservative policy:
+The previous zip contained many useful experimental files from an earlier paper version, but the experiment procedure had mistakes and the behavior of the old Lean chain was not fully trustworthy. Therefore, this restart follows a conservative policy:
 
 1. do not import the old terminal mega-file as a foundation;
 2. rebuild the formalization in small independently checkable layers;
@@ -23,7 +23,7 @@ The previous zip contained many useful experimental files from an earlier paper 
 4. separate what is fully Lean-verified from what is currently an explicit skeleton/bridge assumption;
 5. reuse old files only as design references or for small ideas, not as opaque trusted infrastructure.
 
-At the current stage, the goal is not yet to prove the full main theorem of the paper.  The goal is to build a reliable, modular Lean foundation for the soundness and completeness proof.
+At the current stage, the development has a verified reachable-model main theorem. It is not yet the fully concrete canonical learner theorem from the paper, but it is now much closer than the earlier skeleton: soundness, reachable exact reconstruction, finite-text coverage, and Gold identification have all been connected.
 
 ---
 
@@ -47,13 +47,22 @@ CompletenessSkeleton.lean ✅
 CharacteristicSampleSkeleton.lean ✅
 ExactReconstructionSkeleton.lean ✅
 GoldIdentificationSkeleton.lean ✅
+FiniteTextCoverage.lean ✅
+ReachableStartBridge.lean ✅
+ReachableGoldTheorem.lean ✅
+CharacteristicDataMonotone.lean ✅
+StartAnchorCanonical.lean ✅
+PrefixExactReconstruction.lean ✅
+MainReachableTheorem.lean ✅
+CharacteristicSamplePackage.lean ✅
+CharacteristicSampleBuilderSkeleton.lean ✅
 ```
 
 All of the above files have passed Lean CI up to:
 
 ```text
-Lean CI #502
-Commit: 1ac7d43
+Lean CI #511
+Commit: ad9754b
 ```
 
 The current state is best described as:
@@ -61,8 +70,24 @@ The current state is best described as:
 ```text
 soundness side: strong skeleton, largely formalized
 completeness side: rule-simulation skeleton formalized
-exact reconstruction: outer skeleton formalized, one bridge remains explicit
-Gold identification: finite characteristic sample ⇒ eventual correctness skeleton formalized
+reachable exact reconstruction: packaged as a main theorem
+Gold identification: finite characteristic package ⇒ eventual correctness verified
+characteristic sample construction: now has a blueprint target, but not yet constructed from G̃₀
+concrete canonical learner enumeration: still not yet formalized
+```
+
+Most important progress since CI #502:
+
+```text
+FiniteTextCoverage.lean removed the explicit EventuallyContains assumption.
+ReachableStartBridge.lean replaced the old ReconstructionBridge by a natural reachable-language bridge.
+ReachableGoldTheorem.lean connected reachable exact reconstruction to Gold identification.
+CharacteristicDataMonotone.lean proved finite characteristic data is monotone under sample extension.
+StartAnchorCanonical.lean made the start-anchor bridge easier to construct.
+PrefixExactReconstruction.lean stated exact reconstruction directly for text prefix samples.
+MainReachableTheorem.lean packaged the current reachable main theorem.
+CharacteristicSamplePackage.lean separated finite characteristic data from global target assumptions.
+CharacteristicSampleBuilderSkeleton.lean introduced a flat blueprint for constructing the finite package.
 ```
 
 What has **not** yet been fully formalized:
@@ -72,9 +97,8 @@ concrete finite canonical learner enumeration
 explicit tuple-occurrence and binary-witness enumeration
 actual construction of CS(G̃₀)
 trimmed output-type refinement G̃₀ as a finite grammar object
-proof that CS(G̃₀) gives CharacteristicSampleData
-ReconstructionBridge from characteristic start anchor to actual sample-start derivations
-finite-text coverage from finite S without explicit EventuallyContains assumption
+proof that CS(G̃₀) gives ReachableCharacteristicBlueprint
+concrete construction of LeftFillingIdentity / RightFillingIdentity
 polynomial-time construction bound
 no-advice non-identifiability
 copy-language / member-kernel exclusion
@@ -90,7 +114,7 @@ Status: CI passed.
 
 Purpose:
 
-This is the clean base layer.  It intentionally does not import the previous experimental MCFG files.
+This is the clean base layer. It intentionally does not import the previous experimental MCFG files.
 
 Main contents:
 
@@ -135,7 +159,7 @@ Paper correspondence:
 
 Important design choice:
 
-`TemplateTuple.Nondeleting` is deliberately weak in `Basic.lean`: every child component occurs at least once.  Exact-once linearity is added later in `ExactOnce.lean`.
+`TemplateTuple.Nondeleting` is deliberately weak in `Basic.lean`: every child component occurs at least once. Exact-once linearity is added later in `ExactOnce.lean`.
 
 ---
 
@@ -168,7 +192,7 @@ This refines the working MCFG side condition: each variable from the two child t
 
 Current limitation:
 
-Exact-once counting is represented by explicit occurrence-count predicates.  It is not yet connected to a finite rule enumerator.
+Exact-once counting is represented by explicit occurrence-count predicates. It is not yet connected to a finite rule enumerator.
 
 ---
 
@@ -341,7 +365,7 @@ E_C[y] = E[ρ(x,y)]
 
 Design choice:
 
-Concrete construction of the named child contexts is postponed.  Instead, this file introduces witness records:
+Concrete construction of the named child contexts is postponed. Instead, this file introduces witness records:
 
 ```lean
 LeftFillingIdentity
@@ -428,7 +452,7 @@ unit rule case
 binary witness rule case
 ```
 
-This file does not yet define a concrete canonical learner.  It proves that the semantic evidence used by the learner is valid.
+This file does not yet define a concrete canonical learner. It proves that the semantic evidence used by the learner is valid.
 
 ---
 
@@ -662,7 +686,7 @@ ReconstructionBridge.exact_reconstruction_inclusions
 
 Paper correspondence:
 
-This gives the outer exact reconstruction form:
+This gives the first outer exact reconstruction form:
 
 ```text
 SampleStringLanguage K obs f = G.StringLanguage
@@ -670,14 +694,7 @@ SampleStringLanguage K obs f = G.StringLanguage
 
 provided a remaining `ReconstructionBridge`.
 
-Current bridge assumption:
-
-```lean
-ReconstructionBridge.toSampleString :
-  CharacteristicReachableLanguage D ⊆ SampleStringLanguage K obs f
-```
-
-This corresponds to connecting the characteristic start anchor to actual sample start rules.
+This bridge is later replaced by the more natural reachable-language bridge in `ReachableStartBridge.lean`.
 
 ---
 
@@ -715,9 +732,340 @@ eventually S appears in every positive text
 ⇒ learner stabilizes to the target language
 ```
 
-Current abstraction:
+At this file’s level, `TextFor.EventuallyContains S` was still an explicit assumption. That is discharged later in `FiniteTextCoverage.lean`.
 
-`TextFor.EventuallyContains S` is assumed explicitly.  The next step should prove this from finiteness of `S` and coverage of the text.
+---
+
+### 2.16 `FiniteTextCoverage.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Discharge the finite-coverage assumption used by the Gold identification skeleton.
+
+Main contents:
+
+```lean
+TextFor.eventuallyContains_of_subset
+TextFor.eventuallyContains_finite_subset
+
+characteristicSample_eventual_correct_on_every_text
+characteristicSample_correct_after_finite_coverage
+finiteCharacteristicSample_identifies_target
+```
+
+Paper correspondence:
+
+This proves the standard Gold-learning finite-coverage lemma:
+
+```text
+S finite
+S ⊆ L
+T is a positive text for L
+⇒ S is eventually contained in the prefix samples of T
+```
+
+This removes the earlier explicit `EventuallyContains` assumption.
+
+---
+
+### 2.17 `ReachableStartBridge.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Replace the earlier abstract `ReconstructionBridge` by a more natural reachable-language bridge.
+
+Main contents:
+
+```lean
+ReachableSampleStringDerives
+ReachableSampleStringLanguage
+reachableSampleStringLanguage_sound
+sampleStringLanguage_subset_reachableSampleStringLanguage
+
+StartAnchorAsSampleWord
+StartAnchorAsSampleWord.characteristic_subset_reachableSample
+StartAnchorAsSampleWord.exact_reconstruction_reachable
+StartAnchorAsSampleWord.exact_reconstruction_reachable_inclusions
+```
+
+Paper correspondence:
+
+This formalizes the reachable version:
+
+```text
+characteristic start anchor is the singleton tuple of a sample word
+⇒ characteristic reachable language ⊆ reachable sample string language
+⇒ reachable exact reconstruction
+```
+
+This is now the main route for exact reconstruction.
+
+---
+
+### 2.18 `ReachableGoldTheorem.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Connect reachable exact reconstruction with Gold identification.
+
+Main contents:
+
+```lean
+ReachableSampleHyp
+reachableSampleLearner
+reachableHypLanguage
+
+ReachableCharacteristicCondition
+reachable_characteristicSample
+reachable_identifies_from_positive_text
+reachable_identifies_after_some_stage
+```
+
+Paper correspondence:
+
+This proves:
+
+```text
+if a finite S is positive
+and every positive finite K ⊇ S supplies characteristic data plus start-anchor bridge,
+then the reachable learner identifies the target from every positive text.
+```
+
+This is a major packaging step toward the main theorem.
+
+---
+
+### 2.19 `CharacteristicDataMonotone.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Show that characteristic data over a finite sample `S` can be transported to any larger sample `K`.
+
+Main contents:
+
+```lean
+CharacteristicSampleData.mono
+StartAnchorAsSampleWord.mono
+
+reachableCharacteristicCondition_of_data
+reachable_characteristicSample_of_data
+reachable_identifies_from_characteristic_data
+reachable_correct_after_some_stage_from_characteristic_data
+```
+
+Paper correspondence:
+
+This is the monotonicity principle:
+
+```text
+CS(G̃₀) works at S
+⇒ the same witnesses work at every finite K with S ⊆ K
+```
+
+This eliminates the need to separately construct characteristic data for every later prefix sample.
+
+---
+
+### 2.20 `StartAnchorCanonical.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Make the start-anchor bridge easier to construct.
+
+Main contents:
+
+```lean
+StartAnchorCanonical
+StartAnchorCanonical.toStartAnchorAsSampleWord
+StartAnchorCanonical.toStartAnchorAsSampleWord_of_eq
+StartAnchorCanonical.mono
+StartAnchorCanonical.exact_reconstruction_reachable
+StartAnchorCanonical.exact_reconstruction_reachable_inclusions
+
+reachable_characteristicSample_of_canonical_data
+reachable_identifies_from_canonical_characteristic_data
+reachable_correct_after_some_stage_from_canonical_data
+```
+
+Paper correspondence:
+
+Instead of requiring an equality for every proof of the start arity equality, this file allows construction from one proof:
+
+```text
+startWord ∈ S
+1 = arity start
+anchor start = castTuple hstart (singletonTuple startWord)
+```
+
+This is closer to the way the paper’s start convention should be used.
+
+---
+
+### 2.21 `PrefixExactReconstruction.lean`
+
+Status: CI passed.
+
+Purpose:
+
+State exact reconstruction directly for prefix samples of a positive text.
+
+Main contents:
+
+```lean
+exact_reconstruction_at_prefix_after_seen
+eventually_exact_reconstruction_at_prefixes
+eventually_reachable_hypothesis_correct_at_prefixes
+reachable_hypothesis_correct_after_seen
+```
+
+Paper correspondence:
+
+This proves:
+
+```text
+finite characteristic sample S has appeared in T.prefixSample n
+⇒ reachable learner on T.prefixSample n reconstructs L(G) exactly.
+```
+
+Together with finite-text coverage, this gives eventual exact reconstruction along every positive text.
+
+---
+
+### 2.22 `MainReachableTheorem.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Package the current verified development into a single reachable-model main theorem.
+
+Main contents:
+
+```lean
+ReachableMainData
+
+ReachableMainData.exact_at_seen_prefix
+ReachableMainData.eventually_exact_at_prefixes
+ReachableMainData.eventually_hypothesis_correct_at_prefixes
+ReachableMainData.eventually_correct_on_text
+ReachableMainData.characteristic_sample
+ReachableMainData.identifies_from_positive_text
+ReachableMainData.prefix_exact_eventually
+
+main_reachable_identification
+main_reachable_prefix_exact
+```
+
+Paper correspondence:
+
+This is the clean current main theorem for the reachable learner model:
+
+```text
+ReachableMainData G S obs f
+⇒ for every positive text T for L(G),
+   eventually the reachable learner hypothesis on T.prefixSample n is exactly L(G).
+```
+
+The record `ReachableMainData` still assumes the finite characteristic data and start-anchor witness, but the theorem chain from those assumptions to Gold identification is now fully Lean-checked.
+
+---
+
+### 2.23 `CharacteristicSamplePackage.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Separate finite characteristic-sample data from global target assumptions.
+
+Main contents:
+
+```lean
+ReachableCharacteristicPackage
+
+ReachableCharacteristicPackage.toMainData
+ReachableCharacteristicPackage.characteristic_sample
+ReachableCharacteristicPackage.eventually_correct_on_text
+ReachableCharacteristicPackage.identifies_from_positive_text
+ReachableCharacteristicPackage.exact_at_seen_prefix
+ReachableCharacteristicPackage.prefix_exact_eventually
+ReachableCharacteristicPackage.mono
+ReachableCharacteristicPackage.exact_for_positive_superset
+ReachableCharacteristicPackage.toReachableCharacteristicCondition
+
+main_reachable_identification_from_package
+main_reachable_prefix_exact_from_package
+```
+
+Paper correspondence:
+
+This separates:
+
+```text
+finite sample side:
+  positivity of S
+  CharacteristicSampleData
+  StartAnchorCanonical
+
+global target side:
+  fanout ≤ f
+  fixed-observation substitutability promise
+```
+
+This is useful because the future `CS(G̃₀)` construction should produce the finite package, while the theorem statement supplies the global target assumptions.
+
+---
+
+### 2.24 `CharacteristicSampleBuilderSkeleton.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Introduce a flat construction blueprint for the finite characteristic package.
+
+Main contents:
+
+```lean
+ReachableCharacteristicBlueprint
+
+ReachableCharacteristicBlueprint.toData
+ReachableCharacteristicBlueprint.toStartAnchorCanonical
+ReachableCharacteristicBlueprint.toPackage
+ReachableCharacteristicBlueprint.toMainData
+
+ReachableCharacteristicBlueprint.exact_at_seen_prefix
+ReachableCharacteristicBlueprint.prefix_exact_eventually
+ReachableCharacteristicBlueprint.identifies_from_positive_text
+ReachableCharacteristicBlueprint.characteristic_sample
+ReachableCharacteristicBlueprint.exact_for_positive_superset
+
+main_reachable_identification_from_blueprint
+main_reachable_prefix_exact_from_blueprint
+```
+
+Paper correspondence:
+
+This is now the target shape for the actual characteristic-sample construction:
+
+```text
+construct ReachableCharacteristicBlueprint from CS(G̃₀)
+⇒ get ReachableCharacteristicPackage
+⇒ get ReachableMainData
+⇒ get reachable exact reconstruction and Gold identification
+```
+
+This file is a major interface improvement: future construction work can focus on filling one flat record rather than juggling dependent packages.
 
 ---
 
@@ -755,9 +1103,27 @@ CharacteristicSampleSkeleton
 ExactReconstructionSkeleton
   ↓
 GoldIdentificationSkeleton
+  ↓
+FiniteTextCoverage
+  ↓
+ReachableStartBridge
+  ↓
+ReachableGoldTheorem
+  ↓
+CharacteristicDataMonotone
+  ↓
+StartAnchorCanonical
+  ↓
+PrefixExactReconstruction
+  ↓
+MainReachableTheorem
+  ↓
+CharacteristicSamplePackage
+  ↓
+CharacteristicSampleBuilderSkeleton
 ```
 
-This linear chain is intentional.  It keeps CI failures local and makes the experiment traceable.
+This linear chain is intentional. It keeps CI failures local and makes the experiment traceable.
 
 ---
 
@@ -807,38 +1173,58 @@ target promise
 ⇒ sample-level string derivations generate only target strings.
 ```
 
-### 4.6 Completeness skeleton
+### 4.6 Completeness induction skeleton
 
 ```text
 if characteristic sample data gives rule-by-rule anchor simulation,
 then target derivations are learner-reachable from anchors.
 ```
 
-### 4.7 Exact reconstruction outer form
+### 4.7 Finite text coverage
 
 ```text
-soundness inclusion
+finite S ⊆ L
 +
-completeness inclusion
-+
-ReconstructionBridge
-⇒ exact reconstruction.
+T is a positive text for L
+⇒ S appears in all sufficiently late prefix samples of T.
 ```
 
-### 4.8 Gold identification skeleton
+### 4.8 Reachable exact reconstruction
 
 ```text
-finite characteristic sample condition
+CharacteristicSampleData
 +
-eventual appearance in text
-⇒ eventual correctness of hypotheses.
+StartAnchorCanonical
++
+positive finite sample
++
+target promise
+⇒ ReachableSampleStringLanguage K obs f = G.StringLanguage.
+```
+
+### 4.9 Reachable Gold identification
+
+```text
+ReachableCharacteristicPackage
++
+global target assumptions
+⇒ reachable learner identifies the target from every positive text.
+```
+
+### 4.10 Blueprint-to-main theorem bridge
+
+```text
+ReachableCharacteristicBlueprint
+⇒ ReachableCharacteristicPackage
+⇒ ReachableMainData
+⇒ main reachable identification theorem.
 ```
 
 ---
 
 ## 5. What remains as explicit assumptions or skeleton fields?
 
-The main explicit assumptions/skeleton records are:
+The main explicit assumptions/skeleton records are now:
 
 ### 5.1 `LeftFillingIdentity` / `RightFillingIdentity`
 
@@ -864,30 +1250,65 @@ Derive this from concrete tuple occurrences and binary witnesses in sample words
 
 This packages the data that `CS(G̃₀) ⊆ K` should provide.
 
-Need later:
+Partly superseded by:
 
-```text
-Construct CharacteristicSampleData from the actual presentation-relative characteristic sample.
+```lean
+ReachableCharacteristicBlueprint
+ReachableCharacteristicPackage
 ```
 
-### 5.4 `ReconstructionBridge`
-
-This bridges characteristic-anchor reachability to actual sample-start derivations.
-
 Need later:
 
 ```text
-Use the start-child convention / expose-start identity context to prove this.
+Construct these records from the actual presentation-relative characteristic sample.
 ```
 
-### 5.5 `TextFor.EventuallyContains`
+### 5.4 `StartAnchorCanonical`
 
-Currently assumed in `GoldIdentificationSkeleton`.
+This is now the preferred start-anchor bridge.
 
 Need later:
 
 ```text
-Prove every finite S ⊆ L is eventually contained in every text for L.
+Derive it from the actual start convention of CS(G̃₀), probably using an identity exposing context for the start.
+```
+
+### 5.5 `ReachableCharacteristicBlueprint`
+
+This is the new target for construction.
+
+Need later:
+
+```text
+Build its fields:
+  anchor
+  expose
+  anchor_mem
+  terminal_mem
+  terminal_type_eq
+  binary_mem
+  binary_type_eq
+  binary_leftIdentity
+  binary_rightIdentity
+  start_mem
+  start_type_eq
+  startWord
+  start_arity
+  start_anchor_eq
+```
+
+### 5.6 Concrete learner equivalence
+
+The current theorem is for:
+
+```lean
+ReachableSampleStringLanguage K obs f
+```
+
+Need later:
+
+```text
+Define the actual finite canonical learner grammar/relation and prove its language equals, or is equivalent to, the reachable model.
 ```
 
 ---
@@ -896,76 +1317,101 @@ Prove every finite S ⊆ L is eventually contained in every text for L.
 
 Recommended next steps:
 
-### 6.1 `FiniteTextCoverage.lean`
+### 6.1 `BlueprintFiniteSample.lean`
 
 Goal:
 
-Remove the explicit `EventuallyContains` assumption for finite characteristic samples.
+Define a canonical finite sample associated to a blueprint.
 
-Expected theorem:
+Possible content:
 
 ```lean
-theorem finiteSample_eventuallyContained
-    (T : TextFor L) (S : Finset (Word α))
-    (hS : (S : Set (Word α)) ⊆ L) :
-    T.EventuallyContains S
+def ReachableCharacteristicBlueprint.sampleWords : Finset (Word α)
 ```
 
-Idea:
+or, more realistically, define a separate record that stores the finite set of words used by the blueprint and proves all membership fields.
 
-For each `s ∈ S`, use `T.covers s`.  Take a maximum stage over the finite set.
-
-This should be a relatively safe next file.
+This may clarify how `CS(G̃₀)` is represented.
 
 ---
 
-### 6.2 `ReachableStartBridge.lean`
+### 6.2 `ExposingContextSkeleton.lean`
 
 Goal:
 
-Fill or reduce `ReconstructionBridge`.
-
-Possible approach:
-
-Define a reachable string language that starts from `D.anchor G.start`, and prove that if the start anchor itself occurs as a sample start word, then characteristic reachability is included in `SampleStringLanguage`.
-
-Expected data:
-
-```lean
-startAnchorAsSampleWord :
-  ∃ w ∈ K, D.anchor G.start = singletonTuple w
-```
-
-or a variant using arity transport and identity context.
-
-This corresponds to the paper’s convention that for start children the exposing context is `□`.
-
----
-
-### 6.3 `CharacteristicSampleFromRefinement.lean`
-
-Goal:
-
-Connect actual output-type refinement data to `CharacteristicSampleData`.
-
-This is harder.
+Start isolating the construction of exposing contexts.
 
 Need ingredients:
 
 ```text
-surviving typed nonterminals
-anchor tuple ω(X)
-exposing context χ(X)
-terminal and binary rule sample words
-output-type equality for anchors and rule outputs
-filling identities for binary witnesses
+for each surviving typed nonterminal X:
+  anchor tuple ω(X)
+  named context χ(X)
+  namedFill χ(X) ω(X) ∈ L(G)
 ```
 
-This is where the paper’s `CS(G̃₀)` construction enters Lean.
+This is where the “trimmed” condition of `G̃₀` enters.
 
 ---
 
-### 6.4 `ConcreteTupleOccurrences.lean`
+### 6.3 `FillingIdentityConstructionSkeleton.lean`
+
+Goal:
+
+Reduce the abstraction around `LeftFillingIdentity` and `RightFillingIdentity`.
+
+Possible first theorem shape:
+
+```lean
+Given a parent named context E and a binary template ρ,
+there exist child named contexts E_left and E_right satisfying
+LeftFillingIdentity and RightFillingIdentity.
+```
+
+This will likely require more concrete definitions for template holes and component order.
+
+---
+
+### 6.4 `OutputTypeRefinementGrammar.lean`
+
+Goal:
+
+Construct the actual finite output-type refined grammar object.
+
+Need ingredients:
+
+```text
+typed nonterminals as base nonterminal + componentwise observation type
+typed terminal rules
+typed binary rules
+typed start rules
+erasure and lifting theorems
+```
+
+Some pieces already exist in `OutputTypeRefinement.lean` and `OutputTypeLift.lean`, but not yet as a finite `WorkingMCFG`.
+
+---
+
+### 6.5 `TrimmedRefinementSkeleton.lean`
+
+Goal:
+
+Represent surviving nonterminals of `G̃₀`.
+
+Need ingredients:
+
+```text
+reachable from start
+productive to terminal strings
+anchor tuple
+exposing context
+```
+
+This is likely prerequisite for constructing `ReachableCharacteristicBlueprint`.
+
+---
+
+### 6.6 `ConcreteTupleOccurrences.lean`
 
 Goal:
 
@@ -985,7 +1431,7 @@ This file is likely bookkeeping-heavy and should be done carefully.
 
 ---
 
-### 6.5 `ConcreteCanonicalLearner.lean`
+### 6.7 `ConcreteCanonicalLearner.lean`
 
 Goal:
 
@@ -1006,92 +1452,67 @@ then grammar object later.
 
 ---
 
-### 6.6 `PolynomialBoundSkeleton.lean`
-
-Goal:
-
-Formalize or at least structure the fixed-parameter polynomial construction bound.
-
-This can initially be a skeleton:
-
-```text
-number of tuple occurrences ≤ |K|^{O(f)}
-number of binary witnesses ≤ |K|^{O(f)}
-rule generation is polynomial for fixed f and fixed h
-```
-
-This is likely better after concrete tuple occurrence enumeration is defined.
-
----
-
 ## 7. Medium-term roadmap toward the paper theorem
 
-### Stage A: Finish Gold identification skeleton
+### Stage A: Reachable main theorem
+
+Status: essentially complete under blueprint/package assumptions.
 
 Files:
 
 ```text
 FiniteTextCoverage.lean
-GoldIdentification.lean
-```
-
-Target theorem shape:
-
-```lean
-finite characteristic sample
-⇒ identifies in the limit from positive data
-```
-
-This is probably the nearest fully completable part.
-
----
-
-### Stage B: Fill exact reconstruction bridge
-
-Files:
-
-```text
 ReachableStartBridge.lean
-ExactReconstruction.lean
+ReachableGoldTheorem.lean
+CharacteristicDataMonotone.lean
+StartAnchorCanonical.lean
+PrefixExactReconstruction.lean
+MainReachableTheorem.lean
+CharacteristicSamplePackage.lean
+CharacteristicSampleBuilderSkeleton.lean
 ```
 
-Target theorem shape:
+Current theorem shape:
 
 ```lean
-CharacteristicSampleData
-+ start bridge
-⇒ SampleStringLanguage K obs f = G.StringLanguage
+ReachableCharacteristicBlueprint G S obs f
++
+G.FanoutAtMost f
++
+FixedNamedTupleSubstitutable f obs G.StringLanguage
+⇒ reachable learner identifies G.StringLanguage from every positive text.
 ```
 
-This should be feasible soon.
+This stage is the strongest verified result so far.
 
 ---
 
-### Stage C: Construct characteristic sample data
+### Stage B: Construct the blueprint from `CS(G̃₀)`
 
-Files:
+Files to create:
 
 ```text
 OutputTypeRefinementGrammar.lean
-ExposingContexts.lean
+TrimmedRefinementSkeleton.lean
+ExposingContextSkeleton.lean
 CharacteristicSampleConstruction.lean
-CharacteristicSampleDataTheorem.lean
+CharacteristicBlueprintTheorem.lean
 ```
 
 Target theorem shape:
 
 ```lean
-CS(G̃₀) ⊆ K ⊆ L(G)
-⇒ CharacteristicSampleData G K obs f
+CS(G̃₀) constructed from the trimmed output-type refinement
+⇒ ReachableCharacteristicBlueprint G CS obs f
 ```
 
-This is the main completeness construction.
+This is the main remaining completeness-construction work.
 
 ---
 
-### Stage D: Concrete learner
+### Stage C: Concrete learner equivalence
 
-Files:
+Files to create:
 
 ```text
 TupleOccurrences.lean
@@ -1103,22 +1524,18 @@ CanonicalLearnerSoundComplete.lean
 Target theorem shape:
 
 ```lean
-language of concrete learner relation = SampleStringLanguage
+language of the concrete canonical learner relation
+=
+ReachableSampleStringLanguage K obs f
 ```
 
-or
-
-```lean
-concrete learner derivation implies SampleStringDerives
-```
-
-and the reverse if needed.
+or a pair of inclusions if equality is too strict at first.
 
 ---
 
-### Stage E: Polynomial bound
+### Stage D: Polynomial bound
 
-Files:
+Files to create:
 
 ```text
 OccurrenceCounting.lean
@@ -1137,9 +1554,9 @@ This may remain partially informal unless a complexity framework is introduced.
 
 ---
 
-### Stage F: Boundary results
+### Stage E: Boundary results
 
-Files:
+Files to create:
 
 ```text
 ObservationAdviceBoundary.lean
@@ -1169,7 +1586,10 @@ distributional equivalence lemmas
 witnessed composition semantic core
 sample-level soundness
 completeness induction skeleton
-Gold finite-sample skeleton
+finite text coverage
+reachable exact reconstruction
+reachable Gold identification
+blueprint/package/main-theorem plumbing
 ```
 
 ### Verified but intentionally abstract
@@ -1178,8 +1598,9 @@ Gold finite-sample skeleton
 filling identities
 sample binary evidence
 characteristic sample data
-reconstruction bridge
-eventual containment of finite samples
+start-anchor canonical bridge
+reachable characteristic blueprint
+reachable sample language model
 ```
 
 ### Not yet verified
@@ -1188,6 +1609,7 @@ eventual containment of finite samples
 actual concrete learner enumeration
 actual characteristic sample construction
 trimmed output-type refinement as finite grammar
+concrete filling-identity construction
 polynomial bound
 boundary examples and non-identifiability
 ```
@@ -1231,19 +1653,41 @@ Keep each new file small and CI-confirmed.
 After adding the current latest file, the useful CI/local command is:
 
 ```bash
-lake build LeanCfgProject.MCFG.GoldIdentificationSkeleton
+lake build LeanCfgProject.MCFG.CharacteristicSampleBuilderSkeleton
 ```
 
 Next proposed file:
 
 ```text
-FiniteTextCoverage.lean
+BlueprintFiniteSample.lean
 ```
 
 Expected purpose:
 
 ```text
-prove finite S ⊆ L eventually appears in every positive text for L
+start making the blueprint construction more concrete by separating
+the finite set of characteristic words from the proofs that those words
+supply anchor, terminal, binary, and start witnesses.
 ```
 
-This will remove one explicit assumption from the Gold identification skeleton.
+Alternative next file:
+
+```text
+FillingIdentityConstructionSkeleton.lean
+```
+
+Expected purpose:
+
+```text
+start reducing the remaining abstraction around LeftFillingIdentity and
+RightFillingIdentity.
+```
+
+Recommended order:
+
+```text
+1. BlueprintFiniteSample.lean
+2. FillingIdentityConstructionSkeleton.lean
+3. OutputTypeRefinementGrammar.lean
+4. TrimmedRefinementSkeleton.lean
+```
