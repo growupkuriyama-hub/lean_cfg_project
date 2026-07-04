@@ -1,7 +1,14 @@
+/- CI fix revision: Basic_CI487_fixed, generated after GitHub Actions #487. -/
+/-
+Copyright (c) 2026 Takayuki Kuriyama. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Takayuki Kuriyama
+-/
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.Group.Defs
 
 /-!
@@ -98,7 +105,7 @@ section AbstractContexts
 variable {α : Type u} {M : Type v} [Monoid M]
 variable {Ctx : Nat → Type w}
 
-/-- An arity-indexed filling operation for contexts. -/
+-- An arity-indexed filling operation for contexts.
 variable (fill : ∀ d : Nat, Ctx d → Tuple α d → Word α)
 
 /-- The distribution of an arity-`d` tuple: all contexts that accept it. -/
@@ -384,10 +391,10 @@ theorem evalTemplateWord_obs {dB dC : Nat}
       evalTemplateWordObs obs (tupleType obs x) (tupleType obs y) word := by
   induction word with
   | nil =>
-      simp [evalTemplateWord, evalTemplateWordObs, evalObs]
+      simp [evalTemplateWord, evalTemplateWordObs]
   | cons atom rest ih =>
       simp [evalTemplateWord, evalTemplateWordObs, evalObs_append,
-        evalTemplateAtom_obs, ih, mul_assoc]
+        evalTemplateAtom_obs, ih]
 
 theorem evalTemplateTuple_obs {e dB dC : Nat}
     (obs : α → M) (body : TemplateTuple α e dB dC)
