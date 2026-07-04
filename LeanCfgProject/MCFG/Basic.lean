@@ -9,9 +9,9 @@ import Mathlib.Algebra.Group.Defs
 
 First clean Lean experiment for the MCFG fixed finite-observation paper.
 
-This file is intentionally self-contained.  It does **not** import the previous
+This file is intentionally self-contained. It does **not** import the previous
 experimental MCFG files, because the old experiment chain may contain procedural
-mistakes.  The goal of this first restart file is to establish a small, stable
+mistakes. The goal of this first restart file is to establish a small, stable
 foundation:
 
 * words and tuples;
@@ -40,11 +40,11 @@ abbrev Tuple (α : Type u) (d : Nat) := Fin d → Word α
 def finOne : Fin 1 := ⟨0, by decide⟩
 
 /-- The one-component tuple containing a single word. -/
-def singletonTuple {α : Type u} (w : Word α) : Tuple α 1 :=
-  fun _ => w
+def singletonTuple {α : Type u} (word : Word α) : Tuple α 1 :=
+  fun _ => word
 
-@[simp] theorem singletonTuple_apply {α : Type u} (w : Word α) (i : Fin 1) :
-    singletonTuple w i = w := rfl
+@[simp] theorem singletonTuple_apply {α : Type u} (word : Word α) (i : Fin 1) :
+    singletonTuple word i = word := rfl
 
 /-- Transport a tuple across an equality of arities. -/
 def castTuple {α : Type u} {d e : Nat} (h : d = e) (x : Tuple α d) : Tuple α e := by
@@ -62,21 +62,21 @@ variable {α : Type u} {M : Type v} [Monoid M]
 /-- Extend a letter observation `obs : α → M` multiplicatively to words. -/
 def evalObs (obs : α → M) : Word α → M
   | [] => 1
-  | a :: w => obs a * evalObs obs w
+  | a :: rest => obs a * evalObs obs rest
 
 @[simp] theorem evalObs_nil (obs : α → M) :
     evalObs obs ([] : Word α) = 1 := rfl
 
-@[simp] theorem evalObs_cons (obs : α → M) (a : α) (w : Word α) :
-    evalObs obs (a :: w) = obs a * evalObs obs w := rfl
+@[simp] theorem evalObs_cons (obs : α → M) (a : α) (rest : Word α) :
+    evalObs obs (a :: rest) = obs a * evalObs obs rest := rfl
 
 /-- Multiplicativity of the word observation. -/
-theorem evalObs_append (obs : α → M) (u v : Word α) :
-    evalObs obs (u ++ v) = evalObs obs u * evalObs obs v := by
-  induction u with
+theorem evalObs_append (obs : α → M) (u1 u2 : Word α) :
+    evalObs obs (u1 ++ u2) = evalObs obs u1 * evalObs obs u2 := by
+  induction u1 with
   | nil =>
       simp [evalObs]
-  | cons a u ih =>
+  | cons a rest ih =>
       simp [evalObs, ih, mul_assoc]
 
 /-- Componentwise observation type of a tuple. -/
@@ -140,13 +140,13 @@ structure Refines (obs : α → M) (obs' : α → M') where
 variable {obs : α → M} {obs' : α → M'}
 
 /-- Word observation commutes with refinement. -/
-theorem evalObs_refines (r : Refines obs obs') (w : Word α) :
-    r.map (evalObs obs' w) = evalObs obs w := by
-  induction w with
+theorem evalObs_refines (r : Refines obs obs') (word : Word α) :
+    r.map (evalObs obs' word) = evalObs obs word := by
+  induction word with
   | nil =>
       exact r.map_one
-  | cons a w ih =>
-      change r.map (obs' a * evalObs obs' w) = obs a * evalObs obs w
+  | cons a rest ih =>
+      change r.map (obs' a * evalObs obs' rest) = obs a * evalObs obs rest
       rw [r.map_mul, r.comm a, ih]
 
 /-- Pointwise tuple-type compatibility under refinement. -/
@@ -191,7 +191,7 @@ variable {α : Type u}
 
 /-- A raw named sentence context of arity `d`.
 
-`chunks` are the terminal pieces around holes.  `holes` records which tuple
+`chunks` are the terminal pieces around holes. `holes` records which tuple
 component is placed at each hole occurrence. -/
 structure RawNamedSentenceContext (α : Type u) (d : Nat) where
   chunks : List (Word α)
@@ -221,9 +221,9 @@ On well-formed contexts this is the intended named-hole substitution.
 Malformed cases are made total only to keep the function easy to use. -/
 def fillNamedAux {d : Nat} (x : Tuple α d) : List (Fin d) → List (Word α) → Word α
   | [], [] => []
-  | [], c :: _ => c
+  | [], chunk :: _ => chunk
   | h :: hs, [] => x h ++ fillNamedAux x hs []
-  | h :: hs, c :: cs => c ++ x h ++ fillNamedAux x hs cs
+  | h :: hs, chunk :: chunks => chunk ++ x h ++ fillNamedAux x hs chunks
 
 /-- Fill a raw named sentence context with a tuple. -/
 def rawNamedFill {d : Nat} (c : RawNamedSentenceContext α d) (x : Tuple α d) :
@@ -311,7 +311,7 @@ def evalTemplateWord {dB dC : Nat}
     (x : Tuple α dB) (y : Tuple α dC) :
     TemplateWord α dB dC → Word α
   | [] => []
-  | a :: rest => evalTemplateAtom x y a ++ evalTemplateWord x y rest
+  | atom :: rest => evalTemplateAtom x y atom ++ evalTemplateWord x y rest
 
 @[simp] theorem evalTemplateWord_nil {dB dC : Nat}
     (x : Tuple α dB) (y : Tuple α dC) :
@@ -319,9 +319,9 @@ def evalTemplateWord {dB dC : Nat}
 
 @[simp] theorem evalTemplateWord_cons {dB dC : Nat}
     (x : Tuple α dB) (y : Tuple α dC)
-    (a : TemplateAtom α dB dC) (rest : TemplateWord α dB dC) :
-    evalTemplateWord x y (a :: rest) =
-      evalTemplateAtom x y a ++ evalTemplateWord x y rest := rfl
+    (atom : TemplateAtom α dB dC) (rest : TemplateWord α dB dC) :
+    evalTemplateWord x y (atom :: rest) =
+      evalTemplateAtom x y atom ++ evalTemplateWord x y rest := rfl
 
 /-- A binary template tuple with output arity `e`. -/
 abbrev TemplateTuple (α : Type u) (e dB dC : Nat) :=
@@ -336,7 +336,7 @@ def evalTemplateTuple {e dB dC : Nat}
 /-- Lightweight nondeleting condition: every child component occurs at least
 once somewhere in the body.
 
-The paper's exact working form asks for exactly once.  This first Lean layer
+The paper's exact working form asks for exactly once. This first Lean layer
 keeps the weaker predicate so that later experiments can add exact-once
 counting separately. -/
 def TemplateTuple.Nondeleting {e dB dC : Nat}
@@ -361,7 +361,7 @@ def evalTemplateWordObs {dB dC : Nat}
     (obs : α → M) (q : Fin dB → M) (r : Fin dC → M) :
     TemplateWord α dB dC → M
   | [] => 1
-  | a :: rest => evalTemplateAtomObs obs q r a *
+  | atom :: rest => evalTemplateAtomObs obs q r atom *
       evalTemplateWordObs obs q r rest
 
 /-- Observation-level evaluation of a template tuple. -/
@@ -372,20 +372,20 @@ def evalTemplateTupleObs {e dB dC : Nat}
 
 theorem evalTemplateAtom_obs {dB dC : Nat}
     (obs : α → M) (x : Tuple α dB) (y : Tuple α dC)
-    (a : TemplateAtom α dB dC) :
-    evalObs obs (evalTemplateAtom x y a) =
-      evalTemplateAtomObs obs (tupleType obs x) (tupleType obs y) a := by
-  cases a <;> simp [evalTemplateAtom, evalTemplateAtomObs, tupleType, evalObs]
+    (atom : TemplateAtom α dB dC) :
+    evalObs obs (evalTemplateAtom x y atom) =
+      evalTemplateAtomObs obs (tupleType obs x) (tupleType obs y) atom := by
+  cases atom <;> simp [evalTemplateAtom, evalTemplateAtomObs, tupleType, evalObs]
 
 theorem evalTemplateWord_obs {dB dC : Nat}
     (obs : α → M) (x : Tuple α dB) (y : Tuple α dC)
-    (w : TemplateWord α dB dC) :
-    evalObs obs (evalTemplateWord x y w) =
-      evalTemplateWordObs obs (tupleType obs x) (tupleType obs y) w := by
-  induction w with
+    (word : TemplateWord α dB dC) :
+    evalObs obs (evalTemplateWord x y word) =
+      evalTemplateWordObs obs (tupleType obs x) (tupleType obs y) word := by
+  induction word with
   | nil =>
       simp [evalTemplateWord, evalTemplateWordObs, evalObs]
-  | cons a rest ih =>
+  | cons atom rest ih =>
       simp [evalTemplateWord, evalTemplateWordObs, evalObs_append,
         evalTemplateAtom_obs, ih, mul_assoc]
 
@@ -469,7 +469,6 @@ theorem tupleType_apply {M : Type w} [Monoid M]
 
 end BinaryRule
 
-
 /-- A lightweight record for working binary MCFG presentations. -/
 structure WorkingMCFG (N : Type v) (α : Type u) where
   start : N
@@ -482,7 +481,7 @@ structure WorkingMCFG (N : Type v) (α : Type u) where
 namespace StartRule
 
 /-- A start rule is well-typed when the child has the same arity as the start
-symbol.  Under the paper's working assumptions both are one. -/
+symbol. Under the paper's working assumptions both are one. -/
 def WellTyped (G : WorkingMCFG N α) (ρ : StartRule N) : Prop :=
   G.arity ρ.child = G.arity G.start
 
@@ -513,7 +512,7 @@ def BinaryRulesNondeleting (G : WorkingMCFG N α) : Prop :=
     BinaryRule.Nondeleting ρ
 
 /-- The presentation-level working side conditions represented in this first
-file.  Exact-once linearity and start separation are intentionally postponed. -/
+file. Exact-once linearity and start separation are intentionally postponed. -/
 def BasicWorkingConditions (G : WorkingMCFG N α) : Prop :=
   G.StartArityOne ∧
   G.StartRulesWellTyped ∧
@@ -524,7 +523,7 @@ def BasicWorkingConditions (G : WorkingMCFG N α) : Prop :=
 parent and children arities at most `f`. -/
 theorem binaryRule_arities_le_of_fanout
     (G : WorkingMCFG N α) {f : Nat} (hG : G.FanoutAtMost f)
-    {ρ : BinaryRule N α G.arity} (hρ : ρ ∈ G.binaryRules) :
+    {ρ : BinaryRule N α G.arity} (_hρ : ρ ∈ G.binaryRules) :
     G.arity ρ.lhs ≤ f ∧ G.arity ρ.left ≤ f ∧ G.arity ρ.right ≤ f := by
   exact ⟨hG ρ.lhs, hG ρ.left, hG ρ.right⟩
 
@@ -564,8 +563,8 @@ inductive DerivesTuple (G : WorkingMCFG N α) :
 
 /-- The generated string language of a grammar. -/
 def StringLanguage (G : WorkingMCFG N α) : Set (Word α) :=
-  { w | ∃ h : 1 = G.arity G.start,
-      DerivesTuple G G.start (castTuple h (singletonTuple w)) }
+  { word | ∃ h : 1 = G.arity G.start,
+      DerivesTuple G G.start (castTuple h (singletonTuple word)) }
 
 namespace WorkingMCFG
 
@@ -575,21 +574,21 @@ abbrev StringLanguage (G : WorkingMCFG N α) : Set (Word α) :=
 
 end WorkingMCFG
 
-/-- If the start symbol derives the singleton tuple for `w`, then `w` belongs
-to the string language. -/
+/-- If the start symbol derives the singleton tuple for `word`, then `word`
+belongs to the string language. -/
 theorem mem_StringLanguage_of_start_derives
-    (G : WorkingMCFG N α) (w : Word α)
+    (G : WorkingMCFG N α) (word : Word α)
     (hstart : 1 = G.arity G.start)
-    (hw : DerivesTuple G G.start (castTuple hstart (singletonTuple w))) :
-    w ∈ G.StringLanguage := by
+    (hw : DerivesTuple G G.start (castTuple hstart (singletonTuple word))) :
+    word ∈ G.StringLanguage := by
   exact ⟨hstart, hw⟩
 
 /-- Unpack membership in the string language. -/
 theorem start_derives_of_mem_StringLanguage
-    (G : WorkingMCFG N α) (w : Word α)
-    (hw : w ∈ G.StringLanguage) :
+    (G : WorkingMCFG N α) (word : Word α)
+    (hw : word ∈ G.StringLanguage) :
     ∃ h : 1 = G.arity G.start,
-      DerivesTuple G G.start (castTuple h (singletonTuple w)) := by
+      DerivesTuple G G.start (castTuple h (singletonTuple word)) := by
   exact hw
 
 end DerivationSemantics
@@ -646,11 +645,10 @@ end GrammarContextBridge
 section PositiveSamples
 
 variable {N : Type v} {α : Type u}
-variable [DecidableEq α]
 
 /-- A finite positive sample for a grammar. -/
 def PositiveSample (G : WorkingMCFG N α) (K : Finset (Word α)) : Prop :=
-  ∀ w : Word α, w ∈ K → w ∈ G.StringLanguage
+  ∀ word : Word α, word ∈ K → word ∈ G.StringLanguage
 
 /-- Sample-level named-context distribution. -/
 def SampleNamedDistribution
@@ -719,7 +717,6 @@ abbrev HypLanguage (α : Type u) (Hyp : Type v) := Hyp → Set (Word α)
 
 /-- Characteristic sample condition for a set-driven learner on finite samples. -/
 def CharacteristicSample
-    [DecidableEq α]
     (lang : HypLanguage α Hyp)
     (learner : Finset (Word α) → Hyp)
     (S : Finset (Word α))
@@ -733,7 +730,6 @@ def CharacteristicSample
 /-- Once a finite sample contains a characteristic sample and remains positive,
 the learner's hypothesis is exactly the target language. -/
 theorem characteristicSample_correct
-    [DecidableEq α]
     (lang : HypLanguage α Hyp)
     (learner : Finset (Word α) → Hyp)
     {S K : Finset (Word α)} {L : Set (Word α)}
