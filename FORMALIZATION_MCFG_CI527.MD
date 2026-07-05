@@ -2,8 +2,8 @@
 
 Lean formalization log and roadmap for the MCFG fixed finite-observation paper.
 
-Last updated: 2026-07-04  
-Current confirmed CI point: Lean CI #511, commit `ad9754b`, pushed by `growupkuriyama-hub`.
+Last updated: 2026-07-05  
+Current confirmed CI point: Lean CI #527, commit `c83ea95`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -56,38 +56,59 @@ PrefixExactReconstruction.lean ✅
 MainReachableTheorem.lean ✅
 CharacteristicSamplePackage.lean ✅
 CharacteristicSampleBuilderSkeleton.lean ✅
+BlueprintFiniteSample.lean ✅
+FillingIdentityConstructionSkeleton.lean ✅
+NamedContextSplicingSkeleton.lean ✅
+BinaryRuleSplicingEvidence.lean ✅
+NamedContextSplicingConstructor.lean ✅
+SplicingMainTheorem.lean ✅
+SplicingMainDataMonotone.lean ✅
+SplicingCharacteristicPackage.lean ✅
+SplicingBlueprint.lean ✅
+SplicingBlueprintMainData.lean ✅
+SplicingBlueprintMainDataMonotone.lean ✅
+FinalReachableTheorem.lean ✅
+OutputTypeRefinementPresentation.lean ✅
+OutputTypePresentationLanguage.lean ✅
+OutputTypePresentationMonotone.lean ✅
 ```
 
 All of the above files have passed Lean CI up to:
 
 ```text
-Lean CI #511
-Commit: ad9754b
+Lean CI #527
+Commit: c83ea95
 ```
 
 The current state is best described as:
 
 ```text
-soundness side: strong skeleton, largely formalized
-completeness side: rule-simulation skeleton formalized
-reachable exact reconstruction: packaged as a main theorem
-Gold identification: finite characteristic package ⇒ eventual correctness verified
-characteristic sample construction: now has a blueprint target, but not yet constructed from G̃₀
+reachable main theorem: stabilized under FinalReachableData
+splicing/blueprint layer: packaged up to a flat construction target
+context-splicing task: isolated as NamedContextSplicingConstructor
+finite typed presentation layer: introduced, with language soundness and monotonicity
 concrete canonical learner enumeration: still not yet formalized
+actual construction from G̃₀ / CS(G̃₀): still not yet formalized
 ```
 
-Most important progress since CI #502:
+Most important progress since CI #511:
 
 ```text
-FiniteTextCoverage.lean removed the explicit EventuallyContains assumption.
-ReachableStartBridge.lean replaced the old ReconstructionBridge by a natural reachable-language bridge.
-ReachableGoldTheorem.lean connected reachable exact reconstruction to Gold identification.
-CharacteristicDataMonotone.lean proved finite characteristic data is monotone under sample extension.
-StartAnchorCanonical.lean made the start-anchor bridge easier to construct.
-PrefixExactReconstruction.lean stated exact reconstruction directly for text prefix samples.
-MainReachableTheorem.lean packaged the current reachable main theorem.
-CharacteristicSamplePackage.lean separated finite characteristic data from global target assumptions.
-CharacteristicSampleBuilderSkeleton.lean introduced a flat blueprint for constructing the finite package.
+BlueprintFiniteSample.lean split the finite sample data from the blueprint core.
+FillingIdentityConstructionSkeleton.lean separated pre-core data from binary filling witnesses.
+NamedContextSplicingSkeleton.lean reduced filling witnesses to named-context splicing.
+BinaryRuleSplicingEvidence.lean localized named-context splicing to each binary rule.
+NamedContextSplicingConstructor.lean isolated a universal constructor target for all parent contexts/templates.
+SplicingMainTheorem.lean packaged pre-core + finite sample + constructor into the reachable theorem.
+SplicingMainDataMonotone.lean proved monotonicity of that package under sample extension.
+SplicingCharacteristicPackage.lean separated finite splicing data from fanout/promise assumptions.
+SplicingBlueprint.lean introduced a flat construction target for the splicing-based characteristic data.
+SplicingBlueprintMainData.lean combined that flat blueprint with fanout and substitutability.
+SplicingBlueprintMainDataMonotone.lean proved final-interface monotonicity.
+FinalReachableTheorem.lean fixed stable final names for the reachable theorem.
+OutputTypeRefinementPresentation.lean introduced finite typed presentations.
+OutputTypePresentationLanguage.lean attached a sound string language to finite typed presentations.
+OutputTypePresentationMonotone.lean proved presentation language monotonicity under extension.
 ```
 
 What has **not** yet been fully formalized:
@@ -95,10 +116,11 @@ What has **not** yet been fully formalized:
 ```text
 concrete finite canonical learner enumeration
 explicit tuple-occurrence and binary-witness enumeration
+actual construction of NamedContextSplicingConstructor
 actual construction of CS(G̃₀)
-trimmed output-type refinement G̃₀ as a finite grammar object
-proof that CS(G̃₀) gives ReachableCharacteristicBlueprint
-concrete construction of LeftFillingIdentity / RightFillingIdentity
+trimmed output-type refinement G̃₀ as a concrete finite presentation/grammar object
+proof that CS(G̃₀) gives ReachableSplicingBlueprint / FinalReachableData
+completeness of finite output-type presentations for the original grammar language
 polynomial-time construction bound
 no-advice non-identifiability
 copy-language / member-kernel exclusion
@@ -1069,6 +1091,553 @@ This file is a major interface improvement: future construction work can focus o
 
 ---
 
+### 2.25 `BlueprintFiniteSample.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Separate the sample-independent blueprint core from the finite sample membership data.
+
+Main contents:
+
+```lean
+ReachableBlueprintCore
+ReachableBlueprintFiniteSample
+ReachableBlueprintFiniteSample.toBlueprint
+ReachableBlueprintFiniteSample.toPackage
+ReachableBlueprintFiniteSample.toMainData
+ReachableBlueprintFiniteSample.mono
+main_reachable_identification_from_finite_sample_blueprint
+main_reachable_prefix_exact_from_finite_sample_blueprint
+```
+
+Paper correspondence:
+
+This clarifies the role of the finite characteristic set:
+
+```text
+core choices: anchors, exposures, type equalities, filling identities, start anchor
+finite sample facts: the required words are actually contained in S
+```
+
+This is closer to a future construction from `CS(G̃₀)`.
+
+---
+
+### 2.26 `FillingIdentityConstructionSkeleton.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Separate the pre-core from the binary filling identity witnesses.
+
+Main contents:
+
+```lean
+ReachableBlueprintPreCore
+BinaryFillingWitnessFamily
+ReachableBlueprintPreCore.withFillingWitnesses
+ReachablePreCoreFiniteSample
+ReachablePreCoreFiniteSample.toFiniteSample
+main_reachable_identification_from_precore
+main_reachable_prefix_exact_from_precore
+```
+
+Paper correspondence:
+
+This isolates the remaining context-splicing/filling task:
+
+```text
+pre-core data + binary filling witnesses
+⇒ full reachable blueprint core
+```
+
+So the hard bookkeeping around child contexts is no longer mixed with the rest of the main theorem.
+
+---
+
+### 2.27 `NamedContextSplicingSkeleton.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Reduce binary filling identities to named-context splicing data.
+
+Main contents:
+
+```lean
+BinaryNamedContextSplicing
+BinaryNamedContextSplicing.leftIdentity
+BinaryNamedContextSplicing.rightIdentity
+BinaryNamedSplicingFamily
+BinaryNamedSplicingFamily.toFillingWitnessFamily
+BinaryNamedSplicingFamily.toBlueprintCore
+BinaryNamedSplicingFamily.toFiniteSample
+BinaryNamedSplicingFamily.toBlueprint
+main_reachable_identification_from_named_splicing
+main_reachable_prefix_exact_from_named_splicing
+```
+
+Paper correspondence:
+
+This gives a cleaner target for constructing child contexts:
+
+```text
+parent named context E
+binary template ρ
+⇒ left and right named child contexts satisfying exact filling equations
+```
+
+---
+
+### 2.28 `BinaryRuleSplicingEvidence.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Localize named-context splicing evidence to individual binary rules.
+
+Main contents:
+
+```lean
+BinaryRuleSplicingEvidence
+BinaryRuleSplicingEvidence.leftIdentity
+BinaryRuleSplicingEvidence.rightIdentity
+BinaryRuleSplicingProvider
+BinaryRuleSplicingProvider.toNamedSplicingFamily
+BinaryRuleSplicingProvider.toFillingWitnessFamily
+BinaryRuleSplicingProvider.toBlueprintCore
+main_reachable_identification_from_rule_splicing
+main_reachable_prefix_exact_from_rule_splicing
+```
+
+Paper correspondence:
+
+This says:
+
+```text
+if every binary rule has local splicing evidence,
+then the whole grammar has the filling witnesses needed for the reachable theorem.
+```
+
+---
+
+### 2.29 `NamedContextSplicingConstructor.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Isolate a universal named-context splicing constructor.
+
+Main contents:
+
+```lean
+NamedContextSplicingConstructor
+NamedContextSplicingConstructor.toRuleSplicingEvidence
+NamedContextSplicingConstructor.toRuleSplicingProvider
+NamedContextSplicingConstructor.toNamedSplicingFamily
+NamedContextSplicingConstructor.toFillingWitnessFamily
+NamedContextSplicingConstructor.toBlueprintCore
+main_reachable_identification_from_splicing_constructor
+main_reachable_prefix_exact_from_splicing_constructor
+```
+
+Paper correspondence:
+
+This is now the clean construction target for the filling-identity problem:
+
+```text
+for every parent named context and every binary template,
+construct BinaryNamedContextSplicing
+```
+
+Once this constructor exists, the entire binary filling side follows.
+
+---
+
+### 2.30 `SplicingMainTheorem.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Package the reachable theorem using the universal splicing constructor.
+
+Main contents:
+
+```lean
+ReachableSplicingMainData
+ReachableSplicingMainData.ruleSplicingProvider
+ReachableSplicingMainData.namedSplicingFamily
+ReachableSplicingMainData.fillingWitnessFamily
+ReachableSplicingMainData.blueprintCore
+ReachableSplicingMainData.toBlueprint
+ReachableSplicingMainData.toPackage
+ReachableSplicingMainData.toMainData
+ReachableSplicingMainData.identifies_from_positive_text
+ReachableSplicingMainData.prefix_exact_eventually
+main_reachable_identification_from_splicing_data
+main_reachable_prefix_exact_from_splicing_data
+```
+
+Paper correspondence:
+
+This theorem interface says:
+
+```text
+fanout + promise + pre-core + finite sample + universal splicing constructor
+⇒ reachable exact reconstruction and Gold identification.
+```
+
+---
+
+### 2.31 `SplicingMainDataMonotone.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Prove monotonicity of `ReachableSplicingMainData` under finite sample extension.
+
+Main contents:
+
+```lean
+ReachablePreCoreFiniteSample.mono
+ReachablePreCoreFiniteSample.toFiniteSample_mono
+ReachableSplicingMainData.mono
+ReachableSplicingMainData.exact_after_mono
+ReachableSplicingMainData.exact_at_prefix_via_mono
+ReachableSplicingMainData.prefix_exact_eventually_via_mono
+main_reachable_prefix_exact_from_splicing_data_mono
+main_reachable_identification_from_splicing_data_mono
+```
+
+Paper correspondence:
+
+This is the prefix-text mechanism in the splicing package:
+
+```text
+S has all witnesses
+S ⊆ K ⊆ L(G)
+⇒ the same data works over K
+```
+
+---
+
+### 2.32 `SplicingCharacteristicPackage.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Separate finite splicing construction data from the global target assumptions.
+
+Main contents:
+
+```lean
+ReachableSplicingPackage
+ReachableSplicingPackage.toMainData
+ReachableSplicingPackage.ruleSplicingProvider
+ReachableSplicingPackage.namedSplicingFamily
+ReachableSplicingPackage.fillingWitnessFamily
+ReachableSplicingPackage.blueprintCore
+ReachableSplicingPackage.toBlueprint
+ReachableSplicingPackage.toCharacteristicPackage
+ReachableSplicingPackage.mono
+ReachableSplicingPackage.identifies_from_positive_text
+main_reachable_identification_from_splicing_package
+main_reachable_prefix_exact_from_splicing_package
+```
+
+Paper correspondence:
+
+This makes the finite construction target independent of:
+
+```text
+fanout bound
+fixed-observation substitutability promise
+```
+
+Those are supplied later by the theorem statement.
+
+---
+
+### 2.33 `SplicingBlueprint.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Introduce the flat construction target for the splicing-based characteristic package.
+
+Main contents:
+
+```lean
+ReachableSplicingBlueprint
+ReachableSplicingBlueprint.toPreCore
+ReachableSplicingBlueprint.toFiniteSample
+ReachableSplicingBlueprint.toPackage
+ReachableSplicingBlueprint.toMainData
+ReachableSplicingBlueprint.mono
+ReachableSplicingBlueprint.characteristic_sample
+ReachableSplicingBlueprint.identifies_from_positive_text
+main_reachable_identification_from_splicing_blueprint
+main_reachable_prefix_exact_from_splicing_blueprint
+```
+
+Paper correspondence:
+
+This is now the most natural target for a future `CS(G̃₀)` construction:
+
+```text
+anchors + exposing contexts + type equalities
++ finite sample membership facts
++ start anchor
++ NamedContextSplicingConstructor
+⇒ reachable identification
+```
+
+---
+
+### 2.34 `SplicingBlueprintMainData.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Package the flat blueprint together with the global target assumptions.
+
+Main contents:
+
+```lean
+ReachableSplicingBlueprintMainData
+ReachableSplicingBlueprintMainData.toPackage
+ReachableSplicingBlueprintMainData.toSplicingMainData
+ReachableSplicingBlueprintMainData.toReachableMainData
+ReachableSplicingBlueprintMainData.characteristic_sample
+ReachableSplicingBlueprintMainData.exact_for_positive_superset
+ReachableSplicingBlueprintMainData.prefix_exact_eventually
+ReachableSplicingBlueprintMainData.identifies_from_positive_text
+main_reachable_identification_from_splicing_blueprint_data
+main_reachable_prefix_exact_from_splicing_blueprint_data
+```
+
+Paper correspondence:
+
+This gives the compact main-theorem interface:
+
+```text
+ReachableSplicingBlueprint
++
+fanout
++
+fixed-observation promise
+⇒ reachable exact reconstruction and Gold identification
+```
+
+---
+
+### 2.35 `SplicingBlueprintMainDataMonotone.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Prove monotonicity of the flat blueprint main-data interface.
+
+Main contents:
+
+```lean
+ReachableSplicingBlueprintMainData.mono
+ReachableSplicingBlueprintMainData.exact_after_mono
+ReachableSplicingBlueprintMainData.characteristic_sample_after_mono
+ReachableSplicingBlueprintMainData.exact_at_prefix_via_mono
+ReachableSplicingBlueprintMainData.prefix_exact_eventually_via_mono
+ReachableSplicingBlueprintMainData.identifies_from_positive_text_via_mono
+main_reachable_prefix_exact_from_splicing_blueprint_data_mono
+main_reachable_identification_from_splicing_blueprint_data_mono
+```
+
+Paper correspondence:
+
+This is the final-interface version of:
+
+```text
+once S appears in a positive text prefix,
+every later prefix inherits the same characteristic blueprint data.
+```
+
+---
+
+### 2.36 `FinalReachableTheorem.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Fix stable final names for the current reachable-model theorem.
+
+Main contents:
+
+```lean
+FinalReachableData
+FinalReachableData.blueprint
+FinalReachableData.fanout
+FinalReachableData.promise
+FinalReachableData.toBlueprintMainData
+FinalReachableData.toSplicingMainData
+FinalReachableData.toReachableMainData
+FinalReachableData.characteristic_sample
+FinalReachableData.exact_for_positive_superset
+FinalReachableData.prefix_exact_eventually
+FinalReachableData.identifies_from_positive_text
+FinalReachableData.mono
+final_reachable_identification
+final_reachable_prefix_exact
+final_reachable_exact_for_positive_superset
+```
+
+Paper correspondence:
+
+This is the current formal endpoint:
+
+```text
+FinalReachableData
+⇒ reachable Gold identification
+⇒ eventual prefix-exact reconstruction.
+```
+
+Important limitation:
+
+This is still the reachable sample-language theorem, not yet the fully enumerated concrete canonical learner theorem.
+
+---
+
+### 2.37 `OutputTypeRefinementPresentation.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Start the finite typed-presentation layer for output-type refinements.
+
+Main contents:
+
+```lean
+OutputTypeRefinementPresentation
+OutputTypeRefinementPresentation.HasNonterminal
+OutputTypeRefinementPresentation.HasTerminalRule
+OutputTypeRefinementPresentation.HasBinaryRule
+OutputTypeRefinementPresentation.HasStartRule
+OutputTypeRefinementPresentation.terminal_lhs_present
+OutputTypeRefinementPresentation.binary_nodes_present
+PresentationDerives
+PresentationDerives.toOutputTypedDerives
+PresentationDerives.erase
+PresentationDerives.tuple_type_eq
+```
+
+Paper correspondence:
+
+This starts representing finite pieces of `G^h` / `G̃₀` as a finite typed presentation:
+
+```text
+finite typed nonterminals
+finite typed terminal rules
+finite typed binary rules
+finite typed start rules
+```
+
+Verified here:
+
+```text
+a presentation derivation erases to an ordinary derivation of the original grammar
+and has the output type stored in its typed nonterminal.
+```
+
+---
+
+### 2.38 `OutputTypePresentationLanguage.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Attach a string language to finite output-type presentations.
+
+Main contents:
+
+```lean
+PresentationStringDerives
+PresentationStringDerives.child_present
+PresentationStringDerives.child_erases
+PresentationStringDerives.child_output_typed_derives
+PresentationStringDerives.child_tuple_type_eq
+PresentationStringDerives.sound
+PresentationStringLanguage
+presentationStringLanguage_sound
+mem_original_of_mem_presentationStringLanguage
+mem_presentationStringLanguage_of_start
+mem_original_of_presentation_start
+```
+
+Paper correspondence:
+
+This proves the soundness inclusion for finite typed presentations:
+
+```text
+PresentationStringLanguage P ⊆ G.StringLanguage
+```
+
+This is the presentation-level soundness half for `G^h` / `G̃₀`.
+
+---
+
+### 2.39 `OutputTypePresentationMonotone.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Prove monotonicity of finite typed presentations.
+
+Main contents:
+
+```lean
+PresentationExtends
+PresentationExtends.refl
+PresentationExtends.trans
+PresentationExtends.hasNonterminal
+PresentationExtends.hasTerminalRule
+PresentationExtends.hasBinaryRule
+PresentationExtends.hasStartRule
+PresentationExtends.derives
+PresentationExtends.stringDerives
+PresentationExtends.language_subset
+PresentationExtends.mem_language
+PresentationExtends.language_eq_of_mutual
+PresentationExtends.sound_after_extension
+```
+
+Paper correspondence:
+
+This verifies:
+
+```text
+P's typed nonterminals and typed rules are included in Q
+⇒ every P derivation is a Q derivation
+⇒ PresentationStringLanguage P ⊆ PresentationStringLanguage Q
+```
+
+This is useful for moving between a trimmed core presentation and a larger saturated/reachable presentation.
+
+---
+
 ## 3. Overall dependency chain
 
 Current import chain:
@@ -1121,6 +1690,36 @@ MainReachableTheorem
 CharacteristicSamplePackage
   ↓
 CharacteristicSampleBuilderSkeleton
+  ↓
+BlueprintFiniteSample
+  ↓
+FillingIdentityConstructionSkeleton
+  ↓
+NamedContextSplicingSkeleton
+  ↓
+BinaryRuleSplicingEvidence
+  ↓
+NamedContextSplicingConstructor
+  ↓
+SplicingMainTheorem
+  ↓
+SplicingMainDataMonotone
+  ↓
+SplicingCharacteristicPackage
+  ↓
+SplicingBlueprint
+  ↓
+SplicingBlueprintMainData
+  ↓
+SplicingBlueprintMainDataMonotone
+  ↓
+FinalReachableTheorem
+  ↓
+OutputTypeRefinementPresentation
+  ↓
+OutputTypePresentationLanguage
+  ↓
+OutputTypePresentationMonotone
 ```
 
 This linear chain is intentional. It keeps CI failures local and makes the experiment traceable.
@@ -1220,84 +1819,143 @@ ReachableCharacteristicBlueprint
 ⇒ main reachable identification theorem.
 ```
 
+
+### 4.11 Splicing-constructor reduction
+
+```text
+binary filling witnesses
+⇐ named-context splicing families
+⇐ binary-rule splicing evidence
+⇐ universal NamedContextSplicingConstructor
+```
+
+The remaining context-splicing construction is now isolated in one clean interface.
+
+### 4.12 Final reachable theorem names
+
+```text
+FinalReachableData
+⇒ final_reachable_identification
+⇒ final_reachable_prefix_exact
+⇒ final_reachable_exact_for_positive_superset
+```
+
+The reachable-model endpoint now has stable names suitable for paper/roadmap references.
+
+### 4.13 Finite typed presentation soundness
+
+```text
+PresentationDerives P X x
+⇒ OutputTypedDerives X x
+⇒ DerivesTuple G X.base x
+```
+
+and at string level:
+
+```text
+PresentationStringLanguage P ⊆ G.StringLanguage
+```
+
+### 4.14 Finite typed presentation monotonicity
+
+```text
+PresentationExtends P Q
+⇒ PresentationStringLanguage P ⊆ PresentationStringLanguage Q
+```
+
+This is verified for typed nonterminals, terminal rules, binary rules, and start rules.
+
+
 ---
 
 ## 5. What remains as explicit assumptions or skeleton fields?
 
 The main explicit assumptions/skeleton records are now:
 
-### 5.1 `LeftFillingIdentity` / `RightFillingIdentity`
+### 5.1 `NamedContextSplicingConstructor`
 
-These abstract the construction of child contexts from a parent context and a binary template.
+This is the cleanest remaining abstraction around filling identities.
 
-Need later:
-
-```text
-Concrete construction for named sentence contexts, including empty components and tie-order bookkeeping.
-```
-
-### 5.2 `SampleBinaryEvidence`
-
-This assumes the existence of filling-identity witnesses for binary sample witnesses.
-
-Need later:
+It currently assumes:
 
 ```text
-Derive this from concrete tuple occurrences and binary witnesses in sample words.
-```
-
-### 5.3 `CharacteristicSampleData`
-
-This packages the data that `CS(G̃₀) ⊆ K` should provide.
-
-Partly superseded by:
-
-```lean
-ReachableCharacteristicBlueprint
-ReachableCharacteristicPackage
+for every parent named context E and binary template ρ,
+there is a BinaryNamedContextSplicing E ρ
 ```
 
 Need later:
 
 ```text
-Construct these records from the actual presentation-relative characteristic sample.
+Concrete construction of the left and right child named contexts,
+including component order, empty components, and cast bookkeeping.
 ```
 
-### 5.4 `StartAnchorCanonical`
+This now supersedes the older direct focus on `LeftFillingIdentity` / `RightFillingIdentity`.
 
-This is now the preferred start-anchor bridge.
+---
+
+### 5.2 `ReachableSplicingBlueprint`
+
+This is now the preferred finite construction target.
 
 Need later:
 
 ```text
-Derive it from the actual start convention of CS(G̃₀), probably using an identity exposing context for the start.
-```
-
-### 5.5 `ReachableCharacteristicBlueprint`
-
-This is the new target for construction.
-
-Need later:
-
-```text
-Build its fields:
+Build its fields from the actual trimmed output-type presentation G̃₀ and CS(G̃₀):
   anchor
   expose
-  anchor_mem
-  terminal_mem
   terminal_type_eq
-  binary_mem
   binary_type_eq
-  binary_leftIdentity
-  binary_rightIdentity
-  start_mem
   start_type_eq
+  sample membership facts
   startWord
   start_arity
   start_anchor_eq
+  splicingConstructor
 ```
 
-### 5.6 Concrete learner equivalence
+---
+
+### 5.3 `FinalReachableData`
+
+This is the stable wrapper for the current reachable theorem.
+
+It is verified that:
+
+```text
+FinalReachableData
+⇒ final_reachable_identification
+⇒ final_reachable_prefix_exact
+```
+
+Need later:
+
+```text
+construct FinalReachableData from the actual finite characteristic sample.
+```
+
+---
+
+### 5.4 Finite output-type presentation completeness
+
+The presentation layer currently verifies soundness and monotonicity:
+
+```text
+PresentationStringLanguage P ⊆ G.StringLanguage
+PresentationExtends P Q ⇒ PresentationStringLanguage P ⊆ PresentationStringLanguage Q
+```
+
+Need later:
+
+```text
+conditions ensuring G.StringLanguage ⊆ PresentationStringLanguage P
+```
+
+Probably this should be packaged as a completeness/lift assumption first, then connected to `G^h` / `G̃₀`.
+
+---
+
+### 5.5 Concrete learner equivalence
 
 The current theorem is for:
 
@@ -1308,146 +1966,102 @@ ReachableSampleStringLanguage K obs f
 Need later:
 
 ```text
-Define the actual finite canonical learner grammar/relation and prove its language equals, or is equivalent to, the reachable model.
+Define the actual finite canonical learner grammar/relation and prove its language equals,
+or is at least extensionally equivalent to, ReachableSampleStringLanguage K obs f.
+```
+
+---
+
+### 5.6 Concrete characteristic sample construction
+
+Still not done:
+
+```text
+tuple occurrences in sample words
+binary witness segmentation
+presentation-relative CS(G̃₀)
+proof that CS(G̃₀) supplies the fields of ReachableSplicingBlueprint
 ```
 
 ---
 
 ## 6. Immediate next files
 
-Recommended next steps:
+Recommended next step:
 
-### 6.1 `BlueprintFiniteSample.lean`
+### 6.1 `OutputTypePresentationCompleteness.lean`
 
 Goal:
 
-Define a canonical finite sample associated to a blueprint.
+Package the missing completeness direction for a finite typed presentation.
 
-Possible content:
+Expected theorem shape:
 
 ```lean
-def ReachableCharacteristicBlueprint.sampleWords : Finset (Word α)
+PresentationCompleteFor G P
+⇒ G.StringLanguage ⊆ PresentationStringLanguage P
 ```
 
-or, more realistically, define a separate record that stores the finite set of words used by the blueprint and proves all membership fields.
-
-This may clarify how `CS(G̃₀)` is represented.
-
----
-
-### 6.2 `ExposingContextSkeleton.lean`
-
-Goal:
-
-Start isolating the construction of exposing contexts.
-
-Need ingredients:
-
-```text
-for each surviving typed nonterminal X:
-  anchor tuple ω(X)
-  named context χ(X)
-  namedFill χ(X) ω(X) ∈ L(G)
-```
-
-This is where the “trimmed” condition of `G̃₀` enters.
-
----
-
-### 6.3 `FillingIdentityConstructionSkeleton.lean`
-
-Goal:
-
-Reduce the abstraction around `LeftFillingIdentity` and `RightFillingIdentity`.
-
-Possible first theorem shape:
+and therefore, together with already verified soundness:
 
 ```lean
-Given a parent named context E and a binary template ρ,
-there exist child named contexts E_left and E_right satisfying
-LeftFillingIdentity and RightFillingIdentity.
+PresentationStringLanguage P = G.StringLanguage
 ```
 
-This will likely require more concrete definitions for template holes and component order.
+This should initially be an assumption/record interface, not the full construction of `G^h`.
 
 ---
 
-### 6.4 `OutputTypeRefinementGrammar.lean`
+### 6.2 `OutputTypeTrimmedPresentationSkeleton.lean`
 
 Goal:
 
-Construct the actual finite output-type refined grammar object.
+Represent a trimmed finite presentation `G̃₀`.
 
-Need ingredients:
+Possible fields:
 
 ```text
-typed nonterminals as base nonterminal + componentwise observation type
-typed terminal rules
-typed binary rules
-typed start rules
-erasure and lifting theorems
+presentation P
+productive witnesses / anchors
+reachable or exposing witnesses / contexts
+start coverage
+presentation completeness
 ```
 
-Some pieces already exist in `OutputTypeRefinement.lean` and `OutputTypeLift.lean`, but not yet as a finite `WorkingMCFG`.
+This should eventually connect the finite typed-presentation layer to `ReachableSplicingBlueprint`.
 
 ---
 
-### 6.5 `TrimmedRefinementSkeleton.lean`
+### 6.3 `NamedContextSplicingConstruction.lean`
 
 Goal:
 
-Represent surviving nonterminals of `G̃₀`.
+Start proving the actual `NamedContextSplicingConstructor`.
 
-Need ingredients:
+Expected first move:
 
 ```text
-reachable from start
-productive to terminal strings
-anchor tuple
-exposing context
+define raw operations for substituting a binary template into one hole
+construct left and right child contexts
+prove the corresponding namedFill equations
 ```
 
-This is likely prerequisite for constructing `ReachableCharacteristicBlueprint`.
+This is bookkeeping-heavy and should probably be split into several small files.
 
 ---
 
-### 6.6 `ConcreteTupleOccurrences.lean`
+### 6.4 `ConcreteCanonicalLearnerRelation.lean`
 
 Goal:
 
-Define concrete tuple occurrences in finite sample words.
-
-Need ingredients:
-
-```text
-intervals or cut positions
-named holes
-empty component bookkeeping
-binary witness segmentation
-induced template
-```
-
-This file is likely bookkeeping-heavy and should be done carefully.
-
----
-
-### 6.7 `ConcreteCanonicalLearner.lean`
-
-Goal:
-
-Define the actual finite learner object from a finite sample.
-
-Possible options:
-
-1. define it as an inductive relation generated by enumerated evidence;
-2. define an actual grammar object;
-3. prove equivalence between the grammar object and the inductive relation.
+Define the actual learner relation generated by enumerated sample evidence.
 
 Recommended order:
 
 ```text
-first relation,
-then grammar object later.
+1. relation first
+2. grammar object later
+3. prove equivalence with ReachableSampleStringLanguage
 ```
 
 ---
@@ -1456,30 +2070,20 @@ then grammar object later.
 
 ### Stage A: Reachable main theorem
 
-Status: essentially complete under blueprint/package assumptions.
+Status: verified under final blueprint/data assumptions.
 
-Files:
+Endpoint:
 
-```text
-FiniteTextCoverage.lean
-ReachableStartBridge.lean
-ReachableGoldTheorem.lean
-CharacteristicDataMonotone.lean
-StartAnchorCanonical.lean
-PrefixExactReconstruction.lean
-MainReachableTheorem.lean
-CharacteristicSamplePackage.lean
-CharacteristicSampleBuilderSkeleton.lean
+```lean
+final_reachable_identification
+final_reachable_prefix_exact
+final_reachable_exact_for_positive_superset
 ```
 
 Current theorem shape:
 
 ```lean
-ReachableCharacteristicBlueprint G S obs f
-+
-G.FanoutAtMost f
-+
-FixedNamedTupleSubstitutable f obs G.StringLanguage
+FinalReachableData G S obs f
 ⇒ reachable learner identifies G.StringLanguage from every positive text.
 ```
 
@@ -1487,30 +2091,49 @@ This stage is the strongest verified result so far.
 
 ---
 
-### Stage B: Construct the blueprint from `CS(G̃₀)`
+### Stage B: Presentation-level output-type refinement
 
-Files to create:
+Status: started.
+
+Verified:
 
 ```text
-OutputTypeRefinementGrammar.lean
-TrimmedRefinementSkeleton.lean
-ExposingContextSkeleton.lean
+finite typed presentation derivations erase to original grammar derivations
+presentation string language is sound
+presentation extension is monotone
+```
+
+Next target:
+
+```text
+presentation completeness interface
+trimmed presentation skeleton
+```
+
+---
+
+### Stage C: Construct the blueprint from `CS(G̃₀)`
+
+Files to create or continue:
+
+```text
+OutputTypePresentationCompleteness.lean
+OutputTypeTrimmedPresentationSkeleton.lean
 CharacteristicSampleConstruction.lean
-CharacteristicBlueprintTheorem.lean
+SplicingBlueprintFromPresentation.lean
 ```
 
 Target theorem shape:
 
 ```lean
-CS(G̃₀) constructed from the trimmed output-type refinement
-⇒ ReachableCharacteristicBlueprint G CS obs f
+CS(G̃₀) constructed from the trimmed output-type presentation
+⇒ ReachableSplicingBlueprint G CS obs f
+⇒ FinalReachableData G CS obs f
 ```
-
-This is the main remaining completeness-construction work.
 
 ---
 
-### Stage C: Concrete learner equivalence
+### Stage D: Concrete learner equivalence
 
 Files to create:
 
@@ -1533,7 +2156,7 @@ or a pair of inclusions if equality is too strict at first.
 
 ---
 
-### Stage D: Polynomial bound
+### Stage E: Polynomial bound
 
 Files to create:
 
@@ -1554,7 +2177,7 @@ This may remain partially informal unless a complexity framework is introduced.
 
 ---
 
-### Stage E: Boundary results
+### Stage F: Boundary results
 
 Files to create:
 
@@ -1582,6 +2205,7 @@ These are mathematically separate from the learner construction and can be forma
 
 ```text
 typed observation algebra
+output-type local invariants
 distributional equivalence lemmas
 witnessed composition semantic core
 sample-level soundness
@@ -1589,18 +2213,21 @@ completeness induction skeleton
 finite text coverage
 reachable exact reconstruction
 reachable Gold identification
-blueprint/package/main-theorem plumbing
+splicing/blueprint/main theorem plumbing
+FinalReachableData endpoint
+finite typed-presentation soundness
+finite typed-presentation monotonicity
 ```
 
 ### Verified but intentionally abstract
 
 ```text
-filling identities
+universal named-context splicing constructor
 sample binary evidence
-characteristic sample data
 start-anchor canonical bridge
-reachable characteristic blueprint
+reachable splicing blueprint
 reachable sample language model
+finite typed-presentation completeness
 ```
 
 ### Not yet verified
@@ -1608,8 +2235,9 @@ reachable sample language model
 ```text
 actual concrete learner enumeration
 actual characteristic sample construction
-trimmed output-type refinement as finite grammar
-concrete filling-identity construction
+trimmed output-type refinement as finite presentation/grammar
+concrete named-context splicing construction
+concrete filling-identity construction as a theorem
 polynomial bound
 boundary examples and non-identifiability
 ```
@@ -1650,44 +2278,43 @@ Keep each new file small and CI-confirmed.
 
 ## 10. Current recommended next command
 
-After adding the current latest file, the useful CI/local command is:
+After the latest confirmed file, the useful CI/local command is:
 
 ```bash
-lake build LeanCfgProject.MCFG.CharacteristicSampleBuilderSkeleton
+lake build LeanCfgProject.MCFG.OutputTypePresentationMonotone
 ```
 
 Next proposed file:
 
 ```text
-BlueprintFiniteSample.lean
+OutputTypePresentationCompleteness.lean
 ```
 
 Expected purpose:
 
 ```text
-start making the blueprint construction more concrete by separating
-the finite set of characteristic words from the proofs that those words
-supply anchor, terminal, binary, and start witnesses.
+package the assumption that a finite typed presentation is complete for G,
+then prove PresentationStringLanguage P = G.StringLanguage from completeness + soundness.
 ```
 
 Alternative next file:
 
 ```text
-FillingIdentityConstructionSkeleton.lean
+OutputTypeTrimmedPresentationSkeleton.lean
 ```
 
 Expected purpose:
 
 ```text
-start reducing the remaining abstraction around LeftFillingIdentity and
-RightFillingIdentity.
+start representing the trimmed output-type presentation G̃₀,
+with anchors/productivity/exposing-context data separated from global assumptions.
 ```
 
 Recommended order:
 
 ```text
-1. BlueprintFiniteSample.lean
-2. FillingIdentityConstructionSkeleton.lean
-3. OutputTypeRefinementGrammar.lean
-4. TrimmedRefinementSkeleton.lean
+1. OutputTypePresentationCompleteness.lean
+2. OutputTypeTrimmedPresentationSkeleton.lean
+3. NamedContextSplicingConstruction.lean
+4. SplicingBlueprintFromPresentation.lean
 ```
