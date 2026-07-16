@@ -2,8 +2,8 @@
 
 Lean formalization log and roadmap for the MCFG fixed finite-observation paper.
 
-Last updated: 2026-07-11  
-Current confirmed CI point: Lean CI #634, commit `168022f`, pushed by `growupkuriyama-hub`.
+Last updated: 2026-07-16  
+Current confirmed CI point: Lean CI #674, commit `94d1590`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -23,13 +23,19 @@ The previous zip contained many useful experimental files from an earlier paper 
 4. separate what is fully Lean-verified from what is currently an explicit skeleton/bridge assumption;
 5. reuse old files only as design references or for small ideas, not as opaque trusted infrastructure.
 
-At the current stage, the development has a verified reachable-model main theorem, a scaffolded trimmed-presentation / characteristic-sample route, a paper-facing existential theorem, and a stable constructive paper-facing facade.  The major named-context splicing obligation has now been solved for the paper's exact-once working grammars by an explicit Lean construction.  The unrestricted universal `NamedContextSplicingConstructor` was shown to be false in general, and the corrected exact-once constructor has been connected through characteristic samples, prefix-exact reconstruction, and Gold identification.  The development is still not the fully concrete canonical learner theorem from the paper: the main remaining obligations are the concrete construction of the complete finite output-type presentation and its productive/reachable trim, extraction of successful occurrence/representative data from that construction, exact language equivalence for the concrete presentation grammar, and equivalence with the fully enumerated canonical learner.
+At the current stage, the positive-learning route is no longer merely a reachable-model or presentation-level scaffold.  The development now constructs the full finite output-type presentation from `G` and `obs`, proves exact language equivalence for its concrete working grammar, builds the successful typed trim and extracts successful occurrences, constructs a typed-indexed finite characteristic sample, explicitly enumerates finite tuple occurrences, unit rules, exact-once binary witnesses, and a target-independent concrete canonical learner, and proves exact reconstruction and Gold identification for that finite learner.  The final CI-confirmed class theorem states that one corrected concrete learner identifies every language represented by a finite exact working MCFG satisfying semantic start-rooted normality, the fixed fan-out bound, and the fixed-observation substitutability promise.  The main remaining work is no longer the positive-learning existence theorem; it is executable/complexity refinement, removal or normalization of the start-rooted assumption if desired, and the paper's boundary and non-identifiability results.
 
 The CI-confirmed phase from CI #583 to CI #603 did not pretend to discharge those remaining mathematical construction obligations.  Instead, it reorganized them into clean construction layers and then wrapped them in stable final names suitable for the paper and blueprint.
 
 The phase from CI #603 to CI #620 decomposed the preferred anchor-common route down to an explicit all-pieces checklist and opened the splicing obligation down to concrete child-context functions and `namedFill` equations.  The CI #621--#624 phase then crossed the important line from interface decomposition to actual construction: it proved that the old unrestricted constructor is not inhabitable, built explicit left/right named contexts under exact-once linearity, integrated the resulting filling witnesses into the reachable theorem chain, removed unnecessary common-transport assumptions from a minimal route, and connected the existing exposing-transport route to the concrete exact-once splicing construction.
 
 The CI #625--#634 phase moved beyond the exposing-transport interface.  It replaced the unconditional transport assumption by the paper-faithful derivational-exposure invariant, constructed that invariant from explicit successful derivation spines and successful occurrences, used those occurrences to build the witness component of a trimmed typed presentation, descended to base-nonterminal representatives and pre-core data, derived rule-output compatibility from actual typed-rule realizations and then from canonical typed-rule closure, and finally converted every finite output-type presentation into an actual `WorkingMCFG` with a fresh start symbol.  Presentation derivations now embed into this concrete grammar, and exact working conditions and fan-out bounds are preserved.
+
+The CI #635--#651 phase closes the concrete positive-learning route.  It proves the converse derivation translation and exact presentation-grammar language equality; constructs the full finite output-type refinement and its successful trim directly from `G` and `obs`; replaces the incompatible one-representative-per-base route by a typed-indexed characteristic sample; enumerates finite tuple occurrences, contexts, unit rules, exact-once template tuples, and binary witnesses; proves completeness of those enumerations with a corrected binary-template bound; defines an exact-once reachable relation and a corrected finite concrete learner and proves them equivalent; transfers exact reconstruction and Gold identification to the concrete learner; packages the result for an entire language class; selects finite characteristic samples and stabilization stages; and weakens syntactic `StartSeparated` to semantic `StartRootedNormal`.
+
+The CI #652--#665 phase turns that qualitative concrete learner into an explicit finite hypothesis pipeline and then into an actual `WorkingMCFG`-valued learner.  It proves cardinality bounds for every brute-force finite enumerator, eliminates the sample alphabet in favor of sample length, compresses the bounds to one common power and then to a paper-facing quadratic exponent, packages the dependent unit/binary rule codes as an actual finite hypothesis object, proves its language equal to the corrected learner and exact reachable semantics, gives rule-level simulations under sample extension, and organizes prefix hypotheses as a coherent directed system.  It then identifies a genuine empty-alphabet obstruction for the present `WorkingMCFG` syntax, constructs a finite control/cut saturation, compiles the finite object into an actual working grammar, proves both-direction derivation translation and exact language equality, characterizes the exact compilation domain, and finally proves class-level Gold identification for a learner whose outputs are actual finite `WorkingMCFG` objects whenever the terminal alphabet is nonempty.
+
+The CI #666--#674 phase quantifies and classifies those actual grammar outputs.  It proves exact formulas and quadratic upper bounds for the compiler's control nodes, saturated cut rules, total grammar-rule count, nonterminal enumeration, and complete top-level presentation item count.  It then formalizes the precise structural boundary: the outputs preserve start/terminal typing and bounded fan-out, but nonempty-sample outputs provably fail the paper's nondeleting and exact-working conditions because constant control rules erase dummy children.  On the positive side, it defines the correct cut-compiled representation class, proves that every start-rooted target has an exact finite grammar representation obtained from a finite positive characteristic sample, stratifies those representations by sample-length budget, and introduces minimum representation, exact-output, and characteristic-sample ranks.  Finally it formalizes semantic mind changes along texts, proves that every language change strictly increases the observed prefix-sample cardinality, and proves stabilization with no later language changes after coverage of a minimum-budget characteristic sample.
 
 ---
 
@@ -183,40 +189,260 @@ CharacteristicSampleExactOnceSuccessfulPresentationRoute.lean ✅
 CharacteristicSampleExactOnceSuccessfulRuleRealizationRoute.lean ✅
 CharacteristicSampleExactOnceCanonicalRuleClosureRoute.lean ✅
 OutputTypePresentationWorkingGrammar.lean ✅
+OutputTypePresentationWorkingGrammarEquivalence.lean ✅
+ConcreteOutputTypeRefinementPresentation.lean ✅
+StartSeparatedOutputTypeRefinementCompleteness.lean ✅
+ConcreteTrimmedSuccessfulPresentation.lean ✅
+ConcreteReducedRepresentativeSelection.lean ✅
+ConcreteObservationDeterministicClosure.lean ✅
+ConcreteTypedCharacteristicSample.lean ✅
+TupleOccurrences.lean ✅
+BinaryWitnesses.lean ✅
+ConcreteCanonicalLearner.lean ✅
+TupleOccurrenceEnumerationCompleteness.lean ✅
+NamedFillEnumerationBounds.lean ✅
+BinaryWitnessEnumerationCompleteness.lean ✅
+ExactConcreteCanonicalLearnerEquivalence.lean ✅
+ConcreteCanonicalLearnerIdentification.lean ✅
+ConcreteCanonicalLearnerClassTheorem.lean ✅
+ConcreteCanonicalLearnerStabilization.lean ✅
+StartRootedConcreteCanonicalLearnerIdentification.lean ✅
+StartRootedConcreteCanonicalLearnerClassTheorem.lean ✅
+ConcreteCanonicalLearnerFiniteEnumerationBounds.lean ✅
+ConcreteCanonicalLearnerLengthOnlyBounds.lean ✅
+ConcreteCanonicalLearnerSinglePowerBounds.lean ✅
+ConcreteCanonicalLearnerPolynomialExponentBounds.lean ✅
+ConcreteCanonicalLearnerFiniteHypothesis.lean ✅
+ConcreteCanonicalLearnerFiniteHypothesisSize.lean ✅
+ConcreteCanonicalLearnerFiniteObjectIdentification.lean ✅
+ConcreteCanonicalLearnerFiniteObjectMonotone.lean ✅
+ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObstruction.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarConstruction.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarIdentification.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarSize.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean ✅
 ```
 
 All files marked ✅ above are user-confirmed as passed.  The latest named CI/commit explicitly recorded in this document is:
 
 ```text
-Lean CI #634
-Commit: 168022f
+Lean CI #674
+Commit: 94d1590
 ```
 
-`OutputTypePresentationWorkingGrammar.lean` is now confirmed passed.
+`ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean` is now confirmed passed at Lean CI #674.  The verified chain listed above contains 186 CI-confirmed files.
 
 The current state is best described as:
 
 ```text
-reachable main theorem: stabilized under FinalReachableData
+reachable-model soundness/completeness and Gold logic: complete
 exact-once named-context splicing: concretely constructed and CI-confirmed
-unrestricted universal splicing constructor: formally refuted and absent from the corrected route
-unconditional exposing transport: no longer needed by the strongest corrected route
-derivational exposure: constructed from explicit successful derivation spines and occurrences
-trimmed witness layer: constructed from successful typed occurrences
-typed-to-base pre-core layer: constructed from representative selection and rule compatibility
-rule compatibility: derived from actual typed-rule realization and canonical typed-rule closure
-finite positive characteristic sample: constructed from the successful-presentation package
-current strongest identification endpoint:
-  trimmed_successful_canonical_rule_closure_exact_working_conclusion_package
-concrete presentation grammar:
-  OutputTypeRefinementPresentation.toWorkingMCFG
-presentation derivations embed into the concrete WorkingMCFG
-exact working conditions and fan-out bounds transfer to the concrete WorkingMCFG
-actual finite complete G^h / trimmed G̃₀ construction from G and h: still not complete
-successful occurrence family and representative/canonical-closure existence: still construction obligations
-concrete canonical learner enumeration: still not yet formalized
+unrestricted universal splicing constructor: formally refuted
+finite full output-type presentation G^h from G and obs: constructed
+presentation WorkingMCFG language equivalence: proved in both directions
+successful typed trim and typed characteristic sample: constructed
+finite tuple/context/unit/exact-binary enumeration and completeness: proved
+corrected finite concrete canonical learner: constructed and equivalent to exact reachable semantics
+uniform start-rooted language-class theorem: proved
+actual dependent finite hypothesis object: constructed
+actual finite hypothesis language = corrected learner = exact reachable language: proved
+actual finite hypothesis rule count: explicitly bounded
+sample-extension rule simulations and finite-object language monotonicity: proved
+prefix finite hypotheses form a coherent directed system: proved
+unconditional compilation into present WorkingMCFG syntax: formally shown false over the empty alphabet with sample {ε}
+exact compilation domain: sample empty or terminal alphabet nonempty
+finite control/cut saturation compiler to an actual WorkingMCFG: constructed
+compiled WorkingMCFG language = finite-object language: proved in both directions
+actual WorkingMCFG-valued learner: constructed for Nonempty α
+actual WorkingMCFG-valued learner identifies the start-rooted target class: proved
+compiled grammar control/cut cardinality and actual rule count: explicitly bounded
+all compiled nonterminals: explicitly enumerated
+nonterminal-plus-rule presentation item count: explicitly bounded
+preserved output conditions: start/terminal typing and fan-out max 1 f
+nondeleting/exact-working output condition for nonempty samples: formally refuted
+cut-compiled representation class and exact target representations: constructed
+bounded representation hierarchy: constructed and monotone
+minimum bounded-representation rank: defined and attained
+minimum exact-output rank: defined and attained
+minimum characteristic-sample rank: defined and attained
+rank chain representation ≤ exact-output ≤ characteristic ≤ selected-sample length: proved
+semantic language mind changes: bounded by observed prefix-sample cardinality
+minimum-characteristic-sample coverage implies permanent target exactness and no later mind changes
+current strongest identification/rank endpoint:
+  correctedConcreteWorkingGrammarLearner_identification_characteristicRank_package
+current strongest mind-change endpoint:
+  correctedConcreteWorkingGrammarLearner_class_mindChange_package
+current strongest size endpoint:
+  correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
 ```
 
+Most important progress since CI #665:
+
+```text
+ConcreteCanonicalLearnerWorkingGrammarSize.lean counted the actual compiled grammar rules, proving
+  controlCodes.card ≤ K.card + 3 * sourceRuleCount,
+  cutPairs.card ≤ controlCodes.card²,
+and the structural bound
+  grammarRuleCount ≤ (K.card + 3 * sourceRuleCount + 2)².
+It then substituted the paper-facing source-rule bound into an explicit actual-grammar rule bound.
+ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean explicitly enumerated every compiled nonterminal, proved the enumeration length is controlCodes.card + 2, and bounded the complete nonterminal-plus-rule presentation item count by
+  (K.card + 3 * sourceRuleCount + 3)²,
+with a fully expanded sample-length-only bound.
+ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean proved bounded fan-out and start/terminal typing for every output and introduced CutCompiledConditions.  It also proved that every nonempty-sample output fails BinaryRulesNondeleting, BasicWorkingConditions, and ExactWorkingConditions because constant rules erase both dummy children.
+ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean defined the cut-compiled representation class and proved every start-rooted target has an exact actual finite WorkingMCFG representation obtained from a finite positive characteristic sample, together with all size bounds.
+ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean stratified exact representations by sample-length budget, proved bound monotonicity and hierarchy monotonicity, and placed every target at some finite level.
+ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean defined the minimum bounded-representation rank and minimum exact learner-output rank, proved both minima are attained, and proved representation rank ≤ exact-output rank.
+ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean defined the minimum characteristic-sample rank, proved it is attained, and established
+  representation rank ≤ exact-output rank ≤ characteristic rank ≤ selected characteristic-sample length.
+ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean defined semantic prefix hypotheses and language mind changes, proved every semantic change strictly increases prefix-sample cardinality, bounded finite-prefix mind changes by the number of distinct observed words, selected a minimum-budget characteristic sample, and proved permanent target exactness and constant cumulative mind-change count after its coverage stage.
+```
+
+Most important progress since CI #651:
+
+```text
+ConcreteCanonicalLearnerFiniteEnumerationBounds.lean proved cardinality bounds for the actual word, context, tuple-occurrence, unit-rule, exact-template, and binary-witness enumerators.
+ConcreteCanonicalLearnerLengthOnlyBounds.lean eliminated the sample-alphabet cardinality in favor of sampleLengthBudget.
+ConcreteCanonicalLearnerSinglePowerBounds.lean absorbed all finite families into one common base and exponent.
+ConcreteCanonicalLearnerPolynomialExponentBounds.lean expanded the exponent and proved the paper-facing bound
+  (4 * (sampleLengthBudget K + f + 1)) ^
+    (64 * (sampleLengthBudget K + f + 1)^2).
+ConcreteCanonicalLearnerFiniteHypothesis.lean packaged dependent unit and binary rule codes into an actual finite hypothesis object and proved its listed semantics equivalent to the corrected concrete and exact reachable semantics.
+ConcreteCanonicalLearnerFiniteHypothesisSize.lean applied the quantitative bound to the ruleCount of the actual finite hypothesis object.
+ConcreteCanonicalLearnerFiniteObjectIdentification.lean made the finite object the learner output type and transferred characteristic samples and class-level Gold identification.
+ConcreteCanonicalLearnerFiniteObjectMonotone.lean constructed rule-level sample-extension transports and structurally transported listed derivations.
+ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean added identity, composition, and prefix-directed-system coherence for finite hypothesis simulations.
+ConcreteCanonicalLearnerWorkingGrammarObstruction.lean proved that every nonempty WorkingMCFG language forces Nonempty α, and exhibited the empty-alphabet sample {ε} as a counterexample to unconditional compilation.
+ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean normalized listed derivations using a finite control set and finite saturated cut relation.
+ConcreteCanonicalLearnerWorkingGrammarConstruction.lean compiled finite controls, corrected binary rules, cut pairs, and sample starts into an actual finite WorkingMCFG and proved the forward language inclusion.
+ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean inverted every compiled grammar derivation, proved exact language equality, and characterized realizability by K = ∅ ∨ Nonempty α.
+ConcreteCanonicalLearnerWorkingGrammarIdentification.lean made actual compiled WorkingMCFG objects the learner outputs and proved consistency, monotonicity, characteristic samples, start-rooted class identification, selected-stage exactness, and retained source-rule bounds.
+```
+
+Most important progress since CI #634:
+
+```text
+OutputTypePresentationWorkingGrammarEquivalence.lean proved the reverse derivation translation and exact language equality between a finite typed presentation and its concrete WorkingMCFG.
+ConcreteOutputTypeRefinementPresentation.lean constructed the full finite output-type presentation from finite N, finite M, G, and obs.
+StartSeparatedOutputTypeRefinementCompleteness.lean replaced an opaque semantic completeness premise by a local syntactic start-separation criterion.
+ConcreteTrimmedSuccessfulPresentation.lean defined the successful typed trim by Finset.filter, proved language preservation, and extracted the successful occurrence family automatically.
+ConcreteReducedRepresentativeSelection.lean formalized reducedness and representative selection and isolated the parent-output coherence obstruction of the one-base-representative route.
+ConcreteObservationDeterministicClosure.lean closed that base-indexed route under the precise TupleTypeDeterministic assumption.
+ConcreteTypedCharacteristicSample.lean removed TupleTypeDeterministic and all base representatives by indexing anchors directly by successful typed nonterminals; it proved exact reconstruction and Gold identification for the reachable semantics.
+TupleOccurrences.lean and BinaryWitnesses.lean constructed finite sample-dependent enumerations of words, tuples, named contexts, unit rules, exact-once templates, and binary witnesses.
+ConcreteCanonicalLearner.lean assembled the first target-independent finite-rule learner and proved its sound inclusion into reachable semantics.
+TupleOccurrenceEnumerationCompleteness.lean and NamedFillEnumerationBounds.lean proved completeness of the word/context/tuple/unit-rule enumeration and removed all manually supplied bounds.
+BinaryWitnessEnumerationCompleteness.lean corrected the binary template budget to sampleLengthBudget K + dB + dC and proved exact-once binary enumeration completeness.
+ExactConcreteCanonicalLearnerEquivalence.lean defined ExactSampleLearnerReachable and proved two-way equivalence with the corrected finite concrete learner.
+ConcreteCanonicalLearnerIdentification.lean transferred the typed characteristic-sample reconstruction to the corrected finite learner and proved exact reconstruction, positive-superset exactness, prefix exactness, and Gold identification.
+ConcreteCanonicalLearnerClassTheorem.lean proved that one target-independent learner identifies the whole represented language class and supplies finite characteristic samples/tell-tales.
+ConcreteCanonicalLearnerStabilization.lean selected a characteristic sample and a concrete coverage/stabilization stage for every target text.
+StartRootedConcreteCanonicalLearnerIdentification.lean weakened StartSeparated to semantic StartRootedNormal throughout the grammar-level theorem.
+StartRootedConcreteCanonicalLearnerClassTheorem.lean lifted the weaker condition to a uniform class theorem and proved inclusion of the old syntactic class into the new semantic class.
+```
+
+Current strongest constructive route:
+
+```text
+finite N and finite observation monoid M
++
+G.ExactWorkingConditions
++
+G.StartRootedNormal
++
+G.FanoutAtMost f
++
+FixedNamedTupleSubstitutable f obs G.StringLanguage
+⇒ full finite typed output presentation
+⇒ successful typed trim and concrete typed characteristic sample
+⇒ corrected finite exact-once canonical learner
+⇒ actual dependent finite hypothesis object
+⇒ explicit source-rule cardinality bound
+⇒ finite control/cut saturation
+⇒ actual finite WorkingMCFG compilation, assuming Nonempty α
+⇒ exact grammar-language equivalence
+⇒ exact reconstruction on every positive finite superset
+⇒ eventual prefix exactness on every positive text
+⇒ Gold identification by one target-independent WorkingMCFG-valued learner.
+```
+
+Stable finite-rule endpoint:
+
+```lean
+correctedConcreteFiniteObjectLearner_class_size_semantic_package
+```
+
+Stable actual-grammar endpoints:
+
+```lean
+correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+workingGrammarRealization_iff_emptySample_or_nonemptyAlphabet
+correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
+correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
+correctedConcreteWorkingGrammarLearner_class_structuralBoundary_package
+correctedConcreteWorkingGrammarLearner_targetRepresentation_package
+correctedConcreteWorkingGrammarLearner_identification_boundedRepresentation_package
+correctedConcreteWorkingGrammarLearner_identification_characteristicRank_package
+correctedConcreteWorkingGrammarLearner_class_mindChange_package
+```
+
+Current actual-grammar quantitative endpoints include:
+
+```lean
+grammarRuleCount ≤
+  (K.card + 3 * sourceRuleCount + 2) ^ 2
+
+presentationItemCount ≤
+  (K.card + 3 * sourceRuleCount + 3) ^ 2
+
+mindChangeCount T N ≤
+  (T.prefixSample N).card
+```
+
+The fully expanded presentation-item bound is:
+
+```lean
+presentationItemCount ≤
+  (sampleLengthBudget K +
+      3 *
+        ((4 * (sampleLengthBudget K + f + 1)) ^
+          (64 *
+            (sampleLengthBudget K + f + 1) *
+            (sampleLengthBudget K + f + 1))) +
+      4) ^ 2.
+```
+
+Current progress estimate:
+
+```text
+logical theorem plumbing and reachable-model reasoning: complete
+exact-once splicing, full presentation, successful trim, and typed characteristic sample: complete
+finite corrected canonical learner and exact semantic equivalence: complete
+actual finite hypothesis object and structural sample-extension simulation: complete
+actual WorkingMCFG compilation and reverse equivalence: complete on the exact domain
+actual grammar rule-count, nonterminal-count, and top-level presentation-item bounds: complete
+output structural boundary, including formal failure of nondeleting/exact-working conditions: complete
+finite representation hierarchy and minimum representation/exact-output/characteristic ranks: complete
+semantic mind-change counting and eventual no-change stabilization: complete
+qualitative positive-learning theorem for the stated class: complete
+encoded symbol/bit description-size analysis: open
+executable polynomial learner implementation: about 60--70%
+whole paper including observation design and boundary/non-identifiability results: about 68--72%
+```
+
+The principal remaining work is now executable coding, replacement of
+brute-force bounded-word enumeration by sample factorization, encoded
+description-size and running-time bounds, a stricter language-preserving output
+normalization if paper-side exact-working hypotheses are required, optional
+start normalization, and the negative/boundary half of the paper.
 
 Most important progress since CI #624:
 
@@ -234,7 +460,7 @@ CharacteristicSampleExactOnceCanonicalRuleClosureRoute.lean removed arbitrary ty
 OutputTypePresentationWorkingGrammar.lean converted an OutputTypeRefinementPresentation into an actual WorkingMCFG with a fresh start symbol, embedded presentation derivations, and transferred exact working conditions and fan-out bounds.
 ```
 
-Current strongest corrected identification route:
+Historical CI #634 strongest corrected identification route:
 
 ```text
 complete finite typed presentation
@@ -256,7 +482,7 @@ fixed-observation tuple substitutability
 ⇒ reachable Gold identification.
 ```
 
-Stable endpoint:
+Historical CI #634 endpoint:
 
 ```lean
 trimmed_successful_canonical_rule_closure_exact_working_conclusion_package
@@ -426,7 +652,7 @@ preferred anchor-common all-pieces checklist
 splicing decomposition to context functions and namedFill equations.
 ```
 
-Current strongest paper-facing constructive endpoint:
+Historical paper-facing constructive endpoint at that phase:
 
 ```lean
 trimmed_paper_constructive_main_theorem
@@ -469,7 +695,7 @@ CharacteristicSampleExistentialPaperTheorem.lean reached the current paper-level
   ⇒ ∃ f, reachable learner at f identifies the target language.
 ```
 
-Current best theorem-facing endpoint:
+Historical best theorem-facing endpoint at that phase:
 
 ```lean
 trimmed_paper_constructive_main_theorem
@@ -491,7 +717,7 @@ the reachable learner using obs and f identifies G.StringLanguage
 from every positive text.
 ```
 
-Current strongest corrected endpoint:
+Historical corrected endpoint at that phase:
 
 ```lean
 trimmed_successful_canonical_rule_closure_exact_working_conclusion_package
@@ -569,22 +795,22 @@ CharacteristicSampleExposingAsCommonContext.lean and CharacteristicSampleTranspo
 CharacteristicSampleAnchorCommonContextFinal.lean gave the common-context route its final theorem wrapper.
 ```
 
-What has **not** yet been fully formalized:
+What remains after the CI #651 positive-learning completion:
 
 ```text
-actual finite enumeration/construction of the complete output-type presentation G^h from G and obs
-construction of the reachable/productive trimmed core G̃₀ from that full presentation
-automatic extraction of one successful typed occurrence for every present typed nonterminal
-automatic choice/existence of one compatible present typed representative for every base nonterminal
-proof that the concrete presentation WorkingMCFG has no extra derivations beyond the presentation relation
-language equality between OutputTypeRefinementPresentation.toWorkingMCFG and PresentationStringLanguage
-concrete finite canonical learner enumeration
-explicit tuple-occurrence and binary-witness enumeration
-equivalence between the reachable learner language and the fully enumerated canonical learner object
-polynomial-time construction bound
+executable decidable coding for the currently noncomputable finite objects
+replacement of all-bounded-word enumeration by polynomial sample factorization
+cardinality, running-time, hypothesis-size, and mind-change bounds
+optional normalization removing the semantic StartRootedNormal condition
+bounded observation-family product compilation
+observation-design complexity
 no-advice non-identifiability
 copy-language / member-kernel exclusion
 ```
+
+The previously listed full-presentation, successful-trim, occurrence-extraction,
+concrete-grammar-equivalence, tuple/binary enumeration, and concrete-learner
+equivalence tasks are now CI-confirmed.
 
 ---
 
@@ -5337,6 +5563,1031 @@ grammar.  A converse erasure theorem for arbitrary derivations of
 ---
 
 
+
+### 2.146 `OutputTypePresentationWorkingGrammarEquivalence.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Prove the converse translation from derivations of the concrete presentation
+`WorkingMCFG` back to presentation derivations.
+
+Main verified results:
+
+```lean
+presentationStringLanguage_workingGrammar_eq
+CompleteOutputTypePresentation.workingGrammar_stringLanguage_eq_original
+```
+
+This closes the previously missing reverse inclusion and proves exact language
+equality for the concrete presentation grammar.
+
+---
+
+### 2.147 `ConcreteOutputTypeRefinementPresentation.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Construct the full finite output-type presentation directly from finite `N`,
+finite observation monoid `M`, `G`, and `obs`.
+
+Main contents:
+
+```text
+all typed nonterminals of compatible arity
+all canonical typed terminal rules
+all canonical typed binary rules
+all canonical typed start rules
+finite presentation and completeness for the start-rooted language
+```
+
+This eliminates the former external `CompleteOutputTypePresentation` premise at
+the full-presentation level.
+
+---
+
+### 2.148 `StartSeparatedOutputTypeRefinementCompleteness.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Introduce the syntactic condition `WorkingMCFG.StartSeparated` and prove that it
+implies ordinary string derivations are start-rooted.
+
+Main results:
+
+```lean
+stringLanguage_subset_startRooted_of_startSeparated
+concreteCompleteOutputTypePresentation_of_startSeparated
+concreteWorkingGrammar_stringLanguage_eq_original_of_startSeparated
+```
+
+---
+
+### 2.149 `ConcreteTrimmedSuccessfulPresentation.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Construct the successful typed trim by finite filtering rather than assuming a
+trimmed presentation.
+
+Main contents:
+
+```lean
+TypedNonterminal.HasSuccessfulOccurrence
+ConcreteSuccessfulOutputTypeRefinement.presentation
+StartFreeDerives.toConcreteSuccessfulPresentation
+concreteSuccessfulPresentation_stringLanguage_eq_original
+concreteTypedSuccessfulOccurrenceFamily
+concreteSuccessfulOccurrenceCompletePresentation
+```
+
+This automatically extracts the successful occurrence family from trim
+membership.
+
+---
+
+### 2.150 `ConcreteReducedRepresentativeSelection.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Formalize productive/reachable reducedness, successful occurrences, and
+base-representative selection.
+
+Main contents:
+
+```lean
+WorkingMCFG.SuccessfullyReduced
+occurrence_iff_derives_and_spine
+concreteReducedBaseRepresentativeSelection
+```
+
+The file also isolates the genuine obstruction to a single representative per
+base nonterminal: parent output types need not be coherent when one base derives
+several observation types.
+
+---
+
+### 2.151 `ConcreteObservationDeterministicClosure.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Close the base-indexed representative route under the precise semantic
+condition `WorkingMCFG.TupleTypeDeterministic`.
+
+Main endpoint:
+
+```lean
+concreteObservationDeterministic_paper_conclusion_package
+```
+
+This is a valid special case, but it is superseded for the general theorem by
+the typed-indexed route.
+
+---
+
+### 2.152 `ConcreteTypedCharacteristicSample.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Construct the characteristic sample directly over successful typed
+nonterminals, avoiding base representatives and tuple-type determinism.
+
+Main contents:
+
+```lean
+typedAnchorSample
+typedTerminalSample
+typedBinarySample
+typedStartSample
+typedCharacteristicSample
+typedCharacteristicSample_positive
+presentationDerives_reachable_from_typed_anchor
+typedCharacteristicSample_exact_reconstruction
+concreteTypedCharacteristicSample_identifies_from_positive_text
+```
+
+---
+
+### 2.153 `TupleOccurrences.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Construct finite sample-dependent enumerations of bounded words, tuples, named
+contexts, tuple occurrences, and unit-rule pairs.
+
+Main contents:
+
+```lean
+finiteWordsUpTo
+sampleAlphabet
+finiteTupleCodes
+namedContextCandidates
+tupleOccurrences
+concreteUnitRules
+sampleUnitEvidenceOfConcreteRule
+```
+
+---
+
+### 2.154 `BinaryWitnesses.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Enumerate finite exact-once template tuples and sample binary witnesses.
+
+Main contents:
+
+```lean
+finiteExactTemplateTupleCodesUpTo
+FiniteBinaryWitnessCandidate
+concreteBinaryWitnesses
+sampleBinaryEvidenceOfConcreteWitness
+```
+
+---
+
+### 2.155 `ConcreteCanonicalLearner.lean`
+
+Status: CI passed / user-confirmed at Lean CI #643, commit `ef81a10`.
+
+Purpose:
+
+Assemble finite unit and binary rule sets into a target-independent concrete
+learner.
+
+Main contents:
+
+```lean
+ConcreteCanonicalLearnerDerives
+ConcreteCanonicalStringDerives
+ConcreteCanonicalLearnerLanguage
+concreteCanonicalLearner
+```
+
+Verified here:
+
+```lean
+ConcreteCanonicalLearnerLanguage K obs f
+  ⊆ ReachableSampleStringLanguage K obs f
+```
+
+---
+
+### 2.156 `TupleOccurrenceEnumerationCompleteness.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Prove completeness of fixed-length list, bounded-word, tuple-code,
+named-context, tuple-occurrence, and bounded unit-rule enumeration.
+
+Main endpoint:
+
+```lean
+concreteUnitRuleOfEvidenceUpTo
+```
+
+---
+
+### 2.157 `NamedFillEnumerationBounds.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Derive all default occurrence bounds automatically from `namedFill` membership
+in the finite sample.
+
+Main results:
+
+```lean
+wellFormed_holes_length
+namedFill_chunk_mem_sampleBoundedWords
+namedFill_component_mem_sampleBoundedWords
+concreteUnitRuleOfEvidence
+concreteCanonicalLearnerDerives_unit_of_evidence
+```
+
+---
+
+### 2.158 `BinaryWitnessEnumerationCompleteness.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Correct the finite binary-template bound and prove exact-once binary witness
+enumeration completeness.
+
+Corrected bound:
+
+```lean
+sampleLengthBudget K + dB + dC
+```
+
+Main endpoint:
+
+```lean
+correctedConcreteBinaryRuleOfEvidence
+```
+
+---
+
+### 2.159 `ExactConcreteCanonicalLearnerEquivalence.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Define the exact-once reachable semantics and prove it equivalent to the
+corrected finite concrete learner.
+
+Main contents:
+
+```lean
+ExactSampleLearnerReachable
+CorrectedConcreteCanonicalLearnerDerives
+correctedConcreteCanonicalLearnerDerives_iff_exactReachable
+correctedConcreteCanonicalLearnerLanguage_eq_exactReachable
+```
+
+---
+
+### 2.160 `ConcreteCanonicalLearnerIdentification.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Transfer the typed characteristic-sample simulation to exact-once reachability
+and then to the corrected finite concrete learner.
+
+Main endpoints:
+
+```lean
+concreteTypedCharacteristicSample_correctedConcrete_exact
+concreteTypedCharacteristicSample_correctedConcrete_exact_for_positive_superset
+correctedConcreteCanonicalLearner_identifies_from_positive_text
+correctedConcreteCanonicalLearner_paper_main_theorem
+correctedConcreteCanonicalLearner_conclusion_package
+```
+
+---
+
+### 2.161 `ConcreteCanonicalLearnerClassTheorem.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Package the grammar-level theorem as a uniform language-class theorem for one
+target-independent learner.
+
+Main contents:
+
+```lean
+CorrectedConcreteTargetWitness
+CorrectedConcreteTargetClass
+correctedConcreteCanonicalLearner_identifies_targetClass
+correctedConcreteCanonicalLearner_class_conclusion_package
+```
+
+---
+
+### 2.162 `ConcreteCanonicalLearnerStabilization.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Select a finite characteristic sample for each target language and a concrete
+coverage/stabilization stage for each positive text.
+
+Main contents:
+
+```lean
+correctedConcreteTargetCharacteristicSample
+correctedConcreteTargetCoverageStage
+correctedConcreteCanonicalLearner_correct_after_coverageStage
+correctedConcreteCanonicalLearner_eventually_language_constant
+```
+
+---
+
+### 2.163 `StartRootedConcreteCanonicalLearnerIdentification.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Replace syntactic `StartSeparated` by the weaker semantic condition
+`WorkingMCFG.StartRootedNormal` throughout the grammar-level theorem.
+
+Main endpoint:
+
+```lean
+correctedConcreteCanonicalLearner_conclusion_package_of_startRooted
+```
+
+---
+
+### 2.164 `StartRootedConcreteCanonicalLearnerClassTheorem.lean`
+
+Status: CI passed / user-confirmed at Lean CI #651, commit `a628798`.
+
+Purpose:
+
+Lift the semantic start-rooted theorem to a uniform class theorem and selected
+stabilization package.
+
+Main contents:
+
+```lean
+StartRootedCorrectedConcreteTargetWitness
+StartRootedCorrectedConcreteTargetClass
+correctedConcreteTargetClass_subset_startRooted
+correctedConcreteCanonicalLearner_identifies_startRootedTargetClass
+startRootedCorrectedConcreteTargetCharacteristicSample
+startRootedCorrectedConcreteTargetCoverageStage
+correctedConcreteCanonicalLearner_startRooted_stabilization_conclusion_package
+```
+
+This is the current strongest class-level endpoint.
+
+---
+
+
+### 2.165 `ConcreteCanonicalLearnerFiniteEnumerationBounds.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Prove cardinality bounds for the actual finite brute-force enumerators.
+
+Main contents:
+
+```lean
+finiteWordEnumerationBound
+namedContextEnumerationBound
+tupleOccurrenceEnumerationBound
+unitRuleEnumerationBound
+exactTemplateTupleEnumerationBound
+correctedBinaryWitnessEnumerationBound
+correctedConcreteRuleCountUpToFanout
+correctedConcreteRuleCountUpToFanout_le
+```
+
+This is the first quantitative layer for the concrete learner.
+
+---
+
+### 2.166 `ConcreteCanonicalLearnerLengthOnlyBounds.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Replace sample-alphabet cardinality by the total sample-length budget.
+
+Main contents:
+
+```lean
+card_sampleAlphabet_le_sampleLengthBudget
+finiteWordEnumerationBound_mono_alphabet
+sampleLengthOnlyUnitRuleCountBound
+sampleLengthOnlyCorrectedBinaryRuleCountBound
+sampleLengthOnlyCorrectedRuleCountBound
+correctedConcreteRuleCountUpToFanout_le_lengthOnly
+```
+
+---
+
+### 2.167 `ConcreteCanonicalLearnerSinglePowerBounds.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Absorb all rule-family bounds into one common base and one exponent.
+
+Main contents:
+
+```lean
+uniformEnumerationBase
+uniformUnitRuleExponent
+uniformBinaryRuleExponent
+uniformRuleExponent
+singlePowerCorrectedRuleCountBound
+correctedConcreteRuleCountUpToFanout_le_singlePower
+```
+
+---
+
+### 2.168 `ConcreteCanonicalLearnerPolynomialExponentBounds.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Expand the common exponent and derive a simpler paper-facing quadratic
+exponent.
+
+Main contents:
+
+```lean
+expandedUniformRuleExponent
+expandedSinglePowerCorrectedRuleCountBound
+correctedLearnerPaperRuleCountBound
+correctedConcreteRuleCountUpToFanout_le_paperBound
+correctedConcreteRuleCountUpToFanout_le_explicit_paperPower
+```
+
+Verified explicit bound:
+
+```lean
+correctedConcreteRuleCountUpToFanout K obs f ≤
+  (4 * (sampleLengthBudget K + f + 1)) ^
+    (64 *
+      (sampleLengthBudget K + f + 1) *
+      (sampleLengthBudget K + f + 1)).
+```
+
+---
+
+### 2.169 `ConcreteCanonicalLearnerFiniteHypothesis.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Package the arity-indexed finite rule families into an actual dependent finite
+hypothesis object.
+
+Main contents:
+
+```lean
+CorrectedConcreteUnitRuleCode
+CorrectedConcreteBinaryRuleCode
+CorrectedConcreteFiniteHypothesis
+correctedConcreteFiniteHypothesis
+FiniteCorrectedConcreteLearnerDerives
+FiniteCorrectedConcreteLearnerLanguage
+finiteCorrectedConcreteLearnerLanguage_eq
+finiteCorrectedConcreteLearnerLanguage_eq_exactReachable
+```
+
+This is the first actual finite hypothesis object, rather than a language-valued
+facade.
+
+---
+
+### 2.170 `ConcreteCanonicalLearnerFiniteHypothesisSize.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Apply the quantitative bounds to the actual dependent finite hypothesis.
+
+Main contents:
+
+```lean
+card_positiveArities
+card_finset_sigma_le_card_mul
+card_finiteCorrectedConcreteUnitRuleCodes_le_uniform
+card_finiteCorrectedConcreteBinaryRuleCodes_le_uniform
+correctedConcreteFiniteHypothesis_ruleCount_le_singlePower
+correctedConcreteFiniteHypothesis_ruleCount_le_explicit_paperPower
+correctedConcreteFiniteHypothesis_size_semantic_package
+```
+
+---
+
+### 2.171 `ConcreteCanonicalLearnerFiniteObjectIdentification.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Make the actual finite rule object the fixed hypothesis type of the learner.
+
+Main contents:
+
+```lean
+ListedFiniteCorrectedConcreteLearnerDerives
+CorrectedConcreteFiniteHypothesis.Language
+CorrectedConcreteFiniteHypothesisObject
+correctedConcreteFiniteObjectLearner
+correctedConcreteFiniteObjectHypLanguage
+correctedConcreteFiniteObjectLearner_identifies_startRootedTargetClass
+correctedConcreteFiniteObjectLearner_class_size_semantic_package
+```
+
+The listed semantics explicitly carries membership proofs in the stored rule
+lists.
+
+---
+
+### 2.172 `ConcreteCanonicalLearnerFiniteObjectMonotone.lean`
+
+Status: CI passed / confirmed by the CI #665 chain.
+
+Purpose:
+
+Construct rule-level sample-extension transports and structurally transport
+listed derivation trees.
+
+Main contents:
+
+```lean
+CorrectedConcreteUnitRuleCode.mono
+CorrectedConcreteBinaryRuleCode.mono
+CorrectedConcreteFiniteHypothesisSimulation
+CorrectedConcreteFiniteHypothesisSimulation.ofSampleSubset
+CorrectedConcreteFiniteHypothesisSimulation.derives
+correctedConcreteFiniteHypothesis_language_mono
+correctedConcreteFiniteObjectLearner_language_mono
+```
+
+---
+
+### 2.173 `ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean`
+
+Status: CI passed / included in the confirmed CI #665 project chain.
+
+Purpose:
+
+Give finite-hypothesis simulations identity, composition, and coherent
+prefix-directed-system structure.
+
+Main contents:
+
+```lean
+CorrectedConcreteFiniteHypothesisSimulation.refl
+CorrectedConcreteFiniteHypothesisSimulation.comp
+correctedConcreteTextFiniteHypothesis
+correctedConcreteTextSimulation
+correctedConcreteTextSimulation_refl
+correctedConcreteTextSimulation_trans
+correctedConcreteFiniteObject_directedStabilization_package
+```
+
+---
+
+### 2.174 `ConcreteCanonicalLearnerWorkingGrammarObstruction.lean`
+
+Status: CI passed / dependency of the CI #665 endpoint.
+
+Purpose:
+
+Identify the exact obstruction to unconditional compilation into the current
+`WorkingMCFG` syntax.
+
+Main contents:
+
+```lean
+DerivesTuple.alphabet_nonempty
+WorkingMCFG.stringLanguage_eq_empty_of_isEmpty
+CorrectedConcreteFiniteObjectWorkingGrammarRealization
+emptySampleWorkingGrammarRealization
+emptyAlphabet_epsilonSample_not_represented
+workingGrammarRealization_implies_compilationDomain
+```
+
+Key correction:
+
+```text
+nonempty WorkingMCFG language ⇒ Nonempty α,
+```
+
+whereas the finite learner over the empty alphabet and sample `{ε}` generates
+`ε`.  Thus unconditional compilation is false.
+
+---
+
+### 2.175 `ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean`
+
+Status: CI passed / dependency of the CI #665 endpoint.
+
+Purpose:
+
+Normalize transitive listed derivations through a finite control set and a
+finite saturated cut relation.
+
+Main contents:
+
+```lean
+FiniteObjectTupleCode
+CorrectedConcreteFiniteHypothesis.controlCodes
+CutNormalizedListedFiniteDerives
+ListedFiniteCorrectedConcreteLearnerDerives.toCutNormalized
+CorrectedConcreteFiniteHypothesis.cutPairs
+correctedConcreteFiniteHypothesis_language_iff_cutNormalized
+```
+
+---
+
+### 2.176 `ConcreteCanonicalLearnerWorkingGrammarConstruction.lean`
+
+Status: CI passed / dependency of the CI #665 endpoint.
+
+Purpose:
+
+Compile the finite controls, corrected binary rules, saturated cuts, and sample
+starts into an actual finite `WorkingMCFG`.
+
+Main contents:
+
+```lean
+CorrectedConcreteCutGrammarNonterminal
+correctedConcreteCutConstantRule
+correctedConcreteCutLiftedBinaryRule
+correctedConcreteCutSaturationRule
+CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
+CutNormalizedListedFiniteDerives.toCutWorkingMCFG
+correctedConcreteFiniteHypothesis_language_subset_cutWorkingGrammar
+```
+
+The construction uses a dummy terminal seed.  Its constant and cut rules are
+not asserted to satisfy the paper-side nondeleting/exact-once conditions.
+
+---
+
+### 2.177 `ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean`
+
+Status: CI passed / user-confirmed before CI #665.
+
+Purpose:
+
+Invert every derivation of the compiled grammar and prove exact language
+equality.
+
+Main contents:
+
+```lean
+CorrectedConcreteCutWorkingGrammarDerivationView
+CorrectedConcreteCutWorkingGrammarDerivationView.ofDerives
+cutWorkingGrammar_control_derives_iff
+cutWorkingGrammar_start_derives_iff
+correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+workingGrammarRealization_iff_emptySample_or_nonemptyAlphabet
+```
+
+Exact domain theorem:
+
+```lean
+Nonempty CorrectedConcreteFiniteObjectWorkingGrammarRealization ↔
+  K = ∅ ∨ Nonempty α.
+```
+
+---
+
+### 2.178 `ConcreteCanonicalLearnerWorkingGrammarIdentification.lean`
+
+Status: CI passed / user-confirmed at Lean CI #665, commit `1ef3ea8`.
+
+Purpose:
+
+Make actual compiled finite `WorkingMCFG` objects the learner output type and
+transfer the complete Gold-identification theorem.
+
+Main contents:
+
+```lean
+CorrectedConcreteWorkingGrammarHypothesis
+correctedConcreteWorkingGrammarLearner
+correctedConcreteWorkingGrammarHypLanguage
+correctedConcreteWorkingGrammarLearner_consistent
+correctedConcreteWorkingGrammarLearner_language_mono
+correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
+correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
+correctedConcreteWorkingGrammarLearner_class_conclusion_package
+correctedConcreteWorkingGrammarLearner_selectedStage_package
+```
+
+This is the current strongest actual-grammar-valued endpoint.
+
+---
+
+
+### 2.179 `ConcreteCanonicalLearnerWorkingGrammarSize.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Count every rule stored by the actual cut-saturated `WorkingMCFG` and connect
+the compiler overhead to the existing source finite-rule bound.
+
+Main contents:
+
+```lean
+card_sample_le_lengthBudget_add_one
+CorrectedConcreteFiniteHypothesis.controlCodes_card_le_sample_add_three_ruleCount
+CorrectedConcreteFiniteHypothesis.cutPairs_card_le_controlCodes_square
+CorrectedConcreteFiniteHypothesis.compiledGrammarRuleCount
+CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG_totalRuleCount_eq
+CorrectedConcreteFiniteHypothesis.compiledGrammarRuleCount_le_quadratic
+correctedConcreteCompiledGrammarRuleCountBound
+correctedConcreteWorkingGrammarLearner_grammarRuleCount_le_explicit
+correctedConcreteWorkingGrammarLearner_size_semantic_package
+```
+
+Central structural estimate:
+
+```lean
+H.compiledGrammarRuleCount ≤
+  (K.card + 3 * H.ruleCount + 2) ^ 2.
+```
+
+---
+
+### 2.180 `ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Explicitly enumerate every nonterminal of the compiled grammar and bound the
+complete top-level presentation size.
+
+Main contents:
+
+```lean
+CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminals
+CorrectedConcreteFiniteHypothesis.mem_compiledGrammarNonterminals
+CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminalCount
+CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationItemCount
+CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationItemCount_le_structuralSquare
+correctedConcreteCompiledGrammarPresentationItemBound
+correctedConcreteWorkingGrammarLearner_presentationItemCount_le_explicit
+correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
+```
+
+Exact nonterminal count and structural presentation bound:
+
+```lean
+nonterminalCount = controlCodes.card + 2
+
+presentationItemCount ≤
+  (K.card + 3 * sourceRuleCount + 3) ^ 2.
+```
+
+---
+
+### 2.181 `ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Identify exactly which syntactic conditions are preserved by the compiler and
+which paper-side conditions fail.
+
+Main contents:
+
+```lean
+CorrectedConcreteFiniteHypothesis.controlCode_arity_le_max
+CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG_fanoutAtMost_max
+WorkingMCFG.CutCompiledConditions
+CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG_cutCompiledConditions
+constantTupleTemplate_not_nondeleting
+correctedConcreteCutConstantRule_not_nondeleting
+CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG_not_basicWorkingConditions_of_sample_nonempty
+CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG_not_exactWorkingConditions_of_sample_nonempty
+correctedConcreteWorkingGrammarLearner_class_structuralBoundary_package
+```
+
+Verified positive conditions:
+
+```text
+start arity one
+well-typed start rules
+well-typed terminal rules
+fan-out at most max 1 f.
+```
+
+Verified boundary:
+
+```lean
+K.Nonempty →
+  ¬ (H.toCutWorkingMCFG dummy).ExactWorkingConditions.
+```
+
+---
+
+### 2.182 `ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Define the correct class of languages represented by actual cut-compiled
+grammars and prove exact representation of every start-rooted target.
+
+Main contents:
+
+```lean
+CutCompiledWorkingGrammarRepresentation
+CutCompiledWorkingGrammarLanguageClass
+CorrectedConcreteWorkingGrammarTargetRepresentationWitness
+correctedConcreteWorkingGrammarTargetRepresentation_of_characteristicSample
+correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
+startRootedTargetClass_subset_cutCompiledWorkingGrammarLanguageClass
+correctedConcreteWorkingGrammarLearner_targetRepresentation_package
+correctedConcreteWorkingGrammarLearner_representation_identification_package
+```
+
+Each target representation carries a finite positive construction sample,
+actual grammar, exact language equality, compiler conditions, and all verified
+size bounds.
+
+---
+
+### 2.183 `ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Stratify exact grammar representations by the total length of the finite
+positive construction sample.
+
+Main contents:
+
+```lean
+correctedLearnerPaperRuleCountBound_mono_sampleLength
+correctedConcreteCompiledGrammarPresentationItemBound_mono_sampleLength
+BoundedCutCompiledWorkingGrammarRepresentation
+BoundedCutCompiledWorkingGrammarLanguageClass
+boundedCutCompiledWorkingGrammarLanguageClass_mono
+correctedConcreteWorkingGrammarLearner_boundedRepresentation
+CorrectedConcreteBoundedWorkingGrammarTargetWitness
+startRootedTarget_mem_some_boundedCutCompiledClass
+correctedConcreteWorkingGrammarLearner_boundedRepresentation_package
+```
+
+The bounded classes form an increasing hierarchy, and every semantic
+start-rooted target belongs to some finite level.
+
+---
+
+### 2.184 `ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Define least sample-length budgets for bounded representation and for exact
+output by the canonical grammar-valued learner.
+
+Main contents:
+
+```lean
+HasBoundedCutCompiledWorkingGrammarRepresentation
+boundedCutCompiledWorkingGrammarRepresentationRank
+CorrectedConcreteWorkingGrammarExactOutputAtBudget
+HasCorrectedConcreteWorkingGrammarExactOutputBudget
+correctedConcreteWorkingGrammarExactOutputRank
+boundedRepresentationRank_le_exactOutputRank
+startRootedTargetExactOutputRank
+startRootedTargetExactOutputRank_le_selectedCharacteristicSampleLength
+correctedConcreteWorkingGrammarLearner_representationRank_package
+```
+
+Verified inequality:
+
+```text
+minimum bounded-representation budget
+≤ minimum exact learner-output budget.
+```
+
+---
+
+### 2.185 `ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean`
+
+Status: CI passed / user-confirmed.
+
+Purpose:
+
+Define the minimum total word length of a characteristic sample for the actual
+grammar-valued learner.
+
+Main contents:
+
+```lean
+CorrectedConcreteWorkingGrammarCharacteristicAtBudget
+HasCorrectedConcreteWorkingGrammarCharacteristicBudget
+correctedConcreteWorkingGrammarCharacteristicRank
+exactOutputRank_le_characteristicRank
+boundedRepresentationRank_le_characteristicRank
+startRootedTargetCharacteristicRank
+startRootedTarget_exists_characteristicSample_at_rank
+startRootedTarget_fullRankChain
+correctedConcreteWorkingGrammarLearner_identification_characteristicRank_package
+```
+
+Full target-level rank chain:
+
+```text
+representation rank
+≤ exact-output rank
+≤ characteristic rank
+≤ selected characteristic-sample total length.
+```
+
+---
+
+### 2.186 `ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean`
+
+Status: CI passed / user-confirmed at Lean CI #674, commit `94d1590`.
+
+Purpose:
+
+Formalize semantic language changes along positive texts and connect them to
+minimum characteristic-sample coverage.
+
+Main contents:
+
+```lean
+correctedConcreteWorkingGrammarTextLanguage
+CorrectedConcreteWorkingGrammarLanguageChangesAt
+correctedConcreteWorkingGrammarMindChangeCount
+correctedConcreteWorkingGrammarLanguageChangesAt_implies_prefixSample_card_lt
+correctedConcreteWorkingGrammarMindChangeCount_le_prefixSample_card
+correctedConcreteWorkingGrammarCharacteristicCoverageStage
+startRootedTargetMinimalCharacteristicSample
+correctedConcreteWorkingGrammar_correct_after_minimalCharacteristicCoverage
+correctedConcreteWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
+correctedConcreteWorkingGrammarLearner_class_mindChange_package
+```
+
+Every semantic language change strictly increases the prefix-sample
+cardinality, and after minimum-characteristic-sample coverage the output
+language is permanently equal to the target and the cumulative mind-change
+count is constant.
+
+---
+
 ## 3. Overall dependency chain
 
 Current import chain:
@@ -5631,9 +6882,89 @@ CharacteristicSampleExactOnceSuccessfulRuleRealizationRoute
 CharacteristicSampleExactOnceCanonicalRuleClosureRoute
   ↓
 OutputTypePresentationWorkingGrammar
+  ↓
+OutputTypePresentationWorkingGrammarEquivalence
+  ↓
+ConcreteOutputTypeRefinementPresentation
+  ↓
+StartSeparatedOutputTypeRefinementCompleteness
+  ↓
+ConcreteTrimmedSuccessfulPresentation
+  ↓
+ConcreteReducedRepresentativeSelection
+  ↓
+ConcreteObservationDeterministicClosure
+  ↓
+ConcreteTypedCharacteristicSample
+  ↓
+TupleOccurrences
+  ↓
+BinaryWitnesses
+  ↓
+ConcreteCanonicalLearner
+  ↓
+TupleOccurrenceEnumerationCompleteness
+  ↓
+NamedFillEnumerationBounds
+  ↓
+BinaryWitnessEnumerationCompleteness
+  ↓
+ExactConcreteCanonicalLearnerEquivalence
+  ↓
+ConcreteCanonicalLearnerIdentification
+  ↓
+ConcreteCanonicalLearnerClassTheorem
+  ↓
+ConcreteCanonicalLearnerStabilization
+  ↓
+StartRootedConcreteCanonicalLearnerIdentification
+  ↓
+StartRootedConcreteCanonicalLearnerClassTheorem
+  ↓
+ConcreteCanonicalLearnerFiniteEnumerationBounds
+  ↓
+ConcreteCanonicalLearnerLengthOnlyBounds
+  ↓
+ConcreteCanonicalLearnerSinglePowerBounds
+  ↓
+ConcreteCanonicalLearnerPolynomialExponentBounds
+  ↓
+ConcreteCanonicalLearnerFiniteHypothesis
+  ↓
+ConcreteCanonicalLearnerFiniteHypothesisSize
+  ↓
+ConcreteCanonicalLearnerFiniteObjectIdentification
+  ↓
+ConcreteCanonicalLearnerFiniteObjectMonotone
+  ├──→ ConcreteCanonicalLearnerFiniteObjectDirectedSystem
+  └──→ ConcreteCanonicalLearnerWorkingGrammarObstruction
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarCutSaturation
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarConstruction
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarEquivalence
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarIdentification
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarSize
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarPresentationSize
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarStructuralConditions
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarRepresentation
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarRepresentationRank
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarMindChanges
 ```
 
-This linear chain is intentional. It keeps CI failures local and makes the experiment traceable.
+The main import chain remains deliberately linear.  The directed-system file is a verified side branch from finite-object monotonicity; the actual-grammar route proceeds through obstruction, cut saturation, construction, equivalence, identification, quantitative size analysis, structural-boundary analysis, representation hierarchies, minimum ranks, and semantic mind-change stabilization.
 
 ---
 
@@ -6251,329 +7582,604 @@ embed into grammar derivations, and exact working conditions and fan-out bounds
 are inherited from the original grammar.
 
 
-## 5. What remains as explicit assumptions or skeleton fields?
 
-CI #634 has eliminated the old splicing and unconditional-transport
-obligations from the strongest route.  The remaining positive-learning
-assumptions now concern construction of the finite typed presentation itself
-and extraction of successful data from it.
+### 4.43 Exact concrete presentation-grammar equivalence
 
-### 5.1 Concrete finite complete output-type presentation
-
-Still explicit.
-
-The current strongest route begins with a
+Arbitrary derivations of `P.toWorkingMCFG` are inverted back to typed
+presentation derivations.  Therefore:
 
 ```lean
-CompleteOutputTypePresentation G obs
+P.toWorkingMCFG.StringLanguage = PresentationStringLanguage P.
 ```
 
-inside `SuccessfulOccurrenceCompletePresentation`.
+For a complete presentation, this language is exactly the original grammar
+language.
 
-What remains is to construct its finite sets of:
+### 4.44 Full finite output-type presentation construction
 
-```text
-typed nonterminals
-typed terminal rules
-typed binary rules
-typed start rules
-```
+For finite nonterminals and finite observation monoid, the full typed node and
+rule sets are explicitly finite and complete.  The formerly external
+`CompleteOutputTypePresentation` has been eliminated from the concrete route.
 
-directly from the finite grammar `G` and finite observation monoid, and prove
-`PresentationCompleteFor` for that concrete presentation.
+### 4.45 Successful typed trim and automatic occurrences
 
-### 5.2 Successful occurrence family
+The successful typed core is built by finite filtering.  Membership supplies an
+actual successful occurrence, and the filtered presentation preserves the
+string language under start-rooted normality.
 
-Still explicit.
+### 4.46 Typed-indexed characteristic sample
 
-For each present typed nonterminal, the current construction assumes a
+Anchors are indexed by present successful typed nonterminals rather than by one
+representative per base.  This avoids the false general assumption that one
+base nonterminal has only one observation type.
+
+### 4.47 Finite sample-rule enumeration
+
+Finite words, tuple codes, well-formed named contexts, tuple occurrences, unit
+rules, exact-once templates, and binary witnesses are explicitly enumerated
+from the sample.
+
+### 4.48 Enumeration completeness
+
+Every sample unit witness is represented in the finite unit-rule set.  Every
+exact-once sample binary witness is represented in the corrected finite binary
+set using the bound
 
 ```lean
-PresentTypedSuccessfulOccurrence X.
+sampleLengthBudget K + dB + dC.
 ```
 
-The next semantic construction must extract such an occurrence from a
-successful presentation derivation, or define the trimmed presentation so that
-being present already carries this successful occurrence witness.
+### 4.49 Corrected concrete learner equivalence
 
-### 5.3 Base representative selection
-
-Still explicit.
-
-The current route assumes one present typed representative for every original
-base nonterminal:
+The corrected finite learner is equivalent, at tuple and string levels, to the
+exact-once reachable semantics:
 
 ```lean
-SuccessfulOccurrenceBaseRepresentativeSelection.
+CorrectedConcreteCanonicalLearnerLanguage K obs f
+  = ExactReachableSampleStringLanguage K obs f.
 ```
 
-This is appropriate only for reduced grammars.  A concrete reducedness /
-productive-and-reachable construction must prove that every relevant base
-nonterminal has such a present typed representative.
+### 4.50 Concrete learner exact reconstruction
 
-### 5.4 Canonical typed-rule closure
+The fully concrete typed characteristic sample reconstructs the target exactly
+under the corrected finite learner.  Exactness is monotone over every positive
+finite superset.
 
-Still explicit.
+### 4.51 Concrete learner Gold identification
 
-The current strongest package assumes the selected finite presentation contains
-the canonical typed terminal, binary, and start rules determined by the chosen
-representative output types.
+Every positive text eventually contains the finite characteristic sample;
+thereafter every prefix hypothesis language is exactly the target.
 
-The full output-type refinement should make this closure automatic.  A trimmed
-presentation may require a proof that only productive/reachable canonical rules
-needed by the selected successful occurrences are retained.
+### 4.52 Uniform language-class theorem
 
-### 5.5 Converse for the concrete presentation grammar
+One learner, depending only on `obs`, `f`, and the finite input sample,
+identifies every language represented by the target class.  The hidden grammar
+and its nonterminal type are not learner inputs.
 
-Still explicit.
+### 4.53 Selected characteristic samples and stages
 
-CI #634 proves:
+Classical choice is used only after existence is proved to select one finite
+characteristic sample per target and one coverage/stabilization stage per text.
+After the selected stage, hypothesis languages are target-equal and pairwise
+equal.
 
-```text
-PresentationStringLanguage P
-⊆ P.toWorkingMCFG.StringLanguage.
+### 4.54 Semantic start-rooted weakening
+
+The final route needs only
+
+```lean
+G.StringLanguage ⊆ StartRootedStringLanguage G
 ```
 
-It does not yet prove that arbitrary derivations of `P.toWorkingMCFG` decode
-back to `PresentationDerives P`.  This converse is needed for:
+rather than the stronger syntactic `StartSeparated`.  The latter is proved to
+be a sufficient condition.
 
-```text
-P.toWorkingMCFG.StringLanguage
-= PresentationStringLanguage P.
+### 4.55 Larger start-rooted target class
+
+The old start-separated class embeds into the larger semantic start-rooted
+class, and the same corrected concrete learner identifies this larger class.
+
+
+### 4.56 Quantitative bounds for the actual brute-force enumerators
+
+The cardinalities of the concrete word, context, tuple-occurrence, unit-rule,
+exact-template, and binary-witness finite sets are now Lean-bounded.
+
+### 4.57 Length-only and common-power bounds
+
+The sample-alphabet parameter is eliminated in favor of `sampleLengthBudget`,
+and all rule families are absorbed into one common base/exponent expression.
+
+### 4.58 Paper-facing explicit source-rule bound
+
+For the actual canonical finite hypothesis:
+
+```lean
+(correctedConcreteFiniteHypothesis K obs f).ruleCount ≤
+  (4 * (sampleLengthBudget K + f + 1)) ^
+    (64 *
+      (sampleLengthBudget K + f + 1) *
+      (sampleLengthBudget K + f + 1)).
 ```
 
-### 5.6 Concrete canonical learner
+This is a verified finite-size bound, not yet a polynomial-time claim.
 
-Still explicit.
+### 4.59 Actual dependent finite hypothesis object
 
-The verified endpoint continues to use `ReachableSampleStringLanguage`.
-Finite enumeration of tuple occurrences, empty-slot tie orders, binary
-witnesses, unit rules, and the actual learner grammar is not yet implemented.
+The learner output is no longer merely a sample or language facade.  It stores
+finite dependent unit and binary rule codes, and listed derivations explicitly
+use membership in those stored lists.
 
-### 5.7 Complexity and boundary results
+### 4.60 Finite-object language equivalence
 
-Still explicit:
+```lean
+finite-object listed language
+=
+corrected concrete canonical learner language
+=
+exact-once reachable sample language.
+```
+
+### 4.61 Structural sample-extension simulation
+
+Unit and binary rule evidence is transported to larger samples, corresponding
+new finite codes are selected, and complete listed derivation trees are
+transported rule by rule.
+
+### 4.62 Coherent prefix directed system
+
+Finite hypothesis simulations have identity and composition.  Along a positive
+text, prefix hypotheses and their semantic maps form a directed system that is
+eventually language constant at the target.
+
+### 4.63 Empty-alphabet obstruction
+
+Every `DerivesTuple` proof in the present lightweight `WorkingMCFG` syntax has a
+terminal-rule leaf.  Hence every nonempty generated language implies
+`Nonempty α`.  The finite learner on the empty alphabet and sample `{ε}` is a
+formal counterexample to unconditional compilation.
+
+### 4.64 Exact compilation domain
+
+A finite learner object is realizable by the present `WorkingMCFG` syntax iff:
+
+```lean
+K = ∅ ∨ Nonempty α.
+```
+
+The empty-sample case uses a rule-free empty grammar; the nonempty-alphabet case
+uses the cut-saturated compiler.
+
+### 4.65 Finite control and cut saturation
+
+Sample singletons and all rule source/target tuples form a finite control set.
+Every listed derivation from a control state has a cut-normal form, and all
+control-to-control reachable cuts are contained in one finite saturation.
+
+### 4.66 Actual finite WorkingMCFG construction
+
+The compiler creates:
 
 ```text
-fixed-(f,h) polynomial construction bound
+fresh start node
+one seed terminal node
+one nonterminal for each finite control tuple
+constant rules for controls
+lifted corrected binary rules
+left-identity rules for saturated cuts
+start rules for sample words.
+```
+
+### 4.67 Reverse derivation translation and exact grammar equivalence
+
+Every compiled grammar derivation is inverted into a seed/control/start view,
+and control derivations are converted back to cut-normal listed derivations.
+Therefore:
+
+```lean
+(H.toCutWorkingMCFG dummy).StringLanguage = H.Language.
+```
+
+### 4.68 Actual WorkingMCFG-valued learner
+
+For `Nonempty α`, one target-independent set-driven learner outputs actual
+finite `WorkingMCFG` objects and agrees samplewise with the corrected concrete
+learner and exact reachable semantics.
+
+### 4.69 WorkingMCFG-valued class identification
+
+Under the established finite/exact/start-rooted/substitutability assumptions,
+the actual grammar-valued learner is consistent, language-monotone, has finite
+characteristic samples, identifies the whole start-rooted target class, and is
+exact after the selected coverage stage.
+
+
+### 4.70 Actual compiled grammar rule count
+
+The compiler rule lists have exact length formulas, and:
+
+```lean
+compiledGrammarRuleCount ≤
+  (K.card + 3 * sourceRuleCount + 2) ^ 2.
+```
+
+The source finite-rule power bound is substituted into a fully explicit
+sample-length-only actual-grammar bound.
+
+### 4.71 Explicit nonterminal enumeration and presentation item count
+
+Every compiled nonterminal is listed explicitly:
+
+```text
+fresh start
+dummy seed
+one control node per finite control code.
+```
+
+The list length is `controlCodes.card + 2`, and the complete top-level count
+satisfies:
+
+```lean
+presentationItemCount ≤
+  (K.card + 3 * sourceRuleCount + 3) ^ 2.
+```
+
+### 4.72 Exact structural boundary of output hypotheses
+
+Every compiled output satisfies:
+
+```text
+start arity one
+well-typed start rules
+well-typed terminal rules
+fan-out at most max 1 f.
+```
+
+For nonempty samples, constant control rules ignore both dummy children.
+Therefore output hypotheses provably fail `BinaryRulesNondeleting`,
+`BasicWorkingConditions`, and `ExactWorkingConditions`.
+
+### 4.73 Exact finite representation theorem
+
+The class `CutCompiledWorkingGrammarLanguageClass` records the structural
+conditions the compiler really preserves.  Every language in the semantic
+start-rooted target class has an exact representation in this class, obtained
+from one finite positive characteristic sample.
+
+### 4.74 Bounded representation hierarchy
+
+Exact representations are stratified by sample-length budgets using
+`BoundedCutCompiledWorkingGrammarLanguageClass`.  The hierarchy is monotone,
+every learner output lies at its own sample-length level, and every start-rooted
+target belongs to some finite level.
+
+### 4.75 Minimum representation and exact-output ranks
+
+The least bounded-representation budget and least exact learner-output budget
+are defined by `Nat.find`, are attained, and satisfy:
+
+```text
+representation rank ≤ exact-output rank.
+```
+
+### 4.76 Minimum characteristic-sample rank
+
+The least total word length of a characteristic sample is defined and attained.
+For every start-rooted target:
+
+```text
+representation rank
+≤ exact-output rank
+≤ characteristic rank
+≤ selected characteristic-sample total length.
+```
+
+### 4.77 Semantic mind changes and stabilization
+
+The prefix-language hypothesis is monotone.  Every semantic language change
+forces a strict increase in prefix-sample cardinality, so:
+
+```lean
+mindChangeCount T N ≤ (T.prefixSample N).card.
+```
+
+A minimum-budget characteristic sample is selected.  After its coverage stage,
+all output languages equal the target, no later language change occurs, and the
+cumulative mind-change count is constant.
+
+## 5. What remains as explicit assumptions or unfinished work?
+
+CI #674 completes the qualitative positive-learning route, actual finite
+grammar compilation, top-level grammar-size analysis, exact representation
+hierarchies, minimum sample-length ranks, and semantic mind-change
+stabilization.  The remaining limitations are executable, encoded-size,
+normal-form, sharper-complexity, and boundary issues.
+
+### 5.1 Executable coding versus `noncomputable` finite definitions
+
+The finite rule sets, cut saturation, minimum-rank witnesses, and coverage
+stages are mathematically finite, but several definitions use classical choice,
+function-valued Finsets, and noncomputable filters/images.  Extracted executable
+code and verified decidable encodings are still absent.
+
+### 5.2 Polynomial-time construction
+
+The present enumerator still generates all bounded words over the sample
+alphabet.  The verified bounds honestly measure this brute-force object; they
+do not establish polynomial time.  A polynomial construction should enumerate
+actual sample factorizations, substrings, component splits, and hole
+placements.
+
+### 5.3 Encoded description size
+
+The total number of nonterminal and rule entries is now bounded, including cut
+saturation.  What remains is an encoded symbol/bit-length analysis for:
+
+```text
+terminal words stored in tuple codes
+template atoms and component boundaries
+named contexts and hole positions
+dependent nonterminal indices
+finite rule-code serialization
+cut-pair serialization.
+```
+
+Thus `presentationItemCount` is verified, while full encoded description size
+is not.
+
+### 5.4 Paper-side exact-working conditions of output hypotheses
+
+The structural status is no longer merely undocumented: it is formally
+settled.  Nonempty-sample compiled outputs do **not** satisfy the paper's
+nondeleting or exact-working conditions, because constant control rules erase
+dummy children.  A publication must either:
+
+```text
+allow the broader cut-compiled hypothesis syntax,
+or construct a new language-preserving strict normal-form compiler.
+```
+
+### 5.5 Semantic start-rooted normality
+
+The target class still assumes `G.StartRootedNormal`; `StartSeparated` is a
+verified sufficient condition.  A general language-preserving normalization
+for grammars using start rules internally remains open.
+
+### 5.6 Terminal-alphabet domain
+
+For nonempty samples, actual compilation into the current `WorkingMCFG` syntax
+requires `Nonempty α`, and this is formally necessary.  The finite-rule learner
+itself does not need this hypothesis.
+
+### 5.7 Sharper quantitative learning bounds
+
+The following semantic quantities now exist and have minimum-rank theorems:
+
+```text
+bounded-representation rank
+exact-output rank
+characteristic-sample rank
+finite-prefix semantic mind-change count.
+```
+
+Still open or not sharp:
+
+```text
+characteristic-sample cardinality and length in target-grammar parameters
+a text-order-independent coverage-stage bound
+a target-specific total mind-change bound
+encoded hypothesis size
+verified construction time.
+```
+
+The current mind-change theorem bounds changes before stage `N` by the number
+of distinct observed words in `T.prefixSample N`; it does not bound the
+coverage stage by characteristic-sample length because texts may repeat words
+arbitrarily.
+
+### 5.8 Observation design and boundary results
+
+Still unformalized:
+
+```text
 bounded observation-family product compilation
+observation-design optimization / complexity
 unbounded no-advice non-identifiability
 member-kernel exclusion
 copy-language exclusion
+observation failure theorems.
 ```
+
+### 5.9 Paper/API cleanup
+
+The repository contains historical conditional facades, the corrected finite
+learner, the actual finite-object learner, and the actual grammar-valued
+learner.  A final public import should identify the CI #674 endpoints as the
+canonical route and move superseded interfaces to legacy/internal namespaces.
 
 ## 6. Immediate next files
 
-The current CI #634 endpoint is:
+The current CI #674 endpoint is:
 
 ```lean
-OutputTypePresentationWorkingGrammar.lean
+ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean
 ```
 
-The next work should stay on the concrete presentation grammar rather than add
-another paper-facing wrapper.
+The next file should address encoded description size or executability rather
+than adding another semantic facade.
 
-### 6.1 `OutputTypePresentationWorkingGrammarEquivalence.lean`
+### 6.1 `ConcreteCanonicalLearnerWorkingGrammarDescriptionSize.lean`
 
 Recommended next.
 
-Goal:
-
-```lean
-WorkingGrammarDerives.toPresentationDerives
-```
-
-for derivations whose nonterminal is `.typed X`, followed by:
-
-```lean
-P.toWorkingMCFG.StringLanguage
-  ⊆ PresentationStringLanguage P
-```
-
-and therefore:
-
-```lean
-P.toWorkingMCFG.StringLanguage
-  = PresentationStringLanguage P.
-```
-
-The proof should invert membership in the three mapped finite rule lists and
-recover the corresponding present typed rule.
-
-For complete presentations, conclude:
-
-```lean
-P.toWorkingMCFG.StringLanguage = G.StringLanguage.
-```
-
-### 6.2 `ConcreteOutputTypeRefinementPresentation.lean`
-
-Construct the full finite output-type presentation from `G` and `obs`.
-
-Expected finite data:
+Define symbol-occurrence measures for:
 
 ```text
-all base nonterminals relevant to the finite grammar
-all componentwise monoid output tuples of the appropriate arity
-all canonical typed terminal rules
-all canonical typed binary rules for child output pairs
-all canonical typed start rules
+words and tuples
+template tuples
+start, terminal, and binary rules
+control-code payloads
+cut-pair payloads
+the complete compiled grammar.
 ```
 
-Prove closure and `PresentationCompleteFor`.
+Prove a bound relating encoded/symbolic description size to the verified
+presentation item count and the existing sample-length/source-rule bounds.
 
-### 6.3 `ConcreteTrimmedSuccessfulPresentation.lean`
+### 6.2 `ExecutableConcreteCanonicalLearner.lean`
 
-Define the productive/reachable successful core.  Presence should carry or
-generate an explicit `PresentTypedSuccessfulOccurrence`, so that the witness
-family from CI #634 is constructed rather than assumed.
+Introduce list-based decidable codes for tuple occurrences, named contexts,
+templates, finite rules, control nodes, and cut pairs, and prove semantic
+equivalence with the current noncomputable objects.
 
-### 6.4 `ConcreteReducedRepresentativeSelection.lean`
+### 6.3 `SampleFactorizationEnumeration.lean`
 
-From reducedness, choose one successful present typed representative for every
-base nonterminal and prove canonical rule closure for the selected
-representatives.
-
-### 6.5 Concrete learner enumeration
-
-After the concrete presentation route is closed:
+Replace all-bounded-word enumeration by finite decompositions of actual sample
+words:
 
 ```text
-TupleOccurrences.lean
-BinaryWitnesses.lean
-ConcreteCanonicalLearner.lean
-CanonicalLearnerReachableEquivalence.lean
+substring/factor enumeration
+bounded tuple-component splits
+well-formed hole placements
+parent/child context reconstruction.
 ```
 
-## 7. Medium-term roadmap toward the paper theorem
+### 6.4 `ConcreteCanonicalLearnerComplexity.lean`
 
-### Stage A: Reachable learner theorem
+After executable factorization enumeration exists, prove fixed-parameter
+construction-time and encoded hypothesis-size bounds.  Reuse the verified
+minimum-rank and semantic mind-change interfaces where appropriate.
 
-Status: essentially complete.
+### 6.5 Strict output-grammar normalization
 
-Verified endpoints:
+If the paper requires learned hypotheses themselves to satisfy exact-working
+conditions, construct a new strict compiler.  The current dummy-child compiler
+is now formally known not to satisfy those conditions on nonempty samples.
 
-```lean
-final_reachable_identification
-final_reachable_prefix_exact
-final_reachable_exact_for_positive_superset
+### 6.6 Boundary theorem files
+
+```text
+ObservationFamilyProduct.lean
+ObservationFailure.lean
+NoAdviceNonIdentification.lean
+CopyLanguageExclusion.lean
+MemberKernelExclusion.lean
 ```
 
-The remaining work is no longer in the Gold-learning logic.
+## 7. Updated roadmap toward the full paper theorem
 
----
+### Stage A: Reachable semantic theorem
 
-### Stage B: Exact-once context and successful-occurrence semantics
+Status: complete.
 
-Status: complete at the conditional construction level.
+### Stage B: Exact-once splicing and successful-occurrence semantics
+
+Status: complete.
+
+### Stage C: Full finite output-type presentation and presentation grammar
+
+Status: complete for finite `N`, finite `M`, and the current target grammar
+model.
+
+### Stage D: Successful trim and typed characteristic sample
+
+Status: complete under semantic start-rooted normality.
+
+### Stage E: Corrected concrete canonical learner
+
+Status: complete for the exact-once route, including finite enumeration
+completeness, exact semantic equivalence, exact reconstruction, class-level
+Gold identification, and selected stages.
+
+### Stage F: Actual finite hypothesis object
+
+Status: complete.
 
 Verified:
 
 ```text
-unrestricted splicing is false
-exact-once child contexts and filling equations
-derivational exposure
-successful derivation spines
-successful derivation occurrences
-successful occurrences ⇒ typed trimmed witnesses
+dependent finite unit/binary rule codes
+listed membership-based semantics
+language equivalence
+class identification
+source-rule cardinality bound
+structural sample-extension simulation
+prefix directed-system coherence.
 ```
 
-Remaining task:
+### Stage G: Actual WorkingMCFG-valued learner
 
-```text
-extract successful occurrences automatically from the concrete productive/reachable trim
-```
-
----
-
-### Stage C: Concrete output-type presentation grammar
-
-Status: actively under construction.
+Status: complete on the exact domain `K = ∅ ∨ Nonempty α`; the uniform
+positive-text class theorem is stated under `Nonempty α`.
 
 Verified:
 
 ```text
-finite typed presentation interfaces
-presentation soundness and completeness interface
-canonical typed-rule closure route
-OutputTypeRefinementPresentation.toWorkingMCFG
-presentation derivations embed into the concrete grammar
-exact working conditions and fan-out bounds transfer
+empty-alphabet obstruction
+finite control/cut saturation
+actual finite grammar construction
+both-direction derivation translation
+exact language equality
+exact compilation-domain characterization
+consistent and monotone grammar-valued learner
+class-level Gold identification
+selected-stage exactness.
 ```
 
-Next:
+### Stage H: Quantitative actual-grammar and learning analysis
+
+Status: substantially complete at the semantic/item-count level.
+
+Verified:
 
 ```text
-reverse concrete-grammar derivations back to PresentationDerives
-language equality for P.toWorkingMCFG
-actual finite full G^h construction from G and obs
+control-code and cut-pair cardinality bounds
+actual grammar-rule count
+explicit nonterminal enumeration
+complete nonterminal-plus-rule presentation item count
+sample-length-indexed representation hierarchy
+minimum representation rank
+minimum exact-output rank
+minimum characteristic-sample rank
+semantic mind-change count
+no-change stabilization after minimum-characteristic coverage.
 ```
 
----
+Still open:
 
-### Stage D: Concrete productive/reachable trimmed core
+```text
+encoded symbol/bit description size
+executable list-based implementation
+sample-factorization enumeration
+polynomial construction time
+sharper target-parametric characteristic and mind-change bounds.
+```
 
-Status: not yet constructed from the full presentation.
+### Stage I: Target/start and hypothesis normal forms
+
+Status: optional/open.
 
 Targets:
 
 ```text
-define present typed nodes/rules by successful occurrences
-construct TypedSuccessfulOccurrenceFamily automatically
-prove language preservation
-construct base representatives from reducedness
-prove canonical rule closure
+language-preserving normalization to StartRootedNormal
+or a precise paper statement adopting it as target normal form
+strict output compiler preserving exact-working conditions
+or explicit use of broader cut-compiled hypotheses.
 ```
 
-Once this stage is complete, the CI #634 characteristic-sample route should
-produce the finite positive sample and Gold theorem with no presentation-side
-construction package left as an assumption.
+### Stage J: Boundary and observation-design results
 
----
-
-### Stage E: Concrete learner equivalence
-
-Files to create:
-
-```text
-TupleOccurrences.lean
-BinaryWitnesses.lean
-CanonicalLearnerRelation.lean
-CanonicalLearnerSoundComplete.lean
-```
-
-Target:
-
-```lean
-ConcreteCanonicalLearnerLanguage K obs f
-=
-ReachableSampleStringLanguage K obs f.
-```
-
----
-
-### Stage F: Polynomial bound
+Status: open.
 
 Targets:
 
 ```text
-finite tuple-occurrence code count
-finite binary-witness code count
-learner-rule count
-fixed-(f,h) construction bound ||K||₊^{O(f)}
-```
-
----
-
-### Stage G: Boundary results
-
-Targets:
-
-```text
-bounded observation families compile by product morphism
-unbounded union over all finite observations is not identifiable
-member-kernel exclusion
-copy-language exclusion from every finite-observation fiber
+bounded observation products
+observation-design complexity
+unbounded no-advice obstruction
+copy/member-kernel exclusions
+observation failure theorem.
 ```
 
 ## 8. Trust map
@@ -6581,48 +8187,64 @@ copy-language exclusion from every finite-observation fiber
 ### Strongly verified now
 
 ```text
-typed observation algebra
-output-type local invariants
-distributional equivalence and witnessed composition
-sample-level soundness and completeness induction
-finite text coverage, exact reconstruction, and reachable Gold identification
-formal counterexample to unrestricted splicing
-concrete exact-once left/right context construction and filling equations
-derivational exposure route without unconditional transport
-successful derivation spines and successful occurrences
-successful occurrences to typed trimmed witnesses
-typed witnesses to base representatives and pre-core data
-typed-rule realization to output compatibility
-canonical typed-rule closure to characteristic sample and Gold identification
-finite output-type presentation to actual WorkingMCFG
-embedding of presentation derivations into the concrete WorkingMCFG
-preservation of exact working conditions and fan-out bounds
+fixed finite-observation algebra and output types
+exact-once named-context splicing and its necessity
+sample-level soundness and reachable completeness
+full finite output-type presentation from G and obs
+presentation WorkingMCFG exact language equivalence
+successful typed trim and automatic occurrence extraction
+typed-indexed finite characteristic sample
+finite tuple, context, unit, exact-template, and binary-witness enumeration
+completeness of unit and exact-once binary enumeration
+corrected finite concrete canonical learner
+exact reachable/concrete learner equivalence
+exact reconstruction on characteristic samples and positive supersets
+uniform positive-text class identification and selected stabilization stages
+semantic weakening from StartSeparated to StartRootedNormal
+cardinality bounds for all current brute-force enumerators
+actual dependent finite hypothesis object and listed semantics
+structural sample-extension simulations and directed-system coherence
+formal empty-alphabet obstruction for present WorkingMCFG syntax
+finite control and saturated cut construction
+actual finite WorkingMCFG compilation
+reverse grammar-derivation translation and exact language equality
+exact compilation-domain theorem
+actual grammar rule-count and nonterminal-count bounds
+explicit complete top-level presentation item-count bound
+formal CutCompiledConditions and exact nondeleting/exact-working failure boundary
+exact target representation by finite positive samples
+bounded representation hierarchy
+minimum representation, exact-output, and characteristic-sample ranks
+semantic mind-change count and eventual no-change stabilization
+actual WorkingMCFG-valued learner and class-level Gold identification.
 ```
 
-### Verified but intentionally abstract
+### Verified but intentionally non-executable or broader than paper working conditions
 
 ```text
-CompleteOutputTypePresentation supplied as data
-TypedSuccessfulOccurrenceFamily supplied as data
-one present typed representative for each base nonterminal
-canonical typed-rule closure of the selected presentation
-reachable sample-language learner model
-legacy exposing-transport and unrestricted-splicing routes as historical conditional interfaces
+classical selection of characteristic samples, minimum-rank witnesses, and coverage stages
+noncomputable Finset images/filters over function-valued objects
+classical selection of transported/reconstructed finite rule codes
+fixed-observation substitutability as a semantic target-class promise
+semantic StartRootedNormal as a target-class condition
+dummy-terminal cut-saturated grammar compiler
+compiled grammar language exactness despite formal failure of nondeleting/exact-working output conditions
+minimum ranks as semantic Nat.find invariants, without a computability claim.
 ```
 
 ### Not yet verified
 
 ```text
-actual finite full G^h presentation constructed from G and obs
-productive/reachable trimmed G̃₀ constructed from the full presentation
-automatic extraction of successful typed occurrences
-automatic reduced base-representative selection
-reverse derivation translation from P.toWorkingMCFG to PresentationDerives
-exact language equality for the concrete presentation WorkingMCFG
-actual concrete learner enumeration
-reachable/concrete learner equivalence
-polynomial bound
-boundary examples and non-identifiability
+fully executable decidable encoding equivalent to the current learner
+polynomial sample-factorization learner
+encoded grammar symbol/bit description-size bound
+verified construction-time bound
+target-parametric characteristic-sample length/cardinality bound
+text-order-independent stabilization-stage or total mind-change bound
+strict compiler preserving paper-side exact-working conditions
+general fresh-start/start-rooted normalization
+observation-design complexity
+no-advice non-identifiability and exclusion examples.
 ```
 
 ## 9. Notes on the old zip experiment
@@ -6664,62 +8286,82 @@ Keep each new file small and CI-confirmed.
 Latest confirmed command/CI target:
 
 ```bash
-lake build LeanCfgProject.MCFG.OutputTypePresentationWorkingGrammar
+lake build LeanCfgProject.MCFG.ConcreteCanonicalLearnerWorkingGrammarMindChanges
 ```
 
 Latest confirmed CI point:
 
 ```text
-Lean CI #634
-Commit: 168022f
+Lean CI #674
+Commit: 94d1590
 ```
 
-Current strongest corrected identification endpoint:
+Current exact grammar-compilation endpoints:
 
 ```lean
-trimmed_successful_canonical_rule_closure_exact_working_conclusion_package
+correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+workingGrammarRealization_iff_emptySample_or_nonemptyAlphabet
 ```
 
-Current concrete grammar endpoint:
+Current strongest actual-grammar size and structural endpoints:
 
 ```lean
-OutputTypeRefinementPresentation.toWorkingMCFG
+correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
+correctedConcreteWorkingGrammarLearner_class_structuralBoundary_package
 ```
 
-Confirmed implications:
+Current strongest representation/rank endpoints:
+
+```lean
+correctedConcreteWorkingGrammarLearner_targetRepresentation_package
+correctedConcreteWorkingGrammarLearner_identification_boundedRepresentation_package
+correctedConcreteWorkingGrammarLearner_identification_characteristicRank_package
+```
+
+Current strongest stabilization endpoint:
+
+```lean
+correctedConcreteWorkingGrammarLearner_class_mindChange_package
+```
+
+Confirmed end-to-end implication:
 
 ```text
-PresentationStringLanguage P
-⊆ P.toWorkingMCFG.StringLanguage
-
-G.ExactWorkingConditions
-⇒ P.toWorkingMCFG.ExactWorkingConditions
-
-G.FanoutAtMost f
-⇒ P.toWorkingMCFG.FanoutAtMost f.
+finite N and finite M
++
+ExactWorkingConditions
++
+StartRootedNormal
++
+FanoutAtMost f
++
+FixedNamedTupleSubstitutable f obs L(G)
++
+Nonempty terminal alphabet
+⇒ concrete finite characteristic sample
+⇒ corrected finite canonical learner
+⇒ actual dependent finite hypothesis object
+⇒ actual finite cut-compiled WorkingMCFG output with exactly the same language
+⇒ explicit rule/nonterminal/presentation-item bounds
+⇒ exact finite representation hierarchy
+⇒ minimum representation/exact-output/characteristic ranks
+⇒ exact reconstruction on every positive finite superset
+⇒ eventual exactness on every positive text
+⇒ no semantic language changes after minimum-characteristic-sample coverage
+⇒ one uniform target-independent WorkingMCFG-valued learner identifies the entire represented class.
 ```
 
 Recommended next file:
 
 ```text
-OutputTypePresentationWorkingGrammarEquivalence.lean
+ConcreteCanonicalLearnerWorkingGrammarDescriptionSize.lean
 ```
 
 Reason:
 
-CI #634 constructs the actual grammar and proves the forward embedding.  The
-next smallest genuine mathematical obligation is the converse: invert lifted
-rules in an arbitrary derivation of `P.toWorkingMCFG` and recover a
-`PresentationDerives P` object.  This will turn the current inclusion into
-language equality and, for a complete presentation, establish that the
-concrete working grammar generates exactly `G.StringLanguage`.
-
-Parallel major target after that:
-
-```text
-ConcreteOutputTypeRefinementPresentation.lean
-```
-
-This will eliminate the largest remaining positive-learning assumption:
-supplying the complete finite typed presentation itself.
-
+CI #674 completes the top-level item-count, representation-rank, and semantic
+mind-change layers.  The next genuine quantitative gap is the size of the data
+stored *inside* each item: words, tuple components, template atoms, contexts,
+and cut-pair payloads.  A symbolic or encoded description-size theorem would
+connect the current finite-presentation count to an actual hypothesis encoding
+and prepare the executable complexity phase.
