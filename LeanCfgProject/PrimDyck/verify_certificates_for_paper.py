@@ -1,224 +1,238 @@
 #!/usr/bin/env python3
-"""
-Verification program for
-    "Additive Representations by Primitive Dyck Numbers"
-    (Takayuki Kuriyama)
+"""Reproduce the finite computations in
 
-This script independently checks every finite computation on which the
-paper relies, in particular:
+    Takayuki Kuriyama,
+    "Additive Representations by Primitive Dyck Numbers".
 
-  * Lemma "finite-five"        (the five interval inclusions in 5P)
-  * Lemma "finite-exception"   (F_5(L), 1+F_3(L), 2+F_1(L) and the
-                                exceptional complement in [0,211])
-  * Proposition "fiveP"        ([212,inf) subset F_5(P); 209,210,211 not)
-  * Theorem "main"             (the full exceptional set and r(N))
+The script checks the finite certificates used in the paper:
 
-CONVENTIONS (answering the referee's likely questions).
+* the five interval inclusions in the finite interval certificate;
+* the low-end checks for the five-summand proposition;
+* the finite exceptional-set certificate on [0, 211]; and
+* a direct dynamic-programming cross-check of r(N) on a finite range.
 
-  * kX  = { x_1 + ... + x_k : x_i in X }  -- sums of EXACTLY k elements,
-          WITH REPETITION allowed (x_i need not be distinct).
-  * F_k(X) = union_{j=0}^{k} jX          -- sums of AT MOST k elements.
-  * 0X = {0} (the empty sum).
-  * An "interval [a,b]" always means the integer interval {a,a+1,...,b}.
+Conventions
+-----------
+For a finite set X of nonnegative integers,
 
-All sumsets are computed exhaustively as finite integer sets (dynamic
-programming), never from a closed-form interval guess; the interval
-descriptions printed in the paper are then verified against these
-exhaustively computed sets.
+    kX     = {x_1 + ... + x_k : x_i in X},
+    F_k(X) = union_{j=0}^k jX,
+
+where repetition is allowed and 0X = {0}.  Intervals [a,b] are integer
+intervals.  All sumsets below are constructed exhaustively as finite sets.
+
+This program uses only the Python standard library.
 """
 
-from functools import lru_cache
+from __future__ import annotations
 
-# ---------------------------------------------------------------------------
-# 1. Primitive Dyck numbers, computed from first principles.
-#    A primitive Dyck word is 1 u 0 with u any Dyck word.  We enumerate them
-#    by length and record their base-2 values, so that L, H, P etc. below are
-#    checked against the actual set N_pD rather than assumed.
-# ---------------------------------------------------------------------------
+from argparse import ArgumentParser
+from typing import Iterable, Set
 
-def dyck_words(n):
-    """All Dyck words with n opening and n closing symbols (as '1'/'0' strings)."""
-    out = []
-    def rec(s, height, opens, closes):
+
+def dyck_words(n: int) -> list[str]:
+    """Return all Dyck words with n opening and n closing symbols."""
+    out: list[str] = []
+
+    def rec(s: str, opens: int, closes: int) -> None:
         if len(s) == 2 * n:
             out.append(s)
             return
-        if opens < n:                      # place a '1'
-            rec(s + '1', height + 1, opens + 1, closes)
-        if closes < opens:                 # place a '0'
-            rec(s + '0', height - 1, opens, closes + 1)
-    rec('', 0, 0, 0)
+        if opens < n:
+            rec(s + "1", opens + 1, closes)
+        if closes < opens:
+            rec(s + "0", opens, closes + 1)
+
+    rec("", 0, 0)
     return out
 
-def primitive_dyck_numbers(max_pairs):
-    """Set of integer values [w]_2 for primitive Dyck words 1u0 with
-       |1u0| <= 2*max_pairs."""
-    vals = set()
-    for inner in range(0, max_pairs):      # u has 'inner' pairs; word length 2(inner+1)
-        for u in dyck_words(inner):
-            vals.add(int('1' + u + '0', 2))
-    return vals
 
-# Enumerate far past every constant used in the paper (max value here is huge).
-NPD = primitive_dyck_numbers(12)           # includes all primitive Dyck numbers < 4*10^6
-P   = {v // 4 for v in NPD if v >= 12}     # P = { v/4 : v in N_pD, v >= 12 }
+def primitive_dyck_numbers_upto(bound: int) -> set[int]:
+    """Return all positive primitive Dyck numbers not exceeding bound."""
+    values: set[int] = set()
+    inner_pairs = 0
+    while (1 << (2 * inner_pairs + 1)) <= bound:
+        for middle in dyck_words(inner_pairs):
+            value = int("1" + middle + "0", 2)
+            if value <= bound:
+                values.add(value)
+        inner_pairs += 1
+    return values
 
-# ---------------------------------------------------------------------------
-# 2. Exact sumset machinery (exhaustive, repetition allowed).
-# ---------------------------------------------------------------------------
 
-def kX(X, k, cap):
-    """{ sums of EXACTLY k elements of X (with repetition) } intersect [0,cap]."""
-    cur = {0}
-    Xc = sorted(x for x in X if x <= cap)
+def kx(values: Iterable[int], k: int, cap: int) -> set[int]:
+    """Return kX intersected with [0, cap], with repetition allowed."""
+    current = {0}
+    usable = sorted(x for x in values if 0 <= x <= cap)
     for _ in range(k):
-        nxt = set()
-        for s in cur:
-            for x in Xc:
-                t = s + x
-                if t <= cap:
-                    nxt.add(t)
-        cur = nxt
-    return cur
+        current = {
+            subtotal + x
+            for subtotal in current
+            for x in usable
+            if subtotal + x <= cap
+        }
+    return current
 
-def F(X, k, cap):
-    """F_k(X) = sums of AT MOST k elements of X, intersect [0,cap]."""
-    res = {0}
-    cur = {0}
-    Xc = sorted(x for x in X if x <= cap)
+
+def fk(values: Iterable[int], k: int, cap: int) -> set[int]:
+    """Return F_k(X) intersected with [0, cap]."""
+    result = {0}
+    current = {0}
+    usable = sorted(x for x in values if 0 <= x <= cap)
     for _ in range(k):
-        nxt = set()
-        for s in cur:
-            for x in Xc:
-                t = s + x
-                if t <= cap:
-                    nxt.add(t)
-        cur = nxt
-        res |= cur
-    return res
+        current = {
+            subtotal + x
+            for subtotal in current
+            for x in usable
+            if subtotal + x <= cap
+        }
+        result.update(current)
+    return result
 
-def sumset(A, B, cap):
-    """A + B intersect [0,cap]."""
-    return {a + b for a in A for b in B if a + b <= cap}
 
-def contains_interval(S, a, b):
-    """True iff [a,b] subset S."""
-    return all(x in S for x in range(a, b + 1))
+def sumset(left: Iterable[int], right: Iterable[int], cap: int) -> set[int]:
+    """Return (left + right) intersected with [0, cap]."""
+    return {a + b for a in left for b in right if a + b <= cap}
 
-def as_intervals(S):
-    """Represent finite integer set S as a sorted list of maximal [a,b] blocks."""
-    xs = sorted(S)
-    if not xs:
-        return []
-    blocks, start, prev = [], xs[0], xs[0]
-    for x in xs[1:]:
-        if x == prev + 1:
-            prev = x
-        else:
-            blocks.append((start, prev))
-            start = prev = x
-    blocks.append((start, prev))
-    return blocks
 
-# ---------------------------------------------------------------------------
-# 3. The finite sets named in the paper.
-# ---------------------------------------------------------------------------
+def interval(a: int, b: int) -> set[int]:
+    return set(range(a, b + 1))
 
-L = {3, 13, 14, 53, 54, 57, 58, 60}
-H = {213, 214, 217, 218, 220, 229, 230, 233, 234, 236, 241, 242, 244, 248}
 
-def check(name, condition):
+def check(name: str, condition: bool) -> None:
     print(f"[{'OK ' if condition else 'FAIL'}] {name}")
-    assert condition, name
+    if not condition:
+        raise AssertionError(name)
 
-print("=== Membership: L, H really lie in P ===")
-check("L subset P", L <= P)
-check("H subset P", H <= P)
 
-print("\n=== Lemma finite-five: five interval inclusions in 5P ===")
-CAP = 1100
-fiveL   = kX(L, 5, CAP)
-H_4L    = sumset(H,        kX(L, 4, CAP), CAP)
-H2_3L   = sumset(kX(H,2,CAP), kX(L, 3, CAP), CAP)
-H3_2L   = sumset(kX(H,3,CAP), kX(L, 2, CAP), CAP)
-H4_L    = sumset(kX(H,4,CAP), L, CAP)
-check("[215,254]  subset 5L",     contains_interval(fiveL, 215, 254))
-check("[245,486]  subset H+4L",   contains_interval(H_4L, 245, 486))
-check("[439,674]  subset 2H+3L",  contains_interval(H2_3L, 439, 674))
-check("[645,862]  subset 3H+2L",  contains_interval(H3_2L, 645, 862))
-check("[855,1046] subset 4H+L",   contains_interval(H4_L, 855, 1046))
-# Every listed sumset uses EXACTLY 5 elements of P (5=5, 1+4, 2+3, 3+2, 4+1),
-# so their union lies in 5P; overlap gives the stated corollary.
-union5P = fiveL | H_4L | H2_3L | H3_2L | H4_L
-check("[215,1046] subset 5P (overlap of the five)",
-      contains_interval(union5P, 215, 1046))
+def compute_r(bound: int, primitive_numbers: Iterable[int]) -> list[int]:
+    """Compute r(N) for 0 <= N <= bound by unbounded coin-change DP."""
+    parts = sorted(p for p in primitive_numbers if 0 < p <= bound)
+    infinity = bound + 1
+    r = [infinity] * (bound + 1)
+    r[0] = 0
+    for n in range(1, bound + 1):
+        r[n] = min((r[n - p] + 1 for p in parts if p <= n), default=infinity)
+    return r
 
-print("\n=== Proposition fiveP: [212,inf) subset F_5(P), and 209,210,211 excluded ===")
-# Sharpness at the low end, checked exhaustively against F_5(P) up to 214.
-F5P_small = F(P, 5, 300)
-check("212 in F_5(P)", 212 in F5P_small)
-check("213 in F_5(P)", 213 in F5P_small)
-check("214 in F_5(P)", 214 in F5P_small)
-check("209 not in F_5(P)", 209 not in F5P_small)
-check("210 not in F_5(P)", 210 not in F5P_small)
-check("211 not in F_5(P)", 211 not in F5P_small)
 
-print("\n=== Lemma finite-exception: F_5(L), and the criterion complement in [0,211] ===")
-F5L = F(L, 5, 211)
-paper_F5L = (
-    {0, 3, 6, 9}
-    | set(range(12, 18)) | {19, 20} | {22, 23}
-    | set(range(25, 38)) | set(range(39, 49)) | set(range(52, 209))
-)
-check("F_5(L) cap [0,211] matches the paper's interval list",
-      F5L == paper_F5L)
+def main(theorem_check_bound: int) -> None:
+    if theorem_check_bound < 848:
+        raise ValueError("--bound must be at least 848")
 
-criterion = F(L, 5, 211) \
-          | {1 + x for x in F(L, 3, 211) if 1 + x <= 211} \
-          | {2 + x for x in F(L, 1, 211) if 2 + x <= 211}
-criterion &= set(range(0, 212))
-paper_criterion = (
-    set(range(0, 8)) | {9, 10} | set(range(12, 24))
-    | set(range(25, 38)) | set(range(39, 49)) | set(range(52, 209))
-)
-check("[0,211] cap (F5L u (1+F3L) u (2+F1L)) matches paper",
-      criterion == paper_criterion)
+    # P = {v/4 : v is a primitive Dyck number and v >= 12}.
+    # The finite sumset checks only use elements of P at most 1100, so
+    # primitive Dyck numbers through 4400 suffice for this part.
+    certificate_cap = 1100
+    primitive_for_certificates = primitive_dyck_numbers_upto(4 * certificate_cap)
+    p_set = {v // 4 for v in primitive_for_certificates if v >= 12}
 
-complement = sorted(set(range(0, 212)) - criterion)
-check("complement in [0,211] = {8,11,24,38,49,50,51,209,210,211}",
-      complement == [8, 11, 24, 38, 49, 50, 51, 209, 210, 211])
-print("    complement =", complement)
-print("    => N = 4m+2 for these m:", [4 * m + 2 for m in complement])
+    low = {3, 13, 14, 53, 54, 57, 58, 60}
+    high = {213, 214, 217, 218, 220, 229, 230, 233, 234, 236,
+            241, 242, 244, 248}
 
-# ---------------------------------------------------------------------------
-# 4. Independent brute force of r(N): the whole theorem, no structure assumed.
-#    r(N) = fewest primitive Dyck numbers (with repetition) summing to N.
-# ---------------------------------------------------------------------------
-print("\n=== Theorem main: brute-force r(N) for even N (coin-problem DP) ===")
-BOUND = 2000
-parts = sorted(v for v in NPD if 0 < v <= BOUND)
-INF = float('inf')
-r = [INF] * (BOUND + 1)
-r[0] = 0
-for n in range(1, BOUND + 1):
-    best = INF
-    for p in parts:
-        if p > n:
-            break
-        if r[n - p] + 1 < best:
-            best = r[n - p] + 1
-    r[n] = best
+    print("=== Primitive-Dyck membership checks ===")
+    check("L subset P", low <= p_set)
+    check("H subset P", high <= p_set)
+    check("P intersect [0,211] equals L", (p_set & interval(0, 211)) == low)
 
-need7 = [n for n in range(2, BOUND + 1, 2) if r[n] == 7]
-need8 = [n for n in range(2, BOUND + 1, 2) if r[n] == 8]
-need_more = [n for n in range(2, BOUND + 1, 2) if r[n] > 8]
-check("r(46) = 8", r[46] == 8)
-check("exactly the ten N with r=7", need7 ==
-      [34, 44, 98, 154, 198, 202, 206, 838, 842, 846])
-check("no even N with r>8", need_more == [])
-check("every even N in [848,2000] has r<=6",
-      all(r[n] <= 6 for n in range(848, BOUND + 1, 2)))
-print("    r=7 at:", need7)
-print("    r=8 at:", need8)
+    print("\n=== Finite interval certificate ===")
+    five_low = kx(low, 5, certificate_cap)
+    high_plus_4low = sumset(high, kx(low, 4, certificate_cap), certificate_cap)
+    two_high_plus_3low = sumset(
+        kx(high, 2, certificate_cap), kx(low, 3, certificate_cap), certificate_cap
+    )
+    three_high_plus_2low = sumset(
+        kx(high, 3, certificate_cap), kx(low, 2, certificate_cap), certificate_cap
+    )
+    four_high_plus_low = sumset(kx(high, 4, certificate_cap), low, certificate_cap)
 
-print("\nAll checks passed.")
+    check("[215,254] subset 5L", interval(215, 254) <= five_low)
+    check("[245,486] subset H+4L", interval(245, 486) <= high_plus_4low)
+    check("[439,674] subset 2H+3L", interval(439, 674) <= two_high_plus_3low)
+    check("[645,862] subset 3H+2L", interval(645, 862) <= three_high_plus_2low)
+    check("[855,1046] subset 4H+L", interval(855, 1046) <= four_high_plus_low)
+
+    finite_union = (
+        five_low
+        | high_plus_4low
+        | two_high_plus_3low
+        | three_high_plus_2low
+        | four_high_plus_low
+    )
+    check("[215,1046] is covered by the five finite sumsets",
+          interval(215, 1046) <= finite_union)
+
+    print("\n=== Low-end checks for the five-summand proposition ===")
+    f5p_small = fk(p_set, 5, 300)
+    check("212, 213, 214 belong to F_5(P)", {212, 213, 214} <= f5p_small)
+    check("209, 210, 211 do not belong to F_5(P)",
+          {209, 210, 211}.isdisjoint(f5p_small))
+
+    print("\n=== Finite exceptional-set certificate on [0,211] ===")
+    f5_low = fk(low, 5, 211)
+    paper_f5_low = (
+        {0, 3, 6, 9}
+        | interval(12, 17)
+        | {19, 20, 22, 23}
+        | interval(25, 37)
+        | interval(39, 48)
+        | interval(52, 208)
+    )
+    check("F_5(L) matches the interval list in the paper", f5_low == paper_f5_low)
+
+    criterion = (
+        fk(low, 5, 211)
+        | {1 + x for x in fk(low, 3, 211) if 1 + x <= 211}
+        | {2 + x for x in fk(low, 1, 211) if 2 + x <= 211}
+    ) & interval(0, 211)
+
+    paper_criterion = (
+        interval(0, 7)
+        | {9, 10}
+        | interval(12, 23)
+        | interval(25, 37)
+        | interval(39, 48)
+        | interval(52, 208)
+    )
+    check("the six-summand criterion matches the paper", criterion == paper_criterion)
+
+    expected_complement = {8, 11, 24, 38, 49, 50, 51, 209, 210, 211}
+    actual_complement = interval(0, 211) - criterion
+    check("the complement is the stated ten-element set",
+          actual_complement == expected_complement)
+    print("    exceptional m:", sorted(actual_complement))
+    print("    corresponding N=4m+2:", sorted(4 * m + 2 for m in actual_complement))
+
+    print(f"\n=== Finite-range cross-check of r(N), 2 <= N <= {theorem_check_bound} ===")
+    primitive_for_r = primitive_dyck_numbers_upto(theorem_check_bound)
+    r = compute_r(theorem_check_bound, primitive_for_r)
+
+    expected_r7 = [34, 44, 98, 154, 198, 202, 206, 838, 842, 846]
+    actual_r7 = [n for n in range(2, theorem_check_bound + 1, 2) if r[n] == 7]
+    actual_r8 = [n for n in range(2, theorem_check_bound + 1, 2) if r[n] == 8]
+    actual_over8 = [n for n in range(2, theorem_check_bound + 1, 2) if r[n] > 8]
+
+    check("r(46)=8", r[46] == 8)
+    check("the r=7 values in the checked range are exactly the stated ten",
+          actual_r7 == expected_r7)
+    check("46 is the only r=8 value in the checked range", actual_r8 == [46])
+    check("no checked even N has r(N)>8", not actual_over8)
+    check(f"every checked even N in [848,{theorem_check_bound}] has r(N)<=6",
+          all(r[n] <= 6 for n in range(848, theorem_check_bound + 1, 2)))
+
+    print("    r=7 at:", actual_r7)
+    print("    r=8 at:", actual_r8)
+    print("\nAll finite checks passed.")
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--bound",
+        type=int,
+        default=2000,
+        help="upper bound for the independent finite-range check of r(N) (default: 2000)",
+    )
+    args = parser.parse_args()
+    main(args.bound)
