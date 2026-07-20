@@ -2,8 +2,8 @@
 
 Lean formalization log and roadmap for the MCFG fixed finite-observation paper.
 
-Last updated: 2026-07-17  
-Current confirmed CI point: Lean CI #718, commit `ba0b1cb`, pushed by `growupkuriyama-hub`.
+Last updated: 2026-07-20  
+Current confirmed CI point: Lean CI #751, commit `b7e0d5a`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -93,6 +93,49 @@ is no longer the positive-learning theorem or the closed bit-size theorem; it is
 chiefly executable polynomial construction, concrete strict-gain/observation
 separation examples, observation-design optimization complexity, and the final
 negative/exclusion results.
+
+The CI #719--#738 phase builds the semantic observation-design optimization
+theory on top of ablation.  It constructs paired and arbitrary finite selected
+observation products, proves target/failure monotonicity and synergy
+decompositions, defines minimum-cardinality and general weighted selection,
+derives irredundancy and coordinate essentiality, introduces two-objective
+Pareto fronts and positive additive costs, and turns the semantic optimization
+problems into explicit finite feasible/minimum/Pareto candidate sets with actual
+classical selectors and certified selected-product learners.  It then organizes
+cost-bounded candidates into a monotone filtration and language-class rank
+hierarchy, proves exact rank-shell decomposition, comparison, perturbation
+sensitivity, and fixed-overhead normalization, identifies the rank-zero,
+rank-one, arbitrary-cardinality, and arbitrary-positive-additive layers, and
+finally reconstructs positive additive rank as the minimum scalar envelope of
+the finite Pareto frontier with an actual Pareto-rank selector.  The remaining
+observation-design gap is now chiefly computational complexity and concrete
+strict separation, not semantic optimization existence.
+
+The CI #739--#751 phase resolves the internal geometry of the
+positive-additive-rank-minimizing Pareto frontier.  It defines the finite set of
+rank-minimizing profiles, selects the minimum-cardinality and minimum-additive
+endpoints, and proves that every profile lies on one affine rank line.  The
+endpoint distance becomes an exact tradeoff width.  Profiles are normalized by
+their cardinality offsets, reconstructed exactly from those offsets, and put in
+an explicit finite equivalence with the realized offset set.  Actual selected
+observation interfaces are then chosen for every realized offset, with exact
+cardinality/additive-cost formulas, order equivalence, difference preservation,
+Pareto optimality, irredundancy, coordinate essentiality, and certified
+selected-product learners.
+
+The same phase distinguishes gap-free spectra from spectra with missing
+intermediate profiles.  It proves exact interval and cardinality
+characterizations of gap-freeness, defines the finite gap set and the exact
+defect formula
+`profiles.card + gaps.card = width + 1`, selects and bounds the first missing
+offset, and constructs a finite Boolean checker relative to the semantic
+offset table together with a canonical least-gap certificate.  Finally it
+packages the positive and negative branches as proof-carrying alternatives and
+as finite offset-indexed families of actual certified selected interfaces.
+This substantially closes the semantic profile/gap theory.  It does not yet
+replace semantic target-membership filters by an executable encoded
+optimization problem, so the main remaining observation-design task is still
+computational complexity and concrete strict separation.
 
 ---
 
@@ -331,18 +374,50 @@ ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions.lean 
 ConcreteCanonicalLearnerWorkingGrammarObservationRefinementFailure.lean ✅
 ConcreteCanonicalLearnerWorkingGrammarObservationEquivalenceChain.lean ✅
 ConcreteCanonicalLearnerWorkingGrammarObservationAblation.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationProduct.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelection.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfiles.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileExtremes.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileWidth.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsets.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetSelector.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetOrder.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetBijection.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapFree.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGaps.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetFirstGapBounds.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapDecision.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapAlternative.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapSelectionFamily.lean ✅
 ```
 
 All files marked ✅ above are user-confirmed as passed.  The latest named CI/commit explicitly recorded in this document is:
 
 ```text
-Lean CI #718
-Commit: ba0b1cb
+Lean CI #751
+Commit: b7e0d5a
 ```
 
-`ConcreteCanonicalLearnerWorkingGrammarObservationAblation.lean` is now
-confirmed passed at Lean CI #718.  The verified chain listed above contains
-230 CI-confirmed files.
+`ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapSelectionFamily.lean`
+is now confirmed passed at Lean CI #751.  The verified chain listed above
+contains 262 CI-confirmed files.
 
 The current state is best described as:
 
@@ -403,14 +478,195 @@ profile obstructions imply characteristic-rank lower bounds: proved
 observation refinement target/failure/gain monotonicity: proved
 mutual observation refinement and refinement-chain gain decomposition: proved
 interface ablation redundancy/essentiality criterion: proved
+paired and finite selected observation products: constructed
+minimum-cardinality, weighted, positive-additive, and Pareto selection semantics: proved
+minimum selections are irredundant and selected coordinates are essential: proved
+finite feasible/minimum/Pareto candidate sets and actual selectors: constructed
+cost-budget filtration and exact language-class rank hierarchy: constructed
+cost-model comparison, perturbation sensitivity, and fixed-overhead normalization: proved
+rank-zero, rank-one, arbitrary-cardinality, and arbitrary-positive-additive shell theorems: proved
+positive-additive rank = minimum scalar value on the finite additive Pareto frontier: proved
+actual rank-minimizing Pareto selector with certified selected-product learner: constructed
+rank-minimizing Pareto profile set, endpoint profiles, and exact tradeoff width: constructed
+profile/offset reconstruction, finite bijection, and exact order/difference correspondence: proved
+gap-free interval characterization and exact profile-count theorem: proved
+finite gap set and exact defect formula profiles.card + gaps.card = width + 1: proved
+least missing offset, strict interior/rank bounds, and certified realized prefix: constructed
+finite semantic-table Boolean decision and canonical least-gap certificate: constructed
+complete or first-gap-prefix offset-indexed families of actual certified selected products: constructed
 current strongest certified identification/rank endpoint:
   correctedConcreteCertifiedWorkingGrammarLearner_identification_descriptionRankObstruction_package
 current strongest observation endpoint:
-  correctedConcreteCertifiedWorkingGrammar_observationAblation_package
+  correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankProfileOffsetGapSelectionFamily_package
 current strongest checked-description endpoint:
   correctedConcreteWorkingGrammarLearner_finalDescriptionConclusion_package
 current strongest finite-search endpoint:
   correctedConcreteWorkingGrammarLearner_identification_canonicalSelector_package
+```
+
+
+Most important progress since CI #738:
+
+```text
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfiles.lean
+constructs the finite set of positive-additive-rank-minimizing Pareto profiles,
+proves exact rank-line equations and antichain/order properties, bounds the
+profile count by rank + 1, and selects the actual selector's profile.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileExtremes.lean
+selects the minimum-cardinality and minimum-additive endpoint profiles, proves
+their extremal inequalities and rank equations, and attaches certified
+selected-product witnesses to both endpoints.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileWidth.lean
+defines the exact endpoint tradeoff width, proves equality of the cardinality
+and additive-coordinate widths, bounds width by positive-additive rank, embeds
+all profiles in the finite endpoint interval, and characterizes width zero as
+profile rigidity.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsets.lean
+normalizes profiles to cardinality offsets, reconstructs each profile exactly
+as `(c_min + d, a_max - d)`, proves offset injectivity, realizes offsets 0 and
+width, and gives certified selected-product witnesses for every realized
+offset.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetSelector.lean
+chooses one actual selected subset for every realized offset and proves exact
+profile formulas, Pareto optimality, exact rank, global minimum cost,
+irredundancy, coordinate essentiality, endpoint behavior, and certified
+learning.  It deliberately asserts profile uniqueness rather than subset
+uniqueness.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetOrder.lean
+proves that offset order is exactly cardinality order and reverse
+additive-coordinate order.  Ordered offset differences are preserved exactly
+as both cardinality increase and additive-cost decrease.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetBijection.lean
+constructs an explicit equivalence between realized offsets and
+rank-minimizing profiles, proves both round trips and unique correspondence,
+derives exact finite-cardinality equality, and transports every profile to an
+actual certified offset selection.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapFree.lean
+defines gap-freeness, characterizes it by equality with
+`range (width + 1)` and by attaining the maximal profile count, identifies the
+profile set with the full tradeoff interval, constructs all-offset selectors,
+and proves exact one-step exchanges.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGaps.lean
+defines the finite missing-offset set and gap count, proves disjoint
+offset/gap decomposition of the width interval, establishes
+`profiles.card + gaps.card = width + 1`, and selects the least missing offset
+with a certified realized prefix before it.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetFirstGapBounds.lean
+proves that every first gap is a strict interior offset, so non-gap-freeness
+forces width and rank at least two.  It bounds profile count below by
+`firstGap + 1`, bounds gap count above by `width - firstGap`, and constructs
+certified selectors for the realized prefix and maximum endpoint.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapDecision.lean
+defines a Boolean gap-free decision and missing-offset verifier relative to
+the finite semantic table, proves their correctness, identifies the accepted
+candidate set with the semantic gap set, and constructs a canonical least-gap
+certificate.  This is not yet an external polynomial-time decision theorem.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapAlternative.lean
+packages the Boolean result as a proof-carrying dichotomy: the positive branch
+provides all offsets, while the negative branch returns the least verified gap,
+its rank/width bounds, and certified selectors for every smaller offset.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapSelectionFamily.lean
+lifts single-offset selectors to finite indexed families.  The gap-free branch
+has a complete family of width + 1 certified selected products; the negative
+branch has a first-gap-prefix-plus-maximum family of firstGap + 1 certified
+selected products, with exact profile and tradeoff-order guarantees at every
+index.
+```
+
+Most important progress since CI #718:
+
+```text
+ConcreteCanonicalLearnerWorkingGrammarObservationProduct.lean constructs paired
+observations, factor refinements, target/failure comparisons, semantic synergy,
+and the decomposition of the paired target class into factor targets plus
+genuinely joint-observation targets.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelection.lean generalizes
+pairing to arbitrary finite selected products and defines minimum-cardinality
+observation selection for every full-product target.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy.lean
+proves that minimum-cardinality selections are inclusion-irredundant and that
+every retained coordinate is essential.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection.lean
+introduces arbitrary natural-valued selection costs, exact attained minima,
+strictly monotone cost irredundancy, and exact bounded-cost obstruction
+theorems.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection.lean introduces
+the two-objective profile (selected cardinality, selection cost), weak/strict
+dominance, Pareto fronts, Pareto profiles, existence, irredundancy, coordinate
+essentiality, and certified Pareto-selected learners.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights.lean
+specializes the cost theory to additive and positive-additive coordinate
+weights and proves strict monotonicity of the positive-additive model.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization.lean turns
+semantic feasibility, minimum cost, Pareto fronts, and Pareto profiles into
+explicit finite Finset searches bounded by 2^|U|.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector.lean
+selects actual minimum-cost and Pareto candidates from those finite nonempty
+sets and attaches certified selected-product learners.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration.lean organizes
+all feasible candidates by cost budget, proves filtration monotonicity, and
+identifies the semantic minimum as the first nonempty layer.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank.lean lifts the
+budget filtration to cumulative language classes, exact rank shells, unique
+rank decomposition, exact profile thresholds, and certified rank-minimum
+selection.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison.lean
+proves profile/filtration inclusion and rank monotonicity under pointwise cost
+order, including cardinality versus positive-additive rank and monotonicity
+under coordinate-weight increases.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean
+proves additive perturbation bounds for profiles, filtrations, exact shells, and
+ranks; coordinatewise weight error d changes positive-additive rank by at most
+d * |U| in the controlled direction.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead.lean
+proves exact translation under a fixed setup cost: ranks shift by the overhead,
+minimum subsets and Pareto fronts remain unchanged, and the same selected-product
+certified learner applies.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero.lean and
+ObservationSelectionRankOne.lean identify the bottom two shells: rank zero is
+exactly empty-interface representability; cardinality rank one is exactly
+one-coordinate representability but not empty-interface representability; the
+positive-additive rank-one witness additionally has zero extra weight.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank.lean
+and ObservationSelectionPositiveAdditiveRank.lean give arbitrary-rank witness
+theorems, bounded shell decompositions, exact lower-bound obstructions, and
+irredundant certified exact-rank selections.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope.lean
+proves that positive-additive rank is exactly the minimum scalar total on the
+finite additive Pareto frontier and that rank lower bounds can be checked only
+against Pareto scalar values.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector.lean
+filters the finite Pareto frontier to the exact rank-minimizing candidates,
+selects one actual candidate, proves global optimality, irredundancy and
+coordinate essentiality, and attaches its certified learner.
 ```
 
 
@@ -785,23 +1041,33 @@ certificate-carrying learner and certified mind-change transfer: complete
 minimum bit/search complexity and simultaneous description-rank framework: complete semantically
 description-rank obstruction framework: complete semantically
 observation refinement/equivalence/gain/ablation framework: complete abstractly
+finite observation products and semantic selection optimization: complete
+cardinality/weighted/Pareto/rank hierarchy and selectors: complete semantically
+Pareto rank-profile geometry, endpoint width, offset equivalence, and exact order theory: complete semantically
+gap-free/gap/first-gap/defect/certificate/selection-family theory: complete semantically
 concrete strict observation-separation examples: not yet constructed
 executable polynomial learner implementation: about 60--70%
+observation-selection encoded decision/optimization complexity: about 35--45%
 negative/no-advice and copy/member-kernel boundary results: about 25--35%
 positive-learning plus quantitative/certification half: about 95--98%
-observation-design mathematical framework: about 80--88%
-whole intended paper formalization: about 84--89%
+observation-design mathematical framework: about 98--99% semantically
+whole intended paper formalization: about 89--93%
 ```
 
-The principal remaining work is now divided into three tracks.  On the
+The principal remaining work is still divided into three tracks.  On the
 executable side: replace brute-force bounded-word enumeration by actual sample
 factorization, remove remaining `noncomputable` finite selections, and verify
-construction time.  On the observation side: construct a concrete strict-gain
-witness, formalize bounded observation products and optimization complexity,
-and connect the abstract ablation criterion to a real separation theorem.  On
-the boundary side: prove no-advice non-identifiability and the proposed
-copy/member-kernel exclusions, and decide whether strict output/start
-normalization is required by the final paper statement.
+construction time.  On the observation side, the semantic optimization and
+profile/gap theory is now essentially closed; the remaining work is to
+construct concrete strict-gain witnesses, replace semantic target-membership
+filters by a decidable encoded selection problem, and prove the intended
+decision/optimization complexity bounds, including NP-hardness or
+NP-completeness if valid.  The new Boolean gap checker is only a finite checker
+relative to the already constructed semantic table and does not discharge this
+complexity obligation.  On the boundary side: prove no-advice
+non-identifiability and the proposed copy/member-kernel exclusions, and decide
+whether strict output/start normalization is required by the final paper
+statement.
 
 Most important progress since CI #624:
 
@@ -1154,7 +1420,7 @@ CharacteristicSampleExposingAsCommonContext.lean and CharacteristicSampleTranspo
 CharacteristicSampleAnchorCommonContextFinal.lean gave the common-context route its final theorem wrapper.
 ```
 
-What remains after the CI #718 progress:
+What remains after the CI #738 progress:
 
 ```text
 executable decidable construction equivalent to the current noncomputable learner
@@ -1165,8 +1431,9 @@ exact lower bounds for concrete certified-description-rank families
 optional normalization removing semantic StartRootedNormal
 strict output compiler preserving paper-side exact-working conditions, if required
 one concrete strict observation-gain witness
-bounded observation-family product compilation
-observation-selection and optimization complexity
+decidable encoding of semantic observation-selection feasibility
+observation-selection decision and optimization complexity
+NP-hardness or NP-completeness of observation design, if the intended reduction works
 no-advice non-identifiability
 copy-language / member-kernel exclusion
 ```
@@ -7865,6 +8132,419 @@ correctedConcreteCertifiedWorkingGrammar_observationAblation_package
 ```
 
 
+
+### 2.231 `ConcreteCanonicalLearnerWorkingGrammarObservationProduct.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Constructs paired finite observations, factor refinements, target/failure
+comparisons, semantic synergy, and certified learning for paired-observation
+targets.
+
+Main contents:
+
+```lean
+pairedObservation
+leftTargetClass_subset_pairedTargetClass
+rightTargetClass_subset_pairedTargetClass
+pairedTargetClass_eq_factorUnion_union_synergy
+pairedObservation_semanticDecomposition_package
+correctedConcreteCertifiedWorkingGrammar_observationProduct_package
+```
+
+
+### 2.232 `ConcreteCanonicalLearnerWorkingGrammarObservationSelection.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Generalizes paired observations to arbitrary finite selected products and
+defines the minimum number of coordinates needed to represent a full-product
+target.
+
+Main contents:
+
+```lean
+selectedObservationProduct
+selectedObservationProductTargetClass_mono
+CorrectedConcreteObservationSelectionAtCardinality
+correctedConcreteObservationSelectionCardinality
+ambientTarget_exists_minimumObservationSelection
+correctedConcreteCertifiedWorkingGrammar_observationSelection_package
+```
+
+
+### 2.233 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Proves that minimum-cardinality observation selections are inclusion-
+irredundant and that every retained coordinate is essential.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionIrredundant
+CorrectedConcreteSelectedObservationCoordinateEssential
+observationSelection_irredundant_coordinate_package
+ambientTarget_exists_minimumIrredundantObservationSelection
+correctedConcreteCertifiedWorkingGrammar_observationSelectionIrredundancy_package
+```
+
+
+### 2.234 `ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Introduces arbitrary natural-valued selection costs, attained minimum cost,
+strictly monotone cost irredundancy, and exact bounded-cost obstruction
+theorems.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionAtCost
+HasCorrectedConcreteObservationSelectionCost
+correctedConcreteObservationSelectionMinimumCost
+observationSelection_not_atCost_iff_lt_minimumCost
+ambientTarget_exists_minimumCostCertifiedObservationSelection
+correctedConcreteCertifiedWorkingGrammar_observationWeightedSelection_package
+```
+
+
+### 2.235 `ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Introduces cardinality/cost Pareto profiles, dominance, finite Pareto fronts,
+existence, irredundancy, coordinate essentiality, and certified Pareto-selected
+learners.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionParetoOptimal
+CorrectedConcreteObservationSelectionParetoFrontier
+CorrectedConcreteObservationSelectionParetoProfileSet
+observationSelection_exists_paretoOptimal
+observationSelection_paretoOptimal_irredundant
+ambientTarget_exists_paretoCertifiedObservationSelection
+correctedConcreteCertifiedWorkingGrammar_observationParetoSelection_package
+```
+
+
+### 2.236 `ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Specializes weighted selection to additive and positive-additive coordinate
+costs and proves the monotonicity/strict-monotonicity needed for irredundancy.
+
+Main contents:
+
+```lean
+correctedConcreteObservationSelectionAdditiveCost
+correctedConcreteObservationSelectionPositiveAdditiveCost
+observationSelectionAtZeroPositiveAdditiveCost_iff
+correctedConcreteCertifiedWorkingGrammar_observationAdditiveWeights_package
+```
+
+
+### 2.237 `ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Turns semantic feasibility, minimum cost, Pareto fronts, and Pareto profiles
+into explicit finite candidate sets bounded by `2 ^ U.card`.
+
+Main contents:
+
+```lean
+correctedConcreteObservationFeasibleSelections
+correctedConcreteObservationMinimumCostSelections
+correctedConcreteObservationParetoSelections
+correctedConcreteObservationParetoProfiles
+correctedConcreteObservationMinimumCostSelections_nonempty
+correctedConcreteObservationParetoSelections_card_le_two_pow
+correctedConcreteCertifiedWorkingGrammar_observationFiniteOptimization_package
+```
+
+
+### 2.238 `ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Selects actual minimum-cost and Pareto candidates from the finite nonempty
+search sets and attaches their certified selected-product learners.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationMinimumCostSelectionResult
+correctedConcreteObservationMinimumCostSelectionResult
+CorrectedConcreteObservationParetoSelectionResult
+correctedConcreteObservationParetoSelectionResult
+correctedConcreteObservationMinimumCostSelectionResult_certified_package
+correctedConcreteObservationParetoSelectionResult_certified_package
+correctedConcreteCertifiedWorkingGrammar_observationOptimizationSelector_package
+```
+
+
+### 2.239 `ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Organizes cost-bounded feasible selections into a monotone finite filtration
+and identifies the semantic minimum as its first nonempty layer.
+
+Main contents:
+
+```lean
+correctedConcreteObservationCostBudgetFiltration
+correctedConcreteObservationCostBudgetFiltration_mono
+correctedConcreteObservationCostBudgetFiltration_firstNonempty_package
+correctedConcreteObservationCostBudgetCandidate_certified_package
+correctedConcreteCertifiedWorkingGrammar_observationBudgetFiltration_package
+```
+
+
+### 2.240 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Lifts the budget filtration to cumulative language classes and disjoint exact
+selection-rank shells with unique decomposition and certified minimum-rank
+selection.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionCostProfileClass
+CorrectedConcreteObservationSelectionExactCostRankClass
+observationSelection_mem_costProfileClass_iff_minimum_le
+observationSelectionExactCostRankClasses_disjoint
+fullProductTarget_existsUnique_exactObservationSelectionCostRank
+ambientTarget_observationSelectionCostRank_certified_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionRank_package
+```
+
+
+### 2.241 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Compares profiles, filtrations, exact shells, and target ranks under pointwise
+cost order and coordinate-weight order.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionCostPointwiseLe
+observationSelectionCostProfileClass_subset_of_pointwiseLe
+observationSelectionMinimumCost_le_of_pointwiseLe
+ambientTargetObservationSelectionCostRank_le_of_pointwiseLe
+ambientTarget_cardinalityCostRank_le_positiveAdditiveCostRank
+ambientTarget_twoCostRank_certifiedComparison_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionRankComparison_package
+```
+
+
+### 2.242 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Proves additive perturbation bounds for selection profiles, filtrations, exact
+shells, and ranks, including the coordinate-weight bound `delta * U.card`.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionCostLeUpToWithin
+observationSelectionMinimumCost_le_add_of_leUpToWithin
+ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
+ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation
+ambientTarget_costRankSensitivity_certified_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionRankSensitivity_package
+```
+
+
+### 2.243 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Analyzes fixed setup overhead: cumulative profiles and filtrations translate,
+ranks shift exactly, while minimum subsets and Pareto fronts remain unchanged.
+
+Main contents:
+
+```lean
+correctedConcreteObservationSelectionCostWithOverhead
+observationSelectionMinimumCost_withOverhead_eq
+observationSelection_mem_exactRankWithOverhead_iff
+ambientTargetObservationSelectionCostRank_withOverhead_eq
+correctedConcreteObservationParetoSelections_withOverhead_eq
+ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionCostOverhead_package
+```
+
+
+### 2.244 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Identifies rank zero with zero-cost representability and, for cardinality and
+positive-additive costs, with representability by the empty selected product.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionZeroCostClass
+observationSelectionExactCostRankZeroClass_eq_zeroCostClass
+ambientTarget_positiveAdditiveCostRank_eq_zero_iff_emptyProductTarget
+ambientTarget_cardinalityCostRank_eq_zero_iff_emptyProductTarget
+ambientTarget_positiveAdditiveRankZero_emptyProductCertified_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionRankZero_package
+```
+
+
+### 2.245 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Identifies cardinality rank one with one-coordinate representability but not
+empty-interface representability; positive-additive rank one additionally
+requires zero extra weight.
+
+Main contents:
+
+```lean
+CorrectedConcreteCardinalityObservationSelectionRankOneClass
+CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
+observationSelectionPositiveAdditiveCost_eq_one_iff
+ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
+ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
+correctedConcreteCertifiedWorkingGrammar_observationSelectionRankOne_package
+```
+
+
+### 2.246 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Gives the arbitrary-cardinality-rank witness theorem, bounded exact-shell
+decomposition, direct lower-bound obstruction, and irredundant certified
+minimum-cardinality selection.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
+cardinalityObservationSelectionExactRankClass_eq_witnessClass
+ambientTarget_cardinalityCostRank_eq_selectionCardinality
+fullProductTargetClass_eq_exists_boundedExactCardinalityRank
+ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
+ambientTarget_exists_cardinalityRankCertifiedSelection
+correctedConcreteCertifiedWorkingGrammar_observationSelectionCardinalityRank_package
+```
+
+
+### 2.247 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Gives the arbitrary positive-additive-rank witness theorem, bounded shell
+decomposition, cost obstruction, and irredundant certified exact-rank
+selection.
+
+Main contents:
+
+```lean
+CorrectedConcreteObservationSelectionExactPositiveAdditiveRankWitnessClass
+positiveAdditiveObservationSelectionExactRankClass_eq_witnessClass
+fullProductTargetClass_eq_exists_boundedExactPositiveAdditiveRank
+ambientTarget_positiveAdditiveRank_gt_iff_all_boundedSelections_fail
+ambientTarget_exists_positiveAdditiveRankCertifiedSelection
+correctedConcreteCertifiedWorkingGrammar_observationSelectionPositiveAdditiveRank_package
+```
+
+
+### 2.248 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Identifies positive-additive rank with the minimum scalar value on the finite
+additive Pareto frontier and derives Pareto-only rank obstructions.
+
+Main contents:
+
+```lean
+correctedConcreteObservationPositiveAdditiveParetoRankValues
+CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass
+positiveAdditiveExactCostRankClass_eq_paretoEnvelopeRankClass
+ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue
+ambientTarget_positiveAdditiveRank_gt_iff_lt_all_paretoRankValues
+ambientTarget_exists_positiveAdditiveRankParetoCertifiedSelection
+correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankEnvelope_package
+```
+
+
+### 2.249 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector.lean`
+
+Status: CI passed.
+
+Purpose:
+
+Filters the finite Pareto frontier to exact rank-minimizing candidates, selects
+one actual subset, proves global optimality/irredundancy/essentiality, and
+attaches its certified learner.
+
+Main contents:
+
+```lean
+correctedConcreteObservationPositiveAdditiveRankMinimizingParetoSelections
+CorrectedConcreteObservationPositiveAdditiveParetoRankSelectionResult
+correctedConcreteObservationPositiveAdditiveParetoRankSelectionResult
+CorrectedConcreteObservationPositiveAdditiveParetoRankSelectionResult.semantic_package
+CorrectedConcreteObservationPositiveAdditiveParetoRankSelectionResult.certified_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankSelector_package
+```
+
+
 ## 3. Overall dependency chain
 
 Current import chain:
@@ -8327,6 +9007,44 @@ ConcreteCanonicalLearnerFiniteObjectMonotone
        ConcreteCanonicalLearnerWorkingGrammarObservationEquivalenceChain
           ↓
        ConcreteCanonicalLearnerWorkingGrammarObservationAblation
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationProduct
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelection
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope
+          ↓
+       ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector
 ```
 
 The main import chain remains deliberately linear.  The directed-system file is
@@ -8337,7 +9055,10 @@ representation hierarchies, minimum ranks, semantic mind-change stabilization,
 the complete checked natural/bit serialization chain, closed sample-parametric
 and paper-power bounds, finite checked code search and canonical selection,
 certificate-carrying outputs, minimum certified description ranks and
-obstructions, and finally observation refinement/equivalence/ablation.
+obstructions, observation refinement/equivalence/ablation, and finally finite
+observation products, semantic optimization, exact selection-rank hierarchies,
+cost sensitivity, Pareto envelopes, and an actual certified Pareto-rank
+selector.
 
 ---
 
@@ -9397,13 +10118,88 @@ An essential refinement yields a genuinely new fine-observation target with an
 exact minimum-rank certified description.
 ```
 
+
+### 4.36 Finite observation products and selected interfaces
+
+```text
+paired observations refine each factor
+arbitrary finite selected products refine every selected factor
+target classes grow under selected-product extension
+failure classes shrink
+paired and multi-factor synergy classes isolate genuinely joint information.
+```
+
+### 4.37 Minimum selection, irredundancy, and Pareto structure
+
+```text
+minimum-cardinality selections exist and are attained
+strictly monotone weighted minima are irredundant
+every retained coordinate of a minimum/Pareto selection is essential
+cardinality/cost Pareto fronts and Pareto profiles are nonempty
+selected products carry their own certified learners.
+```
+
+### 4.38 Explicit finite semantic optimization
+
+```text
+all feasible selections form a finite subset of U.powerset
+minimum-cost selections form a nonempty finite set
+Pareto selections and Pareto profiles form finite sets
+all candidate families have cardinality at most 2^|U|
+actual minimum-cost and Pareto selectors are constructed by finite choice.
+```
+
+### 4.39 Budget filtrations and exact selection-rank shells
+
+```text
+cost-bounded candidate layers are monotone
+the minimum cost is exactly the first nonempty layer
+cumulative language profiles have exact threshold theorems
+exact rank shells are pairwise disjoint
+every full-product target has one unique exact selection rank.
+```
+
+### 4.40 Cost comparison, perturbation, and normalization
+
+```text
+pointwise cheaper costs give larger profiles and no larger ranks
+coordinatewise larger weights cannot decrease positive-additive rank
+bounded cost perturbations shift ranks by a proved additive bound
+coordinate weight error d gives rank error at most d * |U|
+fixed overhead shifts every rank exactly and preserves minimum subsets/Pareto fronts.
+```
+
+### 4.41 Rank-zero, rank-one, and arbitrary-rank structure
+
+```text
+rank zero = representability by a zero-cost selection
+cardinality/positive-additive rank zero = empty-product representability
+cardinality rank one = one-coordinate but not zero-coordinate representability
+positive-additive rank one additionally has zero extra weight
+arbitrary cardinality and positive-additive ranks have direct minimum witnesses
+full target classes decompose into bounded unique exact-rank shells.
+```
+
+### 4.42 Pareto rank envelope and selector
+
+```text
+positive-additive rank is the minimum scalar total on the additive Pareto frontier
+the finite Pareto scalar set has at most 2^|U| values
+rank lower bounds can be checked only against Pareto scalar values
+the finite frontier can be filtered to exact rank minimizers
+one actual rank-minimizing Pareto subset is selected
+that subset is irredundant, coordinate-essential, globally optimal, and certified-learnable.
+```
+
+
 ## 5. What remains as explicit assumptions or unfinished work?
 
-CI #718 completes the qualitative positive-learning theorem, actual finite
+CI #738 completes the qualitative positive-learning theorem, actual finite
 grammar compilation, exact semantic reconstruction, closed checked
 sample-parametric description-size analysis, finite exhaustive checked-code
 search, certified output learner, minimum certified description-rank framework,
-and the abstract observation refinement/equivalence/ablation theory.
+the abstract observation refinement/equivalence/ablation theory, and the full
+semantic finite observation-selection optimization/rank/Pareto-selector layer.
 
 The remaining limitations are now much more concentrated.
 
@@ -9500,27 +10296,33 @@ tight minimum checked-bit complexity for explicit target families.
 
 ### 5.8 Observation design
 
-The abstract order theory is now verified:
+The semantic mathematical framework is now verified:
 
 ```text
-refinement target monotonicity
-failure contravariance
-strict gain and empty loss
-mutual-refinement equivalence
-disjoint gain composition along chains
+refinement target monotonicity and failure contravariance
+strict gain, empty loss, mutual equivalence, and chain decomposition
 redundancy/essentiality ablation criterion
-certified learning of every strict-gain target.
+paired and arbitrary finite selected observation products
+minimum-cardinality and arbitrary weighted selection
+irredundancy and coordinate essentiality
+two-objective Pareto fronts and positive-additive scalarization
+explicit finite feasible/minimum/Pareto candidate sets
+actual classical minimum/Pareto/rank-minimizing selectors
+budget filtrations and exact rank-shell decompositions
+rank comparison, perturbation sensitivity, and fixed-overhead normalization
+rank-zero/rank-one/arbitrary-rank witness theorems
+Pareto-envelope characterization and certified Pareto-rank selection.
 ```
 
 Still open:
 
 ```text
 one concrete strict-gain witness for a chosen observation pair
-bounded observation-family product compilation
-minimal/optimal observation selection
+a decidable finite encoding replacing semantic target-membership filters
+executable observation-selection algorithms
 decision and optimization complexity
 NP-hardness or NP-completeness of observation design
-quantitative comparison of certified ranks across concrete observation choices.
+concrete quantitative comparisons across explicit observation families.
 ```
 
 ### 5.9 Negative and exclusion results
@@ -9537,72 +10339,62 @@ other observation-independent lower bounds.
 ### 5.10 Paper/API cleanup
 
 The repository now contains a long verified linear history.  A final public
-import should expose the CI #718 endpoints and place historical facades and
+import should expose the CI #738 endpoints and place historical facades and
 intermediate decomposition files behind internal/legacy imports.
 
 ## 6. Immediate next files
 
-The current CI #718 endpoint is:
+The current CI #738 endpoint is:
 
 ```lean
-ConcreteCanonicalLearnerWorkingGrammarObservationAblation.lean
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector.lean
 ```
 
-The best next mathematical move is no longer another abstract wrapper.  It is a
-concrete separation input for the ablation theorem.
+The semantic observation-selection problem is now highly developed.  The next
+major step should convert it into a decidable encoded optimization problem or
+supply the missing concrete separation witness.
 
-### 6.1 `ConcreteCanonicalLearnerWorkingGrammarObservationStrictGainWitness.lean`
+### 6.1 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDecisionProblem.lean`
 
-Construct explicit finite observations
+Introduce a finite encoded feasibility table/oracle separated from semantic
+target-class membership, and define the decision variants
 
 ```text
-obs_coarse
-obs_fine
-Refines obs_coarse obs_fine
+does some selection of cost at most b cover the target requirement?
+does some Pareto candidate have scalar value at most b?
+is the minimum observation-selection rank at most b?
 ```
 
-and one explicit finite exact start-rooted working MCFG language `L` such that
+Prove equivalence with the existing finite optimization layer whenever the
+encoded table correctly represents semantic feasibility.
 
-```text
-L ∈ TargetClass(obs_fine)
-L ∉ TargetClass(obs_coarse).
-```
+### 6.2 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionComplexity.lean`
 
-This would prove the first inhabited strict gain class and the first genuinely
-essential interface.
+Once the decision encoding is stable, formalize certificates, verification,
+membership in NP, and the intended NP-hardness/NP-completeness reduction.
 
-### 6.2 `ConcreteCanonicalLearnerWorkingGrammarObservationProduct.lean`
+### 6.3 `ConcreteCanonicalLearnerWorkingGrammarObservationStrictGainWitness.lean`
 
-Construct finite products of a bounded family of observations and prove that
-the product refines every factor and represents the union of their available
-finite interface information.
+Construct one explicit refinement and one explicit finite exact start-rooted
+working MCFG language lying in the fine target class but not the coarse target
+class.  This remains the main missing concrete observation-separation example.
 
-### 6.3 `ConcreteCanonicalLearnerWorkingGrammarObservationSelection.lean`
-
-Define finite candidate families, admissible observation selections, coverage
-of target witnesses, and minimum-cardinality/weight selection problems.
-
-### 6.4 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionComplexity.lean`
-
-After the finite selection problem is encoded, prove decidability and seek the
-intended NP-hardness/NP-completeness result.
-
-### 6.5 `ExecutableConcreteCanonicalLearner.lean`
+### 6.4 `ExecutableConcreteCanonicalLearner.lean`
 
 Replace classical/function-valued finite objects by decidable list-based codes
 and prove semantic equivalence with the present certified learner and checked
 serializer.
 
-### 6.6 `SampleFactorizationEnumeration.lean`
+### 6.5 `SampleFactorizationEnumeration.lean`
 
 Replace all-bounded-word enumeration by decompositions of actual sample words.
 
-### 6.7 `ConcreteCanonicalLearnerConstructionComplexity.lean`
+### 6.6 `ConcreteCanonicalLearnerConstructionComplexity.lean`
 
 Prove fixed-parameter or polynomial construction-time bounds for the executable
 factorization learner.
 
-### 6.8 Boundary theorem files
+### 6.7 Boundary theorem files
 
 ```text
 StrictWorkingGrammarNormalization.lean
@@ -9684,9 +10476,9 @@ rank obstruction theorems
 exact-rank shell partition.
 ```
 
-### Stage J: Observation refinement and ablation
+### Stage J: Observation refinement, products, and semantic optimization
 
-Status: abstract framework complete.
+Status: semantic framework essentially complete.
 
 Verified:
 
@@ -9697,15 +10489,21 @@ strict gain and empty loss
 mutual-refinement equivalence
 chain composition and disjoint gains
 redundancy/essentiality criterion
-certified minimum-rank descriptions for strict-gain targets.
+paired and arbitrary finite selected products
+minimum-cardinality and weighted selection
+finite minimum/Pareto candidate searches and selectors
+budget filtrations and exact selection-rank shells
+cost comparison, sensitivity, and normalization
+rank-zero/rank-one/arbitrary-rank characterizations
+Pareto-envelope theorem and actual certified Pareto-rank selector.
 ```
 
 Still needed:
 
 ```text
 concrete strict-gain example
-finite observation products
-selection/optimization complexity.
+decidable selection-problem encoding
+selection/optimization complexity and hardness.
 ```
 
 ### Stage K: Executability and construction time
@@ -9749,7 +10547,15 @@ joint profile hierarchy and minimum certified description rank
 profile/complexity obstruction theorems
 observation refinement target/failure monotonicity
 strict gain, empty loss, mutual equivalence, and chain decomposition
-interface ablation redundancy/essentiality criterion.
+interface ablation redundancy/essentiality criterion
+paired and arbitrary finite selected observation products
+minimum-cardinality and weighted observation selection
+finite feasible/minimum/Pareto candidate sets and actual selectors
+budget filtrations and exact selection-rank shells
+cost comparison, perturbation sensitivity, and fixed-overhead normalization
+rank-zero, rank-one, and arbitrary rank witness/decomposition theorems
+positive-additive Pareto-envelope theorem
+actual rank-minimizing Pareto selector with certified selected-product learner.
 ```
 
 ### Verified but intentionally non-executable or broader than paper working conditions
@@ -9775,8 +10581,9 @@ verified construction-time complexity
 strict compiler preserving exact-working output conditions
 general start-rooted normalization
 concrete strict observation-gain witness
-bounded observation products
-observation-selection optimization complexity
+decidable/executable encoding of semantic observation-selection feasibility
+observation-selection decision and optimization complexity
+NP-hardness or NP-completeness of observation design
 no-advice non-identifiability
 copy-language and member-kernel exclusions.
 ```
@@ -9821,14 +10628,14 @@ Keep each new file small and CI-confirmed.
 Latest confirmed command/CI target:
 
 ```bash
-lake build LeanCfgProject.MCFG.ConcreteCanonicalLearnerWorkingGrammarObservationAblation
+lake build LeanCfgProject.MCFG.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector
 ```
 
 Latest confirmed CI point:
 
 ```text
-Lean CI #718
-Commit: ba0b1cb
+Lean CI #738
+Commit: 6ef91db
 ```
 
 Current strongest semantic/certified endpoints:
@@ -9838,6 +10645,11 @@ correctedConcreteCertifiedWorkingGrammarLearner_identification_descriptionRankOb
 correctedConcreteCertifiedWorkingGrammar_observationRefinementFailure_package
 correctedConcreteCertifiedWorkingGrammar_observationRefinementChain_package
 correctedConcreteCertifiedWorkingGrammar_observationAblation_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionRank_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionCardinalityRank_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionPositiveAdditiveRank_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankEnvelope_package
+correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankSelector_package
 ```
 
 Current strongest checked-description and finite-search endpoints:
@@ -9882,40 +10694,37 @@ Nonempty terminal alphabet
 ⇒ Gold identification and semantic mind-change stabilization.
 ```
 
-Observation comparison now additionally gives:
+Observation design now additionally gives:
 
 ```text
-obs' refines obs
-⇒ TargetClass(obs) ⊆ TargetClass(obs')
-⇒ FailureClass(obs') ⊆ FailureClass(obs)
-⇒ no observation loss
-⇒ finer targets = coarse targets ∪ strict gains.
-
-refinement is redundant
-↔ strict gain is empty
-↔ target classes are equal
-↔ failure classes are equal.
-
-refinement is essential
-⇒ there exists a new fine-observation target
-   identified by the fine certified learner
-   with an exact minimum-rank checked finite description.
+paired and finite selected products preserve every selected factor's targets
+minimum-cardinality and minimum weighted selections are attained
+minimum and Pareto selections are irredundant and coordinate-essential
+finite feasible/minimum/Pareto searches have at most 2^|U| candidates
+cost budgets form a monotone filtration whose first nonempty layer is the rank
+every full-product target lies in one unique exact selection-rank shell
+pointwise cost order and bounded perturbations control rank changes
+fixed overhead shifts rank exactly without changing minimum/Pareto subsets
+cardinality and positive-additive rank-zero/one/arbitrary shells are characterized
+positive-additive rank is the minimum scalar value on the additive Pareto frontier
+an actual rank-minimizing Pareto subset is selected and certified.
 ```
 
 Recommended next file:
 
 ```text
-ConcreteCanonicalLearnerWorkingGrammarObservationStrictGainWitness.lean
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDecisionProblem.lean
 ```
 
 Reason:
 
-CI #718 completes the abstract observation-ablation theorem.  The largest
-remaining mathematical gap in that direction is now concrete rather than
-logical: exhibit one explicit refinement and one explicit language/grammar that
-belongs to the fine target class but not the coarse target class.  Such a file
-would turn the nonempty-gain condition from a premise into the first genuine
-observation-separation theorem, prove an actual essential interface, and provide
-the natural base case for observation-product and observation-selection
-complexity results.
-
+CI #738 completes the semantic finite observation-selection optimization layer,
+including explicit finite candidates, minimum/Pareto selectors, exact rank
+hierarchies, sensitivity, and a certified Pareto-rank selector.  The largest
+remaining gap in that direction is now computational: semantic target-class
+membership still appears inside noncomputable finite filters.  The next file
+should isolate a decidable finite feasibility encoding and prove its equivalence
+to the current semantic selection problem under a correctness interface.  That
+creates the right foundation for NP membership and the intended hardness
+results.  The concrete strict-gain witness remains the parallel mathematical
+example track.
