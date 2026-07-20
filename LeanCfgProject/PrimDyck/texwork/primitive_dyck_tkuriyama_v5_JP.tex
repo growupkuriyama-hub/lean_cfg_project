@@ -1,0 +1,1021 @@
+\documentclass[12pt]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\setlength{\emergencystretch}{3em}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+\renewcommand{\proofname}{証明}
+
+\newcommand{\val}[2]{[#1]_{#2}}
+\newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
+\newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
+\newcommand{\Pset}{\mathcal P}
+\newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\textnormal{\underline{#1}}}}
+
+\title{原始Dyck数による加法的表現}
+\author{Takayuki Kuriyama}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+$1$を開き括弧、$0$を閉じ括弧とみなし、Dyck語を2進整数として読むと、
+完全平衡数が得られる。本稿では、そのうち、走査中のバランスが末尾でのみ
+初めて0に戻る原始Dyck語から生じる部分集合を研究する。任意の正の偶数を
+表すために必要な原始Dyck数の最小個数を決定する。整数$46$だけは8個の
+加数を必要とし、
+$34$, $44$, $98$, $154$, $198$, $202$, $206$, $838$, $842$, $846$
+は7個を必要とする。それ以外のすべての正の偶数は、高々6個の原始Dyck数の
+和である。特に、$848$は、それ以上では常に6個で十分となる最小の閾値である。
+証明では、正則部分言語と、原始Dyck数全体を4で割って得られる族の自己相似的な
+閉性とを組み合わせる。
+\end{abstract}
+
+\noindent\textbf{キーワード：} 加法的表現、相対的漸近加法基底、例外集合、
+Dyck語、原始Dyck路、正則言語、区間充填。
+
+\noindent\textbf{2020 Mathematics Subject Classification：} Primary 11B13;
+Secondary 05A15, 68Q45.
+
+\section{序論}\label{sec:introduction}
+
+平衡した括弧列はすべて、開き括弧を$1$、閉じ括弧を$0$とすることで、
+アルファベット$\{1,0\}$上の語として書ける。したがって、それを2進整数として
+読むことができる。このようにしてどの整数が得られるのか、また、それらが作る
+集合は加法的にどの程度豊かであるのか。本稿では、この問いの自然な変種を扱う。
+
+\emph{Dyck語}とは、$1$と$0$を同数含み、かつ任意の接頭辞において$1$の個数が
+$0$の個数以上である語$w\in\{1,0\}^*$をいう。ここで、$1$は括弧を開き、$0$は
+括弧を閉じる。空でないDyck語が\emph{原始的}であるとは、その空でない真の
+接頭辞がどれも平衡していないことをいう。同値に、対応する格子路が終点において
+初めて高さ0へ戻ることをいう。このような路は、\emph{既約}または\emph{非分解}
+Dyck路とも呼ばれる。原始Dyck語の言語を$\DP$と書く。長さ順、同じ長さでは
+辞書式順に並べると、最初の18個は
+\[
+\begin{gathered}
+10,\ 1100,\ 110100,\ 111000,\ 11010100,\ 11011000,\\
+11100100,\ 11101000,\ 11110000,\ 1101010100,\ 1101011000,\\
+1101100100,\ 1101101000,\ 1101110000,\ 1110010100,\\
+1110011000,\ 1110100100,\ 1110101000
+\end{gathered}
+\]
+である。
+
+$m$進数字上の語$w$に対し、$\val{w}{m}$で、それを$m$進数として読んだ整数を
+表す。便宜上$0$も付け加え、
+\[
+ \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}
+\]
+とおく。正の元を小さい順に18個並べると
+\[
+\begin{gathered}
+2,12,52,56,212,216,228,232,240,\\
+852,856,868,872,880,916,920,932,936
+\end{gathered}
+\]
+であり、これはOEIS数列\seqnum{A057547}である\cite{OEIS}。空でないDyck語は
+すべて$0$で終わるので、$\NpD$の正の元はすべて偶数である。したがって、
+$\NpD$の元の和によって表現できる目標整数は偶数に限られる。
+
+以下では、さらに精密な合同類に関する観察を繰り返し用いる。
+
+\begin{lemma}\label{lem:mod4}
+$4$を法として$2$に合同な正の原始Dyck数は$2$だけである。それ以外の正の
+原始Dyck数はすべて$4$で割り切れる。
+\end{lemma}
+
+\begin{proof}
+空でないDyck語はすべて$0$で終わる。さらに、長さ4以上の原始Dyck語は、実際には
+$00$で終わらなければならない。もし$10$で終われば、最後の2文字を読む直前に、
+路はすでに高さ0へ戻ってしまうからである。語$10$は整数$2$を表し、それより長い
+原始語はすべて$4$の倍数を表す。
+\end{proof}
+
+Bell、Lidbetter、Shallitは、\emph{すべての}Dyck語から得られる、より大きな集合、
+すなわち\emph{完全平衡数}（OEIS数列\seqnum{A014486}\cite{OEIS}）を研究した。
+正則な下方近似とオートマトンを用いて、
+\[
+        8,\ 18,\ 28,\ 38,\ 40,\ 82,\ 166
+\]
+を除くすべての偶数が高々3個の完全平衡数の和である一方、漸近的には2個では
+足りないことを証明した\cite[Thm.\ 14]{BLS}。
+
+原始性による制限は、この結果の見かけだけの変種ではない。空でないDyck語は
+すべて原始Dyck語の連結として一意に分解されるが、本稿では各加数が単一の
+原始因子でなければならない。したがって、制限のないDyck数による表現から、
+一般には同じ個数の原始Dyck数による表現は得られない。
+
+数字表現によって定義される加法基底は、オートマトン理論的な方法でも研究されて
+きた。Bell、Hare、Shallitは、オートマティック集合が加法基底となる条件を特徴づけ、
+その位数を決定する有効な手続きを与えた\cite{BHS}。関連する決定手続きによって、
+2進回文数\cite{RSS}および2進平方語\cite{MNRS}についても鋭い加法的結果が
+得られている。原始Dyck語の言語は正則ではないので、これらの一般的な有限
+オートマトンの方法だけでは、本稿の問題は直接には解決されない。
+
+本稿の証明が異なるのは、正則近似だけでは足りなくなる構造的な点である。
+正則部分言語によって$4$を法として$0$の合同類を処理し、$4$を法として$2$の
+合同類は、原始族全体の自己相似的な閉性によって処理する。これにより、単なる
+十分大きい範囲での上界だけでなく、完全な例外集合、すべての偶数に対する最適な
+一様上界、および十分大きい範囲での最小閾値を得る。
+
+数え上げの意味では、原始性による制限は漸近的には穏やかである。長さ$2n$の
+Dyck語は$C_n$個あり、原始Dyck語は、長さ$2n-2$のDyck語$u$を用いて一意に
+$1u0$と書ける。したがって、長さ$2n$の原始Dyck語は$C_{n-1}$個である。
+Catalan数の公式$C_n=\frac1{n+1}\binom{2n}{n}$から、
+\[
+ \frac{C_{n-1}}{C_n}=\frac{n+1}{2(2n-1)}\longrightarrow\frac14
+\]
+を得る。しかし、その算術的効果は顕著である。十分大きい偶数は、制限のない
+Dyck数なら3個で足りるにもかかわらず、原始族には小さいが自明でない例外集合が
+現れる。本稿では、高々6個の原始Dyck数の和でない正の偶数が、ちょうど11個で
+あることを示す。そのうち10個は7個の加数を必要とし、$46$だけが8個を必要とする。
+11個の例外はすべて$848$未満にある。
+
+8個を必要とする現象は完全に局所的である。$48$未満の正の原始Dyck数は$2$と$12$
+だけだからである。一方、十分大きい範囲で6個で足りるという上界は、2つの
+自己相似的な族から得られる。正則部分族が$4$の倍数を処理し、原始族全体を$4$で
+割ったものが残りの合同類を処理する。
+
+正の偶数$N$に対し、$r(N)$を、和が$N$となる正の原始Dyck数の最小個数とする。
+数列$(r(2n))_{n\geq1}$はOEIS数列\seqnum{A395858}である\cite{OEIS}。
+その項は、付随するPythonプログラム\path{compute_A395858.py}によって計算できる。
+プログラムは次のURLで公開されている：
+\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/compute_A395858.py}。
+
+\begin{theorem}\label{thm:main}
+$r(N)>6$となる値は、正確に次のとおりである：
+\[
+ r(46)=8,
+\]
+また
+\[
+ r(N)=7
+ \quad\Longleftrightarrow\quad
+ N\in\{34,44,98,154,198,202,206,838,842,846\}.
+\]
+それ以外のすべての正の偶数は$r(N)\leq6$を満たす。したがって、すべての偶数
+$N\geq848$は、高々6個の原始Dyck数の和である。
+\end{theorem}
+
+例外値$46$だけで、一様上界を8より小さくできないことがすでに分かる。
+
+\begin{proposition}\label{prop:46}
+整数$46$は8個の原始Dyck数の和であるが、7個の和ではない。
+\end{proposition}
+
+\begin{proof}
+$48$未満の正の原始Dyck数は$2$と$12$だけである。実際、長さ2と4の原始語は
+$10$と$1100$である一方、長さ6以上の原始語は$11$で始まるので、その値は
+$[110000]_2=48$以上である。したがって、$46$の任意の表現は
+\[
+        46=12a+2b,\qquad a,b\geq0
+\]
+の形である。同値に、$6a+b=23$である。$12\cdot4>46$なので$a\leq3$であり、
+したがって加数の個数は
+\[
+        a+b=23-5a\geq8
+\]
+を満たす。等号は
+\[
+        46=12+12+12+2+2+2+2+2
+\]
+によって達成される。
+\end{proof}
+
+例えば、
+\[
+ 2026=2+240+852+932=2+216+872+936
+\]
+である。この2つの表現に現れる7個の相異なる整数は、すべて原始Dyck語を2進表示に
+もつ。
+
+以下で用いる和集合の記法は、加法基底論で標準的なものである
+\cite[Chap.\ 1]{Nathanson}。非負整数$k$に対し、$kX$を、$X$の元を重複を許して
+$k$個加えて得られる和の集合とし、$0X=\{0\}$とする。また、スカラー$c$に対し、
+$c\cdot X=\{cx:x\in X\}$を$X$の拡大とする。
+
+\section{原始語に含まれる正則な族}
+
+原始Dyck語の中には、単純な正則パターンが存在する。例えば、$868$の2進表示は
+\[
+ \operatorname{bin}(868)=1101100100=11\,01\,10\,01\,00
+ \in 11(01\mid10)^*00
+\]
+と因数分解できる。2進数字を2桁ずつ組にすると、最初のブロック$11$は4進数字$3$、
+最後のブロック$00$は$0$となり、各中間ブロック$01$または$10$は$1$または$2$
+となる。したがって、このような4進整数を固定個数だけ加えると、長い区間が埋まる
+ことが期待される。以下の混合和集合補題は、この考えを厳密化する。
+
+$\mathcal E$を
+\[
+ \mathcal E=\{0\}\cup
+ \bigl\{\val{3\varepsilon_1\cdots\varepsilon_k}{4}:
+        k\geq0,\ \varepsilon_i\in\{1,2\}\bigr\}
+\]
+と定める。$k=0$のとき、文字列$\varepsilon_1\cdots\varepsilon_k$は空であり、
+対応する元は$\val{3}{4}=3$である。$4$倍することは、4進表示の末尾に$0$を
+付け加えることに対応する。各4進数字を対応する2桁の2進数字に置き換えると、
+\[
+\begin{aligned}
+ 3_{(4)}&\longleftrightarrow11_{(2)},&
+ 1_{(4)}&\longleftrightarrow01_{(2)},\\
+ 2_{(4)}&\longleftrightarrow10_{(2)},&
+ 0_{(4)}&\longleftrightarrow00_{(2)}
+\end{aligned}
+\]
+である。したがって、$4\cdot\mathcal E$の正の元の2進表示はすべて
+$11(01\mid10)^*00$に属する。最初の$11$を読んだ後、路の高さは$2$である。
+各中間ブロック$01$または$10$を読むと高さ$2$へ戻り、最後の$00$によって初めて
+高さ$0$へ戻る。ゆえに、$4\cdot\mathcal E$の正の元はすべて原始Dyck数である。
+また$0\in\NpD$なので、
+\begin{equation}\label{eq:4E}
+        4\cdot\mathcal E\subseteq\NpD
+\end{equation}
+を得る。
+
+核心は、$\mathcal E$の6個の元だけで、$25$以上のすべての整数をすでに覆えることで
+ある。
+
+\begin{proposition}\label{prop:E}
+任意の整数$n\geq25$は$6\mathcal E$に属する。
+\end{proposition}
+
+これを有限桁の区間論法によって証明する。まず、以下の補助集合の役割を説明する。
+$\mathcal E_m$の$m$桁の元を先頭桁とそれより下の桁に分けると、下位$m-1$桁は、
+各桁が$\{0,1\}$に属する4進補正項をなす。集合$\Delta_m$は、これらの補正項を
+ちょうど記録する。6項和のうちいくつかの加数が新しい先頭桁を用いると、残る
+下位桁の問題は、$\Delta_{m-1}$と$\mathcal E_{m-1}$のコピーの混合和となる。
+混合和集合$S_{t,m}$は、これらの可能性を同時に追跡するために設計されている。
+
+$u_0=0$とし、$m\geq1$に対して
+\begin{equation}\label{eq:umdef}
+ u_m=[\underbrace{11\cdots1}_{m\text{ 桁}}]_4
+    =1+4+\cdots+4^{m-1}=\frac{4^m-1}{3}
+\end{equation}
+とおく。すると
+\begin{equation}\label{eq:urecursion}
+\begin{aligned}
+ 4^{m-1}&=3u_{m-1}+1 &&(m\geq1),\\
+ u_{m-1}&=4u_{m-2}+1 &&(m\geq2)
+\end{aligned}
+\end{equation}
+である。補正集合を
+\[
+ \Delta_m=\Bigl\{[\delta_{m-1}\cdots\delta_0]_4:\delta_j\in\{0,1\}\Bigr\}
+    =\Bigl\{\textstyle\sum_{j=0}^{m-1}\delta_j4^j:\delta_j\in\{0,1\}\Bigr\}
+\]
+と定める。このとき$\max\Delta_m=u_m$である。また、$\mathcal E_m$を、$0$と、
+高々$m$桁の4進表示をもつ$\mathcal E$の元とからなる有限部分集合とする。例えば、
+\[
+\begin{aligned}
+ \Delta_2&=\{[00]_4,[01]_4,[10]_4,[11]_4\}=\{0,1,4,5\},\\
+ \mathcal E_2&=\{0,[3]_4,[31]_4,[32]_4\}=\{0,3,13,14\}
+\end{aligned}
+\]
+である。$0\leq t\leq6$に対し、
+\[
+        S_{t,m}=t\Delta_m+(6-t)\mathcal E_m
+\]
+とおく。$\mathcal E_m$の最大元は
+\[
+ \max\mathcal E_m=[3\underbrace{22\cdots2}_{m-1\text{ 桁}}]_4
+                =3\cdot4^{m-1}+2u_{m-1}
+\]
+であり、$m\geq2$では式\eqref{eq:urecursion}から
+\begin{equation}\label{eq:maxErecursion}
+ \max\mathcal E_{m-1}=11u_{m-2}+3=\frac{11u_{m-1}+1}{4}
+\end{equation}
+を得る。$\max\Delta_m=u_m$なので、
+\begin{equation}\label{eq:maxStm}
+ \max S_{t,m}=tu_m+(6-t)\max\mathcal E_m
+\end{equation}
+である。さらに、$\max\mathcal E_m>u_m$なので、$\max S_{t,m}$は$t$に関して
+減少する。以下、$[a,b]$は整数区間$\{a,a+1,\ldots,b\}$を表す。
+
+\begin{lemma}\label{lem:mixed}
+任意の$m\geq2$および任意の$2\leq t\leq6$に対して、
+\begin{equation}\label{eq:mixedtge}
+ S_{t,m}=[0,\max S_{t,m}]
+\end{equation}
+が成り立つ。一方、
+\begin{equation}\label{eq:mixedtone}
+ S_{1,m}=[0,\max S_{1,m}]\setminus\{2\}
+\end{equation}
+である。さらに、
+\begin{equation}\label{eq:mixedEminterval}
+ [25,e_m]\subseteq6\mathcal E_m,\qquad e_m=\frac{33}{8}\,4^m-4
+\end{equation}
+が成り立つ。
+\end{lemma}
+
+\begin{proof}
+まず、基底の場合$m=2$について\eqref{eq:mixedtge}と\eqref{eq:mixedtone}を示す。
+\[
+ \Delta_2=\{0,1,4,5\},\qquad \mathcal E_2=\{0,3,13,14\}
+\]
+であった。直接計算すると
+$2\Delta_2=\{0,1,2,4,5,6,8,9,10\}$であり、さらに$\Delta_2$を1つ加えると
+残りのすべての隙間が埋まる。したがって$3\Delta_2=[0,15]$であり、ゆえに
+\[
+ t\Delta_2=[0,5t]\qquad(3\leq t\leq6)
+\]
+となる。一方、
+\[
+\begin{aligned}
+2\mathcal E_2
+={}&\{0,3,6,13,14,16,17,26,27,28\},\\[1ex]
+3\mathcal E_2
+={}&\{0,3,6,9\}\cup[13,14]\cup[16,17]\cup[19,20]\\
+&\qquad\cup[26,31]\cup[39,42],\\[1ex]
+4\mathcal E_2
+={}&\{0,3,6,9\}\cup[12,14]\cup[16,17]\cup[19,20]\\
+&\qquad\cup[22,23]\cup[26,34]\cup[39,45]\cup[52,56],\\[1ex]
+5\mathcal E_2
+={}&\{0,3,6,9\}\cup[12,17]\cup[19,20]\cup[22,23]\\
+&\qquad\cup[25,37]\cup[39,48]\cup[52,59]\cup[65,70]
+\end{aligned}
+\]
+である。$5\mathcal E_2$に$\Delta_2$を加え、$4\mathcal E_2$に
+$2\Delta_2$を加えると、
+\[
+ S_{1,2}=\{0,1\}\cup[3,75],\qquad S_{2,2}=[0,66]
+\]
+を得る。同様に、
+\[
+\begin{aligned}
+S_{3,2}&=3\Delta_2+3\mathcal E_2=[0,15]+3\mathcal E_2=[0,57],\\[1ex]
+S_{4,2}&=4\Delta_2+2\mathcal E_2=[0,20]+2\mathcal E_2=[0,48],\\[1ex]
+S_{5,2}&=5\Delta_2+\mathcal E_2 =[0,25]+\mathcal E_2 =[0,39],\\[1ex]
+S_{6,2}&=6\Delta_2=[0,30]
+\end{aligned}
+\]
+である。以上をまとめると、
+\[
+\begin{array}{c|c}
+t&S_{t,2}\\ \hline
+1&[0,75]\setminus\{2\}\\
+2&[0,66]\\
+3&[0,57]\\
+4&[0,48]\\
+5&[0,39]\\
+6&[0,30]
+\end{array}
+\]
+となり、$m=2$における\eqref{eq:mixedtge}と\eqref{eq:mixedtone}が示された。
+\eqref{eq:mixedEminterval}については、
+$[25,e_2]=[25,62]\subseteq6\mathcal E_2$を確かめればよい。
+$[26,28]$、$[39,42]$、$[52,56]$は、それぞれ$\{13,14\}$の元を2個、3個、
+4個加えて得られる区間であるから、
+\[
+\begin{aligned}
+25&=13+3+3+3+3+0,\\
+[26,40]&=\{26,27,28\}+3\cdot\{0,1,2,3,4\},\\
+[39,51]&=[39,42]+3\cdot\{0,1,2,3\},\\
+[52,62]&=[52,56]+3\cdot\{0,1,2\}
+\end{aligned}
+\]
+となる。これで基底の場合が完了する。下端$25$は最良である。実際、$25$未満の
+$\mathcal E$の正の元は$3,13,14$だけであり、それらを高々6個加えても$24$には
+ならないので、$24\notin6\mathcal E$である。
+
+次に$m\geq3$とし、レベル$m-1$で
+\eqref{eq:mixedtge}--\eqref{eq:mixedEminterval}が成り立つと仮定する。
+この段階では記法を簡単にするため、
+\[
+ u=u_{m-1},\qquad q=q_m,
+ \qquad M=\max\mathcal E_{m-1}
+\]
+と書く。このとき
+\[
+ 4^{m-1}=3u+1,\qquad q=10u+3,
+ \qquad M=\frac{11u+1}{4}
+\]
+である。ここで
+\begin{equation}\label{eq:qmdef}
+ q=q_m=[3\underbrace{11\cdots1}_{m-1\text{ 桁}}]_4
+      =3\cdot4^{m-1}+u=10u+3
+\end{equation}
+であり、以下では
+\begin{equation}\label{eq:qoverlap}
+ 2\cdot4^{m-1}+4u=q-1
+\end{equation}
+を繰り返し用いる。先頭の4進数字によって分解すると、
+\[
+ \Delta_m=\Delta_{m-1}\cup(4^{m-1}+\Delta_{m-1}),\qquad
+ \mathcal E_m=\mathcal E_{m-1}\cup(q+\Delta_{m-1})
+\]
+を得る。実際、$\Delta_m$の元の新しい先頭桁は$0$または$1$である。一方、
+$\mathcal E_m$の新しい$m$桁の元は、先頭桁$3$と、$\Delta_{m-1}$に属する
+下位$m-1$桁の補正項とからなる。$\Delta_m$の$t$個のコピーのうち$s$個が
+平行移動された部分を使い、$\mathcal E_m$の$6-t$個のコピーのうち$v$個が
+新しい$m$桁部分を使うとすると、
+\begin{equation}\label{eq:decomp}
+ S_{t,m}=\bigcup_{v=0}^{6-t}\ \bigcup_{s=0}^{t}
+ \bigl(s\cdot4^{m-1}+vq+S_{t+v,m-1}\bigr)
+\end{equation}
+となる。したがって、$v$を固定すると、$s$は$4^{m-1}$の倍数だけ平行移動した
+$t+1$個の集合を生み、$v$を1増やすと次の大きなブロックへ移る：
+\[
+ \underbrace{[vq,\ \cdots]}_{v\text{-ブロック}}
+ \qquad
+ \underbrace{[(v+1)q,\ \cdots]}_{(v+1)\text{-ブロック}}.
+\]
+以下では、隣接する平行移動区間どうし、および隣接する$v$-ブロックどうしが
+重なることを確認する。
+
+まず$t\geq2$を扱う。帰納法の仮定\eqref{eq:mixedtge}により、
+\eqref{eq:decomp}に現れるすべての$v$について
+$S_{t+v,m-1}=[0,\max S_{t+v,m-1}]$である。$v$を固定すると、連続する$s$の値は
+この区間を$4^{m-1}$ずつ平行移動する。$\max S_{j,m-1}$は$j$とともに減少するので、
+\[
+ \max S_{t+v,m-1}\geq\max S_{6,m-1}=6u
+     \geq3u=4^{m-1}-1
+\]
+である。したがって、これら$t+1$個の平行移動区間は重なり合い、
+\[
+ [vq,\,vq+t\cdot4^{m-1}+\max S_{t+v,m-1}]
+\]
+をなす。連続する$v$に対応するブロックどうしも重なる。次のブロックが存在する
+ときは$t+v\leq5$であり、$t\geq2$なので、
+\[
+\begin{aligned}
+ t\cdot4^{m-1}+\max S_{t+v,m-1}
+ &\geq2\cdot4^{m-1}+\max S_{5,m-1}\\
+ &=2\cdot4^{m-1}+5u+M\\
+ &=(2\cdot4^{m-1}+4u)+(u+M)\\
+ &\geq q-1
+\end{aligned}
+\]
+となる。最後の不等式には\eqref{eq:qoverlap}を用いた。よって、
+\eqref{eq:decomp}の和集合は、$0$からその最大元$\max S_{t,m}$までの完全な整数区間
+である。これでレベル$m$における\eqref{eq:mixedtge}が示された。
+
+$t=1$の場合、最初のブロックには欠けた整数$2$が1つだけ残る。固定した$v\geq1$
+については、2つの$s$-平行移動は$S_{1+v,m-1}$を含み、$1+v\geq2$である。
+さらに
+\[
+ \max S_{1+v,m-1}\geq\max S_{6,m-1}=6u\geq4^{m-1}-1
+\]
+なので、それらは重なる。したがって、2番目以降の$v$-ブロックはすべて区間で
+ある。$\max S_{j,m-1}$は$j$とともに減少するので、連続する$v$-ブロックの最後の
+組だけを確認すれば十分である。実際、
+\[
+\begin{aligned}
+ 4^{m-1}+\max S_{5,m-1}-(q-1)
+ &=M-2u-1\\
+ &=\frac{11u+1}{4}-2u-1
+  =\frac{3u-3}{4}\geq0
+\end{aligned}
+\]
+であるから、連続する$v$-ブロックは重なる。最後に、
+\[
+\begin{aligned}
+ \max S_{1,m-1}-(4^{m-1}+2)
+ &=u+5M-4^{m-1}-2\\
+ &=\frac{47u-7}{4}\geq0
+\end{aligned}
+\]
+である。したがって、最初の$v$-ブロックの中で、平行移動されていない長い区間は
+$4^{m-1}+2$まで達し、次の$s$-平行移動区間と隙間なく接続する。ゆえに、
+\[
+ S_{1,m}=[0,\max S_{1,m}]\setminus\{2\}
+\]
+となり、レベル$m$における\eqref{eq:mixedtone}が示された。
+
+残るのは、$6\mathcal E_m$の中の区間を次のレベルへ延長することである。
+\eqref{eq:decomp}で$t=0$とすると、
+\[
+ 6\mathcal E_m=\bigcup_{v=0}^{6}\bigl(vq+S_{v,m-1}\bigr)
+\]
+を得る。$v=0$のブロックは$S_{0,m-1}=6\mathcal E_{m-1}$であり、帰納法の仮定に
+より$[25,e_{m-1}]$を含む。$m\geq3$なので$u\geq5$であり、
+\[
+ e_{m-1}-(q+2)=\frac{19u-39}{8}\geq0
+\]
+である。$v=1$のブロック$q+S_{1,m-1}$は、帰納法の仮定により
+$\{q,q+1\}\cup[q+3,q+\max S_{1,m-1}]$を含む。直前の区間が$q+2$まで達する
+ため、両者は隙間なくつながる。$j=1,2,3$について、$v=j$のブロックと$v=j+1$
+のブロックをつなぐには、
+\[
+ \max S_{j,m-1}\geq q-1
+\]
+であれば十分である。$\max S_{j,m-1}$は$j$とともに減少するので、最も厳しいのは
+$j=3$である。したがって、
+\[
+\begin{aligned}
+ \max S_{3,m-1}-(q-1)
+ &=3u+3M-(10u+2)\\
+ &=\frac{5u-5}{4}\geq0
+\end{aligned}
+\]
+を確認すればよい。ゆえに
+$\max S_{1,m-1},\ \max S_{2,m-1},\ \max S_{3,m-1}\geq q-1$であり、
+$v=1,2,3,4$のブロックは順に接続して、
+\[
+ 4q+\max S_{4,m-1}=\frac{33}{8}\,4^m-4=e_m
+\]
+までを覆う。残る$v=5,6$のブロックは隙間の後から始まる可能性があるが、ここで
+延長する区間には必要ない。以上により、レベル$m$における
+\eqref{eq:mixedtge}--\eqref{eq:mixedEminterval}が成立し、帰納法が完了する。
+\end{proof}
+
+$e_m\to\infty$かつ$\mathcal E=\bigcup_{m\geq1}\mathcal E_m$なので、
+命題\ref{prop:E}は直ちに従う。
+
+上の命題によって、$4$を法として$0$の合同類を処理できる。すなわち、$100$以上の
+すべての$4$の倍数は、高々6個の原始Dyck数の和である。
+
+\section{4で割った原始族全体}
+
+正則族$\mathcal E$は$4$の倍数には十分であるが、後で必要となる5項和の区間を
+それだけでは与えない。そこで、もう一方の合同類については原始族全体を用いる。
+\[
+ \Pset=\{v/4:v\in\NpD,\ v\geq12\}
+\]
+とおく。このとき
+\[
+ \NpD=\{0,2\}\cup(4\cdot\Pset)
+\]
+である。整数の集合$X$と$k\geq0$に対し、
+\[
+ F_k(X)=\bigcup_{j=0}^{k}jX
+\]
+を、$X$の元を高々$k$個加えて得られる和の集合とする。
+
+原始族全体は、単純な自己相似的閉性をもつ。
+
+\begin{lemma}\label{lem:Pclosure}
+$p\in\Pset$ならば、$4p+1$と$4p+2$も$\Pset$に属する。
+\end{lemma}
+
+\begin{proof}
+原始Dyck数$4p$の2進表示を$u00$と書く。$u$を読み終えた直後、対応する路の高さは
+$2$である。$4(4p+1)$と$4(4p+2)$の2進表示は、それぞれ
+\[
+ u0100\qquad\text{および}\qquad u1000
+\]
+である。挿入されたブロック$01$と$10$は、いずれも高さ$2$から始まり高さ$2$で
+終わり、その途中の高さも正である。したがって、2つの新しい路はいずれも最後の
+記号を読むまで厳密に高さ0より上にあり、末尾でのみ0へ戻る。よって表示した2語は
+原始Dyck語であり、主張が従う。
+\end{proof}
+
+次に、$\Pset$について5項和の区間を構成する。有限な基底部分では、2つの部分集合
+\[
+ L=\{3,13,14,53,54,57,58,60\}\subseteq\Pset
+\]
+および
+\[
+\begin{split}
+ H=\{&213,214,217,218,220,229,230,233,234,236,\\
+     &241,242,244,248\}\subseteq\Pset
+\end{split}
+\]
+を用いる。所属関係は、$4L$および$4H$に対応する原始Dyck数の2進表示から直接確認
+できる。
+
+以下の補題\ref{lem:finitefive}から補題\ref{lem:finiteexception}までの有限和集合の計算は、付随するPythonプログラム
+\path{verify_certificates_for_paper.py}
+によって再現できる。プログラムは次のURLで公開されている：
+\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/verify_certificates_for_paper.py}.
+
+
+\begin{lemma}[有限区間証明書]\label{lem:finitefive}
+次の包含が成り立つ：
+\[
+\begin{array}{c|c}
+\text{和集合}&\text{含まれる整数区間}\\ \hline
+5L &[215,254]\\
+H+4L &[245,486]\\
+2H+3L &[439,674]\\
+3H+2L &[645,862]\\
+4H+L &[855,1046]
+\end{array}
+\]
+\end{lemma}
+
+\begin{proof}
+\[
+ A=\{53,54,57,58,60\},\qquad B=\{3,13,14\}
+\]
+とおく。順に和を取ると、
+\[
+ 2A=[106,108]\cup[110,118]\cup\{120\},
+\]
+\[
+ 3A=[159,178]\cup\{180\},\qquad
+ 4A=[212,238]\cup\{240\}
+\]
+を得る。したがって$4A+B=[215,254]$であり、第1行が示される。
+
+第2行について、$L$を繰り返し加えると、
+\[
+\begin{split}
+4L\supseteq{}&[32,34]\cup[42,45]\cup[52,56]\cup[82,102]\\
+ &{}\cup[116,148]\cup[162,194]\cup[212,238]
+\end{split}
+\]
+を得る。最初の3つの短い区間から、
+\[
+\begin{aligned}
+H+[32,34]&\supseteq[245,254]\cup[261,270]
+ \cup[273,278]\cup[280,282],\\
+H+[42,45]&\supseteq[255,265]\cup[271,281]\cup[283,293],\\
+H+[52,56]&\supseteq[265,276]\cup[281,304]
+\end{aligned}
+\]
+を得る。これらの和集合は$[245,304]$を含む。$H$の連続する元の差は高々$9$
+である。したがって、$I=[a,b]$が$b-a\geq8$を満たすならば、
+$H+I=[213+a,248+b]$である。これを残る4つの長い区間に適用すると、
+\[
+ [295,350],\quad[329,396],\quad[375,442],\quad[425,486]
+\]
+を得る。これらは互いに重なり、$[245,486]\subseteq H+4L$の証明が完了する。
+
+第3行については、次の包含区間だけで十分である：
+\[
+ 2H\supseteq[426,428]\cup[430,438]\cup[446,478]\cup\{496\},
+\]
+\[
+\begin{split}
+3L\supseteq{}&\{9\}\cup[19,20]\cup[39,42]\cup[73,77]
+ \cup[109,111]\\
+ &{}\cup[113,134]\cup[159,178]\cup\{180\}.
+\end{split}
+\]
+$2H$の最初の2成分から、
+\[
+ [430,438]+9=[439,447],\quad
+ [426,428]+[19,20]=[445,448]
+\]
+および
+\[
+ [430,438]+[19,20]=[449,458]
+\]
+を得る。$[446,478]$に、順に
+\[
+\begin{gathered}
+ \{9\},\ [39,42],\ [73,77],\ [109,111],\\
+ [113,134],\ [159,178],\ \{180\}
+\end{gathered}
+\]
+を加えると、重なり合う区間によって$[455,658]$が覆われる。最後に、
+\[
+ 496+[159,178]=[655,674]
+\]
+である。以上の区間を合わせると、$[439,674]\subseteq2H+3L$が示される。
+
+第4行には、
+\[
+ 3H\supseteq[639,734]\cup\{744\},\qquad
+ 2L\supseteq\{6\}\cup[70,74]\cup[110,118]\cup\{120\}
+\]
+を用いる。4つの区間和
+\[
+ [645,740],\quad[709,808],\quad[759,854],\quad[854,862]
+\]
+が$[645,862]$を覆う。最後の行には、
+\[
+ 4H\supseteq[852,982]\cup[984,986],
+ \qquad \{3,57,58,60\}\subseteq L
+\]
+を用いる。このとき区間
+\[
+ [855,985],\quad[912,1042],\quad[1041,1044],\quad[1044,1046]
+\]
+が$[855,1046]$を覆う。
+\end{proof}
+
+補題\ref{lem:finitefive}の5つの区間は互いに重なるので、
+\[
+ [215,1046]\subseteq5\Pset
+\]
+を得る。
+
+\begin{proposition}\label{prop:fiveP}
+任意の整数$n\geq215$は、$\Pset$の元をちょうど5個加えた和である。したがって、
+\[
+ [212,\infty)\subseteq F_5(\Pset)
+\]
+である。下端は最良であり、$209,210,211$はいずれも$F_5(\Pset)$に属さない。
+\end{proposition}
+
+\begin{proof}
+補題\ref{lem:finitefive}は、より強い包含
+$[215,1046]\subseteq5\Pset$を与える。$n$に関する強い帰納法の基底としては、
+最初の区間$[215,867]$だけを用いればよい。$n\geq868$とし、
+$S\equiv n\pmod4$を満たす一意な$S\in\{5,6,7,8\}$を取る。このとき
+\[
+ M=\frac{n-S}{4}\geq\frac{868-8}{4}=215
+\]
+である。$M<n$なので、帰納法の仮定により、
+\[
+ M=q_1+\cdots+q_5,\qquad q_i\in\Pset
+\]
+と書ける。$5\leq S\leq8$なので、$e_i\in\{1,2\}$を
+$e_1+\cdots+e_5=S$となるように選べる。したがって、
+\[
+ n=4M+S=\sum_{i=1}^{5}(4q_i+e_i)
+\]
+である。補題\ref{lem:Pclosure}により、各加数$4q_i+e_i$は$\Pset$に属する。
+よって$n\in5\Pset$であり、帰納法が完了する。
+
+さらに、
+\[
+\begin{aligned}
+212&=53+53+53+53,\\
+213&=53+53+53+54,\\
+214&=53+53+54+54
+\end{aligned}
+\]
+なので、$[212,\infty)\subseteq F_5(\Pset)$である。次に、$212$未満の
+$\Pset$の元が$L$の8元だけであることを示す。長さ$4,6,8$の原始Dyck語から、
+$4$で割った値として、それぞれ
+\[
+ \{3\},\qquad \{13,14\},\qquad \{53,54,57,58,60\}
+\]
+が得られる。長さ10の原始Dyck語は、長さ8のDyck語$u$を用いて$1u0$と書ける。
+そのうち辞書式最小の語は$1101010100$であり、その値は$852$である。$4$で割ると
+$213$となる。それより長い原始語の値はさらに大きい。したがって、
+$\Pset\cap[0,211]=L$である。
+
+$L$の元を高々5個加えた和で、$\{53,54,57,58,60\}$から取る項が高々3個なら、
+その和は高々
+\[
+ 3\cdot60+2\cdot14=208
+\]
+である。一方、この集合から少なくとも4個取るなら、その和は少なくとも
+\[
+ 4\cdot53=212
+\]
+である。したがって、$209,210,211\notin F_5(\Pset)$である。
+\end{proof}
+
+\section{例外集合}\label{sec:exceptions}
+
+まず、$4$を法として$2$の合同類における6項表現可能性を、$\Pset$上の有限和条件へ
+翻訳する。
+
+\begin{lemma}\label{lem:sixcriterion}
+$N=4m+2$とする。このとき、$N$が高々6個の正の原始Dyck数の和であることと、
+\[
+ m\in F_5(\Pset)
+ \cup\bigl(1+F_3(\Pset)\bigr)
+ \cup\bigl(2+F_1(\Pset)\bigr)
+\]
+とは同値である。
+\end{lemma}
+
+\begin{proof}
+補題\ref{lem:mod4}により、$2$以外の原始Dyck数はすべて$4$の倍数である。
+したがって、$N\equiv2\pmod4$の表現には、$2$が奇数個現れる。加数が高々6個なら、
+その個数は$1,3,5$のいずれかである。
+
+$2$を1個用いる場合、残りの和を$4$で割ると$m\in F_5(\Pset)$を得る。$2$を3個
+用いる場合は$m-1\in F_3(\Pset)$を、$2$を5個用いる場合は
+$m-2\in F_1(\Pset)$を得る。これで必要性が示された。逆に、3つの所属条件の
+いずれからも、対応する$\Pset$の加数を$4$倍し、それぞれ$2$を1個、3個、5個
+付け加えることで$N$の表現が得られる。したがって条件は十分でもある。
+\end{proof}
+
+\begin{lemma}[小さい4の倍数]\label{lem:smallmultiples}
+$100$未満の正の$4$の倍数のうち、高々6個の正の原始Dyck数で表せないものは
+$44$だけである。また、
+\[
+ 44=12+12+12+2+2+2+2
+\]
+である。
+\end{lemma}
+
+\begin{proof}
+$100$未満の正の原始Dyck数は正確に
+\[
+ 2,\ 12,\ 52,\ 56
+\]
+である。まず$N<52$とし、$N=4x$と書く。$12$のコピーと、組$2+2$との和は
+\[
+ x=3a+c
+\]
+の形であり、加数の個数は$a+2c$である。条件$a+2c\leq6$の下で得られる
+正の$x<13$は
+\[
+ 1,2,3,4,5,6,7,8,9,10,12
+\]
+である。欠ける値は$x=11$だけであり、これは$N=44$に対応する。
+
+次に$52\leq N<100$とする。まず$52=4\cdot13$または$56=4\cdot14$の一方を
+用いる。残る高々5個の加数として$12$と組$2+2$から得られる剰余の商は、
+\[
+ R=\{3a+c:a,c\geq0,\ a+2c\leq5\}
+   =\{0,1,2,3,4,5,6,7,9,10,12,15\}
+\]
+である。これら12個の整数を直接調べると、
+\[
+ [13,24]\subseteq(13+R)\cup(14+R)
+\]
+を得る。したがって、$52$から$96$までのすべての$4$の倍数は必要な表現をもつ。
+上で表示した$44$の7項表現と合わせて証明が完了する。
+\end{proof}
+
+\begin{lemma}[有限例外集合証明書]\label{lem:finiteexception}
+\[
+ L=\{3,13,14,53,54,57,58,60\}
+\]
+とする。このとき、
+\[
+\begin{aligned}
+F_5(L)\cap[0,211]
+={}&\{0,3,6,9\}\cup[12,17]\cup[19,20]\cup[22,23]\\
+ &{}\cup[25,37]\cup[39,48]\cup[52,208]
+\end{aligned}
+\]
+である。さらに、
+\[
+\begin{aligned}
+[0,211]\cap\Bigl(F_5(L)&\cup(1+F_3(L))\cup(2+F_1(L))\Bigr)\\
+={}&[0,7]\cup[9,10]\cup[12,23]\cup[25,37]\\
+ &{}\cup[39,48]\cup[52,208]
+\end{aligned}
+\]
+である。したがって、$[0,211]$における補集合は
+\[
+ \{8,11,24,38,49,50,51,209,210,211\}
+\]
+である。
+\end{lemma}
+
+\begin{proof}
+$0L=\{0\}$から始め、漸化式$jL=(j-1)L+L$を用いて$L$の8元を順に加えると、
+$211$以下では
+\[
+\begin{aligned}
+F_5(L)\cap[0,211]={}&\{0,3,6,9\}\cup[12,17]\cup[19,20]\cup[22,23]\\
+ &{}\cup[25,37]\cup[39,48]\cup[52,208]
+\end{aligned}
+\]
+を得る。一方、
+\[
+\begin{aligned}
+(1+F_3(L))\cap[0,211]
+={}&\{1,4,7,10\}\cup[14,15]\cup[17,18]\cup[20,21]\\
+ &{}\cup[27,32]\cup[40,43]\cup[54,55]\cup[57,62]\\
+ &{}\cup[64,65]\cup[67,78]\cup[80,89]\cup[107,135]\\
+ &{}\cup[160,179]\cup\{181\},
+\end{aligned}
+\]
+また
+\[
+ (2+F_1(L))\cap[0,211]
+ =\{2,5\}\cup[15,16]\cup[55,56]\cup[59,60]\cup\{62\}
+\]
+である。表示した区間リストの和集合を取ると第2の式を得て、そこから欠ける整数は
+最後に示した集合と正確に一致する。各段階では、直前の区間リストを$L$の8元だけ
+平行移動すればよいので、この計算は総当たり探索を行わなくても検算できる。
+\end{proof}
+
+
+\begin{proof}[定理\ref{thm:main}の証明]
+まず$N\equiv0\pmod4$とする。$N\geq100$ならば$N=4n$と書く。このとき$n\geq25$
+なので、命題\ref{prop:E}と\eqref{eq:4E}により、$N$は高々6個の原始Dyck数の和で
+表される。補題\ref{lem:smallmultiples}は残る正の$4$の倍数を処理し、
+$r(44)=7$を与える。
+
+次に$N\equiv2\pmod4$とし、$N=4m+2$と書く。$N\geq850$ならば$m\geq212$である。
+したがって、命題\ref{prop:fiveP}により$m\in F_5(\Pset)$である。
+補題\ref{lem:sixcriterion}から、$N$は高々6個の原始Dyck数の和である。直前の段落と
+合わせると、この時点ですでに、すべての偶数$N\geq848$がそのような表現をもつ
+ことが分かる。
+
+残るのは、$N\leq846$かつ$N\equiv2\pmod4$である数を分類することである。
+このとき$0\leq m\leq211$であり、命題\ref{prop:fiveP}により、$m$以下の$\Pset$の元は
+\[
+ L=\{3,13,14,53,54,57,58,60\}
+\]
+だけである。補題\ref{lem:finiteexception}によれば、判定条件に含まれない$m$の値は
+\[
+ \{8,11,24,38,49,50,51,209,210,211\}
+\]
+である。補題\ref{lem:sixcriterion}から、対応する$N=4m+2$は正確に
+\[
+ 34,46,98,154,198,202,206,838,842,846
+\]
+である。したがって、これら10個と$44$とを合わせた11個が、高々6個の原始Dyck数の
+和でない正の偶数のすべてである。
+
+$46$以外のすべてには、次の7項表現がある：
+\[
+\begin{aligned}
+34&=12+12+2+2+2+2+2,\\
+44&=12+12+12+2+2+2+2,\\
+98&=56+12+12+12+2+2+2,\\
+154&=52+52+12+12+12+12+2,\\
+198&=56+52+52+12+12+12+2,\\
+202&=56+56+52+12+12+12+2,\\
+206&=56+56+56+12+12+12+2,\\
+838&=240+240+240+52+52+12+2,\\
+842&=240+240+240+56+52+12+2,\\
+846&=240+240+240+56+56+12+2.
+\end{aligned}
+\]
+命題\ref{prop:46}により、$46$は正確に8個の加数を必要とする。これですべての主張が
+証明された。
+\end{proof}
+
+\begin{corollary}\label{cor:threshold}
+$848$は、すべての偶数$N\geq T$が高々6個の原始Dyck数の和となるような最小の
+偶数$T$である。
+\end{corollary}
+
+\begin{proof}
+定理\ref{thm:main}により、$848$以上のすべての偶数には6個で十分である一方、
+$846$は7個の加数を必要とする。
+\end{proof}
+
+\begin{corollary}\label{cor:eight}
+任意の非負偶数は$\NpD$の高々8個の元の和であり、$46$は$\NpD$の高々7個の元の和で
+ない唯一の偶数である。
+\end{corollary}
+
+\begin{proof}
+正の整数に関する主張は定理\ref{thm:main}から直ちに従う。整数$0$は空和である。
+\end{proof}
+
+定理\ref{thm:main}は、6項表現可能性に関する完全な例外集合を与える。
+系\ref{cor:eight}により、$\NpD$は、非負偶数全体に相対的な正確な位数8の加法基底で
+ある。また、非負偶数全体に相対的な位数高々6の漸近加法基底でもある。同値に、
+$\frac12\NpD$は、$\mathbb N_0$の位数高々6の漸近加法基底である。
+系\ref{cor:threshold}により、対応する閾値$848$が最良であることも分かる。
+十分大きいすべての偶数に5個の加数で足りるかどうかは、未解決である。
+
+\section{OEISに収録された数列}\label{sec:oeis}
+
+本稿では3つのOEIS数列を扱う。完全平衡数は\seqnum{A014486}をなす。本稿で
+$\NpD$と書いた原始Dyck数は\seqnum{A057547}をなす。最後に、和が$2n$となる
+正の原始Dyck数の最小個数$r(2n)$は\seqnum{A395858}をなす。
+
+\section{AI利用の開示}\label{sec:AI}
+
+本研究の着想は、著者がChatGPT 5.6（OpenAI）を用いて、形式言語と初等整数論を結びつける既存研究を調査していた過程で得られた。著者はChatGPT 5.6と、既存結果のどの部分を変更すれば新しい加法的問題が得られるかについて議論し、原始Dyck数に対する加法的表現問題を研究する方針を定めた。
+
+本稿に現れる具体的な集合、有限区間証明書、例外集合、帰納法および各証明は、著者がホワイトボード、紙、ボールペンおよび関数電卓を用いて導出し、検証した。大規模な有限計算にはPythonプログラムを用い、そのプログラムの作成および検査にはClaude Opus 4.8（Anthropic）の支援を受けた。
+
+ChatGPT 5.6は、数学記号および記法の統一性・整合性の確認、\LaTeX{}の使用方法に関する助言、ならびに著者が作成した英文における不自然な表現の指摘にも用いた。
+
+
+\begin{thebibliography}{9}
+
+\bibitem{BHS}
+J.~P. Bell, K.~G. Hare, and J.~Shallit,
+When is an automatic set an additive basis?,
+\emph{Proc. Amer. Math. Soc. Ser. B} \textbf{5} (2018), 50--63.
+
+\bibitem{BLS}
+J.~P. Bell, T.~F. Lidbetter, and J.~Shallit,
+Additive number theory via approximation by regular languages,
+\emph{Internat. J. Found. Comput. Sci.} \textbf{31} (2020), 667--687.
+
+\bibitem{MNRS}
+P.~Madhusudan, D.~Nowotka, A.~Rajasekaran, and J.~Shallit,
+Lagrange's theorem for binary squares,
+in \emph{43rd International Symposium on Mathematical Foundations of
+Computer Science}, Leibniz Int. Proc. Inform., Vol.~117, Schloss
+Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik, 2018, pp.~18:1--18:14.
+
+\bibitem{Nathanson}
+M.~B. Nathanson,
+\emph{Additive Number Theory: The Classical Bases},
+Grad. Texts in Math., Vol.~164, Springer, 1996.
+
+\bibitem{OEIS}
+OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences}.
+Available at \url{https://oeis.org}.
+
+\bibitem{RSS}
+A.~Rajasekaran, J.~Shallit, and T.~Smith,
+Sums of palindromes: an approach via automata,
+in \emph{35th Symposium on Theoretical Aspects of Computer Science},
+Leibniz Int. Proc. Inform., Vol.~96, Schloss Dagstuhl--Leibniz-Zentrum
+f{\"u}r Informatik, 2018, pp.~54:1--54:12.
+
+\end{thebibliography}
+
+\begin{flushleft}
+Takayuki Kuriyama\\
+Growup Learning Academy\\
+4-8-3 Shakujii-machi\\
+Nerima-ku, Tokyo 177-0041\\
+Japan\\
+\textit{Email address}: \href{mailto:growup.kuriyama@gmail.com}
+{\texttt{growup.kuriyama@gmail.com}}
+\end{flushleft}
+
+\end{document}
