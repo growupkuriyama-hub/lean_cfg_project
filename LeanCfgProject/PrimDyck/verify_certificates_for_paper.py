@@ -100,9 +100,12 @@ def interval(a: int, b: int) -> set[int]:
 
 
 def check(name: str, condition: bool) -> None:
-    print(f"[{'OK ' if condition else 'FAIL'}] {name}")
-    if not condition:
-        raise AssertionError(name)
+    """Print a concise certificate result and stop immediately on failure."""
+    if condition:
+        print(f"PASS: {name}")
+        return
+    print(f"FAIL: {name}")
+    raise AssertionError(name)
 
 
 def compute_r(bound: int, primitive_numbers: Iterable[int]) -> list[int]:
@@ -130,13 +133,9 @@ def main(theorem_check_bound: int) -> None:
     low = {3, 13, 14, 53, 54, 57, 58, 60}
     high = {213, 214, 217, 218, 220, 229, 230, 233, 234, 236,
             241, 242, 244, 248}
-
-    print("=== Primitive-Dyck membership checks ===")
-    check("L subset P", low <= p_set)
-    check("H subset P", high <= p_set)
+    check("L is contained in P", low <= p_set)
+    check("H is contained in P", high <= p_set)
     check("P intersect [0,211] equals L", (p_set & interval(0, 211)) == low)
-
-    print("\n=== Finite interval certificate ===")
     five_low = kx(low, 5, certificate_cap)
     high_plus_4low = sumset(high, kx(low, 4, certificate_cap), certificate_cap)
     two_high_plus_3low = sumset(
@@ -147,11 +146,11 @@ def main(theorem_check_bound: int) -> None:
     )
     four_high_plus_low = sumset(kx(high, 4, certificate_cap), low, certificate_cap)
 
-    check("[215,254] subset 5L", interval(215, 254) <= five_low)
-    check("[245,486] subset H+4L", interval(245, 486) <= high_plus_4low)
-    check("[439,674] subset 2H+3L", interval(439, 674) <= two_high_plus_3low)
-    check("[645,862] subset 3H+2L", interval(645, 862) <= three_high_plus_2low)
-    check("[855,1046] subset 4H+L", interval(855, 1046) <= four_high_plus_low)
+    check("[215,254] is contained in 5L", interval(215, 254) <= five_low)
+    check("[245,486] is contained in H+4L", interval(245, 486) <= high_plus_4low)
+    check("[439,674] is contained in 2H+3L", interval(439, 674) <= two_high_plus_3low)
+    check("[645,862] is contained in 3H+2L", interval(645, 862) <= three_high_plus_2low)
+    check("[855,1046] is contained in 4H+L", interval(855, 1046) <= four_high_plus_low)
 
     finite_union = (
         five_low
@@ -162,14 +161,10 @@ def main(theorem_check_bound: int) -> None:
     )
     check("[215,1046] is covered by the five finite sumsets",
           interval(215, 1046) <= finite_union)
-
-    print("\n=== Low-end checks for the five-summand proposition ===")
     f5p_small = fk(p_set, 5, 300)
-    check("212, 213, 214 belong to F_5(P)", {212, 213, 214} <= f5p_small)
-    check("209, 210, 211 do not belong to F_5(P)",
+    check("212, 213, and 214 belong to F_5(P)", {212, 213, 214} <= f5p_small)
+    check("209, 210, and 211 do not belong to F_5(P)",
           {209, 210, 211}.isdisjoint(f5p_small))
-
-    print("\n=== Finite exceptional-set certificate on [0,211] ===")
     f5_low = fk(low, 5, 211)
     paper_f5_low = (
         {0, 3, 6, 9}
@@ -179,7 +174,7 @@ def main(theorem_check_bound: int) -> None:
         | interval(39, 48)
         | interval(52, 208)
     )
-    check("F_5(L) matches the interval list in the paper", f5_low == paper_f5_low)
+    check("F_5(L) matches the interval certificate in the paper", f5_low == paper_f5_low)
 
     criterion = (
         fk(low, 5, 211)
@@ -201,10 +196,10 @@ def main(theorem_check_bound: int) -> None:
     actual_complement = interval(0, 211) - criterion
     check("the complement is the stated ten-element set",
           actual_complement == expected_complement)
-    print("    exceptional m:", sorted(actual_complement))
-    print("    corresponding N=4m+2:", sorted(4 * m + 2 for m in actual_complement))
-
-    print(f"\n=== Finite-range cross-check of r(N), 2 <= N <= {theorem_check_bound} ===")
+    print("PASS: exceptional m-values are")
+    print(f"      {sorted(actual_complement)}")
+    print("PASS: corresponding N=4m+2 values are")
+    print(f"      {sorted(4 * m + 2 for m in actual_complement)}")
     primitive_for_r = primitive_dyck_numbers_upto(theorem_check_bound)
     r = compute_r(theorem_check_bound, primitive_for_r)
 
@@ -221,9 +216,10 @@ def main(theorem_check_bound: int) -> None:
     check(f"every checked even N in [848,{theorem_check_bound}] has r(N)<=6",
           all(r[n] <= 6 for n in range(848, theorem_check_bound + 1, 2)))
 
-    print("    r=7 at:", actual_r7)
-    print("    r=8 at:", actual_r8)
-    print("\nAll finite checks passed.")
+    print("PASS: finite-range r(N) cross-check gives")
+    print(f"      r(N)=7 at {actual_r7}")
+    print(f"      r(N)=8 at {actual_r8}")
+    print("PASS: all certificates verified")
 
 
 if __name__ == "__main__":
