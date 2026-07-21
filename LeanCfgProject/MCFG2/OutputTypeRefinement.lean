@@ -103,6 +103,30 @@ theorem tupleType_outputTuple
 
 end TerminalRule
 
+
+/-- Transporting a tuple across an arity equality preserves a constant
+componentwise output type.
+
+The equality is eliminated here while both arities are independent variables;
+this avoids dependent elimination on a rule structure carrying its own arity
+proof. -/
+theorem tupleType_castTuple_constant
+    {d e : Nat}
+    (obs : α → M)
+    (h : d = e)
+    (x : Tuple α d)
+    (value : M)
+    (hx :
+      tupleType obs x =
+        (fun _ : Fin d => value)) :
+    tupleType obs (castTuple h x) =
+      (fun _ : Fin e => value) := by
+
+  subst e
+
+  simpa using hx
+
+
 namespace BinaryRule
 
 /-- The output type computed from a binary rule template and two child types. -/
@@ -160,23 +184,23 @@ theorem cast_outputTuple_matches_lhs
     (τ : TypedTerminalRule G) (obs : α → M) :
     TypedNonterminal.Matches obs (τ.lhs obs)
       (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) := by
+
   unfold TypedNonterminal.Matches
+
   change
     tupleType obs
         (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) =
-      (fun _ => evalObs obs [τ.baseRule.terminal])
+      (fun _ : Fin (G.arity τ.baseRule.lhs) =>
+        evalObs obs [τ.baseRule.terminal])
 
-  have h : G.arity τ.baseRule.lhs = 1 :=
-    τ.wellTyped
+  apply
+    tupleType_castTuple_constant
+      obs
+      τ.wellTyped.symm
+      τ.baseRule.outputTuple
+      (evalObs obs [τ.baseRule.terminal])
 
-  have hProof : τ.wellTyped = h :=
-    Subsingleton.elim _ _
-
-  rw [hProof]
-  clear hProof
-  cases h
-
-  exact
+  simpa [TerminalRule.outputType] using
     TerminalRule.tupleType_outputTuple
       obs
       τ.baseRule
