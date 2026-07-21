@@ -20,7 +20,7 @@ project-facing version was NOT re-run through `lake build` in that environment
 because the sandbox had no Mathlib toolchain; the `simp` steps that are not
 `simp only` may need trivial adjustment against Mathlib's larger simp set.
 -/
-import LeanCfgProject.MCFG.NamedContextSplicingConstructor
+import LeanCfgProject.MCFG2.NamedContextSplicingConstructor
 
 universe u v w
 
