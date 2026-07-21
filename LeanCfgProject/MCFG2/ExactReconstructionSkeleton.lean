@@ -46,7 +46,7 @@ variable {α : Type u} {M : Type v} [Monoid M]
 a word is included if it is derived from some start word in the finite sample. -/
 def SampleStringLanguage
     (K : Finset (Word α)) (obs : α → M) (f : Nat) : Set (Word α) :=
-  { word | SampleStringDerives K obs f word }
+  { word | Nonempty (SampleStringDerives K obs f word) }
 
 /-- Soundness of the sample-level string language. -/
 theorem sampleStringLanguage_sound
@@ -57,7 +57,8 @@ theorem sampleStringLanguage_sound
     (hK : PositiveSample G K) :
     SampleStringLanguage K obs f ⊆ G.StringLanguage := by
   intro word hword
-  exact SampleStringDerives.sound_for_grammar G hL hK hword
+  rcases hword with ⟨hderiv⟩
+  exact SampleStringDerives.sound_for_grammar G hL hK hderiv
 
 /-- Every sample word is in the sample-level string language. -/
 theorem sample_mem_sampleStringLanguage
@@ -65,7 +66,7 @@ theorem sample_mem_sampleStringLanguage
     {word : Word α}
     (hword : word ∈ K) :
     word ∈ SampleStringLanguage K obs f :=
-  SampleStringDerives.of_sample_word hword
+  ⟨SampleStringDerives.of_sample_word hword⟩
 
 end SampleStringLanguage
 
