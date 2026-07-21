@@ -7,24 +7,39 @@ on:
 
 jobs:
   build:
-    name: Build and check Lean files
+    name: Build Lean and verify certificates
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Lean/Lake and restore the mathlib cache, but do not let the
-      # action run its default `lake build`/direct checks for us.
       - name: Set up Lean
         uses: leanprover/lean-action@v1
         with:
+          auto-config: false
           build: false
+          test: false
+          lint: false
 
-      # Do not run `lake env lean LeanCfgProject.lean` directly here.
-      # Direct `lean` expects imported modules to already have .olean files.
-      # Lake builds the dependency chain in the right order and creates them.
       - name: Build MCFG experiment modules
         run: |
           lake build LeanCfgProject.MCFG.FI_v2_1_FixedObservation
           lake build LeanCfgProject.MCFG.Basic
           lake build LeanCfgProject
+
+      - name: Run all Python scripts under PrimDyck
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            echo "Running: $file"
+            python3 "$file"
+          done < <(
+            find LeanCfgProject/PrimDyck \
+              -type f \
+              -name '*.py' \
+              -print0 |
+            sort -z
+          )
