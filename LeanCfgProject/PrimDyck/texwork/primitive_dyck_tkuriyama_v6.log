@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.2.28)  21 JUL 2026 04:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.2.28)  21 JUL 2026 19:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -288,8 +288,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count312
-)
-No file primitive_dyck_tkuriyama_v6.aux.
+) (primitive_dyck_tkuriyama_v6.aux)
 \openout1 = `primitive_dyck_tkuriyama_v6.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
@@ -310,6 +309,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 23.
 LaTeX Font Info:    ... okay on input line 23.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 23.
 LaTeX Font Info:    ... okay on input line 23.
+
 (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -357,221 +357,40 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 \Gin@req@width=\dimen175
 )
 Package hyperref Info: Link coloring OFF on input line 23.
+ (primitive_dyck_tkuriyama_v6.out) (primitive_dyck_tkuriyama_v6.out)
 \@outlinefile=\write3
 \openout3 = `primitive_dyck_tkuriyama_v6.out'.
 
 LaTeX Font Info:    Trying to load font information for U+msa on input line 26.
 
- (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+
+(C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 26.
+
 
 (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 [1
 
-{C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-
-LaTeX Warning: Citation `OEIS' on page 2 undefined on input line 88.
-
-
-LaTeX Warning: Citation `OEIS' on page 2 undefined on input line 110.
-
-
-LaTeX Warning: Citation `BLS' on page 2 undefined on input line 116.
-
-[2]
-
-LaTeX Warning: Citation `BHS' on page 3 undefined on input line 128.
-
-
-LaTeX Warning: Citation `RSS' on page 3 undefined on input line 129.
-
-
-LaTeX Warning: Citation `MNRS' on page 3 undefined on input line 130.
-
-[3]
-
-LaTeX Warning: Citation `OEIS' on page 4 undefined on input line 166.
-
-[4]
-
-LaTeX Warning: Citation `Nathanson' on page 5 undefined on input line 223.
-
-[5]
-
-LaTeX Warning: Reference `eq:urecursion' on page 6 undefined on input line 322.
-
-
-[6]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 7 undefined on input line 349.
-
-
-LaTeX Warning: Reference `eq:mixedtone' on page 7 undefined on input line 349.
-
-[7]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 8 undefined on input line 400.
-
-
-LaTeX Warning: Reference `eq:mixedtone' on page 8 undefined on input line 400.
-
-
-LaTeX Warning: Reference `eq:mixedEminterval' on page 8 undefined on input line
- 401.
-
-
-LaTeX Warning: Reference `eq:mixedtge' on page 8 undefined on input line 419.
-
-
-LaTeX Warning: Reference `eq:mixedEminterval' on page 8 undefined on input line
- 419.
-
-[8]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 9 undefined on input line 464.
-
-
-LaTeX Warning: Reference `eq:decomp' on page 9 undefined on input line 465.
-
-
-LaTeX Warning: Reference `eq:qoverlap' on page 9 undefined on input line 487.
-
-
-LaTeX Warning: Reference `eq:decomp' on page 9 undefined on input line 487.
-
-
-LaTeX Warning: Reference `eq:mixedtge' on page 9 undefined on input line 489.
-
-[9]
-
-LaTeX Warning: Reference `eq:mixedtone' on page 10 undefined on input line 521.
-
-
-
-LaTeX Warning: Reference `eq:decomp' on page 10 undefined on input line 524.
-
-[10]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 11 undefined on input line 558.
-
-
-LaTeX Warning: Reference `eq:mixedEminterval' on page 11 undefined on input lin
-e 558.
-
-
-LaTeX Warning: Reference `prop:E' on page 11 undefined on input line 563.
-
-[11]
-
-LaTeX Warning: Reference `lem:finitefive' on page 12 undefined on input line 62
-3.
-
-
-LaTeX Warning: Reference `lem:finiteexception' on page 12 undefined on input li
-ne 624.
-
-[12] [13]
-
-LaTeX Warning: Reference `lem:finitefive' on page 14 undefined on input line 73
-7.
-
-
-LaTeX Warning: Reference `lem:finitefive' on page 14 undefined on input line 75
-3.
-
-[14]
-
-LaTeX Warning: Reference `lem:Pclosure' on page 15 undefined on input line 770.
-
-
-[15]
-
-LaTeX Warning: Reference `lem:mod4' on page 16 undefined on input line 821.
-
-[16]
-
-LaTeX Warning: Reference `thm:main' on page 17 undefined on input line 936.
-
-
-LaTeX Warning: Reference `prop:E' on page 17 undefined on input line 938.
-
-
-LaTeX Warning: Reference `eq:4E' on page 17 undefined on input line 938.
-
-
-LaTeX Warning: Reference `lem:smallmultiples' on page 17 undefined on input lin
-e 940.
-
-[17]
-
-LaTeX Warning: Reference `prop:fiveP' on page 18 undefined on input line 944.
-
-
-LaTeX Warning: Reference `lem:sixcriterion' on page 18 undefined on input line 
-945.
-
-
-LaTeX Warning: Reference `prop:fiveP' on page 18 undefined on input line 950.
-
-
-LaTeX Warning: Reference `lem:finiteexception' on page 18 undefined on input li
-ne 955.
-
-
-LaTeX Warning: Reference `lem:sixcriterion' on page 18 undefined on input line 
-960.
-
-
-LaTeX Warning: Reference `prop:46' on page 18 undefined on input line 983.
-
-[18]
-
-LaTeX Warning: Reference `thm:main' on page 19 undefined on input line 993.
-
-
-LaTeX Warning: Reference `thm:main' on page 19 undefined on input line 1005.
-
-
-LaTeX Warning: Reference `thm:main' on page 19 undefined on input line 1008.
-
-
-LaTeX Warning: Reference `cor:eight' on page 19 undefined on input line 1009.
-
-
-LaTeX Warning: Reference `cor:threshold' on page 19 undefined on input line 101
-4.
-
+{C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
+[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
 [19] [20] [21] (primitive_dyck_tkuriyama_v6.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `primitive_dyck_tkuriyama_v6.out' has chan
-ged.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `primitive_dyck_tkuriyama_v6.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  80C8E436A1D01A3BC7E9AFCEA1F8E654;1146.
+Package rerunfilecheck Info: File `primitive_dyck_tkuriyama_v6.out' has not cha
+nged.
+(rerunfilecheck)             Checksum: 80C8E436A1D01A3BC7E9AFCEA1F8E654;1146.
  ) 
 Here is how much of TeX's memory you used:
- 10519 strings out of 467867
- 162533 string characters out of 5418334
- 576430 words of memory out of 5000000
- 39231 multiletter control sequences out of 15000+600000
+ 10534 strings out of 467867
+ 163097 string characters out of 5418334
+ 577875 words of memory out of 5000000
+ 39240 multiletter control sequences out of 15000+600000
  639250 words of font info for 84 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,15n,79p,566b,603s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -591,9 +410,9 @@ s/cm/cmsy8.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public
 /amsfonts/cm/cmti12.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/public/amsfonts/cm/cmtt12.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/
 fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_v6.pdf (21 pages, 255266 bytes).
+Output written on primitive_dyck_tkuriyama_v6.pdf (21 pages, 266109 bytes).
 PDF statistics:
- 228 PDF objects out of 1000 (max. 8388607)
+ 294 PDF objects out of 1000 (max. 8388607)
  59 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 49 words of extra memory for PDF output out of 10000 (max. 10000000)
 
