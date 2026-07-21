@@ -3,7 +3,7 @@ Copyright (c) 2026 Takayuki Kuriyama. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
-import LeanCfgProject.MCFG.ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds
+import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds
 
 /-!
 # ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification.lean
