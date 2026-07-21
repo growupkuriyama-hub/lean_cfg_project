@@ -153,8 +153,12 @@ theorem mem_right_for_grammar
     {c : NamedSentenceContext α d}
     (hc : namedFill d c x ∈ G.StringLanguage) :
     namedFill d c u ∈ G.StringLanguage :=
-  fixedNamedDistributionalEquivalent_mem_right
-    (h.sound_for_grammar G hL hK) hc
+  fixedNamedDistributionalEquivalent_mem_left
+    (x := u)
+    (y := x)
+    (c := c)
+    (h.sound_for_grammar G hL hK)
+    hc
 
 end SampleLearnerReachable
 
@@ -192,7 +196,7 @@ structure AnchorSimulation
   binaryEvidence :
     ∀ (ρ : BinaryRule N α G.arity),
       ρ ∈ G.binaryRules →
-        ∃ parent : NamedSentenceContext α (G.arity ρ.lhs),
+        Σ parent : NamedSentenceContext α (G.arity ρ.lhs),
           SampleBinaryEvidence K parent ρ.body
             (anchor ρ.left) (anchor ρ.right)
   startReachable :
@@ -217,9 +221,9 @@ theorem simulates_derivation
     (h : DerivesTuple G A x) :
     SampleLearnerReachable K obs f (S.anchor A) x := by
   induction h with
-  | terminal hρ hwt =>
-      exact S.terminalReachable _ hρ hwt
-  | binary hρ hx hy ihx ihy =>
+  | @terminal ρ hρ hwt =>
+      exact S.terminalReachable ρ hρ hwt
+  | @binary ρ hρ x y hx hy ihx ihy =>
       have hRule :
           SampleLearnerReachable K obs f
             (S.anchor ρ.lhs)
@@ -236,7 +240,7 @@ theorem simulates_derivation
         exact SampleLearnerReachable.binary
           (hfan ρ.lhs) (G.arity_pos ρ.lhs) B ihx ihy
       exact SampleLearnerReachable.trans hRule hChildren
-  | start hρ hx ihx hwt =>
+  | @start ρ hρ x hx hwt ihx =>
       have hStart :
           SampleLearnerReachable K obs f
             (S.anchor G.start)
