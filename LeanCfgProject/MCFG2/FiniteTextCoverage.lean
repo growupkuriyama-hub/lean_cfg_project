@@ -73,7 +73,7 @@ theorem eventuallyContains_of_subset
           exact Nat.lt_of_succ_le hm1
         exact Finset.mem_image.mpr
           ⟨m, Finset.mem_range.mpr hm_lt, hm⟩
-      · exact hnS n (le_trans (le_max_right (m + 1) nS) hn) word hwS
+      · exact hnS n (le_trans (le_max_right (m + 1) nS) hn) hwS
 
 /-- Every finite subset of the target is eventually contained in every text for
 the target language.  This is just `eventuallyContains_of_subset` with the
