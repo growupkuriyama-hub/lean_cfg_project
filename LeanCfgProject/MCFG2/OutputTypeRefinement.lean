@@ -160,8 +160,26 @@ theorem cast_outputTuple_matches_lhs
     (τ : TypedTerminalRule G) (obs : α → M) :
     TypedNonterminal.Matches obs (τ.lhs obs)
       (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) := by
-  cases τ.wellTyped
-  rfl
+  unfold TypedNonterminal.Matches
+  change
+    tupleType obs
+        (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) =
+      (fun _ => evalObs obs [τ.baseRule.terminal])
+
+  have h : G.arity τ.baseRule.lhs = 1 :=
+    τ.wellTyped
+
+  have hProof : τ.wellTyped = h :=
+    Subsingleton.elim _ _
+
+  rw [hProof]
+  clear hProof
+  cases h
+
+  exact
+    TerminalRule.tupleType_outputTuple
+      obs
+      τ.baseRule
 
 end TypedTerminalRule
 
