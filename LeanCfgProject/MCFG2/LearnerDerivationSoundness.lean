@@ -112,7 +112,12 @@ theorem mem_right_of_derives
     {c : NamedSentenceContext α d}
     (hc : namedFill d c x ∈ L) :
     namedFill d c u ∈ L :=
-  fixedNamedDistributionalEquivalent_mem_right (h.sound hL) hc
+  fixedNamedDistributionalEquivalent_mem_left
+    (x := u)
+    (y := x)
+    (c := c)
+    (h.sound hL)
+    hc
 
 /-- Any accepting context for the derived tuple also accepts the source tuple. -/
 theorem mem_left_of_derives
@@ -122,7 +127,12 @@ theorem mem_left_of_derives
     {c : NamedSentenceContext α d}
     (hc : namedFill d c u ∈ L) :
     namedFill d c x ∈ L :=
-  fixedNamedDistributionalEquivalent_mem_left (h.sound hL) hc
+  fixedNamedDistributionalEquivalent_mem_right
+    (x := u)
+    (y := x)
+    (c := c)
+    (h.sound hL)
+    hc
 
 /-- Unit extension preserves soundness by one additional semantic unit step.
 
