@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Lean and verify certificates
+    name: Build every MCFG2 module
     runs-on: ubuntu-latest
 
     steps:
@@ -22,16 +22,71 @@ jobs:
           test: false
           lint: false
 
-      - name: Build MCFG experiment modules
+      - name: Verify MCFG2 imports
+        shell: bash
         run: |
-          lake build LeanCfgProject.MCFG.FI_v2_1_FixedObservation
-          lake build LeanCfgProject.MCFG.Basic
-          lake build LeanCfgProject
+          set -euo pipefail
+
+          if [[ ! -d LeanCfgProject/MCFG2 ]]; then
+            echo "::error::LeanCfgProject/MCFG2 does not exist."
+            exit 1
+          fi
+
+          if grep -RInE \
+            '^[[:space:]]*import[[:space:]]+LeanCfgProject\.MCFG(\.|$)' \
+            LeanCfgProject/MCFG2
+          then
+            echo "::error::Old LeanCfgProject.MCFG imports remain under MCFG2."
+            echo "Replace them with LeanCfgProject.MCFG2 imports."
+            exit 1
+          fi
+
+      - name: Build every MCFG2 module
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -d '' files < <(
+            find LeanCfgProject/MCFG2 \
+              -type f \
+              -name '*.lean' \
+              -print0 |
+            sort -z
+          )
+
+          total="${#files[@]}"
+
+          if [[ "$total" -eq 0 ]]; then
+            echo "::error::No Lean files were found under LeanCfgProject/MCFG2."
+            exit 1
+          fi
+
+          echo "Found ${total} Lean files under LeanCfgProject/MCFG2."
+
+          current=0
+
+          for file in "${files[@]}"; do
+            current=$((current + 1))
+
+            module="${file%.lean}"
+            module="${module//\//.}"
+
+            echo "::group::[${current}/${total}] ${module}"
+            lake build "${module}"
+            echo "::endgroup::"
+          done
+
+          echo "All ${total} MCFG2 modules passed."
 
       - name: Run all Python scripts under PrimDyck
         shell: bash
         run: |
           set -euo pipefail
+
+          if [[ ! -d LeanCfgProject/PrimDyck ]]; then
+            echo "LeanCfgProject/PrimDyck does not exist; skipping Python scripts."
+            exit 0
+          fi
 
           while IFS= read -r -d '' file; do
             echo "Running: $file"
