@@ -42,8 +42,8 @@ def unaryIdentityContext : NamedSentenceContext α 1 :=
     · simp [rawTwoSidedAsNamed]
     · simp [rawTwoSidedAsNamed]
     · intro i
-      fin_cases i
-      simp [rawTwoSidedAsNamed, finOne]⟩
+      rw [Subsingleton.elim i finOne]
+      simp [rawTwoSidedAsNamed]⟩
 
 /-- Filling the one-hole identity context by a singleton tuple returns the
 underlying word. -/
