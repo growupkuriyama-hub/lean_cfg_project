@@ -121,9 +121,7 @@ theorem tupleType_castTuple_constant
         (fun _ : Fin d => value)) :
     tupleType obs (castTuple h x) =
       (fun _ : Fin e => value) := by
-
   subst e
-
   simpa using hx
 
 
@@ -200,7 +198,11 @@ theorem cast_outputTuple_matches_lhs
       τ.baseRule.outputTuple
       (evalObs obs [τ.baseRule.terminal])
 
-  simpa [TerminalRule.outputType] using
+  change
+    tupleType obs τ.baseRule.outputTuple =
+      TerminalRule.outputType obs τ.baseRule
+
+  exact
     TerminalRule.tupleType_outputTuple
       obs
       τ.baseRule

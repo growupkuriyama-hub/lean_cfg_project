@@ -13,8 +13,8 @@
 \newcommand{\val}[2]{[#1]_{#2}}
 \newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
 \newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
-\newcommand{\Pset}{\tfrac14\cdot
-  \bigl(\mathcal N_{\mathrm{pD}}\bigr)_{\ge 12}}
+\newcommand{\Pset}{\bigl(\tfrac14\cdot
+  \mathcal N_{\mathrm{pD}}\bigr)_{\ge 12}}
 \newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
 
 \title{Additive Representations by Primitive Dyck Numbers}
@@ -31,7 +31,8 @@ and $0$ as a closing bracket, gives a totally balanced number.  We study
 the subset arising from primitive Dyck words, whose running balance
 returns to zero only at the end.  We determine the least number of
 primitive Dyck numbers needed to represent every positive even integer.
-The integer $46$ uniquely requires eight summands, and the integers
+Among positive even integers, $46$ alone requires exactly eight summands,
+and the integers
 $34$, $44$, $98$, $154$, $198$, $202$, $206$, $838$, $842$, and $846$
 require seven.  Every other positive even integer is a sum of at most
 six primitive Dyck numbers.  In particular, $848$ is the sharp threshold
@@ -140,11 +141,11 @@ not only to an eventual bound but to the complete exceptional set, the
 optimal uniform bound for all even integers, and the sharp eventual
 threshold.
 
-The primitive family still has positive asymptotic proportion $1/4$
-within each fixed-length Dyck layer.  Indeed, there are $C_n$ Dyck words
-of length $2n$, and every primitive one is uniquely of the form $1u0$
-with $u$ a Dyck word of length $2n-2$; so there are $C_{n-1}$ primitive
-words of length $2n$.  From the Catalan formula
+Within the Dyck words of length $2n$, the proportion that are primitive
+tends to $1/4$ as $n\to\infty$.  Indeed, there are $C_n$ Dyck words of
+length $2n$, and every primitive one is uniquely of the form $1u0$ with
+$u$ a Dyck word of length $2n-2$; so there are $C_{n-1}$ primitive words
+of length $2n$.  From the Catalan formula
 $C_n=\frac1{n+1}\binom{2n}{n}$,
 \[
  \frac{C_{n-1}}{C_n}=\frac{n+1}{2(2n-1)}\longrightarrow\frac14 .
@@ -169,6 +170,7 @@ integer sequence of this paper by
 \[
         a(n)=r(2n),\qquad n\geq1.
 \]
+This is OEIS sequence \seqnum{A395858} \cite{OEIS-A395858}.
 Its first fifty terms are
 \[
 \begin{gathered}
@@ -214,8 +216,8 @@ The exceptional value $46$ already explains why the uniform bound can
 never be smaller than eight.
 
 \begin{proposition}\label{prop:46}
-The integer $46$ is a sum of eight primitive Dyck numbers, but not of
-seven.
+The integer $46$ requires exactly eight positive primitive Dyck numbers:
+it is a sum of eight, but it is not a sum of at most seven.
 \end{proposition}
 
 \begin{proof}
@@ -820,7 +822,7 @@ Lemma~\ref{lem:finitefive} gives the stronger inclusion
 $[215,1046]\subseteq5\Pset$; only the initial interval $[215,867]$ is
 needed as the base case for strong induction on $n$.  Let $n\geq868$, and
 choose the unique
-$S\in\{5,6,7,8\}$ with $S\equiv n$ (mod $4$).  Then
+$S\in\{5,6,7,8\}$ with $S\equiv n\pmod 4$.  Then
 \[
  M=\frac{n-S}{4}\geq\frac{868-8}{4}=215.
 \]
@@ -885,7 +887,7 @@ numbers if and only if
 
 \begin{proof}
 By Lemma~\ref{lem:mod4}, every primitive Dyck summand other than $2$ is
-a multiple of $4$.  Hence a representation of $N\equiv2$ (mod $4$) contains
+a multiple of $4$.  Hence a representation of $N\equiv2\pmod 4$ contains
 an odd number of copies of $2$.  If it has at most six summands, that
 number is $1$, $3$, or $5$.
 
@@ -1000,19 +1002,19 @@ exhaustive search.
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
-Suppose first that $N\equiv0$ (mod $4$).  If $N\geq100$, write $N=4n$.
+Suppose first that $N\equiv0\pmod 4$.  If $N\geq100$, write $N=4n$.
 Then $n\geq25$, so Proposition~\ref{prop:E} and \eqref{eq:4E} give a
 representation of $N$ with at most six primitive Dyck summands.
 Lemma~\ref{lem:smallmultiples} treats the remaining positive multiples
 of $4$ and shows that $r(44)=7$.
 
-Now let $N\equiv2$ (mod $4$), say $N=4m+2$.  If $N\geq850$, then $m\geq212$,
+Now let $N\equiv2\pmod 4$, say $N=4m+2$.  If $N\geq850$, then $m\geq212$,
 so Proposition~\ref{prop:fiveP} gives $m\in F_5(\Pset)$.  By
 Lemma~\ref{lem:sixcriterion}, $N$ is a sum of at most six primitive
 Dyck numbers.  Together with the preceding paragraph, this already
 shows that every even $N\geq848$ has such a representation.
 
-It remains to classify the numbers $N\leq846$ with $N\equiv2$ (mod $4$).
+It remains to classify the numbers $N\leq846$ with $N\equiv2\pmod 4$.
 Here $0\leq m\leq211$, and Proposition~\ref{prop:fiveP} shows that the
 only elements of $\Pset$ not exceeding $m$ lie in
 \[
@@ -1094,32 +1096,11 @@ it remains open whether the bound six can be reduced to five.
 
 \section{Sequences from the OEIS}\label{sec:oeis}
 
-Two existing OEIS sequences are discussed in this paper.  The totally
-balanced numbers form \seqnum{A014486} \cite{OEIS-A014486}.  The
-primitive Dyck numbers, denoted $\NpD$ here, form \seqnum{A057547}
-\cite{OEIS-A057547}.  The central sequence studied here is
-$a(n)=r(2n)$.
-
-\section{Disclosure of AI use}\label{sec:AI}
-
-The idea for this study arose while the author was using ChatGPT 5.6
-(OpenAI) to survey existing research connecting formal languages with
-elementary number theory. The author discussed with ChatGPT 5.6 which
-aspects of existing results might be modified to yield a new additive
-problem, and decided to investigate additive representations by
-primitive Dyck numbers.
-
-The specific sets, finite interval certificates, exceptional set,
-induction arguments, and proofs appearing in this paper were derived
-and verified by the author using a whiteboard, paper, a ballpoint pen,
-and a scientific calculator. Large-scale finite computations were
-carried out using Python programs, and Claude Opus 4.8 (Anthropic)
-assisted with the development and checking of those programs.
-
-ChatGPT 5.6 was also used to check the consistency and uniformity of
-mathematical symbols and notation, to provide advice on the use of
-\LaTeX{}, and to point out unnatural expressions in English text
-written by the author.
+Three OEIS sequences are discussed in this paper.  The totally balanced
+numbers form \seqnum{A014486} \cite{OEIS-A014486}.  The positive
+elements of $\NpD$, the primitive Dyck numbers, form \seqnum{A057547}
+\cite{OEIS-A057547}.  The central sequence studied here,
+$a(n)=r(2n)$, is \seqnum{A395858} \cite{OEIS-A395858}.
 
 \begin{thebibliography}{9}
 
@@ -1155,7 +1136,11 @@ OEIS Foundation Inc.,
 \emph{The On-Line Encyclopedia of Integer Sequences, A057547},
 \url{https://oeis.org/A057547}.
 
-% Replace this pending item by the accepted OEIS entry before submission.
+\bibitem{OEIS-A395858}
+OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences, A395858},
+\url{https://oeis.org/A395858}.
+
 \bibitem{RSS}
 A.~Rajasekaran, J.~Shallit, and T.~Smith,
 Sums of palindromes: an approach via automata,
