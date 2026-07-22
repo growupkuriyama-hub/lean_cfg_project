@@ -93,7 +93,7 @@ def toExposingCoreFinalData
     F.startEvidence F.splicingConstructor F.fanout F.promise
 
 /-- The finite sample produced by the common-context final data. -/
-def sample
+noncomputable def sample
     (F : TrimmedPresentationAnchorCommonContextFinalData D) :
     Finset (Word α) :=
   F.toExposingCoreFinalData.sample
@@ -124,7 +124,7 @@ def toGrammarRuleTransportData
   F.toExposingCoreFinalData.toGrammarRuleTransportData
 
 /-- Convert to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (F : TrimmedPresentationAnchorCommonContextFinalData D) :
     FinalReachableData G F.sample obs f :=
   F.toExposingCoreFinalData.toFinalReachableData
@@ -235,8 +235,7 @@ theorem prefix_exact_eventually_of_startWord_sample_final
       ∃ n0 : Nat, ∀ n : Nat, n0 ≤ n →
         ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
           G.StringLanguage :=
-  (P.toAnchorCommonContextFinalDataOfStartWordSample E U hfan hL)
-    .prefix_exact_eventually
+  (P.toAnchorCommonContextFinalDataOfStartWordSample E U hfan hL).prefix_exact_eventually
 
 /-- Reachable Gold identification through common-context final data using
 start-word evidence extracted from a positive finite sample. -/
@@ -251,8 +250,7 @@ theorem identifies_from_positive_text_of_startWord_sample_final
         (reachableHypLanguage obs f)
         (reachableSampleLearner (α := α))
         Ttxt :=
-  (P.toAnchorCommonContextFinalDataOfStartWordSample E U hfan hL)
-    .identifies_from_positive_text
+  (P.toAnchorCommonContextFinalDataOfStartWordSample E U hfan hL).identifies_from_positive_text
 
 end TrimmedPresentationAnchorCommonContextCoreData
 
