@@ -77,7 +77,7 @@ def toGrammarRuleBuilder
   E.grammarData.toGrammarRuleBuilder
 
 /-- The finite sample produced by the direct grammar-rule-data route. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationGrammarRuleDataEndpoint D) :
     Finset (Word α) :=
   E.grammarData.sample
@@ -96,7 +96,7 @@ theorem contains_witnesses
   E.grammarData.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationGrammarRuleDataEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.grammarData.toFinalReachableData
@@ -180,10 +180,10 @@ def toGrammarRuleData
 def toGrammarRuleBuilder
     (E : TrimmedPresentationGrammarRuleTransportEndpoint D) :
     TrimmedPresentationGrammarRuleBuilder D :=
-  E.transportData.toGrammarRuleBuilder
+  E.transportData.toGrammarRuleData.toGrammarRuleBuilder
 
 /-- The finite sample produced by the transport-data route. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationGrammarRuleTransportEndpoint D) :
     Finset (Word α) :=
   E.transportData.sample
@@ -202,7 +202,7 @@ theorem contains_witnesses
   E.transportData.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationGrammarRuleTransportEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.transportData.toFinalReachableData
@@ -277,7 +277,7 @@ variable {D : TrimmedPresentationPreCoreData T f}
 def toGrammarRuleTransportData
     (E : TrimmedPresentationRuleTransportEndpoint D) :
     TrimmedPresentationGrammarRuleTransportData D :=
-  E.finalData.toGrammarRuleTransportData
+  E.finalData.transportData
 
 /-- Convert to grammar-rule data. -/
 def toGrammarRuleData
@@ -286,7 +286,7 @@ def toGrammarRuleData
   E.finalData.toGrammarRuleData
 
 /-- The finite sample produced by rule-transport final data. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationRuleTransportEndpoint D) :
     Finset (Word α) :=
   E.finalData.sample
@@ -305,7 +305,7 @@ theorem contains_witnesses
   E.finalData.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationRuleTransportEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.finalData.toFinalReachableData
