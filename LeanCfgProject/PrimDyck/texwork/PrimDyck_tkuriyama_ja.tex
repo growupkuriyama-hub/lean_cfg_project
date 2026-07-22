@@ -230,11 +230,6 @@ $48$ 未満の正の原始Dyck数は $2$ と $12$ だけである。実際、長
 $k$ 個足して得られる和の集合を表し、$0X=\{0\}$ とする。また、スカラー $c$ に対し、
 $c\cdot X=\{cx:x\in X\}$ は $X$ の $c$ 倍拡大を表す。
 
-$A\subseteq2\mathbb N_0$ に対し、$2\mathbb N_0$ の各元が $A$ の高々 $h$ 個の元の
-和であるとき、$A$ を $2\mathbb N_0$ に対する\emph{位数高々 $h$ の相対加法基底}と呼ぶ。
-この性質をもつ最小の整数が $h$ であるとき、その相対位数は\emph{ちょうど $h$} であるという。
-同様に、$2\mathbb N_0$ の十分大きな元がすべて $A$ の高々 $h$ 個の元の和であるとき、
-$A$ を\emph{位数高々 $h$ の相対漸近加法基底}と呼ぶ。
 
 \section{原始語の内部にある正則族}
 
@@ -425,7 +420,8 @@ $24$ を表すことはできないので、$24\notin6\mathcal E$ である。
 
 次に $m\geq3$ とし、レベル $m-1$ で
 \eqref{eq:mixedtge}--\eqref{eq:mixedEminterval} が成り立つと仮定する。
-この段階での記法を簡潔にするため、
+この段階での記法を簡潔にするため、$ q_m=[3\underbrace{11\cdots1}_{m-1\text{ 桁}}]_4
+      =3\cdot4^{m-1}+u$とし、
 \[
  u=u_{m-1},\qquad q=q_m,
  \qquad M=\max\mathcal E_{m-1}
@@ -437,10 +433,9 @@ $24$ を表すことはできないので、$24\notin6\mathcal E$ である。
 \]
 である。ここで
 \begin{equation}\label{eq:qmdef}
- q=q_m=[3\underbrace{11\cdots1}_{m-1\text{ 桁}}]_4
-      =3\cdot4^{m-1}+u=10u+3
+ q=10u+3
 \end{equation}
-であり、以下では
+であり、以下では両辺が$10u+2$に一致する
 \begin{equation}\label{eq:qoverlap}
  2\cdot4^{m-1}+4u=q-1
 \end{equation}
@@ -449,7 +444,7 @@ $24$ を表すことはできないので、$24\notin6\mathcal E$ である。
  \Delta_m=\Delta_{m-1}\cup(4^{m-1}+\Delta_{m-1}),\qquad
  \mathcal E_m=\mathcal E_{m-1}\cup(q+\Delta_{m-1})
 \]
-を得る。実際、$\Delta_m$ の元の新しい先頭桁は $0$ または $1$ である。一方、
+を得る。実際、$\Delta_m$ の元の新しい$m$ 桁の元は先頭桁は $1$ である。一方、
 $\mathcal E_m$ の新しい $m$ 桁の元は、先頭桁が $3$ で、その後に
 $\Delta_{m-1}$ から来る下位 $m-1$ 桁の補正項が続く。
 

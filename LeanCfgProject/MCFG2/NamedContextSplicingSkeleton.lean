@@ -82,7 +82,7 @@ def leftIdentity
     (y : Tuple α dC) :
     LeftFillingIdentity namedFill parent body y where
   ctx := S.leftContext y
-  fill_eq := by
+  identity := by
     intro x
     exact S.left_fill_eq y x
 
@@ -93,7 +93,7 @@ def rightIdentity
     (u : Tuple α dB) :
     RightFillingIdentity namedFill parent body u where
   ctx := S.rightContext u
-  fill_eq := by
+  identity := by
     intro v
     exact S.right_fill_eq u v
 
