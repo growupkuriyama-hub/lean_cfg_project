@@ -203,6 +203,7 @@ theorem start_covers_sample
     (hρ : ρ ∈ G.startRules)
     (hwt : G.arity ρ.child = G.arity G.start) :
     D.startWitnessWord ρ hwt ∈ B.startSample := by
+  classical
   have hp : B.start_arity ρ hρ = hwt := Subsingleton.elim _ _
   unfold startSample
   refine Finset.mem_image.mpr ?_
