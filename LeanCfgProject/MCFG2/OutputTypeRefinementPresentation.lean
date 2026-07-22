@@ -203,19 +203,17 @@ theorem toOutputTypedDerives
     (h : PresentationDerives P X x) :
     OutputTypedDerives (G := G) (obs := obs) X x := by
   induction h with
-  | terminal hτ =>
+  | @terminal τ hτ =>
       exact OutputTypedDerives.mk
         (DerivesTuple.terminal
           (ρ := τ.baseRule) τ.inGrammar τ.wellTyped)
         (τ.cast_outputTuple_matches_lhs obs)
-  | binary hτ hx hy ihx ihy =>
+  | @binary τ hτ x y hx hy ihx ihy =>
       exact OutputTypedDerives.binary τ ihx ihy
 
 end PresentationDerives
 
 end PresentationDerivations
-
-end MCFG
 
 
 namespace PresentationDerives
