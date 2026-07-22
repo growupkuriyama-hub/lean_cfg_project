@@ -99,24 +99,28 @@ def anchorSample
   B.baseNonterminals.image (fun A => D.anchorWitnessWord A)
 
 /-- Terminal sample obtained from the grammar's terminal rules. -/
-def terminalSample
+noncomputable def terminalSample
     (B : TrimmedPresentationGrammarRuleBuilder D) :
-    Finset (Word α) :=
-  G.terminalRules.attach.image
+    Finset (Word α) := by
+  classical
+  exact G.terminalRules.attach.toFinset.image
     (fun i => D.terminalWitnessWord i.val
       (B.terminal_arity i.val i.property))
 
 /-- Binary sample obtained from the grammar's binary rules. -/
-def binarySample
+noncomputable def binarySample
     (B : TrimmedPresentationGrammarRuleBuilder D) :
-    Finset (Word α) :=
-  G.binaryRules.image (fun ρ => D.binaryWitnessWord ρ)
+    Finset (Word α) := by
+  classical
+  exact G.binaryRules.toFinset.image
+    (fun ρ => D.binaryWitnessWord ρ)
 
 /-- Start sample obtained from the grammar's start rules. -/
-def startSample
+noncomputable def startSample
     (B : TrimmedPresentationGrammarRuleBuilder D) :
-    Finset (Word α) :=
-  G.startRules.attach.image
+    Finset (Word α) := by
+  classical
+  exact G.startRules.attach.toFinset.image
     (fun i => D.startWitnessWord i.val
       (B.start_arity i.val i.property))
 
