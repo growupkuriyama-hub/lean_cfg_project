@@ -40,6 +40,14 @@ variable {N : Type v} {α : Type u} {M : Type w}
 variable [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
 
+/-- Transport a componentwise output type across an equality of arities. -/
+def castOutputType
+    {d e : Nat}
+    (h : d = e)
+    (out : Fin d → M) :
+    Fin e → M :=
+  fun i => out (Fin.cast h.symm i)
+
 /-- Base-indexed representatives chosen from a trimmed output-type presentation.
 
 For each base nonterminal `A`, we choose a present typed nonterminal whose base
@@ -57,7 +65,9 @@ structure TrimmedBaseRepresentatives
   anchor_matches_rep :
     ∀ A : N,
       tupleType obs (anchor A) =
-        castTuple (congrArg G.arity (rep_base_eq A)) ((rep A).node.out)
+        castOutputType
+          (congrArg G.arity (rep_base_eq A))
+          ((rep A).node.out)
 
   expose_accepts :
     ∀ A : N,
@@ -77,8 +87,9 @@ def repArityEq
 /-- The output type of the representative, transported to the base arity. -/
 def transportedRepOutput
     (R : TrimmedBaseRepresentatives T)
-    (A : N) : Tuple M (G.arity A) :=
-  castTuple (R.repArityEq A) ((R.rep A).node.out)
+    (A : N) :
+    Fin (G.arity A) → M :=
+  castOutputType (R.repArityEq A) ((R.rep A).node.out)
 
 /-- The exposed word associated with a base nonterminal. -/
 def exposedWord

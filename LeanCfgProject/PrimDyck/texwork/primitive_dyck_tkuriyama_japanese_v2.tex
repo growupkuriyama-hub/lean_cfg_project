@@ -662,7 +662,7 @@ READMEも同梱する。
 
 \begin{lemma}[有限区間証明書]\label{lem:finitefive}
 次の包含関係が成り立つ：
-\[
+\begin{equation}\label{eq:finite-interval-certificate}
 \begin{array}{c|c}
 \text{和集合}&\text{含まれる整数区間}\\ \hline
 5L &[215,254]\\
@@ -671,15 +671,15 @@ H+4L &[245,486]\\
 3H+2L &[645,862]\\
 4H+L &[855,1046].
 \end{array}
-\]
+\end{equation}
 \end{lemma}
 
 \begin{proof}
-$L$ : \eqref{eq:L-def} を
+\eqref{eq:finite-interval-certificate}の第1行$[215,254]\subseteq5L$については、$L$ : \eqref{eq:L-def} を
 \[
  A=\{53,54,57,58,60\},\qquad B=\{3,13,14\}
 \]
-と分割する。逐次加算により、
+と$L=A\sqcup B$に分割する。逐次加算により、
 \[
  2A=[106,108]\cup[110,118]\cup\{120\},
 \]
@@ -687,9 +687,9 @@ $L$ : \eqref{eq:L-def} を
  3A=[159,178]\cup\{180\},\qquad
  4A=[212,238]\cup\{240\}
 \]
-を得る。したがって $4A+B=[215,254]$ であり、第1行が証明される。
+を得る。したがって $4A+B=[215,254]$ であり、\eqref{eq:finite-interval-certificate}の第1行が証明される。
 
-第2行について、$L$ を繰り返し加えると、
+\eqref{eq:finite-interval-certificate}の第2行$[245,486]\subseteq H+4L$については、$L$ を繰り返し加えると、
 \begin{equation}\label{eq:4L-intervals}
 \begin{split}
 4L\supseteq{}&[32,34]\cup[42,45]\cup[52,56]\cup[82,102]\\
@@ -706,13 +706,13 @@ H+[52,56]&\supseteq[265,276]\cup[281,304]
 \end{aligned}
 \]
 を得る。これらの和集合は $[245,304]$ を含む。一方で、$H$ の連続する元の差は高々 $9$かつ$H\subseteq[213,248]$ であるので、$I=[a,b]$ が $b-a\geq8$ を満たすなら、
-$H+I=[213+a,248+b]$ である。これを前７ツの区間のうち、残りの四つの長い区間に適用すると、
+$H+I=[213+a,248+b]$ である。これを\eqref{eq:4L-intervals}の後半四つの区間に適用すると、それぞれ
 \[
  [295,350],\quad[329,396],\quad[375,442],\quad[425,486]
 \]
 を得る。これらは互いに重なるので、$[245,486]\subseteq H+4L$ の証明が完了する。
 
-第3行については、次の包含区間で十分である：
+\eqref{eq:finite-interval-certificate}の第3行$[439,674]\subseteq2H+3L$については、次の包含区間で十分である：
 \[
  2H\supseteq[426,428]\cup[430,438]\cup[446,478]\cup\{496\},
 \]
@@ -743,9 +743,9 @@ $2H$ の最初の二つの成分から、
 \[
  496+[159,178]=[655,674]
 \]
-である。以上の区間を合わせると、$[439,674]\subseteq2H+3L$ が証明される。
+である。以上の区間を合わせると、\eqref{eq:finite-interval-certificate}の第3行が証明される。
 
-第4行については、
+\eqref{eq:finite-interval-certificate}の第4行$[645,862]\subseteq3H+2L$については、については、
 \[
  3H\supseteq[639,734]\cup\{744\},\qquad
  2L\supseteq\{6\}\cup[70,74]\cup[110,118]\cup\{120\}
@@ -754,7 +754,7 @@ $2H$ の最初の二つの成分から、
 \[
  [645,740],\quad[709,808],\quad[759,854],\quad[854,862]
 \]
-は $[645,862]$ を覆う。最後の行については、
+は $[645,862]$ を覆う。\eqref{eq:finite-interval-certificate}の第4行$[855,1046]\subseteq4H+L$については、については、
 \[
  4H\supseteq[852,982]\cup[984,986],
  \qquad \{3,57,58,60\}\subseteq L
@@ -785,20 +785,20 @@ $F_5(\Pset)$ に属さない。
 補題 \ref{lem:finitefive} は、より強い包含
 $[215,1046]\subseteq5\Pset$ を与える。$n$ に関する強い帰納法の基底として必要なのは、
 そのうち最初の区間 $[215,867]$ だけである。$n\geq868$ とし、
-$S\equiv n\pmod4$ を満たす一意な $S\in\{5,6,7,8\}$ を選ぶ。このとき、
+$\rho\equiv n\pmod4$ を満たす一意な $\rho\in\{5,6,7,8\}$ を選ぶ。このとき、
 \[
- M=\frac{n-S}{4}\geq\frac{868-8}{4}=215
+ M=\frac{n-\rho}{4}\geq\frac{868-8}{4}=215
 \]
 である。$M<n$ なので、帰納法の仮定により
 \[
  M=q_1+\cdots+q_5,\qquad q_i\in\Pset
 \]
-と書ける。$5\leq S\leq8$ であるから、
-$e_1+\cdots+e_5=S$ となる $e_i\in\{1,2\}$ を選ぶことができる。したがって、
+と書ける。$5\leq \rho\leq8$ であるから、
+$r_1+\cdots+r_5=\rho$ となる $r_i\in\{1,2\}$ を選ぶことができる。したがって、
 \[
- n=4M+S=\sum_{i=1}^{5}(4q_i+e_i)
+ n=4M+\rho=\sum_{i=1}^{5}(4q_i+r_i)
 \]
-である。補題 \ref{lem:Pclosure} により、各加数 $4q_i+e_i$ は $\Pset$ に属する。
+である。補題 \ref{lem:Pclosure} により、各加数 $4q_i+r_i$ は $\Pset$ に属する。
 ゆえに $n\in5\Pset$ であり、帰納法が完了する。
 
 最後に、
