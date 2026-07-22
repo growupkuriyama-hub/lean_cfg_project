@@ -189,7 +189,7 @@ def toGrammarRuleTransportData
 
 /-- The finite sample produced by anchor distributional core data plus
 start-word evidence. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationAnchorDistributionCoreData D)
     (E : TrimmedPresentationStartWordEvidence D) :
     Finset (Word α) :=
@@ -225,7 +225,7 @@ def toExposingCoreFinalData
   promise := hL
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationAnchorDistributionCoreData D)
     (E : TrimmedPresentationStartWordEvidence D)
     (U : NamedContextSplicingConstructor α)
