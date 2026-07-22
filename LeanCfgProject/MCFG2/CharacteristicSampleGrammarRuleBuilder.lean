@@ -216,7 +216,7 @@ theorem start_covers_sample
   · simpa only [hp]
 
 /-- Convert the grammar-rule builder to the component package. -/
-def toComponentPackage
+noncomputable def toComponentPackage
     (B : TrimmedPresentationGrammarRuleBuilder D) :
     TrimmedPresentationComponentPackage D where
   anchor :=
@@ -238,7 +238,7 @@ def toComponentPackage
   startWord_positive := B.startWord_positive
 
 /-- The finite sample produced by the grammar-rule builder. -/
-def sample
+noncomputable def sample
     (B : TrimmedPresentationGrammarRuleBuilder D) :
     Finset (Word α) :=
   B.toComponentPackage.sample
@@ -257,7 +257,7 @@ theorem contains_witnesses
   B.toComponentPackage.contains_witnesses
 
 /-- Convert to the abstract finite-sample builder. -/
-def toFiniteSampleBuilder
+noncomputable def toFiniteSampleBuilder
     (B : TrimmedPresentationGrammarRuleBuilder D) :
     TrimmedPresentationFiniteSampleBuilder D :=
   B.toComponentPackage.toFiniteSampleBuilder
@@ -269,14 +269,14 @@ def toWitnessSample
   B.toComponentPackage.toWitnessSample
 
 /-- Convert to a characteristic-sample object. -/
-def toCharacteristicSample
+noncomputable def toCharacteristicSample
     (B : TrimmedPresentationGrammarRuleBuilder D) :
     TrimmedPresentationCharacteristicSample D :=
   B.toComponentPackage.toCharacteristicSample
 
 /-- Convert to final reachable data after adding the remaining splicing
 constructor and global assumptions. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (B : TrimmedPresentationGrammarRuleBuilder D)
     (U : NamedContextSplicingConstructor α)
     (hfan : G.FanoutAtMost f)
