@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  22 JUL 2026 16:02
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  22 JUL 2026 16:08
  restricted system commands enabled.
 **PrimDyck_tkuriyama_ja.tex
 (./PrimDyck_tkuriyama_ja.tex
@@ -959,10 +959,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip62
 )
 \c@theorem=\count322
-
-No file PrimDyck_tkuriyama_ja.aux.
-
+ (./PrimDyck_tkuriyama_ja.aux)
 \openout1 = PrimDyck_tkuriyama_ja.aux
+
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
 LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
@@ -987,6 +986,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
+
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/graphics/graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -1034,6 +1034,7 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 \Gin@req@width=\dimen198
 )
 Package hyperref Info: Link coloring OFF on input line 26.
+ (./PrimDyck_tkuriyama_ja.out) (./PrimDyck_tkuriyama_ja.out)
 \@outlinefile=\write3
 
 \openout3 = PrimDyck_tkuriyama_ja.out
@@ -1055,10 +1056,12 @@ LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 5.54828pt on input line 29.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 29.
 
- (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
+
+(C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 29.
+
 
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -1140,9 +1143,6 @@ Class ltjsarticle Warning: deprecated old font command `\rm' used.
 (ltjsarticle)              class has defined the old font commands like
 (ltjsarticle)              `\rm' only for compatibility on input line 86.
 
-
-LaTeX Warning: Citation `OEIS-A057547' on page 2 undefined on input line 86.
-
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <10> not available
 (Font)              Font shape `JT3/mc/m/n' tried instead on input line 92.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
@@ -1151,110 +1151,14 @@ LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <10> not available
 (Font)              Font shape `JY3/mc/m/n' tried instead on input line 92.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 7.70596pt on input line 92.
-
-LaTeX Warning: Citation `OEIS-A014486' on page 2 undefined on input line 106.
-
-
-LaTeX Warning: Citation `BLS' on page 2 undefined on input line 111.
-
-[2]
-
-LaTeX Warning: Citation `BHS' on page 3 undefined on input line 120.
-
-
-LaTeX Warning: Citation `RSS' on page 3 undefined on input line 121.
-
-
-LaTeX Warning: Citation `MNRS' on page 3 undefined on input line 121.
-
-
-LaTeX Warning: Citation `OEIS-A395858' on page 3 undefined on input line 155.
-
-[3] [4]
-
-LaTeX Warning: Citation `Nathanson' on page 5 undefined on input line 230.
-
-[5](load cache: extra_lmroman7-regular.luc)
+[2] [3] [4] [5](load cache: extra_lmroman7-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
 (Font)              scaled to size 6.47295pt on input line 293.
 (load cache: extra_lmroman5-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
 (Font)              scaled to size 4.62357pt on input line 293.
-
-
-LaTeX Warning: Reference `eq:urecursion' on page 6 undefined on input line 325.
-
-
-[6]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 7 undefined on input line 354.
-
-
-LaTeX Warning: Reference `eq:mixedtone' on page 7 undefined on input line 355.
-
-[7]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 8 undefined on input line 408.
-
-
-LaTeX Warning: Reference `eq:mixedtone' on page 8 undefined on input line 409.
-
-
-LaTeX Warning: Reference `eq:mixedEminterval' on page 8 undefined on input line
- 411.
-
-
-LaTeX Warning: Reference `eq:mixedtge' on page 8 undefined on input line 428.
-
-
-LaTeX Warning: Reference `eq:mixedEminterval' on page 8 undefined on input line
- 428.
-
-[8]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 9 undefined on input line 473.
-
-
-LaTeX Warning: Reference `eq:decomp' on page 9 undefined on input line 474.
-
-[9]
-
-LaTeX Warning: Reference `eq:qoverlap' on page 10 undefined on input line 499.
-
-
-LaTeX Warning: Reference `eq:decomp' on page 10 undefined on input line 499.
-
-
-LaTeX Warning: Reference `eq:mixedtge' on page 10 undefined on input line 501.
-
-
-LaTeX Warning: Reference `eq:mixedtone' on page 10 undefined on input line 533.
-
-
-
-LaTeX Warning: Reference `eq:decomp' on page 10 undefined on input line 536.
-
-[10]
-
-LaTeX Warning: Reference `eq:mixedtge' on page 11 undefined on input line 570.
-
-
-LaTeX Warning: Reference `eq:mixedEminterval' on page 11 undefined on input lin
-e 570.
-
-
-LaTeX Warning: Reference `prop:E' on page 11 undefined on input line 574.
-
-[11] [12](load cache: extra_lmmono10-regular.luc)
-
-LaTeX Warning: Reference `lem:finitefive' on page 13 undefined on input line 65
-9.
-
-
-LaTeX Warning: Reference `lem:finiteexception' on page 13 undefined on input li
-ne 661.
-
-(load cache: extra_lmroman7-italic.luc)
+ [6] [7] [8] [9] [10] [11] [12](load cache: extra_lmmono10-regular.luc)(load cac
+he: extra_lmroman7-italic.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <6.99995> not available
 (Font)              Font shape `JT3/mc/m/n' tried instead on input line 669.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
@@ -1271,92 +1175,8 @@ LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <5> not available
 (Font)              Font shape `JY3/mc/m/n' tried instead on input line 669.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 3.85297pt on input line 669.
-[13] [14]
-
-LaTeX Warning: Reference `lem:finitefive' on page 15 undefined on input line 77
-1.
-
-
-LaTeX Warning: Reference `lem:finitefive' on page 15 undefined on input line 78
-7.
-
-
-LaTeX Warning: Reference `lem:Pclosure' on page 15 undefined on input line 803.
-
-
-[15]
-
-LaTeX Warning: Reference `lem:mod4' on page 16 undefined on input line 857.
-
-[16] [17]
-
-LaTeX Warning: Reference `thm:main' on page 18 undefined on input line 963.
-
-
-LaTeX Warning: Reference `prop:E' on page 18 undefined on input line 965.
-
-
-LaTeX Warning: Reference `eq:4E' on page 18 undefined on input line 965.
-
-
-LaTeX Warning: Reference `lem:smallmultiples' on page 18 undefined on input lin
-e 966.
-
-
-LaTeX Warning: Reference `prop:fiveP' on page 18 undefined on input line 970.
-
-
-LaTeX Warning: Reference `lem:sixcriterion' on page 18 undefined on input line 
-971.
-
-[18]
-
-LaTeX Warning: Reference `prop:fiveP' on page 19 undefined on input line 975.
-
-
-LaTeX Warning: Reference `lem:finiteexception' on page 19 undefined on input li
-ne 980.
-
-
-LaTeX Warning: Reference `lem:sixcriterion' on page 19 undefined on input line 
-984.
-
-
-LaTeX Warning: Reference `prop:46' on page 19 undefined on input line 1006.
-
-
-LaTeX Warning: Reference `thm:main' on page 19 undefined on input line 1016.
-
-[19]
-
-LaTeX Warning: Reference `thm:main' on page 20 undefined on input line 1026.
-
-
-LaTeX Warning: Reference `thm:main' on page 20 undefined on input line 1029.
-
-
-LaTeX Warning: Reference `cor:eight' on page 20 undefined on input line 1030.
-
-
-LaTeX Warning: Reference `cor:threshold' on page 20 undefined on input line 103
-3.
-
-
-LaTeX Warning: Citation `BLS' on page 20 undefined on input line 1037.
-
-
-LaTeX Warning: Citation `OEIS-A014486' on page 20 undefined on input line 1048.
-
-
-
-LaTeX Warning: Citation `OEIS-A057547' on page 20 undefined on input line 1049.
-
-
-
-LaTeX Warning: Citation `OEIS-A395858' on page 20 undefined on input line 1050.
-
-
-[20] [21] (./PrimDyck_tkuriyama_ja.aux)
+ [13] [14] [15] [16] [17]
+[18] [19] [20] [21] (./PrimDyck_tkuriyama_ja.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -1366,31 +1186,19 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
 
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `PrimDyck_tkuriyama_ja.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `PrimDyck_tkuriyama_ja.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  F2B9C894DB7D8B0019FBA78567747DEF;496.
+Package rerunfilecheck Info: File `PrimDyck_tkuriyama_ja.out' has not changed.
+(rerunfilecheck)             Checksum: F2B9C894DB7D8B0019FBA78567747DEF;496.
 )
 
 Here is how much of LuaTeX's memory you used:
- 12634 strings out of 476076
+ 12657 strings out of 476076
  195720,662416 words of node,token memory allocated
  6074 words of node memory still in use:
    10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 2491 attribute, 59 glue_s
 pec, 238 attribute_list, 1 write, 13 user_defined, 1 pdf_action nodes
-   avail lists: 1:20,2:38369,3:362,4:300,5:180,6:30,7:5794,8:157,9:2192,10:30,11
+   avail lists: 1:20,2:38621,3:366,4:300,5:180,6:36,7:5794,8:157,9:2192,10:30,11
 :142
- 34772 multiletter control sequences out of 65536+600000
+ 34780 multiletter control sequences out of 65536+600000
  97 fonts using 70249807 bytes
  119i,19n,112p,2045b,556s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmmono10-
@@ -1416,9 +1224,9 @@ X/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/Owner/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Owner/AppData/Local/
 Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Owner/AppData
 /Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on PrimDyck_tkuriyama_ja.pdf (21 pages, 348353 bytes).
+Output written on PrimDyck_tkuriyama_ja.pdf (21 pages, 359601 bytes).
 
-PDF statistics: 265 PDF objects out of 1000 (max. 8388607)
+PDF statistics: 342 PDF objects out of 1000 (max. 8388607)
  60 named destinations out of 1000 (max. 1048576)
- 1 words of extra memory for PDF output out of 10000 (max. 100000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 100000000)
 
