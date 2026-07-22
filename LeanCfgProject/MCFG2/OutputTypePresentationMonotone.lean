@@ -162,7 +162,8 @@ theorem language_subset
     (hPQ : PresentationExtends P Q) :
     PresentationStringLanguage P ⊆ PresentationStringLanguage Q := by
   intro word hword
-  exact hPQ.stringDerives hword
+  rcases hword with ⟨D⟩
+  exact ⟨hPQ.stringDerives D⟩
 
 /-- Pointwise membership transport for presentation string languages. -/
 theorem mem_language

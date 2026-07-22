@@ -14,7 +14,7 @@
 \newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
 \newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
 \newcommand{\Pset}{\bigl(\tfrac14\cdot
-  \mathcal N_{\mathrm{pD,\,\geq12}}\bigr)}
+  \mathcal{N}_{\mathrm{pD},\,\geq12}\bigr)}
 \newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
 
 \title{Additive Representations by Primitive Dyck Numbers}
@@ -35,7 +35,7 @@ Among positive even integers, $46$ alone requires exactly eight summands,
 and the integers
 $34$, $44$, $98$, $154$, $198$, $202$, $206$, $838$, $842$, and $846$
 require seven.  Every other positive even integer is a sum of at most
-six primitive Dyck numbers.  In particular, $848$ is the sharp threshold
+six primitive Dyck numbers.  In particular, $848$ is the sharp even threshold
 beyond which six summands always suffice.  The proof combines a regular
 sublanguage with a self-similar closure property of the full primitive
 family after division by $4$.
@@ -170,34 +170,34 @@ integer sequence of this paper by
 \[
         a(n)=r(2n),\qquad n\geq1.
 \]
-This is OEIS sequence \seqnum{A395858} \cite{OEIS-A395858}.
-Its first fifty terms are
+This sequence has been registered in the OEIS as
+\seqnum{A395858} \cite{OEIS-A395858}.  Its first fifty terms are
 \[
 \begin{gathered}
 1,2,3,4,5,1,2,3,4,5,6,2,3,4,5,6,7,3,4,5,6,7,8,4,5,\\
 1,2,1,2,3,4,2,3,2,3,4,5,3,4,3,4,5,6,4,5,4,5,6,7,5.
 \end{gathered}
 \]
-The displayed terms and the finite certificates used below are
-reproducible from the accompanying Python programs.
+The following Python program reproduces the displayed terms and generates
+50,000 terms of the sequence, making some recurring patterns visible:
+\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/A395858.py}.
 
 \begin{theorem}\label{thm:main}
 The values of $r(N)$ exceeding six are exactly as follows:
 \[
- r(46)=8,
-\]
-and
-\[
- r(N)=7
- \quad\Longleftrightarrow\quad
+\begin{aligned}
+ r(46)&=8,\\[4pt]
+ r(N)=7\quad&\Longleftrightarrow\quad
  N\in\{34,44,98,154,198,202,206,838,842,846\}.
+\end{aligned}
 \]
-Every other positive even integer satisfies $r(N)\leq6$.  Consequently,
-every even integer $N\geq848$ is a sum of at most six primitive Dyck
-numbers.
+Thus every other positive even integer satisfies $r(N)\leq6$.  In other
+words, every even integer $N\geq848$ is a sum of at most six primitive
+Dyck numbers.
 \end{theorem}
 
-Equivalently, in terms of the sequence $a(n)=r(2n)$,
+Equivalently, for the OEIS sequence \seqnum{A395858}
+\cite{OEIS-A395858}, defined by $a(n)=r(2n)$,
 \[
         \max_{n\geq1}a(n)=8,
         \qquad
@@ -252,14 +252,6 @@ The sumset notation used below is standard in additive-basis theory
 set of sums of $k$ not necessarily distinct members of $X$, with
 $0X=\{0\}$, and for a scalar $c$ write
 $c\cdot X=\{cx:x\in X\}$ for the dilation of $X$.
-
-For $A\subseteq2\mathbb N_0$, we call $A$ a \emph{relative additive
-basis of order at most $h$ for $2\mathbb N_0$} if every element of
-$2\mathbb N_0$ is a sum of at most $h$ elements of $A$.  Its relative
-order is \emph{exactly $h$} if $h$ is the least integer with this
-property.  We similarly call $A$ a \emph{relative asymptotic additive
-basis of order at most $h$} if every sufficiently large element of
-$2\mathbb N_0$ is a sum of at most $h$ elements of $A$.  
 
 \section{A regular family inside the primitive words}
 
@@ -346,9 +338,9 @@ $m$ base-$4$ digits.  For example,
 \end{aligned}
 \]
 For $0\leq t\leq6$ set
-\[
-        S_{t,m}=t\Delta_m+(6-t)\mathcal E_{m} .
-\]
+\begin{equation}\label{eq:S-t-m}
+ S_{t,m}=t\Delta_m+(6-t)\mathcal E_{m}.
+\end{equation}
 The largest element of $\mathcal E_{m}$ is
 \[
  \max\mathcal E_{m}=[3\underbrace{22\cdots2}_{m-1\text{ digits}}]_4
@@ -452,35 +444,38 @@ $24$.
 
 Now let $m\geq3$ and assume that
 \eqref{eq:mixedtge}--\eqref{eq:mixedEminterval} hold at level $m-1$.
-To lighten the notation during this step, write
+To lighten the notation during this step, set
 \[
- u=u_{m-1},\qquad q=q_m,
- \qquad M=\max\mathcal E_{m-1}.
+ u=u_{m-1},\qquad
+ q=q_m=[3\underbrace{11\cdots1}_{m-1\text{ digits}}]_4
+      =3\cdot4^{m-1}+u,\qquad
+ M=\max\mathcal E_{m-1}.
 \]
 Then
 \[
- 4^{m-1}=3u+1,\qquad q=10u+3,
- \qquad M=\frac{11u+1}{4}.
+ 4^{m-1}=3u+1,\qquad
+ M=\frac{11u+1}{4}.
 \]
-Here
+Moreover,
 \begin{equation}\label{eq:qmdef}
- q=q_m=[3\underbrace{11\cdots1}_{m-1\text{ digits}}]_4
-      =3\cdot4^{m-1}+u=10u+3,
+ q=10u+3.
 \end{equation}
-and we shall repeatedly use
+We shall repeatedly use
 \begin{equation}\label{eq:qoverlap}
- 2\cdot4^{m-1}+4u=q-1.
+ 2\cdot4^{m-1}+4u=q-1,
 \end{equation}
-Splitting according to the leading base-$4$ digit gives
+whose two sides are both equal to $10u+2$.  Splitting according to the
+leading base-$4$ digit gives
 \[
  \Delta_m=\Delta_{m-1}\cup(4^{m-1}+\Delta_{m-1}),\qquad
  \mathcal E_{m}=\mathcal E_{m-1}\cup(q+\Delta_{m-1}).
 \]
-Indeed, the new leading digit of an element of $\Delta_m$ is $0$ or $1$,
+Indeed, every new $m$-digit element of $\Delta_m$ has leading digit $1$,
 whereas a new $m$-digit element of $\mathcal E_{m}$ has leading digit $3$
 followed by a lower $(m-1)$-digit correction from $\Delta_{m-1}$.  If $s$ of
 the $t$ copies of $\Delta_m$ use their shifted part and $v$ of the $6-t$
-copies of $\mathcal E_{m}$ use their new $m$-digit part, then
+copies of $\mathcal E_{m}$ use their new $m$-digit part, then the sumset in
+\eqref{eq:S-t-m} decomposes as
 \begin{equation}\label{eq:decomp}
  S_{t,m}=\bigcup_{v=0}^{6-t}\ \bigcup_{s=0}^{t}
  \bigl(s\cdot4^{m-1}+vq+S_{t+v,m-1}\bigr).
@@ -709,7 +704,7 @@ H+4L &[245,486]\\
 \end{lemma}
 
 \begin{proof}
-Put
+Partition $L$ as
 \[
  A=\{53,54,57,58,60\},\qquad B=\{3,13,14\}.
 \]
@@ -730,7 +725,7 @@ For the second line, repeated addition of $L$ gives
  &{}\cup[116,148]\cup[162,194]\cup[212,238].
 \end{split}
 \]
-The three short intervals give
+Adding $H$ to the first three short intervals gives
 \[
 \begin{aligned}
 H+[32,34]&\supseteq[245,254]\cup[261,270]
@@ -739,10 +734,10 @@ H+[42,45]&\supseteq[255,265]\cup[271,281]\cup[283,293],\\
 H+[52,56]&\supseteq[265,276]\cup[281,304].
 \end{aligned}
 \]
-Their union contains $[245,304]$.  Consecutive elements of $H$ differ
-by at most $9$.  Therefore, if $I=[a,b]$ with $b-a\geq8$, then
-$H+I=[213+a,248+b]$.  Applying this to the four remaining long
-intervals gives
+Their union contains $[245,304]$.  On the other hand, since consecutive
+elements of $H$ differ by at most $9$, if $I=[a,b]$ satisfies
+$b-a\geq8$, then $H+I=[213+a,248+b]$.  Applying this to the four
+remaining long intervals gives
 \[
  [295,350],\quad[329,396],\quad[375,442],\quad[425,486],
 \]
@@ -813,8 +808,8 @@ Consequently,
 \[
  [212,\infty)\subseteq F_5(\Pset).
 \]
-The lower endpoint is sharp: none of $209,210,211$ belongs to
-$F_5(\Pset)$.
+The lower endpoint is sharp: none of the integers $209$, $210$, and
+$211$ belongs to $F_5(\Pset)$.
 \end{proposition}
 
 \begin{proof}
@@ -1072,6 +1067,14 @@ seven elements of $\NpD$.
 The assertion for positive integers follows immediately from
 Theorem~\ref{thm:main}; the integer $0$ is the empty sum.
 \end{proof}
+
+For $A\subseteq2\mathbb N_0$, we call $A$ a \emph{relative additive
+basis of order at most $h$ for $2\mathbb N_0$} if every element of
+$2\mathbb N_0$ is a sum of at most $h$ elements of $A$.  Its relative
+order is \emph{exactly $h$} if $h$ is the least integer with this
+property.  We similarly call $A$ a \emph{relative asymptotic additive
+basis of order at most $h$} if every sufficiently large element of
+$2\mathbb N_0$ is a sum of at most $h$ elements of $A$.
 
 Theorem~\ref{thm:main} gives the complete exceptional set for
 six-summand representability.  Corollary~\ref{cor:eight} shows that
