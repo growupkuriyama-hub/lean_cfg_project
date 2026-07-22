@@ -135,7 +135,7 @@ theorem reachableCharacteristicCondition_of_data
     (B : StartAnchorAsSampleWord D) :
     ReachableCharacteristicCondition G S obs f := by
   intro K hSK _hKG
-  exact ⟨D.mono hSK, B.mono hSK⟩
+  exact ⟨D.mono hSK, ⟨B.mono hSK⟩⟩
 
 /-- A single finite characteristic-data package over `S` gives a characteristic
 sample for the reachable learner, provided `S` itself is positive for the
