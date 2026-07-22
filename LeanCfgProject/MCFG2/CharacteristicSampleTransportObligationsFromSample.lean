@@ -109,7 +109,7 @@ def toExposingCoreFinalData
 
 /-- The finite sample produced by the resulting exposing-transport obligation
 package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationExposingTransportObligationsFromSample D S) :
     Finset (Word α) :=
   O.toExposingTransportObligations.sample
@@ -146,7 +146,7 @@ def toGrammarRuleTransportData
   O.toExposingTransportObligations.toGrammarRuleTransportData
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationExposingTransportObligationsFromSample D S) :
     FinalReachableData G O.sample obs f :=
   O.toExposingTransportObligations.toFinalReachableData
@@ -301,7 +301,7 @@ def toExposingTransportObligationsFromSample
 
 /-- The finite sample produced by the common-context-from-sample obligation
 package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationCommonContextTransportObligationsFromSample D S) :
     Finset (Word α) :=
   O.toCommonContextTransportObligations.sample
@@ -338,7 +338,7 @@ def toGrammarRuleTransportData
   O.toCommonContextTransportObligations.toGrammarRuleTransportData
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationCommonContextTransportObligationsFromSample D S) :
     FinalReachableData G O.sample obs f :=
   O.toCommonContextTransportObligations.toFinalReachableData
