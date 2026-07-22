@@ -152,6 +152,10 @@ theorem startSample_positive
     (B : TrimmedPresentationGrammarRuleBuilder D) :
     (B.startSample : Set (Word α)) ⊆ G.StringLanguage := by
   intro word hword
+  change word ∈
+    G.startRules.attach.image
+      (fun i => D.startWitnessWord i.val
+        (B.start_arity i.val i.property)) at hword
   rcases Finset.mem_image.mp hword with ⟨i, _hi, hEq⟩
   rw [← hEq]
   exact B.start_positive i.val i.property
@@ -174,17 +178,23 @@ theorem terminal_covers_sample
     (hwt : G.arity ρ.lhs = 1) :
     D.terminalWitnessWord ρ hwt ∈ B.terminalSample := by
   have hp : B.terminal_arity ρ hρ = hwt := Subsingleton.elim _ _
+  change D.terminalWitnessWord ρ hwt ∈
+    G.terminalRules.attach.image
+      (fun i => D.terminalWitnessWord i.val
+        (B.terminal_arity i.val i.property))
   refine Finset.mem_image.mpr ?_
   refine ⟨⟨ρ, hρ⟩, by simp, ?_⟩
-  simp [terminalSample, hp]
+  simpa only [hp]
 
 /-- The binary sample covers every binary witness word. -/
 theorem binary_covers_sample
     (B : TrimmedPresentationGrammarRuleBuilder D)
     (ρ : BinaryRule N α G.arity)
     (hρ : ρ ∈ G.binaryRules) :
-    D.binaryWitnessWord ρ ∈ B.binarySample :=
-  Finset.mem_image.mpr ⟨ρ, hρ, rfl⟩
+    D.binaryWitnessWord ρ ∈ B.binarySample := by
+  change D.binaryWitnessWord ρ ∈
+    G.binaryRules.image (fun σ => D.binaryWitnessWord σ)
+  exact Finset.mem_image.mpr ⟨ρ, hρ, rfl⟩
 
 /-- The start sample covers every start witness word.
 
@@ -197,9 +207,13 @@ theorem start_covers_sample
     (hwt : G.arity ρ.child = G.arity G.start) :
     D.startWitnessWord ρ hwt ∈ B.startSample := by
   have hp : B.start_arity ρ hρ = hwt := Subsingleton.elim _ _
+  change D.startWitnessWord ρ hwt ∈
+    G.startRules.attach.image
+      (fun i => D.startWitnessWord i.val
+        (B.start_arity i.val i.property))
   refine Finset.mem_image.mpr ?_
   refine ⟨⟨ρ, hρ⟩, by simp, ?_⟩
-  simp [startSample, hp]
+  simpa only [hp]
 
 /-- Convert the grammar-rule builder to the component package. -/
 def toComponentPackage
