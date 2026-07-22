@@ -67,8 +67,10 @@ def mono
 @[simp] theorem mono_promise
     (A : ReachableSplicingBlueprintMainData G S obs f)
     (hSK : (S : Set (Word α)) ⊆ (K : Set (Word α)))
-    (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
-    (A.mono hSK hKpos).promise = A.promise :=
+    (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage)
+    {d : Nat} :
+    (A.mono hSK hKpos).promise (d := d) =
+      A.promise (d := d) :=
   rfl
 
 /-- The monotone main-data package reconstructs the target exactly on the

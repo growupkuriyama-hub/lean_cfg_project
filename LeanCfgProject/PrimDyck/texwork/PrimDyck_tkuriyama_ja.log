@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  22 JUL 2026 16:44
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  22 JUL 2026 17:00
  restricted system commands enabled.
 **PrimDyck_tkuriyama_ja.tex
 (./PrimDyck_tkuriyama_ja.tex
@@ -1191,16 +1191,16 @@ Package rerunfilecheck Info: File `PrimDyck_tkuriyama_ja.out' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 12657 strings out of 476076
+ 12659 strings out of 476076
  195720,662416 words of node,token memory allocated
- 6080 words of node memory still in use:
-   10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 2491 attribute, 59 glue_s
-pec, 238 attribute_list, 1 write, 13 user_defined, 2 pdf_action nodes
-   avail lists: 1:20,2:41963,3:376,4:324,5:188,6:35,7:5794,8:157,9:2192,10:30,11
-:142
- 34780 multiletter control sequences out of 65536+600000
+ 6104 words of node memory still in use:
+   10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 2502 attribute, 59 glue_s
+pec, 239 attribute_list, 1 write, 13 user_defined, 2 pdf_action nodes
+   avail lists: 1:20,2:41951,3:365,4:324,5:190,6:34,7:5794,8:157,9:2192,10:30,11
+:126
+ 34781 multiletter control sequences out of 65536+600000
  97 fonts using 70249807 bytes
- 119i,19n,112p,2045b,554s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 119i,19n,112p,2045b,550s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman7-
 regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/
 lm/lmmono10-regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/open
@@ -1224,9 +1224,9 @@ X/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/Owner/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Owner/AppData/Local/
 Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Owner/AppData
 /Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on PrimDyck_tkuriyama_ja.pdf (21 pages, 358378 bytes).
+Output written on PrimDyck_tkuriyama_ja.pdf (21 pages, 358953 bytes).
 
-PDF statistics: 348 PDF objects out of 1000 (max. 8388607)
- 60 named destinations out of 1000 (max. 1048576)
+PDF statistics: 350 PDF objects out of 1000 (max. 8388607)
+ 61 named destinations out of 1000 (max. 1048576)
  41 words of extra memory for PDF output out of 10000 (max. 100000000)
 
