@@ -1,0 +1,59 @@
+name: Python CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  python:
+    name: Run PrimDyck Python experiments
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run all Python scripts under PrimDyck
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -d LeanCfgProject/PrimDyck ]]; then
+            echo "::error::LeanCfgProject/PrimDyck does not exist."
+            exit 1
+          fi
+
+          mapfile -d '' files < <(
+            find LeanCfgProject/PrimDyck \
+              -type f \
+              -name '*.py' \
+              -print0 |
+            sort -z
+          )
+
+          total="${#files[@]}"
+
+          if [[ "$total" -eq 0 ]]; then
+            echo "::error::No Python files were found under LeanCfgProject/PrimDyck."
+            exit 1
+          fi
+
+          echo "Found ${total} Python scripts under LeanCfgProject/PrimDyck."
+
+          current=0
+
+          for file in "${files[@]}"; do
+            current=$((current + 1))
+
+            echo "::group::[${current}/${total}] ${file}"
+            python3 "$file"
+            echo "::endgroup::"
+          done
+
+          echo "All ${total} Python scripts passed."
