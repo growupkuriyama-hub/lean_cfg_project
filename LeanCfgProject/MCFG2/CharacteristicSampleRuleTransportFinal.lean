@@ -71,7 +71,7 @@ structure TrimmedPresentationRuleTransportFinalData
 namespace TrimmedPresentationRuleTransportFinalData
 
 /-- The finite sample produced by the transport final data. -/
-def sample
+noncomputable def sample
     (F : TrimmedPresentationRuleTransportFinalData D) :
     Finset (Word α) :=
   F.transportData.sample
@@ -102,13 +102,13 @@ def toGrammarRuleBuilder
   F.toGrammarRuleData.toGrammarRuleBuilder
 
 /-- Convert to componentwise characteristic-sample data. -/
-def toComponentPackage
+noncomputable def toComponentPackage
     (F : TrimmedPresentationRuleTransportFinalData D) :
     TrimmedPresentationComponentPackage D :=
   F.transportData.toGrammarRuleData.toComponentPackage
 
 /-- Convert to the abstract finite-sample builder. -/
-def toFiniteSampleBuilder
+noncomputable def toFiniteSampleBuilder
     (F : TrimmedPresentationRuleTransportFinalData D) :
     TrimmedPresentationFiniteSampleBuilder D :=
   F.transportData.toFiniteSampleBuilder
@@ -120,13 +120,13 @@ def toWitnessSample
   F.transportData.toWitnessSample
 
 /-- Convert to a characteristic-sample object. -/
-def toCharacteristicSample
+noncomputable def toCharacteristicSample
     (F : TrimmedPresentationRuleTransportFinalData D) :
     TrimmedPresentationCharacteristicSample D :=
   F.transportData.toCharacteristicSample
 
 /-- Convert to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (F : TrimmedPresentationRuleTransportFinalData D) :
     FinalReachableData G F.sample obs f :=
   F.transportData.toFinalReachableData
