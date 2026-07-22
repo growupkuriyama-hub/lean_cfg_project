@@ -91,7 +91,7 @@ def toRuleTransportFinalData
   E.finalData.toRuleTransportFinalData
 
 /-- The finite sample produced by the endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationExposingCoreFinalEndpoint D) :
     Finset (Word α) :=
   E.finalData.sample
@@ -110,7 +110,7 @@ theorem contains_witnesses
   E.finalData.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationExposingCoreFinalEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.finalData.toFinalReachableData
@@ -262,7 +262,7 @@ def toGrammarRuleTransportData
   E.coreData.toGrammarRuleTransportData E.startEvidence
 
 /-- The finite sample produced by the same-context endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationSameContextCoreEndpoint D) :
     Finset (Word α) :=
   E.coreData.sample E.startEvidence
@@ -281,7 +281,7 @@ theorem contains_witnesses
   E.coreData.contains_witnesses E.startEvidence
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationSameContextCoreEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.coreData.toFinalReachableData
@@ -419,7 +419,7 @@ def toExposingCoreFinalEndpoint
   E.toSameContextCoreEndpoint.toExposingCoreFinalEndpoint
 
 /-- The finite sample produced by this endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationSameContextCoreEndpointFromSample D S) :
     Finset (Word α) :=
   E.toSameContextCoreEndpoint.sample
@@ -444,7 +444,7 @@ theorem contains_witnesses
   E.toSameContextCoreEndpoint.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationSameContextCoreEndpointFromSample D S) :
     FinalReachableData G E.sample obs f :=
   E.toSameContextCoreEndpoint.toFinalReachableData
