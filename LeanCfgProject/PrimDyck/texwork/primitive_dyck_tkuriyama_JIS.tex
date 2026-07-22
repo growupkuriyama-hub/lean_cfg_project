@@ -193,7 +193,7 @@ This sequence has been registered in the OEIS as
 \]
 The following Python program reproduces the displayed terms and generates
 50,000 terms of the sequence, making some recurring patterns visible:
-\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/A395858.py}.
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/A395858.py}{\path{A395858.py} at the fixed repository snapshot \texttt{3525cfb}}.
 
 \begin{theorem}\label{thm:classification}
 The values of $r(N)$ exceeding six are exactly as follows:
@@ -878,9 +878,10 @@ h&[4h]_2&h&[4h]_2\\ \hline
 
 The finite computations can be reproduced using the Python program
 \path{verify_certificates_for_paper.py}, available as a
-\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/bc0211ccb478d79969f8ce6b5fe465e5f3fd9cf5/LeanCfgProject/PrimDyck/verify_certificates_for_paper.py}{fixed repository copy at commit \texttt{bc0211ccb478}}.
-The same program is included as a supplementary file, together with a
-README giving the execution command and the expected output.
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/verify_certificates_for_paper.py}{fixed repository copy at commit \texttt{3525cfb}}.
+The archived version passed the repository's Python CI check at that commit
+(Python CI run \#1).  The same program is included as a supplementary file,
+together with a README giving the execution command and the expected output.
 
 The five statements in Lemma~\ref{lem:finitefive} are inclusion
 certificates: the program checks that each displayed interval is
@@ -1502,15 +1503,26 @@ level six:
   a(5\cdot4^{k+1}-3)=6\qquad(k\geq2).
 \end{equation}
 
-The program 
-\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/A395858.py}
+The program
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/A395858.py}{\path{A395858.py} at commit \texttt{3525cfb}}
 reproduces the displayed initial terms and generates the first $50{,}000$ terms
-of A395858.  The supplementary program
-\path{verify_certificates_for_paper.py} checks the five finite interval
-inclusions, the sharp lower endpoint for Proposition~\ref{prop:fiveP}, the
-finite exceptional-set certificate, and an independent finite-range dynamic
-programming computation of $r(N)$.  These computations provide reproducible
-cross-checks; the infinite assertions are proved theoretically above.
+of A395858.  The supplementary verification script at the same fixed commit
+checks the five finite interval inclusions, the sharp lower endpoint for
+Proposition~\ref{prop:fiveP}, and the finite exceptional-set certificate.  Its
+independent dynamic-programming computation checks $r(N)$ through the selected
+finite bound (by default $50{,}000$).  The default run also checks the recurring
+obstruction for $2\leq k\leq5$, the six-summand family
+\[
+ r(10\cdot4^{k+1}-6)=6
+\]
+for $2\leq k\leq5$, and the five-summand family
+\[
+ r(10\cdot4^{k+1}-8)=5
+\]
+for $3\leq k\leq5$.  This version passed the repository's Python CI check at
+commit \texttt{3525cfb} (Python CI run \#1).  These computations provide
+reproducible finite cross-checks; the assertions for all $k$ and all sufficiently
+large integers are proved theoretically above.
 
 \section{Concluding remarks}
 
