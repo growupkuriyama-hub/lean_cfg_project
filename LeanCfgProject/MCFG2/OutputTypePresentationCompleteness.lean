@@ -116,12 +116,10 @@ theorem language_eq_after_extension
 /-- If two presentations extend each other, completeness transfers backward. -/
 def of_mutual_extension
     (C : PresentationCompleteFor P)
-    (hQP : PresentationExtends Q P) :
-    PresentationCompleteFor Q where
-  complete := by
-    intro word hword
-    exact hQP.language_subset ?_
-    exact C.complete hword
+    (hPQ : PresentationExtends P Q)
+    (_hQP : PresentationExtends Q P) :
+    PresentationCompleteFor Q :=
+  C.extend hPQ
 
 /-- Mutual extension preserves exact presentation language. -/
 theorem language_eq_of_mutual_extension
@@ -129,7 +127,7 @@ theorem language_eq_of_mutual_extension
     (hPQ : PresentationExtends P Q)
     (hQP : PresentationExtends Q P) :
     PresentationStringLanguage Q = G.StringLanguage :=
-  (C.extend hPQ).language_eq
+  (C.of_mutual_extension hPQ hQP).language_eq
 
 end PresentationCompleteFor
 
