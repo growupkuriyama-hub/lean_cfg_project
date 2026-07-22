@@ -1,6 +1,8 @@
 \documentclass[12pt]{article}
 
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
 \usepackage{xurl}
 \usepackage[hidelinks]{hyperref}
 
@@ -9,15 +11,17 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{plain}
 
 \newcommand{\val}[2]{[#1]_{#2}}
 \newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
 \newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
-\newcommand{\Pset}{\bigl(\tfrac14\cdot
-  \mathcal{N}_{\mathrm{pD},\,\geq12}\bigr)}
+\newcommand{\Pset}{\mathcal{P}}
 \newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
 
-\title{Additive Representations by Primitive Dyck Numbers}
+\title{Additive Representations by Primitive Dyck Numbers:\\ Exceptional Sets and Optimal Orders}
 \author{Takayuki Kuriyama}
 \date{}
 
@@ -26,24 +30,30 @@
 \maketitle
 
 \begin{abstract}
-Reading a Dyck word as a binary integer, with $1$ as an opening bracket
-and $0$ as a closing bracket, gives a totally balanced number.  We study
-the subset arising from primitive Dyck words, whose running balance
-returns to zero only at the end.  We determine the least number of
-primitive Dyck numbers needed to represent every positive even integer.
-Among positive even integers, $46$ alone requires exactly eight summands,
-and the integers
-$34$, $44$, $98$, $154$, $198$, $202$, $206$, $838$, $842$, and $846$
-require seven.  Every other positive even integer is a sum of at most
-six primitive Dyck numbers.  In particular, $848$ is the sharp even threshold
-beyond which six summands always suffice.  The proof combines a regular
-sublanguage with a self-similar closure property of the full primitive
-family after division by $4$.
+Let $\NpD$ be the set consisting of $0$ and the integers represented in
+binary by primitive Dyck words.  For a positive even integer $N$, let $r(N)$
+be the least number of positive elements of $\NpD$ whose sum is $N$; the
+associated sequence $a(n)=r(2n)$ is OEIS sequence \seqnum{A395858}.  We
+determine the complete exceptional set for six-summand representability:
+$46$ alone satisfies $r(46)=8$, the ten integers
+$34,44,98,154,198,202,206,838,842,846$ satisfy $r(N)=7$, and every other
+positive even integer satisfies $r(N)\leq6$.  Thus $848$ is the sharp even
+threshold beyond which six summands always suffice.  We also determine the
+exact relative asymptotic order.  For every $k\geq2$,
+\[
+  r(10\cdot4^{k+1}-6)=6,
+\]
+so six summands are necessary infinitely often and the asymptotic order is
+exactly $6$.  The proof combines a regular sublanguage, finite interval
+certificates, a self-similar five-summand propagation, and a base-$4$
+characterization of the halved primitive family by two-coloured Motzkin words.
+As a further consequence, that halved family is an asymptotic additive basis
+of order exactly $5$.
 \end{abstract}
 
-\noindent\textbf{Keywords:} additive representation, relative asymptotic
-additive basis, exceptional set, Dyck word, primitive Dyck path, regular
-language, interval filling.
+\noindent\textbf{Keywords:} primitive Dyck number, additive
+representation, additive basis, asymptotic order, exceptional set,
+two-coloured Motzkin word, digital self-similarity, interval filling.
 
 \noindent\textbf{2020 Mathematics Subject Classification:} Primary 11B13;
 Secondary 05A15, 68Q45.
@@ -135,11 +145,14 @@ present problem.
 
 Our proof differs at the structural point where regular approximation
 alone ceases to suffice.  A regular sublanguage settles the congruence
-class $0$ modulo $4$, but the class $2$ modulo $4$ is handled by a
-self-similar closure property of the full primitive family.  This leads
-not only to an eventual bound but to the complete exceptional set, the
-optimal uniform bound for all even integers, and the sharp eventual
-threshold.
+class $0$ modulo $4$, while the class $2$ modulo $4$ is handled by a
+self-similar closure property of the full primitive family after division
+by $4$.  The same family admits a base-$4$ description by two-coloured
+Motzkin words.  Its self-similarity has two complementary effects: it
+propagates five-summand intervals, but its generation gaps also create an
+infinite sequence of obstructions to four-summand representations.  These
+facts yield the complete exceptional set, the optimal uniform bound, the
+sharp eventual threshold, and the exact asymptotic order.
 
 Within the Dyck words of length $2n$, the proportion that are primitive
 tends to $1/4$ as $n\to\infty$.  Indeed, there are $C_n$ Dyck words of
@@ -182,7 +195,7 @@ The following Python program reproduces the displayed terms and generates
 50,000 terms of the sequence, making some recurring patterns visible:
 \url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/A395858.py}.
 
-\begin{theorem}\label{thm:main}
+\begin{theorem}\label{thm:classification}
 The values of $r(N)$ exceeding six are exactly as follows:
 \[
 \begin{aligned}
@@ -211,6 +224,28 @@ and
 \]
 Thus the main theorem gives a complete determination of all terms of
 $a(n)$ exceeding six, rather than only an eventual estimate.
+
+
+The eventual bound six is also best possible.
+
+\begin{theorem}\label{thm:asymptotic-order}
+Let
+\[
+ h_{\mathrm{asym}}
+ =\min\{h:\text{every sufficiently large even }N\text{ satisfies }r(N)\leq h\}.
+\]
+Then $h_{\mathrm{asym}}=6$.  More precisely, for every integer $k\geq2$,
+\[
+ N_k=10\cdot4^{k+1}-6
+\]
+satisfies $r(N_k)=6$.  Equivalently,
+\[
+ a(5\cdot4^{k+1}-3)=6\qquad(k\geq2).
+\]
+\end{theorem}
+
+Thus the finite exceptional set above coexists with infinitely many large
+integers for which the six-summand upper bound is attained.
 
 The exceptional value $46$ already explains why the uniform bound can
 never be smaller than eight.
@@ -250,12 +285,209 @@ have primitive Dyck binary expansions.
 The sumset notation used below is standard in additive-basis theory
 \cite[Chap.\ 1]{Nathanson}.  For a nonnegative integer $k$, let $kX$ denote the
 set of sums of $k$ not necessarily distinct members of $X$, with
-$0X=\{0\}$, and for a scalar $c$ write
-$c\cdot X=\{cx:x\in X\}$ for the dilation of $X$.
+$0X=\{0\}$, and put
+\[
+ F_k(X)=\bigcup_{j=0}^{k}jX.
+\]
+Thus $F_k(X)$ is the set of sums of at most $k$ elements of $X$.  For a scalar
+$c$, write $c\cdot X=\{cx:x\in X\}$ for the dilation of $X$.
 
-\section{A regular family inside the primitive words}
+The mod-$4$ property motivates the central halved family
+\begin{equation}\label{eq:P-def}
+ \Pset=\{v/4:v\in\NpD,\ v\geq12\},
+\end{equation}
+so that
+\begin{equation}\label{eq:NpD-decomp}
+ \NpD=\{0,2\}\cup4\Pset.
+\end{equation}
+The first elements of $\Pset$ are
+\[
+ 3,13,14,53,54,57,58,60,213,214,217,\ldots.
+\]
 
-A simple regular pattern runs through the primitive Dyck words.  For
+
+\section{The base-\texorpdfstring{$4$}{4} structure of
+\texorpdfstring{$\Pset$}{P}}\label{sec:base4}
+
+Assign weights to the base-$4$ digits by
+\[
+  \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
+  \sigma(1)=\sigma(2)=0.
+\]
+A word $w=c_1\cdots c_\ell\in\{0,1,2,3\}^{\ell}$ is called a
+\emph{two-coloured Motzkin word} if every prefix has nonnegative total weight
+and the total weight of $w$ is $0$.  The two zero-weight digits $1$ and $2$ are
+regarded as distinct colours.  Write $[w]_4$ for the value of $w$ as a base-$4$
+numeral, with $[\varepsilon]_4=0$.
+
+\begin{lemma}[Base-$4$ characterization]\label{lem:base4}
+A positive integer $p$ lies in $\Pset$ if and only if its base-$4$ expansion has
+the form $3w$, where $w$ is a two-coloured Motzkin word.
+\end{lemma}
+
+\begin{proof}
+Let $v=4p\in\NpD$ with $v\geq12$, and group the binary digits of $v$ into
+consecutive pairs.  Reading the pairs as base-$4$ digits gives a word
+$d_1\cdots d_L$.  At pair boundaries, the binary height is twice the cumulative
+$\sigma$-weight, because
+\[
+  11\leftrightarrow3,\quad 10\leftrightarrow2,\quad
+  01\leftrightarrow1,\quad 00\leftrightarrow0.
+\]
+Since $v$ is primitive and has length at least four, it begins with $11$ and
+ends with $00$; hence $d_1=3$ and $d_L=0$.  At every proper pair boundary the
+binary height is at least $2$, and at the final boundary it is $0$.
+
+These boundary conditions also control heights inside each pair.  A pair of
+type $01$ can lower the height by only one before restoring it; a nonfinal pair
+of type $00$ ends at height at least $2$ and therefore starts at height at
+least $4$; and the other two pair types begin with $1$.  Thus positivity before
+the final bit is equivalent to positivity at all proper pair boundaries,
+together with the final return to $0$.
+
+Dividing $v$ by $4$ deletes the final base-$4$ digit $0$.  Hence the base-$4$
+expansion of $p$ is $3w$, where every prefix of $3w$ has $\sigma$-weight at
+least $1$ and the total weight of $3w$ is $1$.  Removing the initial digit $3$
+shows that every prefix of $w$ has nonnegative weight and that $w$ has total
+weight $0$.
+
+Conversely, if $p$ has base-$4$ expansion $3w$ with $w$ a two-coloured Motzkin
+word, append a final digit $0$ and expand each base-$4$ digit into its binary
+pair.  The resulting binary word has equal numbers of $1$'s and $0$'s, remains
+strictly above height $0$ before its final bit by the preceding within-pair
+check, and returns to $0$ at the end.  It is therefore a primitive Dyck word,
+so $4p\in\NpD$ and $p\in\Pset$.
+\end{proof}
+
+The characterization gives the self-similarity used later.
+
+\begin{corollary}\label{cor:Pclosure}
+If $p\in\Pset$, then $4p+1$ and $4p+2$ also belong to $\Pset$.
+\end{corollary}
+
+\begin{proof}
+Write the base-$4$ expansion of $p$ as $3w$, with $w$ a two-coloured Motzkin
+word.  Then $4p+1$ and $4p+2$ have expansions $3w1$ and $3w2$.  Appending either
+zero-weight colour preserves the two-coloured Motzkin condition, so the claim
+follows from Lemma~\ref{lem:base4}.
+\end{proof}
+
+We next determine the smallest and largest values in each generation.
+
+\begin{lemma}[Extremal two-coloured Motzkin values]\label{lem:extremal}
+For every $\ell\geq0$ and every two-coloured Motzkin word $w$ of length $\ell$,
+\begin{equation}\label{eq:motzkin-extrema}
+  \frac{4^{\ell}-1}{3}\leq[w]_4\leq4^{\ell}-2^{\ell}.
+\end{equation}
+Both bounds are attained.  The lower bound is attained by $1^{\ell}$, and the
+upper bound is attained by
+\[
+  w_{\max,\ell}=
+  \begin{cases}
+    3^a0^a,&\ell=2a,\\
+    3^a2\,0^a,&\ell=2a+1.
+  \end{cases}
+\]
+\end{lemma}
+
+\begin{proof}
+We use induction on $\ell$.  The assertion is immediate for $\ell=0$.
+
+\emph{Lower bound.}
+The first digit cannot be $0$.  If $c_1\in\{1,2\}$, then the suffix
+$w'=c_2\cdots c_\ell$ is again a two-coloured Motzkin word, and hence
+\[
+  [w]_4\geq4^{\ell-1}+[w']_4
+  \geq4^{\ell-1}+\frac{4^{\ell-1}-1}{3}
+  =\frac{4^{\ell}-1}{3}.
+\]
+If $c_1=3$, then
+\[
+  [w]_4\geq3\cdot4^{\ell-1}\geq\frac{4^{\ell}-1}{3}.
+\]
+Equality is attained by $w=1^{\ell}$.
+
+\emph{Upper bound.}
+If $c_1\in\{1,2\}$, then $w'$ is again a two-coloured Motzkin word, so
+\[
+  [w]_4
+  \leq2\cdot4^{\ell-1}+\bigl(4^{\ell-1}-2^{\ell-1}\bigr)
+  =3\cdot4^{\ell-1}-2^{\ell-1}
+  \leq4^{\ell}-2^{\ell}.
+\]
+
+Now suppose $c_1=3$, and let $r$ be the least index at which the prefix weight
+returns to $0$.  Then $2\leq r\leq\ell$, one has $c_r=0$, and
+\[
+  u=c_2\cdots c_{r-1},\qquad v=c_{r+1}\cdots c_\ell
+\]
+are two-coloured Motzkin words of lengths $r-2$ and $\ell-r$, respectively.
+By place value and the induction hypothesis,
+\begin{align*}
+  [w]_4
+  &=3\cdot4^{\ell-1}+[u]_4\,4^{\ell-r+1}+[v]_4\\
+  &\leq3\cdot4^{\ell-1}
+    +\bigl(4^{r-2}-2^{r-2}\bigr)4^{\ell-r+1}
+    +4^{\ell-r}-2^{\ell-r}\\
+  &=4^{\ell}-2^{2\ell-r}+2^{2\ell-2r}-2^{\ell-r}.
+\end{align*}
+It remains to verify
+\[
+  2^{2\ell-r}-2^{2\ell-2r}
+  \geq2^{\ell}-2^{\ell-r}.
+\]
+After factoring, this is
+\[
+  2^{2\ell-2r}(2^r-1)\geq2^{\ell-r}(2^r-1),
+\]
+which follows from $r\leq\ell$.  This proves the upper bound.
+
+Finally, the displayed words $w_{\max,\ell}$ are two-coloured Motzkin words.
+A geometric-series calculation gives
+\[
+  [w_{\max,\ell}]_4=4^{\ell}-2^{\ell},
+\]
+so the upper bound is attained.
+\end{proof}
+
+An element of $\Pset$ belongs to \emph{generation $d$} if its base-$4$
+expansion has exactly $d$ digits.  By Lemma~\ref{lem:base4}, a generation-$d$
+element has value $3\cdot4^{d-1}+[w]_4$, where $w$ has length $d-1$.
+
+\begin{corollary}[Generation bounds]\label{cor:gen}
+For every $d\geq1$, every generation-$d$ element of $\Pset$ lies in
+\begin{equation}\label{eq:generation-interval}
+  [g_d,U_d]
+  =\left[
+  3\cdot4^{d-1}+\frac{4^{d-1}-1}{3},
+  4^d-2^{d-1}
+  \right],
+\end{equation}
+and both endpoints are attained.  In particular,
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item there is no element of $\Pset$ in $(U_d,3\cdot4^d)$;
+\item for every $k\geq0$,
+\begin{equation}\label{eq:three-g}
+  3g_{k+1}=10\cdot4^k-1.
+\end{equation}
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+The interval follows from Lemmas~\ref{lem:base4} and~\ref{lem:extremal}.  The
+attainment statements follow from the extremal words in
+Lemma~\ref{lem:extremal}.  Part~(a) follows because the next generation begins
+at $g_{d+1}>3\cdot4^d$.  Finally,
+\[
+  3g_{k+1}
+  =3\left(3\cdot4^k+\frac{4^k-1}{3}\right)
+  =10\cdot4^k-1.
+\]
+\end{proof}
+
+\section{A regular family and six-term interval filling}\label{sec:regular}
+
+Inside the base-$4$ family described in Section~\ref{sec:base4}, a simple regular pattern runs through the primitive Dyck words.  For
 example, the binary expansion of $868$ factors as
 \[
  \operatorname{bin}(868)=1101100100=11\,01\,10\,01\,00
@@ -592,48 +824,18 @@ completes the induction.
 Since $\ell_{m}\to\infty$ and $\mathcal E=\bigcup_{m\geq1}\mathcal E_{m}$,
 Proposition \ref{prop:E} follows at once.
 
-The preceding proposition will handle the congruence class $0$ modulo
+The preceding proposition handles the congruence class $0$ modulo
 $4$: every multiple of $4$ at least $100$ is a sum of at most six
 primitive Dyck numbers.
 
-\section{The full primitive family after division by four}
+\section{A five-summand interval for the full halved family}
+\label{sec:five-interval}
 
-The regular family $\mathcal E$ is sufficient for multiples of $4$, but
-it does not by itself provide the five-summand interval needed below.
-For the other congruence class we instead use the full primitive family.
-Set
-\[
- \Pset=\{v/4:v\in\NpD,\ v\geq12\}.
-\]
-Thus
-\[
- \NpD=\{0,2\}\cup(4\cdot\Pset).
-\]
-For a set $X$ of integers and $k\geq0$, write
-\[
- F_k(X)=\bigcup_{j=0}^{k}jX
-\]
-for the set of sums of at most $k$ elements of $X$.
-
-The full family has a simple self-similar closure property.
-
-\begin{lemma}\label{lem:Pclosure}
-If $p\in\Pset$, then $4p+1$ and $4p+2$ also belong to $\Pset$.
-\end{lemma}
-
-\begin{proof}
-Write the binary expansion of the primitive Dyck number $4p$ as $u00$.
-Immediately after reading $u$, the associated path has height $2$.  The
-binary expansions of $4(4p+1)$ and $4(4p+2)$ are, respectively,
-\[
- u0100\qquad\text{and}\qquad u1000.
-\]
-The inserted blocks $01$ and $10$ both begin and end at height $2$, and
-their intermediate heights are positive.  Thus both new paths remain
-strictly above zero until their final symbol and return to zero only at
-the end.  The two displayed words are therefore primitive Dyck words,
-which proves the claim.
-\end{proof}
+The regular family $\mathcal E$ is sufficient for multiples of $4$, but it
+does not by itself provide the five-summand interval needed for the other
+congruence class.  We now use the full family $\Pset$ from
+\eqref{eq:P-def}, together with its self-similar closure in
+Corollary~\ref{cor:Pclosure}.
 
 We next establish a five-summand interval for $\Pset$.  The finite base
 uses the two subsets
@@ -675,9 +877,8 @@ h&[4h]_2&h&[4h]_2\\ \hline
 \]
 
 The finite computations can be reproduced using the Python program
-\texttt{verify\_certificates\_for\_paper.py}, archived at commit
-\path{bc0211ccb478d79969f8ce6b5fe465e5f3fd9cf5}:
-\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/bc0211ccb478d79969f8ce6b5fe465e5f3fd9cf5/LeanCfgProject/PrimDyck/verify_certificates_for_paper.py}.
+\path{verify_certificates_for_paper.py}, available as a
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/bc0211ccb478d79969f8ce6b5fe465e5f3fd9cf5/LeanCfgProject/PrimDyck/verify_certificates_for_paper.py}{fixed repository copy at commit \texttt{bc0211ccb478}}.
 The same program is included as a supplementary file, together with a
 README giving the execution command and the expected output.
 
@@ -857,7 +1058,7 @@ Therefore
 \[
  n=4M+\rho=\sum_{i=1}^{5}(4q_i+\eta_i).
 \]
-Lemma~\ref{lem:Pclosure} shows that every summand $4q_i+\eta_i$ belongs
+Corollary~\ref{cor:Pclosure} shows that every summand $4q_i+\eta_i$ belongs
 to $\Pset$.  Thus $n\in5\Pset$, completing the induction.
 
 Finally,
@@ -899,7 +1100,7 @@ whereas a sum using at least four terms from $D$ is at least
 Hence $209,210,211\notin F_5(\Pset)$.
 \end{proof}
 
-\section{The exceptional set}\label{sec:exceptions}
+\section{The complete exceptional set}\label{sec:exceptions}
 
 We first translate six-summand representability in the congruence class
 $2$ modulo $4$ into a finite-sum condition on $\Pset$.
@@ -1030,7 +1231,7 @@ eight elements of $L$, so the calculation can be checked without an
 exhaustive search.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:main}]
+\begin{proof}[Proof of Theorem~\ref{thm:classification}]
 Suppose first that $N\equiv0\pmod 4$.  If $N\geq100$, write $N=4n$.
 Then $n\geq25$, so Proposition~\ref{prop:E} and \eqref{eq:4E} give a
 representation of $N$ with at most six primitive Dyck summands.
@@ -1087,7 +1288,7 @@ integer $N\geq T$ is a sum of at most six primitive Dyck numbers.
 \end{corollary}
 
 \begin{proof}
-Theorem~\ref{thm:main} shows that six summands suffice for every even
+Theorem~\ref{thm:classification} shows that six summands suffice for every even
 integer at least $848$, whereas $846$ requires seven summands.
 \end{proof}
 
@@ -1099,45 +1300,233 @@ seven elements of $\NpD$.
 
 \begin{proof}
 The assertion for positive integers follows immediately from
-Theorem~\ref{thm:main}; the integer $0$ is the empty sum.
+Theorem~\ref{thm:classification}; the integer $0$ is the empty sum.
 \end{proof}
 
-For $A\subseteq2\mathbb N_0$, we call $A$ a \emph{relative additive
-basis of order at most $h$ for $2\mathbb N_0$} if every element of
-$2\mathbb N_0$ is a sum of at most $h$ elements of $A$.  Its relative
-order is \emph{exactly $h$} if $h$ is the least integer with this
-property.  We similarly call $A$ a \emph{relative asymptotic additive
-basis of order at most $h$} if every sufficiently large element of
-$2\mathbb N_0$ is a sum of at most $h$ elements of $A$.
 
-Theorem~\ref{thm:main} gives the complete exceptional set for
-six-summand representability.  Corollary~\ref{cor:eight} shows that
-$\NpD$ is a relative additive basis of exact order eight for
-$2\mathbb N_0$.  It is also a relative asymptotic additive basis of
-order at most six; equivalently, $\frac12\cdot\NpD$ is an asymptotic additive
-basis of $\mathbb N_0$ of order at most six.  Corollary~\ref{cor:threshold}
-shows that the associated threshold $848$ is sharp.
+For $A\subseteq2\mathbb N_0$, we call $A$ a \emph{relative additive basis of
+order at most $h$ for $2\mathbb N_0$} if every element of $2\mathbb N_0$ is a
+sum of at most $h$ elements of $A$.  Its relative order is \emph{exactly $h$}
+if $h$ is the least integer with this property.  We similarly call $A$ a
+\emph{relative asymptotic additive basis of order at most $h$} if every
+sufficiently large element of $2\mathbb N_0$ is a sum of at most $h$ elements
+of $A$.
 
-Let $h_{\mathrm{asym}}$ denote the least $h$ for which every sufficiently
-large even integer is a sum of at most $h$ primitive Dyck numbers.  The
-larger family of all totally balanced numbers is not an asymptotic
-additive basis of order two \cite[Thm.~14]{BLS}; since the primitive
-family is a subset of it, two summands cannot suffice here either.
-Together with the present upper bound, this gives
+Theorem~\ref{thm:classification} gives the complete exceptional set for
+six-summand representability.  Corollary~\ref{cor:eight} shows that $\NpD$ is
+a relative additive basis of exact order eight for $2\mathbb N_0$, while
+Corollary~\ref{cor:threshold} identifies the sharp six-summand threshold.
+The next section proves that the relative asymptotic order is exactly six.
+
+
+\section{Recurring gaps and asymptotic optimality}\label{sec:asymptotic}
+
+Representations of an integer congruent to $2$ modulo $4$ split according to
+the number of copies of the exceptional summand $2$.  For five summands the
+criterion is as follows.
+
+\begin{lemma}[Five-summand criterion]\label{lem:fivecrit}
+Let $N=4m+2$ with $m\geq3$.  Then $r(N)\leq5$ if and only if
+\begin{equation}\label{eq:fivecrit}
+  m\in F_4(\Pset)\cup\bigl(1+F_2(\Pset)\bigr).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:mod4}, a representation of $N$ uses some number $s\geq0$ of
+copies of $2$ and otherwise uses summands from $4\Pset$.  Reduction modulo $4$
+gives $2s\equiv2\pmod4$, so $s$ is odd.  If at most five summands are used,
+then $s\in\{1,3,5\}$.  Writing the remaining summands as $4p_i$ and dividing
+$N=2s+\sum_i4p_i$ by $4$ after subtracting $2$ gives
 \[
-        3\leq h_{\mathrm{asym}}\leq6.
+  m=\frac{s-1}{2}+\sum_i p_i.
 \]
-The exact asymptotic order is therefore one of $3,4,5,6$.  In particular,
-it remains open whether the bound six can be reduced to five.
+For $s=1$ this gives $m\in F_4(\Pset)$, and for $s=3$ it gives
+$m\in1+F_2(\Pset)$.  If $s=5$, then $m=2$, excluded by $m\geq3$.  This proves
+necessity.  Conversely, membership in the first set of~\eqref{eq:fivecrit}
+gives a representation using one copy of $2$, and membership in the second
+gives one using three copies of $2$.
+\end{proof}
 
+The following lemma isolates the lower-bound mechanism.
 
-\section{Sequences from the OEIS}\label{sec:oeis}
+\begin{lemma}[Recurring obstruction]\label{lem:obstruction}
+For every integer $k\geq2$, put
+\[
+  x_k=10\cdot4^k-2.
+\]
+Then
+\begin{equation}\label{eq:obstruction}
+  x_k\notin F_4(\Pset)
+  \qquad\text{and}\qquad
+  x_k-1\notin F_2(\Pset).
+\end{equation}
+\end{lemma}
 
-Three OEIS sequences are discussed in this paper.  The totally balanced
-numbers form \seqnum{A014486} \cite{OEIS-A014486}.  The positive
-elements of $\NpD$, the primitive Dyck numbers, form \seqnum{A057547}
-\cite{OEIS-A057547}.  The central sequence studied here,
-$a(n)=r(2n)$, is \seqnum{A395858} \cite{OEIS-A395858}.
+\begin{proof}
+Fix $k\geq2$, and abbreviate $x=x_k$.  The least element of generation $k+2$
+is
+\[
+  g_{k+2}>3\cdot4^{k+1}=12\cdot4^k>x.
+\]
+Consequently, every element of $\Pset$ that is at most $x$ has generation at
+most $k+1$.  By Corollary~\ref{cor:gen}, every such element is either
+\emph{small}, of generation at most $k$ and hence at most
+\[
+  U_k=4^k-2^{k-1},
+\]
+or \emph{large}, of generation $k+1$ and hence between $g_{k+1}$ and
+$U_{k+1}=4^{k+1}-2^k$.
+
+First consider $x-1=10\cdot4^k-3$.  It is larger than $U_{k+1}$ and smaller
+than $g_{k+2}$, so it does not itself belong to $\Pset$.  Moreover, any sum of
+two eligible elements is at most
+\[
+  2U_{k+1}=8\cdot4^k-2^{k+1}<10\cdot4^k-3=x-1.
+\]
+Thus $x-1\notin F_2(\Pset)$.
+
+Now suppose, for contradiction, that
+\[
+  x=q_1+\cdots+q_t,\qquad t\leq4,\qquad q_i\in\Pset.
+\]
+Let $\lambda$ be the number of large summands.  If $\lambda\leq2$, then filling
+the remaining positions with the largest possible small summands gives
+\begin{align*}
+  x
+  &\leq2U_{k+1}+2U_k\\
+  &=2(4^{k+1}-2^k)+2(4^k-2^{k-1})\\
+  &=10\cdot4^k-3\cdot2^k
+  <10\cdot4^k-2=x,
+\end{align*}
+a contradiction.  Hence $\lambda\geq3$.  But then the three large summands
+alone have sum at least
+\[
+  3g_{k+1}=10\cdot4^k-1=x+1
+\]
+by~\eqref{eq:three-g}, again a contradiction.  Therefore
+$x\notin F_4(\Pset)$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:asymptotic-order}]
+Fix $k\geq2$ and put $m=x_k=10\cdot4^k-2$.  Then
+\[
+  N_k=4m+2=10\cdot4^{k+1}-6.
+\]
+By Lemma~\ref{lem:obstruction},
+\[
+  m\notin F_4(\Pset),\qquad m-1\notin F_2(\Pset).
+\]
+The five-summand criterion, Lemma~\ref{lem:fivecrit}, therefore gives
+$r(N_k)\geq6$.  The integer $N_k$ is not one of the eleven exceptions in
+Theorem~\ref{thm:classification}, so $r(N_k)\leq6$.  Hence $r(N_k)=6$.
+Since $N_k\to\infty$, no $h\leq5$ bounds $r(N)$ for all sufficiently large even
+$N$, while Theorem~\ref{thm:classification} gives the upper bound $h=6$.
+Therefore $h_{\mathrm{asym}}=6$.
+\end{proof}
+
+\begin{corollary}[Order of $\Pset$]\label{cor:orderfive}
+The set $\Pset$ is an asymptotic additive basis of order exactly $5$ for the
+nonnegative integers.  More precisely, every integer $n\geq212$ lies in
+$F_5(\Pset)$, whereas $F_4(\Pset)$ and $F_3(\Pset)$ each omit infinitely many
+integers.
+\end{corollary}
+
+\begin{proof}
+Proposition~\ref{prop:fiveP} gives $[212,\infty)\subseteq F_5(\Pset)$.  For
+every $k\geq2$, Lemma~\ref{lem:obstruction} gives
+\[
+  x_k=10\cdot4^k-2\notin F_4(\Pset).
+\]
+Since $x_k\to\infty$, four summands do not suffice asymptotically.  The same is
+true for three summands because $F_3(\Pset)\subseteq F_4(\Pset)$.
+\end{proof}
+
+\begin{corollary}[Multiples of $4$ requiring five summands]
+\label{cor:five-multiples}
+For every integer $k\geq3$,
+\[
+  M_k=10\cdot4^{k+1}-8
+\]
+satisfies $r(M_k)=5$.  Hence infinitely many multiples of $4$ require exactly
+five positive primitive Dyck summands.
+\end{corollary}
+
+\begin{proof}
+Write $M_k=4x_k$.  Since $k\geq3$, one has $x_k\geq212$, and
+Proposition~\ref{prop:fiveP} gives $x_k\in F_5(\Pset)$.  Multiplying such a
+representation by $4$ shows that $r(M_k)\leq5$.
+
+Suppose that $M_k$ had a representation using at most four primitive Dyck
+summands, and let $s$ be the number of copies of $2$.  Since
+$M_k\equiv0\pmod4$, $s$ is even, so $s\in\{0,2,4\}$.  If $s=0$, division by
+$4$ gives $x_k\in F_4(\Pset)$, contradicting Lemma~\ref{lem:obstruction}.  If
+$s=2$, division after removing the two copies of $2$ gives
+$x_k-1\in F_2(\Pset)$, again a contradiction.  If $s=4$, no other summand is
+available and division by $4$ would give $x_k=2$, which is impossible.  Thus
+$r(M_k)\geq5$, and equality follows.
+\end{proof}
+
+\begin{remark}[The two residue classes]
+If $N=4n$, then $n\in F_5(\Pset)$ for all sufficiently large $n$, so
+$r(N)\leq5$ eventually; Corollary~\ref{cor:five-multiples} shows that equality
+occurs infinitely often.  If $N=4m+2$, the number of copies of $2$ must be odd.
+For $m=x_k$, the one-copy case would require $m\in F_4(\Pset)$ and the
+three-copy case would require $m-1\in F_2(\Pset)$; Lemma~\ref{lem:obstruction}
+excludes both.  This residue class raises the relative asymptotic order from
+$5$ to $6$.
+\end{remark}
+
+\section{OEIS sequences and computational verification}
+\label{sec:oeis}
+
+Three OEIS sequences occur naturally.  The totally balanced numbers form
+\seqnum{A014486}~\cite{OEIS-A014486}; the positive primitive Dyck numbers form
+\seqnum{A057547}~\cite{OEIS-A057547}; and the central sequence of this paper is
+\[
+  a(n)=r(2n),
+\]
+namely \seqnum{A395858}~\cite{OEIS-A395858}.  Theorem~\ref{thm:classification}
+determines all terms exceeding six:
+\[
+  a(n)=8\iff n=23,
+\]
+and
+\[
+  a(n)=7\iff
+  n\in\{17,22,49,77,99,101,103,419,421,423\}.
+\]
+Theorem~\ref{thm:asymptotic-order} supplies an explicit infinite subsequence at
+level six:
+\begin{equation}\label{eq:A395858-six-subsequence}
+  a(5\cdot4^{k+1}-3)=6\qquad(k\geq2).
+\end{equation}
+
+The program 
+\url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/A395858.py}
+reproduces the displayed initial terms and generates the first $50{,}000$ terms
+of A395858.  The supplementary program
+\path{verify_certificates_for_paper.py} checks the five finite interval
+inclusions, the sharp lower endpoint for Proposition~\ref{prop:fiveP}, the
+finite exceptional-set certificate, and an independent finite-range dynamic
+programming computation of $r(N)$.  These computations provide reproducible
+cross-checks; the infinite assertions are proved theoretically above.
+
+\section{Concluding remarks}
+
+The results determine three exact orders associated with primitive Dyck
+numbers.  The relative additive order on all nonnegative even integers is
+$8$, the relative asymptotic order is $6$, and the asymptotic additive order of
+$\Pset$ is $5$.  The same base-$4$ self-similarity that propagates long
+five-summand intervals also produces the recurring obstruction
+$x_k=10\cdot4^k-2$.
+
+It remains to characterize the complete set of even integers $N$ for which
+$r(N)=6$.  Computations suggest additional block structure near the points
+$10\cdot4^k$, but the exact widths and endpoints of those blocks are not yet
+proved.  A broader question is whether analogous regular-subfamily upper
+bounds and generation-gap lower bounds occur for other indecomposable digital
+languages.
 
 \begin{thebibliography}{9}
 
