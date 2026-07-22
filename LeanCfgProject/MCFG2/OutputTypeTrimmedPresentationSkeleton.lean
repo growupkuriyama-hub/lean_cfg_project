@@ -62,7 +62,7 @@ def arity
 /-- The stored output type of the typed nonterminal. -/
 def out
     (X : PresentTypedNonterminal P) :
-    Tuple M (G.arity X.node.base) :=
+    Fin (G.arity X.node.base) → M :=
   X.node.out
 
 /-- Repackage a present nonterminal from an explicit membership proof. -/
