@@ -193,7 +193,7 @@ def toExposingTransportCoreData
   P.coreData
 
 /-- The finite sample produced after adding start-word evidence. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationExposingCommonCoreData D)
     (E : TrimmedPresentationStartWordEvidence D) :
     Finset (Word α) :=
@@ -229,7 +229,7 @@ def toExposingCoreFinalData
   promise := hL
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationExposingCommonCoreData D)
     (E : TrimmedPresentationStartWordEvidence D)
     (U : NamedContextSplicingConstructor α)
