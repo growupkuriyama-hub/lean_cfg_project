@@ -1,0 +1,30 @@
+name: MCFG2 Passed Experiments CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build passed MCFG2 experiments
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Build passed MCFG2 experiment chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake build LeanCfgProject.MCFG2.CharacteristicSampleStartWordFromSample
+          echo "Passed MCFG2 experiment chain built successfully."
