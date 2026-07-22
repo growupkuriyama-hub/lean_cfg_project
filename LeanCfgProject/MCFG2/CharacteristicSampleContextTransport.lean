@@ -186,7 +186,7 @@ def toGrammarRuleTransportData
   transport := P.toRuleWitnessTransport
 
 /-- The finite sample produced by same-context-transport data. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationContextTransportData D) :
     Finset (Word α) :=
   P.toGrammarRuleTransportData.sample
@@ -218,7 +218,7 @@ def toRuleTransportFinalData
   promise := hL
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationContextTransportData D)
     (U : NamedContextSplicingConstructor α)
     (hfan : G.FanoutAtMost f)
