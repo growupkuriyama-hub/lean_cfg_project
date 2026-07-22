@@ -73,7 +73,7 @@ def ReachableCharacteristicCondition
     (S : Set (Word α)) ⊆ (K : Set (Word α)) →
     (K : Set (Word α)) ⊆ G.StringLanguage →
       ∃ D : CharacteristicSampleData G K obs f,
-        StartAnchorAsSampleWord D
+        Nonempty (StartAnchorAsSampleWord D)
 
 /-- If a finite sample `S` gives characteristic data for every positive
 finite superset `K`, then `S` is a characteristic sample for the reachable
@@ -93,7 +93,7 @@ theorem reachable_characteristicSample
       G.StringLanguage := by
   refine ⟨hSpos, ?_⟩
   intro K hSK hKG
-  rcases hCond K hSK hKG with ⟨D, B⟩
+  rcases hCond K hSK hKG with ⟨D, ⟨B⟩⟩
   have hKpos : PositiveSample G K := by
     intro word hword
     exact hKG hword

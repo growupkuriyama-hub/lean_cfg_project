@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  22 JUL 2026 16:08
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  22 JUL 2026 16:12
  restricted system commands enabled.
 **PrimDyck_tkuriyama_ja.tex
 (./PrimDyck_tkuriyama_ja.tex
@@ -1151,30 +1151,30 @@ LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <10> not available
 (Font)              Font shape `JY3/mc/m/n' tried instead on input line 92.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 7.70596pt on input line 92.
-[2] [3] [4] [5](load cache: extra_lmroman7-regular.luc)
+[2](load cache: extra_lmmono10-regular.luc) [3] [4] [5](load cache: extra_lmroma
+n7-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 6.47295pt on input line 293.
+(Font)              scaled to size 6.47295pt on input line 294.
 (load cache: extra_lmroman5-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 4.62357pt on input line 293.
- [6] [7] [8] [9] [10] [11] [12](load cache: extra_lmmono10-regular.luc)(load cac
-he: extra_lmroman7-italic.luc)
+(Font)              scaled to size 4.62357pt on input line 294.
+ [6] [7] [8] [9] [10] [11] [12](load cache: extra_lmroman7-italic.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <6.99995> not available
-(Font)              Font shape `JT3/mc/m/n' tried instead on input line 669.
+(Font)              Font shape `JT3/mc/m/n' tried instead on input line 670.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 5.39413pt on input line 669.
+(Font)              scaled to size 5.39413pt on input line 670.
 LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <6.99995> not available
-(Font)              Font shape `JY3/mc/m/n' tried instead on input line 669.
+(Font)              Font shape `JY3/mc/m/n' tried instead on input line 670.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 5.39413pt on input line 669.
+(Font)              scaled to size 5.39413pt on input line 670.
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <5> not available
-(Font)              Font shape `JT3/mc/m/n' tried instead on input line 669.
+(Font)              Font shape `JT3/mc/m/n' tried instead on input line 670.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 3.85297pt on input line 669.
+(Font)              scaled to size 3.85297pt on input line 670.
 LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <5> not available
-(Font)              Font shape `JY3/mc/m/n' tried instead on input line 669.
+(Font)              Font shape `JY3/mc/m/n' tried instead on input line 670.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 3.85297pt on input line 669.
+(Font)              scaled to size 3.85297pt on input line 670.
  [13] [14] [15] [16] [17]
 [18] [19] [20] [21] (./PrimDyck_tkuriyama_ja.aux)
  ***********
@@ -1186,6 +1186,9 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `PrimDyck_tkuriyama_ja.out' has not changed.
 (rerunfilecheck)             Checksum: F2B9C894DB7D8B0019FBA78567747DEF;496.
 )
@@ -1193,17 +1196,17 @@ Package rerunfilecheck Info: File `PrimDyck_tkuriyama_ja.out' has not changed.
 Here is how much of LuaTeX's memory you used:
  12657 strings out of 476076
  195720,662416 words of node,token memory allocated
- 6074 words of node memory still in use:
-   10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 2491 attribute, 59 glue_s
-pec, 238 attribute_list, 1 write, 13 user_defined, 1 pdf_action nodes
-   avail lists: 1:20,2:38621,3:366,4:300,5:180,6:36,7:5794,8:157,9:2192,10:30,11
-:142
+ 6104 words of node memory still in use:
+   10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 2502 attribute, 59 glue_s
+pec, 239 attribute_list, 1 write, 13 user_defined, 2 pdf_action nodes
+   avail lists: 1:20,2:44120,3:420,4:290,5:180,6:38,7:5794,8:157,9:2192,10:30,11
+:214
  34780 multiletter control sequences out of 65536+600000
  97 fonts using 70249807 bytes
  119i,19n,112p,2045b,556s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmmono10-
+<c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman7-
 regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/
-lm/lmroman7-regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/open
+lm/lmmono10-regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/open
 type/public/lm/lmroman10-italic.otf><c:/users/owner/appdata/local/programs/mikte
 x/fonts/opentype/public/lm/lmsans12-regular.otf><c:/users/owner/appdata/local/pr
 ograms/miktex/fonts/opentype/public/lm/lmroman10-bold.otf><c:/users/owner/appdat
@@ -1224,9 +1227,9 @@ X/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/Owner/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Owner/AppData/Local/
 Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Owner/AppData
 /Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on PrimDyck_tkuriyama_ja.pdf (21 pages, 359601 bytes).
+Output written on PrimDyck_tkuriyama_ja.pdf (21 pages, 361185 bytes).
 
-PDF statistics: 342 PDF objects out of 1000 (max. 8388607)
+PDF statistics: 346 PDF objects out of 1000 (max. 8388607)
  60 named destinations out of 1000 (max. 1048576)
  41 words of extra memory for PDF output out of 10000 (max. 100000000)
 
