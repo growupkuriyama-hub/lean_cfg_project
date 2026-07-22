@@ -104,7 +104,7 @@ def toObligations
   O.toTransportFromWitnessSample.toObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationExposingTransportFromFiniteBuilder D) :
     Finset (Word α) :=
   O.toTransportFromWitnessSample.sample
@@ -129,7 +129,7 @@ theorem contains_witnesses
   O.toTransportFromWitnessSample.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationExposingTransportFromFiniteBuilder D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromWitnessSample.toFinalReachableData
@@ -246,7 +246,7 @@ def toExposingTransportObligations
   O.toTransportFromWitnessSample.toExposingTransportObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationCommonContextFromFiniteBuilder D) :
     Finset (Word α) :=
   O.toTransportFromWitnessSample.sample
@@ -271,7 +271,7 @@ theorem contains_witnesses
   O.toTransportFromWitnessSample.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationCommonContextFromFiniteBuilder D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromWitnessSample.toFinalReachableData
@@ -380,7 +380,7 @@ def toTransportFromWitnessSample
   O.toTransportFromFiniteBuilder.toTransportFromWitnessSample
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationExposingTransportFromPositiveFiniteUnionBuilder D) :
     Finset (Word α) :=
   O.toTransportFromFiniteBuilder.sample
@@ -405,7 +405,7 @@ theorem contains_witnesses
   O.toTransportFromFiniteBuilder.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationExposingTransportFromPositiveFiniteUnionBuilder D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromFiniteBuilder.toFinalReachableData
@@ -501,7 +501,7 @@ def toExposingTransportObligations
   O.toTransportFromFiniteBuilder.toExposingTransportObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationCommonContextFromPositiveFiniteUnionBuilder D) :
     Finset (Word α) :=
   O.toTransportFromFiniteBuilder.sample
@@ -526,7 +526,7 @@ theorem contains_witnesses
   O.toTransportFromFiniteBuilder.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationCommonContextFromPositiveFiniteUnionBuilder D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromFiniteBuilder.toFinalReachableData
