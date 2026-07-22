@@ -239,7 +239,7 @@ def toGrammarRuleTransportData
 
 /-- The finite sample produced after adding start-word evidence, fanout, and
 fixed-observation substitutability. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationAnchorCommonContextCoreData D)
     (E : TrimmedPresentationStartWordEvidence D)
     (hfan : G.FanoutAtMost f)
@@ -278,7 +278,7 @@ def toExposingCoreFinalData
     E U hfan hL
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationAnchorCommonContextCoreData D)
     (E : TrimmedPresentationStartWordEvidence D)
     (U : NamedContextSplicingConstructor α)
