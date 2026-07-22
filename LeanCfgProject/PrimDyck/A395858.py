@@ -95,8 +95,8 @@ def main(num_terms: int, num_data: int, output: Path) -> None:
 
 if __name__ == "__main__":
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument("--terms", type=int, default=500,
-                        help="number of terms to generate (default: 500; minimum: 423)")
+    parser.add_argument("--terms", type=int, default=50000,
+                        help="number of terms to generate (default: 50000; minimum: 423)")
     parser.add_argument("--data", type=int, default=40,
                         help="number of terms printed as a DATA line (default: 40)")
     parser.add_argument("--output", type=Path, default=Path("b395858.txt"),

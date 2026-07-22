@@ -161,25 +161,23 @@ $r(N)$ とし、本稿の中心となる整数列を
 \end{gathered}
 \]
 である。ここに表示した項は、以下のPythonプログラムから
-再現できる；
+50000項まで再現でき、ある種の規則性を見ることができる：
 \url{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/master/LeanCfgProject/PrimDyck/A395858.py}。
 
 \begin{theorem}\label{thm:main}
 $r(N)$ が6を超える場合は、正確に次のとおりである：
 \[
- r(46)=8,
-\]
-また、
-\[
- r(N)=7
- \quad\Longleftrightarrow\quad
+\begin{aligned}
+r(46) &= 8, \\[4pt]
+r(N) = 7 \quad&\Longleftrightarrow\quad
  N\in\{34,44,98,154,198,202,206,838,842,846\}.
+\end{aligned}
 \]
-それ以外の正の偶数はすべて $r(N)\leq6$ を満たす。したがって、任意の偶数
+すなわち、それ以外の正の偶数はすべて $r(N)\leq6$ を満たす。いいかえれば、任意の偶数
 $N\geq848$ は、高々6個の原始Dyck数の和である。
 \end{theorem}
 
-同値な形で、数列 $a(n)=r(2n)$ を用いれば、
+同値な形で、 OEIS数列 \seqnum{A395858} \cite{OEIS-A395858} $a(n)=r(2n)$ を用いれば、
 \[
         \max_{n\geq1}a(n)=8,
         \qquad

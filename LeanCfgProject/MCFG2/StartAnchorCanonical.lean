@@ -63,9 +63,10 @@ def toStartAnchorAsSampleWord
   start_mem := C.start_mem
   anchor_eq := by
     intro hstart
-    cases C.start_arity
-    cases hstart
-    simpa using C.anchor_eq
+    have hproof : hstart = C.start_arity :=
+      Subsingleton.elim _ _
+    rw [hproof]
+    exact C.anchor_eq
 
 /-- Direct constructor for `StartAnchorAsSampleWord` from one transported
 start-anchor equality. -/
