@@ -206,7 +206,7 @@ def ofContextTransportData
   startWord_positive := P.startWord_positive
 
 /-- The finite sample produced by exposing-context transport data. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationExposingTransportData D) :
     Finset (Word α) :=
   P.toGrammarRuleTransportData.sample
@@ -238,7 +238,7 @@ def toRuleTransportFinalData
   promise := hL
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationExposingTransportData D)
     (U : NamedContextSplicingConstructor α)
     (hfan : G.FanoutAtMost f)
