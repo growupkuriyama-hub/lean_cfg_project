@@ -162,7 +162,7 @@ def toGrammarRuleData
   startWord_positive := P.transport.startWord_positive
 
 /-- The finite sample produced by the transport-oriented package. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationGrammarRuleTransportData D) :
     Finset (Word α) :=
   P.toGrammarRuleData.sample
@@ -181,7 +181,7 @@ theorem contains_witnesses
   P.toGrammarRuleData.contains_witnesses
 
 /-- Convert to the abstract finite-sample builder. -/
-def toFiniteSampleBuilder
+noncomputable def toFiniteSampleBuilder
     (P : TrimmedPresentationGrammarRuleTransportData D) :
     TrimmedPresentationFiniteSampleBuilder D :=
   P.toGrammarRuleData.toFiniteSampleBuilder
@@ -193,14 +193,14 @@ def toWitnessSample
   P.toGrammarRuleData.toWitnessSample
 
 /-- Convert to a characteristic-sample object. -/
-def toCharacteristicSample
+noncomputable def toCharacteristicSample
     (P : TrimmedPresentationGrammarRuleTransportData D) :
     TrimmedPresentationCharacteristicSample D :=
   P.toGrammarRuleData.toCharacteristicSample
 
 /-- Convert to final reachable data after adding the remaining splicing
 constructor and global assumptions. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationGrammarRuleTransportData D)
     (U : NamedContextSplicingConstructor α)
     (hfan : G.FanoutAtMost f)
