@@ -94,7 +94,7 @@ def toObligations
   O.toTransportFromComponentPackage.toObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationExposingTransportFromRuleEnumeration D) :
     Finset (Word α) :=
   O.toTransportFromComponentPackage.sample
@@ -113,7 +113,7 @@ theorem contains_witnesses
   O.toTransportFromComponentPackage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationExposingTransportFromRuleEnumeration D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromComponentPackage.toFinalReachableData
@@ -204,7 +204,7 @@ def toExposingTransportObligations
   O.toTransportFromComponentPackage.toExposingTransportObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationCommonContextFromRuleEnumeration D) :
     Finset (Word α) :=
   O.toTransportFromComponentPackage.sample
@@ -223,7 +223,7 @@ theorem contains_witnesses
   O.toTransportFromComponentPackage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationCommonContextFromRuleEnumeration D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromComponentPackage.toFinalReachableData
@@ -317,7 +317,7 @@ def toObligations
   O.toTransportFromRuleEnumeration.toObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationExposingTransportFromRuleCoverage D) :
     Finset (Word α) :=
   O.toTransportFromRuleEnumeration.sample
@@ -336,7 +336,7 @@ theorem contains_witnesses
   O.toTransportFromRuleEnumeration.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationExposingTransportFromRuleCoverage D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromRuleEnumeration.toFinalReachableData
@@ -427,7 +427,7 @@ def toExposingTransportObligations
   O.toTransportFromRuleEnumeration.toExposingTransportObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationCommonContextFromRuleCoverage D) :
     Finset (Word α) :=
   O.toTransportFromRuleEnumeration.sample
@@ -446,7 +446,7 @@ theorem contains_witnesses
   O.toTransportFromRuleEnumeration.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationCommonContextFromRuleCoverage D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromRuleEnumeration.toFinalReachableData
@@ -516,13 +516,13 @@ def arities
   start_arity := O.builder.start_arity
 
 /-- The component package induced by the grammar-rule builder. -/
-def toComponentPackage
+noncomputable def toComponentPackage
     (O : TrimmedPresentationExposingTransportFromGrammarRuleBuilder D) :
     TrimmedPresentationComponentPackage D :=
   O.builder.toComponentPackage
 
 /-- Convert to the component-package transport route. -/
-def toTransportFromComponentPackage
+noncomputable def toTransportFromComponentPackage
     (O : TrimmedPresentationExposingTransportFromGrammarRuleBuilder D) :
     TrimmedPresentationExposingTransportFromComponentPackage D where
   components := O.toComponentPackage
@@ -535,13 +535,13 @@ def toTransportFromComponentPackage
   promise := O.promise
 
 /-- Convert to the compact exposing-transport obligation package. -/
-def toObligations
+noncomputable def toObligations
     (O : TrimmedPresentationExposingTransportFromGrammarRuleBuilder D) :
     TrimmedPresentationExposingTransportObligations D :=
   O.toTransportFromComponentPackage.toObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationExposingTransportFromGrammarRuleBuilder D) :
     Finset (Word α) :=
   O.toTransportFromComponentPackage.sample
@@ -560,7 +560,7 @@ theorem contains_witnesses
   O.toTransportFromComponentPackage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationExposingTransportFromGrammarRuleBuilder D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromComponentPackage.toFinalReachableData
@@ -623,7 +623,7 @@ namespace TrimmedPresentationCommonContextFromGrammarRuleBuilder
 variable {D : TrimmedPresentationPreCoreData T f}
 
 /-- Convert to the component-package common-context route. -/
-def toTransportFromComponentPackage
+noncomputable def toTransportFromComponentPackage
     (O : TrimmedPresentationCommonContextFromGrammarRuleBuilder D) :
     TrimmedPresentationCommonContextFromComponentPackage D where
   components := O.builder.toComponentPackage
@@ -633,19 +633,19 @@ def toTransportFromComponentPackage
   promise := O.promise
 
 /-- Convert to the compact common-context obligation package. -/
-def toObligations
+noncomputable def toObligations
     (O : TrimmedPresentationCommonContextFromGrammarRuleBuilder D) :
     TrimmedPresentationCommonContextTransportObligations D :=
   O.toTransportFromComponentPackage.toObligations
 
 /-- Convert to exposing-transport obligations through the common-context route. -/
-def toExposingTransportObligations
+noncomputable def toExposingTransportObligations
     (O : TrimmedPresentationCommonContextFromGrammarRuleBuilder D) :
     TrimmedPresentationExposingTransportObligations D :=
   O.toTransportFromComponentPackage.toExposingTransportObligations
 
 /-- The finite sample produced by the resulting obligation package. -/
-def sample
+noncomputable def sample
     (O : TrimmedPresentationCommonContextFromGrammarRuleBuilder D) :
     Finset (Word α) :=
   O.toTransportFromComponentPackage.sample
@@ -664,7 +664,7 @@ theorem contains_witnesses
   O.toTransportFromComponentPackage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (O : TrimmedPresentationCommonContextFromGrammarRuleBuilder D) :
     FinalReachableData G O.sample obs f :=
   O.toTransportFromComponentPackage.toFinalReachableData
