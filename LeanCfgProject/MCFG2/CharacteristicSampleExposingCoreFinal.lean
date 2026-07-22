@@ -71,7 +71,7 @@ def toExposingTransportData
   F.coreData.withStartWord F.startEvidence
 
 /-- The finite sample produced by the final data. -/
-def sample
+noncomputable def sample
     (F : TrimmedPresentationExposingCoreFinalData D) :
     Finset (Word α) :=
   F.toExposingTransportData.sample
@@ -109,7 +109,7 @@ def toRuleTransportFinalData
     F.splicingConstructor F.fanout F.promise
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (F : TrimmedPresentationExposingCoreFinalData D) :
     FinalReachableData G F.sample obs f :=
   F.toExposingTransportData.toFinalReachableData
