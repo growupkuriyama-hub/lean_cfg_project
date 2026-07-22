@@ -117,7 +117,7 @@ def toGrammarRuleTransportData
   (P.withStartWord E).toGrammarRuleTransportData
 
 /-- The finite sample produced by the core data plus start-word evidence. -/
-def sample
+noncomputable def sample
     (P : TrimmedPresentationExposingTransportCoreData D)
     (E : TrimmedPresentationStartWordEvidence D) :
     Finset (Word α) :=
@@ -140,7 +140,7 @@ theorem contains_witnesses
 
 /-- Convert to final reachable data after adding start-word evidence and the
 remaining global assumptions. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (P : TrimmedPresentationExposingTransportCoreData D)
     (E : TrimmedPresentationStartWordEvidence D)
     (U : NamedContextSplicingConstructor α)
