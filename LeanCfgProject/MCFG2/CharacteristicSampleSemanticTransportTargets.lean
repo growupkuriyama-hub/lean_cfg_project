@@ -130,7 +130,7 @@ def toExposingTransportObligations
   C.toGrammarBuilderCommonContextTarget.toExposingTransportObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationGrammarBuilderCommonTransportTarget D) :
     Finset (Word α) :=
   C.toGrammarBuilderCommonContextTarget.sample
@@ -149,7 +149,7 @@ theorem contains_witnesses
   C.toGrammarBuilderCommonContextTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationGrammarBuilderCommonTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toGrammarBuilderCommonContextTarget.toFinalReachableData
@@ -242,19 +242,19 @@ def toGrammarBuilderExposingTarget
   promise := C.promise
 
 /-- Convert to exposing-transport obligations. -/
-def toExposingTransportObligations
+noncomputable def toExposingTransportObligations
     (C : TrimmedPresentationGrammarBuilderExposingTransportTarget D) :
     TrimmedPresentationExposingTransportObligations D :=
   C.toGrammarBuilderExposingTarget.toExposingTransportObligations
 
 /-- Convert to grammar-rule transport endpoint. -/
-def toGrammarRuleTransportEndpoint
+noncomputable def toGrammarRuleTransportEndpoint
     (C : TrimmedPresentationGrammarBuilderExposingTransportTarget D) :
     TrimmedPresentationGrammarRuleTransportEndpoint D :=
   C.toGrammarBuilderExposingTarget.toGrammarRuleTransportEndpoint
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationGrammarBuilderExposingTransportTarget D) :
     Finset (Word α) :=
   C.toGrammarBuilderExposingTarget.sample
@@ -273,7 +273,7 @@ theorem contains_witnesses
   C.toGrammarBuilderExposingTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationGrammarBuilderExposingTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toGrammarBuilderExposingTarget.toFinalReachableData
