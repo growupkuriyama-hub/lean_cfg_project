@@ -5,6 +5,8 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.CharacteristicSampleSemanticConstructionTargetLevels
 
+-- CI rerun marker: harmless comment-only update.
+
 /-!
 # CharacteristicSampleSemanticTransportTargets.lean
 
