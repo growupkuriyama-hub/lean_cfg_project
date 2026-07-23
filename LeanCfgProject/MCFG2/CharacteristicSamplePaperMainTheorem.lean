@@ -5,6 +5,8 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.CharacteristicSampleSemanticMainTheorems
 
+-- CI rerun marker: noncomputable and projection fixes included.
+
 /-!
 # CharacteristicSamplePaperMainTheorem.lean
 
@@ -149,8 +151,7 @@ theorem exact_at_seen_prefix
       (Ttxt.prefixSample n : Set (Word α))) :
     ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
       G.StringLanguage :=
-  A.toGrammarBuilderCommonTransportTarget.toCommonContextTransportObligations
-    .exact_at_seen_prefix Ttxt hseen
+  A.toGrammarBuilderCommonTransportTarget.toCommonContextTransportObligations.exact_at_seen_prefix Ttxt hseen
 
 /-- Eventual prefix-exact reconstruction on every positive text. -/
 theorem prefix_exact_eventually
