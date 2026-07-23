@@ -72,7 +72,7 @@ def toGrammarBuilderExposingTarget
   C.toGrammarBuilderExposingTransportTarget.toGrammarBuilderExposingTarget
 
 /-- Final reachable data obtained through the exposing leg. -/
-def toFinalReachableDataViaExposing
+noncomputable def toFinalReachableDataViaExposing
     (C : TrimmedPresentationGrammarBuilderCommonTransportTarget D) :
     FinalReachableData G
       C.toGrammarBuilderExposingTransportTarget.sample obs f :=
@@ -106,8 +106,7 @@ theorem exact_for_positive_superset_via_exposing
         (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  C.toGrammarBuilderExposingTransportTarget
-    .exact_for_positive_superset hCK hKpos
+  C.toGrammarBuilderExposingTransportTarget.exact_for_positive_superset hCK hKpos
 
 end TrimmedPresentationGrammarBuilderCommonTransportTarget
 
@@ -156,8 +155,7 @@ theorem exact_for_positive_superset_via_exposing
         (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  C.toRuleCoverageExposingTransportTarget
-    .exact_for_positive_superset hCK hKpos
+  C.toRuleCoverageExposingTransportTarget.exact_for_positive_superset hCK hKpos
 
 end TrimmedPresentationRuleCoverageCommonTransportTarget
 
@@ -206,8 +204,7 @@ theorem exact_for_positive_superset_via_exposing
         (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  C.toComponentPackageExposingTransportTarget
-    .exact_for_positive_superset hCK hKpos
+  C.toComponentPackageExposingTransportTarget.exact_for_positive_superset hCK hKpos
 
 end TrimmedPresentationComponentPackageCommonTransportTarget
 
@@ -256,8 +253,7 @@ theorem exact_for_positive_superset_via_exposing
         (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  C.toComponentEnumerationExposingTransportTarget
-    .exact_for_positive_superset hCK hKpos
+  C.toComponentEnumerationExposingTransportTarget.exact_for_positive_superset hCK hKpos
 
 end TrimmedPresentationComponentEnumerationCommonTransportTarget
 
