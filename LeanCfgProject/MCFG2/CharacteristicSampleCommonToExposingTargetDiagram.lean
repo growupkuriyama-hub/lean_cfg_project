@@ -5,6 +5,8 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.CharacteristicSampleSemanticTransportTargetDiagram
 
+-- CI rerun marker: projection and noncomputable fixes included.
+
 /-!
 # CharacteristicSampleCommonToExposingTargetDiagram.lean
 
@@ -155,7 +157,7 @@ theorem exact_for_positive_superset_via_exposing
         (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  C.toRuleCoverageExposingTransportTarget.exact_for_positive_superset hCK hKpos
+  C.toRuleCoverageExposingTransportTarget.toFinalReachableData.exact_for_positive_superset hCK hKpos
 
 end TrimmedPresentationRuleCoverageCommonTransportTarget
 
@@ -253,7 +255,7 @@ theorem exact_for_positive_superset_via_exposing
         (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  C.toComponentEnumerationExposingTransportTarget.exact_for_positive_superset hCK hKpos
+  C.toComponentEnumerationExposingTransportTarget.toFinalReachableData.exact_for_positive_superset hCK hKpos
 
 end TrimmedPresentationComponentEnumerationCommonTransportTarget
 
