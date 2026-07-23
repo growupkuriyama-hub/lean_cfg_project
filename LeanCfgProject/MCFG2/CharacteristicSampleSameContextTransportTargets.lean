@@ -82,7 +82,7 @@ def toSameContextCoreData
 def startEvidence
     (C : TrimmedPresentationGrammarBuilderSameContextTransportTarget D) :
     TrimmedPresentationStartWordEvidence D :=
-  C.builder.toGrammarRuleData.startWord_positive
+  ⟨C.builder.startWord_positive⟩
 
 /-- Convert to the same-context core endpoint. -/
 def toSameContextCoreEndpoint
@@ -119,7 +119,7 @@ def toRuleTransportEndpoint
   C.toSameContextCoreEndpoint.toRuleTransportEndpoint
 
 /-- The finite sample produced by the same-context target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationGrammarBuilderSameContextTransportTarget D) :
     Finset (Word α) :=
   C.toSameContextCoreEndpoint.sample
@@ -138,7 +138,7 @@ theorem contains_witnesses
   C.toSameContextCoreEndpoint.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationGrammarBuilderSameContextTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toSameContextCoreEndpoint.toFinalReachableData
