@@ -95,7 +95,7 @@ def toAnchorCommonContextCoreData
   baseNonterminals := C.builder.baseNonterminals
   base_covers := C.builder.base_covers
   arities := C.arities
-  commonTransport := C.commonTransport
+  commonContext := C.commonTransport
 
 /-- Convert to the already-established grammar-builder common-context target. -/
 def toGrammarBuilderCommonContextTarget
@@ -112,19 +112,19 @@ def toAnchorCommonContextCoreEndpoint
     (C : TrimmedPresentationGrammarBuilderCommonTransportTarget D) :
     TrimmedPresentationAnchorCommonContextCoreEndpoint D where
   coreData := C.toAnchorCommonContextCoreData
-  startEvidence := C.builder.toGrammarRuleData.startWord_positive
+  startEvidence := ⟨C.builder.startWord_positive⟩
   splicingConstructor := C.splicingConstructor
   fanout := C.fanout
   promise := C.promise
 
 /-- Convert to common-context transport obligations. -/
-def toCommonContextTransportObligations
+noncomputable def toCommonContextTransportObligations
     (C : TrimmedPresentationGrammarBuilderCommonTransportTarget D) :
     TrimmedPresentationCommonContextTransportObligations D :=
   C.toGrammarBuilderCommonContextTarget.toCommonContextTransportObligations
 
 /-- Convert to exposing-transport obligations through the common-context route. -/
-def toExposingTransportObligations
+noncomputable def toExposingTransportObligations
     (C : TrimmedPresentationGrammarBuilderCommonTransportTarget D) :
     TrimmedPresentationExposingTransportObligations D :=
   C.toGrammarBuilderCommonContextTarget.toExposingTransportObligations
