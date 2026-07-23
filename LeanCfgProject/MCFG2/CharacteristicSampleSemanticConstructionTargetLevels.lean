@@ -84,7 +84,7 @@ def toExposingTransportObligations
   C.toCommonContextFromComponentPackage.toExposingTransportObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentPackageCommonContextTarget D) :
     Finset (Word α) :=
   C.toCommonContextFromComponentPackage.sample
@@ -103,7 +103,7 @@ theorem contains_witnesses
   C.toCommonContextFromComponentPackage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentPackageCommonContextTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toCommonContextFromComponentPackage.toFinalReachableData
@@ -198,7 +198,7 @@ def toExposingTransportObligations
   C.toExposingTransportFromComponentPackage.toObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentPackageExposingTarget D) :
     Finset (Word α) :=
   C.toExposingTransportFromComponentPackage.sample
@@ -217,7 +217,7 @@ theorem contains_witnesses
   C.toExposingTransportFromComponentPackage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentPackageExposingTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toExposingTransportFromComponentPackage.toFinalReachableData
@@ -321,7 +321,7 @@ def toCommonContextTransportObligations
   C.toCommonContextFromComponentEnumeration.toObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentEnumerationCommonContextTarget D) :
     Finset (Word α) :=
   C.toCommonContextFromComponentEnumeration.sample
@@ -340,7 +340,7 @@ theorem contains_witnesses
   C.toCommonContextFromComponentEnumeration.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentEnumerationCommonContextTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toCommonContextFromComponentEnumeration.toFinalReachableData
@@ -444,7 +444,7 @@ def toExposingTransportObligations
   C.toExposingTransportFromComponentEnumeration.toObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentEnumerationExposingTarget D) :
     Finset (Word α) :=
   C.toExposingTransportFromComponentEnumeration.sample
@@ -463,7 +463,7 @@ theorem contains_witnesses
   C.toExposingTransportFromComponentEnumeration.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentEnumerationExposingTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toExposingTransportFromComponentEnumeration.toFinalReachableData
