@@ -79,7 +79,7 @@ def toGrammarBuilderCommonTransportTarget
   promise := A.promise
 
 /-- The finite sample constructed by the preferred target. -/
-def sample
+noncomputable def sample
     (A : TrimmedPresentationPaperMainAssumptions D) :
     Finset (Word α) :=
   A.toGrammarBuilderCommonTransportTarget.sample
@@ -99,7 +99,7 @@ theorem contains_witnesses
   A.toGrammarBuilderCommonTransportTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (A : TrimmedPresentationPaperMainAssumptions D) :
     FinalReachableData G A.sample obs f :=
   A.toGrammarBuilderCommonTransportTarget.toFinalReachableData
@@ -137,8 +137,7 @@ theorem exact_for_positive_superset
     (hAK : (A.sample : Set (Word α)) ⊆ (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  A.toGrammarBuilderCommonTransportTarget
-    .exact_for_positive_superset hAK hKpos
+  A.toGrammarBuilderCommonTransportTarget.exact_for_positive_superset hAK hKpos
 
 /-- Exact reconstruction at a positive-text prefix containing the constructed
 sample. -/
@@ -150,8 +149,7 @@ theorem exact_at_seen_prefix
       (Ttxt.prefixSample n : Set (Word α))) :
     ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
       G.StringLanguage :=
-  A.toGrammarBuilderCommonTransportTarget
-    .toCommonContextTransportObligations
+  A.toGrammarBuilderCommonTransportTarget.toCommonContextTransportObligations
     .exact_at_seen_prefix Ttxt hseen
 
 /-- Eventual prefix-exact reconstruction on every positive text. -/

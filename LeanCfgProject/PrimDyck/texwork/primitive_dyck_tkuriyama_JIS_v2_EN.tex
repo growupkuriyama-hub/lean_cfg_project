@@ -18,7 +18,9 @@
 \newcommand{\val}[2]{[#1]_{#2}}
 \newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
 \newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
-\newcommand{\Pset}{\mathcal{P}}
+\newcommand{\Pset}{%
+  \bigl(\tfrac{1}{4}\cdot\mathcal{N}_{\mathrm{pD},\geq 12}\bigr)%
+}
 \newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
 
 \title{Additive Representations by Primitive Dyck Numbers:\\ Exceptional Sets and Optimal Orders}
@@ -39,11 +41,8 @@ $46$ alone satisfies $r(46)=8$, the ten integers
 $34,44,98,154,198,202,206,838,842,846$ satisfy $r(N)=7$, and every other
 positive even integer satisfies $r(N)\leq6$.  Thus $848$ is the sharp even
 threshold beyond which six summands always suffice.  We also determine the
-exact relative asymptotic order.  For every $k\geq2$,
-\[
-  r(10\cdot4^{k+1}-6)=6,
-\]
-so six summands are necessary infinitely often and the asymptotic order is
+exact relative asymptotic order.  For every $k\geq2$, one has
+$r(10\cdot4^{k+1}-6)=6$, so six summands are necessary infinitely often and the asymptotic order is
 exactly $6$.  The proof combines a regular sublanguage, finite interval
 certificates, a self-similar five-summand propagation, and a base-$4$
 characterization of the halved primitive family by two-coloured Motzkin words.
@@ -86,10 +85,12 @@ its first eighteen elements are
 \]
 
 For a word $w$ over the base-$m$ digits, let $\val{w}{m}$ denote the
-integer it represents in base $m$.  Adjoining $0$ for convenience, set
+integer it represents in base $m$.  Adjoining $0$ for convenience in additive
+representations, set
 \[
  \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}.
 \]
+This convention does not affect the conclusions of the theorems below.
 The first eighteen positive elements are
 \[
 \begin{gathered}
@@ -159,7 +160,13 @@ tends to $1/4$ as $n\to\infty$.  Indeed, there are $C_n$ Dyck words of
 length $2n$, and every primitive one is uniquely of the form $1u0$ with
 $u$ a Dyck word of length $2n-2$; so there are $C_{n-1}$ primitive words
 of length $2n$.  From the Catalan formula
-$C_n=\frac1{n+1}\binom{2n}{n}$,
+$C_n=\frac1{n+1}\binom{2n}{n}$\footnote{The grammar
+$S\to\varepsilon\mid 1S0S$ gives the unique decomposition $1u0v$ of every
+nonempty Dyck word, where $u$ and $v$ are Dyck words.  Hence $C_0=1$ and
+$C_n=\sum_{k=0}^{n-1}C_kC_{n-1-k}$.  If
+$B_n=\frac{1}{n+1}\binom{2n}{n}$, then the binomial convolution identity gives
+$B_0=1$ and $B_n=\sum_{k=0}^{n-1}B_kB_{n-1-k}$.  Therefore induction yields
+$C_n=B_n$.},
 \[
  \frac{C_{n-1}}{C_n}=\frac{n+1}{2(2n-1)}\longrightarrow\frac14 .
 \]
@@ -314,11 +321,13 @@ Assign weights to the base-$4$ digits by
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0.
 \]
-A word $w=c_1\cdots c_\ell\in\{0,1,2,3\}^{\ell}$ is called a
+A word $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ is called a
 \emph{two-coloured Motzkin word} if every prefix has nonnegative total weight
 and the total weight of $w$ is $0$.  The two zero-weight digits $1$ and $2$ are
 regarded as distinct colours.  Write $[w]_4$ for the value of $w$ as a base-$4$
-numeral, with $[\varepsilon]_4=0$.
+numeral, with $[\varepsilon]_4=0$.  For a positive integer $n$, let
+$\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote its standard binary
+and base-$4$ expansions, respectively.
 
 \begin{lemma}[Base-$4$ characterization]\label{lem:base4}
 A positive integer $p$ lies in $\Pset$ if and only if its base-$4$ expansion has
@@ -326,37 +335,126 @@ the form $3w$, where $w$ is a two-coloured Motzkin word.
 \end{lemma}
 
 \begin{proof}
-Let $v=4p\in\NpD$ with $v\geq12$, and group the binary digits of $v$ into
-consecutive pairs.  Reading the pairs as base-$4$ digits gives a word
-$d_1\cdots d_L$.  At pair boundaries, the binary height is twice the cumulative
-$\sigma$-weight, because
+Suppose first that $p\in\Pset$.  Then
+\[
+ v:=4p\in\NpD,\qquad v\geq12.
+\]
+Write the binary expansion of $v$ as
+\[
+ b_1b_2\cdots b_{2L}\qquad(b_i\in\{0,1\}),
+\]
+and define its height function by
+\[
+ h(t):=\sum_{i=1}^{t}(2b_i-1)
+ \qquad(0\leq t\leq2L).
+\]
+Since $v$ is represented by a primitive Dyck word,
+\[
+ h(0)=h(2L)=0,
+ \qquad
+ h(t)>0\quad(1\leq t<2L).
+\]
+Group the binary digits into consecutive pairs and put
+\[
+ d_j:=2b_{2j-1}+b_{2j}\in\{0,1,2,3\}
+ \qquad(1\leq j\leq L).
+\]
+Then $d_1\cdots d_L$ is the base-$4$ expansion of $v$.  The correspondence
 \[
   11\leftrightarrow3,\quad 10\leftrightarrow2,\quad
-  01\leftrightarrow1,\quad 00\leftrightarrow0.
+  01\leftrightarrow1,\quad 00\leftrightarrow0
 \]
-Since $v$ is primitive and has length at least four, it begins with $11$ and
-ends with $00$; hence $d_1=3$ and $d_L=0$.  At every proper pair boundary the
-binary height is at least $2$, and at the final boundary it is $0$.
+shows that
+\[
+ h(2j)-h(2j-2)=2\sigma(d_j),
+\]
+and hence
+\begin{equation}\label{eq:height-sigma}
+ h(2j)=2\sum_{i=1}^{j}\sigma(d_i)
+ \qquad(0\leq j\leq L).
+\end{equation}
 
-These boundary conditions also control heights inside each pair.  A pair of
-type $01$ can lower the height by only one before restoring it; a nonfinal pair
-of type $00$ ends at height at least $2$ and therefore starts at height at
-least $4$; and the other two pair types begin with $1$.  Thus positivity before
-the final bit is equivalent to positivity at all proper pair boundaries,
-together with the final return to $0$.
+Because the primitive word has length at least four, its first pair is $11$
+and its last pair is $00$: otherwise it would return to height $0$ after its
+first two bits or before its last two bits.  Thus
+\[
+ d_1=3,\qquad d_L=0.
+\]
+For $1\leq j<L$, the integer $h(2j)$ is a positive even number, so
+\[
+ \sum_{i=1}^{j}\sigma(d_i)=\frac{h(2j)}2\geq1.
+\]
+Dividing $v=4p$ by $4$ deletes the final base-$4$ digit $0$.  Therefore the
+base-$4$ expansion of $p$ is $3w$, where
+\[
+ w:=d_2d_3\cdots d_{L-1}.
+\]
+For every prefix of $w$ of length $r$, with $0\leq r\leq L-2$, one has
+\[
+ \sum_{i=2}^{r+1}\sigma(d_i)
+ =\sum_{i=1}^{r+1}\sigma(d_i)-\sigma(d_1)
+ \geq1-1=0.
+\]
+Moreover, by \eqref{eq:height-sigma},
+\[
+ \sum_{i=1}^{L}\sigma(d_i)=\frac{h(2L)}2=0.
+\]
+Since $\sigma(d_1)=1$ and $\sigma(d_L)=-1$, it follows that
+\[
+ \sum_{i=2}^{L-1}\sigma(d_i)=0.
+\]
+Thus $w$ is a two-coloured Motzkin word.
 
-Dividing $v$ by $4$ deletes the final base-$4$ digit $0$.  Hence the base-$4$
-expansion of $p$ is $3w$, where every prefix of $3w$ has $\sigma$-weight at
-least $1$ and the total weight of $3w$ is $1$.  Removing the initial digit $3$
-shows that every prefix of $w$ has nonnegative weight and that $w$ has total
-weight $0$.
+Conversely, suppose that
+\[
+ \operatorname{quad}(p)=3w,
+ \qquad
+ w=e_1\cdots e_m
+\]
+is a two-coloured Motzkin word.  Thus
+\[
+ \sum_{i=1}^{r}\sigma(e_i)\geq0
+ \quad(0\leq r\leq m),
+ \qquad
+ \sum_{i=1}^{m}\sigma(e_i)=0.
+\]
+Append a final base-$4$ digit $0$ and expand the digits of $3w0$ by the
+block map
+\[
+ \phi(3)=11,\qquad \phi(2)=10,\qquad
+ \phi(1)=01,\qquad \phi(0)=00.
+\]
+Let $B=\phi(3w0)$ and let $h$ be its binary height function.  At the pair
+boundaries,
+\[
+ h(2)=2
+\]
+and, for $0\leq r\leq m$,
+\[
+ h(2r+2)
+ =2\left(1+\sum_{i=1}^{r}\sigma(e_i)\right)
+ \geq2.
+\]
+After the appended final digit $0$ has been read,
+\[
+ h(2m+4)
+ =2\left(1+\sum_{i=1}^{m}\sigma(e_i)-1\right)
+ =0.
+\]
+It remains to check positions inside the two-bit blocks.  The blocks
+corresponding to $3$ and $2$ begin with $1$, so the height first increases.
+A block corresponding to $1$ is $01$; its initial height is at least $2$, so
+after the first bit its height is still at least $1$.  If a digit $0$ occurs
+inside $w$, then the Motzkin prefix condition implies that the weight before
+that digit is at least $1$.  Hence the binary height before its block is at
+least $4$, and after the first $0$ it is at least $3$.  Finally, the appended
+terminal block $00$ begins at height $2$, passes through height $1$, and ends
+at height $0$.
 
-Conversely, if $p$ has base-$4$ expansion $3w$ with $w$ a two-coloured Motzkin
-word, append a final digit $0$ and expand each base-$4$ digit into its binary
-pair.  The resulting binary word has equal numbers of $1$'s and $0$'s, remains
-strictly above height $0$ before its final bit by the preceding within-pair
-check, and returns to $0$ at the end.  It is therefore a primitive Dyck word,
-so $4p\in\NpD$ and $p\in\Pset$.
+Consequently $B$ stays strictly above height $0$ before its final bit and
+returns to height $0$ at the end.  It is therefore a primitive Dyck word.  Its
+base-$4$ digits are $3w0$, so it represents $4p$.  Also $p\geq3$, and hence
+$4p\geq12$.  Thus $4p\in\NpD$ and $p\in\Pset$.
 \end{proof}
 
 The characterization gives the self-similarity used later.
@@ -366,10 +464,19 @@ If $p\in\Pset$, then $4p+1$ and $4p+2$ also belong to $\Pset$.
 \end{corollary}
 
 \begin{proof}
-Write the base-$4$ expansion of $p$ as $3w$, with $w$ a two-coloured Motzkin
-word.  Then $4p+1$ and $4p+2$ have expansions $3w1$ and $3w2$.  Appending either
-zero-weight colour preserves the two-coloured Motzkin condition, so the claim
-follows from Lemma~\ref{lem:base4}.
+Write
+\[
+ \operatorname{quad}(p)=3w,
+\]
+where $w$ is a two-coloured Motzkin word.  Then
+\[
+ \operatorname{quad}(4p+1)=3w1,
+ \qquad
+ \operatorname{quad}(4p+2)=3w2.
+\]
+The digits $1$ and $2$ both have $\sigma$-weight $0$, so appending either of
+them preserves the two-coloured Motzkin condition.  The claim follows from
+Lemma~\ref{lem:base4}.
 \end{proof}
 
 We next determine the smallest and largest values in each generation.
@@ -392,44 +499,60 @@ upper bound is attained by
 
 \begin{proof}
 We use induction on $\ell$.  The assertion is immediate for $\ell=0$.
+Write
+\[
+ w=c_0c_1\cdots c_{\ell-1},
+ \qquad
+ c_j\in\{0,1,2,3\}.
+\]
 
 \emph{Lower bound.}
-The first digit cannot be $0$.  If $c_1\in\{1,2\}$, then the suffix
-$w'=c_2\cdots c_\ell$ is again a two-coloured Motzkin word, and hence
+Since $\sigma(0)=-1$, the first digit cannot be $0$.  If
+$c_0\in\{1,2\}$, then the suffix $w'=c_1\cdots c_{\ell-1}$ is again a
+two-coloured Motzkin word.  Hence
 \[
   [w]_4\geq4^{\ell-1}+[w']_4
   \geq4^{\ell-1}+\frac{4^{\ell-1}-1}{3}
   =\frac{4^{\ell}-1}{3}.
 \]
-If $c_1=3$, then
+If $c_0=3$, then
 \[
-  [w]_4\geq3\cdot4^{\ell-1}\geq\frac{4^{\ell}-1}{3}.
+  [w]_4
+  \geq[3\underbrace{00\cdots0}_{\ell-1\text{ digits}}]_4
+  =3\cdot4^{\ell-1}
+  \geq\frac{4^{\ell}-1}{3}.
 \]
 Equality is attained by $w=1^{\ell}$.
 
 \emph{Upper bound.}
-If $c_1\in\{1,2\}$, then $w'$ is again a two-coloured Motzkin word, so
-\[
+If $c_0\in\{1,2\}$, then $w'$ is again a two-coloured Motzkin word, so
+\begin{align*}
   [w]_4
-  \leq2\cdot4^{\ell-1}+\bigl(4^{\ell-1}-2^{\ell-1}\bigr)
-  =3\cdot4^{\ell-1}-2^{\ell-1}
-  \leq4^{\ell}-2^{\ell}.
-\]
+  &=[c_0c_1\cdots c_{\ell-1}]_4\\
+  &\leq[2c_1\cdots c_{\ell-1}]_4\\
+  &\leq2\cdot4^{\ell-1}+\bigl(4^{\ell-1}-2^{\ell-1}\bigr)\\
+  &=3\cdot4^{\ell-1}-2^{\ell-1}\\
+  &\leq4^{\ell}-2^{\ell}.
+\end{align*}
 
-Now suppose $c_1=3$, and let $r$ be the least index at which the prefix weight
-returns to $0$.  Then $2\leq r\leq\ell$, one has $c_r=0$, and
+Now suppose $c_0=3$, and let $r$ be the length of the shortest nonempty prefix
+of $w$ having total weight $0$.  Then $2\leq r\leq\ell$,
+$c_{r-1}=0$, and
 \[
-  u=c_2\cdots c_{r-1},\qquad v=c_{r+1}\cdots c_\ell
+  u=c_1\cdots c_{r-2},
+  \qquad
+  v=c_r\cdots c_{\ell-1}
 \]
 are two-coloured Motzkin words of lengths $r-2$ and $\ell-r$, respectively.
-By place value and the induction hypothesis,
+Thus $w=3u0v$.  By place value and the induction hypothesis,
 \begin{align*}
   [w]_4
   &=3\cdot4^{\ell-1}+[u]_4\,4^{\ell-r+1}+[v]_4\\
   &\leq3\cdot4^{\ell-1}
     +\bigl(4^{r-2}-2^{r-2}\bigr)4^{\ell-r+1}
     +4^{\ell-r}-2^{\ell-r}\\
-  &=4^{\ell}-2^{2\ell-r}+2^{2\ell-2r}-2^{\ell-r}.
+  &=4^{\ell}-2^{2\ell-r}+2^{2\ell-2r}-2^{\ell-r}\\
+  &=4^{\ell}-\bigl(2^{2\ell-r}-2^{2\ell-2r}\bigr)-2^{\ell-r}.
 \end{align*}
 It remains to verify
 \[
