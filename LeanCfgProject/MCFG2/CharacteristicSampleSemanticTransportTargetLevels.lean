@@ -74,7 +74,7 @@ def toAnchorCommonContextCoreData
   baseNonterminals := C.baseNonterminals
   base_covers := C.base_covers
   arities := C.arities
-  commonTransport := C.commonTransport
+  commonContext := C.commonTransport
 
 /-- Convert to the previously named rule-coverage common-context target. -/
 def toRuleCoverageCommonContextTarget
@@ -105,7 +105,7 @@ def toExposingTransportObligations
   C.toCommonContextFromRuleCoverage.toExposingTransportObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationRuleCoverageCommonTransportTarget D) :
     Finset (Word α) :=
   C.toRuleCoverageCommonContextTarget.sample
@@ -124,7 +124,7 @@ theorem contains_witnesses
   C.toRuleCoverageCommonContextTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationRuleCoverageCommonTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toRuleCoverageCommonContextTarget.toFinalReachableData
@@ -206,7 +206,7 @@ def toAnchorCommonContextCoreData
   baseNonterminals := C.baseNonterminals
   base_covers := C.base_covers
   arities := C.arities
-  commonTransport := C.commonTransport
+  commonContext := C.commonTransport
 
 /-- Convert to the component-package common-context target. -/
 def toComponentPackageCommonContextTarget
@@ -237,7 +237,7 @@ def toExposingTransportObligations
   C.toCommonContextFromComponentPackage.toExposingTransportObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentPackageCommonTransportTarget D) :
     Finset (Word α) :=
   C.toComponentPackageCommonContextTarget.sample
@@ -256,7 +256,7 @@ theorem contains_witnesses
   C.toComponentPackageCommonContextTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentPackageCommonTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toComponentPackageCommonContextTarget.toFinalReachableData
@@ -385,7 +385,7 @@ def toExposingTransportObligations
   C.toCommonContextFromComponentEnumeration.toExposingTransportObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentEnumerationCommonTransportTarget D) :
     Finset (Word α) :=
   C.toComponentEnumerationCommonContextTarget.sample
@@ -404,7 +404,7 @@ theorem contains_witnesses
   C.toComponentEnumerationCommonContextTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentEnumerationCommonTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toComponentEnumerationCommonContextTarget.toFinalReachableData
