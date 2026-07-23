@@ -109,7 +109,7 @@ def toGrammarRuleTransportEndpoint
   promise := E.promise
 
 /-- The finite sample produced by this endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationAnchorDistributionCoreEndpoint D) :
     Finset (Word α) :=
   E.toExposingCoreFinalEndpoint.sample
@@ -128,7 +128,7 @@ theorem contains_witnesses
   E.toExposingCoreFinalEndpoint.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationAnchorDistributionCoreEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.toExposingCoreFinalEndpoint.toFinalReachableData
@@ -246,7 +246,7 @@ def toExposingCoreFinalEndpoint
   E.toAnchorDistributionCoreEndpoint.toExposingCoreFinalEndpoint
 
 /-- The finite sample produced by this endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationAnchorDistributionCoreEndpointFromSample D S) :
     Finset (Word α) :=
   E.toAnchorDistributionCoreEndpoint.sample
@@ -271,7 +271,7 @@ theorem contains_witnesses
   E.toAnchorDistributionCoreEndpoint.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationAnchorDistributionCoreEndpointFromSample D S) :
     FinalReachableData G E.sample obs f :=
   E.toAnchorDistributionCoreEndpoint.toFinalReachableData
@@ -398,7 +398,7 @@ def toGrammarRuleTransportEndpoint
   E.toAnchorDistributionCoreEndpoint.toGrammarRuleTransportEndpoint
 
 /-- The finite sample produced by this endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationAnchorCommonContextCoreEndpoint D) :
     Finset (Word α) :=
   E.toAnchorCommonContextFinalData.sample
@@ -417,7 +417,7 @@ theorem contains_witnesses
   E.toAnchorCommonContextFinalData.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationAnchorCommonContextCoreEndpoint D) :
     FinalReachableData G E.sample obs f :=
   E.toAnchorCommonContextFinalData.toFinalReachableData
@@ -547,11 +547,10 @@ def toCommonContextTransportObligationsFromSample
 def toExposingTransportObligationsFromSample
     (E : TrimmedPresentationAnchorCommonContextCoreEndpointFromSample D S) :
     TrimmedPresentationExposingTransportObligationsFromSample D S :=
-  E.toCommonContextTransportObligationsFromSample
-    .toExposingTransportObligationsFromSample
+  E.toCommonContextTransportObligationsFromSample.toExposingTransportObligationsFromSample
 
 /-- The finite sample produced by this endpoint. -/
-def sample
+noncomputable def sample
     (E : TrimmedPresentationAnchorCommonContextCoreEndpointFromSample D S) :
     Finset (Word α) :=
   E.toAnchorCommonContextCoreEndpoint.sample
@@ -576,7 +575,7 @@ theorem contains_witnesses
   E.toAnchorCommonContextCoreEndpoint.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (E : TrimmedPresentationAnchorCommonContextCoreEndpointFromSample D S) :
     FinalReachableData G E.sample obs f :=
   E.toAnchorCommonContextCoreEndpoint.toFinalReachableData
