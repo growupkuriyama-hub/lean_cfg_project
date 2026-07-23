@@ -86,26 +86,26 @@ def toCommonContextFromGrammarRuleBuilder
   promise := C.promise
 
 /-- View the target as compact common-context transport obligations. -/
-def toCommonContextTransportObligations
+noncomputable def toCommonContextTransportObligations
     (C : TrimmedPresentationGrammarBuilderCommonContextTarget D) :
     TrimmedPresentationCommonContextTransportObligations D :=
   C.toCommonContextFromGrammarRuleBuilder.toObligations
 
 /-- View the target as exposing-transport obligations through the common-context
 route. -/
-def toExposingTransportObligations
+noncomputable def toExposingTransportObligations
     (C : TrimmedPresentationGrammarBuilderCommonContextTarget D) :
     TrimmedPresentationExposingTransportObligations D :=
   C.toCommonContextFromGrammarRuleBuilder.toExposingTransportObligations
 
 /-- View the target as a grammar-rule transport endpoint. -/
-def toGrammarRuleTransportEndpoint
+noncomputable def toGrammarRuleTransportEndpoint
     (C : TrimmedPresentationGrammarBuilderCommonContextTarget D) :
     TrimmedPresentationGrammarRuleTransportEndpoint D :=
   C.toCommonContextTransportObligations.toGrammarRuleTransportEndpoint
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationGrammarBuilderCommonContextTarget D) :
     Finset (Word α) :=
   C.toCommonContextFromGrammarRuleBuilder.sample
@@ -124,7 +124,7 @@ theorem contains_witnesses
   C.toCommonContextFromGrammarRuleBuilder.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationGrammarBuilderCommonContextTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toCommonContextFromGrammarRuleBuilder.toFinalReachableData
@@ -217,19 +217,19 @@ def toExposingTransportFromGrammarRuleBuilder
   promise := C.promise
 
 /-- View the target as compact exposing-transport obligations. -/
-def toExposingTransportObligations
+noncomputable def toExposingTransportObligations
     (C : TrimmedPresentationGrammarBuilderExposingTarget D) :
     TrimmedPresentationExposingTransportObligations D :=
   C.toExposingTransportFromGrammarRuleBuilder.toObligations
 
 /-- View the target as a grammar-rule transport endpoint. -/
-def toGrammarRuleTransportEndpoint
+noncomputable def toGrammarRuleTransportEndpoint
     (C : TrimmedPresentationGrammarBuilderExposingTarget D) :
     TrimmedPresentationGrammarRuleTransportEndpoint D :=
   C.toExposingTransportObligations.toGrammarRuleTransportEndpoint
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationGrammarBuilderExposingTarget D) :
     Finset (Word α) :=
   C.toExposingTransportFromGrammarRuleBuilder.sample
@@ -248,7 +248,7 @@ theorem contains_witnesses
   C.toExposingTransportFromGrammarRuleBuilder.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationGrammarBuilderExposingTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toExposingTransportFromGrammarRuleBuilder.toFinalReachableData
@@ -340,7 +340,7 @@ def toCommonContextFromRuleCoverage
   promise := C.promise
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationRuleCoverageCommonContextTarget D) :
     Finset (Word α) :=
   C.toCommonContextFromRuleCoverage.sample
@@ -359,7 +359,7 @@ theorem contains_witnesses
   C.toCommonContextFromRuleCoverage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationRuleCoverageCommonContextTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toCommonContextFromRuleCoverage.toFinalReachableData
@@ -438,7 +438,7 @@ def toExposingTransportFromRuleCoverage
   promise := C.promise
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationRuleCoverageExposingTarget D) :
     Finset (Word α) :=
   C.toExposingTransportFromRuleCoverage.sample
@@ -457,7 +457,7 @@ theorem contains_witnesses
   C.toExposingTransportFromRuleCoverage.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationRuleCoverageExposingTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toExposingTransportFromRuleCoverage.toFinalReachableData
