@@ -20,7 +20,9 @@
 \newcommand{\val}[2]{[#1]_{#2}}
 \newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
 \newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
-\newcommand{\Pset}{\mathcal{P}}
+\newcommand{\Pset}{
+  \bigl(\tfrac{1}{4}\cdot\mathcal{N}_{pD,\geq 12}\bigr)
+}
 \newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\textrm{\underline{#1}}}}
 
 \title{原始Dyck数による加法的表現：\\例外集合と最適位数}
@@ -200,7 +202,7 @@ $48$ 未満の正の原始Dyck数は $2$ と $12$ だけである。実際、長
 
 法4の性質から、中心的な半分化族
 \begin{equation}\label{eq:P-def}
- \Pset=\{v/4:v\in\NpD,\ v\geq12\}
+ \Pset=\{n/4:v\in\NpD,\ n\geq12\}
 \end{equation}
 を導入する。このとき
 \begin{equation}\label{eq:NpD-decomp}
@@ -214,15 +216,15 @@ $48$ 未満の正の原始Dyck数は $2$ と $12$ だけである。実際、長
 
 \section{\texorpdfstring{$\Pset$}{P} の基数\texorpdfstring{$4$}{4}構造}\label{sec:base4}
 
-基数4の各数字に重みを
+4進数の各桁に重みを
 \[
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0
 \]
-によって割り当てる。語 $w=c_1\cdots c_\ell\in\{0,1,2,3\}^{\ell}$ が\emph{2色Motzkin語}であるとは、任意の接頭辞の総重みが非負であり、かつ $w$ 全体の総重みが $0$ であることをいう。重み0の二つの数字 $1$ と $2$ は、異なる色とみなす。$w$ を基数4の数として読んだ値を $[w]_4$ と書き、$[\varepsilon]_4=0$ とする。
+によって割り当てる。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が\emph{2色Motzkin語}であるとは、任意の接頭辞の総重みが非負であり、かつ $w$ 全体の総重みが $0$ であることをいう。重み0の二つの数字 $1$ と $2$ は、異なる色とみなす。$w$ を基数4の数として読んだ値を $[w]_4$ と書き、$[\varepsilon]_4=0$ とする。
 
 \begin{lemma}[基数4による特徴づけ]\label{lem:base4}
-正整数 $p$ が $\Pset$ に属するための必要十分条件は、その基数4展開が $3w$ の形であり、$w$ が2色Motzkin語であることである。
+正整数 $p$ が $\Pset$ に属するための必要十分条件は、その4数展開が $3w$ の形であり、$w$ が2色Motzkin語であることである。
 \end{lemma}
 
 \begin{proof}

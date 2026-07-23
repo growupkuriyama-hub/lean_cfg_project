@@ -101,7 +101,7 @@ def toExposingTransportObligations
   C.toExposingTransportFromRuleCoverage.toObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationRuleCoverageSameContextTransportTarget D) :
     Finset (Word α) :=
   C.toRuleCoverageExposingTarget.sample
@@ -120,7 +120,7 @@ theorem contains_witnesses
   C.toRuleCoverageExposingTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationRuleCoverageSameContextTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toRuleCoverageExposingTarget.toFinalReachableData
@@ -228,7 +228,7 @@ def toExposingTransportObligations
   C.toExposingTransportFromComponentPackage.toObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentPackageSameContextTransportTarget D) :
     Finset (Word α) :=
   C.toComponentPackageExposingTarget.sample
@@ -247,7 +247,7 @@ theorem contains_witnesses
   C.toComponentPackageExposingTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentPackageSameContextTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toComponentPackageExposingTarget.toFinalReachableData
@@ -355,7 +355,7 @@ def toExposingTransportObligations
   C.toExposingTransportFromComponentEnumeration.toObligations
 
 /-- The finite sample produced by the target. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationComponentEnumerationSameContextTransportTarget D) :
     Finset (Word α) :=
   C.toComponentEnumerationExposingTarget.sample
@@ -374,7 +374,7 @@ theorem contains_witnesses
   C.toComponentEnumerationExposingTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (C : TrimmedPresentationComponentEnumerationSameContextTransportTarget D) :
     FinalReachableData G C.sample obs f :=
   C.toComponentEnumerationExposingTarget.toFinalReachableData
