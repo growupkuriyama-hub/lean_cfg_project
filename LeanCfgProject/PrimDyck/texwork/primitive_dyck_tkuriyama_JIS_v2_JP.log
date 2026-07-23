@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  23 JUL 2026 16:24
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  23 JUL 2026 17:07
  restricted system commands enabled.
 **primitive_dyck_tkuriyama_JIS_v2_JP.tex
 (./primitive_dyck_tkuriyama_JIS_v2_JP.tex
@@ -1283,9 +1283,6 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `primitive_dyck_tkuriyama_JIS_v2_JP.out' has 
 not changed.
 (rerunfilecheck)             Checksum: 04C612C9D26DFDB3D906C0232C42247E;864.
@@ -1294,10 +1291,10 @@ not changed.
 Here is how much of LuaTeX's memory you used:
  13518 strings out of 476076
  195720,662416 words of node,token memory allocated
- 9748 words of node memory still in use:
-   11 hlist, 2 vlist, 5 rule, 3 glue, 4 kern, 1 glyph, 4165 attribute, 59 glue_s
-pec, 391 attribute_list, 1 write, 14 user_defined, 1 pdf_action nodes
-   avail lists: 1:15,2:41808,3:380,4:381,5:216,6:38,7:6688,8:70,9:2466,10:37,11:
+ 9796 words of node memory still in use:
+   11 hlist, 2 vlist, 5 rule, 3 glue, 4 kern, 1 glyph, 4187 attribute, 59 glue_s
+pec, 393 attribute_list, 1 write, 14 user_defined, 1 pdf_action nodes
+   avail lists: 1:15,2:41784,3:380,4:381,5:216,6:38,7:6688,8:70,9:2466,10:37,11:
 142
  35588 multiletter control sequences out of 65536+600000
  123 fonts using 86823399 bytes
@@ -1339,7 +1336,7 @@ ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Own
 er/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Us
 ers/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm
 10.pfb>
-Output written on primitive_dyck_tkuriyama_JIS_v2_JP.pdf (26 pages, 521574 bytes
+Output written on primitive_dyck_tkuriyama_JIS_v2_JP.pdf (26 pages, 523241 bytes
 ).
 
 PDF statistics: 505 PDF objects out of 1000 (max. 8388607)

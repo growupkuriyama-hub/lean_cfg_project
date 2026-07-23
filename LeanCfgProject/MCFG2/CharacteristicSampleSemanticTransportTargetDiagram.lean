@@ -77,7 +77,7 @@ def toGrammarBuilderExposingTarget
 
 /-- The final reachable data obtained through the exposing leg agrees
 definitionally with the exposing-target route. -/
-def toFinalReachableDataViaExposing
+noncomputable def toFinalReachableDataViaExposing
     (C : TrimmedPresentationGrammarBuilderSameContextTransportTarget D) :
     FinalReachableData G C.toGrammarBuilderExposingTransportTarget.sample obs f :=
   C.toGrammarBuilderExposingTransportTarget.toFinalReachableData
