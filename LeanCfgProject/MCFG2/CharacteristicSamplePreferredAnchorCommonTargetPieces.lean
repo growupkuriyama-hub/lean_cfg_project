@@ -222,8 +222,7 @@ def toPaperPreferredAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     PaperPreferredAnchorCommonConstructionData
       (G := G) (obs := obs) :=
-  C.toLayeredConstructionData
-    .toPaperPreferredAnchorCommonConstructionData
+  C.toLayeredConstructionData.toPaperPreferredAnchorCommonConstructionData
 
 /-- Separated targets imply existence of the preferred layered construction
 data. -/
