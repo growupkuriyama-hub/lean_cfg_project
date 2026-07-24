@@ -55,7 +55,7 @@ structure PaperExactOnceMinimalPieces where
 namespace PaperExactOnceMinimalPieces
 
 /-- The finite positive sample supplied by the grammar-rule builder. -/
-def sample
+noncomputable def sample
     (C : PaperExactOnceMinimalPieces (G := G) (obs := obs)) :
     Finset (Word α) :=
   C.builder.sample
@@ -75,7 +75,7 @@ theorem sample_positive
 
 /-- Concrete exact-once splicing turns the stored sample data into the ordinary
 reachable characteristic blueprint. -/
-def toExactReachableBlueprint
+noncomputable def toExactReachableBlueprint
     (C : PaperExactOnceMinimalPieces (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     ReachableCharacteristicBlueprint
@@ -137,7 +137,7 @@ theorem paper_characteristic_sample_theorem
     (C : PaperExactOnceMinimalPieces (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     PaperConstructiveCharacteristicSampleConclusion G obs := by
-  show ExistsBoundedPositiveCharacteristicSample G obs
+  change ExistsBoundedPositiveCharacteristicSample G obs
   exact ⟨C.fanoutBound, C.sample, C.sample_positive,
     C.characteristic_sample hexact⟩
 
@@ -146,7 +146,7 @@ theorem paper_prefix_exact_theorem
     (C : PaperExactOnceMinimalPieces (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     PaperConstructivePrefixExactConclusion G obs := by
-  show ExistsBoundedPrefixExactIdentification G obs
+  change ExistsBoundedPrefixExactIdentification G obs
   exact ⟨C.fanoutBound, C.prefix_exact_eventually hexact⟩
 
 /-- Corrected paper-facing identification theorem from the minimal pieces. -/
@@ -154,7 +154,7 @@ theorem paper_main_theorem
     (C : PaperExactOnceMinimalPieces (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     PaperConstructiveIdentificationConclusion G obs := by
-  show ExistsBoundedReachableIdentification G obs
+  change ExistsBoundedReachableIdentification G obs
   exact ⟨C.fanoutBound, C.identifies_from_positive_text hexact⟩
 
 /-- Complete corrected learning conclusion package from the minimal pieces. -/

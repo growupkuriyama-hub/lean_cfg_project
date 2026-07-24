@@ -323,18 +323,19 @@ $\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読
  B:=\operatorname{bin}(4p)=b_1b_2\cdots b_{2L},
  \qquad b_i\in\{0,1\},
 \]
-は長さ $2L\geq4$ の原始Dyck語である。その高さ関数を
+は$|B|=2L\geq4$ かつ$B\in\DP$である。その高さ関数を
 \[
  h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2L)
 \]
-と定める。$B$ が原始Dyck語であることから、
+と定める。条件$B\in\DP$を形式的にかけば、 
+
 \begin{equation}\label{eq:primitive-height}
  h_B(0)=h_B(2L)=0,
  \qquad
  h_B(t)>0\quad(1\leq t<2L)
 \end{equation}
-が成り立つ。
+である。
 
 一方、$4p$ の4進展開を
 \[
@@ -364,11 +365,11 @@ $\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読
 \end{equation}
 を得る。ただし、$j=0$ のとき右辺は空和 $0$ とする。
 
-次に、最初と最後のブロックを決定する。$B$ はDyck語なので $b_1=1$ である。
+次に、最初と最後のブロックを決定する。$B\in\DP$なので $b_1=1$ である。
 もし $b_2=0$ ならば $h_B(2)=0$ となり、$2<2L$ および
 \eqref{eq:primitive-height} に反する。したがって $b_2=1$ であり、
 \[
- q_1=3
+ q_1=b_1b_2=3_{(4)}
 \]
 である。同様に、$b_{2L}=0$ である。もし $b_{2L-1}=1$ ならば、最後のブロックは
 $10$ なので、

@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  25 JUL 2026 03:12
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  25 JUL 2026 04:47
  restricted system commands enabled.
 **primitive_dyck_tkuriyama_JIS_v4_JP.tex
 (./primitive_dyck_tkuriyama_JIS_v4_JP.tex
@@ -1283,7 +1283,7 @@ LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 6.65793pt on input line 293.
  [5] [6] [7] [8] [9] [10](load cache: extra_lmroman5-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 4.62357pt on input line 615.
+(Font)              scaled to size 4.62357pt on input line 616.
  [11] [12] [13] [14] [15] [16] [17] [18]
 [19] [20] [21] [22] [23] [24] [25] [26]
 
@@ -1292,7 +1292,7 @@ Class ltjsarticle Warning: deprecated old font command `\rm' used.
 (ltjsarticle)              new font selection scheme called NFSS2 with several
 (ltjsarticle)              new, combinable font commands. This ltjsarticle
 (ltjsarticle)              class has defined the old font commands like
-(ltjsarticle)              `\rm' only for compatibility on input line 1425.
+(ltjsarticle)              `\rm' only for compatibility on input line 1426.
 
 [27] [28] [29] [30] (./primitive_dyck_tkuriyama_JIS_v4_JP.aux)
  ***********
@@ -1358,7 +1358,7 @@ ner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/U
 sers/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pf
 b><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
 ols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_JIS_v4_JP.pdf (30 pages, 560421 bytes
+Output written on primitive_dyck_tkuriyama_JIS_v4_JP.pdf (30 pages, 560461 bytes
 ).
 
 PDF statistics: 568 PDF objects out of 1000 (max. 8388607)
