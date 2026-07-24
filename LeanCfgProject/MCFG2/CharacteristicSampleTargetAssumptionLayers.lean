@@ -234,8 +234,7 @@ def toSplitCoreWithGlobalAssumptions
       (G := G) (obs := obs)) :
     TrimmedPresentationSplitCoreWithGlobalAssumptions
       (G := G) (obs := obs) :=
-  C.toSplitCoreWithSplitGlobalAssumptions
-    .toSplitCoreWithGlobalAssumptions
+  C.toSplitCoreWithSplitGlobalAssumptions.toSplitCoreWithGlobalAssumptions
 
 /-- Recover the previous core construction package. -/
 def core
@@ -295,8 +294,7 @@ theorem main_theorem_from_transport_choice
       (G := G) (obs := obs))
     (W : TrimmedPresentationTransportWitnessChoice C.base) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitCoreWithGlobalAssumptions
-    .main_theorem_from_transport_choice W
+  C.toSplitCoreWithGlobalAssumptions.main_theorem_from_transport_choice W
 
 /-- Direct exposing transport over the core gives the main theorem. -/
 theorem main_theorem_from_exposing_transport
@@ -304,8 +302,7 @@ theorem main_theorem_from_exposing_transport
       (G := G) (obs := obs))
     (E : TrimmedPresentationExposingContextTransport C.core.data) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitCoreWithGlobalAssumptions
-    .main_theorem_from_exposing_transport E
+  C.toSplitCoreWithGlobalAssumptions.main_theorem_from_exposing_transport E
 
 /-- Anchor common-context transport over the core gives the main theorem. -/
 theorem main_theorem_from_anchor_common_transport
@@ -313,8 +310,7 @@ theorem main_theorem_from_anchor_common_transport
       (G := G) (obs := obs))
     (A : TrimmedPresentationAnchorCommonContextTransport C.core.data) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitCoreWithGlobalAssumptions
-    .main_theorem_from_anchor_common_transport A
+  C.toSplitCoreWithGlobalAssumptions.main_theorem_from_anchor_common_transport A
 
 /-- Same-context transport over the core gives the main theorem. -/
 theorem main_theorem_from_same_context_transport
@@ -322,8 +318,7 @@ theorem main_theorem_from_same_context_transport
       (G := G) (obs := obs))
     (S : TrimmedPresentationSameContextTransport C.core.data) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitCoreWithGlobalAssumptions
-    .main_theorem_from_same_context_transport S
+  C.toSplitCoreWithGlobalAssumptions.main_theorem_from_same_context_transport S
 
 end TrimmedPresentationSplitCoreWithFullySplitGlobalAssumptions
 

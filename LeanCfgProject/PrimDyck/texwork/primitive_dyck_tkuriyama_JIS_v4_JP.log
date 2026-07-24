@@ -1,7 +1,7 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  24 JUL 2026 21:32
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  24 JUL 2026 22:12
  restricted system commands enabled.
-**primitive_dyck_tkuriyama_JIS_v3_JP.tex
-(./primitive_dyck_tkuriyama_JIS_v3_JP.tex
+**primitive_dyck_tkuriyama_JIS_v4_JP.tex
+(./primitive_dyck_tkuriyama_JIS_v4_JP.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 Lua module: luaotfload 2024-12-03 v3.29 Lua based OpenType font support
@@ -987,8 +987,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip63
 )
 \c@theorem=\count327
- (./primitive_dyck_tkuriyama_JIS_v3_JP.aux)
-\openout1 = primitive_dyck_tkuriyama_JIS_v3_JP.aux
+ (./primitive_dyck_tkuriyama_JIS_v4_JP.aux)
+\openout1 = primitive_dyck_tkuriyama_JIS_v4_JP.aux
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
 LaTeX Font Info:    ... okay on input line 32.
@@ -1096,11 +1096,11 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring OFF on input line 32.
-(./primitive_dyck_tkuriyama_JIS_v3_JP.out)
-(./primitive_dyck_tkuriyama_JIS_v3_JP.out)
+(./primitive_dyck_tkuriyama_JIS_v4_JP.out)
+(./primitive_dyck_tkuriyama_JIS_v4_JP.out)
 \@outlinefile=\write3
 
-\openout3 = primitive_dyck_tkuriyama_JIS_v3_JP.out
+\openout3 = primitive_dyck_tkuriyama_JIS_v4_JP.out
 (load cache: extra_lmroman17-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
 (Font)              scaled to size 15.97902pt on input line 35.
@@ -1294,7 +1294,7 @@ Class ltjsarticle Warning: deprecated old font command `\rm' used.
 (ltjsarticle)              class has defined the old font commands like
 (ltjsarticle)              `\rm' only for compatibility on input line 1425.
 
-[27] [28] [29] [30] (./primitive_dyck_tkuriyama_JIS_v3_JP.aux)
+[27] [28] [29] [30] (./primitive_dyck_tkuriyama_JIS_v4_JP.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -1304,7 +1304,7 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-Package rerunfilecheck Info: File `primitive_dyck_tkuriyama_JIS_v3_JP.out' has 
+Package rerunfilecheck Info: File `primitive_dyck_tkuriyama_JIS_v4_JP.out' has 
 not changed.
 (rerunfilecheck)             Checksum: 04C612C9D26DFDB3D906C0232C42247E;864.
 )
@@ -1358,7 +1358,7 @@ ner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/U
 sers/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pf
 b><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
 ols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_JIS_v3_JP.pdf (30 pages, 560704 bytes
+Output written on primitive_dyck_tkuriyama_JIS_v4_JP.pdf (30 pages, 560421 bytes
 ).
 
 PDF statistics: 568 PDF objects out of 1000 (max. 8388607)

@@ -78,7 +78,7 @@ an up-step and $0$ as a down-step, the associated lattice path returns to
 height zero for the first time only at its endpoint.\footnote{Such paths are
 also commonly called \emph{irreducible} or \emph{indecomposable} Dyck paths.}
 Let $\DP$ denote the language of primitive Dyck words; the empty word
-$\varepsilon$ is not included in $\DP$.  Ordered by length and then
+$\lambda$ is not included in $\DP$.  Ordered by length and then
 lexicographically, its first eighteen elements are
 \[
 \begin{gathered}
@@ -178,7 +178,7 @@ length $2n$, and every primitive one is uniquely of the form $1u0$ with
 $u$ a Dyck word of length $2n-2$; so there are $C_{n-1}$ primitive words
 of length $2n$.  From the Catalan formula
 $C_n=\frac1{n+1}\binom{2n}{n}$\footnote{The context-free grammar
-$S\to\varepsilon\mid 1S0S$ gives the unique decomposition $1u0v$ of every
+$S\to\lambda\mid 1S0S$ gives the unique decomposition $1u0v$ of every
 nonempty Dyck word, where $u$ and $v$ are Dyck words.  Hence $C_0=1$ and
 $C_n=\sum_{k=0}^{n-1}C_kC_{n-1-k}$.  If
 $B_n=\frac{1}{n+1}\binom{2n}{n}$, then the binomial convolution identity gives
@@ -291,7 +291,7 @@ representation of $46$ has the form
 \[
         46=12a+2b,\qquad a,b\geq0.
 \]
-Equivalently, $6a+b=23$.  Since $12\cdot4>46$, we have $a\leq3$, and
+Equivalently, $6a+b=23$.  Since $6\cdot4>23$, we have $a\leq3$, and
 hence the number of summands satisfies
 \[
         a+b=23-5a\geq8.
@@ -339,21 +339,19 @@ base-$4$ structure of the family.  Assign weights to the base-$4$ digits by
   \sigma(1)=\sigma(2)=0.
 \]
 A word $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ is called a
-\emph{two-coloured Motzkin word} if every prefix has nonnegative total weight
-and the total weight of $w$ is $0$.\footnote{The two zero-weight digits $1$
-and $2$ are regarded as distinct colours.}  Let $\mathsf{Motz}$ denote the
-set of all two-coloured Motzkin words.  Unlike $\DP$, it contains the empty
-word $\varepsilon$.  Write $[w]_4$ for the value of $w$ as a base-$4$
-numeral, and set $[\varepsilon]_4=0$.  For a positive integer $n$, let
-$\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote its standard
-binary and base-$4$ expansions, respectively.
+\emph{two-coloured Motzkin word}\footnote{The two zero-weight digits $1$
+and $2$ are regarded as distinct colours.} if every prefix has nonnegative
+total weight and the total weight of $w$ is $0$.  In particular, the running
+prefix weight is allowed to return to $0$ more than once.  Let $\mathsf{Motz}$
+denote the set of all two-coloured Motzkin words.  Unlike $\DP$,
+$\mathsf{Motz}$ contains the empty word $\lambda$.  Write $[w]_4$ for the
+value of $w$ as a base-$4$ numeral, and set $[\lambda]_4=0$.  For a positive
+integer $n$, let $\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote
+its standard binary and base-$4$ expansions, respectively.
 
 \begin{lemma}[Base-$4$ characterization]\label{lem:base4}
 A positive integer $p$ lies in $\Pset$ if and only if there exists
-$w\in\mathsf{Motz}$ such that
-\[
- \operatorname{quad}(p)=3w.
-\]
+$w\in\mathsf{Motz}$ such that $\operatorname{quad}(p)=3w$.
 \end{lemma}
 
 \begin{proof}
@@ -390,10 +388,10 @@ Grouping the binary digits from the left into consecutive pairs gives
 \]
 The correspondences
 \[
- 3\longleftrightarrow11,\qquad
- 2\longleftrightarrow10,\qquad
- 1\longleftrightarrow01,\qquad
- 0\longleftrightarrow00
+ 3_{(4)}\longleftrightarrow11_{(2)},\qquad
+ 2_{(4)}\longleftrightarrow10_{(2)},\qquad
+ 1_{(4)}\longleftrightarrow01_{(2)},\qquad
+ 0_{(4)}\longleftrightarrow00_{(2)}
 \]
 show that the change in height across the $j$th block is
 \[
@@ -422,47 +420,51 @@ Since $h_B(2L)=0$, this would give $h_B(2L-2)=0$, again contradicting
  q_L=0.
 \]
 
+It remains to verify the weight conditions defining $\mathsf{Motz}$.
 For $1\leq j\leq L-1$, one has $2j<2L$, so
-$h_B(2j)>0$ by \eqref{eq:primitive-height}.  Since $h_B(2j)$ is even,
+$h_B(2j)>0$ by \eqref{eq:primitive-height}.  Since $h_B(2j)$ is a positive
+even integer, equation~\eqref{eq:height-sigma} gives
 \begin{equation}\label{eq:prefix-height}
  \sum_{i=1}^{j}\sigma(q_i)
  =\frac{h_B(2j)}{2}
  \geq1
  \qquad(1\leq j\leq L-1).
 \end{equation}
-Dividing $4p$ by $4$ deletes the final base-$4$ digit $0$.  Consequently,
+Since dividing $4p$ by $4$ deletes its final base-$4$ digit $0$, we have
 \[
  \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=3u,
  \qquad
  u:=q_2q_3\cdots q_{L-1}.
 \]
 
-Consider a prefix of $u$ of length $r$, where $0\leq r\leq L-2$.
-For $r=0$ its weight is the empty sum $0$.  For
-$1\leq r\leq L-2$, applying \eqref{eq:prefix-height} with $j=r+1$ gives
+It remains to show that $u\in\mathsf{Motz}$.  Consider a prefix of $u$ of
+length $r$, where $0\leq r\leq L-2$.  For $r=0$ its weight is the empty sum
+$0$.  For $1\leq r\leq L-2$, applying \eqref{eq:prefix-height} with
+$j=r+1$ gives
 \begin{equation}\label{eq:motzkin-prefix-nonnegative}
  \sum_{i=2}^{r+1}\sigma(q_i)
  =\sum_{i=1}^{r+1}\sigma(q_i)-\sigma(q_1)
  \geq1-1=0.
 \end{equation}
 Moreover, applying \eqref{eq:height-sigma} with $j=L$ gives
-\[
+\begin{equation}\label{eq:total-weight-zero}
  \sum_{i=1}^{L}\sigma(q_i)
- =\frac{h_B(2L)}{2}=0.
-\]
+ =\frac{h_B(2L)}{2}
+ =0.
+\end{equation}
 Since $\sigma(q_1)=\sigma(3)=1$ and
-$\sigma(q_L)=\sigma(0)=-1$, it follows that
+$\sigma(q_L)=\sigma(0)=-1$, equation~\eqref{eq:total-weight-zero} gives
 \[
- \sum_{i=2}^{L-1}\sigma(q_i)=0.
+ \sum_{i=2}^{L-1}\sigma(q_i)
+ =\sum_{i=1}^{L}\sigma(q_i)
+  -\bigl(\sigma(q_1)+\sigma(q_L)\bigr)
+ =0.
 \]
 Thus every prefix of $u$ has nonnegative weight and the total weight of $u$
 is $0$.  Therefore $u\in\mathsf{Motz}$, proving the forward implication.
 
 Conversely, suppose that there exists $w\in\mathsf{Motz}$ such that
-\[
- \operatorname{quad}(p)=3w.
-\]
-Write
+$\operatorname{quad}(p)=3w$.  Write
 \[
  \operatorname{quad}(p)=q_1q_2\cdots q_m,
  \qquad
@@ -495,67 +497,67 @@ by
 \]
 on letters.  Put $q_{m+1}:=0$ and set
 \[
- U:=\phi(q_1q_2\cdots q_mq_{m+1})
+ B:=\phi(q_1q_2\cdots q_mq_{m+1})
    =b_1b_2\cdots b_{2m+2}.
 \]
 Because each base-$4$ digit is replaced by its two-bit binary block,
 \begin{equation}\label{eq:block-value}
- [U]_2=[q_1q_2\cdots q_m0]_4=4p.
+ [B]_2=[q_1q_2\cdots q_m0]_4=4p.
 \end{equation}
 Define
 \[
- h_U(t):=\sum_{i=1}^{t}(2b_i-1)
+ h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2m+2).
 \]
 The same block calculation as above gives
 \begin{equation}\label{eq:reverse-height-sigma}
- h_U(2j)=2\sum_{i=1}^{j}\sigma(q_i)
+ h_B(2j)=2\sum_{i=1}^{j}\sigma(q_i)
  \qquad(0\leq j\leq m+1).
 \end{equation}
 
 We first check the block boundaries.  For $1\leq j\leq m$,
 \[
  \sum_{i=1}^{j}\sigma(q_i)
+ =\sigma(q_1)+\sum_{i=2}^{j}\sigma(q_i)
  =1+\sum_{i=2}^{j}\sigma(q_i)
  \geq1,
 \]
 where the second sum is empty when $j=1$.  Hence
 \begin{equation}\label{eq:positive-even-height}
- h_U(2j)\geq2
+ h_B(2j)\geq2
  \qquad(1\leq j\leq m).
 \end{equation}
 On the other hand, $\sigma(q_{m+1})=\sigma(0)=-1$ and
 \eqref{eq:reverse-motzkin-total} imply
 \[
  \sum_{i=1}^{m+1}\sigma(q_i)
- =1+\sum_{i=2}^{m}\sigma(q_i)-1=0.
+ =\sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)+\sigma(q_{m+1})
+ =1+0-1=0.
 \]
 Thus
 \begin{equation}\label{eq:terminal-height}
- h_U(2m+2)=0.
+ h_B(2m+2)=0.
 \end{equation}
 
 It remains to check the positions inside the blocks, namely the odd positions
 $2j-1$ for $1\leq j\leq m+1$.  For $j=1$, since $q_1=3$, the first block
-is $11$ and
-\[
- h_U(1)=h_U(0)+1=1.
-\]
+is $11$, and hence $h_B(1)=1$.
+
 Now let $2\leq j\leq m$.  If $q_j\in\{2,3\}$, its block is $10$ or $11$,
 so its first bit is $1$.  By \eqref{eq:positive-even-height}, applied with
 $j-1$ in place of $j$,
 \[
- h_U(2j-1)=h_U(2j-2)+1\geq3.
+ h_B(2j-1)=h_B(2j-2)+1\geq3.
 \]
 If $q_j=1$, its block is $01$, and the same shifted application of
 \eqref{eq:positive-even-height} gives
 \[
- h_U(2j-1)=h_U(2j-2)-1\geq1.
+ h_B(2j-1)=h_B(2j-2)-1\geq1.
 \]
-Finally suppose that $q_j=0$.  By
-\eqref{eq:reverse-motzkin-prefix},
+Finally suppose that $q_j=0$.  By \eqref{eq:reverse-motzkin-prefix},
 \[
  0\leq\sum_{i=2}^{j}\sigma(q_i)
+ =\sum_{i=2}^{j-1}\sigma(q_i)+\sigma(q_j)
  =\sum_{i=2}^{j-1}\sigma(q_i)-1,
 \]
 so
@@ -564,44 +566,39 @@ so
 \]
 Therefore \eqref{eq:reverse-height-sigma} gives
 \[
- h_U(2j-2)
+ h_B(2j-2)
  =2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
  \geq4,
 \]
 and hence
 \[
- h_U(2j-1)=h_U(2j-2)-1\geq3.
+ h_B(2j-1)=h_B(2j-2)-1\geq3.
 \]
 
 For the appended terminal digit $q_{m+1}=0$,
 \eqref{eq:reverse-motzkin-total} and
 \eqref{eq:reverse-height-sigma} give
 \[
- h_U(2m)=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)=2.
+ h_B(2m)=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)=2.
 \]
 Thus the terminal block $00$ passes through height
 \[
- h_U(2m+1)=1
+ h_B(2m+1)=1
 \]
 and ends at the height in \eqref{eq:terminal-height}.
 
 Every integer $t$ with $1\leq t<2m+2$ is either $t=2j$ for some
 $1\leq j\leq m$, or $t=2j-1$ for some $1\leq j\leq m+1$.
 The even case is covered by \eqref{eq:positive-even-height}, and the odd
-case by the preceding case distinction.  Hence
-\[
- h_U(t)>0\qquad(1\leq t<2m+2),
-\]
-while \eqref{eq:terminal-height} gives $h_U(2m+2)=0$.  Therefore $U$ is a
-primitive Dyck word, so $U\in\DP$.
+case by the preceding case distinction.  Thus $h_B(t)>0$ for every
+$1\leq t<2m+2$, whereas \eqref{eq:terminal-height} gives
+$h_B(2m+2)=0$.  Therefore $B$ is a primitive Dyck word, and hence
+$B\in\DP$.
 
 Since the first base-$4$ digit of $p$ is $3$, one has $p\geq3$ and hence
-$4p\geq12$.  Together with \eqref{eq:block-value} and $U\in\DP$, this gives
-\[
- 4p\in\NpD,\qquad 4p\geq12.
-\]
-By the definition of $\Pset$, $p\in\Pset$.  This proves the reverse
-implication.
+$4p\geq12$.  Together with \eqref{eq:block-value} and $B\in\DP$, this gives
+$4p\in\NpD$ and $4p\geq12$.  By the definition of $\Pset$, $p\in\Pset$.
+This proves the reverse implication.
 \end{proof}
 
 The characterization gives the self-similarity used later.
@@ -642,6 +639,7 @@ upper bound is attained by
     3^a2\,0^a,&\ell=2a+1.
   \end{cases}
 \]
+Here $1^0$ is understood to be the empty word $\lambda$.
 \end{lemma}
 
 \begin{proof}
@@ -758,7 +756,7 @@ at $g_{d+1}>3\cdot4^d$.  Finally,
 \section{A regular family and six-term interval filling}\label{sec:regular}
 
 Inside the base-$4$ family described in Section~\ref{sec:base4}, a simple regular pattern runs through the primitive Dyck words.  For
-example, the binary expansion of $868$ factors as
+example, $868\in\NpD$, and its binary expansion factors as
 \[
  \operatorname{bin}(868)=1101100100=11\,01\,10\,01\,00
  \in 11(01\mid10)^*00 .
@@ -779,12 +777,10 @@ When $k=0$ the string $\varepsilon_1\cdots\varepsilon_k$ is empty, so
 the corresponding element is $\val{3}{4}=3$.  Multiplying by $4$ appends
 a base-$4$ zero.  Replacing each base-$4$ digit by its two binary digits,
 \[
-\begin{aligned}
- 3_{(4)}&\longleftrightarrow11_{(2)},&
- 1_{(4)}&\longleftrightarrow01_{(2)},\\
- 2_{(4)}&\longleftrightarrow10_{(2)},&
- 0_{(4)}&\longleftrightarrow00_{(2)}.
-\end{aligned}
+ 3_{(4)}\longleftrightarrow11_{(2)},\qquad
+ 2_{(4)}\longleftrightarrow10_{(2)},\qquad
+ 1_{(4)}\longleftrightarrow01_{(2)},\qquad
+ 0_{(4)}\longleftrightarrow00_{(2)}.
 \]
 we find that every positive element of $4\cdot\mathcal E$ has binary
 expansion in $11(01\mid10)^*00$.  After the initial $11$ the path stands
@@ -1669,7 +1665,7 @@ Now suppose, for contradiction, that
 \[
   x=q_1+\cdots+q_t,\qquad t\leq4,\qquad q_i\in\Pset.
 \]
-Let $\lambda$ be the number of large summands.  If $\lambda\leq2$, then filling
+Let $N_{\rm b}$ be the number of large summands.  If $N_{\rm b}\leq2$, then filling
 the remaining positions with the largest possible small summands gives
 \begin{align*}
   x
@@ -1678,7 +1674,7 @@ the remaining positions with the largest possible small summands gives
   &=10\cdot4^k-3\cdot2^k
   <10\cdot4^k-2=x,
 \end{align*}
-a contradiction.  Hence $\lambda\geq3$.  But then the three large summands
+a contradiction.  Hence $N_{\rm b}\geq3$.  But then the three large summands
 alone have sum at least
 \[
   3g_{k+1}=10\cdot4^k-1=x+1
