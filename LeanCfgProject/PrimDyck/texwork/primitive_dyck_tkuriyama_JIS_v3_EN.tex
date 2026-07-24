@@ -59,22 +59,27 @@ Secondary 05A15, 68Q45.
 
 \section{Introduction}\label{sec:introduction}
 
-Every string of balanced parentheses can be written over the alphabet
-$\{1,0\}$, with $1$ for an opening bracket and $0$ for a closing one,
-and so read as a binary integer.  Which integers arise this way, and how
-additively rich is the set they form?  We take up a natural variant of
-that question.
+For example, the balanced parenthesis string $()(())$ becomes the word
+$101100$ when an opening parenthesis is encoded by $1$ and a closing
+parenthesis by $0$.  More generally, every balanced parenthesis string can
+be written over the alphabet $\{1,0\}$ in this way\footnote{The set of all
+words over this alphabet is denoted by $\{0,1\}^*$; it is a regular
+language.} and hence read as a binary integer.  Which integers arise this
+way, and how additively rich is the set they form?  We take up a natural
+variant of that question.
 
 A \emph{Dyck word} is a word $w\in\{1,0\}^*$ with equally many $1$'s
-and $0$'s in which every prefix has at least as many $1$'s as $0$'s;
-thus $1$ opens a parenthesis and $0$ closes it.  A nonempty Dyck word is
-\emph{primitive} if none of its proper nonempty prefixes is itself
-balanced---equivalently, if the associated lattice path returns to
-height zero for the first time only at its endpoint.  Such paths are
-also commonly called \emph{irreducible} or \emph{indecomposable} Dyck
-paths.  Let $\DP$ denote the language
-of primitive Dyck words.  Ordered by length and then lexicographically,
-its first eighteen elements are
+and $0$'s in which every prefix has at least as many $1$'s as $0$'s.\footnote{The
+Dyck language is not regular, but it is context-free.}  For example, the
+unique factorization of the Dyck word $101100$ into primitive Dyck words is
+$101100=10\cdot1100$.  A nonempty Dyck word is \emph{primitive} if none of
+its proper nonempty prefixes is balanced.  Equivalently, if $1$ is viewed as
+an up-step and $0$ as a down-step, the associated lattice path returns to
+height zero for the first time only at its endpoint.\footnote{Such paths are
+also commonly called \emph{irreducible} or \emph{indecomposable} Dyck paths.}
+Let $\DP$ denote the language of primitive Dyck words; the empty word
+$\varepsilon$ is not included in $\DP$.  Ordered by length and then
+lexicographically, its first eighteen elements are
 \[
 \begin{gathered}
 10,\ 1100,\ 110100,\ 111000,\ 11010100,\ 11011000,\\
@@ -85,24 +90,24 @@ its first eighteen elements are
 \]
 
 For a word $w$ over the base-$m$ digits, let $\val{w}{m}$ denote the
-integer it represents in base $m$.  Adjoining $0$ for convenience in additive
-representations, set
+integer it represents in base $m$.  For convenience in the additive
+representations considered in this paper, we adjoin $0$ and set
 \[
  \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}.
 \]
-This convention does not affect the conclusions of the theorems below.
-The first eighteen positive elements are
+The convention $0\in\NpD$ is inessential to the conclusions below.  The
+first eighteen positive elements are
 \[
 \begin{gathered}
 2,12,52,56,212,216,228,232,240,\\
 852,856,868,872,880,916,920,932,936;
 \end{gathered}
 \]
-this is OEIS sequence \seqnum{A057547} \cite{OEIS-A057547}.  Every positive member of
-$\NpD$ is even, since every nonempty Dyck word ends in $0$.  Thus only
-even target integers can be represented by sums from $\NpD$.
+this is OEIS sequence \seqnum{A057547} \cite{OEIS-A057547}.  Every positive
+member of $\NpD$ is even, since every nonempty Dyck word ends in $0$.
+Thus only even target integers can be represented by sums from $\NpD$.
 
-The following sharper congruence observation will be used repeatedly.
+We shall repeatedly use the following elementary mod-$4$ observation.
 
 \begin{lemma}\label{lem:mod4}
 The number $2$ is the only positive primitive Dyck number congruent to
@@ -111,11 +116,15 @@ by $4$.
 \end{lemma}
 
 \begin{proof}
-Every nonempty Dyck word ends in $0$.  A primitive Dyck word of length at
-least four must in fact end in $00$: if it ended in $10$, the path would
-already have returned to height zero just before its last two letters.
-The word $10$ represents $2$, and every longer primitive word therefore
-represents a multiple of $4$.
+Let $w\in\DP$, and let $|w|$ denote its length.  Since $w$ is balanced and
+nonempty, its last letter is $0$.  If $|w|=2$, then necessarily $w=10$ and
+$[w]_2=2$.  Suppose that $|w|\geq4$ and write
+\[
+ w=ub0,\qquad b\in\{0,1\}.
+\]
+If $b=1$, then the suffix $10$ has net height zero, so the proper prefix
+$u$ is already balanced, contradicting the primitivity of $w$.  Hence
+$b=0$.  Thus $w$ ends in $00$, and therefore $4\mid[w]_2$.
 \end{proof}
 
 Bell, Lidbetter, and Shallit studied the larger set obtained from
@@ -134,6 +143,14 @@ primitive Dyck words, whereas here each summand must consist of a single
 factor.  Consequently, a representation by unrestricted Dyck numbers
 does not in general yield a representation by the same number of
 primitive Dyck numbers.
+
+The additive representations considered here are far from unique.  For
+example,
+\[
+ 2026=2+240+852+932=2+216+872+936.
+\]
+The seven distinct integers appearing in these two representations all
+have primitive Dyck binary expansions.
 
 Digit-defined additive bases have also been studied by automata-theoretic
 methods.  Bell, Hare, and Shallit characterized automatic sets that form
@@ -160,7 +177,7 @@ tends to $1/4$ as $n\to\infty$.  Indeed, there are $C_n$ Dyck words of
 length $2n$, and every primitive one is uniquely of the form $1u0$ with
 $u$ a Dyck word of length $2n-2$; so there are $C_{n-1}$ primitive words
 of length $2n$.  From the Catalan formula
-$C_n=\frac1{n+1}\binom{2n}{n}$\footnote{The grammar
+$C_n=\frac1{n+1}\binom{2n}{n}$\footnote{The context-free grammar
 $S\to\varepsilon\mid 1S0S$ gives the unique decomposition $1u0v$ of every
 nonempty Dyck word, where $u$ and $v$ are Dyck words.  Hence $C_0=1$ and
 $C_n=\sum_{k=0}^{n-1}C_kC_{n-1-k}$.  If
@@ -170,19 +187,21 @@ $C_n=B_n$.},
 \[
  \frac{C_{n-1}}{C_n}=\frac{n+1}{2(2n-1)}\longrightarrow\frac14 .
 \]
-Its arithmetic effect, however, is striking.  Although all sufficiently
-large even integers need only three unrestricted Dyck summands, the
-primitive family has a small but nontrivial exceptional set.  We show
-that precisely eleven positive even integers fail to be sums of at most
-six primitive Dyck numbers.  Ten require seven summands, while $46$
-alone requires eight.  All eleven exceptions lie below $848$.
+Its arithmetic behaviour, however, acquires a genuinely hierarchical
+feature.  Although all sufficiently large even integers need only three
+unrestricted Dyck summands, restricting the summands to the primitive family
+produces a small but nontrivially shaped exceptional set.  We show that
+precisely eleven positive even integers fail to be sums of at most six
+primitive Dyck numbers.  Ten require seven summands, while $46$ alone
+requires eight.  All eleven exceptions lie below $848$.
 
-The need for eight summands is entirely local: below $48$ the only
-positive primitive Dyck numbers are $2$ and $12$.  The eventual
-six-summand bound, on the other hand, comes from two self-similar
-families.  A regular subfamily handles multiples of $4$, while the full
-primitive family after division by $4$ handles the remaining congruence
-class.
+The eight-summand phenomenon is local and is caused by the fact that the only
+positive primitive Dyck numbers below $48$ are $2$ and $12$.  By contrast,
+the sharpness of the eventual six-summand bound is structural.  A regular
+subfamily handles multiples of $4$, while the full primitive family after
+division by $4$ handles the remaining congruence class; moreover, the
+explicit sequence $(N_k)_{k\geq2}$ constructed below tends to infinity and
+satisfies $r(N_k)=6$.
 
 For a positive even integer $N$, let $r(N)$ be the least number of
 positive primitive Dyck numbers whose sum is $N$, and define the central
@@ -198,9 +217,10 @@ This sequence has been registered in the OEIS as
 1,2,1,2,3,4,2,3,2,3,4,5,3,4,3,4,5,6,4,5,4,5,6,7,5.
 \end{gathered}
 \]
-The following Python program reproduces the displayed terms and generates
-50,000 terms of the sequence, making some recurring patterns visible:
-\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/A395858.py}{\path{A395858.py} at the fixed repository snapshot \texttt{3525cfb}}.
+The generating program is
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/A395858.py}{\path{A395858.py}},
+and the actual output of its first $50{,}000$ terms is available as
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/b395858.txt}{\path{b395858.txt}}.
 
 \begin{theorem}\label{thm:classification}
 The values of $r(N)$ exceeding six are exactly as follows:
@@ -233,7 +253,10 @@ Thus the main theorem gives a complete determination of all terms of
 $a(n)$ exceeding six, rather than only an eventual estimate.
 
 
-The eventual bound six is also best possible.
+A casual inspection of the computed terms may suggest that occurrences of
+the value $6$ become rarer and eventually disappear.  This is not the case:
+there is an explicit sequence of increasingly remote obstructions $N_k$, and
+the eventual upper bound six is best possible.
 
 \begin{theorem}\label{thm:asymptotic-order}
 Let
@@ -245,10 +268,7 @@ Then $h_{\mathrm{asym}}=6$.  More precisely, for every integer $k\geq2$,
 \[
  N_k=10\cdot4^{k+1}-6
 \]
-satisfies $r(N_k)=6$.  Equivalently,
-\[
- a(5\cdot4^{k+1}-3)=6\qquad(k\geq2).
-\]
+satisfies $r(N_k)=6$.
 \end{theorem}
 
 Thus the finite exceptional set above coexists with infinitely many large
@@ -282,12 +302,6 @@ Equality is attained by
 \]
 \end{proof}
 
-For example,
-\[
- 2026=2+240+852+932=2+216+872+936.
-\]
-The seven distinct integers appearing in these two representations all
-have primitive Dyck binary expansions.
 
 The sumset notation used below is standard in additive-basis theory
 \cite[Chap.\ 1]{Nathanson}.  For a nonnegative integer $k$, let $kX$ denote the
@@ -296,165 +310,298 @@ $0X=\{0\}$, and put
 \[
  F_k(X)=\bigcup_{j=0}^{k}jX.
 \]
-Thus $F_k(X)$ is the set of sums of at most $k$ elements of $X$.  For a scalar
-$c$, write $c\cdot X=\{cx:x\in X\}$ for the dilation of $X$.
+Thus $F_k(X)$ is the set of sums of at most $k$ elements of $X$.  This
+notation should not be confused with dilation: in general,
+$jX\neq\{jx:x\in X\}$.  For a scalar $c$, we distinguish the dilation by
+writing $c\cdot X=\{cx:x\in X\}$.
 
 The mod-$4$ property motivates the central halved family
 \begin{equation}\label{eq:P-def}
- \Pset=\{v/4:v\in\NpD,\ v\geq12\},
+ \Pset=\{v/4:v\in\NpD,\ v\geq12\}.
 \end{equation}
-so that
-\begin{equation}\label{eq:NpD-decomp}
- \NpD=\{0,2\}\cup4\Pset.
-\end{equation}
-The first elements of $\Pset$ are
+Its first elements are
 \[
  3,13,14,53,54,57,58,60,213,214,217,\ldots.
 \]
+Then
+\begin{equation}\label{eq:NpD-decomp}
+ \NpD=\{0,2\}\cup4\Pset.
+\end{equation}
 
 
 \section{The base-\texorpdfstring{$4$}{4} structure of
 \texorpdfstring{$\Pset$}{P}}\label{sec:base4}
 
-Assign weights to the base-$4$ digits by
+The division by $4$ in the definition of $\Pset$ is chosen to expose the
+base-$4$ structure of the family.  Assign weights to the base-$4$ digits by
 \[
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0.
 \]
 A word $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ is called a
 \emph{two-coloured Motzkin word} if every prefix has nonnegative total weight
-and the total weight of $w$ is $0$.  The two zero-weight digits $1$ and $2$ are
-regarded as distinct colours.  Write $[w]_4$ for the value of $w$ as a base-$4$
-numeral, with $[\varepsilon]_4=0$.  For a positive integer $n$, let
-$\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote its standard binary
-and base-$4$ expansions, respectively.
+and the total weight of $w$ is $0$.\footnote{The two zero-weight digits $1$
+and $2$ are regarded as distinct colours.}  Let $\mathsf{Motz}$ denote the
+set of all two-coloured Motzkin words.  Unlike $\DP$, it contains the empty
+word $\varepsilon$.  Write $[w]_4$ for the value of $w$ as a base-$4$
+numeral, and set $[\varepsilon]_4=0$.  For a positive integer $n$, let
+$\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote its standard
+binary and base-$4$ expansions, respectively.
 
 \begin{lemma}[Base-$4$ characterization]\label{lem:base4}
-A positive integer $p$ lies in $\Pset$ if and only if its base-$4$ expansion has
-the form $3w$, where $w$ is a two-coloured Motzkin word.
+A positive integer $p$ lies in $\Pset$ if and only if there exists
+$w\in\mathsf{Motz}$ such that
+\[
+ \operatorname{quad}(p)=3w.
+\]
 \end{lemma}
 
 \begin{proof}
-Suppose first that $p\in\Pset$.  Then
+Suppose first that $p\in\Pset$.  By the definition of $\Pset$,
 \[
- v:=4p\in\NpD,\qquad v\geq12.
+ 4p\in\NpD,\qquad 4p\geq12.
 \]
-Write the binary expansion of $v$ as
+Hence the binary expansion
 \[
- b_1b_2\cdots b_{2L}\qquad(b_i\in\{0,1\}),
+ B:=\operatorname{bin}(4p)=b_1b_2\cdots b_{2L},
+ \qquad b_i\in\{0,1\},
 \]
-and define its height function by
+is a primitive Dyck word of length $2L\geq4$.  Define its height function by
 \[
- h(t):=\sum_{i=1}^{t}(2b_i-1)
+ h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2L).
 \]
-Since $v$ is represented by a primitive Dyck word,
-\[
- h(0)=h(2L)=0,
+Since $B$ is primitive,
+\begin{equation}\label{eq:primitive-height}
+ h_B(0)=h_B(2L)=0,
  \qquad
- h(t)>0\quad(1\leq t<2L).
-\]
-Group the binary digits into consecutive pairs and put
-\[
- d_j:=2b_{2j-1}+b_{2j}\in\{0,1,2,3\}
- \qquad(1\leq j\leq L).
-\]
-Then $d_1\cdots d_L$ is the base-$4$ expansion of $v$.  The correspondence
-\[
-  11\leftrightarrow3,\quad 10\leftrightarrow2,\quad
-  01\leftrightarrow1,\quad 00\leftrightarrow0
-\]
-shows that
-\[
- h(2j)-h(2j-2)=2\sigma(d_j),
-\]
-and hence
-\begin{equation}\label{eq:height-sigma}
- h(2j)=2\sum_{i=1}^{j}\sigma(d_i)
- \qquad(0\leq j\leq L).
+ h_B(t)>0\quad(1\leq t<2L).
 \end{equation}
 
-Because the primitive word has length at least four, its first pair is $11$
-and its last pair is $00$: otherwise it would return to height $0$ after its
-first two bits or before its last two bits.  Thus
+Write the base-$4$ expansion of $4p$ as
 \[
- d_1=3,\qquad d_L=0.
+ \operatorname{quad}(4p)=q_1q_2\cdots q_L,
+ \qquad q_j\in\{0,1,2,3\}.
 \]
-For $1\leq j<L$, the integer $h(2j)$ is a positive even number, so
+Grouping the binary digits from the left into consecutive pairs gives
 \[
- \sum_{i=1}^{j}\sigma(d_i)=\frac{h(2j)}2\geq1.
+ q_j=2b_{2j-1}+b_{2j}
+ \qquad(1\leq j\leq L).
 \]
-Dividing $v=4p$ by $4$ deletes the final base-$4$ digit $0$.  Therefore the
-base-$4$ expansion of $p$ is $3w$, where
+The correspondences
 \[
- w:=d_2d_3\cdots d_{L-1}.
+ 3\longleftrightarrow11,\qquad
+ 2\longleftrightarrow10,\qquad
+ 1\longleftrightarrow01,\qquad
+ 0\longleftrightarrow00
 \]
-For every prefix of $w$ of length $r$, with $0\leq r\leq L-2$, one has
+show that the change in height across the $j$th block is
 \[
- \sum_{i=2}^{r+1}\sigma(d_i)
- =\sum_{i=1}^{r+1}\sigma(d_i)-\sigma(d_1)
+ h_B(2j)-h_B(2j-2)=2\sigma(q_j).
+\]
+Summing these identities from $1$ to $j$ yields
+\begin{equation}\label{eq:height-sigma}
+ h_B(2j)=2\sum_{i=1}^{j}\sigma(q_i)
+ \qquad(0\leq j\leq L),
+\end{equation}
+where the sum is empty when $j=0$.
+
+We next determine the first and last blocks.  Since $B$ is a Dyck word,
+$b_1=1$.  If $b_2=0$, then $h_B(2)=0$, contradicting
+$2<2L$ and \eqref{eq:primitive-height}.  Hence $b_2=1$ and
+\[
+ q_1=3.
+\]
+Similarly, $b_{2L}=0$.  If $b_{2L-1}=1$, then the last block is $10$, so
+\[
+ h_B(2L)-h_B(2L-2)=0.
+\]
+Since $h_B(2L)=0$, this would give $h_B(2L-2)=0$, again contradicting
+\eqref{eq:primitive-height}.  Thus $b_{2L-1}=0$ and
+\[
+ q_L=0.
+\]
+
+For $1\leq j\leq L-1$, one has $2j<2L$, so
+$h_B(2j)>0$ by \eqref{eq:primitive-height}.  Since $h_B(2j)$ is even,
+\begin{equation}\label{eq:prefix-height}
+ \sum_{i=1}^{j}\sigma(q_i)
+ =\frac{h_B(2j)}{2}
+ \geq1
+ \qquad(1\leq j\leq L-1).
+\end{equation}
+Dividing $4p$ by $4$ deletes the final base-$4$ digit $0$.  Consequently,
+\[
+ \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=3u,
+ \qquad
+ u:=q_2q_3\cdots q_{L-1}.
+\]
+
+Consider a prefix of $u$ of length $r$, where $0\leq r\leq L-2$.
+For $r=0$ its weight is the empty sum $0$.  For
+$1\leq r\leq L-2$, applying \eqref{eq:prefix-height} with $j=r+1$ gives
+\begin{equation}\label{eq:motzkin-prefix-nonnegative}
+ \sum_{i=2}^{r+1}\sigma(q_i)
+ =\sum_{i=1}^{r+1}\sigma(q_i)-\sigma(q_1)
  \geq1-1=0.
-\]
-Moreover, by \eqref{eq:height-sigma},
+\end{equation}
+Moreover, applying \eqref{eq:height-sigma} with $j=L$ gives
 \[
- \sum_{i=1}^{L}\sigma(d_i)=\frac{h(2L)}2=0.
+ \sum_{i=1}^{L}\sigma(q_i)
+ =\frac{h_B(2L)}{2}=0.
 \]
-Since $\sigma(d_1)=1$ and $\sigma(d_L)=-1$, it follows that
+Since $\sigma(q_1)=\sigma(3)=1$ and
+$\sigma(q_L)=\sigma(0)=-1$, it follows that
 \[
- \sum_{i=2}^{L-1}\sigma(d_i)=0.
+ \sum_{i=2}^{L-1}\sigma(q_i)=0.
 \]
-Thus $w$ is a two-coloured Motzkin word.
+Thus every prefix of $u$ has nonnegative weight and the total weight of $u$
+is $0$.  Therefore $u\in\mathsf{Motz}$, proving the forward implication.
 
-Conversely, suppose that
+Conversely, suppose that there exists $w\in\mathsf{Motz}$ such that
 \[
- \operatorname{quad}(p)=3w,
+ \operatorname{quad}(p)=3w.
+\]
+Write
+\[
+ \operatorname{quad}(p)=q_1q_2\cdots q_m,
  \qquad
- w=e_1\cdots e_m
-\]
-is a two-coloured Motzkin word.  Thus
-\[
- \sum_{i=1}^{r}\sigma(e_i)\geq0
- \quad(0\leq r\leq m),
+ q_1=3,
  \qquad
- \sum_{i=1}^{m}\sigma(e_i)=0.
+ w=q_2q_3\cdots q_m.
 \]
-Append a final base-$4$ digit $0$ and expand the digits of $3w0$ by the
-block map
-\[
- \phi(3)=11,\qquad \phi(2)=10,\qquad
- \phi(1)=01,\qquad \phi(0)=00.
-\]
-Let $B=\phi(3w0)$ and let $h$ be its binary height function.  At the pair
-boundaries,
-\[
- h(2)=2
-\]
-and, for $0\leq r\leq m$,
-\[
- h(2r+2)
- =2\left(1+\sum_{i=1}^{r}\sigma(e_i)\right)
- \geq2.
-\]
-After the appended final digit $0$ has been read,
-\[
- h(2m+4)
- =2\left(1+\sum_{i=1}^{m}\sigma(e_i)-1\right)
- =0.
-\]
-It remains to check positions inside the two-bit blocks.  The blocks
-corresponding to $3$ and $2$ begin with $1$, so the height first increases.
-A block corresponding to $1$ is $01$; its initial height is at least $2$, so
-after the first bit its height is still at least $1$.  If a digit $0$ occurs
-inside $w$, then the Motzkin prefix condition implies that the weight before
-that digit is at least $1$.  Hence the binary height before its block is at
-least $4$, and after the first $0$ it is at least $3$.  Finally, the appended
-terminal block $00$ begins at height $2$, passes through height $1$, and ends
-at height $0$.
+The Motzkin conditions say
+\begin{equation}\label{eq:reverse-motzkin-prefix}
+ \sum_{i=2}^{j}\sigma(q_i)\geq0
+ \qquad(2\leq j\leq m)
+\end{equation}
+and
+\begin{equation}\label{eq:reverse-motzkin-total}
+ \sum_{i=2}^{m}\sigma(q_i)=0.
+\end{equation}
+When $m=1$, both sums are understood as empty and the prefix condition is
+vacuous.
 
-Consequently $B$ stays strictly above height $0$ before its final bit and
-returns to height $0$ at the end.  It is therefore a primitive Dyck word.  Its
-base-$4$ digits are $3w0$, so it represents $4p$.  Also $p\geq3$, and hence
-$4p\geq12$.  Thus $4p\in\NpD$ and $p\in\Pset$.
+Define the monoid morphism
+\[
+ \phi:\{0,1,2,3\}^*\longrightarrow\{0,1\}^*
+\]
+by
+\[
+ \phi(3)=11,\qquad
+ \phi(2)=10,\qquad
+ \phi(1)=01,\qquad
+ \phi(0)=00
+\]
+on letters.  Put $q_{m+1}:=0$ and set
+\[
+ U:=\phi(q_1q_2\cdots q_mq_{m+1})
+   =b_1b_2\cdots b_{2m+2}.
+\]
+Because each base-$4$ digit is replaced by its two-bit binary block,
+\begin{equation}\label{eq:block-value}
+ [U]_2=[q_1q_2\cdots q_m0]_4=4p.
+\end{equation}
+Define
+\[
+ h_U(t):=\sum_{i=1}^{t}(2b_i-1)
+ \qquad(0\leq t\leq2m+2).
+\]
+The same block calculation as above gives
+\begin{equation}\label{eq:reverse-height-sigma}
+ h_U(2j)=2\sum_{i=1}^{j}\sigma(q_i)
+ \qquad(0\leq j\leq m+1).
+\end{equation}
+
+We first check the block boundaries.  For $1\leq j\leq m$,
+\[
+ \sum_{i=1}^{j}\sigma(q_i)
+ =1+\sum_{i=2}^{j}\sigma(q_i)
+ \geq1,
+\]
+where the second sum is empty when $j=1$.  Hence
+\begin{equation}\label{eq:positive-even-height}
+ h_U(2j)\geq2
+ \qquad(1\leq j\leq m).
+\end{equation}
+On the other hand, $\sigma(q_{m+1})=\sigma(0)=-1$ and
+\eqref{eq:reverse-motzkin-total} imply
+\[
+ \sum_{i=1}^{m+1}\sigma(q_i)
+ =1+\sum_{i=2}^{m}\sigma(q_i)-1=0.
+\]
+Thus
+\begin{equation}\label{eq:terminal-height}
+ h_U(2m+2)=0.
+\end{equation}
+
+It remains to check the positions inside the blocks, namely the odd positions
+$2j-1$ for $1\leq j\leq m+1$.  For $j=1$, since $q_1=3$, the first block
+is $11$ and
+\[
+ h_U(1)=h_U(0)+1=1.
+\]
+Now let $2\leq j\leq m$.  If $q_j\in\{2,3\}$, its block is $10$ or $11$,
+so its first bit is $1$.  By \eqref{eq:positive-even-height}, applied with
+$j-1$ in place of $j$,
+\[
+ h_U(2j-1)=h_U(2j-2)+1\geq3.
+\]
+If $q_j=1$, its block is $01$, and the same shifted application of
+\eqref{eq:positive-even-height} gives
+\[
+ h_U(2j-1)=h_U(2j-2)-1\geq1.
+\]
+Finally suppose that $q_j=0$.  By
+\eqref{eq:reverse-motzkin-prefix},
+\[
+ 0\leq\sum_{i=2}^{j}\sigma(q_i)
+ =\sum_{i=2}^{j-1}\sigma(q_i)-1,
+\]
+so
+\[
+ \sum_{i=2}^{j-1}\sigma(q_i)\geq1.
+\]
+Therefore \eqref{eq:reverse-height-sigma} gives
+\[
+ h_U(2j-2)
+ =2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
+ \geq4,
+\]
+and hence
+\[
+ h_U(2j-1)=h_U(2j-2)-1\geq3.
+\]
+
+For the appended terminal digit $q_{m+1}=0$,
+\eqref{eq:reverse-motzkin-total} and
+\eqref{eq:reverse-height-sigma} give
+\[
+ h_U(2m)=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)=2.
+\]
+Thus the terminal block $00$ passes through height
+\[
+ h_U(2m+1)=1
+\]
+and ends at the height in \eqref{eq:terminal-height}.
+
+Every integer $t$ with $1\leq t<2m+2$ is either $t=2j$ for some
+$1\leq j\leq m$, or $t=2j-1$ for some $1\leq j\leq m+1$.
+The even case is covered by \eqref{eq:positive-even-height}, and the odd
+case by the preceding case distinction.  Hence
+\[
+ h_U(t)>0\qquad(1\leq t<2m+2),
+\]
+while \eqref{eq:terminal-height} gives $h_U(2m+2)=0$.  Therefore $U$ is a
+primitive Dyck word, so $U\in\DP$.
+
+Since the first base-$4$ digit of $p$ is $3$, one has $p\geq3$ and hence
+$4p\geq12$.  Together with \eqref{eq:block-value} and $U\in\DP$, this gives
+\[
+ 4p\in\NpD,\qquad 4p\geq12.
+\]
+By the definition of $\Pset$, $p\in\Pset$.  This proves the reverse
+implication.
 \end{proof}
 
 The characterization gives the self-similarity used later.
@@ -464,18 +611,18 @@ If $p\in\Pset$, then $4p+1$ and $4p+2$ also belong to $\Pset$.
 \end{corollary}
 
 \begin{proof}
-Write
+By Lemma~\ref{lem:base4}, there exists $w\in\mathsf{Motz}$ such that
 \[
- \operatorname{quad}(p)=3w,
+ \operatorname{quad}(p)=3w.
 \]
-where $w$ is a two-coloured Motzkin word.  Then
+Then
 \[
  \operatorname{quad}(4p+1)=3w1,
  \qquad
  \operatorname{quad}(4p+2)=3w2.
 \]
-The digits $1$ and $2$ both have $\sigma$-weight $0$, so appending either of
-them preserves the two-coloured Motzkin condition.  The claim follows from
+The digits $1$ and $2$ both have $\sigma$-weight $0$, so appending either one
+preserves membership in $\mathsf{Motz}$.  The claim follows from
 Lemma~\ref{lem:base4}.
 \end{proof}
 
