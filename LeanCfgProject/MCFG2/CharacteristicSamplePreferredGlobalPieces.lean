@@ -167,8 +167,7 @@ def toGlobalConstructionAssumptions
       (G := G) (obs := obs) K) :
     TrimmedPresentationGlobalConstructionAssumptions
       K.toCoreConstructionData :=
-  A.toFullySplitGlobalConstructionAssumptions
-    .toGlobalConstructionAssumptions
+  A.toFullySplitGlobalConstructionAssumptions.toGlobalConstructionAssumptions
 
 /-- The named-context splicing constructor contained in separated global
 targets. -/
