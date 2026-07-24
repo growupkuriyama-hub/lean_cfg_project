@@ -75,7 +75,7 @@ structure TrimmedPresentationBoundedGlobalPaperSameContextWitness where
 namespace TrimmedPresentationBoundedGlobalPaperMainWitness
 
 /-- The finite sample extracted from a bounded global main witness. -/
-def sample
+noncomputable def sample
     (W : TrimmedPresentationBoundedGlobalPaperMainWitness
       (G := G) (obs := obs)) :
     Finset (Word α) :=
@@ -178,7 +178,7 @@ end TrimmedPresentationBoundedGlobalPaperMainWitness
 namespace TrimmedPresentationBoundedGlobalPaperExposingWitness
 
 /-- The finite sample extracted from a bounded global exposing witness. -/
-def sample
+noncomputable def sample
     (W : TrimmedPresentationBoundedGlobalPaperExposingWitness
       (G := G) (obs := obs)) :
     Finset (Word α) :=
@@ -256,7 +256,7 @@ end TrimmedPresentationBoundedGlobalPaperExposingWitness
 namespace TrimmedPresentationBoundedGlobalPaperSameContextWitness
 
 /-- The finite sample extracted from a bounded global same-context witness. -/
-def sample
+noncomputable def sample
     (W : TrimmedPresentationBoundedGlobalPaperSameContextWitness
       (G := G) (obs := obs)) :
     Finset (Word α) :=
