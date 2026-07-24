@@ -79,7 +79,7 @@ def toFiniteData
   semantics := E
 
 /-- The concrete finite witness sample associated with derivational exposure. -/
-def finiteSample
+noncomputable def finiteSample
     (E : TrimmedPresentationDerivationalExposure D)
     (hworking : G.BasicWorkingConditions) :
     Finset (Word α) :=
