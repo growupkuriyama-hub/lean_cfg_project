@@ -195,8 +195,7 @@ def toPaperPreferredAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     PaperPreferredAnchorCommonConstructionData
       (G := G) (obs := obs) :=
-  C.toLayeredConstructionData
-    .toPaperPreferredAnchorCommonConstructionData
+  C.toLayeredConstructionData.toPaperPreferredAnchorCommonConstructionData
 
 /-- All pieces give existence of separated-global piecewise targets. -/
 theorem existsPiecewiseSeparatedGlobalTargets
