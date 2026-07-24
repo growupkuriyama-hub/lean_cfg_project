@@ -68,7 +68,7 @@ def toGrammarBuilderExposingTransportTarget
   promise := A.promise
 
 /-- The finite sample constructed by the exposing target. -/
-def sample
+noncomputable def sample
     (A : TrimmedPresentationPaperExposingAssumptions D) :
     Finset (Word α) :=
   A.toGrammarBuilderExposingTransportTarget.sample
@@ -87,7 +87,7 @@ theorem contains_witnesses
   A.toGrammarBuilderExposingTransportTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (A : TrimmedPresentationPaperExposingAssumptions D) :
     FinalReachableData G A.sample obs f :=
   A.toGrammarBuilderExposingTransportTarget.toFinalReachableData
@@ -123,8 +123,7 @@ theorem exact_for_positive_superset
     (hAK : (A.sample : Set (Word α)) ⊆ (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  A.toGrammarBuilderExposingTransportTarget
-    .exact_for_positive_superset hAK hKpos
+  A.toGrammarBuilderExposingTransportTarget.exact_for_positive_superset hAK hKpos
 
 /-- Eventual prefix-exact reconstruction on every positive text. -/
 theorem prefix_exact_eventually
@@ -205,7 +204,7 @@ def toPaperExposingAssumptions
   promise := A.promise
 
 /-- The finite sample constructed by the same-context target. -/
-def sample
+noncomputable def sample
     (A : TrimmedPresentationPaperSameContextAssumptions D) :
     Finset (Word α) :=
   A.toGrammarBuilderSameContextTransportTarget.sample
@@ -224,7 +223,7 @@ theorem contains_witnesses
   A.toGrammarBuilderSameContextTransportTarget.contains_witnesses
 
 /-- Convert directly to final reachable data. -/
-def toFinalReachableData
+noncomputable def toFinalReachableData
     (A : TrimmedPresentationPaperSameContextAssumptions D) :
     FinalReachableData G A.sample obs f :=
   A.toGrammarBuilderSameContextTransportTarget.toFinalReachableData
@@ -260,8 +259,7 @@ theorem exact_for_positive_superset
     (hAK : (A.sample : Set (Word α)) ⊆ (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  A.toGrammarBuilderSameContextTransportTarget
-    .exact_for_positive_superset hAK hKpos
+  A.toGrammarBuilderSameContextTransportTarget.exact_for_positive_superset hAK hKpos
 
 /-- Exact reconstruction at a prefix containing the constructed sample. -/
 theorem exact_at_seen_prefix
@@ -272,8 +270,7 @@ theorem exact_at_seen_prefix
       (Ttxt.prefixSample n : Set (Word α))) :
     ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
       G.StringLanguage :=
-  A.toGrammarBuilderSameContextTransportTarget
-    .exact_at_seen_prefix Ttxt hseen
+  A.toGrammarBuilderSameContextTransportTarget.exact_at_seen_prefix Ttxt hseen
 
 /-- Eventual prefix-exact reconstruction on every positive text. -/
 theorem prefix_exact_eventually

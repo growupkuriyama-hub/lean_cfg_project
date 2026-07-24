@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  23 JUL 2026 21:04
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  23 JUL 2026 22:04
  restricted system commands enabled.
 **primitive_dyck_tkuriyama_JIS_v2_JP_from_EN.tex
 (./primitive_dyck_tkuriyama_JIS_v2_JP_from_EN.tex
@@ -1182,6 +1182,42 @@ LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 6.47295pt on input line 49.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 4.62357pt on input line 49.
+(load cache: extra_lmroman7-regular.luc)
+LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
+(Font)              scaled to size 6.47295pt on input line 49.
+LaTeX Font Info:    Calculating math sizes for size <9.59998> on input line 49.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <5.59996> not available
+(Font)              size <6> substituted on input line 49.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4> not available
+(Font)              size <5> substituted on input line 49.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <5.59996> not available
+(Font)              size <6> substituted on input line 49.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <4> not available
+(Font)              size <5> substituted on input line 49.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <5.59996> not available
+(Font)              size <6> substituted on input line 49.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <4> not available
+(Font)              size <5> substituted on input line 49.
+
+LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
+(Font)              scaled to size 5.17834pt on input line 49.
+LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
+(Font)              scaled to size 3.69885pt on input line 49.
+(load cache: extra_lmroman6-regular.luc)
+LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
+(Font)              scaled to size 5.17834pt on input line 49.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
 (Font)              scaled to size 9.24713pt on input line 51.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
@@ -1195,6 +1231,19 @@ LaTeX Font Info:    Font shape `JY3/gt/m/it' in size <10> not available
 (Font)              Font shape `JY3/gt/m/n' tried instead on input line 51.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
 (Font)              scaled to size 7.70596pt on input line 51.
+LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
+(Font)              scaled to size 7.3977pt on input line 51.
+LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
+(Font)              scaled to size 7.3977pt on input line 51.
+(load cache: extra_lmroman8-italic.luc)
+LaTeX Font Info:    Font shape `JT3/gt/m/it' in size <8> not available
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 51.
+LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
+(Font)              scaled to size 6.16476pt on input line 51.
+LaTeX Font Info:    Font shape `JY3/gt/m/it' in size <8> not available
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 51.
+LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
+(Font)              scaled to size 6.16476pt on input line 51.
 [1
 
 {C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
@@ -1206,71 +1255,35 @@ LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <10> not available
 (Font)              Font shape `JY3/mc/m/n' tried instead on input line 77.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
 (Font)              scaled to size 7.70596pt on input line 77.
- [2](load cache: extra_lmroman7-regular.luc)
-LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 6.47295pt on input line 98.
-LaTeX Font Info:    Calculating math sizes for size <9.59998> on input line 102
-.
-
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <5.59996> not available
-(Font)              size <6> substituted on input line 102.
-
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 102.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <5.59996> not available
-(Font)              size <6> substituted on input line 102.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <4> not available
-(Font)              size <5> substituted on input line 102.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <5.59996> not available
-(Font)              size <6> substituted on input line 102.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 102.
-
-LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 5.17834pt on input line 102.
-LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 3.69885pt on input line 102.
-(load cache: extra_lmroman6-regular.luc)
-LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 5.17834pt on input line 102.
-(load cache: extra_lmmono10-regular.luc) [3](load cache: extra_lmroman7-italic.l
-uc)
+ [2]
+[3](load cache: extra_lmmono10-regular.luc)(load cache: extra_lmroman7-italic.lu
+c)
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <6.99995> not available
-(Font)              Font shape `JT3/mc/m/n' tried instead on input line 156.
+(Font)              Font shape `JT3/mc/m/n' tried instead on input line 162.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 5.39413pt on input line 156.
+(Font)              scaled to size 5.39413pt on input line 162.
 LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <6.99995> not available
-(Font)              Font shape `JY3/mc/m/n' tried instead on input line 156.
+(Font)              Font shape `JY3/mc/m/n' tried instead on input line 162.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 5.39413pt on input line 156.
+(Font)              scaled to size 5.39413pt on input line 162.
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <5> not available
-(Font)              Font shape `JT3/mc/m/n' tried instead on input line 156.
+(Font)              Font shape `JT3/mc/m/n' tried instead on input line 162.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 3.85297pt on input line 156.
+(Font)              scaled to size 3.85297pt on input line 162.
 LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <5> not available
-(Font)              Font shape `JY3/mc/m/n' tried instead on input line 156.
+(Font)              Font shape `JY3/mc/m/n' tried instead on input line 162.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 3.85297pt on input line 156.
+(Font)              scaled to size 3.85297pt on input line 162.
  [4]
-LaTeX Font Info:    Calculating math sizes for size <17.27994> on input line 21
-9.
+LaTeX Font Info:    Calculating math sizes for size <17.27994> on input line 22
+0.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 9.32104pt on input line 219.
+(Font)              scaled to size 9.32104pt on input line 220.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 6.65793pt on input line 219.
+(Font)              scaled to size 6.65793pt on input line 220.
  [5] [6] [7] [8](load cache: extra_lmroman5-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 4.62357pt on input line 403.
+(Font)              scaled to size 4.62357pt on input line 404.
  [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
 [19] [20] [21] [22] [23] [24] [25] [26] [27] [28]
 (./primitive_dyck_tkuriyama_JIS_v2_JP_from_EN.aux)
@@ -1289,22 +1302,22 @@ ut' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 13527 strings out of 476076
+ 13539 strings out of 476076
  244653,662416 words of node,token memory allocated
- 10307 words of node memory still in use:
-   11 hlist, 2 vlist, 5 rule, 4 glue, 4 kern, 1 glyph, 4418 attribute, 59 glue_s
-pec, 414 attribute_list, 1 write, 14 user_defined, 1 pdf_action nodes
-   avail lists: 1:12,2:43477,3:442,4:338,5:203,6:36,7:6965,8:73,9:2554,10:37,11:
+ 10400 words of node memory still in use:
+   11 hlist, 2 vlist, 5 rule, 7 glue, 4 kern, 1 glyph, 4451 attribute, 59 glue_s
+pec, 417 attribute_list, 1 write, 14 user_defined, 1 pdf_action nodes
+   avail lists: 1:16,2:43477,3:442,4:338,5:203,6:42,7:6701,8:73,9:2585,10:37,11:
 224
- 35593 multiletter control sequences out of 65536+600000
- 126 fonts using 87009959 bytes
+ 35602 multiletter control sequences out of 65536+600000
+ 128 fonts using 90925879 bytes
  119i,19n,112p,2066b,564s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmmono10-
 regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/
 lm/lmroman8-regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/open
 type/public/lm/lmroman6-regular.otf><c:/users/owner/appdata/local/programs/mikte
-x/fonts/opentype/public/lm/lmroman7-regular.otf><c:/users/owner/appdata/local/pr
-ograms/miktex/fonts/opentype/public/lm/lmroman10-italic.otf><c:/users/owner/appd
+x/fonts/opentype/public/lm/lmroman10-italic.otf><c:/users/owner/appdata/local/pr
+ograms/miktex/fonts/opentype/public/lm/lmroman7-regular.otf><c:/users/owner/appd
 ata/local/programs/miktex/fonts/opentype/public/lm/lmsans12-regular.otf><c:/user
 s/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman10-bold.ot
 f><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman
@@ -1337,10 +1350,10 @@ ner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/U
 sers/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pf
 b><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symb
 ols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_JIS_v2_JP_from_EN.pdf (28 pages, 543
-812 bytes).
+Output written on primitive_dyck_tkuriyama_JIS_v2_JP_from_EN.pdf (28 pages, 547
+213 bytes).
 
-PDF statistics: 525 PDF objects out of 1000 (max. 8388607)
- 97 named destinations out of 1000 (max. 1048576)
+PDF statistics: 532 PDF objects out of 1000 (max. 8388607)
+ 100 named destinations out of 1000 (max. 1048576)
  65 words of extra memory for PDF output out of 10000 (max. 100000000)
 
