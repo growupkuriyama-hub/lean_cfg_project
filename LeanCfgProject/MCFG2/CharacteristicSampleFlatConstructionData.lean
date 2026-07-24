@@ -131,8 +131,7 @@ def toSplitLayeredExposingConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationSplitLayeredExposingConstructionData
       (G := G) (obs := obs) :=
-  C.toSplitCoreWithFullySplitGlobalAssumptions
-    .withExposingTransport C.exposingTransport
+  C.toSplitCoreWithFullySplitGlobalAssumptions.withExposingTransport C.exposingTransport
 
 /-- Flat exposing construction data gives Gold-style identification for some
 finite bound. -/
@@ -140,8 +139,7 @@ theorem exists_bounded_reachable_identification
     (C : TrimmedPresentationFlatExposingConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitLayeredExposingConstructionData
-    .exists_bounded_reachable_identification
+  C.toSplitLayeredExposingConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationFlatExposingConstructionData
 
@@ -193,8 +191,7 @@ def toSplitLayeredAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationSplitLayeredAnchorCommonConstructionData
       (G := G) (obs := obs) :=
-  C.toSplitCoreWithFullySplitGlobalAssumptions
-    .withAnchorCommonTransport C.commonTransport
+  C.toSplitCoreWithFullySplitGlobalAssumptions.withAnchorCommonTransport C.commonTransport
 
 /-- Flat anchor-common construction data gives Gold-style identification for
 some finite bound. -/
@@ -202,8 +199,7 @@ theorem exists_bounded_reachable_identification
     (C : TrimmedPresentationFlatAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitLayeredAnchorCommonConstructionData
-    .exists_bounded_reachable_identification
+  C.toSplitLayeredAnchorCommonConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationFlatAnchorCommonConstructionData
 
@@ -255,8 +251,7 @@ def toSplitLayeredSameContextConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationSplitLayeredSameContextConstructionData
       (G := G) (obs := obs) :=
-  C.toSplitCoreWithFullySplitGlobalAssumptions
-    .withSameContextTransport C.sameContextTransport
+  C.toSplitCoreWithFullySplitGlobalAssumptions.withSameContextTransport C.sameContextTransport
 
 /-- Flat same-context construction data gives Gold-style identification for some
 finite bound. -/
@@ -264,8 +259,7 @@ theorem exists_bounded_reachable_identification
     (C : TrimmedPresentationFlatSameContextConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toSplitLayeredSameContextConstructionData
-    .exists_bounded_reachable_identification
+  C.toSplitLayeredSameContextConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationFlatSameContextConstructionData
 
