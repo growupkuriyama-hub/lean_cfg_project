@@ -71,7 +71,7 @@ namespace TrimmedPresentationPaperMainWitness
 variable {T}
 
 /-- The finite sample extracted from a main paper witness. -/
-def sample
+noncomputable def sample
     (W : TrimmedPresentationPaperMainWitness (G := G) (obs := obs) (f := f) T) :
     Finset (Word α) :=
   W.assumptions.sample
@@ -149,7 +149,7 @@ namespace TrimmedPresentationPaperExposingWitness
 variable {T}
 
 /-- The finite sample extracted from an exposing paper witness. -/
-def sample
+noncomputable def sample
     (W : TrimmedPresentationPaperExposingWitness (G := G) (obs := obs) (f := f) T) :
     Finset (Word α) :=
   W.assumptions.sample
@@ -209,7 +209,7 @@ namespace TrimmedPresentationPaperSameContextWitness
 variable {T}
 
 /-- The finite sample extracted from a same-context paper witness. -/
-def sample
+noncomputable def sample
     (W : TrimmedPresentationPaperSameContextWitness (G := G) (obs := obs) (f := f) T) :
     Finset (Word α) :=
   W.assumptions.sample
