@@ -368,7 +368,6 @@ theorem realize_leftTokens {α e dB dC} (body : TemplateTuple α e dB dC)
   | h :: hs, [] => by
       simp only [leftTokens, fillNamedAux, realizeTokens_append, realize_bodyLeftTokens,
         realize_leftTokens body x y hs []]
-      rfl
   | h :: hs, chunk :: chunks => by
       simp only [leftTokens, fillNamedAux, realizeTokens, realizeTokens_append,
         realize_bodyLeftTokens, realize_leftTokens body x y hs chunks]
@@ -500,7 +499,6 @@ theorem realize_rightTokens {α e dB dC} (body : TemplateTuple α e dB dC)
   | h :: hs, [] => by
       simp only [rightTokens, fillNamedAux, realizeTokens_append, realize_bodyRightTokens,
         realize_rightTokens body u v hs []]
-      rfl
   | h :: hs, chunk :: chunks => by
       simp only [rightTokens, fillNamedAux, realizeTokens, realizeTokens_append,
         realize_bodyRightTokens, realize_rightTokens body u v hs chunks]
