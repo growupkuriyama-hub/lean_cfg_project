@@ -69,14 +69,11 @@ def toSplitLayeredTransportConstructionData :
     TrimmedPresentationSplitLayeredTransportConstructionData
       (G := G) (obs := obs)
   | exposing C =>
-      C.toSplitLayeredExposingConstructionData
-        .toSplitLayeredTransportConstructionData
+      C.toSplitLayeredExposingConstructionData.toSplitLayeredTransportConstructionData
   | anchorCommon C =>
-      C.toSplitLayeredAnchorCommonConstructionData
-        .toSplitLayeredTransportConstructionData
+      C.toSplitLayeredAnchorCommonConstructionData.toSplitLayeredTransportConstructionData
   | sameContext C =>
-      C.toSplitLayeredSameContextConstructionData
-        .toSplitLayeredTransportConstructionData
+      C.toSplitLayeredSameContextConstructionData.toSplitLayeredTransportConstructionData
 
 /-- Convert a flat construction choice to the fully layered interface. -/
 def toFullyLayeredTransportConstructionData
@@ -84,8 +81,7 @@ def toFullyLayeredTransportConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationFullyLayeredConstructionData
       (G := G) (obs := obs) :=
-  C.toSplitLayeredTransportConstructionData
-    .toFullyLayeredTransportConstructionData
+  C.toSplitLayeredTransportConstructionData.toFullyLayeredTransportConstructionData
 
 /-- Convert a flat construction choice to the transport-choice interface. -/
 def toTransportConstructionChoice
@@ -93,8 +89,7 @@ def toTransportConstructionChoice
       (G := G) (obs := obs)) :
     TrimmedPresentationTransportConstructionChoice
       (G := G) (obs := obs) :=
-  C.toSplitLayeredTransportConstructionData
-    .toTransportConstructionChoice
+  C.toSplitLayeredTransportConstructionData.toTransportConstructionChoice
 
 /-- A flat construction choice gives a finite positive characteristic sample for
 some finite fanout bound. -/
@@ -104,17 +99,11 @@ theorem exists_bounded_positive_characteristic_sample
     ExistsBoundedPositiveCharacteristicSample G obs :=
   match C with
   | exposing E =>
-      E.toSplitLayeredExposingConstructionData
-        .toSplitLayeredTransportConstructionData
-        .exists_bounded_positive_characteristic_sample
+      E.toSplitLayeredExposingConstructionData.toSplitLayeredTransportConstructionData.exists_bounded_positive_characteristic_sample
   | anchorCommon A =>
-      A.toSplitLayeredAnchorCommonConstructionData
-        .toSplitLayeredTransportConstructionData
-        .exists_bounded_positive_characteristic_sample
+      A.toSplitLayeredAnchorCommonConstructionData.toSplitLayeredTransportConstructionData.exists_bounded_positive_characteristic_sample
   | sameContext S =>
-      S.toSplitLayeredSameContextConstructionData
-        .toSplitLayeredTransportConstructionData
-        .exists_bounded_positive_characteristic_sample
+      S.toSplitLayeredSameContextConstructionData.toSplitLayeredTransportConstructionData.exists_bounded_positive_characteristic_sample
 
 /-- A flat construction choice gives eventual prefix exactness for some finite
 fanout bound. -/
@@ -124,17 +113,11 @@ theorem exists_bounded_prefix_exact_identification
     ExistsBoundedPrefixExactIdentification G obs :=
   match C with
   | exposing E =>
-      E.toSplitLayeredExposingConstructionData
-        .toSplitLayeredTransportConstructionData
-        .exists_bounded_prefix_exact_identification
+      E.toSplitLayeredExposingConstructionData.toSplitLayeredTransportConstructionData.exists_bounded_prefix_exact_identification
   | anchorCommon A =>
-      A.toSplitLayeredAnchorCommonConstructionData
-        .toSplitLayeredTransportConstructionData
-        .exists_bounded_prefix_exact_identification
+      A.toSplitLayeredAnchorCommonConstructionData.toSplitLayeredTransportConstructionData.exists_bounded_prefix_exact_identification
   | sameContext S =>
-      S.toSplitLayeredSameContextConstructionData
-        .toSplitLayeredTransportConstructionData
-        .exists_bounded_prefix_exact_identification
+      S.toSplitLayeredSameContextConstructionData.toSplitLayeredTransportConstructionData.exists_bounded_prefix_exact_identification
 
 /-- A flat construction choice gives Gold-style identification for some finite
 fanout bound. -/
