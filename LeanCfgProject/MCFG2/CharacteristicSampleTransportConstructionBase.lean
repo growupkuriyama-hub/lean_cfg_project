@@ -202,8 +202,7 @@ theorem exists_bounded_reachable_identification
 theorem exists_bounded_reachable_identification_via_exposing
     (W : TrimmedPresentationTransportWitnessChoice B) :
     ExistsBoundedReachableIdentification G obs :=
-  W.toTransportConstructionChoice
-    .exists_bounded_reachable_identification_via_exposing
+  W.toTransportConstructionChoice.exists_bounded_reachable_identification_via_exposing
 
 end TrimmedPresentationTransportWitnessChoice
 
@@ -278,8 +277,7 @@ theorem exists_bounded_reachable_identification_via_exposing
     (C : TrimmedPresentationStructuredTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toTransportConstructionChoice
-    .exists_bounded_reachable_identification_via_exposing
+  C.toTransportConstructionChoice.exists_bounded_reachable_identification_via_exposing
 
 end TrimmedPresentationStructuredTransportConstructionData
 
