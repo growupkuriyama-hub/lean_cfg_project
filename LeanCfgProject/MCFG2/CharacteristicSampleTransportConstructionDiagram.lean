@@ -95,16 +95,14 @@ theorem through the diagram. -/
 theorem anchorCommonConstruction_exposing_main_theorem
     (C : AnchorCommonTransportConstructionNode (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_reachable_identification
+  C.toExposingTransportConstructionData.exists_bounded_reachable_identification
 
 /-- Same-context construction data gives the exposing-construction main theorem
 through the diagram. -/
 theorem sameContextConstruction_exposing_main_theorem
     (C : SameContextTransportConstructionNode (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_reachable_identification
+  C.toExposingTransportConstructionData.exists_bounded_reachable_identification
 
 /-- Nonempty anchor-common construction data gives the exposing-construction
 main theorem through the diagram. -/
@@ -129,16 +127,14 @@ sample through the exposing-construction diagram. -/
 theorem anchorCommonConstruction_exposing_characteristic_sample
     (C : AnchorCommonTransportConstructionNode (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bound_and_positive_characteristic_sample
+  C.toExposingTransportConstructionData.exists_bound_and_positive_characteristic_sample
 
 /-- Same-context construction data gives a positive characteristic sample through
 the exposing-construction diagram. -/
 theorem sameContextConstruction_exposing_characteristic_sample
     (C : SameContextTransportConstructionNode (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bound_and_positive_characteristic_sample
+  C.toExposingTransportConstructionData.exists_bound_and_positive_characteristic_sample
 
 /-- Nonempty anchor-common construction data gives a positive characteristic
 sample through the exposing-construction diagram. -/
@@ -163,16 +159,14 @@ exposing-construction diagram. -/
 theorem anchorCommonConstruction_exposing_prefix_exact
     (C : AnchorCommonTransportConstructionNode (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_prefix_exact_identification
+  C.toExposingTransportConstructionData.exists_bounded_prefix_exact_identification
 
 /-- Same-context construction data gives prefix exactness through the
 exposing-construction diagram. -/
 theorem sameContextConstruction_exposing_prefix_exact
     (C : SameContextTransportConstructionNode (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_prefix_exact_identification
+  C.toExposingTransportConstructionData.exists_bounded_prefix_exact_identification
 
 end TransportConstructionDiagram
 
