@@ -368,6 +368,7 @@ theorem realize_leftTokens {α e dB dC} (body : TemplateTuple α e dB dC)
   | h :: hs, [] => by
       simp only [leftTokens, fillNamedAux, realizeTokens_append, realize_bodyLeftTokens,
         realize_leftTokens body x y hs []]
+      rfl
   | h :: hs, chunk :: chunks => by
       simp only [leftTokens, fillNamedAux, realizeTokens, realizeTokens_append,
         realize_bodyLeftTokens, realize_leftTokens body x y hs chunks]
@@ -442,6 +443,7 @@ theorem leftContext_fill_eq {α : Type u} {e dB dC : Nat}
   change rawNamedFill (build (leftTokens body y parent.1.holes parent.1.chunks)).toRaw x
       = namedFill e parent (evalTemplateTuple body x y)
   rw [rawNamedFill_toRaw, build_fill, realize_leftTokens]
+  rfl
 
 end MCFG.ExactSplicing
 
@@ -499,6 +501,7 @@ theorem realize_rightTokens {α e dB dC} (body : TemplateTuple α e dB dC)
   | h :: hs, [] => by
       simp only [rightTokens, fillNamedAux, realizeTokens_append, realize_bodyRightTokens,
         realize_rightTokens body u v hs []]
+      rfl
   | h :: hs, chunk :: chunks => by
       simp only [rightTokens, fillNamedAux, realizeTokens, realizeTokens_append,
         realize_bodyRightTokens, realize_rightTokens body u v hs chunks]
@@ -563,6 +566,7 @@ theorem rightContext_fill_eq {α : Type u} {e dB dC : Nat}
   change rawNamedFill (build (rightTokens body u parent.1.holes parent.1.chunks)).toRaw v
       = namedFill e parent (evalTemplateTuple body u v)
   rw [rawNamedFill_toRaw, build_fill, realize_rightTokens]
+  rfl
 
 end MCFG.ExactSplicing
 
