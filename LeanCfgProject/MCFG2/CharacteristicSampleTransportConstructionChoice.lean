@@ -120,8 +120,7 @@ theorem exists_bounded_reachable_identification_via_exposing
     (C : TrimmedPresentationTransportConstructionChoice
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_reachable_identification
+  C.toExposingTransportConstructionData.exists_bounded_reachable_identification
 
 /-- A construction choice also gives prefix exactness through the direct
 exposing route. -/
@@ -129,8 +128,7 @@ theorem exists_bounded_prefix_exact_identification_via_exposing
     (C : TrimmedPresentationTransportConstructionChoice
       (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_prefix_exact_identification
+  C.toExposingTransportConstructionData.exists_bounded_prefix_exact_identification
 
 /-- A construction choice also gives a positive characteristic sample through
 the direct exposing route. -/
@@ -138,8 +136,7 @@ theorem exists_bounded_positive_characteristic_sample_via_exposing
     (C : TrimmedPresentationTransportConstructionChoice
       (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bound_and_positive_characteristic_sample
+  C.toExposingTransportConstructionData.exists_bound_and_positive_characteristic_sample
 
 end TrimmedPresentationTransportConstructionChoice
 
