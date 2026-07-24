@@ -134,7 +134,7 @@ def toExposingTransportConstructionData
   promise := C.promise
 
 /-- The finite sample extracted from common-context construction data. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationAnchorCommonTransportConstructionData
       (G := G) (obs := obs)) :
     Finset (Word α) :=
@@ -177,8 +177,7 @@ theorem exists_bound_and_positive_characteristic_sample
     (C : TrimmedPresentationAnchorCommonTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  C.toBoundedGlobalPaperMainWitness
-    .exists_bounded_positive_characteristic_sample
+  C.toBoundedGlobalPaperMainWitness.exists_bounded_positive_characteristic_sample
 
 /-- Eventual prefix-exact reconstruction at the constructed bound. -/
 theorem prefix_exact_eventually
@@ -196,8 +195,7 @@ theorem exists_bounded_prefix_exact_identification
     (C : TrimmedPresentationAnchorCommonTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  C.toBoundedGlobalPaperMainWitness
-    .exists_bounded_prefix_exact_identification
+  C.toBoundedGlobalPaperMainWitness.exists_bounded_prefix_exact_identification
 
 /-- Gold-style identification at the constructed bound. -/
 theorem identifies_from_positive_text
@@ -215,16 +213,14 @@ theorem exists_bounded_reachable_identification
     (C : TrimmedPresentationAnchorCommonTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toBoundedGlobalPaperMainWitness
-    .exists_bounded_reachable_identification
+  C.toBoundedGlobalPaperMainWitness.exists_bounded_reachable_identification
 
 /-- Gold-style identification through the exposing-construction route. -/
 theorem exists_bounded_reachable_identification_via_exposing
     (C : TrimmedPresentationAnchorCommonTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toExposingTransportConstructionData
-    .exists_bounded_reachable_identification
+  C.toExposingTransportConstructionData.exists_bounded_reachable_identification
 
 /-- Pointwise eventual correctness on one positive text. -/
 theorem eventually_correct_on_text
