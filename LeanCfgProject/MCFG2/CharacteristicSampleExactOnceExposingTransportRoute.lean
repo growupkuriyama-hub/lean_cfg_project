@@ -62,7 +62,7 @@ def exactSampleData
 
 /-- Concrete exact-once splicing turns exposing-transport sample data into the
 reachable characteristic blueprint. -/
-def toExactReachableBlueprint
+noncomputable def toExactReachableBlueprint
     (P : TrimmedPresentationExposingTransportData D)
     (hexact : G.BinaryRulesExactlyOnce) :
     ReachableCharacteristicBlueprint G P.sample obs f :=
@@ -130,7 +130,7 @@ theorem exact_paper_characteristic_sample_theorem
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveCharacteristicSampleConclusion G obs := by
-  show ExistsBoundedPositiveCharacteristicSample G obs
+  change ExistsBoundedPositiveCharacteristicSample G obs
   exact ⟨f, P.sample, P.sample_positive,
     P.exact_characteristic_sample hexact hfan hL⟩
 
@@ -141,7 +141,7 @@ theorem exact_paper_prefix_exact_theorem
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructivePrefixExactConclusion G obs := by
-  show ExistsBoundedPrefixExactIdentification G obs
+  change ExistsBoundedPrefixExactIdentification G obs
   exact ⟨f, P.exact_prefix_reconstruction hexact hfan hL⟩
 
 /-- Corrected paper-facing identification theorem from exposing-context
@@ -152,7 +152,7 @@ theorem exact_paper_main_theorem
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveIdentificationConclusion G obs := by
-  show ExistsBoundedReachableIdentification G obs
+  change ExistsBoundedReachableIdentification G obs
   exact ⟨f, P.exact_identifies_from_positive_text hexact hfan hL⟩
 
 /-- Complete corrected paper-facing conclusion package. -/

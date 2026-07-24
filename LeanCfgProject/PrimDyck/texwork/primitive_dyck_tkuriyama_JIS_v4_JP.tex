@@ -314,7 +314,7 @@ $\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読
 \end{lemma}
 
 \begin{proof}
-まず $p\in\Pset$ と仮定する。$\Pset$ の定義より、
+この命題を直感的に済ませるのではなくフォーマルに示すことに価値があると考える。まず $p\in\Pset$ と仮定する。$\Pset$ の定義より、
 \[
  4p\in\NpD,\qquad 4p\geq12
 \]
@@ -374,14 +374,14 @@ $\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読
 である。同様に、$b_{2L}=0$ である。もし $b_{2L-1}=1$ ならば、最後のブロックは
 $10$ なので、
 \[
- h_B(2L)-h_B(2L-2)=0
+ h_B(2L)=h_B(2L-2)
 \]
 となる。$h_B(2L)=0$ であるから $h_B(2L-2)=0$ となり、再び
 \eqref{eq:primitive-height} に反する。したがって $b_{2L-1}=0$ であり、
 \[
- q_L=0
+ q_L=b_{N-1}b_{N}=0_{(4)}
 \]
-である。
+に限る。
 
 あとは$\mathsf{Motz}$の内部の重さ条件をチェックする。$1\leq j\leq L-1$ に対して $2j<2L$ であるから、
 \eqref{eq:primitive-height} より $h_B(2j)>0$ である。$h_B(2j)$ は偶数なので、等式\eqref{eq:height-sigma}から
