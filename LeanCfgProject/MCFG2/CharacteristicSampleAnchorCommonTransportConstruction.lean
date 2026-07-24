@@ -77,7 +77,7 @@ def exposingTransport
     (C : TrimmedPresentationAnchorCommonTransportConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationExposingContextTransport C.data :=
-  C.commonTransport.toAnchorDistributionTransport.toExposingContextTransport
+  C.commonTransport.toExposingContextTransport C.fanout C.promise
 
 /-- Convert construction-facing data to the paper-facing main assumptions. -/
 def toPaperMainAssumptions
