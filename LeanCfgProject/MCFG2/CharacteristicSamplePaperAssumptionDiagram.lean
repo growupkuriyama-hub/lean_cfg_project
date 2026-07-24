@@ -58,9 +58,7 @@ def toPaperExposingAssumptions
     TrimmedPresentationPaperExposingAssumptions D where
   builder := A.builder
   exposingTransport :=
-    A.toGrammarBuilderCommonTransportTarget
-      .toExposingTransportObligations
-      .exposingTransport
+    (A.toGrammarBuilderCommonTransportTarget.toExposingTransportObligations).exposingTransport
   splicingConstructor := A.splicingConstructor
   fanout := A.fanout
   promise := A.promise
