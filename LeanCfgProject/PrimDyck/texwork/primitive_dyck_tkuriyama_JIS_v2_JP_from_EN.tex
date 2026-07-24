@@ -220,7 +220,7 @@ $1/4$を出した理由は本理論の４進法との整合性にある。基数
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0
 \]
-によって割り当てる。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が\emph{2色Motzkin語}である\footnote{この言い方は、重み0の二つの数字 $1$ と $2$ は、異なる色とみなして命名している。}とは、任意の接頭辞の総重みが非負であり、かつ $w$ 全体の総重みが $0$ であることをいう。この全体集合を$\mathsf{Motz}$とかく。紛らわしいが、$\DP$と違って$\mathsf{Motz}\ni\varepsilon$とする。$w$ を基数4の数として読んだ値を $[w]_4$ と書き、空列は$[\varepsilon]_4=0$ とする。以降では、正整数 $n$ に対して、その標準的な2進展開および4進展開を、それぞれ $\operatorname{bin}(n)$ および $\operatorname{quad}(n)$ と書く。
+によって割り当てる。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が\emph{2色Motzkin語}である\footnote{この言い方は、重み0の二つの数字 $1$ と $2$ は、異なる色とみなして命名している。}とは、任意の接頭辞の総重みが非負であり、かつ $w$ 全体の総重みが $0$ であることをいう。この全体集合を$\mathsf{Motz}$とかく。$\DP$接頭辞の非空に言及するため$\varepsilon\notin\DP$としたが、今回は$\mathsf{Motz}\ni\varepsilon$とする。$w$ を基数4の数として読んだ値を $[w]_4$ と書き、空列は$[\varepsilon]_4=0$ とする。以降では、正整数 $n$ に対して、その標準的な2進展開および4進展開を、それぞれ $\operatorname{bin}(n)$ および $\operatorname{quad}(n)$ と書く。
 
 \begin{lemma}[基数4による特徴づけ]\label{lem:base4}
 正整数 $p$ が $\Pset$ に属するための必要十分条件は、 $\operatorname{quad}(p)=3w$かつ$w\in\mathsf{Motz}$であること。
@@ -231,7 +231,7 @@ $1/4$を出した理由は本理論の４進法との整合性にある。基数
 \[
  4p\in\NpD,\qquad 4p\geq12
 \]
-である。$4p$ の2進展開を
+である。$\operatorname{bin}(4p)$を
 \[
 w= b_1b_2\cdots b_{2L}\qquad(b_i\in\{0,1\})
 \]
@@ -248,96 +248,92 @@ w= b_1b_2\cdots b_{2L}\qquad(b_i\in\{0,1\})
 \]
 が成り立つ。
 
-$w$における数字を左から連続する2桁ずつにまとめ、４進法にすれば、
+一方で、$\operatorname{quad}(4p)=q_1\cdots q_L$とすれば、これは$w$を左から２桁づつ４進法にすることに相当し、
 \[
- d_j:=2b_{2j-1}+b_{2j}\in\{0,1,2,3\}
+q_j=2b_{2j-1}+b_{2j}
  \qquad(1\leq j\leq L)
 \]
-である。同値に,  $[v]_4=d_1\cdots d_L$である。対応
+である。このとき、対応
 \[
   11\leftrightarrow3,\quad 10\leftrightarrow2,\quad
   01\leftrightarrow1,\quad 00\leftrightarrow0
 \]
 から、
 \[
- h(2j)-h(2j-2)=2\sigma(d_j)
+ h_w(2j)-h_w(2j-2)=2\sigma(q_j)
 \]
 が成り立つ。したがって、
 \begin{equation}\label{eq:height-sigma}
- h(2j)=2\sum_{i=1}^{j}\sigma(d_i)
+ h_w(2j)=2\sum_{i=1}^{j}\sigma(q_i)
  \qquad(0\leq j\leq L)
 \end{equation}
 を得る。
 
-原始語の長さは少なくとも4であるから、最初の2桁は $11$、最後の2桁は $00$ である。実際、そうでなければ、最初の2ビットを読んだ時点、または最後の2ビットを読む前に高さ $0$ に戻ってしまう。したがって、
+$4p\geq12$かつ$\operatorname{bin}(4p)=w$より語$w$の長さは少なくとも4であるから、最初の2桁は$q_1=11$、最後の2桁は$q_L=00$ である。実際、そうでなければ、最初の2ビットを読んだ時点、または最後の2ビットを読む前に高さ $0$ に戻ってしまう。したがって、４進法においては、
 \[
- d_1=3,\qquad d_L=0
+ q_1=3,\qquad q_L=0
 \]
-である。$1\leq j<L$ に対して $h(2j)$ は正の偶数なので、
-\[
- \sum_{i=1}^{j}\sigma(d_i)=\frac{h(2j)}2\geq1
-\]
-が成り立つ。
+である。$w\in\DP$より$1\leq j\leq L-1$ に対して $h_w(2j)$ は正の偶数なので、\eqref{eq:height-sigma}は
+\begin{equation}\label{eq:prefix-height}
+ \sum_{i=1}^{j}\sigma(d_i)
+ =\frac{h_w(2j)}{2}
+ \geq1
+\end{equation}
+を含意する。
 
-$v=4p$ を $4$ で割ることは、末尾の4進数字 $0$ を削除することに対応する。したがって、$p$ の4進展開は $3w$ であり、ここで
+$4p$ を $4$ で割ることは、$\operatorname{quad}(4p)$末尾の$0$ を削除することに対応する。したがって、$p$ の4進展開は $3u$ であり、ここで
 \[
- w:=d_2d_3\cdots d_{L-1}
+ u=q_2\cdots q_{L-1}
 \]
-である。$w$ の長さ $r$ の任意の接頭辞（$0\leq r\leq L-2$）に対して、
-\[
- \sum_{i=2}^{r+1}\sigma(d_i)
- =\sum_{i=1}^{r+1}\sigma(d_i)-\sigma(d_1)
+である。\eqref{eq:prefix-height}および$\sigma(3)=1$により、
+\begin{equation}\label{eq:motzkin-prefix-nonnegative}
+ \sum_{i=2}^{r+1}\sigma(q_i)
+ =\sum_{i=1}^{r+1}\sigma(q_i)-\sigma(3)
  \geq1-1=0
-\]
+\end{equation}
 である。また、\eqref{eq:height-sigma} より、
 \[
- \sum_{i=1}^{L}\sigma(d_i)=\frac{h(2L)}2=0
+ \sum_{i=1}^{L}\sigma(q_i)=\frac{h_w(2L)}2=0
 \]
-である。$\sigma(d_1)=1$ および $\sigma(d_L)=-1$ なので、
+であるが、$\sigma(q_1)=1$ および $\sigma(q_L)=-1$ なので、
 \[
- \sum_{i=2}^{L-1}\sigma(d_i)=0
+ \sum_{i=2}^{L-1}\sigma(q_i)=0
 \]
-を得る。ゆえに、$w\in\mathsf{Motz}$である。
+を得る。ゆえに、$u\in\mathsf{Motz}$である。
 
 逆に、
 \[
- \operatorname{quad}(p)=3w,
- \qquad
- w=e_1\cdots e_m
+ \operatorname{quad}(p)\equiv q'_1 q'_2\cdots q'_{m}\equiv 3w , \qquad q'_1\equiv3
 \]
 であり、$w\in\mathsf{Motz}$であるとする。すなわち、
 \[
- \sum_{i=1}^{r}\sigma(e_i)\geq0
- \quad(0\leq r\leq m),
+ \sum_{i=2}^{r}\sigma(q'_i)\geq0
+ \quad(2\leq r\leq m),
  \qquad
- \sum_{i=1}^{m}\sigma(e_i)=0
+ \sum_{i=2}^{m}\sigma(q'_i)=0
 \]
 が成り立つ。末尾に4進数字 $0$ を付け、$3w0$ の各数字をブロック写像
 \[
  \phi(3)=11,\qquad \phi(2)=10,\qquad
  \phi(1)=01,\qquad \phi(0)=00
 \]
-によって展開する。$B=\phi(3w0)$ とし、その2進路の高さ関数を $h$ とする。各2桁組の境界では、
+によって2進数にする。$\phi(3w0)\equiv u\equiv b_1b_2b_3b_4\cdots b_{2m-1}b_{2m}b_{2m+1}b_{2m+2}$ , $b_1b_2\equiv11$, $b_{2m+1}b_{2m+2}\equiv00$  $b_i\in\{0,1\}$ とし、2進路の高さ関数を $h_u$ とする。$w\in\mathsf{Motz}$なので、$0\leq r\leq m-1$ に対して、
 \[
- h(2)=2
-\]
-であり、$0\leq r\leq m$ に対して、
-\[
- h(2r+2)
- =2\left(1+\sum_{i=1}^{r}\sigma(e_i)\right)
+ h_u(2r+2)
+ =2\left(1+\sum_{i=2}^{r}\sigma(q'_i)\right)
  \geq2
 \]
-である。付け加えた最後の数字 $0$ を読み終えた後には、
+であり、$u$に付け加えられた$00$を読み終えた後には、
 \[
- h(2m+4)
- =2\left(1+\sum_{i=1}^{m}\sigma(e_i)-1\right)
+ h_u(2m+2)
+ =2\left(1+\sum_{i=2}^{m}\sigma(e_i)-1\right)
  =0
 \]
 となる。
 
 残るのは、各2ビットブロックの内部の位置を確認することである。数字 $3$ と $2$ に対応するブロックは $1$ で始まるので、高さはまず増加する。数字 $1$ に対応するブロックは $01$ であり、その開始時の高さは少なくとも $2$ なので、最初のビットを読んだ後の高さも少なくとも $1$ である。数字 $0$ が $w$ の内部に現れる場合、Motzkin語の接頭辞条件から、その数字の直前の重みは少なくとも $1$ である。したがって、そのブロックの直前の2進高さは少なくとも $4$ であり、最初の $0$ を読んだ後も少なくとも $3$ である。最後に付け加えた終端ブロック $00$ は、高さ $2$ から始まり、高さ $1$ を経て、高さ $0$ で終わる。
 
-したがって、$B=\phi(3w0)$ は最後のビットより前では高さ $0$ より真に上にあり、最後に高さ $0$ に戻る。ゆえに $B$ は原始Dyck語である。その4進数字は $3w0$ なので、$B$ が表す整数は $4p$ である。また $p\geq3$ であるから $4p\geq12$ である。したがって $4p\in\NpD$、ゆえに $p\in\Pset$ である。
+したがって、$u=\phi(3w0)$ は最後のビットより前では高さ $0$ より真に上にあり、最後に高さ $0$ に戻る。ゆえに $u\in\DP$である。$[w]_4=p$と$u=3w0$とあわせれば、$[u]_4=4p$ である。また $p\geq3$ であるから $4p\geq12$ である。したがって $4p\in\NpD$、ゆえに $p\in\Pset$ である。
 \end{proof}
 
 この特徴づけから、後で用いる自己相似性が得られる。
