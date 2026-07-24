@@ -44,8 +44,8 @@ def exactFillingWitnessFamily
     (H : TrimmedPresentationSampleData D S)
     (hexact : G.BinaryRulesExactlyOnce) :
     BinaryFillingWitnessFamily G D.toReachablePreCore :=
-  (ExactSplicing.exact_namedContextSplicingConstructor α)
-    .toFillingWitnessFamily hexact G D.toReachablePreCore
+  (ExactSplicing.exact_namedContextSplicingConstructor α).toFillingWitnessFamily
+    hexact G D.toReachablePreCore
 
 /-- Build the ordinary reachable characteristic blueprint without using the
 false universal splicing-constructor assumption. -/
@@ -81,8 +81,8 @@ theorem exact_reconstruction_for_positive_superset
     (hSK : (S : Set (Word α)) ⊆ (K : Set (Word α)))
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f = G.StringLanguage :=
-  (H.toExactReachableBlueprint hexact)
-    .exact_for_positive_superset hfan hL hSK hKpos
+  (H.toExactReachableBlueprint hexact).exact_for_positive_superset
+    hfan hL hSK hKpos
 
 /-- Exact-once sample data gives eventual prefix-exact reconstruction. -/
 theorem exact_prefix_reconstruction
@@ -123,21 +123,21 @@ variable {G : WorkingMCFG N α} {obs : α → M}
 namespace PaperPreferredAnchorCommonAllPiecesWithoutSplicing
 
 /-- The finite sample already constructed by the stored grammar-rule builder. -/
-def exactSample
+noncomputable def exactSample
     (C : PaperPreferredAnchorCommonAllPiecesWithoutSplicing
       (G := G) (obs := obs)) :
     Finset (Word α) :=
   C.builder.sample
 
 /-- The builder's witness sample, viewed as trimmed-presentation sample data. -/
-def exactSampleData
+noncomputable def exactSampleData
     (C : PaperPreferredAnchorCommonAllPiecesWithoutSplicing
       (G := G) (obs := obs)) :
     TrimmedPresentationSampleData C.data C.exactSample :=
   C.builder.toWitnessSample.toSampleData
 
 /-- The concrete exact-once filling witnesses for all listed binary rules. -/
-def exactFillingWitnessFamily
+noncomputable def exactFillingWitnessFamily
     (C : PaperPreferredAnchorCommonAllPiecesWithoutSplicing
       (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
@@ -147,7 +147,7 @@ def exactFillingWitnessFamily
 /-- The corrected characteristic blueprint.  It is built from the stored
 finite sample and the concrete exact-once splicing construction, with no use of
 `NamedContextSplicingConstructor`. -/
-def toExactReachableBlueprint
+noncomputable def toExactReachableBlueprint
     (C : PaperPreferredAnchorCommonAllPiecesWithoutSplicing
       (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
@@ -202,7 +202,7 @@ theorem exact_paper_characteristic_sample_theorem
       (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     PaperConstructiveCharacteristicSampleConclusion G obs := by
-  show ExistsBoundedPositiveCharacteristicSample G obs
+  change ExistsBoundedPositiveCharacteristicSample G obs
   exact ⟨C.fanoutBound, C.exactSample, C.builder.sample_positive,
     C.exact_characteristic_sample hexact⟩
 
@@ -212,7 +212,7 @@ theorem exact_paper_prefix_exact_theorem
       (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     PaperConstructivePrefixExactConclusion G obs := by
-  show ExistsBoundedPrefixExactIdentification G obs
+  change ExistsBoundedPrefixExactIdentification G obs
   exact ⟨C.fanoutBound, C.exact_prefix_reconstruction hexact⟩
 
 /-- Paper-facing corrected theorem.  The impossible universal splicing premise
@@ -223,7 +223,7 @@ theorem exact_paper_main_theorem
       (G := G) (obs := obs))
     (hexact : G.BinaryRulesExactlyOnce) :
     PaperConstructiveIdentificationConclusion G obs := by
-  show ExistsBoundedReachableIdentification G obs
+  change ExistsBoundedReachableIdentification G obs
   exact ⟨C.fanoutBound, C.exact_identifies_from_positive_text hexact⟩
 
 /-- Complete corrected paper-facing conclusion package. -/
