@@ -165,8 +165,7 @@ def toLayeredTransportConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationLayeredTransportConstructionData
       (G := G) (obs := obs) :=
-  L.toFullyLayeredTransportConstructionData
-    .toLayeredTransportConstructionData
+  L.toFullyLayeredTransportConstructionData.toLayeredTransportConstructionData
 
 /-- Convert split layered construction data to a transport-construction choice. -/
 def toTransportConstructionChoice
@@ -182,8 +181,7 @@ theorem exists_bounded_positive_characteristic_sample
     (L : TrimmedPresentationSplitLayeredTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  L.toFullyLayeredTransportConstructionData
-    .exists_bounded_positive_characteristic_sample
+  L.toFullyLayeredTransportConstructionData.exists_bounded_positive_characteristic_sample
 
 /-- A split layered construction gives prefix exactness for some finite fanout
 bound. -/
@@ -191,8 +189,7 @@ theorem exists_bounded_prefix_exact_identification
     (L : TrimmedPresentationSplitLayeredTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  L.toFullyLayeredTransportConstructionData
-    .exists_bounded_prefix_exact_identification
+  L.toFullyLayeredTransportConstructionData.exists_bounded_prefix_exact_identification
 
 /-- A split layered construction gives Gold-style identification for some finite
 fanout bound. -/
@@ -200,8 +197,7 @@ theorem exists_bounded_reachable_identification
     (L : TrimmedPresentationSplitLayeredTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  L.toFullyLayeredTransportConstructionData
-    .exists_bounded_reachable_identification
+  L.toFullyLayeredTransportConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationSplitLayeredTransportConstructionData
 
@@ -265,8 +261,7 @@ theorem exists_bounded_reachable_identification
     (L : TrimmedPresentationSplitLayeredExposingConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  L.toSplitLayeredTransportConstructionData
-    .exists_bounded_reachable_identification
+  L.toSplitLayeredTransportConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationSplitLayeredExposingConstructionData
 
@@ -289,8 +284,7 @@ theorem exists_bounded_reachable_identification
     (L : TrimmedPresentationSplitLayeredAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  L.toSplitLayeredTransportConstructionData
-    .exists_bounded_reachable_identification
+  L.toSplitLayeredTransportConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationSplitLayeredAnchorCommonConstructionData
 
@@ -313,8 +307,7 @@ theorem exists_bounded_reachable_identification
     (L : TrimmedPresentationSplitLayeredSameContextConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  L.toSplitLayeredTransportConstructionData
-    .exists_bounded_reachable_identification
+  L.toSplitLayeredTransportConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationSplitLayeredSameContextConstructionData
 
