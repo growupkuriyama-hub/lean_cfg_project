@@ -146,8 +146,7 @@ theorem exists_bounded_reachable_identification
     (C : PaperPreferredAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toFlatAnchorCommonConstructionData
-    .exists_bounded_reachable_identification
+  C.toFlatAnchorCommonConstructionData.exists_bounded_reachable_identification
 
 end PaperPreferredAnchorCommonConstructionData
 
