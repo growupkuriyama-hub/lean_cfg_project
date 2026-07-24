@@ -125,8 +125,7 @@ def toFlatAnchorCommonConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationFlatAnchorCommonConstructionData
       (G := G) (obs := obs) :=
-  C.toPaperPreferredAnchorCommonConstructionData
-    .toFlatAnchorCommonConstructionData
+  C.toPaperPreferredAnchorCommonConstructionData.toFlatAnchorCommonConstructionData
 
 /-- Existence of the flat anchor-common construction route. -/
 theorem existsFlatAnchorCommonConstruction
