@@ -74,7 +74,10 @@ theorem wf1_holes (c : RawNamedSentenceContext Unit 1) (h : c.WellFormed) :
       have hb : b = 0 := fin1_eq_zero b
       rw [hm] at hnodup
       rw [List.nodup_cons] at hnodup
-      exact absurd (by rw [ha, hb]; exact List.mem_cons_self 0 t) hnodup.1
+      have hab : a ∈ b :: t := by
+        rw [ha, hb]
+        exact List.mem_cons_self
+      exact (hnodup.1 hab).elim
 
 /-- On a well-formed arity-1 context, filling with the constant tuple `w`
 gives `p ++ w ++ q` for chunks `[p, q]` determined by the context. -/
@@ -122,7 +125,13 @@ theorem square_template_no_splicing :
   have hp : p = [] ∧ q = [] := by
     have h := (hpq []).symm.trans e0
     simp only [List.append_nil] at h
-    exact List.append_eq_nil.mp h
+    have hp0 : p = [] := by
+      cases p with
+      | nil => rfl
+      | cons a t => simp at h
+    have hq0 : q = [] := by
+      simpa [hp0] using h
+    exact ⟨hp0, hq0⟩
   obtain ⟨hp0, hq0⟩ := hp
   -- then the length-one filling forces `[()] = [(), ()]`, impossible
   have h1 := (hpq [()]).symm.trans e1
@@ -142,6 +151,8 @@ end MCFG.ExactSplicing
     and prove the fill equation through the flat `realizeTokens` semantics.
     ########################################################################## -/
 
+
+namespace MCFG.ExactSplicing
 
 /-- A flat token: fixed material (`inl`) or a named hole (`inr`). -/
 abbrev Tok (α : Type u) (d : Nat) := Word α ⊕ Fin d
@@ -401,15 +412,19 @@ theorem leftWF {α : Type u} {e dB dC : Nat}
     (parent : NamedSentenceContext α e) (body : TemplateTuple α e dB dC)
     (hbody : ∀ i, LeftOccursExactlyOnce body i) (y : Tuple α dC) :
     ((build (leftTokens body y parent.1.holes parent.1.chunks)).toRaw).WellFormed := by
-  refine ⟨build_len _, ?_, ?_⟩
+  constructor
+  · exact build_len _
+  constructor
   · apply nodup_of_count_le_one
     intro a
     have hc : ((build (leftTokens body y parent.1.holes parent.1.chunks)).toRaw).holes.count a = 1 := by
-      rw [build_holes]; exact leftCount_eq_one parent body hbody y a
+      rw [build_holes]
+      exact leftCount_eq_one parent body hbody y a
     omega
   · intro i
     have hc : ((build (leftTokens body y parent.1.holes parent.1.chunks)).toRaw).holes.count i = 1 := by
-      rw [build_holes]; exact leftCount_eq_one parent body hbody y i
+      rw [build_holes]
+      exact leftCount_eq_one parent body hbody y i
     exact List.count_pos_iff.mp (by omega)
 
 /-- The concrete left child context. -/
@@ -425,10 +440,9 @@ theorem leftContext_fill_eq {α : Type u} {e dB dC : Nat}
     (hbody : ∀ i, LeftOccursExactlyOnce body i) (y : Tuple α dC) (x : Tuple α dB) :
     namedFill dB (leftContextNSC parent body hbody y) x
       = namedFill e parent (evalTemplateTuple body x y) := by
-  show rawNamedFill (build (leftTokens body y parent.1.holes parent.1.chunks)).toRaw x
+  change rawNamedFill (build (leftTokens body y parent.1.holes parent.1.chunks)).toRaw x
       = namedFill e parent (evalTemplateTuple body x y)
   rw [rawNamedFill_toRaw, build_fill, realize_leftTokens]
-  rfl
 
 end MCFG.ExactSplicing
 
@@ -521,15 +535,19 @@ theorem rightWF {α : Type u} {e dB dC : Nat}
     (parent : NamedSentenceContext α e) (body : TemplateTuple α e dB dC)
     (hbody : ∀ j, RightOccursExactlyOnce body j) (u : Tuple α dB) :
     ((build (rightTokens body u parent.1.holes parent.1.chunks)).toRaw).WellFormed := by
-  refine ⟨build_len _, ?_, ?_⟩
+  constructor
+  · exact build_len _
+  constructor
   · apply nodup_of_count_le_one
     intro a
     have hc : ((build (rightTokens body u parent.1.holes parent.1.chunks)).toRaw).holes.count a = 1 := by
-      rw [build_holes]; exact rightCount_eq_one parent body hbody u a
+      rw [build_holes]
+      exact rightCount_eq_one parent body hbody u a
     omega
   · intro j
     have hc : ((build (rightTokens body u parent.1.holes parent.1.chunks)).toRaw).holes.count j = 1 := by
-      rw [build_holes]; exact rightCount_eq_one parent body hbody u j
+      rw [build_holes]
+      exact rightCount_eq_one parent body hbody u j
     exact List.count_pos_iff.mp (by omega)
 
 def rightContextNSC {α : Type u} {e dB dC : Nat}
@@ -544,10 +562,9 @@ theorem rightContext_fill_eq {α : Type u} {e dB dC : Nat}
     (hbody : ∀ j, RightOccursExactlyOnce body j) (u : Tuple α dB) (v : Tuple α dC) :
     namedFill dC (rightContextNSC parent body hbody u) v
       = namedFill e parent (evalTemplateTuple body u v) := by
-  show rawNamedFill (build (rightTokens body u parent.1.holes parent.1.chunks)).toRaw v
+  change rawNamedFill (build (rightTokens body u parent.1.holes parent.1.chunks)).toRaw v
       = namedFill e parent (evalTemplateTuple body u v)
   rw [rawNamedFill_toRaw, build_fill, realize_rightTokens]
-  rfl
 
 end MCFG.ExactSplicing
 
@@ -626,4 +643,3 @@ end Migration
 -- `splicingConstructor` and `G.BinaryRulesExactlyOnce` (already part of
 -- `ExactWorkingConditions`) for the exact-once side condition.
 
-end MCFG.ExactSplicing
