@@ -141,8 +141,7 @@ theorem main_theorem_from_transport_choice
       (G := G) (obs := obs))
     (W : TrimmedPresentationTransportWitnessChoice C.base) :
     ExistsBoundedReachableIdentification G obs :=
-  (C.withTransportWitnessChoice W)
-    .exists_bounded_reachable_identification
+  (C.withTransportWitnessChoice W).exists_bounded_reachable_identification
 
 /-- Direct exposing transport over the core gives the main theorem. -/
 theorem main_theorem_from_exposing_transport
@@ -150,8 +149,7 @@ theorem main_theorem_from_exposing_transport
       (G := G) (obs := obs))
     (E : TrimmedPresentationExposingContextTransport C.core.data) :
     ExistsBoundedReachableIdentification G obs :=
-  (C.withExposingTransport E)
-    .exists_bounded_reachable_identification
+  (C.withExposingTransport E).exists_bounded_reachable_identification
 
 /-- Anchor common-context transport over the core gives the main theorem. -/
 theorem main_theorem_from_anchor_common_transport
@@ -159,8 +157,7 @@ theorem main_theorem_from_anchor_common_transport
       (G := G) (obs := obs))
     (A : TrimmedPresentationAnchorCommonContextTransport C.core.data) :
     ExistsBoundedReachableIdentification G obs :=
-  (C.withAnchorCommonTransport A)
-    .exists_bounded_reachable_identification
+  (C.withAnchorCommonTransport A).exists_bounded_reachable_identification
 
 /-- Same-context transport over the core gives the main theorem. -/
 theorem main_theorem_from_same_context_transport
@@ -168,8 +165,7 @@ theorem main_theorem_from_same_context_transport
       (G := G) (obs := obs))
     (S : TrimmedPresentationSameContextTransport C.core.data) :
     ExistsBoundedReachableIdentification G obs :=
-  (C.withSameContextTransport S)
-    .exists_bounded_reachable_identification
+  (C.withSameContextTransport S).exists_bounded_reachable_identification
 
 /-- An abstract transport witness over the base gives prefix exactness. -/
 theorem prefix_exact_from_transport_choice
@@ -177,8 +173,7 @@ theorem prefix_exact_from_transport_choice
       (G := G) (obs := obs))
     (W : TrimmedPresentationTransportWitnessChoice C.base) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  (C.withTransportWitnessChoice W)
-    .exists_bounded_prefix_exact_identification
+  (C.withTransportWitnessChoice W).exists_bounded_prefix_exact_identification
 
 /-- An abstract transport witness over the base gives a positive characteristic
 sample for some finite bound. -/
@@ -187,8 +182,7 @@ theorem characteristic_sample_from_transport_choice
       (G := G) (obs := obs))
     (W : TrimmedPresentationTransportWitnessChoice C.base) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  (C.withTransportWitnessChoice W)
-    .exists_bounded_positive_characteristic_sample
+  (C.withTransportWitnessChoice W).exists_bounded_positive_characteristic_sample
 
 end TrimmedPresentationSplitCoreWithGlobalAssumptions
 
