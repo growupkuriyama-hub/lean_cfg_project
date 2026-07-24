@@ -266,8 +266,7 @@ def toStructuredTransportConstructionData
       (G := G) (obs := obs)) :
     TrimmedPresentationStructuredTransportConstructionData
       (G := G) (obs := obs) :=
-  L.toLayeredTransportConstructionData
-    .toStructuredTransportConstructionData
+  L.toLayeredTransportConstructionData.toStructuredTransportConstructionData
 
 /-- A fully layered construction datum gives a positive characteristic sample
 for some finite fanout bound. -/
@@ -275,8 +274,7 @@ theorem exists_bounded_positive_characteristic_sample
     (L : TrimmedPresentationFullyLayeredConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  L.toLayeredTransportConstructionData
-    .exists_bounded_positive_characteristic_sample
+  L.toLayeredTransportConstructionData.exists_bounded_positive_characteristic_sample
 
 /-- A fully layered construction datum gives prefix exactness for some finite
 fanout bound. -/
@@ -284,8 +282,7 @@ theorem exists_bounded_prefix_exact_identification
     (L : TrimmedPresentationFullyLayeredConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  L.toLayeredTransportConstructionData
-    .exists_bounded_prefix_exact_identification
+  L.toLayeredTransportConstructionData.exists_bounded_prefix_exact_identification
 
 /-- A fully layered construction datum gives Gold-style identification for some
 finite fanout bound. -/
@@ -293,8 +290,7 @@ theorem exists_bounded_reachable_identification
     (L : TrimmedPresentationFullyLayeredConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  L.toLayeredTransportConstructionData
-    .exists_bounded_reachable_identification
+  L.toLayeredTransportConstructionData.exists_bounded_reachable_identification
 
 end TrimmedPresentationFullyLayeredConstructionData
 
