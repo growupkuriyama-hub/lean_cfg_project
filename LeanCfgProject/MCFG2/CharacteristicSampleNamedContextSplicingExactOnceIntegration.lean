@@ -39,13 +39,26 @@ variable {S : Finset (Word α)}
 
 namespace TrimmedPresentationSampleData
 
+/-- Exact-once splicing evidence, indexed by the listed binary rules. -/
+def exactRuleSplicingProvider
+    (hexact : G.BinaryRulesExactlyOnce) :
+    BinaryRuleSplicingProvider G D.toReachablePreCore where
+  evidence := by
+    intro ρ hρ
+    exact
+      { splicing :=
+          (ExactSplicing.exact_namedContextSplicingConstructor α).splice
+            (D.toReachablePreCore.expose ρ.lhs)
+            ρ.body
+            (hexact ρ hρ) }
+
 /-- Concrete exact-once filling witnesses for the pre-core attached to `D`. -/
 def exactFillingWitnessFamily
     (H : TrimmedPresentationSampleData D S)
     (hexact : G.BinaryRulesExactlyOnce) :
     BinaryFillingWitnessFamily G D.toReachablePreCore :=
-  (ExactSplicing.exact_namedContextSplicingConstructor α).toFillingWitnessFamily
-    hexact G D.toReachablePreCore
+  BinaryRuleSplicingProvider.toFillingWitnessFamily
+    (exactRuleSplicingProvider (D := D) hexact)
 
 /-- Build the ordinary reachable characteristic blueprint without using the
 false universal splicing-constructor assumption. -/
