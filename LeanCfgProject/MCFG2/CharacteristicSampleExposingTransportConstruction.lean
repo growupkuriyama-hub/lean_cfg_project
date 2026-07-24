@@ -104,7 +104,7 @@ def toBoundedGlobalPaperExposingWitness
   witness := C.toGlobalPaperExposingWitness
 
 /-- The finite sample extracted from exposing construction data. -/
-def sample
+noncomputable def sample
     (C : TrimmedPresentationExposingTransportConstructionData
       (G := G) (obs := obs)) :
     Finset (Word α) :=
@@ -147,8 +147,7 @@ theorem exists_bound_and_positive_characteristic_sample
     (C : TrimmedPresentationExposingTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPositiveCharacteristicSample G obs :=
-  C.toBoundedGlobalPaperExposingWitness
-    .exists_bounded_positive_characteristic_sample
+  C.toBoundedGlobalPaperExposingWitness.exists_bounded_positive_characteristic_sample
 
 /-- Eventual prefix-exact reconstruction at the constructed bound. -/
 theorem prefix_exact_eventually
@@ -166,8 +165,7 @@ theorem exists_bounded_prefix_exact_identification
     (C : TrimmedPresentationExposingTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedPrefixExactIdentification G obs :=
-  C.toBoundedGlobalPaperExposingWitness
-    .exists_bounded_prefix_exact_identification
+  C.toBoundedGlobalPaperExposingWitness.exists_bounded_prefix_exact_identification
 
 /-- Gold-style identification at the constructed bound. -/
 theorem identifies_from_positive_text
@@ -185,8 +183,7 @@ theorem exists_bounded_reachable_identification
     (C : TrimmedPresentationExposingTransportConstructionData
       (G := G) (obs := obs)) :
     ExistsBoundedReachableIdentification G obs :=
-  C.toBoundedGlobalPaperExposingWitness
-    .exists_bounded_reachable_identification
+  C.toBoundedGlobalPaperExposingWitness.exists_bounded_reachable_identification
 
 /-- Pointwise eventual correctness on one positive text. -/
 theorem eventually_correct_on_text
