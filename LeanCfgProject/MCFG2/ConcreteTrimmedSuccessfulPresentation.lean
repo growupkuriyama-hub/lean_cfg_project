@@ -391,18 +391,33 @@ theorem toConcreteSuccessfulPresentation
             HasTerminalRule τ :=
         ConcreteSuccessfulOutputTypeRefinement.canonicalTerminalRule_mem
           (obs := obs) hworking ρ hρ O
-      have hnode :
-          τ.lhs obs =
-            TypedNonterminal.ofTuple obs ρ.lhs
-              (castTuple τ.wellTyped.symm
-                ρ.outputTuple) :=
-        TypedNonterminal.eq_of_matches
-          (τ.lhs obs)
-          (castTuple τ.wellTyped.symm
-            ρ.outputTuple)
-          (τ.cast_outputTuple_matches_lhs obs)
-      cases hnode
-      exact PresentationDerives.terminal hmem
+      have hterminal :
+          PresentationDerives
+            (ConcreteSuccessfulOutputTypeRefinement.presentation
+              (G := G) (obs := obs) hworking.basic)
+            ({ base := ρ.lhs,
+               out := fun _ => evalObs obs [ρ.terminal] } :
+              TypedNonterminal G M)
+            (castTuple τ.wellTyped.symm ρ.outputTuple) := by
+        simpa [τ,
+          ConcreteOutputTypeRefinement.canonicalTerminalRule,
+          TypedTerminalRule.lhs] using
+          (PresentationDerives.terminal hmem)
+      have hout :
+          (fun _ : Fin (G.arity ρ.lhs) =>
+              evalObs obs [ρ.terminal]) =
+            tupleType obs
+              (castTuple τ.wellTyped.symm ρ.outputTuple) := by
+        have hm := τ.cast_outputTuple_matches_lhs obs
+        unfold TypedNonterminal.Matches at hm
+        simpa [τ,
+          ConcreteOutputTypeRefinement.canonicalTerminalRule,
+          TypedTerminalRule.lhs] using hm.symm
+      simpa [TypedNonterminal.ofTuple] using
+        (PresentationDerives.congr_output
+          (P := ConcreteSuccessfulOutputTypeRefinement.presentation
+            (G := G) (obs := obs) hworking.basic)
+          hout hterminal)
 
   | binary hρ hx hy ihx ihy =>
       intro parentContext parentOccurrence

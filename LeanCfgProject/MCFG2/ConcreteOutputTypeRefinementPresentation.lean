@@ -394,6 +394,26 @@ theorem TypedNonterminal.eq_of_matches
         ({ base := base, out := tupleType obs x } : TypedNonterminal G M)
       rw [h]
 
+namespace PresentationDerives
+
+/-- Change only the output decoration of a typed nonterminal while keeping its
+base nonterminal, and hence the tuple index, fixed.  This avoids dependent
+elimination on an equality of whole typed nonterminals. -/
+theorem congr_output
+    {P : OutputTypeRefinementPresentation G obs}
+    {A : N}
+    {p q : Fin (G.arity A) → M}
+    (hpq : p = q)
+    {x : Tuple α (G.arity A)}
+    (h : PresentationDerives P
+      ({ base := A, out := p } : TypedNonterminal G M) x) :
+    PresentationDerives P
+      ({ base := A, out := q } : TypedNonterminal G M) x := by
+  cases hpq
+  exact h
+
+end PresentationDerives
+
 end TypedEqualityLemma
 
 
@@ -427,16 +447,33 @@ theorem toConcretePresentation
           hworking ρ hρ
       have hp : hwt = τ.wellTyped := Subsingleton.elim _ _
       cases hp
-      have hnode :
-          τ.lhs obs =
-            TypedNonterminal.ofTuple obs ρ.lhs
-              (castTuple τ.wellTyped.symm ρ.outputTuple) :=
-        TypedNonterminal.eq_of_matches
-          (τ.lhs obs)
-          (castTuple τ.wellTyped.symm ρ.outputTuple)
-          (τ.cast_outputTuple_matches_lhs obs)
-      cases hnode
-      exact PresentationDerives.terminal hmem
+      have hterminal :
+          PresentationDerives
+            (ConcreteOutputTypeRefinement.presentation
+              (G := G) (obs := obs) hworking)
+            ({ base := ρ.lhs,
+               out := fun _ => evalObs obs [ρ.terminal] } :
+              TypedNonterminal G M)
+            (castTuple τ.wellTyped.symm ρ.outputTuple) := by
+        simpa [τ,
+          ConcreteOutputTypeRefinement.canonicalTerminalRule,
+          TypedTerminalRule.lhs] using
+          (PresentationDerives.terminal hmem)
+      have hout :
+          (fun _ : Fin (G.arity ρ.lhs) =>
+              evalObs obs [ρ.terminal]) =
+            tupleType obs
+              (castTuple τ.wellTyped.symm ρ.outputTuple) := by
+        have hm := τ.cast_outputTuple_matches_lhs obs
+        unfold TypedNonterminal.Matches at hm
+        simpa [τ,
+          ConcreteOutputTypeRefinement.canonicalTerminalRule,
+          TypedTerminalRule.lhs] using hm.symm
+      simpa [TypedNonterminal.ofTuple] using
+        (PresentationDerives.congr_output
+          (P := ConcreteOutputTypeRefinement.presentation
+            (G := G) (obs := obs) hworking)
+          hout hterminal)
 
   | @binary ρ hρ x y hx hy ihx ihy =>
       let τ := ConcreteOutputTypeRefinement.canonicalBinaryRule
