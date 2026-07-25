@@ -135,9 +135,27 @@ theorem namedFill_transportUnaryIdentityContext
           (unaryIdentityContext : NamedSentenceContext α 1))
         x =
       tupleWordOfArityOne h x := by
-  rw [← castTuple_singleton_tupleWordOfArityOne h x]
-  rw [namedFill_transportNamedSentenceContext]
-  exact namedFill_unaryIdentityContext _
+  calc
+    namedFill d
+        (transportNamedSentenceContext h
+          (unaryIdentityContext : NamedSentenceContext α 1))
+        x =
+      namedFill d
+        (transportNamedSentenceContext h
+          (unaryIdentityContext : NamedSentenceContext α 1))
+        (castTuple h
+          (singletonTuple (tupleWordOfArityOne h x))) := by
+            rw [castTuple_singleton_tupleWordOfArityOne h x]
+    _ =
+      namedFill 1
+        (unaryIdentityContext : NamedSentenceContext α 1)
+        (singletonTuple (tupleWordOfArityOne h x)) := by
+          exact
+            namedFill_transportNamedSentenceContext h
+              (unaryIdentityContext : NamedSentenceContext α 1)
+              (singletonTuple (tupleWordOfArityOne h x))
+    _ = tupleWordOfArityOne h x := by
+      exact namedFill_unaryIdentityContext _
 
 end NamedContextTransport
 
@@ -165,6 +183,7 @@ theorem startIdentityNamedContext_accepts
         (startIdentityNamedContext G hstart)
         x ∈
       G.StringLanguage := by
+  unfold startIdentityNamedContext
   rw [namedFill_transportUnaryIdentityContext]
   apply mem_StringLanguage_of_start_derives G
     (tupleWordOfArityOne hstart x) hstart
@@ -243,32 +262,28 @@ def acceptsDerives
     (S : ExactSuccessfulDerivationSpine G A c) :
     ∀ {x : Tuple α (G.arity A)},
       DerivesTuple G A x →
-        namedFill (G.arity A) c x ∈ G.StringLanguage :=
-  match S with
-  | .root hstart =>
-      fun {_x} hx =>
-        startIdentityNamedContext_accepts G hstart hx
+        namedFill (G.arity A) c x ∈ G.StringLanguage := by
+  induction S with
+  | root hstart =>
+      intro x hx
+      exact startIdentityNamedContext_accepts G hstart hx
 
-  | .throughStart hρ hwt parentSpine =>
-      fun {x} hx => by
-        rw [namedFill_transportNamedSentenceContext_symm]
-        exact acceptsDerives parentSpine
-          (DerivesTuple.start hρ hx hwt)
+  | throughStart hρ hwt parentSpine ih =>
+      intro x hx
+      rw [namedFill_transportNamedSentenceContext_symm]
+      exact ih (DerivesTuple.start hρ hx hwt)
 
-  | .throughLeft hρ hexact hy parentSpine =>
-      fun {x} hx => by
-        rw [ExactSplicing.leftContext_fill_eq]
-        simpa [BinaryRule.apply] using
-          acceptsDerives parentSpine
-            (DerivesTuple.binary hρ hx hy)
+  | throughLeft hρ hexact hy parentSpine ih =>
+      intro x hx
+      rw [ExactSplicing.leftContext_fill_eq]
+      simpa [BinaryRule.apply] using
+        ih (DerivesTuple.binary hρ hx hy)
 
-  | .throughRight hρ hexact hx parentSpine =>
-      fun {y} hy => by
-        rw [ExactSplicing.rightContext_fill_eq]
-        simpa [BinaryRule.apply] using
-          acceptsDerives parentSpine
-            (DerivesTuple.binary hρ hx hy)
-termination_by S
+  | throughRight hρ hexact hx parentSpine ih =>
+      intro y hy
+      rw [ExactSplicing.rightContext_fill_eq]
+      simpa [BinaryRule.apply] using
+        ih (DerivesTuple.binary hρ hx hy)
 
 /-- Root spine constructed directly from the start-arity part of exact working
 conditions. -/
@@ -277,7 +292,7 @@ def rootOfExactWorking
     (hworking : G.ExactWorkingConditions) :
     ExactSuccessfulDerivationSpine G G.start
       (startIdentityNamedContext G hworking.basic.1.symm) :=
-  .root hworking.basic.1.symm
+  ExactSuccessfulDerivationSpine.root hworking.basic.1.symm
 
 /-- Start-rule spine constructor with well-typedness extracted from exact
 working conditions. -/
@@ -292,7 +307,8 @@ def throughStartOfExactWorking
     ExactSuccessfulDerivationSpine G ρ.child
       (transportNamedSentenceContext
         (hworking.basic.2.1 ρ hρ).symm parent) :=
-  .throughStart hρ (hworking.basic.2.1 ρ hρ) parentSpine
+  ExactSuccessfulDerivationSpine.throughStart
+    hρ (hworking.basic.2.1 ρ hρ) parentSpine
 
 /-- Left-child spine constructor with exact-once linearity extracted from exact
 working conditions. -/
@@ -309,7 +325,8 @@ def throughLeftOfExactWorking
     ExactSuccessfulDerivationSpine G ρ.left
       (ExactSplicing.leftContextNSC
         parent ρ.body (hworking.2 ρ hρ).2.1 y) :=
-  .throughLeft hρ (hworking.2 ρ hρ) hy parentSpine
+  ExactSuccessfulDerivationSpine.throughLeft
+    hρ (hworking.2 ρ hρ) hy parentSpine
 
 /-- Right-child spine constructor with exact-once linearity extracted from
 exact working conditions. -/
@@ -326,7 +343,8 @@ def throughRightOfExactWorking
     ExactSuccessfulDerivationSpine G ρ.right
       (ExactSplicing.rightContextNSC
         parent ρ.body (hworking.2 ρ hρ).2.2 x) :=
-  .throughRight hρ (hworking.2 ρ hρ) hx parentSpine
+  ExactSuccessfulDerivationSpine.throughRight
+    hρ (hworking.2 ρ hρ) hx parentSpine
 
 end ExactSuccessfulDerivationSpine
 
@@ -416,8 +434,7 @@ theorem exact_for_positive_superset
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f =
       G.StringLanguage :=
-  S.toDerivationalExposure.
-    exact_for_positive_superset_of_finite_nonterminal_type
+  S.toDerivationalExposure.exact_for_positive_superset_of_finite_nonterminal_type
       hworking hfan hL hSK hKpos
 
 /-- Eventual prefix-exact reconstruction on every positive text. -/
@@ -430,8 +447,7 @@ theorem exact_prefix_reconstruction
       ∃ n0 : Nat, ∀ n : Nat, n0 ≤ n →
         ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
           G.StringLanguage :=
-  S.toDerivationalExposure.
-    exact_prefix_reconstruction_of_finite_nonterminal_type
+  S.toDerivationalExposure.exact_prefix_reconstruction_of_finite_nonterminal_type
       hworking hfan hL
 
 /-- Gold identification from explicit successful derivation spines. -/
@@ -445,8 +461,7 @@ theorem identifies_from_positive_text
         (reachableHypLanguage obs f)
         (reachableSampleLearner (α := α))
         Ttxt :=
-  S.toDerivationalExposure.
-    identifies_from_positive_text_of_finite_nonterminal_type
+  S.toDerivationalExposure.identifies_from_positive_text_of_finite_nonterminal_type
       hworking hfan hL
 
 /-- Paper-facing identification theorem from explicit successful occurrence
@@ -457,8 +472,7 @@ theorem exact_working_paper_main_theorem
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveIdentificationConclusion G obs :=
-  S.toDerivationalExposure.
-    finite_nonterminal_exact_working_paper_main_theorem
+  S.toDerivationalExposure.finite_nonterminal_exact_working_paper_main_theorem
       hworking hfan hL
 
 /-- Full characteristic-sample, prefix-exact, and Gold-identification package
@@ -469,8 +483,7 @@ theorem exact_working_paper_conclusion_package
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveLearningConclusionPackage G obs :=
-  S.toDerivationalExposure.
-    finite_nonterminal_exact_working_paper_conclusion_package
+  S.toDerivationalExposure.finite_nonterminal_exact_working_paper_conclusion_package
       hworking hfan hL
 
 end TrimmedPresentationSuccessfulSpineData
