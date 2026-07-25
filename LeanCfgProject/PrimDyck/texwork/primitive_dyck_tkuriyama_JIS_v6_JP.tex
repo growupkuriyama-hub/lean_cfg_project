@@ -783,56 +783,85 @@ $g_{d+1}>3\cdot4^d$ から始まることによる。最後に、$  3g_{k+1}
 伝播させる。まず、その一般的な機構を取り出す。
 
 \begin{lemma}[桁持ち上げ]\label{lem:digit-lifting}
-$h\geq1$ とし、$A\subseteq\mathbb N$ が
+$k\geq1$ とし、$A\subseteq\mathbb N$ が
 \begin{equation}\label{eq:digit-closure}
  4A+\{1,2\}\subseteq A
 \end{equation}
-を満たすとする。このとき、$m\in hA$ ならば
+を満たすとする。このとき、$m\in kA$ ならば
 \begin{equation}\label{eq:digit-lifting}
- [4m+h,4m+2h]\subseteq hA
+ [4m+k,4m+2k]\subseteq kA
 \end{equation}
 である。
 \end{lemma}
 
 \begin{proof}
-$m=a_1+\cdots+a_h$（$a_i\in A$）と書く。任意の
-$h\leq r\leq2h$ に対して、
+ある$a_i\in A$に対して、$m=a_1+\cdots+a_k\in kA$であると仮定する。任意の
+$k\leq r\leq2k$ に対して、
 \[
- \eta_1+\cdots+\eta_h=r,
+ \eta_1+\cdots+\eta_k=r,
  \qquad \eta_i\in\{1,2\}
 \]
-となる $\eta_1,\ldots,\eta_h$ を選べる。したがって、
+となる $\eta_1,\ldots,\eta_k$ を選べる。したがって、
 \[
- 4m+r=\sum_{i=1}^{h}(4a_i+\eta_i)\in hA
+ 4m+r=\sum_{i=1}^{k}(4a_i+\eta_i)\in kA
 \]
 であり、主張が従う。
 \end{proof}
 
-\begin{corollary}[有限区間から尾部への伝播]\label{cor:tail-propagation}
-$h\geq3$ とし、$A\subseteq\mathbb N$ が
+\begin{corollary}[有限区間から尾部への伝播]
+\label{cor:tail-propagation}
+$k\geq3$ とし、$A\subseteq\mathbb N$ が
 \eqref{eq:digit-closure} を満たすとする。ある整数 $M\geq1$ に対して
 \begin{equation}\label{eq:tail-seed}
- [M,4M+h-1]\subseteq hA
+ [M,4M+k-1]\subseteq kA
 \end{equation}
 ならば、
 \[
- [M,\infty)\subseteq hA
+ [M,\infty)\subseteq kA
 \]
 である。
 \end{corollary}
 
 \begin{proof}
 $n\geq M$ に関する強い帰納法を用いる。区間
-$M\leq n\leq4M+h-1$ は仮定による。$n\geq4M+h$ とし、
+$M\leq n\leq4M+k-1$ での成立は仮定による。
+
+$n\geq4M+k$ とし、$M\leq j<n$ を満たすすべての整数 $j$ に対して
+$j\in kA$ が成り立つと仮定する。
 $\rho\equiv n\pmod4$ を満たす一意な
-$\rho\in\{h,h+1,h+2,h+3\}$ を選ぶ。$h\geq3$ より
-$h\leq\rho\leq2h$ である。また、
+\[
+ \rho\in\{k,k+1,k+2,k+3\}
+\]
+を選ぶ。$k\geq3$ より
+\[
+ k\leq\rho\leq k+3\leq2k
+\]
+である。また、
+\[
+ m:=\frac{n-\rho}{4}
+\]
+とおくと、$m$ は整数である。さらに、$n\geq4M+k$ および
+$\rho\leq k+3$ より
+\[
+ m\geq\frac{4M+k-(k+3)}{4}
+   =M-\frac34
+\]
+であるから、$m\geq M$ である。一方、$\rho\geq k\geq3$ より
 \[
  m=\frac{n-\rho}{4}
+ \leq\frac{n-k}{4}
+ <n
 \]
-とおけば $M\leq m<n$ である。帰納法の仮定より $m\in hA$ なので、
-補題~\ref{lem:digit-lifting} から $n=4m+\rho\in hA$ を得る。
+である。
+
+したがって、帰納法の仮定より $m\in kA$ である。
+補題~\ref{lem:digit-lifting} から
+\[
+ n=4m+\rho\in kA
+\]
+を得る。以上により、強い帰納法が完了する。
 \end{proof}
+
 
 \subsection{正規部分族による6項被覆}
 

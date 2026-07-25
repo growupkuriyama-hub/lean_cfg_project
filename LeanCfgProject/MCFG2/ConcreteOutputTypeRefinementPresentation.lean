@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.OutputTypePresentationWorkingGrammarEquivalence
+import Mathlib.Data.Finset.Sigma
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.Sigma
 
 /-!
 # ConcreteOutputTypeRefinementPresentation.lean
@@ -423,22 +426,15 @@ theorem toConcretePresentation
           hworking ρ hρ
       have hp : hwt = τ.wellTyped := Subsingleton.elim _ _
       cases hp
-      -- Only the `.out` field differs between `τ.lhs obs` and the canonical
-      -- `ofTuple`-built nonterminal; `.base` is `ρ.lhs` on both sides
-      -- definitionally.  Rewriting just the `.out` field keeps the motive
-      -- well-typed, since the second `PresentationDerives` argument below
-      -- does not depend on it.
-      have houtEq :
-          (τ.lhs obs).out =
-            tupleType obs (castTuple τ.wellTyped.symm ρ.outputTuple) :=
-        (τ.cast_outputTuple_matches_lhs obs).symm
-      change PresentationDerives
-        (ConcreteOutputTypeRefinement.presentation
-          (G := G) (obs := obs) hworking)
-        { base := ρ.lhs,
-          out := tupleType obs (castTuple τ.wellTyped.symm ρ.outputTuple) }
-        (castTuple τ.wellTyped.symm ρ.outputTuple)
-      rw [← houtEq]
+      have hnode :
+          τ.lhs obs =
+            TypedNonterminal.ofTuple obs ρ.lhs
+              (castTuple τ.wellTyped.symm ρ.outputTuple) :=
+        TypedNonterminal.eq_of_matches
+          (τ.lhs obs)
+          (castTuple τ.wellTyped.symm ρ.outputTuple)
+          (τ.cast_outputTuple_matches_lhs obs)
+      rw [← hnode]
       exact PresentationDerives.terminal hmem
 
   | @binary ρ hρ x y hx hy ihx ihy =>
