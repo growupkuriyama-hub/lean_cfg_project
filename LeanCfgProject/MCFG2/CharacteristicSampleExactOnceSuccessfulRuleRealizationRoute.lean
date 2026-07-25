@@ -48,7 +48,7 @@ def TypedStartRule.parent
     (σ : TypedStartRule G M) :
     TypedNonterminal G M where
   base := G.start
-  out := castTuple σ.wellTyped σ.childOut
+  out := castOutputType σ.wellTyped σ.childOut
 
 @[simp] theorem TypedStartRule.parent_base
     {G : WorkingMCFG N α}
@@ -59,7 +59,7 @@ def TypedStartRule.parent
 @[simp] theorem TypedStartRule.parent_out
     {G : WorkingMCFG N α}
     (σ : TypedStartRule G M) :
-    σ.parent.out = castTuple σ.wellTyped σ.childOut :=
+    σ.parent.out = castOutputType σ.wellTyped σ.childOut :=
   rfl
 
 end TypedStartParents
@@ -88,7 +88,7 @@ theorem transportedOutput_eq_of_node_eq
     (hbase : X.base = A)
     (hnode : (R.rep A).node = X) :
     R.transportedOutput A =
-      castTuple (congrArg G.arity hbase) X.out := by
+      castOutputType (congrArg G.arity hbase) X.out := by
   cases hnode
   unfold transportedOutput repArityEq
   have hp :
@@ -355,7 +355,7 @@ theorem start_output
     (hρ : ρ ∈ G.startRules)
     (hwt : G.arity ρ.child = G.arity G.start) :
     R.transportedOutput G.start =
-      castTuple hwt
+      castOutputType hwt
         (R.transportedOutput ρ.child) := by
   let σ := Q.startTypedRule ρ hρ
   have hbase : σ.baseRule = ρ :=
@@ -378,7 +378,7 @@ theorem start_output
         hchild
   have houtParent :
       R.transportedOutput G.start =
-        castTuple σ.wellTyped σ.childOut := by
+        castOutputType σ.wellTyped σ.childOut := by
     simpa [TypedStartRule.parent] using
       R.transportedOutput_eq_of_node_eq
         G.start
@@ -387,10 +387,10 @@ theorem start_output
         hparent
   calc
     R.transportedOutput G.start =
-        castTuple σ.wellTyped σ.childOut :=
+        castOutputType σ.wellTyped σ.childOut :=
       houtParent
     _ =
-        castTuple hwt
+        castOutputType hwt
           (R.transportedOutput σ.baseRule.child) := by
       rw [houtChild]
       have hp : hwt = σ.wellTyped :=
