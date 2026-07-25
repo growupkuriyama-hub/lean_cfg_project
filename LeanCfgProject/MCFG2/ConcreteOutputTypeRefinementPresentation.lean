@@ -33,6 +33,13 @@ variable {N : Type v} {α : Type u} {M : Type w}
 variable [Fintype N] [DecidableEq N] [Fintype M]
 variable {G : WorkingMCFG N α}
 
+/-- Every fixed-arity output-vector type is finite.  Recorded explicitly
+because automatic `Fintype` synthesis for `Fin (G.arity X) → M` does not
+always fire through the opaque `WorkingMCFG.arity` projection. -/
+noncomputable instance instFintypeArityFun (X : N) :
+    Fintype (Fin (G.arity X) → M) :=
+  Fintype.ofFinite _
+
 /-- Output-typed nonterminals are equivalent to the dependent sum of a base
 nonterminal and one finite output vector at its arity. -/
 def typedNonterminalSigmaEquiv :
@@ -68,6 +75,12 @@ section CanonicalTypedRuleEnumeration
 variable {N : Type v} {α : Type u} {M : Type w}
 variable [Fintype N] [DecidableEq N] [Fintype M] [DecidableEq M] [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
+
+/-- Every fixed-arity output-vector type is finite (see the identically-named
+instance above; repeated here since it is needed in this section too). -/
+noncomputable instance instFintypeArityFun' (X : N) :
+    Fintype (Fin (G.arity X) → M) :=
+  Fintype.ofFinite _
 
 namespace ConcreteOutputTypeRefinement
 
@@ -165,12 +178,9 @@ theorem canonicalBinaryRule_mem
     canonicalBinaryRule ρ hρ leftOut rightOut ∈
       allTypedBinaryRules (G := G) (M := M) := by
   classical
-  apply Finset.mem_image.mpr
-  refine ⟨⟨⟨ρ, hρ⟩, ⟨leftOut, rightOut⟩⟩, ?_, rfl⟩
-  apply Finset.mem_sigma.mpr
-  refine ⟨Finset.mem_attach _ _, ?_⟩
-  apply Finset.mem_sigma.mpr
-  exact ⟨Finset.mem_univ _, Finset.mem_univ _⟩
+  refine Finset.mem_image.mpr ⟨⟨⟨ρ, hρ⟩, ⟨leftOut, rightOut⟩⟩, ?_, rfl⟩
+  refine Finset.mem_sigma.mpr ⟨Finset.mem_attach _ _, ?_⟩
+  exact Finset.mem_sigma.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩
 
 /-- Every canonical typed start rule occurs in the finite start-rule
 enumeration. -/
@@ -182,10 +192,8 @@ theorem canonicalStartRule_mem
     canonicalStartRule hworking ρ hρ childOut ∈
       allTypedStartRules (G := G) hworking := by
   classical
-  apply Finset.mem_image.mpr
-  refine ⟨⟨⟨ρ, hρ⟩, childOut⟩, ?_, rfl⟩
-  apply Finset.mem_sigma.mpr
-  exact ⟨Finset.mem_attach _ _, Finset.mem_univ _⟩
+  refine Finset.mem_image.mpr ⟨⟨⟨ρ, hρ⟩, childOut⟩, ?_, rfl⟩
+  exact Finset.mem_sigma.mpr ⟨Finset.mem_attach _ _, Finset.mem_univ _⟩
 
 end ConcreteOutputTypeRefinement
 
@@ -378,7 +386,7 @@ theorem TypedNonterminal.eq_of_matches
   unfold TypedNonterminal.Matches at h
   cases X with
   | mk base out =>
-      show ({ base := base, out := out } : TypedNonterminal G M) =
+      change ({ base := base, out := out } : TypedNonterminal G M) =
         ({ base := base, out := tupleType obs x } : TypedNonterminal G M)
       rw [h]
 
@@ -415,15 +423,22 @@ theorem toConcretePresentation
           hworking ρ hρ
       have hp : hwt = τ.wellTyped := Subsingleton.elim _ _
       cases hp
-      have hnode :
-          τ.lhs obs =
-            TypedNonterminal.ofTuple obs ρ.lhs
-              (castTuple τ.wellTyped.symm ρ.outputTuple) :=
-        TypedNonterminal.eq_of_matches
-          (τ.lhs obs)
-          (castTuple τ.wellTyped.symm ρ.outputTuple)
-          (τ.cast_outputTuple_matches_lhs obs)
-      rw [← hnode]
+      -- Only the `.out` field differs between `τ.lhs obs` and the canonical
+      -- `ofTuple`-built nonterminal; `.base` is `ρ.lhs` on both sides
+      -- definitionally.  Rewriting just the `.out` field keeps the motive
+      -- well-typed, since the second `PresentationDerives` argument below
+      -- does not depend on it.
+      have houtEq :
+          (τ.lhs obs).out =
+            tupleType obs (castTuple τ.wellTyped.symm ρ.outputTuple) :=
+        (τ.cast_outputTuple_matches_lhs obs).symm
+      change PresentationDerives
+        (ConcreteOutputTypeRefinement.presentation
+          (G := G) (obs := obs) hworking)
+        { base := ρ.lhs,
+          out := tupleType obs (castTuple τ.wellTyped.symm ρ.outputTuple) }
+        (castTuple τ.wellTyped.symm ρ.outputTuple)
+      rw [← houtEq]
       exact PresentationDerives.terminal hmem
 
   | @binary ρ hρ x y hx hy ihx ihy =>
@@ -446,14 +461,15 @@ theorem toConcretePresentation
           τ.right y := by
         simpa [τ, ConcreteOutputTypeRefinement.canonicalBinaryRule,
           TypedBinaryRule.right, TypedNonterminal.ofTuple] using ihy
-      have hparent :
-          τ.lhs obs =
-            TypedNonterminal.ofTuple obs ρ.lhs (ρ.apply x y) :=
-        TypedNonterminal.eq_of_matches
-          (τ.lhs obs)
-          (ρ.apply x y)
-          (τ.apply_matches_lhs obs rfl rfl)
-      rw [← hparent]
+      have houtEq :
+          (τ.lhs obs).out = tupleType obs (ρ.apply x y) :=
+        (τ.apply_matches_lhs obs rfl rfl).symm
+      change PresentationDerives
+        (ConcreteOutputTypeRefinement.presentation
+          (G := G) (obs := obs) hworking)
+        { base := ρ.lhs, out := tupleType obs (ρ.apply x y) }
+        (ρ.apply x y)
+      rw [← houtEq]
       exact PresentationDerives.binary hmem ihx' ihy'
 
 end StartFreeDerives
