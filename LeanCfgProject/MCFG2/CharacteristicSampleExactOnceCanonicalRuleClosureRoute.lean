@@ -371,8 +371,8 @@ def toSuccessfulOccurrenceData
     (hworking : G.BasicWorkingConditions) :
     TrimmedPresentationSuccessfulOccurrenceData
       (C.toPreCoreData (f := f) hworking) :=
-  (C.toPreCoreConstruction hworking).
-    toSuccessfulOccurrenceData hworking
+  (C.toPreCoreConstruction hworking).toSuccessfulOccurrenceData
+    hworking
 
 end SuccessfulOccurrenceCanonicalRuleClosedPreCoreConstruction
 
@@ -395,8 +395,8 @@ noncomputable def finiteSample
     (C : SuccessfulOccurrenceCanonicalRuleClosedPreCoreConstruction G obs)
     (hworking : G.ExactWorkingConditions) :
     Finset (Word α) :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    finiteSample (f := f) hworking
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).finiteSample
+    (f := f) hworking
 
 /-- The canonical-closure sample is positive. -/
 theorem finiteSample_positive
@@ -404,8 +404,8 @@ theorem finiteSample_positive
     (hworking : G.ExactWorkingConditions) :
     (C.finiteSample (f := f) hworking : Set (Word α)) ⊆
       G.StringLanguage :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    finiteSample_positive (f := f) hworking
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).finiteSample_positive
+    (f := f) hworking
 
 /-- Exact reconstruction on every positive finite superset of the generated
 sample. -/
@@ -421,9 +421,8 @@ theorem exact_for_positive_superset
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f =
       G.StringLanguage :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    exact_for_positive_superset
-      (f := f) hworking hfan hL hCK hKpos
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).exact_for_positive_superset
+    (f := f) hworking hfan hL hCK hKpos
 
 /-- Eventual prefix-exact reconstruction from canonical typed-rule closure. -/
 theorem exact_prefix_reconstruction
@@ -435,9 +434,8 @@ theorem exact_prefix_reconstruction
       ∃ n0 : Nat, ∀ n : Nat, n0 ≤ n →
         ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
           G.StringLanguage :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    exact_prefix_reconstruction
-      (f := f) hworking hfan hL
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).exact_prefix_reconstruction
+    (f := f) hworking hfan hL
 
 /-- Gold identification from canonical typed-rule closure. -/
 theorem identifies_from_positive_text
@@ -450,9 +448,8 @@ theorem identifies_from_positive_text
         (reachableHypLanguage obs f)
         (reachableSampleLearner (α := α))
         Ttxt :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    identifies_from_positive_text
-      (f := f) hworking hfan hL
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).identifies_from_positive_text
+    (f := f) hworking hfan hL
 
 /-- Paper-facing identification theorem from a successful complete
 presentation closed under the canonical typed rules determined by its selected
@@ -463,9 +460,8 @@ theorem exact_working_paper_main_theorem
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveIdentificationConclusion G obs :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    exact_working_paper_main_theorem
-      (f := f) hworking hfan hL
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).exact_working_paper_main_theorem
+    (f := f) hworking hfan hL
 
 /-- Full characteristic-sample, prefix-exact, and Gold-identification package
 from canonical typed-rule closure. -/
@@ -475,9 +471,8 @@ theorem exact_working_paper_conclusion_package
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveLearningConclusionPackage G obs :=
-  (C.toRuleRealizedPreCoreConstruction hworking.basic).
-    exact_working_paper_conclusion_package
-      (f := f) hworking hfan hL
+  (C.toRuleRealizedPreCoreConstruction hworking.basic).exact_working_paper_conclusion_package
+    (f := f) hworking hfan hL
 
 end SuccessfulOccurrenceCanonicalRuleClosedPreCoreConstruction
 

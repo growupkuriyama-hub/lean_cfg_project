@@ -1,0 +1,1456 @@
+\documentclass[12pt]{ltjsarticle}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{注意}
+\theoremstyle{plain}
+\renewcommand{\proofname}{証明}
+\renewcommand{\abstractname}{要旨}
+
+\newcommand{\val}[2]{[#1]_{#2}}
+\newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
+\newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
+\newcommand{\Pset}{%
+  \bigl(\tfrac{1}{4}\cdot\mathcal{N}_{\mathrm{pD},\geq 12}\bigr)%
+}
+\newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\textrm{\underline{#1}}}}
+
+\title{原始Dyck数による加法的表現：\\例外集合と最適位数}
+\author{Takayuki Kuriyama}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+$\NpD$ を、$0$ と、原始Dyck語を2進数として読んで得られる整数とからなる集合とする。正の偶数 $N$ に対し、$r(N)$ を、和が $N$ となる $\NpD$ の正の元の最小個数とする。このとき、対応する数列 $a(n)=r(2n)$ はOEIS数列 \seqnum{A395858} である。本論文では、6項表示に関する完全な例外集合を決定する。すなわち、$r(46)=8$ を満たすのは $46$ のみであり、10個の整数
+$34,44,98,154,198,202,206,838,842,846$ は $r(N)=7$ を満たし、それ以外のすべての正の偶数は $r(N)\leq6$ を満たす。したがって、6項で常に表示できるようになる鋭い偶数閾値は $848$ である。さらに、正確な相対漸近位数も決定する。任意の $k\geq2$ に対して
+$r(10\cdot4^{k+1}-6)=6$ が成り立つので、無限に多くの場合に6項が必要であり、漸近位数は正確に $6$ である。証明では、正規部分言語、有限区間証明書、自己相似的な5項区間伝播、および2色Motzkin語による半分化原始族の基数4特徴づけを組み合わせる。さらに、その半分化族が正確に位数 $5$ の漸近加法基底であることも従う。
+\end{abstract}
+
+\noindent\textbf{キーワード：} 原始Dyck数、加法的表現、加法基底、漸近位数、例外集合、2色Motzkin語、ディジタル自己相似性、区間充填。
+
+\noindent\textbf{2020 Mathematics Subject Classification:} Primary 11B13;
+Secondary 05A15, 68Q45.
+
+\section{序論}\label{sec:introduction}
+
+例えば、均衡した括弧列 $()(())$ は、開き括弧を $1$、閉じ括弧を
+$0$ と符号化することにより、語 $101100$ になる。より一般に、任意の
+均衡した括弧列はこの方法でアルファベット $\{1,0\}$ 上の語
+\footnote{このアルファベット上のすべての語の集合を $\{0,1\}^*$ と書く。
+これは正規言語である。}として表され、したがって2進整数として読むことが
+できる。この方法で得られる整数の集合は、加法的にどれほど豊かであるのか。
+本論文では、この問いの自然な変種を扱う。
+
+\emph{Dyck語}とは、$1$ と $0$ を同数含み、かつ任意の接頭辞において
+$1$ の個数が $0$ の個数以上である語 $w\in\{1,0\}^*$ のことである。
+\footnote{Dyck言語は正規ではないが、文脈自由言語である。}
+例えば、Dyck語 $101100$ の原始Dyck語への一意な分解は
+$101100=10\cdot1100$ である。ここおよび以下で、$\cdot$ は語の連結を表す。
+空でないDyck語が\emph{原始的}であるとは、
+その空でない真の接頭辞のどれも均衡していないことをいう。同値に、$1$ を上昇、
+$0$ を下降とみなしたとき、対応する格子路が終点において初めて高さ $0$ に戻る
+ことをいう。\footnote{このような路は、\emph{既約}Dyck路または
+\emph{分解不能}Dyck路とも呼ばれる。}
+空でない原始Dyck語全体の言語を $\DP$ と書く。特に、空語 $\lambda$ は
+$\DP$ に含めない。長さ順、同じ長さでは辞書式順に並べると、その最初の18語は
+\[
+\begin{gathered}
+10,\ 1100,\ 110100,\ 111000,\ 11010100,\ 11011000,\\
+11100100,\ 11101000,\ 11110000,\ 1101010100,\ 1101011000,\\
+1101100100,\ 1101101000,\ 1101110000,\ 1110010100,\\
+1110011000,\ 1110100100,\ 1110101000.
+\end{gathered}
+\]
+
+偶数長の2進語は、左から2桁ずつまとめて4進語として読むこともできる。
+例えば、数字列のレベルでは
+\[
+ (11\cdot10\cdot01\cdot01\cdot00)_{(2)}=32110_{(4)}
+\]
+と書く。ここで $\cdot$ は連結を表す。一般に、連続する2進数字の組と4進数字を
+\[
+ 11_{(2)}\longleftrightarrow3_{(4)},\qquad
+ 10_{(2)}\longleftrightarrow2_{(4)},\qquad
+ 01_{(2)}\longleftrightarrow1_{(4)},\qquad
+ 00_{(2)}\longleftrightarrow0_{(4)}
+\]
+によって同一視する。添字 $(2)$ と $(4)$ は基数を示すメタ記号であり、
+基数が文脈から明らかな場合には省略する。
+
+基数 $m$ の数字からなる語 $w$ に対し、それが基数 $m$ で表す整数を
+$\val{w}{m}$ と書く。本論文で扱う加法表示の便宜のために $0$ を加え、
+\[
+ \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}
+ \subseteq\mathbb Z_{\geq0}
+\]
+と定める。$0\in\NpD$ とする約束は、以下の結論には本質的ではない。
+最初の18個の正の元は
+\[
+\begin{gathered}
+2,12,52,56,212,216,228,232,240,\\
+852,856,868,872,880,916,920,932,936;
+\end{gathered}
+\]
+であり、これはOEIS数列 \seqnum{A057547} \cite{OEIS-A057547} である。
+空でないDyck語はすべて末尾が $0$ であるため、$\NpD$ の正の元はすべて
+偶数である。したがって、$\NpD$ の元の和で表示できる対象整数は偶数に限られる。
+
+以下の法 $4$ に関する基本的な観察を繰り返し用いる。
+
+\begin{lemma}\label{lem:mod4}
+$4$ を法として $2$ に合同な正の原始Dyck数は $2$ だけである。
+それ以外の正の原始Dyck数はすべて $4$ で割り切れる。
+\end{lemma}
+
+\begin{proof}
+$w\in\DP$ とし、$|w|$ でその長さを表す。$w$ は空でない均衡語なので、
+その末尾の文字は $0$ である。$|w|=2$ の場合には必ず $w=10$ であり、
+$[w]_2=2$ である。次に $|w|\geq4$ とし、
+\[
+ w=ub0,\qquad b\in\{0,1\}
+\]
+と書く。もし $b=1$ ならば、接尾辞 $10$ の高さ変化は $0$ なので、
+真の接頭辞 $u$ はすでに均衡していることになり、$w$ の原始性に反する。
+したがって $b=0$ である。ゆえに $w$ は $00$ で終わり、
+$4\mid[w]_2$ が成り立つ。
+\end{proof}
+
+Bell、Lidbetter、Shallitは、\emph{すべての}Dyck語から得られる、
+より大きな集合である\emph{完全均衡数}（OEIS数列
+\seqnum{A014486} \cite{OEIS-A014486}）を研究した。彼らは正規な下方近似と
+オートマトンを用い、
+\[
+        8,\ 18,\ 28,\ 38,\ 40,\ 82,\ 166
+\]
+を除くすべての偶数が高々3個の完全均衡数の和であり、一方で漸近的には
+2項では不十分であることを証明した \cite[Thm.\ 14]{BLS}。
+
+原始性という制限は、この結果の表面的な変種ではない。空でないDyck語はすべて、
+原始Dyck語の連結として一意に分解されるが、本論文では各加数そのものが単一の
+因子でなければならない。したがって、制限のないDyck数による表示から、一般には
+同じ項数の原始Dyck数表示は得られない。
+
+本論文で扱う加法表示は、一意とはほど遠い。例えば、
+\[
+ 2026=2+240+852+932=2+216+872+936.
+\]
+この二つの表示に現れる7個の相異なる整数は、すべて原始Dyck語を2進展開にもつ。
+
+数字条件で定義された加法基底は、オートマトン理論的手法によっても研究されてきた。
+Bell、Hare、Shallitは、加法基底となる自動集合を特徴づけ、その位数を決定する
+有効な手続きを与えた \cite{BHS}。関連する決定手続きにより、2進回文数
+\cite{RSS} および2進平方語 \cite{MNRS} についても鋭い加法的結果が得られている。
+原始Dyck語の言語は正規ではないため、これらの一般的な有限オートマトン手法だけでは
+本問題を直接解決できない。
+
+本論文の証明は、正規近似だけでは不十分になる構造的な地点で、従来の方法と異なる。
+正規部分言語が法 $4$ で $0$ の合同類を処理し、法 $4$ で $2$ の合同類は、
+$4$ で割った後の完全な原始族がもつ自己相似的閉性によって処理する。同じ族は、
+2色Motzkin語による基数4表示ももつ。その自己相似性は相補的な二つの効果をもつ。
+すなわち、5項区間を伝播させる一方で、世代間の隙間が4項表示に対する無限個の
+障害を生み出す。これらの事実から、完全例外集合、最適な一様上界、鋭い最終的閾値、
+および正確な漸近位数が得られる。
+
+長さ $2n$ のDyck語のうち原始的なものの割合は、$n\to\infty$ のとき
+$1/4$ に収束する。実際、長さ $2n$ のDyck語は $C_n$ 個あり、原始Dyck語は
+一意に $1u0$ と書ける。ここで $u$ は長さ $2n-2$ のDyck語である。したがって、
+長さ $2n$ の原始Dyck語は $C_{n-1}$ 個である。Catalan数の公式
+$C_n=\frac1{n+1}\binom{2n}{n}$\footnote{文脈自由文法
+$S\to\lambda\mid 1S0S$ により、空でないDyck語は一意に $1u0v$ と
+分解される。ただし $u,v$ はDyck語である。したがって、$C_0=1$ および
+$C_n=\sum_{k=0}^{n-1}C_kC_{n-1-k}$ が成り立つ。一方、
+$B_n=\frac{1}{n+1}\binom{2n}{n}$ とおけば、二項係数の畳み込み恒等式により
+$B_0=1$ および $B_n=\sum_{k=0}^{n-1}B_kB_{n-1-k}$ が成り立つ。
+ゆえに帰納法により $C_n=B_n$ である。}から、
+\[
+ \frac{C_{n-1}}{C_n}=\frac{n+1}{2(2n-1)}\longrightarrow\frac14
+\]
+を得る。しかし、その算術的ふるまいには真に階層的な特徴が現れる。十分大きな偶数は
+すべて、制限のないDyck数なら3項で足りるのに対し、加数を原始族に制限すると、
+小さいながら非自明な形状の例外集合が発生する。本論文では、高々6個の原始Dyck数の
+和でない正の偶数を正確に11個に特定する。そのうち10個は7項を必要とし、$46$ だけが
+8項を必要とする。これら11個の例外はすべて $848$ 未満にある。
+
+8項を必要とする現象は局所的であり、$48$ 未満の正の原始Dyck数が $2$ と $12$ しか
+ないことが原因である。これに対し、最終的な6項上界の鋭さは構造的である。正規部分族が
+$4$ の倍数を処理し、$4$ で割った完全原始族が残る合同類を処理する。さらに、後で構成する
+明示的な数列 $(N_k)_{k\geq2}$ は無限大へ発散し、$r(N_k)=6$ を満たす。
+
+正の偶数 $N$ に対し、和が $N$ となる正の原始Dyck数の最小個数を $r(N)$ とし、
+本論文の中心的な整数列を
+\[
+        a(n)=r(2n),\qquad n\geq1
+\]
+と定める。この数列はOEISに \seqnum{A395858} \cite{OEIS-A395858} として
+登録されている。最初の50項は
+\[
+\begin{gathered}
+1,2,3,4,5,1,2,3,4,5,6,2,3,4,5,6,7,3,4,5,6,7,8,4,5,\\
+1,2,1,2,3,4,2,3,2,3,4,5,3,4,3,4,5,6,4,5,4,5,6,7,5.
+\end{gathered}
+\]
+である。生成プログラムは
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/A395858.py}{\path{A395858.py}}
+であり、その最初の $50{,}000$ 項の実際の出力は
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/b395858.txt}{\path{b395858.txt}}
+として公開している。
+
+\begin{theorem}\label{thm:classification}
+$r(N)$ が6を超える場合は、正確に次のとおりである：
+\[
+\begin{aligned}
+ r(46)&=8,\\[4pt]
+ r(N)=7\quad&\Longleftrightarrow\quad
+ N\in\{34,44,98,154,198,202,206,838,842,846\}.
+\end{aligned}
+\]
+したがって、それ以外のすべての正の偶数は $r(N)\leq6$ を満たす。言い換えれば、
+任意の偶数 $N\geq848$ は高々6個の原始Dyck数の和である。
+\end{theorem}
+
+同値に、$a(n)=r(2n)$ で定義されるOEIS数列 \seqnum{A395858}
+\cite{OEIS-A395858} について、
+\[
+        \max_{n\geq1}a(n)=8,
+        \qquad
+        a(n)=8\quad\Longleftrightarrow\quad n=23,
+\]
+であり、
+\[
+ a(n)=7
+ \quad\Longleftrightarrow\quad
+ n\in\{17,22,49,77,99,101,103,419,421,423\}.
+\]
+したがって、主定理は単なる最終的評価ではなく、$a(n)$ が6を超えるすべての項を
+完全に決定している。
+
+計算された項を軽く眺めると、値 $6$ の出現は次第にまれになり、やがて消滅するようにも
+見える。しかし、事実はそうではない。無限遠まで分布する明示的な障害列 $N_k$ が存在し、
+最終的な上界6は最良である。
+
+\begin{theorem}\label{thm:asymptotic-order}
+\[
+ h_{\mathrm{asym}}
+ =\min\{h:\text{十分大きなすべての偶数 }N\text{ が }r(N)\leq h\text{ を満たす}\}
+\]
+とおく。このとき $h_{\mathrm{asym}}=6$ である。より正確には、任意の整数
+$k\geq2$ に対して
+\[
+ N_k=10\cdot4^{k+1}-6
+\]
+は $r(N_k)=6$ を満たす。
+\end{theorem}
+
+したがって、上記の有限例外集合と、6項上界が達成される無限に多くの大きな整数とは
+両立する。
+
+例外値 $46$ だけでも、一様上界が8より小さくなり得ないことが分かる。
+
+\begin{proposition}\label{prop:46}
+整数 $46$ は正確に8個の正の原始Dyck数を必要とする。すなわち、8個の和ではあるが、
+高々7個の和ではない。
+\end{proposition}
+
+\begin{proof}
+$48$ 未満の正の原始Dyck数は $2$ と $12$ だけである。実際、長さ2および4の原始語は
+$10$ と $1100$ である一方、長さ6以上の原始語は $11$ で始まるので、少なくとも
+$[110000]_2=48$ を表す。したがって、$46$ の任意の表示は
+\[
+        46=12a+2b,\qquad a,b\geq0
+\]
+の形である。同値に $6a+b=23$ である。$6\cdot4>23$ なので $a\leq3$ であり、
+したがって項数は
+\[
+        a+b=23-5a\geq8
+\]
+を満たす。等号は
+\[
+        46=12+12+12+2+2+2+2+2
+\]
+によって達成される。
+\end{proof}
+
+以下で用いる和集合の記法は、加法基底論における標準的なものである
+\cite[Chap.\ 1]{Nathanson}。非負整数 $k$ に対し、$kX$ を、$X$ の元を重複を
+許して $k$ 個足して得られる和の集合とし、$0X=\{0\}$ とする。また、
+\[
+ F_k(X)=\bigcup_{j=0}^{k}jX
+\]
+とおく。したがって、$F_k(X)$ は $X$ の元を高々 $k$ 個足して得られる和の集合である。
+この記法を拡大と混同してはならず、一般に $jX\neq\{jx:x\in X\}$ である。
+スカラー $c$ に対する拡大は $c\cdot X=\{cx:x\in X\}$ と区別して書く。
+
+法4の性質から、中心的な半分化族
+\begin{equation}\label{eq:P-def}
+ \Pset=\{v/4:v\in\NpD,\ v\geq12\}
+\end{equation}
+を導入する。その最初の元は
+\[
+ 3,13,14,53,54,57,58,60,213,214,217,\ldots
+\]
+である。このとき
+\begin{equation}\label{eq:NpD-decomp}
+ \NpD=\{0,2\}\cup4\Pset
+\end{equation}
+である。
+
+\section{\texorpdfstring{$\Pset$}{P} の基数\texorpdfstring{$4$}{4}構造}
+\label{sec:base4}
+
+ここでは、$\Pset$ の定義に現れる $4$ による除算によって明らかになる、
+$\Pset$ の基数4構造を記述する。基数4の各数字に重みを
+\[
+  \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
+  \sigma(1)=\sigma(2)=0
+\]
+によって割り当てる。さらに、$\sigma$ を語に加法的に拡張し、
+\[
+ \sigma(c_0c_1\cdots c_{k-1})
+ :=\sum_{i=0}^{k-1}\sigma(c_i),
+ \qquad
+ \sigma(\lambda):=0
+\]
+と定める。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が
+\emph{2色Motzkin語}である\footnote{重み $0$ の二つの数字 $1$ と $2$ を、異なる
+色とみなしている。}とは、任意の接頭辞の重みが非負であり、かつ
+$\sigma(w)=0$ であることをいう。接頭辞の重みは途中で複数回 $0$ に戻ってもよい。
+このような語全体の集合を $\mathsf{Motz}$ と書く。$\DP$ とは異なり、
+$\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読んだ値を $[w]_4$
+と書き、$[\lambda]_4=0$ と定める。正整数 $n$ に対し、その標準的な2進展開および
+4進展開を、それぞれ $\operatorname{bin}(n)$ および $\operatorname{quad}(n)$ と書く。
+
+\begin{lemma}[基数4による特徴づけ]\label{lem:base4}
+正整数 $p$ が $\Pset$ に属するための必要十分条件は、ある $w\in\mathsf{Motz}$ が存在して$ \operatorname{quad}(p)=3w$
+となることである。
+\end{lemma}
+
+\begin{proof}
+以下では細部まで明示して証明する。まず $p\in\Pset$ と仮定する。$\Pset$ の定義より、
+\[
+ 4p\in\NpD,\qquad 4p\geq12
+\]
+である。したがって、$4p$ の2進展開
+\[
+ B:=\operatorname{bin}(4p)=b_1b_2\cdots b_{2L},
+ \qquad b_i\in\{0,1\},
+\]
+は $|B|=2L\geq4$ および $B\in\DP$ を満たす原始Dyck語である。
+その高さ関数を
+\[
+ h_B(t):=\sum_{i=1}^{t}(2b_i-1)
+ \qquad(0\leq t\leq2L)
+\]
+と定める。条件 $B\in\DP$ は、同値に
+\begin{equation}\label{eq:primitive-height}
+ h_B(0)=h_B(2L)=0,
+ \qquad
+ h_B(t)>0\quad(1\leq t<2L)
+\end{equation}
+が成り立つ。
+
+一方、$4p$ の4進展開を
+\[
+ \operatorname{quad}(4p)=q_1q_2\cdots q_L,
+ \qquad q_j\in\{0,1,2,3\}
+\]
+と書く。2進数字を左から連続する2桁ずつにまとめると、
+\[
+ q_j=2b_{2j-1}+b_{2j}
+ \qquad(1\leq j\leq L)
+\]
+である。対応
+\[
+ 3_{(4)}\longleftrightarrow11_{(2)},\qquad
+ 2_{(4)}\longleftrightarrow10_{(2)},\qquad
+ 1_{(4)}\longleftrightarrow01_{(2)},\qquad
+ 0_{(4)}\longleftrightarrow00_{(2)}
+\]
+から、第 $j$ 番目の2ビットブロックを通過したときの高さの純変化は、
+対応する4進数字の重みの2倍である。すなわち、
+\[
+ h_B(2j)-h_B(2j-2)=2\sigma(q_j)
+\]
+である。これを $1$ から $j$ まで足し合わせると、
+\begin{equation}\label{eq:height-sigma}
+ h_B(2j)=2\sum_{i=1}^{j}\sigma(q_i)
+ \qquad(0\leq j\leq L)
+\end{equation}
+を得る。ただし、$j=0$ のとき右辺は空和 $0$ とする。
+
+次に、最初と最後のブロックを決定する。$B$ はDyck語なので $b_1=1$ である。
+もし $b_2=0$ ならば $h_B(2)=0$ となり、$2<2L$ および
+\eqref{eq:primitive-height} に反する。したがって
+\[
+ b_1b_2=11_{(2)},
+ \qquad
+ q_1=2b_1+b_2=3
+\]
+である。同様に、$b_{2L}=0$ である。もし $b_{2L-1}=1$ ならば、最後のブロックは
+$10$ なので、
+\[
+ h_B(2L)=h_B(2L-2)
+\]
+となる。$h_B(2L)=0$ であるから $h_B(2L-2)=0$ となり、再び
+\eqref{eq:primitive-height} に反する。したがって
+\[
+ b_{2L-1}b_{2L}=00_{(2)},
+ \qquad
+ q_L=0
+\]
+である。
+
+あとは$\mathsf{Motz}$の内部の重さ条件をチェックする。$1\leq j\leq L-1$ に対して $2j<2L$ であるから、
+\eqref{eq:primitive-height} より $h_B(2j)>0$ である。$h_B(2j)$ は偶数なので、等式\eqref{eq:height-sigma}から
+\begin{equation}\label{eq:prefix-height}
+ \sum_{i=1}^{j}\sigma(q_i)
+ =\frac{h_B(2j)}{2}
+ \geq1
+ \qquad(1\leq j\leq L-1)
+\end{equation}
+を得る。$4p$ を $4$ で割ることは、末尾の4進数字 $q_L=0$ を削除することに
+対応する。さらに $q_1=3$ であるから、
+\[
+ \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=3u,
+ \qquad
+ u:=q_2q_3\cdots q_{L-1}.
+\]
+
+のこりは$u\in\mathsf{Motz}$を示す。$u$ の長さ $r$ の接頭辞を考え、$0\leq r\leq L-2$ とする。$r=0$ の場合、その
+重みは空和 $0$ である。$1\leq r\leq L-2$ の場合には、
+\eqref{eq:prefix-height} を $j=r+1$ に適用して、
+\begin{equation}\label{eq:motzkin-prefix-nonnegative}
+ \sum_{i=2}^{r+1}\sigma(q_i)
+ =\sum_{i=1}^{r+1}\sigma(q_i)-\sigma(q_1)
+ \geq1-1=0
+\end{equation}
+を得る。また、\eqref{eq:height-sigma} を $j=L$ に適用すると、
+\begin{equation}\label{eq:total-weight-zero}
+ \sum_{i=1}^{L}\sigma(q_i)
+ =\frac{h_B(2L)}{2}
+ =0
+\end{equation}
+$\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから、\eqref{eq:total-weight-zero}より、
+\[
+ \sum_{i=2}^{L-1}\sigma(q_i)= \sum_{i=1}^{L}\sigma(q_i)-(\sigma(q_1)+\sigma(q_L))=0.
+\]
+式~\eqref{eq:motzkin-prefix-nonnegative} より、$u$ の任意の接頭辞の重みは
+非負である。また、式~\eqref{eq:total-weight-zero} と端の重み
+$\sigma(q_1)=1$、$\sigma(q_L)=-1$ より、$u$ 全体の重みは $0$ である。
+ゆえに $u\in\mathsf{Motz}$ であり、必要性が示された。
+
+逆に、ある $w\in\mathsf{Motz}$ に対して$ \operatorname{quad}(p)=3w$
+であると仮定する。これを
+\[
+ \operatorname{quad}(p)=q_1q_2\cdots q_m,
+ \qquad
+ q_1=3,
+ \qquad
+ w=q_2q_3\cdots q_m
+\]
+と書く。条件 $w\in\mathsf{Motz}$ は、明示的には
+\begin{equation}\label{eq:reverse-motzkin-prefix}
+ \sum_{i=2}^{j}\sigma(q_i)\geq0
+ \qquad(2\leq j\leq m)
+\end{equation}
+および
+\begin{equation}\label{eq:reverse-motzkin-total}
+ \sum_{i=2}^{m}\sigma(q_i)=0
+\end{equation}
+が成り立つ。$m=1$ の場合、いずれの和も空和と解釈し、接頭辞条件は空虚に
+成り立つものとする。
+
+各4進数字を2ビットブロックに置き換えるモノイド準同型
+\[
+ \phi:\{0,1,2,3\}^*\longrightarrow\{0,1\}^*
+\]
+を、各文字上で
+\[
+ \phi(3)=11,\qquad
+ \phi(2)=10,\qquad
+ \phi(1)=01,\qquad
+ \phi(0)=00
+\]
+と定める。$q_{m+1}:=0$ とおき、
+\[
+ B:=\phi(q_1q_2\cdots q_mq_{m+1})
+   =b_1b_2\cdots b_{2m+2}
+\]
+とする。最後の2ビットは
+\[
+ b_{2m+1}b_{2m+2}=00_{(2)}
+\]
+を満たす。各4進数字は対応する2ビットの2進ブロックに置き換えられるので、
+\begin{equation}\label{eq:block-value}
+ [B]_2=[q_1q_2\cdots q_m0]_4=4p
+\end{equation}
+である。$B$ の高さ関数を
+\[
+ h_B(t):=\sum_{i=1}^{t}(2b_i-1)
+ \qquad(0\leq t\leq2m+2)
+\]
+と定める。先ほどと同じブロックごとの計算により、
+\begin{equation}\label{eq:reverse-height-sigma}
+ h_B(2j)=2\sum_{i=1}^{j}\sigma(q_i)
+ \qquad(0\leq j\leq m+1)
+\end{equation}
+が成り立つ。
+
+まず、ブロック境界、すなわち偶数位置の高さを調べる。$1\leq j\leq m$ に対して、
+\[
+ \sum_{i=1}^{j}\sigma(q_i)
+ = \sigma(q_1)+\sum_{i=2}^{j}\sigma(q_i)
+=1+\sum_{i=2}^{j}\sigma(q_i)
+ \geq1
+\]
+である。ただし $j=1$ の場合、第2項は空和 $0$ とする。したがって、
+\begin{equation}\label{eq:positive-even-height}
+ h_B(2j)\geq2
+ \qquad(1\leq j\leq m)
+\end{equation}
+がわかった。一方、$\sigma(q_{m+1})=\sigma(0)=-1$ と
+\eqref{eq:reverse-motzkin-total} より、
+\[
+ \sum_{i=1}^{m+1}\sigma(q_i)
+ = \sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)+\sigma(q_{m+1})
+ =1+0-1=0.
+\]
+したがって、
+\begin{equation}\label{eq:terminal-height}
+ h_B(2m+2)=0.
+\end{equation}
+
+残るのは、各ブロックの内部、すなわち奇数位置 $2j-1$
+（$1\leq j\leq m+1$）の高さの確認である。$j=1$ の場合、$q_1=3$ なので最初の
+ブロックは $11$ であり、$ h_B(1)=1$で問題ない。
+
+次に $2\leq j\leq m$ とする。$q_j\in\{2,3\}$ の場合、そのブロックは $10$ または
+$11$ であり、最初のビットは $1$ である。\eqref{eq:positive-even-height} で $j$ を
+$j-1$ に置き換えると、
+\[
+ h_B(2j-1)=h_B(2j-2)+1\geq3.
+\]
+$q_j=1$ の場合、そのブロックは $01$ であり、同じく
+\eqref{eq:positive-even-height} を一つずらして適用すると、
+\[
+ h_B(2j-1)=h_B(2j-2)-1\geq1.
+\]
+最後に $q_j=0$ とする。\eqref{eq:reverse-motzkin-prefix} より、
+\[
+ 0\leq\sum_{i=2}^{j}\sigma(q_i)
+ =\sum_{i=2}^{j-1}\sigma(q_i)+\sigma(q_j)=\sum_{i=2}^{j-1}\sigma(q_i)-1,
+\]
+したがって、
+\[
+ \sum_{i=2}^{j-1}\sigma(q_i)\geq1.
+\]
+式~\eqref{eq:reverse-height-sigma} において $j$ を $j-1$ に置き換え、
+$\sigma(q_1)=1$ を用いると、
+\[
+\begin{aligned}
+ h_B(2j-2)
+ &=2\sum_{i=1}^{j-1}\sigma(q_i)\\
+ &=2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
+ \geq4
+\end{aligned}
+\]
+を得る。したがって
+\[
+ h_B(2j-1)=h_B(2j-2)-1\geq3.
+\]
+
+付け加えた終端数字 $q_{m+1}=0$ については、
+式~\eqref{eq:reverse-height-sigma} と \eqref{eq:reverse-motzkin-total} より、
+\[
+\begin{aligned}
+ h_B(2m)
+ &=2\left(\sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)\right)\\
+ &=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)
+ =2
+\end{aligned}
+\]
+である。したがって、終端ブロック $00$ は
+\[
+ h_B(2m+1)=1>0
+\]
+を経て、\eqref{eq:terminal-height} の高さで終わる。
+
+任意の整数 $t$（$1\leq t<2m+2$）は、ある $1\leq j\leq m$ に対する
+$t=2j$、またはある $1\leq j\leq m+1$ に対する $t=2j-1$ のいずれかである。
+偶数の場合は \eqref{eq:positive-even-height}、奇数の場合は直前の場合分けによって、$1\leq t<2m+2$の全てで
+$ h_B(t)>0$を確認できた。一方、\eqref{eq:terminal-height} より $h_B(2m+2)=0$ である。
+したがって $B\in\DP$ である。
+
+さらに、$p$ の4進展開の先頭数字は $3$ なので $p\geq3$、したがって
+$4p\geq12$ である。\eqref{eq:block-value} と $B\in\DP$ を合わせると、$ 4p\in\NpD$および$4p\geq12$.
+$\Pset$ の定義より $p\in\Pset$ である。これで十分性も示された。
+\end{proof}
+
+この特徴づけから、後で用いる自己相似性が得られる。
+
+\begin{corollary}\label{cor:Pclosure}
+$p\in\Pset$ ならば、$4p+1$ および $4p+2$ も $\Pset$ に属する。
+\end{corollary}
+
+\begin{proof}
+補題~\ref{lem:base4} より、ある $w\in\mathsf{Motz}$ が存在して
+\[
+ \operatorname{quad}(p)=3w
+\]
+となる。このとき、
+\[
+ \operatorname{quad}(4p+1)=3w1,
+ \qquad
+ \operatorname{quad}(4p+2)=3w2
+\]
+である。また、
+\[
+ \sigma(1)=\sigma(2)=0
+\]
+なので、どちらの数字を末尾に付け加えても $\mathsf{Motz}$ への所属は保たれる。したがって、補題~\ref{lem:base4}
+から主張が従う。
+\end{proof}
+
+次に、各世代における最小値と最大値を決定する。
+
+\begin{lemma}[2色Motzkin値の極値]\label{lem:extremal}
+任意の $\ell=|w|\geq0$である$w\in\mathsf{Motz}$に対して、
+\begin{equation}\label{eq:motzkin-extrema}
+  \frac{4^{\ell}-1}{3}\leq[w]_4\leq4^{\ell}-2^{\ell}
+\end{equation}
+が成り立つ。両方の境界は達成される。下界は $1^{\ell}$ によって達成され、上界は
+\[
+  w_{\max,\ell}=
+  \begin{cases}
+    3^a0^a,&\ell=2a,\\
+    3^a2\,0^a,&\ell=2a+1
+  \end{cases}
+\]
+によって達成される。なお表現$1^0$は空列$\lambda$と解釈する。
+\end{lemma}
+
+\begin{proof}
+$\ell$ に関する帰納法を用いる。$\ell=0$ の場合は明らかである。$w$ を
+\[
+ w=c_0c_1\cdots c_{\ell-1},
+ \qquad
+ c_j\in\{0,1,2,3\}
+\]
+と書く。
+
+\emph{下界。}
+$\sigma(0)=-1$ なので、最初の数字は $0$ ではあり得ない。
+$c_0\in\{1,2\}$ の場合には $\sigma(c_0)=0$ であるから、最初の数字を削除しても、
+それ以後の接頭辞の重みと語全体の重みは変わらない。したがって、接尾辞
+$w'=c_1\cdots c_{\ell-1}$ も2色Motzkin語である。長さ $\ell-1$ の語に対する
+帰納法の仮定により、
+\[
+  [w]_4\geq4^{\ell-1}+[w']_4
+  \geq4^{\ell-1}+\frac{4^{\ell-1}-1}{3}
+  =\frac{4^{\ell}-1}{3}
+\]
+である。$c_0=3$ の場合は、
+\[
+  [w]_4
+  \geq[3\underbrace{00\cdots0}_{\ell-1\text{ 桁}}]_4
+  =3\cdot4^{\ell-1}
+  \geq\frac{4^{\ell}-1}{3}
+\]
+である。等号は $w=1^{\ell}$ によって達成される。
+
+\emph{上界。}
+$c_0\in\{1,2\}$ の場合、上と同様に $w'$ も2色Motzkin語である。
+長さ $\ell-1$ の語に対する帰納法の仮定により、
+\begin{align*}
+  [w]_4
+  &=[c_0c_1\cdots c_{\ell-1}]_4\\
+  &\leq[2c_1\cdots c_{\ell-1}]_4\\
+  &\leq2\cdot4^{\ell-1}+\bigl(4^{\ell-1}-2^{\ell-1}\bigr)\\
+  &=3\cdot4^{\ell-1}-2^{\ell-1}\\
+  &\leq4^{\ell}-2^{\ell}
+\end{align*}
+である。
+
+次に $c_0=3$ とし、総重みが $0$ となる最短の空でない接頭辞の長さを $r$ とする。
+この接頭辞は $3u0$ の形をもち、ここで
+\[
+ u=c_1\cdots c_{r-2}
+\]
+とする。また、残りの接尾辞を
+\[
+ v=c_r\cdots c_{\ell-1}
+\]
+とおく。このとき
+\[
+ 2\leq r\leq\ell,
+ \qquad
+ |u|=r-2,
+ \qquad
+ |v|=\ell-r
+\]
+であり、$u,v\in\mathsf{Motz}$ である。したがって $w=3u0v$ である。
+位取り記数法と帰納法の仮定から、
+\begin{align*}
+  [w]_4
+  &=3\cdot4^{\ell-1}+[u]_4\,4^{\ell-r+1}+[v]_4\\
+  &\leq3\cdot4^{\ell-1}
+    +\bigl(4^{r-2}-2^{r-2}\bigr)4^{\ell-r+1}
+    +4^{\ell-r}-2^{\ell-r}\\
+  &=4^{\ell}-2^{2\ell-r}+2^{2\ell-2r}-2^{\ell-r}\\
+  &=4^{\ell}-\bigl(2^{2\ell-r}-2^{2\ell-2r}\bigr)-2^{\ell-r}
+\end{align*}
+を得る。残る確認は
+\[
+  2^{2\ell-r}-2^{2\ell-2r}
+  \geq2^{\ell}-2^{\ell-r}
+\]
+である。因数分解すると、これは
+\[
+  2^{2\ell-2r}(2^r-1)\geq2^{\ell-r}(2^r-1)
+\]
+となり、$r\leq\ell$ から従う。これで上界が証明された。
+
+最後に、表示した語 $w_{\max,\ell}$ は2色Motzkin語である。等比数列の和を計算すれば、
+\[
+  [w_{\max,\ell}]_4=4^{\ell}-2^{\ell}
+\]
+を得るので、上界は達成される。
+\end{proof}
+
+$\Pset$ の元の基数4展開がちょうど $d$ 桁であるとき、その元は\emph{世代 $d$} に
+属するという。補題~\ref{lem:base4} により、世代 $d$ の元 $p$ は、ある
+$w\in\mathsf{Motz}$ に対して
+\[
+ \operatorname{quad}(p)=3w
+\]
+を満たし、$|w|=d-1$ である。したがって、
+\begin{equation}\label{eq:generation-value}
+ p=[3w]_4=3\cdot4^{d-1}+[w]_4
+\end{equation}
+である。次の系は補題~\ref{lem:extremal} から直ちに従う。
+
+\begin{corollary}[世代境界]\label{cor:gen}
+任意の $d\geq1$ に対し、$\Pset$ の世代 $d$ の任意の元は
+\begin{equation}\label{eq:generation-interval}
+  [g_d,U_d]
+  =\left[
+  3\cdot4^{d-1}+\frac{4^{d-1}-1}{3},
+  4^d-2^{d-1}
+  \right]
+\end{equation}
+に属し、両端点はとも達成される。特に、
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item $(U_d,3\cdot4^d)$ には $\Pset$ の元が存在しない。
+\item 任意の $k\geq0$ に対して、
+\begin{equation}\label{eq:three-g}
+  3g_{k+1}=10\cdot4^k-1
+\end{equation}
+が成り立つ。
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+$p$ を世代 $d$ の元とする。式~\eqref{eq:motzkin-extrema} に $\ell=d-1$ を代入すると、
+\[
+ \frac{4^{d-1}-1}{3}
+ \leq[w]_4
+ \leq4^{d-1}-2^{d-1}
+\]
+を得る。この評価を\eqref{eq:generation-value}に代入すれば、式~\eqref{eq:generation-interval}
+が従う。下端点は $w=1^{d-1}$ によって達成され、上端点は
+$w=w_{\max,d-1}$ によって達成される。(a) は、次の世代が
+$g_{d+1}>3\cdot4^d$ から始まることによる。最後に、$  3g_{k+1}
+  =3\left(3\cdot4^k+\frac{4^k-1}{3}\right)
+  =10\cdot4^k-1$
+である。
+\end{proof}
+
+\section{桁持ち上げと有限証明書}\label{sec:lifting}
+
+第~\ref{sec:base4}節で得た基数4構造は、有限区間の被覆を無限区間へ
+伝播させる。まず、その一般的な機構を取り出す。
+
+\begin{lemma}[桁持ち上げ]\label{lem:digit-lifting}
+$k\geq1$ とし、$A\subseteq\mathbb N$ が
+\begin{equation}\label{eq:digit-closure}
+ 4A+\{1,2\}\subseteq A
+\end{equation}
+を満たすとする。このとき、$m\in kA$ ならば
+\begin{equation}\label{eq:digit-lifting}
+ [4m+k,4m+2k]\subseteq kA
+\end{equation}
+である。
+\end{lemma}
+
+\begin{proof}
+$m=a_1+\cdots+a_k$（$a_i\in A$）と書く。任意の
+$k\leq r\leq2k$ に対して、
+\[
+ \eta_1+\cdots+\eta_k=r,
+ \qquad \eta_i\in\{1,2\}
+\]
+となる $\eta_1,\ldots,\eta_k$ を選べる。条件\eqref{eq:digit-closure}により、
+\[
+ 4m+r=\sum_{i=1}^{k}(4a_i+\eta_i)\in kA
+\]
+であり、主張が従う。
+\end{proof}
+
+\begin{corollary}[有限区間から尾部への伝播]
+\label{cor:tail-propagation}
+$k\geq3$ とし、$A\subseteq\mathbb N$ が
+\eqref{eq:digit-closure} を満たすとする。ある整数 $M\geq1$ に対して
+\begin{equation}\label{eq:tail-seed}
+ [M,4M+k-1]\subseteq kA
+\end{equation}
+ならば、
+\[
+ [M,\infty)\subseteq kA
+\]
+である。
+\end{corollary}
+
+\begin{proof}
+$M\leq n\leq4M+k-1$ の場合は、仮定
+\eqref{eq:tail-seed} より従う。
+
+$M\leq j<n$ を満たすすべての整数 $j$ に対して
+$j\in kA$ が成り立つと仮定する。以下ではとくに$4M+k\leq n$の場合を考える。
+$\rho\equiv n\pmod4$ を満たす一意な$ \rho\in\{k,k+1,k+2,k+3\}$
+を選び、$ m:=\frac{n-\rho}{4}$
+とおく。$\rho\equiv n\pmod4$ であるから、$m$ は整数である。
+
+$n\geq4M+k$ および $\rho\leq k+3$ より、
+\[
+ m=\frac{n-\rho}{4}
+ \geq\frac{4M+k-(k+3)}{4}
+ =M-\frac34.
+\]
+$m$ は整数なので、$m\geq M$ である。一方、$\rho\geq k\geq3$ より、
+\[
+ m=\frac{n-\rho}{4}
+ \leq\frac{n-k}{4}
+ <n.
+\]
+したがって、帰納法の仮定から $m\in kA$ を得る。
+
+さらに $k\geq3$ なので
+\[
+ k\leq\rho\leq k+3\leq2k.
+\]
+ゆえに補題~\ref{lem:digit-lifting} を適用して、
+\[
+ n=4m+\rho\in kA
+\]
+を得る。以上により、強い帰納法が完了する。
+\end{proof}
+
+
+\subsection{正規部分族による6項被覆}
+
+基数4の正規部分族を
+\[
+ \mathcal E=\{0\}\cup
+ \bigl\{\val{3\varepsilon_1\cdots\varepsilon_k}{4}:
+        k\geq0,\ \varepsilon_i\in\{1,2\}\bigr\}
+\]
+とおき、$\mathcal E^+=\mathcal E\setminus\{0\}$ とする。$k=0$ のときは
+$\varepsilon_1\cdots\varepsilon_k=\lambda$ と解釈し、対応する元は
+$[3]_4=3$ である。各語 $\varepsilon_1\cdots\varepsilon_k$ は
+$\mathsf{Motz}$ に属するから、補題~\ref{lem:base4} より
+\[
+ \mathcal E^+\subseteq\Pset.
+\]
+したがって、
+\begin{equation}\label{eq:4E}
+ 4\cdot\mathcal E\subseteq\NpD
+\end{equation}
+である。また、4進展開の末尾に $1$ または $2$ を付け加えることにより、
+\begin{equation}\label{eq:Eclosure}
+ 4\mathcal E^++\{1,2\}\subseteq\mathcal E^+
+\end{equation}
+を得る。
+
+次の有限包含だけを計算証明書として用いる。
+
+\begin{lemma}[正規族の有限証明書]\label{lem:Ecertificate}
+次の集合をおく：
+\[
+\begin{aligned}
+ A_0&=\{0,3,13,14\},
+ &B&=\{53,54,57,58\},\\
+ A&=\{3,13,14,53,54,57,58\},
+ &C&=\{213,214,217,218,229,230,233,234\}.
+\end{aligned}
+\]
+これらは $A_0\subseteq\mathcal E$ および
+$A,B,C\subseteq\mathcal E^+$ を満たし、さらに
+\begin{equation}\label{eq:E-small-certificate}
+\begin{array}{c|c}
+\text{和集合}&\text{含まれる整数区間}\\ \hline
+6A_0 &[25,62]\\
+B+5A_0 &[56,128]\\
+2B+4A_0 &[106,172]\\
+3B+3A_0 &[159,216]\\
+4B+2A_0 &[212,260]
+\end{array}
+\end{equation}
+および
+\begin{equation}\label{eq:E-tail-certificate}
+\begin{array}{c|c}
+\text{和集合}&\text{含まれる整数区間}\\ \hline
+6A &[218,260]\\
+C+5A &[258,524]\\
+2C+4A &[446,700]\\
+3C+3A &[648,876]\\
+4C+2A &[858,1052]
+\end{array}
+\end{equation}
+が成り立つ。
+\end{lemma}
+
+\begin{proof}
+各主張は有限集合の和集合に関する完全な直接計算である。
+すなわち、有限集合 $X$ に対して $S_0(X)=\{0\}$、
+$S_{j+1}(X)=S_j(X)+X$ と再帰的に計算し、表示した各整数区間の
+全要素が対応する和集合に属することを検査する。これらの検査は、
+補助ファイルとして提供する検証プログラムによって再現する。
+\end{proof}
+
+\begin{proposition}\label{prop:E}
+任意の整数 $n\geq25$ は $6\mathcal E$ に属する。
+\end{proposition}
+
+\begin{proof}
+式~\eqref{eq:E-small-certificate} の5区間は互いに重なり、
+\[
+ [25,217]\subseteq6\mathcal E
+\]
+を与える。式~\eqref{eq:E-tail-certificate} の5区間も互いに重なり、
+\[
+ [218,877]\subseteq6\mathcal E^+
+\]
+を与える。ここで $\mathcal E^+$ は \eqref{eq:Eclosure} を満たす。
+系~\ref{cor:tail-propagation} を $h=6$、$M=218$ に適用すると、
+$[218,\infty)\subseteq6\mathcal E^+$ を得る。二つの区間を合わせれば
+主張が従う。
+\end{proof}
+
+命題~\ref{prop:E} と \eqref{eq:4E} により、$100$ 以上の任意の
+$4$ の倍数は、高々6個の原始Dyck数の和である。
+
+\subsection{完全な半分化族に対する5項被覆}
+
+正規族 $\mathcal E$ は法 $4$ で $0$ の合同類を処理するには十分であるが、
+もう一方の合同類には完全な族 $\Pset$ が必要になる。有限な基底部分として
+\begin{equation}\label{eq:L-def}
+ L=\{3,13,14,53,54,57,58,60\}\subseteq\Pset
+\end{equation}
+および
+\begin{equation}\label{eq:H-def}
+\begin{split}
+ H=\{&213,214,217,218,220,229,230,233,234,236,\\
+     &241,242,244,248\}\subseteq\Pset
+\end{split}
+\end{equation}
+を用いる。これらの所属は、各元の4進展開が $3w$（$w\in\mathsf{Motz}$）
+の形であることから、補題~\ref{lem:base4} により直ちに確認できる。
+また、長さ $0,1,2$ の2色Motzkin語を列挙すると、それらから得られる
+$\Pset$ の元は正確に $L$ の8元である。一方、系~\ref{cor:gen} より
+世代4の最小元は $g_4=213$ である。したがって、
+\begin{equation}\label{eq:P-small}
+ \Pset\cap[0,211]=L.
+\end{equation}
+
+\begin{lemma}[完全族の有限証明書]\label{lem:finitefive}
+次の包含関係が成り立つ：
+\begin{equation}\label{eq:finite-interval-certificate}
+\begin{array}{c|c}
+\text{和集合}&\text{含まれる整数区間}\\ \hline
+5L &[215,254]\\
+H+4L &[245,486]\\
+2H+3L &[439,674]\\
+3H+2L &[645,862]\\
+4H+L &[855,1046].
+\end{array}
+\end{equation}
+さらに、
+\begin{equation}\label{eq:finite-five-lower-certificate}
+ 209,210,211\notin F_5(L)
+\end{equation}
+である。
+\end{lemma}
+
+\begin{proof}
+式~\eqref{eq:finite-interval-certificate} は有限和集合の包含証明書であり、
+式~\eqref{eq:finite-five-lower-certificate} は $F_5(L)$ の有限範囲における
+完全計算である。いずれも補題~\ref{lem:Ecertificate} と同じ再帰的な
+有限集合加算によって検査でき、補助検証プログラムによって再現する。
+\end{proof}
+
+補題~\ref{lem:finitefive} の5区間は互いに重なるので、
+\begin{equation}\label{eq:fiveP-seed}
+ [215,1046]\subseteq5\Pset
+\end{equation}
+を得る。
+
+\begin{proposition}\label{prop:fiveP}
+任意の整数 $n\geq215$ は、$\Pset$ の元を正確に5個足した和である。
+したがって、
+\[
+ [212,\infty)\subseteq F_5(\Pset)
+\]
+である。下端点は鋭く、$209,210,211$ のいずれも
+$F_5(\Pset)$ に属さない。
+\end{proposition}
+
+\begin{proof}
+系~\ref{cor:Pclosure} より
+$4\Pset+\{1,2\}\subseteq\Pset$ である。また、
+\eqref{eq:fiveP-seed} は特に
+$[215,864]\subseteq5\Pset$ を含む。したがって、
+系~\ref{cor:tail-propagation} を $h=5$、$M=215$ に適用すると、
+\[
+ [215,\infty)\subseteq5\Pset
+\]
+を得る。さらに、
+\[
+\begin{aligned}
+212&=53+53+53+53,\\
+213&=53+53+53+54,\\
+214&=53+53+54+54
+\end{aligned}
+\]
+なので、$[212,\infty)\subseteq F_5(\Pset)$ である。
+
+式~\eqref{eq:P-small} と \eqref{eq:finite-five-lower-certificate} から
+$209,210,211\notin F_5(\Pset)$ が従う。
+\end{proof}
+
+\section{完全例外集合}\label{sec:exceptions}
+
+原始Dyck数の分解
+\[
+ \NpD=\{0,2\}\cup4\Pset
+\]
+により、項数条件は $\Pset$ の有限和条件へ一様に変換できる。
+
+\begin{lemma}[法4分解判定]\label{lem:mod4-sumcriterion}
+$\epsilon\in\{0,1\}$、$h\geq0$ とし、$N=4m+2\epsilon$ とする。
+このとき、$N$ が高々 $h$ 個の正の原始Dyck数の和であるための
+必要十分条件は、
+\begin{equation}\label{eq:mod4-sumcriterion}
+ m\in
+ \bigcup_{\substack{0\leq s\leq h\\ s\equiv\epsilon\ ({\rm mod}\ 2)}}
+ \left(\frac{s-\epsilon}{2}+F_{h-s}(\Pset)\right)
+\end{equation}
+である。
+\end{lemma}
+
+\begin{proof}
+表示に現れる $2$ の個数を $s$ とする。補題~\ref{lem:mod4} より、
+残りの正の加数は $4p_i$（$p_i\in\Pset$）の形である。法 $4$ で
+比較すると $s\equiv\epsilon\pmod2$ であり、
+\[
+ 4m+2\epsilon=2s+4\sum_i p_i
+\]
+から
+\[
+ m=\frac{s-\epsilon}{2}+\sum_i p_i
+\]
+を得る。残りの加数は高々 $h-s$ 個なので、必要性が従う。
+逆に、\eqref{eq:mod4-sumcriterion} のいずれかの集合に属する表示から、
+各 $p_i$ を $4p_i$ に戻し、$2$ を $s$ 個加えれば $N$ の表示が得られる。
+\end{proof}
+
+\begin{corollary}\label{lem:sixcriterion}
+$N=4m+2$ とする。このとき、$N$ が高々6個の正の原始Dyck数の和である
+ための必要十分条件は、
+\begin{equation}\label{eq:sixcriterion}
+ m\in F_5(\Pset)
+ \cup\bigl(1+F_3(\Pset)\bigr)
+ \cup\bigl(2+F_1(\Pset)\bigr)
+\end{equation}
+である。
+\end{corollary}
+
+\begin{proof}
+補題~\ref{lem:mod4-sumcriterion} において
+$\epsilon=1$、$h=6$ とし、$s=1,3,5$ を代入すればよい。
+\end{proof}
+
+\begin{lemma}[小さい4の倍数]\label{lem:smallmultiples}
+$100$ 未満の正の $4$ の倍数のうち、高々6個の正の原始Dyck数で
+表示できないものは $44$ だけである。さらに、
+\[
+ 44=12+12+12+2+2+2+2
+\]
+である。
+\end{lemma}
+
+\begin{proof}
+$100$ 未満の正の原始Dyck数は正確に
+$2,12,52,56$ である。この有限集合から高々6個を足した和を
+$100$ 未満で完全に計算すると、正の $4$ の倍数のうち欠けるものは
+$44$ だけである。表示した式は $44$ の7項表示を与える。
+この有限検査も補助検証プログラムに含める。
+\end{proof}
+
+\begin{lemma}[有限例外集合証明書]\label{lem:finiteexception}
+$L$ を \eqref{eq:L-def} で定義した集合とする。このとき、
+\begin{equation}\label{eq:finiteexception}
+\begin{split}
+ [0,211]\setminus\Bigl(
+ F_5(L)&\cup(1+F_3(L))\cup(2+F_1(L))\Bigr)\\
+ &=\{8,11,24,38,49,50,51,209,210,211\}.
+\end{split}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+有限集合 $L$ から $F_1(L),F_3(L),F_5(L)$ を再帰的な有限集合加算で
+正確に計算し、$[0,211]$ で切り詰めて和集合と補集合を取る。
+その結果が \eqref{eq:finiteexception} であり、補助検証プログラムにより
+再現する。
+\end{proof}
+
+\begin{proof}[定理~\ref{thm:classification} の証明]
+まず $N\equiv0\pmod4$ とする。$N\geq100$ なら $N=4n$ と書け、
+$n\geq25$ である。命題~\ref{prop:E} と \eqref{eq:4E} により、
+$N$ は高々6個の原始Dyck数で表示できる。補題~\ref{lem:smallmultiples}
+は残る正の $4$ の倍数を処理し、$r(44)=7$ を示す。
+
+次に $N\equiv2\pmod4$ とし、$N=4m+2$ と書く。$N\geq850$ なら
+$m\geq212$ なので、命題~\ref{prop:fiveP} より
+$m\in F_5(\Pset)$ である。系~\ref{lem:sixcriterion} から、$N$ は
+高々6個の原始Dyck数の和である。前段落と合わせると、任意の偶数
+$N\geq848$ がそのような表示をもつ。
+
+残るのは、$N\leq846$ かつ $N\equiv2\pmod4$ の整数である。この場合
+$0\leq m\leq211$ である。式~\eqref{eq:P-small}、
+補題~\ref{lem:finiteexception}、および系~\ref{lem:sixcriterion} から、
+高々6項で表示できない対応する $N=4m+2$ は正確に
+\[
+ 34,46,98,154,198,202,206,838,842,846
+\]
+である。したがって、この10個と $44$ を合わせた11個が、高々6個の
+原始Dyck数の和でない正の偶数のすべてである。
+
+$46$ 以外はすべて7項表示をもつ：
+\[
+\begin{aligned}
+34&=12+12+2+2+2+2+2,\\
+44&=12+12+12+2+2+2+2,\\
+98&=56+12+12+12+2+2+2,\\
+154&=52+52+12+12+12+12+2,\\
+198&=56+52+52+12+12+12+2,\\
+202&=56+56+52+12+12+12+2,\\
+206&=56+56+56+12+12+12+2,\\
+838&=240+240+240+52+52+12+2,\\
+842&=240+240+240+56+52+12+2,\\
+846&=240+240+240+56+56+12+2.
+\end{aligned}
+\]
+命題~\ref{prop:46} により、$46$ は正確に8項を必要とする。
+\end{proof}
+
+\begin{corollary}\label{cor:threshold}
+$848$ は、任意の偶数 $N\geq T$ が高々6個の原始Dyck数の和となるような
+最小の偶数 $T$ である。
+\end{corollary}
+
+\begin{proof}
+定理~\ref{thm:classification} により、$848$ 以上のすべての偶数では
+6項で十分であり、一方 $846$ は7項を必要とする。
+\end{proof}
+
+\begin{corollary}\label{cor:eight}
+任意の非負偶数は $\NpD$ の高々8個の元の和であり、$46$ は
+$\NpD$ の高々7個の元の和でない唯一の偶数である。
+\end{corollary}
+
+\begin{proof}
+正の整数については定理~\ref{thm:classification} から直ちに従い、
+整数 $0$ は空和である。
+\end{proof}
+
+$A\subseteq2\mathbb N_0$ に対し、$2\mathbb N_0$ の任意の元が $A$ の
+高々 $h$ 個の元の和であるとき、$A$ を $2\mathbb N_0$ に対する
+\emph{位数高々 $h$ の相対加法基底}と呼ぶ。この性質をもつ最小の整数が
+$h$ であるとき、その相対位数は\emph{正確に $h$}であるという。同様に、
+$2\mathbb N_0$ の十分大きな任意の元が $A$ の高々 $h$ 個の元の和である
+とき、$A$ を\emph{位数高々 $h$ の相対漸近加法基底}と呼ぶ。
+
+定理~\ref{thm:classification} は6項表示に関する完全例外集合を与える。
+系~\ref{cor:eight} は $\NpD$ が $2\mathbb N_0$ に対する正確に位数8の
+相対加法基底であることを示し、系~\ref{cor:threshold} は鋭い6項閾値を
+与える。次節では、二つの合同類の差を明らかにし、相対漸近位数が
+正確に6であることを証明する。
+
+\section{反復する隙間と漸近的最適性}\label{sec:asymptotic}
+
+$4$ の倍数では $\Pset$ の5項表示が直接利用できる。一方、法 $4$ で
+$2$ に合同な整数では、例外的な加数 $2$ を奇数個使わなければならない。
+この差が、全体の相対漸近位数を5から6へ引き上げる。
+
+\begin{corollary}[5項判定条件]\label{lem:fivecrit}
+$m\geq3$ とし、$N=4m+2$ とする。このとき $r(N)\leq5$ であるための
+必要十分条件は、
+\begin{equation}\label{eq:fivecrit}
+ m\in F_4(\Pset)\cup\bigl(1+F_2(\Pset)\bigr)
+\end{equation}
+である。
+\end{corollary}
+
+\begin{proof}
+補題~\ref{lem:mod4-sumcriterion} において $\epsilon=1$、$h=5$ とすると、
+$s=1,3,5$ に対応して
+\[
+ F_4(\Pset)\cup\bigl(1+F_2(\Pset)\bigr)\cup\{2\}
+\]
+を得る。$m\geq3$ なので最後の集合は除かれる。
+\end{proof}
+
+次の補題は、世代間の隙間が生む下界の機構を取り出したものである。
+
+\begin{lemma}[反復障害]\label{lem:obstruction}
+任意の整数 $k\geq2$ に対し、
+\[
+ x_k=10\cdot4^k-2
+\]
+とおく。このとき、
+\begin{equation}\label{eq:obstruction}
+ x_k\notin F_4(\Pset)
+ \qquad\text{かつ}\qquad
+ x_k-1\notin F_2(\Pset)
+\end{equation}
+である。
+\end{lemma}
+
+\begin{proof}
+$k\geq2$ を固定し、$x=x_k$ と略記する。世代 $k+2$ の最小元は
+\[
+ g_{k+2}>3\cdot4^{k+1}=12\cdot4^k>x
+\]
+である。したがって、$x$ 以下の $\Pset$ の元はすべて世代 $k+1$ 以下に
+属する。系~\ref{cor:gen} により、そのような元は、世代 $k$ 以下で
+\[
+ U_k=4^k-2^{k-1}
+\]
+以下である\emph{小さい}元か、世代 $k+1$ に属し、$g_{k+1}$ 以上
+$U_{k+1}=4^{k+1}-2^k$ 以下である\emph{大きい}元のいずれかである。
+
+まず $x-1=10\cdot4^k-3$ を考える。これは $U_{k+1}$ より大きく、
+$g_{k+2}$ より小さいので、それ自身は $\Pset$ に属さない。さらに、
+許される二つの元の和は最大でも
+\[
+ 2U_{k+1}=8\cdot4^k-2^{k+1}<10\cdot4^k-3=x-1
+\]
+である。したがって $x-1\notin F_2(\Pset)$ である。
+
+次に、背理法のため
+\[
+ x=q_1+\cdots+q_t,
+ \qquad t\leq4,
+ \qquad q_i\in\Pset
+\]
+と仮定する。大きい加数の個数を $N_{\rm b}$ とする。$N_{\rm b}\leq2$
+なら、残る位置を可能な限り大きい小さい加数で埋めても、
+\begin{align*}
+ x
+ &\leq2U_{k+1}+2U_k\\
+ &=2(4^{k+1}-2^k)+2(4^k-2^{k-1})\\
+ &=10\cdot4^k-3\cdot2^k
+ <10\cdot4^k-2=x
+\end{align*}
+となり、矛盾する。したがって $N_{\rm b}\geq3$ である。しかし、
+大きい加数3個だけでも、その和は \eqref{eq:three-g} により
+\[
+ 3g_{k+1}=10\cdot4^k-1=x+1
+\]
+以上となり、再び矛盾する。ゆえに $x\notin F_4(\Pset)$ である。
+\end{proof}
+
+\begin{corollary}[$\Pset$ の位数]\label{cor:orderfive}
+集合 $\Pset$ は、非負整数に対する正確に位数5の漸近加法基底である。
+より正確には、任意の整数 $n\geq212$ は $F_5(\Pset)$ に属する一方、
+$F_4(\Pset)$ と $F_3(\Pset)$ はそれぞれ無限に多くの整数を含まない。
+\end{corollary}
+
+\begin{proof}
+命題~\ref{prop:fiveP} から $[212,\infty)\subseteq F_5(\Pset)$ を得る。
+任意の $k\geq2$ に対して、補題~\ref{lem:obstruction} は
+$x_k\notin F_4(\Pset)$ を与える。$x_k\to\infty$ なので、漸近的にも
+4項では不十分である。$F_3(\Pset)\subseteq F_4(\Pset)$ なので、
+3項についても同様である。
+\end{proof}
+
+\begin{corollary}[5項を必要とする4の倍数]
+\label{cor:five-multiples}
+任意の整数 $k\geq3$ に対し、
+\[
+ M_k=10\cdot4^{k+1}-8
+\]
+は $r(M_k)=5$ を満たす。したがって、正確に5個の正の原始Dyck加数を
+必要とする $4$ の倍数は無限に存在する。
+\end{corollary}
+
+\begin{proof}
+$M_k=4x_k$ と書く。$k\geq3$ なので $x_k\geq212$ であり、
+命題~\ref{prop:fiveP} から $x_k\in F_5(\Pset)$ を得る。その表示を
+4倍すれば $r(M_k)\leq5$ である。
+
+一方、$r(M_k)\leq4$ と仮定する。補題~\ref{lem:mod4-sumcriterion} を
+$\epsilon=0$、$h=4$ に適用すると、
+\[
+ x_k\in F_4(\Pset)
+ \cup\bigl(1+F_2(\Pset)\bigr)
+ \cup\{2\}
+\]
+でなければならない。しかし、最初の二つは補題~\ref{lem:obstruction}
+に反し、$x_k>2$ なので最後の可能性もない。したがって
+$r(M_k)\geq5$ であり、等号が従う。
+\end{proof}
+
+\begin{proof}[定理~\ref{thm:asymptotic-order} の証明]
+$k\geq2$ を固定し、$m=x_k=10\cdot4^k-2$ とおく。このとき、
+\[
+ N_k=4m+2=10\cdot4^{k+1}-6
+\]
+である。補題~\ref{lem:obstruction} より、
+\[
+ m\notin F_4(\Pset),
+ \qquad
+ m-1\notin F_2(\Pset)
+\]
+である。したがって、系~\ref{lem:fivecrit} から $r(N_k)\geq6$ を得る。
+整数 $N_k$ は定理~\ref{thm:classification} の11個の例外のいずれでも
+ないので、$r(N_k)\leq6$ である。ゆえに $r(N_k)=6$ である。
+$N_k\to\infty$ なので、十分大きなすべての偶数を5項以下で表示する
+ことはできない。一方、定理~\ref{thm:classification} は上界6を与える。
+したがって $h_{\mathrm{asym}}=6$ である。
+\end{proof}
+
+\begin{remark}[二つの合同類]
+$N=4n$ の場合、十分大きなすべての $n$ は $F_5(\Pset)$ に属するので、
+最終的に $r(N)\leq5$ であり、系~\ref{cor:five-multiples} は等号が
+無限に多く成立することを示す。一方、$N=4m+2$ の場合には、加数 $2$
+を奇数個用いなければならない。$m=x_k$ では、1個用いる可能性は
+$m\in F_4(\Pset)$ を、3個用いる可能性は
+$m-1\in F_2(\Pset)$ を要求するが、補題~\ref{lem:obstruction} は
+その両方を排除する。この合同類が相対漸近位数を5から6へ引き上げる。
+\end{remark}
+
+\section{OEIS数列と計算機検証}
+\label{sec:oeis}
+
+三つのOEIS数列が自然に現れる。完全均衡数は \seqnum{A014486}~\cite{OEIS-A014486}、正の原始Dyck数は \seqnum{A057547}~\cite{OEIS-A057547} をなし、本論文の中心数列は
+\[
+  a(n)=r(2n)
+\]
+すなわち \seqnum{A395858}~\cite{OEIS-A395858} である。定理~\ref{thm:classification} は6を超えるすべての項を決定する：
+\[
+  a(n)=8\iff n=23
+\]
+であり、
+\[
+  a(n)=7\iff
+  n\in\{17,22,49,77,99,101,103,419,421,423\}
+\]
+である。定理~\ref{thm:asymptotic-order} は、値6をとる明示的な無限部分列
+\begin{equation}\label{eq:A395858-six-subsequence}
+  a(5\cdot4^{k+1}-3)=6\qquad(k\geq2)
+\end{equation}
+を与える。
+
+\href{https://github.com/growupkuriyama-hub/lean_cfg_project/blob/3525cfb/LeanCfgProject/PrimDyck/A395858.py}{コミット \texttt{3525cfb} における \path{A395858.py}}
+は、表示した初項を再現し、A395858の最初の $50{,}000$ 項を生成する。
+本稿の有限計算証明書は、補助ファイル
+\path{verify_certificates_for_paper.py} により、浮動小数点演算を用いず
+整数集合の加算だけで再現する。v6対応版では、正規族に対する
+\eqref{eq:E-small-certificate}--\eqref{eq:E-tail-certificate}、完全族に対する
+\eqref{eq:finite-interval-certificate} と
+\eqref{eq:finite-five-lower-certificate}、小さい4の倍数、および
+有限例外集合 \eqref{eq:finiteexception} を検査する。また、独立な動的計画法により、
+選択した有限上界までの $r(N)$ を交差検証する。検証プログラム、実行コマンド、
+期待される出力、および固定コミットへのリンクは補助資料にまとめる。
+すべての無限範囲に関する主張は、桁持ち上げ、世代境界、および反復障害によって
+本文中で理論的に証明されている。
+
+\section{結語}
+
+本論文の結果は、原始Dyck数に関係する三つの正確な位数を決定する。すべての非負偶数上の相対加法位数は $8$、相対漸近位数は $6$、$\Pset$ の漸近加法位数は $5$ である。長い5項区間を伝播させるのと同じ基数4の自己相似性が、反復障害 $x_k=10\cdot4^k-2$ も生み出す。
+
+$r(N)=6$ となる偶数 $N$ の完全な集合を特徴づけることは、今後の課題として残る。計算は $10\cdot4^k$ の近傍に追加のブロック構造が存在することを示唆するが、それらのブロックの正確な幅と端点はまだ証明されていない。より広い問いとして、他の分解不能なディジタル言語に対しても、正規部分族による上界と世代間の隙間による下界が同様に現れるかが挙げられる。
+
+\begin{thebibliography}{9}
+
+\bibitem{BHS}
+J.~P. Bell, K.~G. Hare, and J.~Shallit,
+When is an automatic set an additive basis?,
+\emph{Proc. Amer. Math. Soc. Ser. B} \textbf{5} (2018), 50--63.
+
+\bibitem{BLS}
+J.~P. Bell, T.~F. Lidbetter, and J.~Shallit,
+Additive number theory via approximation by regular languages,
+\emph{Internat. J. Found. Comput. Sci.} \textbf{31} (2020), 667--687.
+
+\bibitem{MNRS}
+P.~Madhusudan, D.~Nowotka, A.~Rajasekaran, and J.~Shallit,
+Lagrange's theorem for binary squares,
+in \emph{43rd International Symposium on Mathematical Foundations of
+Computer Science}, Leibniz Int. Proc. Inform., Vol.~117, Schloss
+Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik, 2018, pp.~18:1--18:14.
+
+\bibitem{Nathanson}
+M.~B. Nathanson,
+\emph{Additive Number Theory: The Classical Bases},
+Grad. Texts in Math., Vol.~164, Springer, 1996.
+
+\bibitem{OEIS-A014486}
+OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences, A014486},
+\url{https://oeis.org/A014486}.
+
+\bibitem{OEIS-A057547}
+OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences, A057547},
+\url{https://oeis.org/A057547}.
+
+\bibitem{OEIS-A395858}
+OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences, A395858},
+\url{https://oeis.org/A395858}.
+
+\bibitem{RSS}
+A.~Rajasekaran, J.~Shallit, and T.~Smith,
+Sums of palindromes: an approach via automata,
+in \emph{35th Symposium on Theoretical Aspects of Computer Science},
+Leibniz Int. Proc. Inform., Vol.~96, Schloss Dagstuhl--Leibniz-Zentrum
+f{\"u}r Informatik, 2018, pp.~54:1--54:12.
+
+\end{thebibliography}
+
+\begin{flushleft}
+Takayuki Kuriyama\\
+Growup Learning Academy\\
+4-8-3 Shakujii-machi\\
+Nerima-ku, Tokyo 177-0041\\
+Japan\\
+\textit{メールアドレス}: \href{mailto:growup.kuriyama@gmail.com}
+{\texttt{growup.kuriyama@gmail.com}}
+\end{flushleft}
+
+\end{document}
