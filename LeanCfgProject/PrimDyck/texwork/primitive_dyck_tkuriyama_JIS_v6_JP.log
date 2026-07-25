@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  25 JUL 2026 19:36
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  25 JUL 2026 20:01
  restricted system commands enabled.
 **primitive_dyck_tkuriyama_JIS_v6_JP.tex
 (./primitive_dyck_tkuriyama_JIS_v6_JP.tex
@@ -1296,9 +1296,10 @@ Class ltjsarticle Warning: deprecated old font command `\rm' used.
 (ltjsarticle)              new font selection scheme called NFSS2 with several
 (ltjsarticle)              new, combinable font commands. This ltjsarticle
 (ltjsarticle)              class has defined the old font commands like
-(ltjsarticle)              `\rm' only for compatibility on input line 1061.
+(ltjsarticle)              `\rm' only for compatibility on input line 1071.
 
-[18] [19] [20] [21] [22] [23] [24] (./primitive_dyck_tkuriyama_JIS_v6_JP.aux)
+[18] [19] [20] [21] [22] [23] [24] [25]
+(./primitive_dyck_tkuriyama_JIS_v6_JP.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -1314,13 +1315,13 @@ not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 13568 strings out of 476076
+ 13569 strings out of 476076
  244651,662416 words of node,token memory allocated
- 9842 words of node memory still in use:
-   11 hlist, 2 vlist, 5 rule, 7 glue, 4 kern, 1 glyph, 4198 attribute, 59 glue_s
-pec, 394 attribute_list, 1 write, 14 user_defined nodes
-   avail lists: 1:12,2:41909,3:448,4:386,5:232,6:42,7:6810,8:82,9:2663,10:37,11:
-224
+ 9890 words of node memory still in use:
+   11 hlist, 2 vlist, 5 rule, 7 glue, 4 kern, 1 glyph, 4220 attribute, 59 glue_s
+pec, 396 attribute_list, 1 write, 14 user_defined nodes
+   avail lists: 1:12,2:41885,3:448,4:399,5:232,6:42,7:6810,8:82,9:2663,10:37,11:
+213
  35620 multiletter control sequences out of 65536+600000
  130 fonts using 94841415 bytes
  119i,19n,112p,2058b,557s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1363,10 +1364,10 @@ sers/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pf
 b><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
 msy9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/symbols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_JIS_v6_JP.pdf (24 pages, 534479 bytes
+Output written on primitive_dyck_tkuriyama_JIS_v6_JP.pdf (25 pages, 536142 bytes
 ).
 
-PDF statistics: 544 PDF objects out of 1000 (max. 8388607)
- 111 named destinations out of 1000 (max. 1048576)
+PDF statistics: 549 PDF objects out of 1000 (max. 8388607)
+ 112 named destinations out of 1000 (max. 1048576)
  73 words of extra memory for PDF output out of 10000 (max. 100000000)
 

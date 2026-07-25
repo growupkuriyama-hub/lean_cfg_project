@@ -142,7 +142,7 @@ noncomputable def allTypedBinaryRules :
     Finset (TypedBinaryRule G M) := by
   classical
   exact
-    (G.binaryRules.attach.sigma fun ρ =>
+    (G.binaryRules.attach.toFinset.sigma fun ρ =>
       (Finset.univ : Finset (Fin (G.arity ρ.1.left) → M)).sigma fun _ =>
         (Finset.univ : Finset (Fin (G.arity ρ.1.right) → M))
     ).image fun p => canonicalBinaryRule p.1.1 p.1.2 p.2.1 p.2.2
@@ -154,7 +154,7 @@ noncomputable def allTypedStartRules
     Finset (TypedStartRule G M) := by
   classical
   exact
-    (G.startRules.attach.sigma fun ρ =>
+    (G.startRules.attach.toFinset.sigma fun ρ =>
       (Finset.univ : Finset (Fin (G.arity ρ.1.child) → M))
     ).image fun p => canonicalStartRule hworking p.1.1 p.1.2 p.2
 
@@ -182,8 +182,9 @@ theorem canonicalBinaryRule_mem
       allTypedBinaryRules (G := G) (M := M) := by
   classical
   refine Finset.mem_image.mpr ⟨⟨⟨ρ, hρ⟩, ⟨leftOut, rightOut⟩⟩, ?_, rfl⟩
-  refine Finset.mem_sigma.mpr ⟨Finset.mem_attach _ _, ?_⟩
-  exact Finset.mem_sigma.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩
+  refine Finset.mem_sigma.mpr ⟨?_, ?_⟩
+  · simp
+  · exact Finset.mem_sigma.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩
 
 /-- Every canonical typed start rule occurs in the finite start-rule
 enumeration. -/
@@ -196,7 +197,7 @@ theorem canonicalStartRule_mem
       allTypedStartRules (G := G) hworking := by
   classical
   refine Finset.mem_image.mpr ⟨⟨⟨ρ, hρ⟩, childOut⟩, ?_, rfl⟩
-  exact Finset.mem_sigma.mpr ⟨Finset.mem_attach _ _, Finset.mem_univ _⟩
+  exact Finset.mem_sigma.mpr ⟨by simp, Finset.mem_univ _⟩
 
 end ConcreteOutputTypeRefinement
 
@@ -434,7 +435,7 @@ theorem toConcretePresentation
           (τ.lhs obs)
           (castTuple τ.wellTyped.symm ρ.outputTuple)
           (τ.cast_outputTuple_matches_lhs obs)
-      rw [← hnode]
+      cases hnode
       exact PresentationDerives.terminal hmem
 
   | @binary ρ hρ x y hx hy ihx ihy =>

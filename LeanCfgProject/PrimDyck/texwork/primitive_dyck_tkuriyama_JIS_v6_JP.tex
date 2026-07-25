@@ -785,7 +785,7 @@ $g_{d+1}>3\cdot4^d$ から始まることによる。最後に、$  3g_{k+1}
 \begin{lemma}[桁持ち上げ]\label{lem:digit-lifting}
 $k\geq1$ とし、$A\subseteq\mathbb N$ が
 \begin{equation}\label{eq:digit-closure}
- 4A+\{1,2\}\subseteq A
+ 4\cdot A+\{1,2\}\subseteq A
 \end{equation}
 を満たすとする。このとき、$m\in kA$ ならば
 \begin{equation}\label{eq:digit-lifting}
@@ -795,23 +795,23 @@ $k\geq1$ とし、$A\subseteq\mathbb N$ が
 \end{lemma}
 
 \begin{proof}
-ある$a_i\in A$に対して、$m=a_1+\cdots+a_k\in kA$であると仮定する。任意の
+任意の$m\in kA$を仮定する。ある$a_i\in A$をとり、
+$m=a_1+\cdots+a_k$とする。任意の数字
 $k\leq r\leq2k$ に対して、
 \[
  \eta_1+\cdots+\eta_k=r,
  \qquad \eta_i\in\{1,2\}
 \]
-となる $\eta_1,\ldots,\eta_k$ を選べる。したがって、
+となる $\eta_1,\ldots,\eta_k$ を選ぶことができる。したがって、
 \[
- 4m+r=\sum_{i=1}^{k}(4a_i+\eta_i)\in kA
+ 4m+r=\sum_{i=1}^{k}(4a_i+\eta_i)\in kA.
 \]
-であり、主張が従う。
 \end{proof}
 
 \begin{corollary}[有限区間から尾部への伝播]
 \label{cor:tail-propagation}
-$k\geq3$ とし、$A\subseteq\mathbb N$ が
-\eqref{eq:digit-closure} を満たすとする。ある整数 $M\geq1$ に対して
+$A\subseteq\mathbb N$ が
+\eqref{eq:digit-closure} を満たすとする。任意の加法の分割数$k\geq3$に対して、適切な整数$M\geq1$が存在し、
 \begin{equation}\label{eq:tail-seed}
  [M,4M+k-1]\subseteq kA
 \end{equation}
@@ -840,13 +840,13 @@ $\rho\equiv n\pmod4$ を満たす一意な
 \[
  m:=\frac{n-\rho}{4}
 \]
-とおくと、$m$ は整数である。さらに、$n\geq4M+k$ および
+とおくと、$m\in\mathbb{Z}$である。さらに、$n\geq4M+k$ および
 $\rho\leq k+3$ より
 \[
  m\geq\frac{4M+k-(k+3)}{4}
    =M-\frac34
 \]
-であるから、$m\geq M$ である。一方、$\rho\geq k\geq3$ より
+であるから、$m\in\mathbb{Z}$により$m\geq M$ である。一方、$\rho\geq k\geq3$ より
 \[
  m=\frac{n-\rho}{4}
  \leq\frac{n-k}{4}
@@ -855,11 +855,11 @@ $\rho\leq k+3$ より
 である。
 
 したがって、帰納法の仮定より $m\in kA$ である。
-補題~\ref{lem:digit-lifting} から
+補題~\ref{lem:digit-lifting} と$k\leq\rho\leq2k$とあわせて、
 \[
- n=4m+\rho\in kA
+ n=4m+\rho\in [4m+k,4m+2k]\subseteq kA
 \]
-を得る。以上により、強い帰納法が完了する。
+により$n\in kA$を得る。以上により、強い帰納法が完了する。
 \end{proof}
 
 
@@ -882,12 +882,22 @@ $\mathsf{Motz}$ に属するから、補題~\ref{lem:base4} より
 \begin{equation}\label{eq:4E}
  4\cdot\mathcal E\subseteq\NpD
 \end{equation}
-である。また、4進展開の末尾に $1$ または $2$ を付け加えることにより、
+である。また、$e\in\mathcal E^+$ とすると、その4進展開は
+\[
+ e=[3\varepsilon_1\cdots\varepsilon_j]_4,
+ \qquad \varepsilon_i\in\{1,2\}
+\]
+と書ける。このとき、
+\[
+ 4e+1=[3\varepsilon_1\cdots\varepsilon_j1]_4,
+ \qquad
+ 4e+2=[3\varepsilon_1\cdots\varepsilon_j2]_4
+\]
+であり、いずれも再び $\mathcal E^+$ に属する。したがって、
 \begin{equation}\label{eq:Eclosure}
- 4\mathcal E^++\{1,2\}\subseteq\mathcal E^+
+ 4\cdot\mathcal E^++\{1,2\}\subseteq\mathcal E^+
 \end{equation}
 を得る。
-
 次の有限包含だけを計算証明書として用いる。
 
 \begin{lemma}[正規族の有限証明書]\label{lem:Ecertificate}

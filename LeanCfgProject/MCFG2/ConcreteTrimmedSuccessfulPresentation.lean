@@ -401,7 +401,7 @@ theorem toConcreteSuccessfulPresentation
           (castTuple τ.wellTyped.symm
             ρ.outputTuple)
           (τ.cast_outputTuple_matches_lhs obs)
-      rw [← hnode]
+      cases hnode
       exact PresentationDerives.terminal hmem
 
   | binary hρ hx hy ihx ihy =>
