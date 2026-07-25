@@ -187,12 +187,8 @@ theorem workingGrammarStringLanguage_subset_presentation
       (P := P) (z := castTuple hstart (singletonTuple word))).mp hderives with
     ⟨σ, hσ, childTuple, childDerives, tuple_eq⟩
   exact
-    { startRule := σ
-      start_mem := hσ
-      childTuple := childTuple
-      child_derives := childDerives
-      start_arity := hstart
-      word_eq := tuple_eq }
+    mem_presentationStringLanguage_of_start
+      P σ hσ childTuple childDerives hstart tuple_eq
 
 /-- The concrete grammar generated from a finite output-type presentation has
 exactly the presentation string language. -/
