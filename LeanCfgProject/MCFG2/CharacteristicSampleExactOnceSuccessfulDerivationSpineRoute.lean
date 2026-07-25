@@ -270,7 +270,7 @@ def acceptsDerives
 
   | throughStart hρ hwt parentSpine ih =>
       intro x hx
-      rw [namedFill_transportNamedSentenceContext_symm]
+      rw [namedFill_transportNamedSentenceContext_symm hwt]
       exact ih (DerivesTuple.start hρ hx hwt)
 
   | throughLeft hρ hexact hy parentSpine ih =>
