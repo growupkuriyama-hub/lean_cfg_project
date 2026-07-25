@@ -158,7 +158,7 @@ variable {G : WorkingMCFG N α} {obs : α → M}
 
 /-- The concrete working grammar carried by a finite output-type
 presentation. -/
-def OutputTypeRefinementPresentation.toWorkingMCFG
+noncomputable def OutputTypeRefinementPresentation.toWorkingMCFG
     (P : OutputTypeRefinementPresentation G obs) :
     WorkingMCFG (PresentationGrammarNonterminal G M) α where
 
@@ -195,7 +195,10 @@ theorem liftStartRule_mem
     (hσ : P.HasStartRule σ) :
     liftPresentationStartRule σ ∈
       P.toWorkingMCFG.startRules := by
-  simp [OutputTypeRefinementPresentation.toWorkingMCFG, hσ]
+  unfold OutputTypeRefinementPresentation.toWorkingMCFG
+  apply List.mem_map.mpr
+  refine ⟨σ, ?_, rfl⟩
+  simpa [OutputTypeRefinementPresentation.HasStartRule] using hσ
 
 /-- Every present typed terminal rule occurs in the concrete grammar. -/
 theorem liftTerminalRule_mem
@@ -203,7 +206,10 @@ theorem liftTerminalRule_mem
     (hτ : P.HasTerminalRule τ) :
     liftPresentationTerminalRule (M := M) (obs := obs) τ ∈
       P.toWorkingMCFG.terminalRules := by
-  simp [OutputTypeRefinementPresentation.toWorkingMCFG, hτ]
+  unfold OutputTypeRefinementPresentation.toWorkingMCFG
+  apply List.mem_map.mpr
+  refine ⟨τ, ?_, rfl⟩
+  simpa [OutputTypeRefinementPresentation.HasTerminalRule] using hτ
 
 /-- Every present typed binary rule occurs in the concrete grammar. -/
 theorem liftBinaryRule_mem
@@ -211,7 +217,10 @@ theorem liftBinaryRule_mem
     (hτ : P.HasBinaryRule τ) :
     liftPresentationBinaryRule (obs := obs) τ ∈
       P.toWorkingMCFG.binaryRules := by
-  simp [OutputTypeRefinementPresentation.toWorkingMCFG, hτ]
+  unfold OutputTypeRefinementPresentation.toWorkingMCFG
+  apply List.mem_map.mpr
+  refine ⟨τ, ?_, rfl⟩
+  simpa [OutputTypeRefinementPresentation.HasBinaryRule] using hτ
 
 /-- The fresh start retains the original start arity. -/
 theorem toWorkingMCFG_start_arity :
@@ -303,7 +312,7 @@ theorem toWorkingMCFG
   | terminal hτ =>
       exact DerivesTuple.terminal
         (P.liftTerminalRule_mem hτ)
-        τ.wellTyped
+        (P.liftTerminalRule_wellTyped _)
   | binary hτ hx hy ihx ihy =>
       exact DerivesTuple.binary
         (P.liftBinaryRule_mem hτ)
@@ -320,7 +329,10 @@ theorem toWorkingMCFG
     {word : Word α}
     (D : PresentationStringDerives P word) :
     word ∈ P.toWorkingMCFG.StringLanguage := by
-  refine ⟨D.start_arity, ?_⟩
+  let hs :
+      1 = P.toWorkingMCFG.arity P.toWorkingMCFG.start :=
+    D.start_arity
+  refine ⟨hs, ?_⟩
   have hstart :
       DerivesTuple P.toWorkingMCFG
         P.toWorkingMCFG.start
@@ -329,8 +341,14 @@ theorem toWorkingMCFG
       (P.liftStartRule_mem D.start_mem)
       D.child_derives.toWorkingMCFG
       D.startRule.wellTyped
-  rw [D.word_eq]
-  exact hstart
+  have hword :
+      castTuple hs (singletonTuple word) =
+        castTuple D.startRule.wellTyped D.childTuple := by
+    have hp : hs = D.start_arity :=
+      Subsingleton.elim _ _
+    cases hp
+    exact D.word_eq
+  exact hword.symm ▸ hstart
 
 end PresentationStringDerives
 
@@ -341,7 +359,8 @@ theorem presentationStringLanguage_subset_workingGrammar
     PresentationStringLanguage P ⊆
       P.toWorkingMCFG.StringLanguage := by
   intro word hword
-  exact hword.toWorkingMCFG
+  rcases hword with ⟨D⟩
+  exact PresentationStringDerives.toWorkingMCFG D
 
 end PresentationDerivationEmbedding
 
