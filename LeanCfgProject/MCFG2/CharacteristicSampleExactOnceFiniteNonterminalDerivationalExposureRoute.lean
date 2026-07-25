@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.CharacteristicSampleExactOnceFiniteDerivationalExposureRoute
+import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # CharacteristicSampleExactOnceFiniteNonterminalDerivationalExposureRoute.lean
@@ -160,8 +161,8 @@ theorem finite_nonterminal_exact_working_paper_conclusion_package
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveLearningConclusionPackage G obs :=
-  (E.toFiniteDataOfFinite hworking.basic).
-    exact_working_paper_conclusion_package hworking hfan hL
+  (E.toFiniteDataOfFinite hworking.basic).exact_working_paper_conclusion_package
+    hworking hfan hL
 
 end TrimmedPresentationDerivationalExposure
 
