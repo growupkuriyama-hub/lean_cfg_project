@@ -75,6 +75,18 @@ variable {S : SuccessfulOccurrenceCompletePresentation G obs}
 
 namespace SuccessfulOccurrenceBaseRepresentativeSelection
 
+/-- Transport along an equality from an arity to itself is extensionally the
+identity, independently of the particular equality proof. -/
+@[simp] theorem castOutputType_self
+    {d : Nat}
+    (h : d = d)
+    (out : Fin d → M) :
+    castOutputType h out = out := by
+  have hp : h = rfl :=
+    Subsingleton.elim _ _
+  cases hp
+  rfl
+
 /-- If the selected representative node is identified with a typed
 nonterminal `X`, its transported output is the output of `X`, transported along
 the corresponding base equality.
@@ -267,27 +279,31 @@ theorem terminal_output
   have hlhs :
       (R.rep ρ.lhs).node = τ.lhs obs :=
     Q.terminal_lhs_rep ρ hρ
-  rw [← hbase] at hwt hlhs ⊢
-  have hout :
+  have hlhsτ :
+      (R.rep τ.baseRule.lhs).node = τ.lhs obs := by
+    simpa only [hbase] using hlhs
+  have hτ :
       R.transportedOutput τ.baseRule.lhs =
-        (τ.lhs obs).out := by
-    simpa using
-      R.transportedOutput_eq_of_node_eq
-        τ.baseRule.lhs
-        (τ.lhs obs)
-        rfl
-        hlhs
-  calc
-    R.transportedOutput τ.baseRule.lhs =
-        (τ.lhs obs).out :=
-      hout
-    _ =
         tupleType obs
-          (castTuple hwt.symm τ.baseRule.outputTuple) := by
-      have hp : hwt = τ.wellTyped :=
-        Subsingleton.elim _ _
-      cases hp
-      exact (τ.cast_outputTuple_matches_lhs obs).symm
+          (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) := by
+    have hout :
+        R.transportedOutput τ.baseRule.lhs =
+          (τ.lhs obs).out := by
+      simpa [TypedTerminalRule.lhs] using
+        R.transportedOutput_eq_of_node_eq
+          τ.baseRule.lhs
+          (τ.lhs obs)
+          rfl
+          hlhsτ
+    calc
+      R.transportedOutput τ.baseRule.lhs =
+          (τ.lhs obs).out :=
+        hout
+      _ =
+          tupleType obs
+            (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) := by
+        exact (τ.cast_outputTuple_matches_lhs obs).symm
+  simpa only [hbase] using hτ
 
 /-- Typed-rule realization implies the binary representative output equation. -/
 theorem binary_output
@@ -310,45 +326,59 @@ theorem binary_output
   have hlhs :
       (R.rep ρ.lhs).node = τ.lhs obs :=
     Q.binary_lhs_rep ρ hρ
-  rw [← hbase] at hleft hright hlhs ⊢
-  have houtLeft :
-      R.transportedOutput τ.baseRule.left =
-        τ.leftOut := by
-    simpa [TypedBinaryRule.left] using
-      R.transportedOutput_eq_of_node_eq
-        τ.baseRule.left
-        τ.left
-        rfl
-        hleft
-  have houtRight :
-      R.transportedOutput τ.baseRule.right =
-        τ.rightOut := by
-    simpa [TypedBinaryRule.right] using
-      R.transportedOutput_eq_of_node_eq
-        τ.baseRule.right
-        τ.right
-        rfl
-        hright
-  have houtLhs :
+  have hleftτ :
+      (R.rep τ.baseRule.left).node = τ.left := by
+    simpa only [hbase] using hleft
+  have hrightτ :
+      (R.rep τ.baseRule.right).node = τ.right := by
+    simpa only [hbase] using hright
+  have hlhsτ :
+      (R.rep τ.baseRule.lhs).node = τ.lhs obs := by
+    simpa only [hbase] using hlhs
+  have hτ :
       R.transportedOutput τ.baseRule.lhs =
-        BinaryRule.outputType obs τ.baseRule
-          τ.leftOut τ.rightOut := by
-    simpa [TypedBinaryRule.lhs] using
-      R.transportedOutput_eq_of_node_eq
-        τ.baseRule.lhs
-        (τ.lhs obs)
-        rfl
-        hlhs
-  calc
-    R.transportedOutput τ.baseRule.lhs =
-        BinaryRule.outputType obs τ.baseRule
-          τ.leftOut τ.rightOut :=
-      houtLhs
-    _ =
         BinaryRule.outputType obs τ.baseRule
           (R.transportedOutput τ.baseRule.left)
           (R.transportedOutput τ.baseRule.right) := by
-      rw [houtLeft, houtRight]
+    have houtLeft :
+        R.transportedOutput τ.baseRule.left =
+          τ.leftOut := by
+      simpa [TypedBinaryRule.left] using
+        R.transportedOutput_eq_of_node_eq
+          τ.baseRule.left
+          τ.left
+          rfl
+          hleftτ
+    have houtRight :
+        R.transportedOutput τ.baseRule.right =
+          τ.rightOut := by
+      simpa [TypedBinaryRule.right] using
+        R.transportedOutput_eq_of_node_eq
+          τ.baseRule.right
+          τ.right
+          rfl
+          hrightτ
+    have houtLhs :
+        R.transportedOutput τ.baseRule.lhs =
+          BinaryRule.outputType obs τ.baseRule
+            τ.leftOut τ.rightOut := by
+      simpa [TypedBinaryRule.lhs] using
+        R.transportedOutput_eq_of_node_eq
+          τ.baseRule.lhs
+          (τ.lhs obs)
+          rfl
+          hlhsτ
+    calc
+      R.transportedOutput τ.baseRule.lhs =
+          BinaryRule.outputType obs τ.baseRule
+            τ.leftOut τ.rightOut :=
+        houtLhs
+      _ =
+          BinaryRule.outputType obs τ.baseRule
+            (R.transportedOutput τ.baseRule.left)
+            (R.transportedOutput τ.baseRule.right) := by
+        rw [houtLeft, houtRight]
+  simpa only [hbase] using hτ
 
 /-- Typed-rule realization implies the start representative output equation. -/
 theorem start_output
@@ -368,37 +398,40 @@ theorem start_output
   have hparent :
       (R.rep G.start).node = σ.parent :=
     Q.start_parent_rep ρ hρ
-  rw [← hbase] at hwt hchild ⊢
-  have houtChild :
-      R.transportedOutput σ.baseRule.child =
-        σ.childOut := by
-    simpa [TypedStartRule.child] using
-      R.transportedOutput_eq_of_node_eq
-        σ.baseRule.child
-        σ.child
-        rfl
-        hchild
-  have houtParent :
+  have hchildσ :
+      (R.rep σ.baseRule.child).node = σ.child := by
+    simpa only [hbase] using hchild
+  have hσ :
       R.transportedOutput G.start =
-        castOutputType σ.wellTyped σ.childOut := by
-    simpa [TypedStartRule.parent] using
-      R.transportedOutput_eq_of_node_eq
-        G.start
-        σ.parent
-        rfl
-        hparent
-  calc
-    R.transportedOutput G.start =
-        castOutputType σ.wellTyped σ.childOut :=
-      houtParent
-    _ =
-        castOutputType hwt
+        castOutputType σ.wellTyped
           (R.transportedOutput σ.baseRule.child) := by
-      rw [houtChild]
-      have hp : hwt = σ.wellTyped :=
-        Subsingleton.elim _ _
-      cases hp
-      rfl
+    have houtChild :
+        R.transportedOutput σ.baseRule.child =
+          σ.childOut := by
+      simpa [TypedStartRule.child] using
+        R.transportedOutput_eq_of_node_eq
+          σ.baseRule.child
+          σ.child
+          rfl
+          hchildσ
+    have houtParent :
+        R.transportedOutput G.start =
+          castOutputType σ.wellTyped σ.childOut := by
+      simpa [TypedStartRule.parent] using
+        R.transportedOutput_eq_of_node_eq
+          G.start
+          σ.parent
+          rfl
+          hparent
+    calc
+      R.transportedOutput G.start =
+          castOutputType σ.wellTyped σ.childOut :=
+        houtParent
+      _ =
+          castOutputType σ.wellTyped
+            (R.transportedOutput σ.baseRule.child) := by
+        rw [houtChild]
+  simpa only [hbase] using hσ
 
 /-- All three output-compatibility obligations are consequences of concrete
 typed-rule realization. -/

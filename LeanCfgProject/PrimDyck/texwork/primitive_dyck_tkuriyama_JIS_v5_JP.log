@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  25 JUL 2026 15:11
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  25 JUL 2026 15:26
  restricted system commands enabled.
 **primitive_dyck_tkuriyama_JIS_v5_JP.tex
 (./primitive_dyck_tkuriyama_JIS_v5_JP.tex
@@ -1292,7 +1292,7 @@ Class ltjsarticle Warning: deprecated old font command `\rm' used.
 (ltjsarticle)              new font selection scheme called NFSS2 with several
 (ltjsarticle)              new, combinable font commands. This ltjsarticle
 (ltjsarticle)              class has defined the old font commands like
-(ltjsarticle)              `\rm' only for compatibility on input line 1506.
+(ltjsarticle)              `\rm' only for compatibility on input line 1499.
 
 [28] [29] [30] [31] (./primitive_dyck_tkuriyama_JIS_v5_JP.aux)
  ***********
@@ -1312,10 +1312,10 @@ not changed.
 Here is how much of LuaTeX's memory you used:
  13564 strings out of 476076
  244651,662416 words of node,token memory allocated
- 11426 words of node memory still in use:
-   11 hlist, 2 vlist, 5 rule, 7 glue, 4 kern, 1 glyph, 4924 attribute, 59 glue_s
-pec, 460 attribute_list, 1 write, 14 user_defined nodes
-   avail lists: 1:12,2:41117,3:448,4:381,5:232,6:42,7:6810,8:73,9:2663,10:37,11:
+ 11402 words of node memory still in use:
+   11 hlist, 2 vlist, 5 rule, 7 glue, 4 kern, 1 glyph, 4913 attribute, 59 glue_s
+pec, 459 attribute_list, 1 write, 14 user_defined nodes
+   avail lists: 1:12,2:41129,3:448,4:381,5:232,6:42,7:6810,8:73,9:2663,10:37,11:
 142
  35613 multiletter control sequences out of 65536+600000
  128 fonts using 90925879 bytes
@@ -1359,10 +1359,10 @@ sers/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pf
 b><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
 msy9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/symbols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_JIS_v5_JP.pdf (31 pages, 574052 bytes
+Output written on primitive_dyck_tkuriyama_JIS_v5_JP.pdf (31 pages, 573714 bytes
 ).
 
-PDF statistics: 582 PDF objects out of 1000 (max. 8388607)
+PDF statistics: 584 PDF objects out of 1000 (max. 8388607)
  114 named destinations out of 1000 (max. 1048576)
  65 words of extra memory for PDF output out of 10000 (max. 100000000)
 
