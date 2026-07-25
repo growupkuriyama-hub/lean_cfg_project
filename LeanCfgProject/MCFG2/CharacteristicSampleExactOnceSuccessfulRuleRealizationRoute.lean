@@ -263,6 +263,63 @@ theorem start_present
       (Q.startTypedRule ρ hρ) :=
   Q.startTypedRule_mem ρ hρ
 
+/-- Transport the terminal output equation across an equality of base rules.
+The typed rule and the original rule are independent arguments here, so
+dependent elimination is well behaved. -/
+private theorem terminal_output_of_base_eq
+    (τ : TypedTerminalRule G)
+    (ρ : TerminalRule N α)
+    (hbase : τ.baseRule = ρ)
+    (hwt : G.arity ρ.lhs = 1)
+    (hτ :
+      R.transportedOutput τ.baseRule.lhs =
+        tupleType obs
+          (castTuple τ.wellTyped.symm τ.baseRule.outputTuple)) :
+    R.transportedOutput ρ.lhs =
+      tupleType obs
+        (castTuple hwt.symm ρ.outputTuple) := by
+  cases hbase
+  have hp : hwt = τ.wellTyped :=
+    Subsingleton.elim _ _
+  cases hp
+  exact hτ
+
+/-- Transport the binary output equation across an equality of base rules. -/
+private theorem binary_output_of_base_eq
+    (τ : TypedBinaryRule G M)
+    (ρ : BinaryRule N α G.arity)
+    (hbase : τ.baseRule = ρ)
+    (hτ :
+      R.transportedOutput τ.baseRule.lhs =
+        BinaryRule.outputType obs τ.baseRule
+          (R.transportedOutput τ.baseRule.left)
+          (R.transportedOutput τ.baseRule.right)) :
+    R.transportedOutput ρ.lhs =
+      BinaryRule.outputType obs ρ
+        (R.transportedOutput ρ.left)
+        (R.transportedOutput ρ.right) := by
+  cases hbase
+  exact hτ
+
+/-- Transport the start output equation across an equality of base rules. -/
+private theorem start_output_of_base_eq
+    (σ : TypedStartRule G M)
+    (ρ : StartRule N)
+    (hbase : σ.baseRule = ρ)
+    (hwt : G.arity ρ.child = G.arity G.start)
+    (hσ :
+      R.transportedOutput G.start =
+        castOutputType σ.wellTyped
+          (R.transportedOutput σ.baseRule.child)) :
+    R.transportedOutput G.start =
+      castOutputType hwt
+        (R.transportedOutput ρ.child) := by
+  cases hbase
+  have hp : hwt = σ.wellTyped :=
+    Subsingleton.elim _ _
+  cases hp
+  exact hσ
+
 /-- Typed-rule realization implies the terminal representative output
 equation. -/
 theorem terminal_output
@@ -295,15 +352,13 @@ theorem terminal_output
           (τ.lhs obs)
           rfl
           hlhsτ
-    calc
-      R.transportedOutput τ.baseRule.lhs =
+    have hmatch :
+        tupleType obs
+            (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) =
           (τ.lhs obs).out :=
-        hout
-      _ =
-          tupleType obs
-            (castTuple τ.wellTyped.symm τ.baseRule.outputTuple) := by
-        exact (τ.cast_outputTuple_matches_lhs obs).symm
-  simpa only [hbase] using hτ
+      τ.cast_outputTuple_matches_lhs obs
+    exact hout.trans hmatch.symm
+  exact terminal_output_of_base_eq τ ρ hbase hwt hτ
 
 /-- Typed-rule realization implies the binary representative output equation. -/
 theorem binary_output
@@ -378,7 +433,7 @@ theorem binary_output
             (R.transportedOutput τ.baseRule.left)
             (R.transportedOutput τ.baseRule.right) := by
         rw [houtLeft, houtRight]
-  simpa only [hbase] using hτ
+  exact binary_output_of_base_eq τ ρ hbase hτ
 
 /-- Typed-rule realization implies the start representative output equation. -/
 theorem start_output
@@ -431,7 +486,7 @@ theorem start_output
           castOutputType σ.wellTyped
             (R.transportedOutput σ.baseRule.child) := by
         rw [houtChild]
-  simpa only [hbase] using hσ
+  exact start_output_of_base_eq σ ρ hbase hwt hσ
 
 /-- All three output-compatibility obligations are consequences of concrete
 typed-rule realization. -/
