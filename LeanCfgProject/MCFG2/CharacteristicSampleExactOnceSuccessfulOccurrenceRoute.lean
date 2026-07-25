@@ -156,20 +156,22 @@ def spine
     {x : Tuple α (G.arity A)}
     {c : NamedSentenceContext α (G.arity A)}
     (O : ExactSuccessfulDerivationOccurrence G A x c) :
-    ExactSuccessfulDerivationSpine G A c :=
-  match O with
-  | .root hstart _ =>
-      ExactSuccessfulDerivationSpine.root hstart
-  | .throughStart hρ hwt _ parentOccurrence =>
-      ExactSuccessfulDerivationSpine.throughStart
-        hρ hwt (spine parentOccurrence)
-  | .throughLeft hρ hexact _ hy parentOccurrence =>
-      ExactSuccessfulDerivationSpine.throughLeft
-        hρ hexact hy (spine parentOccurrence)
-  | .throughRight hρ hexact hx _ parentOccurrence =>
-      ExactSuccessfulDerivationSpine.throughRight
-        hρ hexact hx (spine parentOccurrence)
-termination_by sizeOf O
+    ExactSuccessfulDerivationSpine G A c := by
+  induction O with
+  | root hstart hx =>
+      exact ExactSuccessfulDerivationSpine.root hstart
+  | throughStart hρ hwt hx parentOccurrence ih =>
+      exact
+        ExactSuccessfulDerivationSpine.throughStart
+          hρ hwt ih
+  | throughLeft hρ hexact hx hy parentOccurrence ih =>
+      exact
+        ExactSuccessfulDerivationSpine.throughLeft
+          hρ hexact hy ih
+  | throughRight hρ hexact hx hy parentOccurrence ih =>
+      exact
+        ExactSuccessfulDerivationSpine.throughRight
+          hρ hexact hx ih
 
 /-- A successful occurrence accepts its selected tuple. -/
 theorem accepts
