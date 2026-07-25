@@ -159,14 +159,17 @@ def spine
     ExactSuccessfulDerivationSpine G A c :=
   match O with
   | .root hstart _ =>
-      .root hstart
+      ExactSuccessfulDerivationSpine.root hstart
   | .throughStart hρ hwt _ parentOccurrence =>
-      .throughStart hρ hwt (spine parentOccurrence)
+      ExactSuccessfulDerivationSpine.throughStart
+        hρ hwt (spine parentOccurrence)
   | .throughLeft hρ hexact _ hy parentOccurrence =>
-      .throughLeft hρ hexact hy (spine parentOccurrence)
+      ExactSuccessfulDerivationSpine.throughLeft
+        hρ hexact hy (spine parentOccurrence)
   | .throughRight hρ hexact hx _ parentOccurrence =>
-      .throughRight hρ hexact hx (spine parentOccurrence)
-termination_by O
+      ExactSuccessfulDerivationSpine.throughRight
+        hρ hexact hx (spine parentOccurrence)
+termination_by sizeOf O
 
 /-- A successful occurrence accepts its selected tuple. -/
 theorem accepts
@@ -198,7 +201,8 @@ def rootOfExactWorking
     (hx : DerivesTuple G G.start x) :
     ExactSuccessfulDerivationOccurrence G G.start x
       (startIdentityNamedContext G hworking.basic.1.symm) :=
-  .root hworking.basic.1.symm hx
+  ExactSuccessfulDerivationOccurrence.root
+    hworking.basic.1.symm hx
 
 /-- Start-child occurrence with well-typedness extracted from exact working
 conditions. -/
@@ -216,8 +220,8 @@ def throughStartOfExactWorking
     ExactSuccessfulDerivationOccurrence G ρ.child x
       (transportNamedSentenceContext
         (hworking.basic.2.1 ρ hρ).symm parent) :=
-  .throughStart hρ (hworking.basic.2.1 ρ hρ)
-    hx parentOccurrence
+  ExactSuccessfulDerivationOccurrence.throughStart
+    hρ (hworking.basic.2.1 ρ hρ) hx parentOccurrence
 
 /-- Left-child occurrence with exact-once linearity extracted from exact
 working conditions. -/
@@ -237,8 +241,8 @@ def throughLeftOfExactWorking
     ExactSuccessfulDerivationOccurrence G ρ.left x
       (ExactSplicing.leftContextNSC
         parent ρ.body (hworking.2 ρ hρ).2.1 y) :=
-  .throughLeft hρ (hworking.2 ρ hρ)
-    hx hy parentOccurrence
+  ExactSuccessfulDerivationOccurrence.throughLeft
+    hρ (hworking.2 ρ hρ) hx hy parentOccurrence
 
 /-- Right-child occurrence with exact-once linearity extracted from exact
 working conditions. -/
@@ -258,8 +262,8 @@ def throughRightOfExactWorking
     ExactSuccessfulDerivationOccurrence G ρ.right y
       (ExactSplicing.rightContextNSC
         parent ρ.body (hworking.2 ρ hρ).2.2 x) :=
-  .throughRight hρ (hworking.2 ρ hρ)
-    hx hy parentOccurrence
+  ExactSuccessfulDerivationOccurrence.throughRight
+    hρ (hworking.2 ρ hρ) hx hy parentOccurrence
 
 end ExactSuccessfulDerivationOccurrence
 
