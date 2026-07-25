@@ -316,12 +316,12 @@ $[110000]_2=48$ を表す。したがって、$46$ の任意の表示は
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0
 \]
-によって割り当てる。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が
+によって割り当てる。空列$\lambda$の重みづけは$\sigma(\lambda)=0$とする。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が
 \emph{2色Motzkin語}である\footnote{重み $0$ の二つの数字 $1$ と $2$ を、異なる
-色とみなしている。}とは、任意の接頭辞の総重みが非負であり\footnote{空列$\lambda$の重みづけは$\sigma(\lambda)=0$とする。}、かつ $w$ 全体の
-総重みが $0$ であることをいう。文字列$w$を左から読んで重み付けするとき一般的には何回か$0$になりうる。
+色とみなしている。}とは、任意の接頭辞の総重みが非負であり、かつ $w$ 全体の
+総重みが $0$ であることをいう。$\mathsf{Motz}$ は空語 $\lambda$ を含む。文字列$w$を左から読んで重み付けするとき一般的には何回か$0$になりうる。
 2色Motzkin語全体の集合を $\mathsf{Motz}$ と書く。$\DP$ とは異なり、また、
-$\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読んだ値を $[w]_4$
+$w$ を基数4の数として読んだ値を $[w]_4$
 と書き、$[\lambda]_4=0$ と定める。正整数 $n$ に対し、その標準的な2進展開および
 4進展開を、それぞれ $\operatorname{bin}(n)$ および $\operatorname{quad}(n)$ と書く。
 
@@ -340,12 +340,12 @@ $\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読
  B:=\operatorname{bin}(4p)=b_1b_2\cdots b_{2L},
  \qquad b_i\in\{0,1\},
 \]
-は$|B|=2L\geq4$ かつ$B\in\DP$である。その高さ関数を
+は$|B|=2L\geq4$ かつ$B\in\DP$である。その高さ関数は
 \[
  h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2L)
 \]
-と定める。条件$B\in\DP$を形式的にかけば、 
+で計算できる。条件$B\in\DP$を形式的にかけば、 
 
 \begin{equation}\label{eq:primitive-height}
  h_B(0)=h_B(2L)=0,
@@ -371,7 +371,7 @@ $\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読
  1_{(4)}\longleftrightarrow01_{(2)},\qquad
  0_{(4)}\longleftrightarrow00_{(2)}
 \]
-から、第 $j$ ブロックによる高さの変化は
+から、第 $j$ ブロックによる高さの変化は比喩的に言えば$\Delta{h}({2j})=2\Delta\sigma_{j}$, 正確には
 \[
  h_B(2j)-h_B(2j-2)=2\sigma(q_j)
 \]
@@ -408,15 +408,15 @@ $10$ なので、
  \geq1
  \qquad(1\leq j\leq L-1)
 \end{equation}
-を得る。$4p$ を $4$ で割ることは、その4進展開の末尾の数字 $0$ を削除することに
-対応するので、
+を得る。$4p$ を $4$ で割ることは、その4進展開の末尾の数字 $0_{(4)}=q_{L}$ を削除することに
+対応するので、$q_1=3_{(4)}$とあわせれば、
 \[
  \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=:3u,
  \qquad
  u=q_2q_3\cdots q_{L-1}.
 \]
 
-のこりは$u\in\mathsf{Motz}$を示す。$u$ の長さ $r$ の接頭辞を考え、$0\leq r\leq L-2$ とする。$r=0$ の場合、その
+以下では$u\in\mathsf{Motz}$を示す。$u$ の長さ $r$ の接頭辞を考え、$0\leq r\leq L-2$ とする。$r=0$ の場合、その
 重みは空和 $0$ である。$1\leq r\leq L-2$ の場合には、
 \eqref{eq:prefix-height} を $j=r+1$ に適用して、
 \begin{equation}\label{eq:motzkin-prefix-nonnegative}
@@ -434,8 +434,7 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
 \[
  \sum_{i=2}^{L-1}\sigma(q_i)= \sum_{i=1}^{L}\sigma(q_i)-(\sigma(q_1)+\sigma(q_L))=0.
 \]
-したがって、$u$ の任意の接頭辞の重みは非負であり、$u$ 全体の重みは $0$ である。
-ゆえに $u\in\mathsf{Motz}$ であり、必要性が示された。
+したがって、\eqref{eq:prefix-height}および\eqref{eq:total-weight-zero}により$u\in\mathsf{Motz}$ であり、必要性が示された。
 
 逆に、ある $w\in\mathsf{Motz}$ に対して$ \operatorname{quad}(p)=3w$
 であると仮定する。これを
@@ -472,18 +471,18 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
 と定める。$q_{m+1}:=0_{(4)}$ とおき、
 \[
  B:=\phi( \operatorname{quad}(p)q_{m+1})=\phi(q_1q_2\cdots q_mq_{m+1})
-   =b_1b_2\cdots  b_{2m+1}b_{2m+2}
+   =:b_1b_2\cdots  b_{2m+1}b_{2m+2}
 \]
 とする。$b_{2m+1}b_{2m+2}=00_{(2)}$なので、
 \begin{equation}\label{eq:block-value}
- [B]_2=[q_1q_2\cdots q_m0]_4=4p
+ [B]_2=[b_1b_2\cdots  b_{2m+1}b_{2m+2}]_2=4p
 \end{equation}
-である。$B$ の高さ関数を
+である。$B$ の高さ関数は
 \[
  h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2m+2)
 \]
-と定める。先ほどと同じブロックごとの計算により、
+で計算できるのであった。先ほどと同じブロックごとの計算により、
 \begin{equation}\label{eq:reverse-height-sigma}
  h_B(2j)=2\sum_{i=1}^{j}\sigma(q_i)
  \qquad(0\leq j\leq m+1)
@@ -497,7 +496,7 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
 =1+\sum_{i=2}^{j}\sigma(q_i)
  \geq1
 \]
-である。ただし $j=1$ の場合、第2項は空和 $0$ とする。したがって、
+である。ただし $j=1$ の場合、第2項は空和 $0$ とする。\eqref{eq:reverse-height-sigma}より、
 \begin{equation}\label{eq:positive-even-height}
  h_B(2j)\geq2
  \qquad(1\leq j\leq m)
@@ -550,13 +549,13 @@ $q_j=1$ の場合、そのブロックは $01$ であり、同じく
 \]
 
 付け加えた終端数字 $q_{m+1}=0$ については、
-\eqref{eq:reverse-motzkin-total} と \eqref{eq:reverse-height-sigma} より、
+  \eqref{eq:reverse-height-sigma} と\eqref{eq:reverse-motzkin-total}より、
 \[
  h_B(2m)=2\left(\sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)\right)=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)=2.
 \]
 したがって、終端ブロック $00$ は
 \[
- h_B(2m+1)=1
+ h_B(2m+1)=1>0
 \]
 を経て、\eqref{eq:terminal-height} の高さで終わる。
 
@@ -564,9 +563,8 @@ $q_j=1$ の場合、そのブロックは $01$ であり、同じく
 $ h_B(t)>0$を確認できた。一方、\eqref{eq:terminal-height} より $h_B(2m+2)=0$ である。
 したがって $B\in\DP$ である。
 
-さらに、$p$ の4進展開の先頭数字は $3$ なので $p\geq3$、したがって
-$4p\geq12$ である。\eqref{eq:block-value} と $B\in\DP$ を合わせると、$ 4p\in\NpD$および$4p\geq12$.
-$\Pset$ の定義より $p\in\Pset$ である。これで十分性も示された。
+さらに、$\operatorname{quad}(p)$の先頭数字は $3$ なので $p\geq3$、したがって
+$4p\geq12$ である。\eqref{eq:block-value}である$[B]_2=4p$ と $B\in\DP$ を合わせると、$p\in\Pset$ である。これで十分性も示された。
 \end{proof}
 
 この特徴づけから、後で用いる自己相似性が得られる。

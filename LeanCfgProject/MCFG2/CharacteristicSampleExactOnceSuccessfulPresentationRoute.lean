@@ -65,7 +65,7 @@ theorem tupleType_castTuple_transport
     (h : d = e)
     (x : Tuple α d) :
     tupleType obs (castTuple h x) =
-      castTuple h (tupleType obs x) := by
+      castOutputType h (tupleType obs x) := by
   cases h
   rfl
 
@@ -167,8 +167,8 @@ arity. -/
 def transportedOutput
     (R : SuccessfulOccurrenceBaseRepresentativeSelection S)
     (A : N) :
-    Tuple M (G.arity A) :=
-  castTuple (R.repArityEq A) (R.rep A).node.out
+    Fin (G.arity A) → M :=
+  castOutputType (R.repArityEq A) (R.rep A).node.out
 
 /-- The transported base anchor has the transported output type of its selected
 typed representative. -/
@@ -179,7 +179,7 @@ theorem anchor_tupleType
       R.transportedOutput A := by
   unfold anchor transportedOutput typedAnchor
   rw [tupleType_castTuple_transport]
-  exact congrArg (castTuple (R.repArityEq A))
+  exact congrArg (castOutputType (R.repArityEq A))
     (S.completePresentation.withSuccessfulOccurrences_anchor_tupleType
       S.occurrences (R.rep A))
 
@@ -256,7 +256,7 @@ structure SuccessfulOccurrenceRepresentativeOutputCompatibility
       ρ ∈ G.startRules →
       ∀ hwt : G.arity ρ.child = G.arity G.start,
         R.transportedOutput G.start =
-          castTuple hwt
+          castOutputType hwt
             (R.transportedOutput ρ.child)
 
 end RepresentativeOutputCompatibility
@@ -359,7 +359,7 @@ def toPreCoreData
           C.representatives.transportedOutput G.start :=
         C.representatives.anchor_tupleType G.start
       _ =
-          castTuple hwt
+          castOutputType hwt
             (C.representatives.transportedOutput ρ.child) :=
         C.compatibility.start_output ρ hρ hwt
       _ =
@@ -409,8 +409,7 @@ theorem expose_accepts_derives
         ((C.toPreCoreData (f := f) hworking).expose A)
         x ∈
       G.StringLanguage :=
-  ((C.toSuccessfulOccurrenceData (f := f) hworking).occurrence A).
-    spine.acceptsDerives hx
+  ((C.toSuccessfulOccurrenceData (f := f) hworking).occurrence A).spine.acceptsDerives hx
 
 end SuccessfulOccurrencePreCoreConstruction
 
@@ -434,8 +433,8 @@ noncomputable def finiteSample
     (C : SuccessfulOccurrencePreCoreConstruction G obs)
     (hworking : G.ExactWorkingConditions) :
     Finset (Word α) :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    finiteSample hworking.basic
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).finiteSample
+    hworking.basic
 
 /-- The generated sample is positive. -/
 theorem finiteSample_positive
@@ -443,8 +442,8 @@ theorem finiteSample_positive
     (hworking : G.ExactWorkingConditions) :
     (C.finiteSample (f := f) hworking : Set (Word α)) ⊆
       G.StringLanguage :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    finiteSample_positive hworking.basic
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).finiteSample_positive
+    hworking.basic
 
 /-- Exact reconstruction on every positive finite superset of the generated
 sample. -/
@@ -460,8 +459,8 @@ theorem exact_for_positive_superset
     (hKpos : (K : Set (Word α)) ⊆ G.StringLanguage) :
     ReachableSampleStringLanguage K obs f =
       G.StringLanguage :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    exact_for_positive_superset hworking hfan hL hCK hKpos
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).exact_for_positive_superset
+    hworking hfan hL hCK hKpos
 
 /-- Eventual prefix-exact reconstruction from the successful presentation
 construction. -/
@@ -474,8 +473,8 @@ theorem exact_prefix_reconstruction
       ∃ n0 : Nat, ∀ n : Nat, n0 ≤ n →
         ReachableSampleStringLanguage (Ttxt.prefixSample n) obs f =
           G.StringLanguage :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    exact_prefix_reconstruction hworking hfan hL
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).exact_prefix_reconstruction
+    hworking hfan hL
 
 /-- Gold identification from a successful complete typed presentation and a
 compatible base-representative selection. -/
@@ -489,8 +488,8 @@ theorem identifies_from_positive_text
         (reachableHypLanguage obs f)
         (reachableSampleLearner (α := α))
         Ttxt :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    identifies_from_positive_text hworking hfan hL
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).identifies_from_positive_text
+    hworking hfan hL
 
 /-- Paper-facing identification theorem from the successful presentation
 construction. -/
@@ -500,8 +499,8 @@ theorem exact_working_paper_main_theorem
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveIdentificationConclusion G obs :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    exact_working_paper_main_theorem hworking hfan hL
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).exact_working_paper_main_theorem
+    hworking hfan hL
 
 /-- Full characteristic-sample, prefix-exact, and Gold-identification package
 from the successful presentation construction. -/
@@ -511,8 +510,8 @@ theorem exact_working_paper_conclusion_package
     (hfan : G.FanoutAtMost f)
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveLearningConclusionPackage G obs :=
-  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).
-    exact_working_paper_conclusion_package hworking hfan hL
+  (C.toSuccessfulOccurrenceData (f := f) hworking.basic).exact_working_paper_conclusion_package
+    hworking hfan hL
 
 end SuccessfulOccurrencePreCoreConstruction
 
