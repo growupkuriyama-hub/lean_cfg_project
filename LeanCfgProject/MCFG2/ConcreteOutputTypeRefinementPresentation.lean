@@ -30,7 +30,7 @@ universe u v w
 section TypedNonterminalEnumeration
 
 variable {N : Type v} {α : Type u} {M : Type w}
-variable [Fintype N] [Fintype M]
+variable [Fintype N] [DecidableEq N] [Fintype M]
 variable {G : WorkingMCFG N α}
 
 /-- Output-typed nonterminals are equivalent to the dependent sum of a base
@@ -66,7 +66,7 @@ end TypedNonterminalEnumeration
 section CanonicalTypedRuleEnumeration
 
 variable {N : Type v} {α : Type u} {M : Type w}
-variable [Fintype N] [Fintype M] [DecidableEq M] [Monoid M]
+variable [Fintype N] [DecidableEq N] [Fintype M] [DecidableEq M] [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
 
 namespace ConcreteOutputTypeRefinement
@@ -117,14 +117,19 @@ noncomputable def allTypedTerminalRules
     (fun ρ => canonicalTerminalRule hworking ρ.1 ρ.2)
 
 /-- Finite enumeration of every typed binary rule over every pair of finite
-child output vectors. -/
+child output vectors.
+
+Built as the image of a dependent-pair (`Finset.sigma`) enumeration rather than
+via `Finset.biUnion`, to avoid depending on `DecidableEq` for the intermediate
+union steps. -/
 noncomputable def allTypedBinaryRules :
     Finset (TypedBinaryRule G M) := by
   classical
-  exact G.binaryRules.attach.toFinset.biUnion fun ρ =>
-    (Finset.univ : Finset (Fin (G.arity ρ.1.left) → M)).biUnion fun leftOut =>
-      (Finset.univ : Finset (Fin (G.arity ρ.1.right) → M)).image fun rightOut =>
-        canonicalBinaryRule ρ.1 ρ.2 leftOut rightOut
+  exact
+    (G.binaryRules.attach.sigma fun ρ =>
+      (Finset.univ : Finset (Fin (G.arity ρ.1.left) → M)).sigma fun _ =>
+        (Finset.univ : Finset (Fin (G.arity ρ.1.right) → M))
+    ).image fun p => canonicalBinaryRule p.1.1 p.1.2 p.2.1 p.2.2
 
 /-- Finite enumeration of every typed start rule over every finite child output
 vector. -/
@@ -132,9 +137,10 @@ noncomputable def allTypedStartRules
     (hworking : G.BasicWorkingConditions) :
     Finset (TypedStartRule G M) := by
   classical
-  exact G.startRules.attach.toFinset.biUnion fun ρ =>
-    (Finset.univ : Finset (Fin (G.arity ρ.1.child) → M)).image fun childOut =>
-      canonicalStartRule hworking ρ.1 ρ.2 childOut
+  exact
+    (G.startRules.attach.sigma fun ρ =>
+      (Finset.univ : Finset (Fin (G.arity ρ.1.child) → M))
+    ).image fun p => canonicalStartRule hworking p.1.1 p.1.2 p.2
 
 /-- Every canonical typed terminal rule occurs in the finite terminal-rule
 enumeration. -/
@@ -159,13 +165,12 @@ theorem canonicalBinaryRule_mem
     canonicalBinaryRule ρ hρ leftOut rightOut ∈
       allTypedBinaryRules (G := G) (M := M) := by
   classical
-  apply Finset.mem_biUnion.mpr
-  refine ⟨⟨ρ, hρ⟩, ?_, ?_⟩
-  · simp
-  · apply Finset.mem_biUnion.mpr
-    refine ⟨leftOut, Finset.mem_univ _, ?_⟩
-    apply Finset.mem_image.mpr
-    exact ⟨rightOut, Finset.mem_univ _, rfl⟩
+  apply Finset.mem_image.mpr
+  refine ⟨⟨⟨ρ, hρ⟩, ⟨leftOut, rightOut⟩⟩, ?_, rfl⟩
+  apply Finset.mem_sigma.mpr
+  refine ⟨Finset.mem_attach _ _, ?_⟩
+  apply Finset.mem_sigma.mpr
+  exact ⟨Finset.mem_univ _, Finset.mem_univ _⟩
 
 /-- Every canonical typed start rule occurs in the finite start-rule
 enumeration. -/
@@ -177,11 +182,10 @@ theorem canonicalStartRule_mem
     canonicalStartRule hworking ρ hρ childOut ∈
       allTypedStartRules (G := G) hworking := by
   classical
-  apply Finset.mem_biUnion.mpr
-  refine ⟨⟨ρ, hρ⟩, ?_, ?_⟩
-  · simp
-  · apply Finset.mem_image.mpr
-    exact ⟨childOut, Finset.mem_univ _, rfl⟩
+  apply Finset.mem_image.mpr
+  refine ⟨⟨⟨ρ, hρ⟩, childOut⟩, ?_, rfl⟩
+  apply Finset.mem_sigma.mpr
+  exact ⟨Finset.mem_attach _ _, Finset.mem_univ _⟩
 
 end ConcreteOutputTypeRefinement
 
@@ -191,7 +195,7 @@ end CanonicalTypedRuleEnumeration
 section ConcretePresentation
 
 variable {N : Type v} {α : Type u} {M : Type w}
-variable [Fintype N] [Fintype M] [DecidableEq M] [Monoid M]
+variable [Fintype N] [DecidableEq N] [Fintype M] [DecidableEq M] [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
 
 namespace ConcreteOutputTypeRefinement
@@ -371,11 +375,12 @@ theorem TypedNonterminal.eq_of_matches
     (x : Tuple α (G.arity X.base))
     (h : X.Matches obs x) :
     X = TypedNonterminal.ofTuple obs X.base x := by
+  unfold TypedNonterminal.Matches at h
   cases X with
   | mk base out =>
-      change tupleType obs x = out at h
-      cases h
-      rfl
+      show ({ base := base, out := out } : TypedNonterminal G M) =
+        ({ base := base, out := tupleType obs x } : TypedNonterminal G M)
+      rw [h]
 
 end TypedEqualityLemma
 
@@ -383,7 +388,7 @@ end TypedEqualityLemma
 section StartFreeCompleteness
 
 variable {N : Type v} {α : Type u} {M : Type w}
-variable [Fintype N] [Fintype M] [DecidableEq M] [Monoid M]
+variable [Fintype N] [DecidableEq N] [Fintype M] [DecidableEq M] [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
 
 namespace StartFreeDerives
@@ -400,7 +405,7 @@ theorem toConcretePresentation
         (G := G) (obs := obs) hworking)
       (TypedNonterminal.ofTuple obs A x) x := by
   induction h with
-  | terminal hρ hwt =>
+  | @terminal ρ hρ hwt =>
       let τ := ConcreteOutputTypeRefinement.canonicalTerminalRule
         hworking ρ hρ
       have hmem :
@@ -421,7 +426,7 @@ theorem toConcretePresentation
       rw [← hnode]
       exact PresentationDerives.terminal hmem
 
-  | binary hρ hx hy ihx ihy =>
+  | @binary ρ hρ x y hx hy ihx ihy =>
       let τ := ConcreteOutputTypeRefinement.canonicalBinaryRule
         ρ hρ (tupleType obs x) (tupleType obs y)
       have hmem :
@@ -464,9 +469,9 @@ theorem PresentationDerives.toStartFreeDerives
         (G := G) (obs := obs) hworking) X x) :
     StartFreeDerives G X.base x := by
   induction h with
-  | terminal hτ =>
+  | @terminal τ hτ =>
       exact StartFreeDerives.terminal τ.inGrammar τ.wellTyped
-  | binary hτ hx hy ihx ihy =>
+  | @binary τ hτ x y hx hy ihx ihy =>
       exact StartFreeDerives.binary τ.inGrammar ihx ihy
 
 end StartFreeCompleteness
@@ -494,14 +499,14 @@ structure StartRootedStringDerives
 /-- The start-rooted normal-form language. -/
 def StartRootedStringLanguage
     (G : WorkingMCFG N α) : Set (Word α) :=
-  { word | StartRootedStringDerives G word }
+  { word | Nonempty (StartRootedStringDerives G word) }
 
 /-- Every start-rooted normal-form derivation is an ordinary string
 derivation. -/
 theorem startRootedStringLanguage_subset_stringLanguage
     (G : WorkingMCFG N α) :
     StartRootedStringLanguage G ⊆ G.StringLanguage := by
-  intro word D
+  rintro word ⟨D⟩
   refine ⟨D.start_arity, ?_⟩
   rw [D.word_eq]
   exact DerivesTuple.start
@@ -515,7 +520,7 @@ end StartRootedNormalLanguage
 section ConcretePresentationNormalCompleteness
 
 variable {N : Type v} {α : Type u} {M : Type w}
-variable [Fintype N] [Fintype M] [DecidableEq M] [Monoid M]
+variable [Fintype N] [DecidableEq N] [Fintype M] [DecidableEq M] [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
 
 /-- Every start-rooted normal-form string derivation is generated by the
@@ -526,7 +531,7 @@ theorem startRootedStringLanguage_subset_concretePresentation
       PresentationStringLanguage
         (ConcreteOutputTypeRefinement.presentation
           (G := G) (obs := obs) hworking) := by
-  intro word D
+  rintro word ⟨D⟩
   let σ := ConcreteOutputTypeRefinement.canonicalStartRule
     hworking D.startRule D.start_mem
       (tupleType obs D.childTuple)
@@ -548,12 +553,12 @@ theorem startRootedStringLanguage_subset_concretePresentation
     Subsingleton.elim _ _
   cases hp
   exact
-    { startRule := σ
-      start_mem := hσmem
-      childTuple := D.childTuple
-      child_derives := hchild
-      start_arity := D.start_arity
-      word_eq := D.word_eq }
+    ⟨{ startRule := σ
+       start_mem := hσmem
+       childTuple := D.childTuple
+       child_derives := hchild
+       start_arity := D.start_arity
+       word_eq := D.word_eq }⟩
 
 /-- Every string derivation of the concrete full presentation is start-rooted
 and start-free below the root. -/
@@ -563,15 +568,15 @@ theorem concretePresentation_subset_startRootedStringLanguage
         (ConcreteOutputTypeRefinement.presentation
           (G := G) (obs := obs) hworking) ⊆
       StartRootedStringLanguage G := by
-  intro word D
+  rintro word ⟨D⟩
   exact
-    { startRule := D.startRule.baseRule
-      start_mem := D.startRule.inGrammar
-      start_wellTyped := D.startRule.wellTyped
-      childTuple := D.childTuple
-      child_derives := D.child_derives.toStartFreeDerives hworking
-      start_arity := D.start_arity
-      word_eq := D.word_eq }
+    ⟨{ startRule := D.startRule.baseRule
+       start_mem := D.startRule.inGrammar
+       start_wellTyped := D.startRule.wellTyped
+       childTuple := D.childTuple
+       child_derives := D.child_derives.toStartFreeDerives hworking
+       start_arity := D.start_arity
+       word_eq := D.word_eq }⟩
 
 /-- Exact language characterization of the concrete full output-type
 presentation under the current grammar syntax. -/
