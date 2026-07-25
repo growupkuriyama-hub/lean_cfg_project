@@ -303,7 +303,7 @@ $[110000]_2=48$ を表す。したがって、$46$ の任意の表示は
 \]
 である。このとき
 \begin{equation}\label{eq:NpD-decomp}
- \NpD=\{0,2\}\cup4\Pset
+ \NpD=\{0,2\}\cup4\cdot\Pset
 \end{equation}
 である。
 
@@ -779,15 +779,15 @@ $g_{d+1}>3\cdot4^d$ から始まることによる。最後に、$  3g_{k+1}
 
 \section{桁持ち上げと有限証明書}\label{sec:lifting}
 
-第~\ref{sec:base4}節で得た基数4構造は、有限区間の被覆を無限区間へ
+第~\ref{sec:base4}節で得た基数4構造は、有限区間の被覆を無限の尾部へ
 伝播させる。まず、その一般的な機構を取り出す。
 
 \begin{lemma}[桁持ち上げ]\label{lem:digit-lifting}
-$k\geq1$ とし、$A\subseteq\mathbb{Z}_+$ が
+$k\geq1$ とし、$A\subseteq\mathbb Z_{>0}$ が
 \begin{equation}\label{eq:digit-closure}
  4\cdot A+\{1,2\}\subseteq A
 \end{equation}
-を満たすとする。このとき、$m\in kA$ ならば
+を満たすとする。$m\in kA$ ならば、
 \begin{equation}\label{eq:digit-lifting}
  [4m+k,4m+2k]\subseteq kA
 \end{equation}
@@ -795,23 +795,30 @@ $k\geq1$ とし、$A\subseteq\mathbb{Z}_+$ が
 \end{lemma}
 
 \begin{proof}
-任意の$m\in kA$を仮定する。ある$a_i\in A$をとり、
-$m=a_1+\cdots+a_k$とする。任意の数字
-$k\leq r\leq2k$ に対して、
+$m\in kA$ を固定する。ある $a_1,\ldots,a_k\in A$ を選んで
+\[
+ m=a_1+\cdots+a_k
+\]
+と書く。任意の整数 $r$（$k\leq r\leq2k$）に対し、
 \[
  \eta_1+\cdots+\eta_k=r,
  \qquad \eta_i\in\{1,2\}
 \]
-となる $\eta_1,\ldots,\eta_k$ を選ぶことができる。したがって、
+となる $\eta_1,\ldots,\eta_k$ を選ぶことができる。
+式~\eqref{eq:digit-closure} より各 $4a_i+\eta_i$ は $A$ に属するので、
 \[
- 4m+r=\sum_{i=1}^{k}(4a_i+\eta_i)\in kA.
+ 4m+r
+ =\sum_{i=1}^{k}(4a_i+\eta_i)
+ \in kA
 \]
+である。$r$ を $k$ から $2k$ まで動かせば、
+式~\eqref{eq:digit-lifting} が従う。
 \end{proof}
 
 \begin{corollary}[有限区間から尾部への伝播]
 \label{cor:tail-propagation}
-$A\subseteq\mathbb{Z}_+$ が
-\eqref{eq:digit-closure} を満たすとする。任意の加法の分割数$k\geq3$に対して、適切な整数$M\geq1$が存在し、
+$k\geq3$ とし、$A\subseteq\mathbb Z_{>0}$ が
+式~\eqref{eq:digit-closure} を満たすとする。ある整数 $M\geq1$ に対して
 \begin{equation}\label{eq:tail-seed}
  [M,4M+k-1]\subseteq kA
 \end{equation}
@@ -823,12 +830,14 @@ $A\subseteq\mathbb{Z}_+$ が
 \end{corollary}
 
 \begin{proof}
-$n\geq M$ に関する強い帰納法を用いる。区間
-$M\leq n\leq4M+k-1$ での成立は仮定による。
+$n\geq M$ に関する強い帰納法により、$n\in kA$ を示す。
+\[
+ M\leq n\leq4M+k-1
+\]
+の場合は、式~\eqref{eq:tail-seed} による。
 
-$n\geq4M+k$ とし、$M\leq j<n$ を満たすすべての整数 $j$ に対して
-$j\in kA$ が成り立つと仮定する。
-$\rho\equiv n\pmod4$ を満たす一意な
+次に $n\geq4M+k$ とし、$M\leq j<n$ を満たすすべての整数 $j$ に対して
+$j\in kA$ が成り立つと仮定する。$n$ と法4で合同になる一意な整数
 \[
  \rho\in\{k,k+1,k+2,k+3\}
 \]
@@ -836,49 +845,54 @@ $\rho\equiv n\pmod4$ を満たす一意な
 \[
  k\leq\rho\leq k+3\leq2k
 \]
-である。また、
+である。ここで
 \[
  m:=\frac{n-\rho}{4}
 \]
-とおくと、$m\in\mathbb{Z}$である。さらに、$n\geq4M+k$ および
+とおくと、$m\in\mathbb Z$ である。さらに、$n\geq4M+k$ および
 $\rho\leq k+3$ より
 \[
- m\geq\frac{4M+k-(k+3)}{4}
-   =M-\frac34
+ m\geq\frac{4M+k-(k+3)}4=M-\frac34
 \]
-であるから、$m\in\mathbb{Z}$により$m\geq M$ である。一方、$\rho\geq k\geq3$ より
+である。$m$ は整数なので、$m\geq M$ が従う。一方、
+$\rho\geq k\geq3$ より
 \[
  m=\frac{n-\rho}{4}
  \leq\frac{n-k}{4}
  <n
 \]
-である。
-
-したがって、帰納法の仮定より $m\in kA$ である。
-補題~\ref{lem:digit-lifting} と$k\leq\rho\leq2k$とあわせて、
+である。したがって、帰納法の仮定から $m\in kA$ である。
+補題~\ref{lem:digit-lifting} と $k\leq\rho\leq2k$ を合わせると、
 \[
- n=4m+\rho\in [4m+k,4m+2k]\subseteq kA
+ n=4m+\rho
+ \in[4m+k,4m+2k]
+ \subseteq kA
 \]
-により$n\in kA$を得る。以上により、強い帰納法が完了する。
+を得る。以上で強い帰納法が完了する。
 \end{proof}
-
 
 \subsection{正規部分族による6項被覆}
 
 基数4の正規部分族を
 \[
  \mathcal E=\{0\}\cup
- \bigl\{\val{3\varepsilon_1\cdots\varepsilon_k}{4}:
-        k\geq0,\ \varepsilon_i\in\{1,2\}\bigr\}
+ \bigl\{[3\varepsilon_1\cdots\varepsilon_j]_4:
+        j\geq0,\ \varepsilon_i\in\{1,2\}\bigr\}
 \]
-とおき、$\mathcal E^+=\mathcal E\setminus\{0\}$ とする。$k=0$ のときは
-$\varepsilon_1\cdots\varepsilon_k=\lambda$ と解釈し、対応する元は
-$[3]_4=3$ である。各語 $\varepsilon_1\cdots\varepsilon_k$ は
-$\mathsf{Motz}$ に属するから、補題~\ref{lem:base4} より$ \mathcal E^+\subseteq\Pset$であるから、
+と定め、$\mathcal E^+=\mathcal E\setminus\{0\}$ とおく。$j=0$ のときは、
+接尾辞を空語と解釈し、対応する元は $[3]_4=3$ である。
+各語 $\varepsilon_1\cdots\varepsilon_j$ は $\mathsf{Motz}$ に属するので、
+補題~\ref{lem:base4} より
+\[
+ \mathcal E^+\subseteq\Pset
+\]
+である。したがって、式~\eqref{eq:NpD-decomp} より
 \begin{equation}\label{eq:4E}
  4\cdot\mathcal E\subseteq\NpD
 \end{equation}
-である。また、$e\in\mathcal E^+$ とすると、その4進展開は
+を得る。
+
+また、$e\in\mathcal E^+$ とすると、その4進展開は
 \[
  e=[3\varepsilon_1\cdots\varepsilon_j]_4,
  \qquad \varepsilon_i\in\{1,2\}
@@ -889,14 +903,16 @@ $\mathsf{Motz}$ に属するから、補題~\ref{lem:base4} より$ \mathcal E^+
  \qquad
  4e+2=[3\varepsilon_1\cdots\varepsilon_j2]_4
 \]
-であり、いずれも再び $\mathcal E^+$ に属する。したがって、
+であり、どちらも再び $\mathcal E^+$ に属する。したがって、
 \begin{equation}\label{eq:Eclosure}
  4\cdot\mathcal E^++\{1,2\}\subseteq\mathcal E^+
 \end{equation}
 を得る。
-次の有限包含だけを計算証明書として用いる。
 
-\begin{lemma}[正規族の有限証明書]\label{lem:Ecertificate}
+以下では、次の有限包含だけを計算証明書として用いる。
+
+\begin{lemma}[正規族の有限証明書]
+\label{lem:Ecertificate}
 次の集合をおく：
 \[
 \begin{aligned}
@@ -906,8 +922,8 @@ $\mathsf{Motz}$ に属するから、補題~\ref{lem:base4} より$ \mathcal E^+
  &C&=\{213,214,217,218,229,230,233,234\}.
 \end{aligned}
 \]
-これらは $A_0\subseteq\mathcal E$ および
-$A,B,C\subseteq\mathcal E^+$ を満たし、さらに
+このとき、$A_0\subseteq\mathcal E$ および
+$A,B,C\subseteq\mathcal E^+$ である。さらに、
 \begin{equation}\label{eq:E-small-certificate}
 \begin{array}{c|c}
 \text{和集合}&\text{含まれる整数区間}\\ \hline
@@ -933,11 +949,13 @@ C+5A &[258,524]\\
 \end{lemma}
 
 \begin{proof}
-各主張は有限集合の和集合に関する完全な直接計算である。
-すなわち、有限集合 $X$ に対して $S_0(X)=\{0\}$、
-$S_{j+1}(X)=S_j(X)+X$ と再帰的に計算し、表示した各整数区間の
-全要素が対応する和集合に属することを検査する。これらの検査は、
-補助ファイルとして提供する検証プログラムによって再現する。
+各主張は、有限集合の和集合に関する完全な直接計算である。
+有限集合 $X$ に対し、$S_0(X)=\{0\}$ とおき、
+\[
+ S_{i+1}(X)=S_i(X)+X
+\]
+と再帰的に計算する。補助検証プログラムは、表示した各整数区間の
+すべての整数が対応する和集合に属することを検査する。
 \end{proof}
 
 \begin{proposition}\label{prop:E}
@@ -946,47 +964,59 @@ $S_{j+1}(X)=S_j(X)+X$ と再帰的に計算し、表示した各整数区間の
 
 \begin{proof}
 式~\eqref{eq:E-small-certificate} の5区間は互いに重なり、
-$[25,217]\subseteq6\mathcal E$ を与える。
-
-式~\eqref{eq:E-tail-certificate} に現れる和集合はいずれも
-$A,C\subseteq\mathcal E^+$ のみから構成されており、$0$ を含む項は
-用いられていない。したがって、この5区間の重なりは実際には
+\[
+ [25,217]\subseteq6\mathcal E
+\]
+を与える。式~\eqref{eq:E-tail-certificate} に現れる和集合は、いずれも
+$A,C\subseteq\mathcal E^+$ だけから構成されており、$0$ を加数として
+用いていない。したがって、その5区間の重なりは
 \[
  [218,877]\subseteq6\mathcal E^+
 \]
-を与える。区間を合体して、
+を与える。二つの有限範囲を合わせると、
 \begin{equation}\label{eq:E-small-cover}
  [25,877]\subseteq6\mathcal E
 \end{equation}
 を得る。
 
-ここで系~\ref{cor:tail-propagation} を、$A=\mathcal E$ ではなく
-$A=\mathcal E^+$ に適用する。$\mathcal E$ は $0$ を含むため条件
-\eqref{eq:digit-closure} を満たさないが、$\mathcal E^+$ は式
-\eqref{eq:Eclosure} によりこの条件を満たす。上で示した
-$[218,877]\subseteq6\mathcal E^+$ により、系~\ref{cor:tail-propagation}
-の成立条件 $[M,4M+k-1]\subseteq kA$ が $A=\mathcal E^+$、$k=6$、$M=218$
-の場合で満たされるので、
+ここで、系~\ref{cor:tail-propagation} を $A=\mathcal E$ ではなく
+$A=\mathcal E^+$ に適用する。実際、$\mathcal E$ は $0$ を含むため、
+式~\eqref{eq:digit-closure} を満たすならば $1,2\in\mathcal E$ でなければ
+ならないが、これは成り立たない。一方、$\mathcal E^+$ は
+式~\eqref{eq:Eclosure} により式~\eqref{eq:digit-closure} を満たす。
+また、
 \[
- [218,+\infty)\subseteq6\mathcal E^+\subseteq6\mathcal E
+ 877=4\cdot218+6-1
 \]
-を得る。これと \eqref{eq:E-small-cover} から得られる
-$[25,217]\subseteq6\mathcal E$ を合わせて、
+であるから、
 \[
- [25,+\infty)\subseteq6\mathcal E
+ [218,877]\subseteq6\mathcal E^+
 \]
-を得る。
+は $k=6$、$M=218$ に対する尾部伝播系の初期区間条件そのものである。
+したがって、系~\ref{cor:tail-propagation} より
+\[
+ [218,\infty)\subseteq6\mathcal E^+\subseteq6\mathcal E
+\]
+を得る。これと
+\[
+ [25,217]\subseteq6\mathcal E
+\]
+を合わせれば、
+\[
+ [25,\infty)\subseteq6\mathcal E
+\]
+が従う。
 \end{proof}
 
-命題~\ref{prop:E} と \eqref{eq:4E} により、$100$ 以上の任意の
-$4$ の倍数は、高々6個の原始Dyck数の和である。
+命題~\ref{prop:E} と式~\eqref{eq:4E} より、$100$ 以上の任意の
+4の倍数は、高々6個の原始Dyck数の和である。
 
-\subsection{完全な半分化族に対する5項被覆}
+\subsection{完全な半分化族による5項被覆}
 
-正規族 $\mathcal E$ は、法 $4$ で $0$ に合同な整数を処理するには
-十分である。一方、法 $4$ で $2$ に合同な整数を扱うためには、
-正規部分族 $\mathcal E^+$ だけでなく、半分化原始族全体
-$\Pset$ の5項和を用いる必要がある。
+正規族 $\mathcal E$ は、法4で $0$ に合同な整数を処理するには十分である。
+一方、法4で $2$ に合同な整数を扱うためには、正規部分族
+$\mathcal E^+$ だけではなく、半分化原始族全体 $\Pset$ の5項表示を
+用いる必要がある。
 
 以下では、有限区間証明書に用いる $\Pset$ の小さい元を具体的に確認する。
 語
@@ -1003,19 +1033,15 @@ $\Pset$ の5項和を用いる必要がある。
  \sigma(c_1c_2\cdots c_\ell)
  \bigr)
 \]
-と書く。ただし、
+と書く。また、$\mathbf h(\lambda)=()$ とする。ここで
 \[
  \sigma(3)=1,\qquad
  \sigma(0)=-1,\qquad
  \sigma(1)=\sigma(2)=0
 \]
-である。また、空語については $\mathbf h(\lambda)=()$ とする。
-この記法では、
-\[
- w\in\mathsf{Motz}
-\]
-であることは、$\mathbf h(w)$ のすべての成分が非負であり、
-最後の成分が $0$ であることと同値である。
+である。この記法では、$w\in\mathsf{Motz}$ であることは、
+$\mathbf h(w)$ のすべての成分が非負であり、その最後の成分が $0$ で
+あることと同値である。
 
 まず、長さ $0,1,2$ の2色Motzkin語をすべて列挙する。
 対応する $\Pset$ の元は次の表のとおりである。
@@ -1033,33 +1059,30 @@ $\Pset$ の5項和を用いる必要がある。
 \end{array}
 \]
 
-この表が完全であることも直接確認できる。
-長さ $1$ の語が総重み $0$ をもつためには、その唯一の文字は
-$1$ または $2$ でなければならない。
-長さ $2$ の場合、最初の文字が $1$ または $2$ ならば、
-二文字目も $1$ または $2$ でなければならず、
+この表が完全であることも直接確認できる。長さ1の語が総重み0を
+もつためには、その唯一の文字が1または2でなければならない。
+長さ2の場合、最初の文字が1または2ならば、二文字目も1または2で
+なければならず、
 \[
  11,\ 12,\ 21,\ 22
 \]
-を得る。最初の文字が $3$ ならば、高さ $1$ から総重み $0$ に
-戻るために二文字目は $0$ でなければならず、語 $30$ を得る。
-最初の文字が $0$ の場合は、最初の接頭辞の重みが負になるため
-許されない。したがって、長さ $0,1,2$ の2色Motzkin語は、
-表に挙げた
+を得る。最初の文字が3ならば、高さ1から総重み0に戻るために
+二文字目は0でなければならず、語 $30$ を得る。最初の文字が0ならば、
+最初の接頭辞の重みが負になるので許されない。したがって、長さ
+$0,1,2$ の2色Motzkin語は、表に挙げた
 \[
  1+2+5=8
 \]
 個で全部である。
 
-補題~\ref{lem:base4} より、これらから得られる $\Pset$ の元は
-正確に
+補題~\ref{lem:base4} より、対応する $\Pset$ の元は正確に
 \begin{equation}\label{eq:L-def}
  L=\{3,13,14,53,54,57,58,60\}
  \subseteq\Pset
 \end{equation}
 である。
 
-次に、長さ $3$ の2色Motzkin語もすべて列挙する。
+次に、長さ3の2色Motzkin語をすべて列挙する：
 \[
 \begin{array}{c|c|c}
  w&[3w]_4&\mathbf h(w)\\ \hline
@@ -1080,8 +1103,7 @@ $1$ または $2$ でなければならない。
 \end{array}
 \]
 
-この列挙も完全である。最初の文字が $1$ の場合、残りの長さ
-$2$ の部分は
+この列挙も完全である。最初の文字が1の場合、残りの長さ2の接尾辞は
 \[
  11,\ 12,\ 21,\ 22,\ 30
 \]
@@ -1089,31 +1111,30 @@ $2$ の部分は
 \[
  111,\ 112,\ 121,\ 122,\ 130
 \]
-を得る。最初の文字が $2$ の場合も同様に、
+を得る。最初の文字が2の場合も同様に、
 \[
  211,\ 212,\ 221,\ 222,\ 230
 \]
 を得る。
 
-最初の文字が $3$ の場合、最初の接頭辞の重みは $1$ である。
-語全体の重みを $0$ にするには、残り二文字の重みの和が
-$-1$ でなければならない。そのような二文字は
+最初の文字が3の場合、最初の接頭辞の重みは1である。したがって、
+残り二文字の重みの和は $-1$ でなければならない。接頭辞重みの
+非負性も満たす可能性は
 \[
  01,\ 02,\ 10,\ 20
 \]
-であるから、
+であり、
 \[
  301,\ 302,\ 310,\ 320
 \]
-を得る。最初の文字が $0$ の場合は、最初の接頭辞の重みが
-負になるので許されない。したがって、長さ $3$ の
-2色Motzkin語は、表に挙げた
+を得る。最初の文字が0ならば、最初の接頭辞の重みが負になるため
+許されない。したがって、長さ3の2色Motzkin語は、表に挙げた
 \[
  5+5+4=14
 \]
 個で全部である。
 
-よって、これらから得られる $\Pset$ の世代 $4$ の元は正確に
+よって、対応する $\Pset$ の世代4の元は正確に
 \begin{equation}\label{eq:H-def}
 \begin{split}
  H=\{&213,214,217,218,220,229,230,233,234,236,\\
@@ -1121,10 +1142,9 @@ $-1$ でなければならない。そのような二文字は
  \subseteq\Pset
 \end{split}
 \end{equation}
-である。実際には、$H$ は単なる部分集合ではなく、
-$\Pset$ の世代 $4$ 全体である。
+である。実際、$H$ は単なる部分集合ではなく、$\Pset$ の世代4全体である。
 
-最後に、系~\ref{cor:gen} によれば、世代 $4$ の最小元は
+最後に、系~\ref{cor:gen} によれば、世代4の最小元は
 \[
 \begin{aligned}
  g_4
@@ -1133,9 +1153,9 @@ $\Pset$ の世代 $4$ 全体である。
  &=213
 \end{aligned}
 \]
-である。したがって、$213$ 未満の $\Pset$ の元は
-世代 $1,2,3$ に属するものに限られ、それらは上の最初の表で
-列挙した $L$ の8元にほかならない。ゆえに、実際には
+である。したがって、$213$ 未満の $\Pset$ の元は世代1、2、3に属する
+ものに限られ、それらは最初の表に列挙した $L$ の8元にほかならない。
+ゆえに、より強く
 \[
  \Pset\cap[0,212]=L
 \]
@@ -1144,10 +1164,6 @@ $\Pset$ の世代 $4$ 全体である。
  \Pset\cap[0,211]=L
 \end{equation}
 を得る。
-```
-
-
-
 
 \begin{lemma}[完全族の有限証明書]\label{lem:finitefive}
 次の包含関係が成り立つ：
@@ -1193,10 +1209,10 @@ $F_5(\Pset)$ に属さない。
 
 \begin{proof}
 系~\ref{cor:Pclosure} より
-$4\Pset+\{1,2\}\subseteq\Pset$ である。また、
+$4\cdot\Pset+\{1,2\}\subseteq\Pset$ である。また、
 \eqref{eq:fiveP-seed} は特に
 $[215,864]\subseteq5\Pset$ を含む。したがって、
-系~\ref{cor:tail-propagation} を $h=5$、$M=215$ に適用すると、
+系~\ref{cor:tail-propagation} を $k=5$、$M=215$ に適用すると、
 \[
  [215,\infty)\subseteq5\Pset
 \]
@@ -1218,7 +1234,7 @@ $209,210,211\notin F_5(\Pset)$ が従う。
 
 原始Dyck数の分解
 \[
- \NpD=\{0,2\}\cup4\Pset
+ \NpD=\{0,2\}\cup4\cdot\Pset
 \]
 により、項数条件は $\Pset$ の有限和条件へ一様に変換できる。
 
@@ -1250,7 +1266,7 @@ $\epsilon\in\{0,1\}$、$h\geq0$ とし、$N=4m+2\epsilon$ とする。
 各 $p_i$ を $4p_i$ に戻し、$2$ を $s$ 個加えれば $N$ の表示が得られる。
 \end{proof}
 
-\begin{corollary}\label{lem:sixcriterion}
+\begin{corollary}\label{cor:sixcriterion}
 $N=4m+2$ とする。このとき、$N$ が高々6個の正の原始Dyck数の和である
 ための必要十分条件は、
 \begin{equation}\label{eq:sixcriterion}
@@ -1309,13 +1325,13 @@ $N$ は高々6個の原始Dyck数で表示できる。補題~\ref{lem:smallmulti
 
 次に $N\equiv2\pmod4$ とし、$N=4m+2$ と書く。$N\geq850$ なら
 $m\geq212$ なので、命題~\ref{prop:fiveP} より
-$m\in F_5(\Pset)$ である。系~\ref{lem:sixcriterion} から、$N$ は
+$m\in F_5(\Pset)$ である。系~\ref{cor:sixcriterion} から、$N$ は
 高々6個の原始Dyck数の和である。前段落と合わせると、任意の偶数
 $N\geq848$ がそのような表示をもつ。
 
 残るのは、$N\leq846$ かつ $N\equiv2\pmod4$ の整数である。この場合
 $0\leq m\leq211$ である。式~\eqref{eq:P-small}、
-補題~\ref{lem:finiteexception}、および系~\ref{lem:sixcriterion} から、
+補題~\ref{lem:finiteexception}、および系~\ref{cor:sixcriterion} から、
 高々6項で表示できない対応する $N=4m+2$ は正確に
 \[
  34,46,98,154,198,202,206,838,842,846
@@ -1380,7 +1396,7 @@ $4$ の倍数では $\Pset$ の5項表示が直接利用できる。一方、法
 $2$ に合同な整数では、例外的な加数 $2$ を奇数個使わなければならない。
 この差が、全体の相対漸近位数を5から6へ引き上げる。
 
-\begin{corollary}[5項判定条件]\label{lem:fivecrit}
+\begin{corollary}[5項判定条件]\label{cor:fivecrit}
 $m\geq3$ とし、$N=4m+2$ とする。このとき $r(N)\leq5$ であるための
 必要十分条件は、
 \begin{equation}\label{eq:fivecrit}
@@ -1510,7 +1526,7 @@ $k\geq2$ を固定し、$m=x_k=10\cdot4^k-2$ とおく。このとき、
  \qquad
  m-1\notin F_2(\Pset)
 \]
-である。したがって、系~\ref{lem:fivecrit} から $r(N_k)\geq6$ を得る。
+である。したがって、系~\ref{cor:fivecrit} から $r(N_k)\geq6$ を得る。
 整数 $N_k$ は定理~\ref{thm:classification} の11個の例外のいずれでも
 ないので、$r(N_k)\leq6$ である。ゆえに $r(N_k)=6$ である。
 $N_k\to\infty$ なので、十分大きなすべての偶数を5項以下で表示する

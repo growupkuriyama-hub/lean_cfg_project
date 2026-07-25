@@ -840,9 +840,9 @@ finite interval coverings to infinite tails.  We first isolate this general
 mechanism.
 
 \begin{lemma}[Digit lifting]\label{lem:digit-lifting}
-Let $k\geq1$, and let $A\subseteq\mathbb N$ satisfy
+Let $k\geq1$, and let $A\subseteq\mathbb Z_{>0}$ satisfy
 \begin{equation}\label{eq:digit-closure}
- 4A+\{1,2\}\subseteq A.
+ 4\cdot A+\{1,2\}\subseteq A.
 \end{equation}
 If $m\in kA$, then
 \begin{equation}\label{eq:digit-lifting}
@@ -851,33 +851,33 @@ If $m\in kA$, then
 \end{lemma}
 
 \begin{proof}
-Write
+Fix $m\in kA$.  Choose $a_1,\ldots,a_k\in A$ such that
 \[
- m=a_1+\cdots+a_k,
- \qquad a_i\in A.
+ m=a_1+\cdots+a_k.
 \]
-For every integer $r$ with $k\leq r\leq2k$, one may choose
+For every integer $r$ with $k\leq r\leq2k$, one can choose
 $\eta_1,\ldots,\eta_k\in\{1,2\}$ such that
 \[
  \eta_1+\cdots+\eta_k=r.
 \]
-By \eqref{eq:digit-closure},
+By \eqref{eq:digit-closure}, each $4a_i+\eta_i$ belongs to $A$, and hence
 \[
  4m+r
  =\sum_{i=1}^{k}(4a_i+\eta_i)
  \in kA.
 \]
-This proves \eqref{eq:digit-lifting}.
+As $r$ ranges from $k$ to $2k$, this proves
+\eqref{eq:digit-lifting}.
 \end{proof}
 
 \begin{corollary}[Propagation from a finite interval to a tail]
 \label{cor:tail-propagation}
-Let $k\geq3$, and let $A\subseteq\mathbb N$ satisfy
-\eqref{eq:digit-closure}.  If, for some integer $M\geq1$,
+Let $k\geq3$, and let $A\subseteq\mathbb Z_{>0}$ satisfy
+\eqref{eq:digit-closure}.  Suppose that, for some integer $M\geq1$,
 \begin{equation}\label{eq:tail-seed}
- [M,4M+k-1]\subseteq kA,
+ [M,4M+k-1]\subseteq kA.
 \end{equation}
-then
+Then
 \[
  [M,\infty)\subseteq kA.
 \]
@@ -896,31 +896,37 @@ $M\leq j<n$ belongs to $kA$.  Choose the unique
 \[
  \rho\in\{k,k+1,k+2,k+3\}
 \]
-such that $\rho\equiv n\pmod4$, and put
+such that
 \[
- m:=\frac{n-\rho}{4}.
+ \rho\equiv n\pmod4.
 \]
-Then $m$ is an integer.  Since $n\geq4M+k$ and $\rho\leq k+3$,
-\[
- m\geq\frac{4M+k-(k+3)}4=M-\frac34.
-\]
-Hence $m\geq M$, because $m$ is an integer.  Moreover,
-$\rho\geq k\geq3$, and therefore
-\[
- m=\frac{n-\rho}{4}
- \leq\frac{n-k}{4}<n.
-\]
-The induction hypothesis gives $m\in kA$.
-
-Finally, since $k\geq3$,
+Since $k\geq3$,
 \[
  k\leq\rho\leq k+3\leq2k.
 \]
-Lemma~\ref{lem:digit-lifting} now yields
+Put
 \[
- n=4m+\rho\in kA.
+ m:=\frac{n-\rho}{4}.
 \]
-The strong induction is complete.
+Then $m\in\mathbb Z$.  Since $n\geq4M+k$ and $\rho\leq k+3$,
+\[
+ m\geq\frac{4M+k-(k+3)}4=M-\frac34.
+\]
+Because $m$ is an integer, it follows that $m\geq M$.  On the other hand,
+since $\rho\geq k\geq3$,
+\[
+ m=\frac{n-\rho}{4}
+ \leq\frac{n-k}{4}
+ <n.
+\]
+The induction hypothesis therefore gives $m\in kA$.  Combining
+Lemma~\ref{lem:digit-lifting} with $k\leq\rho\leq2k$, we obtain
+\[
+ n=4m+\rho
+ \in[4m+k,4m+2k]
+ \subseteq kA.
+\]
+This completes the strong induction.
 \end{proof}
 
 \subsection{Six-summand covering by a regular subfamily}
@@ -933,18 +939,30 @@ Define the regular base-$4$ subfamily
 \]
 and put $\mathcal E^+=\mathcal E\setminus\{0\}$.  When $j=0$, the
 suffix is the empty word, and the corresponding element is $[3]_4=3$.
-Every word over $\{1,2\}$ is a two-coloured Motzkin word, so
-Lemma~\ref{lem:base4} gives
+Every word $\varepsilon_1\cdots\varepsilon_j$ belongs to
+$\mathsf{Motz}$.  Hence Lemma~\ref{lem:base4} gives
 \[
  \mathcal E^+\subseteq\Pset.
 \]
-Consequently,
+It follows from \eqref{eq:NpD-decomp} that
 \begin{equation}\label{eq:4E}
  4\cdot\mathcal E\subseteq\NpD.
 \end{equation}
-Appending the base-$4$ digit $1$ or $2$ also gives
+
+If $e\in\mathcal E^+$, then its base-$4$ expansion has the form
+\[
+ e=[3\varepsilon_1\cdots\varepsilon_j]_4,
+ \qquad \varepsilon_i\in\{1,2\}.
+\]
+Consequently,
+\[
+ 4e+1=[3\varepsilon_1\cdots\varepsilon_j1]_4,
+ \qquad
+ 4e+2=[3\varepsilon_1\cdots\varepsilon_j2]_4.
+\]
+Both integers again belong to $\mathcal E^+$.  Therefore
 \begin{equation}\label{eq:Eclosure}
- 4\mathcal E^++\{1,2\}\subseteq\mathcal E^+.
+ 4\cdot\mathcal E^++\{1,2\}\subseteq\mathcal E^+.
 \end{equation}
 
 We use only the following finite inclusions as computational certificates.
@@ -1005,21 +1023,43 @@ The five intervals in \eqref{eq:E-small-certificate} overlap and give
 \[
  [25,217]\subseteq6\mathcal E.
 \]
-The five intervals in \eqref{eq:E-tail-certificate} also overlap and give
+Every sumset occurring in \eqref{eq:E-tail-certificate} is formed only
+from the sets $A,C\subseteq\mathcal E^+$; no zero summand is used.
+Hence the five intervals in that certificate overlap to give
 \[
  [218,877]\subseteq6\mathcal E^+.
 \]
-By \eqref{eq:Eclosure}, the set $\mathcal E^+$ satisfies the digit-closure
-condition.  Since
+Combining the two finite ranges, we obtain
+\begin{equation}\label{eq:E-small-cover}
+ [25,877]\subseteq6\mathcal E.
+\end{equation}
+
+We apply Corollary~\ref{cor:tail-propagation} to
+$A=\mathcal E^+$, rather than to $A=\mathcal E$.  The set
+$\mathcal E$ contains $0$ and therefore does not satisfy
+\eqref{eq:digit-closure}, since that condition would force
+$1,2\in\mathcal E$.  By contrast, $\mathcal E^+$ satisfies
+\eqref{eq:digit-closure} by \eqref{eq:Eclosure}.  Since
 \[
  877=4\cdot218+6-1,
 \]
-Corollary~\ref{cor:tail-propagation}, applied with $k=6$ and $M=218$,
-gives
+the inclusion
 \[
- [218,\infty)\subseteq6\mathcal E^+.
+ [218,877]\subseteq6\mathcal E^+
 \]
-Combining the two ranges proves the proposition.
+is exactly the seed condition with $k=6$ and $M=218$.
+Corollary~\ref{cor:tail-propagation} therefore gives
+\[
+ [218,\infty)\subseteq6\mathcal E^+\subseteq6\mathcal E.
+\]
+Combining this with
+\[
+ [25,217]\subseteq6\mathcal E
+\]
+proves
+\[
+ [25,\infty)\subseteq6\mathcal E.
+\]
 \end{proof}
 
 It follows from Proposition~\ref{prop:E} and \eqref{eq:4E} that every
@@ -1028,25 +1068,153 @@ numbers.
 
 \subsection{Five-summand covering by the full halved family}
 
-The regular family $\mathcal E$ is sufficient for the residue class $0$
-modulo $4$, but the other residue class requires the full family $\Pset$.
-For the finite base we use
+The regular family $\mathcal E$ is sufficient for treating integers
+congruent to $0$ modulo $4$.  To treat integers congruent to $2$
+modulo $4$, however, we need five-summand representations from the full
+halved primitive family $\Pset$, rather than only from the regular
+subfamily $\mathcal E^+$.
+
+We now verify explicitly the small elements of $\Pset$ used in the finite
+interval certificate.  For
+\[
+ w=c_1c_2\cdots c_\ell\in\{0,1,2,3\}^{\ell},
+\]
+let
+\[
+ \mathbf h(w):=
+ \bigl(
+ \sigma(c_1),\,
+ \sigma(c_1c_2),\,
+ \ldots,\,
+ \sigma(c_1c_2\cdots c_\ell)
+ \bigr)
+\]
+be the sequence of weights of its nonempty prefixes.  Recall that
+\[
+ \sigma(3)=1,\qquad
+ \sigma(0)=-1,\qquad
+ \sigma(1)=\sigma(2)=0.
+\]
+For the empty word, put $\mathbf h(\lambda)=()$.  In this notation,
+$w\in\mathsf{Motz}$ if and only if every component of $\mathbf h(w)$ is
+nonnegative and its last component is $0$.
+
+First, we enumerate all two-coloured Motzkin words of lengths $0$, $1$,
+and $2$.  The corresponding elements of $\Pset$ are as follows:
+\[
+\begin{array}{c|c|c|c}
+ |w|&w&[3w]_4&\mathbf h(w)\\ \hline
+0&\lambda &[3]_4=3&()\\ \hline
+1&1 &[31]_4=13&(0)\\
+1&2 &[32]_4=14&(0)\\ \hline
+2&11 &[311]_4=53&(0,0)\\
+2&12 &[312]_4=54&(0,0)\\
+2&21 &[321]_4=57&(0,0)\\
+2&22 &[322]_4=58&(0,0)\\
+2&30 &[330]_4=60&(1,0)
+\end{array}
+\]
+
+This table is complete.  A word of length $1$ has total weight $0$ only
+when its unique letter is $1$ or $2$.  For a word of length $2$, if the
+first letter is $1$ or $2$, then the second letter must again be $1$ or
+$2$, giving
+\[
+ 11,\ 12,\ 21,\ 22.
+\]
+If the first letter is $3$, then the second letter must be $0$ in order
+to return from height $1$ to total weight $0$, giving the word $30$.
+A word beginning with $0$ is impossible because its first prefix has
+negative weight.  Thus there are exactly
+\[
+ 1+2+5=8
+\]
+two-coloured Motzkin words of lengths $0$, $1$, and $2$.
+
+By Lemma~\ref{lem:base4}, the corresponding elements of $\Pset$ are
+exactly
 \begin{equation}\label{eq:L-def}
- L=\{3,13,14,53,54,57,58,60\}\subseteq\Pset
+ L=\{3,13,14,53,54,57,58,60\}
+ \subseteq\Pset.
 \end{equation}
-and
+
+Next, we enumerate all two-coloured Motzkin words of length $3$:
+\[
+\begin{array}{c|c|c}
+ w&[3w]_4&\mathbf h(w)\\ \hline
+111 &[3111]_4=213&(0,0,0)\\
+112 &[3112]_4=214&(0,0,0)\\
+121 &[3121]_4=217&(0,0,0)\\
+122 &[3122]_4=218&(0,0,0)\\
+130 &[3130]_4=220&(0,1,0)\\ \hline
+211 &[3211]_4=229&(0,0,0)\\
+212 &[3212]_4=230&(0,0,0)\\
+221 &[3221]_4=233&(0,0,0)\\
+222 &[3222]_4=234&(0,0,0)\\
+230 &[3230]_4=236&(0,1,0)\\ \hline
+301 &[3301]_4=241&(1,0,0)\\
+302 &[3302]_4=242&(1,0,0)\\
+310 &[3310]_4=244&(1,1,0)\\
+320 &[3320]_4=248&(1,1,0)
+\end{array}
+\]
+
+This enumeration is also complete.  If the first letter is $1$, the
+remaining suffix of length $2$ must be one of
+\[
+ 11,\ 12,\ 21,\ 22,\ 30,
+\]
+which gives
+\[
+ 111,\ 112,\ 121,\ 122,\ 130.
+\]
+The same argument for the first letter $2$ gives
+\[
+ 211,\ 212,\ 221,\ 222,\ 230.
+\]
+If the first letter is $3$, the first prefix has weight $1$, so the
+remaining two letters must have total weight $-1$.  The possibilities
+compatible with nonnegative prefix weights are
+\[
+ 01,\ 02,\ 10,\ 20,
+\]
+giving
+\[
+ 301,\ 302,\ 310,\ 320.
+\]
+A word beginning with $0$ is impossible.  Hence the table contains all
+\[
+ 5+5+4=14
+\]
+two-coloured Motzkin words of length $3$.
+
+Thus the corresponding elements of generation $4$ of $\Pset$ are exactly
 \begin{equation}\label{eq:H-def}
 \begin{split}
  H=\{&213,214,217,218,220,229,230,233,234,236,\\
-     &241,242,244,248\}\subseteq\Pset.
+     &241,242,244,248\}
+ \subseteq\Pset.
 \end{split}
 \end{equation}
-Membership in $\Pset$ follows immediately from Lemma~\ref{lem:base4},
-since the base-$4$ expansion of every displayed element has the form
-$3w$ with $w\in\mathsf{Motz}$.  Enumerating the two-coloured Motzkin
-words of lengths $0$, $1$, and $2$ gives exactly the eight elements of
-$L$.  On the other hand, Corollary~\ref{cor:gen} gives $g_4=213$.
-Hence
+In fact, $H$ is not merely a subset of $\Pset$: it is exactly the whole of
+generation $4$.
+
+Finally, Corollary~\ref{cor:gen} gives
+\[
+\begin{aligned}
+ g_4
+ &=3\cdot4^3+\frac{4^3-1}{3}\\
+ &=192+21\\
+ &=213.
+\end{aligned}
+\]
+Consequently, every element of $\Pset$ below $213$ belongs to one of
+generations $1$, $2$, and $3$, whose elements are exactly the eight
+members of $L$ listed in the first table.  Thus the stronger identity
+\[
+ \Pset\cap[0,212]=L
+\]
+holds, and in particular
 \begin{equation}\label{eq:P-small}
  \Pset\cap[0,211]=L.
 \end{equation}

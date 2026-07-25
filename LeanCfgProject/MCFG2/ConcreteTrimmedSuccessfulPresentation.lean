@@ -381,10 +381,12 @@ theorem toConcreteSuccessfulPresentation
       let τ :=
         ConcreteOutputTypeRefinement.canonicalTerminalRule
           hworking.basic ρ hρ
-      have hp :
-          hwt = hworking.basic.2.2.1 ρ hρ :=
+      have hproof : τ.wellTyped.symm = hwt.symm :=
         Subsingleton.elim _ _
-      cases hp
+      have htuple :
+          castTuple τ.wellTyped.symm ρ.outputTuple =
+            castTuple hwt.symm ρ.outputTuple :=
+        congrArg (fun e => castTuple e ρ.outputTuple) hproof
       have hmem :
           (ConcreteSuccessfulOutputTypeRefinement.presentation
             (G := G) (obs := obs) hworking.basic).
@@ -413,11 +415,19 @@ theorem toConcreteSuccessfulPresentation
         simpa [τ,
           ConcreteOutputTypeRefinement.canonicalTerminalRule,
           TypedTerminalRule.lhs] using hm.symm
-      simpa [TypedNonterminal.ofTuple] using
-        (PresentationDerives.congr_output
-          (P := ConcreteSuccessfulOutputTypeRefinement.presentation
-            (G := G) (obs := obs) hworking.basic)
-          hout hterminal)
+      have hcanonical :
+          PresentationDerives
+            (ConcreteSuccessfulOutputTypeRefinement.presentation
+              (G := G) (obs := obs) hworking.basic)
+            (TypedNonterminal.ofTuple obs ρ.lhs
+              (castTuple τ.wellTyped.symm ρ.outputTuple))
+            (castTuple τ.wellTyped.symm ρ.outputTuple) := by
+        simpa [TypedNonterminal.ofTuple] using
+          (PresentationDerives.congr_output
+            (P := ConcreteSuccessfulOutputTypeRefinement.presentation
+              (G := G) (obs := obs) hworking.basic)
+            hout hterminal)
+      simpa only [htuple] using hcanonical
 
   | binary hρ hx hy ihx ihy =>
       intro parentContext parentOccurrence
