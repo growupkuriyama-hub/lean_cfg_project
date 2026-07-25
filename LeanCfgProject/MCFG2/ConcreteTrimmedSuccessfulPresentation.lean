@@ -413,6 +413,11 @@ theorem toConcreteSuccessfulPresentation
         simpa [τ,
           ConcreteOutputTypeRefinement.canonicalTerminalRule,
           TypedTerminalRule.lhs] using hm.symm
+      have hcast :
+          castTuple τ.wellTyped.symm ρ.outputTuple =
+            castTuple hwt.symm ρ.outputTuple := by
+        congr 1
+      rw [← hcast]
       simpa [TypedNonterminal.ofTuple] using
         (PresentationDerives.congr_output
           (P := ConcreteSuccessfulOutputTypeRefinement.presentation
