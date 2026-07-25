@@ -58,7 +58,7 @@ $0$ と符号化することにより、語 $101100$ になる。より一般に
 $1$ の個数が $0$ の個数以上である語 $w\in\{1,0\}^*$ のことである。
 \footnote{Dyck言語は正規ではないが、文脈自由言語である。}
 例えば、Dyck語 $101100$ の原始Dyck語への一意な分解は
-$101100=10\cdot1100$ である。\footnote{ここおよび以下で、$\cdot$ は語の連結を表す。}
+$101100=10\cdot1100$ である。ここおよび以下で、$\cdot$ は語の連結を表す。
 空でないDyck語が\emph{原始的}であるとは、
 その空でない真の接頭辞のどれも均衡していないことをいう。同値に、$1$ を上昇、
 $0$ を下降とみなしたとき、対応する格子路が終点において初めて高さ $0$ に戻る
@@ -736,9 +736,9 @@ $w\in\mathsf{Motz}$ に対して
  \operatorname{quad}(p)=3w
 \]
 を満たし、$|w|=d-1$ である。したがって、
-\[
+\begin{equation}\label{eq:generation-value}
  p=[3w]_4=3\cdot4^{d-1}+[w]_4
-\]
+\end{equation}
 である。次の系は補題~\ref{lem:extremal} から直ちに従う。
 
 \begin{corollary}[世代境界]\label{cor:gen}
@@ -762,26 +762,18 @@ $w\in\mathsf{Motz}$ に対して
 \end{corollary}
 
 \begin{proof}
-$p$ を世代 $d$ の元とする。直前の議論より、ある $w\in\mathsf{Motz}$ が存在して
-$|w|=d-1$ かつ
-\[
- p=3\cdot4^{d-1}+[w]_4
-\]
-である。式~\eqref{eq:motzkin-extrema} に $\ell=d-1$ を代入すると、
+$p$ を世代 $d$ の元とする。式~\eqref{eq:motzkin-extrema} に $\ell=d-1$ を代入すると、
 \[
  \frac{4^{d-1}-1}{3}
  \leq[w]_4
  \leq4^{d-1}-2^{d-1}
 \]
-を得る。両辺に $3\cdot4^{d-1}$ を加えれば、式~\eqref{eq:generation-interval}
+を得る。この評価を\eqref{eq:generation-value}に代入すれば、式~\eqref{eq:generation-interval}
 が従う。下端点は $w=1^{d-1}$ によって達成され、上端点は
 $w=w_{\max,d-1}$ によって達成される。(a) は、次の世代が
-$g_{d+1}>3\cdot4^d$ から始まることによる。最後に、
-\[
-  3g_{k+1}
+$g_{d+1}>3\cdot4^d$ から始まることによる。最後に、$  3g_{k+1}
   =3\left(3\cdot4^k+\frac{4^k-1}{3}\right)
-  =10\cdot4^k-1
-\]
+  =10\cdot4^k-1$
 である。
 \end{proof}
 
@@ -799,7 +791,7 @@ $g_{d+1}>3\cdot4^d$ から始まることによる。最後に、
  \bigl\{\val{3\varepsilon_1\cdots\varepsilon_k}{4}:
         k\geq0,\ \varepsilon_i\in\{1,2\}\bigr\}
 \]
-とおく。$k=0$ のとき、文字列 $\varepsilon_1\cdots\varepsilon_k$ は空なので、対応する元は $\val{3}{4}=3$ である。$4$ を掛けることは、末尾に基数4の $0$ を付け加えることに対応する。各基数4数字を対応する2進2桁に置き換えると、
+とおく。$k=0$ のとき、$\varepsilon_1\cdots\varepsilon_k=\lambda$と解釈され、対応する元は $\val{3}{4}=3$ である。$4$ を掛けることは、末尾に基数4の $0$ を付け加えることに対応する。各基数4数字を対応する2進2桁に置き換えると、
 \[
  3_{(4)}\longleftrightarrow11_{(2)},\qquad
  2_{(4)}\longleftrightarrow10_{(2)},\qquad
