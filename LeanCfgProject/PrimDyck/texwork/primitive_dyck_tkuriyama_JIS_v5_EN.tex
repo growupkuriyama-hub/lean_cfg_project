@@ -64,21 +64,22 @@ $101100$ when an opening parenthesis is encoded by $1$ and a closing
 parenthesis by $0$.  More generally, every balanced parenthesis string can
 be written over the alphabet $\{1,0\}$ in this way\footnote{The set of all
 words over this alphabet is denoted by $\{0,1\}^*$; it is a regular
-language.} and hence read as a binary integer.  Which integers arise this
-way, and how additively rich is the set they form?  We take up a natural
-variant of that question.
+language.} and hence read as a binary integer.  How additively rich is the
+set of integers obtained in this way?  We take up a natural variant of this
+question.
 
 A \emph{Dyck word} is a word $w\in\{1,0\}^*$ with equally many $1$'s
 and $0$'s in which every prefix has at least as many $1$'s as $0$'s.\footnote{The
 Dyck language is not regular, but it is context-free.}  For example, the
 unique factorization of the Dyck word $101100$ into primitive Dyck words is
-$101100=10\cdot1100$.  A nonempty Dyck word is \emph{primitive} if none of
+$101100=10\cdot1100$.\footnote{Here and below, $\cdot$ denotes
+concatenation of words.}  A nonempty Dyck word is \emph{primitive} if none of
 its proper nonempty prefixes is balanced.  Equivalently, if $1$ is viewed as
 an up-step and $0$ as a down-step, the associated lattice path returns to
 height zero for the first time only at its endpoint.\footnote{Such paths are
 also commonly called \emph{irreducible} or \emph{indecomposable} Dyck paths.}
-Let $\DP$ denote the language of primitive Dyck words; the empty word
-$\lambda$ is not included in $\DP$.  Ordered by length and then
+Let $\DP$ denote the language of nonempty primitive Dyck words; in
+particular, the empty word $\lambda$ is not included in $\DP$.  Ordered by length and then
 lexicographically, its first eighteen elements are
 \[
 \begin{gathered}
@@ -89,11 +90,28 @@ lexicographically, its first eighteen elements are
 \end{gathered}
 \]
 
+Binary words of even length may also be read blockwise in base $4$.
+For example, at the level of digit strings we write
+\[
+ (11\cdot10\cdot01\cdot01\cdot00)_{(2)}=32110_{(4)},
+\]
+where $\cdot$ denotes concatenation.  More generally, consecutive binary
+pairs are identified with base-$4$ digits through
+\[
+ 11_{(2)}\longleftrightarrow3_{(4)},\qquad
+ 10_{(2)}\longleftrightarrow2_{(4)},\qquad
+ 01_{(2)}\longleftrightarrow1_{(4)},\qquad
+ 00_{(2)}\longleftrightarrow0_{(4)}.
+\]
+The subscripts $(2)$ and $(4)$ are metanotational base labels and will be
+omitted whenever the base is clear from context.
+
 For a word $w$ over the base-$m$ digits, let $\val{w}{m}$ denote the
 integer it represents in base $m$.  For convenience in the additive
 representations considered in this paper, we adjoin $0$ and set
 \[
- \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}.
+ \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}
+ \subseteq\mathbb Z_{\geq0}.
 \]
 The convention $0\in\NpD$ is inessential to the conclusions below.  The
 first eighteen positive elements are
@@ -332,22 +350,29 @@ Then
 \section{The base-\texorpdfstring{$4$}{4} structure of
 \texorpdfstring{$\Pset$}{P}}\label{sec:base4}
 
-The division by $4$ in the definition of $\Pset$ is chosen to expose the
-base-$4$ structure of the family.  Assign weights to the base-$4$ digits by
+We now describe the base-$4$ structure of $\Pset$, which is exposed by
+the division by $4$ in its definition.  Assign weights to the base-$4$ digits by
 \[
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0.
 \]
+Extend $\sigma$ additively to words by
+\[
+ \sigma(c_0c_1\cdots c_{k-1})
+ :=\sum_{i=0}^{k-1}\sigma(c_i),
+ \qquad
+ \sigma(\lambda):=0.
+\]
 A word $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ is called a
 \emph{two-coloured Motzkin word}\footnote{The two zero-weight digits $1$
 and $2$ are regarded as distinct colours.} if every prefix has nonnegative
-total weight and the total weight of $w$ is $0$.  In particular, the running
-prefix weight is allowed to return to $0$ more than once.  Let $\mathsf{Motz}$
-denote the set of all two-coloured Motzkin words.  Unlike $\DP$,
-$\mathsf{Motz}$ contains the empty word $\lambda$.  Write $[w]_4$ for the
-value of $w$ as a base-$4$ numeral, and set $[\lambda]_4=0$.  For a positive
-integer $n$, let $\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote
-its standard binary and base-$4$ expansions, respectively.
+weight and $\sigma(w)=0$.  The running prefix weight is allowed to return to
+$0$ more than once.  Let $\mathsf{Motz}$ denote the set of all such words.
+Unlike $\DP$, the set $\mathsf{Motz}$ contains the empty word $\lambda$.
+Write $[w]_4$ for the value of $w$ as a base-$4$ numeral, and set
+$[\lambda]_4=0$.  For a positive integer $n$, let
+$\operatorname{bin}(n)$ and $\operatorname{quad}(n)$ denote its standard
+binary and base-$4$ expansions, respectively.
 
 \begin{lemma}[Base-$4$ characterization]\label{lem:base4}
 A positive integer $p$ lies in $\Pset$ if and only if there exists
@@ -355,7 +380,7 @@ $w\in\mathsf{Motz}$ such that $\operatorname{quad}(p)=3w$.
 \end{lemma}
 
 \begin{proof}
-Suppose first that $p\in\Pset$.  By the definition of $\Pset$,
+We give the details explicitly.  Suppose first that $p\in\Pset$.  By the definition of $\Pset$,
 \[
  4p\in\NpD,\qquad 4p\geq12.
 \]
@@ -364,12 +389,13 @@ Hence the binary expansion
  B:=\operatorname{bin}(4p)=b_1b_2\cdots b_{2L},
  \qquad b_i\in\{0,1\},
 \]
-is a primitive Dyck word of length $2L\geq4$.  Define its height function by
+is a primitive Dyck word satisfying $|B|=2L\geq4$ and $B\in\DP$.
+Define its height function by
 \[
  h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2L).
 \]
-Since $B$ is primitive,
+The condition $B\in\DP$ is equivalently expressed by
 \begin{equation}\label{eq:primitive-height}
  h_B(0)=h_B(2L)=0,
  \qquad
@@ -393,7 +419,8 @@ The correspondences
  1_{(4)}\longleftrightarrow01_{(2)},\qquad
  0_{(4)}\longleftrightarrow00_{(2)}
 \]
-show that the change in height across the $j$th block is
+show that the net height change across the $j$th two-bit block is twice
+the weight of the corresponding base-$4$ digit:
 \[
  h_B(2j)-h_B(2j-2)=2\sigma(q_j).
 \]
@@ -406,17 +433,21 @@ where the sum is empty when $j=0$.
 
 We next determine the first and last blocks.  Since $B$ is a Dyck word,
 $b_1=1$.  If $b_2=0$, then $h_B(2)=0$, contradicting
-$2<2L$ and \eqref{eq:primitive-height}.  Hence $b_2=1$ and
+$2<2L$ and \eqref{eq:primitive-height}.  Hence
 \[
- q_1=3.
+ b_1b_2=11_{(2)},
+ \qquad
+ q_1=2b_1+b_2=3.
 \]
 Similarly, $b_{2L}=0$.  If $b_{2L-1}=1$, then the last block is $10$, so
 \[
- h_B(2L)-h_B(2L-2)=0.
+ h_B(2L)=h_B(2L-2).
 \]
 Since $h_B(2L)=0$, this would give $h_B(2L-2)=0$, again contradicting
-\eqref{eq:primitive-height}.  Thus $b_{2L-1}=0$ and
+\eqref{eq:primitive-height}.  Thus
 \[
+ b_{2L-1}b_{2L}=00_{(2)},
+ \qquad
  q_L=0.
 \]
 
@@ -430,7 +461,8 @@ even integer, equation~\eqref{eq:height-sigma} gives
  \geq1
  \qquad(1\leq j\leq L-1).
 \end{equation}
-Since dividing $4p$ by $4$ deletes its final base-$4$ digit $0$, we have
+Dividing $4p$ by $4$ deletes the terminal base-$4$ digit $q_L=0$.
+Since $q_1=3$, we obtain
 \[
  \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=3u,
  \qquad
@@ -460,8 +492,11 @@ $\sigma(q_L)=\sigma(0)=-1$, equation~\eqref{eq:total-weight-zero} gives
   -\bigl(\sigma(q_1)+\sigma(q_L)\bigr)
  =0.
 \]
-Thus every prefix of $u$ has nonnegative weight and the total weight of $u$
-is $0$.  Therefore $u\in\mathsf{Motz}$, proving the forward implication.
+Equation~\eqref{eq:motzkin-prefix-nonnegative} shows that every prefix
+of $u$ has nonnegative weight, while \eqref{eq:total-weight-zero} and the
+endpoint weights $\sigma(q_1)=1$ and $\sigma(q_L)=-1$ show that the total
+weight of $u$ is $0$.  Hence $u\in\mathsf{Motz}$, proving the forward
+implication.
 
 Conversely, suppose that there exists $w\in\mathsf{Motz}$ such that
 $\operatorname{quad}(p)=3w$.  Write
@@ -472,7 +507,7 @@ $\operatorname{quad}(p)=3w$.  Write
  \qquad
  w=q_2q_3\cdots q_m.
 \]
-The Motzkin conditions say
+The condition $w\in\mathsf{Motz}$ is expressed explicitly by
 \begin{equation}\label{eq:reverse-motzkin-prefix}
  \sum_{i=2}^{j}\sigma(q_i)\geq0
  \qquad(2\leq j\leq m)
@@ -499,6 +534,10 @@ on letters.  Put $q_{m+1}:=0$ and set
 \[
  B:=\phi(q_1q_2\cdots q_mq_{m+1})
    =b_1b_2\cdots b_{2m+2}.
+\]
+The final two bits satisfy
+\[
+ b_{2m+1}b_{2m+2}=00_{(2)}.
 \]
 Because each base-$4$ digit is replaced by its two-bit binary block,
 \begin{equation}\label{eq:block-value}
@@ -564,26 +603,35 @@ so
 \[
  \sum_{i=2}^{j-1}\sigma(q_i)\geq1.
 \]
-Therefore \eqref{eq:reverse-height-sigma} gives
+Applying \eqref{eq:reverse-height-sigma} with $j-1$ in place of $j$,
+and using $\sigma(q_1)=1$, gives
 \[
+\begin{aligned}
  h_B(2j-2)
- =2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
- \geq4,
+ &=2\sum_{i=1}^{j-1}\sigma(q_i)\\
+ &=2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
+ \geq4.
+\end{aligned}
 \]
 and hence
 \[
  h_B(2j-1)=h_B(2j-2)-1\geq3.
 \]
 
-For the appended terminal digit $q_{m+1}=0$,
-\eqref{eq:reverse-motzkin-total} and
-\eqref{eq:reverse-height-sigma} give
+For the appended terminal digit $q_{m+1}=0$, equations
+\eqref{eq:reverse-height-sigma} and
+\eqref{eq:reverse-motzkin-total} give
 \[
- h_B(2m)=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)=2.
+\begin{aligned}
+ h_B(2m)
+ &=2\left(\sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)\right)\\
+ &=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)
+ =2.
+\end{aligned}
 \]
 Thus the terminal block $00$ passes through height
 \[
- h_B(2m+1)=1
+ h_B(2m+1)=1>0
 \]
 and ends at the height in \eqref{eq:terminal-height}.
 
@@ -618,8 +666,11 @@ Then
  \qquad
  \operatorname{quad}(4p+2)=3w2.
 \]
-The digits $1$ and $2$ both have $\sigma$-weight $0$, so appending either one
-preserves membership in $\mathsf{Motz}$.  The claim follows from
+Since
+\[
+ \sigma(1)=\sigma(2)=0,
+\]
+appending either digit preserves membership in $\mathsf{Motz}$.  The claim follows from
 Lemma~\ref{lem:base4}.
 \end{proof}
 
@@ -652,9 +703,10 @@ Write
 \]
 
 \emph{Lower bound.}
-Since $\sigma(0)=-1$, the first digit cannot be $0$.  If
-$c_0\in\{1,2\}$, then the suffix $w'=c_1\cdots c_{\ell-1}$ is again a
-two-coloured Motzkin word.  Hence
+Since $\sigma(0)=-1$, the first digit cannot be $0$.  If $c_0\in\{1,2\}$, then $\sigma(c_0)=0$, so deleting the first
+digit does not change any subsequent prefix weight or the total weight.
+Hence the suffix $w'=c_1\cdots c_{\ell-1}$ is again a two-coloured
+Motzkin word.  By the induction hypothesis for words of length $\ell-1$,
 \[
   [w]_4\geq4^{\ell-1}+[w']_4
   \geq4^{\ell-1}+\frac{4^{\ell-1}-1}{3}
@@ -670,7 +722,8 @@ If $c_0=3$, then
 Equality is attained by $w=1^{\ell}$.
 
 \emph{Upper bound.}
-If $c_0\in\{1,2\}$, then $w'$ is again a two-coloured Motzkin word, so
+If $c_0\in\{1,2\}$, then, as above, $w'$ is again a two-coloured
+Motzkin word.  By the induction hypothesis for words of length $\ell-1$,
 \begin{align*}
   [w]_4
   &=[c_0c_1\cdots c_{\ell-1}]_4\\
@@ -680,16 +733,25 @@ If $c_0\in\{1,2\}$, then $w'$ is again a two-coloured Motzkin word, so
   &\leq4^{\ell}-2^{\ell}.
 \end{align*}
 
-Now suppose $c_0=3$, and let $r$ be the length of the shortest nonempty prefix
-of $w$ having total weight $0$.  Then $2\leq r\leq\ell$,
-$c_{r-1}=0$, and
+Now suppose $c_0=3$, and let $r$ be the length of the shortest nonempty
+prefix of $w$ having total weight $0$.  This prefix has the form $3u0$,
+where
 \[
-  u=c_1\cdots c_{r-2},
-  \qquad
-  v=c_r\cdots c_{\ell-1}
+ u=c_1\cdots c_{r-2},
 \]
-are two-coloured Motzkin words of lengths $r-2$ and $\ell-r$, respectively.
-Thus $w=3u0v$.  By place value and the induction hypothesis,
+and let
+\[
+ v=c_r\cdots c_{\ell-1}
+\]
+be the remaining suffix.  Then
+\[
+ 2\leq r\leq\ell,
+ \qquad
+ |u|=r-2,
+ \qquad
+ |v|=\ell-r,
+\]
+and $u,v\in\mathsf{Motz}$.  Thus $w=3u0v$.  By place value and the induction hypothesis,
 \begin{align*}
   [w]_4
   &=3\cdot4^{\ell-1}+[u]_4\,4^{\ell-r+1}+[v]_4\\
@@ -719,8 +781,16 @@ so the upper bound is attained.
 \end{proof}
 
 An element of $\Pset$ belongs to \emph{generation $d$} if its base-$4$
-expansion has exactly $d$ digits.  By Lemma~\ref{lem:base4}, a generation-$d$
-element has value $3\cdot4^{d-1}+[w]_4$, where $w$ has length $d-1$.
+expansion has exactly $d$ digits.  By Lemma~\ref{lem:base4}, a
+generation-$d$ element $p$ satisfies
+\[
+ \operatorname{quad}(p)=3w
+\]
+for some $w\in\mathsf{Motz}$ with $|w|=d-1$.  Therefore
+\[
+ p=[3w]_4=3\cdot4^{d-1}+[w]_4.
+\]
+The following corollary is now immediate from Lemma~\ref{lem:extremal}.
 
 \begin{corollary}[Generation bounds]\label{cor:gen}
 For every $d\geq1$, every generation-$d$ element of $\Pset$ lies in
@@ -742,10 +812,18 @@ and both endpoints are attained.  In particular,
 \end{corollary}
 
 \begin{proof}
-The interval follows from Lemmas~\ref{lem:base4} and~\ref{lem:extremal}.  The
-attainment statements follow from the extremal words in
-Lemma~\ref{lem:extremal}.  Part~(a) follows because the next generation begins
-at $g_{d+1}>3\cdot4^d$.  Finally,
+Let $p$ be a generation-$d$ element.  By the preceding paragraph,
+$p=3\cdot4^{d-1}+[w]_4$ for some $w\in\mathsf{Motz}$ with
+$|w|=d-1$.  Applying \eqref{eq:motzkin-extrema} with $\ell=d-1$ gives
+\[
+ \frac{4^{d-1}-1}{3}
+ \leq[w]_4
+ \leq4^{d-1}-2^{d-1}.
+\]
+Adding $3\cdot4^{d-1}$ yields \eqref{eq:generation-interval}.  The lower
+endpoint is attained by $w=1^{d-1}$, and the upper endpoint is attained by
+$w=w_{\max,d-1}$.  Part~(a) follows because the next generation begins at
+$g_{d+1}>3\cdot4^d$.  Finally,
 \[
   3g_{k+1}
   =3\left(3\cdot4^k+\frac{4^k-1}{3}\right)

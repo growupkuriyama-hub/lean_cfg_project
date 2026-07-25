@@ -102,16 +102,17 @@ nonterminal. -/
 theorem transportedOutput_eq_of_node_eq_rfl
     (R : SuccessfulOccurrenceBaseRepresentativeSelection S)
     (A : N)
-    (X : TypedNonterminal G M)
-    (hbase : X.base = A)
-    (hnode : (R.rep A).node = X)
-    (hbaseRfl :
-      congrArg G.arity hbase =
-        (rfl : G.arity A = G.arity A)) :
-    R.transportedOutput A = X.out := by
-  rw [R.transportedOutput_eq_of_node_eq A X hbase hnode]
-  rw [hbaseRfl]
-  rfl
+    (out : Fin (G.arity A) → M)
+    (hnode :
+      (R.rep A).node =
+        ({ base := A, out := out } : TypedNonterminal G M)) :
+    R.transportedOutput A = out := by
+  simpa using
+    R.transportedOutput_eq_of_node_eq
+      A
+      ({ base := A, out := out } : TypedNonterminal G M)
+      rfl
+      hnode
 
 end SuccessfulOccurrenceBaseRepresentativeSelection
 
@@ -265,7 +266,7 @@ theorem terminal_output
   have hlhs :
       (R.rep ρ.lhs).node = τ.lhs obs :=
     Q.terminal_lhs_rep ρ hρ
-  cases hbase
+  rw [← hbase] at hwt hlhs ⊢
   have hout :
       R.transportedOutput τ.baseRule.lhs =
         (τ.lhs obs).out := by
@@ -308,7 +309,7 @@ theorem binary_output
   have hlhs :
       (R.rep ρ.lhs).node = τ.lhs obs :=
     Q.binary_lhs_rep ρ hρ
-  cases hbase
+  rw [← hbase] at hleft hright hlhs ⊢
   have houtLeft :
       R.transportedOutput τ.baseRule.left =
         τ.leftOut := by
@@ -366,7 +367,7 @@ theorem start_output
   have hparent :
       (R.rep G.start).node = σ.parent :=
     Q.start_parent_rep ρ hρ
-  cases hbase
+  rw [← hbase] at hwt hchild ⊢
   have houtChild :
       R.transportedOutput σ.baseRule.child =
         σ.childOut := by

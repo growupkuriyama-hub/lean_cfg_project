@@ -51,20 +51,21 @@ $0$ と符号化することにより、語 $101100$ になる。より一般に
 均衡した括弧列はこの方法でアルファベット $\{1,0\}$ 上の語
 \footnote{このアルファベット上のすべての語の集合を $\{0,1\}^*$ と書く。
 これは正規言語である。}として表され、したがって2進整数として読むことが
-できる。この方法でどの整数の全体集合が、加法的に
-どれほど豊かであるのか。本論文では、この問いの自然な変種を扱う。
+できる。この方法で得られる整数の集合は、加法的にどれほど豊かであるのか。
+本論文では、この問いの自然な変種を扱う。
 
 \emph{Dyck語}とは、$1$ と $0$ を同数含み、かつ任意の接頭辞において
-$1$ の個数が $0$ の個数以上である語 $w\in\{1,0\}^*$ のことである\footnote{ここに記号「$\,cdot\,$」は文字列の連結を表す。}。
+$1$ の個数が $0$ の個数以上である語 $w\in\{1,0\}^*$ のことである。
 \footnote{Dyck言語は正規ではないが、文脈自由言語である。}
 例えば、Dyck語 $101100$ の原始Dyck語への一意な分解は
-$101100=10\cdot1100$ である。空でないDyck語が\emph{原始的}であるとは、
+$101100=10\cdot1100$ である。\footnote{ここおよび以下で、$\cdot$ は語の連結を表す。}
+空でないDyck語が\emph{原始的}であるとは、
 その空でない真の接頭辞のどれも均衡していないことをいう。同値に、$1$ を上昇、
 $0$ を下降とみなしたとき、対応する格子路が終点において初めて高さ $0$ に戻る
 ことをいう。\footnote{このような路は、\emph{既約}Dyck路または
 \emph{分解不能}Dyck路とも呼ばれる。}
-原始Dyck語全体の言語を $\DP$ と書く。空でない接頭辞に対する条件で$\DP$を定義するので、空語 $\lambda$ は $\DP$ に
-含めない。長さ順、同じ長さでは辞書式順に並べると、その最初の18語は
+空でない原始Dyck語全体の言語を $\DP$ と書く。特に、空語 $\lambda$ は
+$\DP$ に含めない。長さ順、同じ長さでは辞書式順に並べると、その最初の18語は
 \[
 \begin{gathered}
 10,\ 1100,\ 110100,\ 111000,\ 11010100,\ 11011000,\\
@@ -74,27 +75,26 @@ $0$ を下降とみなしたとき、対応する格子路が終点において�
 \end{gathered}
 \]
 
-これらは$2$桁ずつ区切ることで$4$進数とみなすこともできる。この変換を
+偶数長の2進語は、左から2桁ずつまとめて4進語として読むこともできる。
+例えば、数字列のレベルでは
 \[
-11 10 01 01 00_{(2)}=11\cdot 10\cdot 01\cdot 01\cdot 00_{(2)}=32110_{(4)}
+ (11\cdot10\cdot01\cdot01\cdot00)_{(2)}=32110_{(4)}
 \]
-のように表記する。言い換えれば形式$u_{(2)}=v_{(4)}$はある文字列$u\in\{0,1\}^*$と文字列$v\in\{0,1,2,3\}^*$を、対応
-
-
+と書く。ここで $\cdot$ は連結を表す。一般に、連続する2進数字の組と4進数字を
 \[
  11_{(2)}\longleftrightarrow3_{(4)},\qquad
  10_{(2)}\longleftrightarrow2_{(4)},\qquad
  01_{(2)}\longleftrightarrow1_{(4)},\qquad
  00_{(2)}\longleftrightarrow0_{(4)}
 \]
-
-の連結によって同一視している。 この表記$*_{(2|4)}$はアルファベット上のメタ記号であり適宜省略して表記する。
-
+によって同一視する。添字 $(2)$ と $(4)$ は基数を示すメタ記号であり、
+基数が文脈から明らかな場合には省略する。
 
 基数 $m$ の数字からなる語 $w$ に対し、それが基数 $m$ で表す整数を
 $\val{w}{m}$ と書く。本論文で扱う加法表示の便宜のために $0$ を加え、
 \[
- \NpD=\{0\}\cup\{\val{w}{2}\in\mathbb{Z}:w\in\DP\}
+ \NpD=\{0\}\cup\{\val{w}{2}:w\in\DP\}
+ \subseteq\mathbb Z_{\geq0}
 \]
 と定める。$0\in\NpD$ とする約束は、以下の結論には本質的ではない。
 最初の18個の正の元は
@@ -107,7 +107,6 @@ $\val{w}{m}$ と書く。本論文で扱う加法表示の便宜のために $0$
 であり、これはOEIS数列 \seqnum{A057547} \cite{OEIS-A057547} である。
 空でないDyck語はすべて末尾が $0$ であるため、$\NpD$ の正の元はすべて
 偶数である。したがって、$\NpD$ の元の和で表示できる対象整数は偶数に限られる。
-
 
 以下の法 $4$ に関する基本的な観察を繰り返し用いる。
 
@@ -311,17 +310,25 @@ $[110000]_2=48$ を表す。したがって、$46$ の任意の表示は
 \section{\texorpdfstring{$\Pset$}{P} の基数\texorpdfstring{$4$}{4}構造}
 \label{sec:base4}
 
-以下で$\Pset$の基数4構造を明らかにする。基数4の各数字に重みを
+ここでは、$\Pset$ の定義に現れる $4$ による除算によって明らかになる、
+$\Pset$ の基数4構造を記述する。基数4の各数字に重みを
 \[
   \sigma(3)=1,\qquad \sigma(0)=-1,\qquad
   \sigma(1)=\sigma(2)=0
 \]
-によって割り当てる。空列$\lambda$の重みづけは$\sigma(\lambda)=0$とする。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が
+によって割り当てる。さらに、$\sigma$ を語に加法的に拡張し、
+\[
+ \sigma(c_0c_1\cdots c_{k-1})
+ :=\sum_{i=0}^{k-1}\sigma(c_i),
+ \qquad
+ \sigma(\lambda):=0
+\]
+と定める。語 $w=c_0\cdots c_{k-1}\in\{0,1,2,3\}^{k}$ が
 \emph{2色Motzkin語}である\footnote{重み $0$ の二つの数字 $1$ と $2$ を、異なる
-色とみなしている。}とは、任意の接頭辞の総重みが非負であり、かつ $w$ 全体の
-総重みが $0$ であることをいう。$\mathsf{Motz}$ は空語 $\lambda$ を含む。文字列$w$を左から読んで重み付けするとき一般的には何回か$0$になりうる。
-2色Motzkin語全体の集合を $\mathsf{Motz}$ と書く。$\DP$ とは異なり、また、
-$w$ を基数4の数として読んだ値を $[w]_4$
+色とみなしている。}とは、任意の接頭辞の重みが非負であり、かつ
+$\sigma(w)=0$ であることをいう。接頭辞の重みは途中で複数回 $0$ に戻ってもよい。
+このような語全体の集合を $\mathsf{Motz}$ と書く。$\DP$ とは異なり、
+$\mathsf{Motz}$ は空語 $\lambda$ を含む。$w$ を基数4の数として読んだ値を $[w]_4$
 と書き、$[\lambda]_4=0$ と定める。正整数 $n$ に対し、その標準的な2進展開および
 4進展開を、それぞれ $\operatorname{bin}(n)$ および $\operatorname{quad}(n)$ と書く。
 
@@ -331,7 +338,7 @@ $w$ を基数4の数として読んだ値を $[w]_4$
 \end{lemma}
 
 \begin{proof}
-この命題を直感的に済ませるのではなくフォーマルに示すことに価値があると考える。まず $p\in\Pset$ と仮定する。$\Pset$ の定義より、
+以下では細部まで明示して証明する。まず $p\in\Pset$ と仮定する。$\Pset$ の定義より、
 \[
  4p\in\NpD,\qquad 4p\geq12
 \]
@@ -340,19 +347,19 @@ $w$ を基数4の数として読んだ値を $[w]_4$
  B:=\operatorname{bin}(4p)=b_1b_2\cdots b_{2L},
  \qquad b_i\in\{0,1\},
 \]
-は$|B|=2L\geq4$ かつ$B\in\DP$である。その高さ関数は
+は $|B|=2L\geq4$ および $B\in\DP$ を満たす原始Dyck語である。
+その高さ関数を
 \[
  h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2L)
 \]
-で計算できる。条件$B\in\DP$を形式的にかけば、 
-
+と定める。条件 $B\in\DP$ は、同値に
 \begin{equation}\label{eq:primitive-height}
  h_B(0)=h_B(2L)=0,
  \qquad
  h_B(t)>0\quad(1\leq t<2L)
 \end{equation}
-である。
+が成り立つ。
 
 一方、$4p$ の4進展開を
 \[
@@ -371,7 +378,8 @@ $w$ を基数4の数として読んだ値を $[w]_4$
  1_{(4)}\longleftrightarrow01_{(2)},\qquad
  0_{(4)}\longleftrightarrow00_{(2)}
 \]
-から、第 $j$ ブロックによる高さの変化は比喩的に言えば$\Delta{h}({2j})=2\Delta\sigma_{j}$, 正確には
+から、第 $j$ 番目の2ビットブロックを通過したときの高さの純変化は、
+対応する4進数字の重みの2倍である。すなわち、
 \[
  h_B(2j)-h_B(2j-2)=2\sigma(q_j)
 \]
@@ -382,11 +390,13 @@ $w$ を基数4の数として読んだ値を $[w]_4$
 \end{equation}
 を得る。ただし、$j=0$ のとき右辺は空和 $0$ とする。
 
-次に、最初と最後のブロックを決定する。$B\in\DP$なので $b_1=1$ である。
+次に、最初と最後のブロックを決定する。$B$ はDyck語なので $b_1=1$ である。
 もし $b_2=0$ ならば $h_B(2)=0$ となり、$2<2L$ および
-\eqref{eq:primitive-height} に反する。したがって $b_2=1$ であり、
+\eqref{eq:primitive-height} に反する。したがって
 \[
- q_1=b_1b_2=3_{(4)}
+ b_1b_2=11_{(2)},
+ \qquad
+ q_1=2b_1+b_2=3
 \]
 である。同様に、$b_{2L}=0$ である。もし $b_{2L-1}=1$ ならば、最後のブロックは
 $10$ なので、
@@ -394,11 +404,13 @@ $10$ なので、
  h_B(2L)=h_B(2L-2)
 \]
 となる。$h_B(2L)=0$ であるから $h_B(2L-2)=0$ となり、再び
-\eqref{eq:primitive-height} に反する。したがって $b_{2L-1}=0$ であり、
+\eqref{eq:primitive-height} に反する。したがって
 \[
- q_L=b_{N-1}b_{N}=0_{(4)}
+ b_{2L-1}b_{2L}=00_{(2)},
+ \qquad
+ q_L=0
 \]
-に限る。
+である。
 
 あとは$\mathsf{Motz}$の内部の重さ条件をチェックする。$1\leq j\leq L-1$ に対して $2j<2L$ であるから、
 \eqref{eq:primitive-height} より $h_B(2j)>0$ である。$h_B(2j)$ は偶数なので、等式\eqref{eq:height-sigma}から
@@ -408,15 +420,15 @@ $10$ なので、
  \geq1
  \qquad(1\leq j\leq L-1)
 \end{equation}
-を得る。$4p$ を $4$ で割ることは、その4進展開の末尾の数字 $0_{(4)}=q_{L}$ を削除することに
-対応するので、$q_1=3_{(4)}$とあわせれば、
+を得る。$4p$ を $4$ で割ることは、末尾の4進数字 $q_L=0$ を削除することに
+対応する。さらに $q_1=3$ であるから、
 \[
- \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=:3u,
+ \operatorname{quad}(p)=q_1q_2\cdots q_{L-1}=3u,
  \qquad
- u=q_2q_3\cdots q_{L-1}.
+ u:=q_2q_3\cdots q_{L-1}.
 \]
 
-以下では$u\in\mathsf{Motz}$を示す。$u$ の長さ $r$ の接頭辞を考え、$0\leq r\leq L-2$ とする。$r=0$ の場合、その
+のこりは$u\in\mathsf{Motz}$を示す。$u$ の長さ $r$ の接頭辞を考え、$0\leq r\leq L-2$ とする。$r=0$ の場合、その
 重みは空和 $0$ である。$1\leq r\leq L-2$ の場合には、
 \eqref{eq:prefix-height} を $j=r+1$ に適用して、
 \begin{equation}\label{eq:motzkin-prefix-nonnegative}
@@ -434,7 +446,10 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
 \[
  \sum_{i=2}^{L-1}\sigma(q_i)= \sum_{i=1}^{L}\sigma(q_i)-(\sigma(q_1)+\sigma(q_L))=0.
 \]
-したがって、\eqref{eq:prefix-height}および\eqref{eq:total-weight-zero}により$u\in\mathsf{Motz}$ であり、必要性が示された。
+式~\eqref{eq:motzkin-prefix-nonnegative} より、$u$ の任意の接頭辞の重みは
+非負である。また、式~\eqref{eq:total-weight-zero} と端の重み
+$\sigma(q_1)=1$、$\sigma(q_L)=-1$ より、$u$ 全体の重みは $0$ である。
+ゆえに $u\in\mathsf{Motz}$ であり、必要性が示された。
 
 逆に、ある $w\in\mathsf{Motz}$ に対して$ \operatorname{quad}(p)=3w$
 であると仮定する。これを
@@ -445,7 +460,7 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
  \qquad
  w=q_2q_3\cdots q_m
 \]
-と書く。条件$w\in\mathsf{Motz}$を形式的に書けば、
+と書く。条件 $w\in\mathsf{Motz}$ は、明示的には
 \begin{equation}\label{eq:reverse-motzkin-prefix}
  \sum_{i=2}^{j}\sigma(q_i)\geq0
  \qquad(2\leq j\leq m)
@@ -454,7 +469,7 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
 \begin{equation}\label{eq:reverse-motzkin-total}
  \sum_{i=2}^{m}\sigma(q_i)=0
 \end{equation}
-である。$m=1$ の場合、いずれの和も空和と解釈し、接頭辞条件は空虚に
+が成り立つ。$m=1$ の場合、いずれの和も空和と解釈し、接頭辞条件は空虚に
 成り立つものとする。
 
 各4進数字を2ビットブロックに置き換えるモノイド準同型
@@ -468,35 +483,39 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
  \phi(1)=01,\qquad
  \phi(0)=00
 \]
-と定める。$q_{m+1}:=0_{(4)}$ とおき、
+と定める。$q_{m+1}:=0$ とおき、
 \[
- B:=\phi( \operatorname{quad}(p)q_{m+1})=\phi(q_1q_2\cdots q_mq_{m+1})
-   =:b_1b_2\cdots  b_{2m+1}b_{2m+2}
+ B:=\phi(q_1q_2\cdots q_mq_{m+1})
+   =b_1b_2\cdots b_{2m+2}
 \]
-とする。$b_{2m+1}b_{2m+2}=00_{(2)}$なので、
+とする。最後の2ビットは
+\[
+ b_{2m+1}b_{2m+2}=00_{(2)}
+\]
+を満たす。各4進数字は対応する2ビットの2進ブロックに置き換えられるので、
 \begin{equation}\label{eq:block-value}
- [B]_2=[b_1b_2\cdots  b_{2m+1}b_{2m+2}]_2=4p
+ [B]_2=[q_1q_2\cdots q_m0]_4=4p
 \end{equation}
-である。$B$ の高さ関数は
+である。$B$ の高さ関数を
 \[
  h_B(t):=\sum_{i=1}^{t}(2b_i-1)
  \qquad(0\leq t\leq2m+2)
 \]
-で計算できるのであった。先ほどと同じブロックごとの計算により、
+と定める。先ほどと同じブロックごとの計算により、
 \begin{equation}\label{eq:reverse-height-sigma}
  h_B(2j)=2\sum_{i=1}^{j}\sigma(q_i)
  \qquad(0\leq j\leq m+1)
 \end{equation}
 が成り立つ。
 
-まず、偶数位置の高さを調べる。$1\leq j\leq m$ に対して、$\sigma(q_1)=\sigma(3)=1$および\eqref{eq:reverse-motzkin-prefix}により、
+まず、ブロック境界、すなわち偶数位置の高さを調べる。$1\leq j\leq m$ に対して、
 \[
  \sum_{i=1}^{j}\sigma(q_i)
  = \sigma(q_1)+\sum_{i=2}^{j}\sigma(q_i)
 =1+\sum_{i=2}^{j}\sigma(q_i)
  \geq1
 \]
-である。ただし $j=1$ の場合、第2項は空和 $0$ とする。\eqref{eq:reverse-height-sigma}より、
+である。ただし $j=1$ の場合、第2項は空和 $0$ とする。したがって、
 \begin{equation}\label{eq:positive-even-height}
  h_B(2j)\geq2
  \qquad(1\leq j\leq m)
@@ -513,7 +532,7 @@ $\sigma(q_1)=\sigma(3)=1$ および $\sigma(q_L)=\sigma(0)=-1$ であるから�
  h_B(2m+2)=0.
 \end{equation}
 
-残るのは、奇数位置 $2j-1$
+残るのは、各ブロックの内部、すなわち奇数位置 $2j-1$
 （$1\leq j\leq m+1$）の高さの確認である。$j=1$ の場合、$q_1=3$ なので最初の
 ブロックは $11$ であり、$ h_B(1)=1$で問題ない。
 
@@ -528,7 +547,7 @@ $q_j=1$ の場合、そのブロックは $01$ であり、同じく
 \[
  h_B(2j-1)=h_B(2j-2)-1\geq1.
 \]
-最後に $q_j=0_{(4)}$すなわち$00_{(2)}$の場合を考える。\eqref{eq:reverse-motzkin-prefix} より、
+最後に $q_j=0$ とする。\eqref{eq:reverse-motzkin-prefix} より、
 \[
  0\leq\sum_{i=2}^{j}\sigma(q_i)
  =\sum_{i=2}^{j-1}\sigma(q_i)+\sigma(q_j)=\sum_{i=2}^{j-1}\sigma(q_i)-1,
@@ -537,34 +556,46 @@ $q_j=1$ の場合、そのブロックは $01$ であり、同じく
 \[
  \sum_{i=2}^{j-1}\sigma(q_i)\geq1.
 \]
-ゆえに、\eqref{eq:reverse-height-sigma} において$j:=j-1$を代入すれば、
+式~\eqref{eq:reverse-height-sigma} において $j$ を $j-1$ に置き換え、
+$\sigma(q_1)=1$ を用いると、
 \[
+\begin{aligned}
  h_B(2j-2)
-   =2\left(\sum_{i=1}^{j-1}\sigma(q_i)\right) =2\left(\sigma(q_1)+\sum_{i=2}^{j-1}\sigma(q_i)\right)=2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
- \geq4,
+ &=2\sum_{i=1}^{j-1}\sigma(q_i)\\
+ &=2\left(1+\sum_{i=2}^{j-1}\sigma(q_i)\right)
+ \geq4
+\end{aligned}
 \]
-したがって
+を得る。したがって
 \[
  h_B(2j-1)=h_B(2j-2)-1\geq3.
 \]
 
 付け加えた終端数字 $q_{m+1}=0$ については、
-  \eqref{eq:reverse-height-sigma} と\eqref{eq:reverse-motzkin-total}より、
+式~\eqref{eq:reverse-height-sigma} と \eqref{eq:reverse-motzkin-total} より、
 \[
- h_B(2m)=2\left(\sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)\right)=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)=2.
+\begin{aligned}
+ h_B(2m)
+ &=2\left(\sigma(q_1)+\sum_{i=2}^{m}\sigma(q_i)\right)\\
+ &=2\left(1+\sum_{i=2}^{m}\sigma(q_i)\right)
+ =2
+\end{aligned}
 \]
-したがって、終端ブロック $00$ は
+である。したがって、終端ブロック $00$ は
 \[
  h_B(2m+1)=1>0
 \]
 を経て、\eqref{eq:terminal-height} の高さで終わる。
 
-以上により、$1\leq t<2m+2$の全ての場合で
+任意の整数 $t$（$1\leq t<2m+2$）は、ある $1\leq j\leq m$ に対する
+$t=2j$、またはある $1\leq j\leq m+1$ に対する $t=2j-1$ のいずれかである。
+偶数の場合は \eqref{eq:positive-even-height}、奇数の場合は直前の場合分けによって、$1\leq t<2m+2$の全てで
 $ h_B(t)>0$を確認できた。一方、\eqref{eq:terminal-height} より $h_B(2m+2)=0$ である。
 したがって $B\in\DP$ である。
 
-さらに、$\operatorname{quad}(p)$の先頭数字は $3$ なので $p\geq3$、したがって
-$4p\geq12$ である。\eqref{eq:block-value}である$[B]_2=4p$ と $B\in\DP$ を合わせると、$p\in\Pset$ である。これで十分性も示された。
+さらに、$p$ の4進展開の先頭数字は $3$ なので $p\geq3$、したがって
+$4p\geq12$ である。\eqref{eq:block-value} と $B\in\DP$ を合わせると、$ 4p\in\NpD$および$4p\geq12$.
+$\Pset$ の定義より $p\in\Pset$ である。これで十分性も示された。
 \end{proof}
 
 この特徴づけから、後で用いる自己相似性が得られる。
@@ -584,8 +615,11 @@ $p\in\Pset$ ならば、$4p+1$ および $4p+2$ も $\Pset$ に属する。
  \qquad
  \operatorname{quad}(4p+2)=3w2
 \]
-である。$\sigma(1_{(4)})=\sigma(2_{(4)})=0$なので、どちらを末尾に
-付け加えても $\mathsf{Motz}$ への所属は保たれる。したがって、補題~\ref{lem:base4}
+である。また、
+\[
+ \sigma(1)=\sigma(2)=0
+\]
+なので、どちらの数字を末尾に付け加えても $\mathsf{Motz}$ への所属は保たれる。したがって、補題~\ref{lem:base4}
 から主張が従う。
 \end{proof}
 
@@ -617,7 +651,11 @@ $\ell$ に関する帰納法を用いる。$\ell=0$ の場合は明らかであ�
 と書く。
 
 \emph{下界。}
-$\sigma(0)=-1$ なので、最初の数字は $0$ ではあり得ない。$c_0\in\{1,2\}$ の場合は$\sigma(c_0)=0$なので、接尾辞 $w'=c_1\cdots c_{\ell-1}$ も$\mathsf{Motz}$に属するので、語長$\ell-1$の帰納的仮定により、
+$\sigma(0)=-1$ なので、最初の数字は $0$ ではあり得ない。
+$c_0\in\{1,2\}$ の場合には $\sigma(c_0)=0$ であるから、最初の数字を削除しても、
+それ以後の接頭辞の重みと語全体の重みは変わらない。したがって、接尾辞
+$w'=c_1\cdots c_{\ell-1}$ も2色Motzkin語である。長さ $\ell-1$ の語に対する
+帰納法の仮定により、
 \[
   [w]_4\geq4^{\ell-1}+[w']_4
   \geq4^{\ell-1}+\frac{4^{\ell-1}-1}{3}
@@ -633,7 +671,8 @@ $\sigma(0)=-1$ なので、最初の数字は $0$ ではあり得ない。$c_0\i
 である。等号は $w=1^{\ell}$ によって達成される。
 
 \emph{上界。}
-$c_0\in\{1,2\}$ の場合、$\sigma(c_0)=0$より$w'$ も$\mathsf{Motz}$に属するので、語長$\ell-1$の帰納的仮定により、
+$c_0\in\{1,2\}$ の場合、上と同様に $w'$ も2色Motzkin語である。
+長さ $\ell-1$ の語に対する帰納法の仮定により、
 \begin{align*}
   [w]_4
   &=[c_0c_1\cdots c_{\ell-1}]_4\\
@@ -644,15 +683,25 @@ $c_0\in\{1,2\}$ の場合、$\sigma(c_0)=0$より$w'$ も$\mathsf{Motz}$に属�
 \end{align*}
 である。
 
-次に $c_0=3$ とし、$w$を左から読んで総重み$\sigma$が始めて$0$ となる空でない接頭辞を$u$とする。$r=|u|$とすれば $2\leq r\leq\ell$であり、残りの接尾辞を$v$で表記すると、
+次に $c_0=3$ とし、総重みが $0$ となる最短の空でない接頭辞の長さを $r$ とする。
+この接頭辞は $3u0$ の形をもち、ここで
 \[
-  u=c_1\cdots c_{r-2},
-  \qquad
-  c_{r-1}=0,
-  \qquad
-  v=c_r\cdots c_{\ell-1}
+ u=c_1\cdots c_{r-2}
 \]
-であり、$|u|=r-2$かつ$|v|=\ell-r$であり$u,\, v\mathsf{Motz}$である。$c_0=3$の場合を今考えているので$w=3u0v$ である。位取り記数法と帰納法の仮定から、
+とする。また、残りの接尾辞を
+\[
+ v=c_r\cdots c_{\ell-1}
+\]
+とおく。このとき
+\[
+ 2\leq r\leq\ell,
+ \qquad
+ |u|=r-2,
+ \qquad
+ |v|=\ell-r
+\]
+であり、$u,v\in\mathsf{Motz}$ である。したがって $w=3u0v$ である。
+位取り記数法と帰納法の仮定から、
 \begin{align*}
   [w]_4
   &=3\cdot4^{\ell-1}+[u]_4\,4^{\ell-r+1}+[v]_4\\
@@ -680,7 +729,17 @@ $c_0\in\{1,2\}$ の場合、$\sigma(c_0)=0$より$w'$ も$\mathsf{Motz}$に属�
 を得るので、上界は達成される。
 \end{proof}
 
-$\Pset$ の元の基数4展開がちょうど $d$ 桁であるとき、その元は\emph{世代 $d$} に属するという。補題~\ref{lem:base4} により、ある $w\in\mathsf{Motz}$ が存在して$ \operatorname{quad}(p)=3w$となるので、世代 $d$ の元の値は $[3w]_4=3\cdot4^{d-1}+[w]_4$ である。ここで $|w|=d-1$ である。補題\ref{lem:extremal}により直ちに以下の系が得られる。
+$\Pset$ の元の基数4展開がちょうど $d$ 桁であるとき、その元は\emph{世代 $d$} に
+属するという。補題~\ref{lem:base4} により、世代 $d$ の元 $p$ は、ある
+$w\in\mathsf{Motz}$ に対して
+\[
+ \operatorname{quad}(p)=3w
+\]
+を満たし、$|w|=d-1$ である。したがって、
+\[
+ p=[3w]_4=3\cdot4^{d-1}+[w]_4
+\]
+である。次の系は補題~\ref{lem:extremal} から直ちに従う。
 
 \begin{corollary}[世代境界]\label{cor:gen}
 任意の $d\geq1$ に対し、$\Pset$ の世代 $d$ の任意の元は
@@ -703,10 +762,26 @@ $\Pset$ の元の基数4展開がちょうど $d$ 桁であるとき、その元
 \end{corollary}
 
 \begin{proof}
-区間の主張は$[3w]_4=3\cdot4^{d-1}+[w]_4$に\eqref{lem:extremal}において$\ell=d-1$とした$\frac{4^{d-1}-1}{3}\leq[w]_4\leq4^{d-1}-2^{d-1}$を代入することで得られる。端点が達成されることは、補題~\ref{lem:extremal} の極値語$w_{\max,\ell}$から従う。(a) は、次の世代が $g_{d+1}>3\cdot4^d$ から始まることによる。最後に、
-$  3g_{k+1}
+$p$ を世代 $d$ の元とする。直前の議論より、ある $w\in\mathsf{Motz}$ が存在して
+$|w|=d-1$ かつ
+\[
+ p=3\cdot4^{d-1}+[w]_4
+\]
+である。式~\eqref{eq:motzkin-extrema} に $\ell=d-1$ を代入すると、
+\[
+ \frac{4^{d-1}-1}{3}
+ \leq[w]_4
+ \leq4^{d-1}-2^{d-1}
+\]
+を得る。両辺に $3\cdot4^{d-1}$ を加えれば、式~\eqref{eq:generation-interval}
+が従う。下端点は $w=1^{d-1}$ によって達成され、上端点は
+$w=w_{\max,d-1}$ によって達成される。(a) は、次の世代が
+$g_{d+1}>3\cdot4^d$ から始まることによる。最後に、
+\[
+  3g_{k+1}
   =3\left(3\cdot4^k+\frac{4^k-1}{3}\right)
-  =10\cdot4^k-1$
+  =10\cdot4^k-1
+\]
 である。
 \end{proof}
 
