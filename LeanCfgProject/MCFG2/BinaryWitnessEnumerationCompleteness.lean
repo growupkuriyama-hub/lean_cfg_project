@@ -171,7 +171,10 @@ theorem totalLeftVarCount_leftVar_cons
             (Finset.mem_univ k)
             (by
               intro i hi hik
-              simp [hik, eq_comm]))
+              have hki : k ≠ i := by
+                intro h
+                exact hik h.symm
+              simp [hki]))
       rw [hdelta]
     _ = totalLeftVarCount rest + 1 := by
       rfl
@@ -216,7 +219,10 @@ theorem totalRightVarCount_rightVar_cons
             (Finset.mem_univ k)
             (by
               intro j hj hjk
-              simp [hjk, eq_comm]))
+              have hkj : k ≠ j := by
+                intro h
+                exact hjk h.symm
+              simp [hkj]))
       rw [hdelta]
     _ = totalRightVarCount rest + 1 := by
       rfl
