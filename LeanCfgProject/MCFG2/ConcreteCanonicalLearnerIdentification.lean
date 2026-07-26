@@ -167,7 +167,7 @@ theorem presentationDerives_exactReachable_from_typed_anchor
             typedTerminalLHS S τa :=
         PresentTypedNonterminal.eq_of_node_eq rfl
 
-      rw [hnode]
+      cases hnode
 
       exact
         ExactSampleLearnerReachable.unit
@@ -199,11 +199,8 @@ theorem presentationDerives_exactReachable_from_typed_anchor
             typedBinaryLHS S τa :=
         PresentTypedNonterminal.eq_of_node_eq rfl
 
-      have ihx' := ihx
-      rw [hleft] at ihx'
-
-      have ihy' := ihy
-      rw [hright] at ihy'
+      cases hleft
+      cases hright
 
       have hparent :
           ExactSampleLearnerReachable
@@ -256,9 +253,9 @@ theorem presentationDerives_exactReachable_from_typed_anchor
               S hworking hworking.basic.1.symm τa)
             (hworking.2
               τ.baseRule τ.inGrammar)
-            ihx' ihy'
+            ihx ihy
 
-      rw [hlhs]
+      cases hlhs
 
       exact ExactSampleLearnerReachable.trans
         hparent hchildren
@@ -306,7 +303,8 @@ theorem presentationStringDerives_exactReachable
         obs f
         (successfulTypedAnchor S childPresent)
         D.childTuple := by
-    simpa [hchildNode] using
+    cases hchildNode
+    exact
       presentationDerives_exactReachable_from_typed_anchor
         S hworking hfan D.child_derives
 
