@@ -122,31 +122,69 @@ namespace DerivesTuple
 /-- Recursively erase all possibility of a start step from a derivation whose
 root nonterminal is known not to be the distinguished start symbol.
 
-The recursive calls are justified by the start-separation conditions on binary
-children.  The `start` constructor is impossible because its conclusion is
-definitionally rooted at `G.start`. -/
-def toStartFreeOfNeStart
+The induction motive keeps the non-start hypothesis as an implication.  This
+avoids a dependent termination measure and lets Lean eliminate the indexed
+derivation without transporting the grammar record itself. -/
+theorem toStartFreeOfNeStart
     {G : WorkingMCFG N α}
     (hsep : G.StartSeparated)
     {A : N}
     {x : Tuple α (G.arity A)}
-    (h : DerivesTuple G A x)
-    (hA : A ≠ G.start) :
-    StartFreeDerives G A x :=
-  match h with
-  | .terminal hρ hwt =>
-      StartFreeDerives.terminal hρ hwt
+    (h : DerivesTuple G A x) :
+    A ≠ G.start → StartFreeDerives G A x := by
+  induction h with
+  | terminal hρ hwt =>
+      intro _
+      exact StartFreeDerives.terminal hρ hwt
 
-  | .binary hρ hx hy =>
-      StartFreeDerives.binary hρ
-        (toStartFreeOfNeStart hsep hx
-          (hsep.binary_left_ne_start _ hρ))
-        (toStartFreeOfNeStart hsep hy
-          (hsep.binary_right_ne_start _ hρ))
+  | binary hρ hx hy ihx ihy =>
+      intro _
+      exact StartFreeDerives.binary hρ
+        (ihx (hsep.binary_left_ne_start _ hρ))
+        (ihy (hsep.binary_right_ne_start _ hρ))
 
-  | .start _ _ _ =>
-      False.elim (hA rfl)
-termination_by h
+  | start hρ hx hwt ihx =>
+      intro hA
+      exact False.elim (hA rfl)
+
+/-- A derivation whose root is equal to the distinguished start symbol
+decomposes into one start rule and a start-free child derivation.  Stating the
+root equality as an implication gives the induction a nondependent motive. -/
+theorem startRule_startFree_of_eq_start
+    {G : WorkingMCFG N α}
+    (hworking : G.BasicWorkingConditions)
+    (hsep : G.StartSeparated)
+    {A : N}
+    {x : Tuple α (G.arity A)}
+    (h : DerivesTuple G A x) :
+    A = G.start →
+      ∃ ρ : StartRule N,
+        ∃ hρ : ρ ∈ G.startRules,
+          ∃ childTuple : Tuple α (G.arity ρ.child),
+            StartFreeDerives G ρ.child childTuple ∧
+              x = castTuple
+                (hworking.2.1 ρ hρ)
+                childTuple := by
+  induction h with
+  | terminal hρ hwt =>
+      intro hA
+      exact False.elim
+        ((hsep.terminal_lhs_ne_start _ hρ) hA)
+
+  | binary hρ hx hy ihx ihy =>
+      intro hA
+      exact False.elim
+        ((hsep.binary_lhs_ne_start _ hρ) hA)
+
+  | start hρ hx hwt ihx =>
+      intro _
+      refine ⟨_, hρ, _, ?_, ?_⟩
+      · exact hx.toStartFreeOfNeStart hsep
+          (hsep.start_child_ne_start _ hρ)
+      · have hp : hwt = hworking.2.1 _ hρ :=
+          Subsingleton.elim _ _
+        cases hp
+        rfl
 
 /-- A derivation rooted at the distinguished start symbol is exactly one start
 rule followed by a start-free child derivation. -/
@@ -165,23 +203,8 @@ theorem start_iff_startRule_startFree
                 childTuple := by
   constructor
   · intro h
-    cases h with
-    | terminal hρ hwt =>
-        exact False.elim
-          ((hsep.terminal_lhs_ne_start _ hρ) rfl)
-
-    | binary hρ hx hy =>
-        exact False.elim
-          ((hsep.binary_lhs_ne_start _ hρ) rfl)
-
-    | start hρ hx hwt =>
-        refine ⟨_, hρ, _, ?_, ?_⟩
-        · exact hx.toStartFreeOfNeStart hsep
-            (hsep.start_child_ne_start _ hρ)
-        · have hp : hwt = hworking.2.1 _ hρ :=
-            Subsingleton.elim _ _
-          cases hp
-          rfl
+    exact startRule_startFree_of_eq_start
+      hworking hsep h rfl
 
   · rintro ⟨ρ, hρ, childTuple, hchild, rfl⟩
     exact DerivesTuple.start
@@ -212,13 +235,13 @@ theorem stringLanguage_subset_startRooted_of_startSeparated
         hworking hsep).mp hderives with
     ⟨ρ, hρ, childTuple, hchild, htuple⟩
   exact
-    { startRule := ρ
-      start_mem := hρ
-      start_wellTyped := hworking.2.1 ρ hρ
-      childTuple := childTuple
-      child_derives := hchild
-      start_arity := hstart
-      word_eq := htuple }
+    ⟨{ startRule := ρ
+       start_mem := hρ
+       start_wellTyped := hworking.2.1 ρ hρ
+       childTuple := childTuple
+       child_derives := hchild
+       start_arity := hstart
+       word_eq := htuple }⟩
 
 /-- Under start separation, the start-rooted normal-form language is exactly
 the original string language. -/
@@ -276,7 +299,7 @@ end PresentationGrammarStartSeparation
 section ConcretePresentationCompleteness
 
 variable {N : Type v} {α : Type u} {M : Type w}
-variable [Fintype N] [Fintype M] [DecidableEq M] [Monoid M]
+variable [Fintype N] [DecidableEq N] [Fintype M] [DecidableEq M] [Monoid M]
 variable {G : WorkingMCFG N α} {obs : α → M}
 
 /-- Start separation discharges the semantic completeness assumption of the
@@ -345,12 +368,10 @@ theorem concreteCompletePresentation_workingGrammar_eq_original_of_startSeparate
     (hworking : G.BasicWorkingConditions)
     (hsep : G.StartSeparated) :
     (concreteCompleteOutputTypePresentation_of_startSeparated
-        (G := G) (obs := obs) hworking hsep).
-        presentation.toWorkingMCFG.StringLanguage =
+        (G := G) (obs := obs) hworking hsep).presentation.toWorkingMCFG.StringLanguage =
       G.StringLanguage :=
   (concreteCompleteOutputTypePresentation_of_startSeparated
-    (G := G) (obs := obs) hworking hsep).
-    workingGrammar_stringLanguage_eq_original
+    (G := G) (obs := obs) hworking hsep).workingGrammar_stringLanguage_eq_original
 
 end ConcretePresentationCompleteness
 
