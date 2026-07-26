@@ -1,3 +1,5 @@
+
+-- Revision marker: explicit obs parameters and stable dependent transports.
 /-
 Copyright (c) 2026 Takayuki Kuriyama. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
@@ -59,6 +61,7 @@ namespace TypedNonterminal
 /-- A typed nonterminal is successful when one tuple of exactly its stored
 output type occurs inside a successful exact-once derivation. -/
 def HasSuccessfulOccurrence
+    (obs : α → M)
     (X : TypedNonterminal G M) : Prop :=
   ∃ (x : Tuple α (G.arity X.base))
     (c : NamedSentenceContext α (G.arity X.base)),
@@ -72,7 +75,8 @@ theorem hasSuccessfulOccurrence_of_occurrence
     {x : Tuple α (G.arity A)}
     {c : NamedSentenceContext α (G.arity A)}
     (O : ExactSuccessfulDerivationOccurrence G A x c) :
-    (TypedNonterminal.ofTuple obs A x).HasSuccessfulOccurrence :=
+    TypedNonterminal.HasSuccessfulOccurrence obs
+      (TypedNonterminal.ofTuple obs A x) :=
   ⟨x, c, O, TypedNonterminal.matches_ofTuple obs A x⟩
 
 /-- A successful occurrence together with a matching proof establishes
@@ -83,7 +87,7 @@ theorem hasSuccessfulOccurrence_of_matches
     {c : NamedSentenceContext α (G.arity X.base)}
     (O : ExactSuccessfulDerivationOccurrence G X.base x c)
     (hx : X.Matches obs x) :
-    X.HasSuccessfulOccurrence :=
+    TypedNonterminal.HasSuccessfulOccurrence obs X :=
   ⟨x, c, O, hx⟩
 
 end TypedNonterminal
@@ -100,15 +104,17 @@ variable {G : WorkingMCFG N α} {obs : α → M}
 namespace ConcreteSuccessfulOutputTypeRefinement
 
 /-- The finite set of all successful output-typed nonterminals. -/
-noncomputable def successfulNonterminals :
+noncomputable def successfulNonterminals
+    (obs : α → M) :
     Finset (TypedNonterminal G M) := by
   classical
   exact
     (allTypedNonterminals (G := G) (M := M)).filter
-      TypedNonterminal.HasSuccessfulOccurrence
+      (fun X => TypedNonterminal.HasSuccessfulOccurrence obs X)
 
 /-- The finite set of typed terminal rules whose typed lhs is successful. -/
 noncomputable def successfulTerminalRules
+    (obs : α → M)
     (hworking : G.BasicWorkingConditions) :
     Finset (TypedTerminalRule G) := by
   classical
@@ -116,23 +122,25 @@ noncomputable def successfulTerminalRules
     (ConcreteOutputTypeRefinement.allTypedTerminalRules
       (G := G) hworking).filter
         (fun τ =>
-          (τ.lhs obs).HasSuccessfulOccurrence)
+          TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs))
 
 /-- The finite set of typed binary rules whose two children and lhs are all
 successful. -/
-noncomputable def successfulBinaryRules :
+noncomputable def successfulBinaryRules
+    (obs : α → M) :
     Finset (TypedBinaryRule G M) := by
   classical
   exact
     (ConcreteOutputTypeRefinement.allTypedBinaryRules
       (G := G) (M := M)).filter
         (fun τ =>
-          τ.left.HasSuccessfulOccurrence ∧
-            τ.right.HasSuccessfulOccurrence ∧
-              (τ.lhs obs).HasSuccessfulOccurrence)
+          TypedNonterminal.HasSuccessfulOccurrence obs τ.left ∧
+            TypedNonterminal.HasSuccessfulOccurrence obs τ.right ∧
+              TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs))
 
 /-- The finite set of typed start rules whose typed child is successful. -/
 noncomputable def successfulStartRules
+    (obs : α → M)
     (hworking : G.BasicWorkingConditions) :
     Finset (TypedStartRule G M) := by
   classical
@@ -140,7 +148,7 @@ noncomputable def successfulStartRules
     (ConcreteOutputTypeRefinement.allTypedStartRules
       (G := G) hworking).filter
         (fun σ =>
-          σ.child.HasSuccessfulOccurrence)
+          TypedNonterminal.HasSuccessfulOccurrence obs σ.child)
 
 /-- The concrete successful trim of the full finite output-type
 presentation. -/
@@ -150,71 +158,87 @@ noncomputable def presentation
   classical
   exact
     { nonterminals :=
-        successfulNonterminals (G := G) (obs := obs)
+        successfulNonterminals (G := G) obs
 
       terminalRules :=
-        successfulTerminalRules (G := G) (obs := obs) hworking
+        successfulTerminalRules (G := G) obs hworking
 
       binaryRules :=
-        successfulBinaryRules (G := G) (obs := obs)
+        successfulBinaryRules (G := G) obs
 
       startRules :=
-        successfulStartRules (G := G) (obs := obs) hworking
+        successfulStartRules (G := G) obs hworking
 
       terminal_lhs_mem := by
         intro τ hτ
-        have hs :
-            (τ.lhs obs).HasSuccessfulOccurrence :=
-          (Finset.mem_filter.mp hτ).2
+        have hfilter :
+            τ ∈ ConcreteOutputTypeRefinement.allTypedTerminalRules
+                  (G := G) hworking ∧
+              TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs) := by
+          simpa [successfulTerminalRules] using hτ
         apply Finset.mem_filter.mpr
         exact
           ⟨mem_allTypedNonterminals
               (G := G) (M := M) (τ.lhs obs),
-            hs⟩
+            hfilter.2⟩
 
       binary_lhs_mem := by
         intro τ hτ
-        have hs :
-            (τ.lhs obs).HasSuccessfulOccurrence :=
-          (Finset.mem_filter.mp hτ).2.2.2
+        have hfilter :
+            τ ∈ ConcreteOutputTypeRefinement.allTypedBinaryRules
+                  (G := G) (M := M) ∧
+              (TypedNonterminal.HasSuccessfulOccurrence obs τ.left ∧
+                TypedNonterminal.HasSuccessfulOccurrence obs τ.right ∧
+                  TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs)) := by
+          simpa [successfulBinaryRules] using hτ
         apply Finset.mem_filter.mpr
         exact
           ⟨mem_allTypedNonterminals
               (G := G) (M := M) (τ.lhs obs),
-            hs⟩
+            hfilter.2.2.2⟩
 
       binary_left_mem := by
         intro τ hτ
-        have hs :
-            τ.left.HasSuccessfulOccurrence :=
-          (Finset.mem_filter.mp hτ).2.1
+        have hfilter :
+            τ ∈ ConcreteOutputTypeRefinement.allTypedBinaryRules
+                  (G := G) (M := M) ∧
+              (TypedNonterminal.HasSuccessfulOccurrence obs τ.left ∧
+                TypedNonterminal.HasSuccessfulOccurrence obs τ.right ∧
+                  TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs)) := by
+          simpa [successfulBinaryRules] using hτ
         apply Finset.mem_filter.mpr
         exact
           ⟨mem_allTypedNonterminals
               (G := G) (M := M) τ.left,
-            hs⟩
+            hfilter.2.1⟩
 
       binary_right_mem := by
         intro τ hτ
-        have hs :
-            τ.right.HasSuccessfulOccurrence :=
-          (Finset.mem_filter.mp hτ).2.2.1
+        have hfilter :
+            τ ∈ ConcreteOutputTypeRefinement.allTypedBinaryRules
+                  (G := G) (M := M) ∧
+              (TypedNonterminal.HasSuccessfulOccurrence obs τ.left ∧
+                TypedNonterminal.HasSuccessfulOccurrence obs τ.right ∧
+                  TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs)) := by
+          simpa [successfulBinaryRules] using hτ
         apply Finset.mem_filter.mpr
         exact
           ⟨mem_allTypedNonterminals
               (G := G) (M := M) τ.right,
-            hs⟩
+            hfilter.2.2.1⟩
 
       start_child_mem := by
         intro σ hσ
-        have hs :
-            σ.child.HasSuccessfulOccurrence :=
-          (Finset.mem_filter.mp hσ).2
+        have hfilter :
+            σ ∈ ConcreteOutputTypeRefinement.allTypedStartRules
+                  (G := G) hworking ∧
+              TypedNonterminal.HasSuccessfulOccurrence obs σ.child := by
+          simpa [successfulStartRules] using hσ
         apply Finset.mem_filter.mpr
         exact
           ⟨mem_allTypedNonterminals
               (G := G) (M := M) σ.child,
-            hs⟩ }
+            hfilter.2⟩ }
 
 /-- Membership in the successful nonterminal set is exactly successful
 occurrence. -/
@@ -222,7 +246,7 @@ theorem hasNonterminal_iff
     (hworking : G.BasicWorkingConditions)
     (X : TypedNonterminal G M) :
     (presentation (G := G) (obs := obs) hworking).HasNonterminal X ↔
-      X.HasSuccessfulOccurrence := by
+      TypedNonterminal.HasSuccessfulOccurrence obs X := by
   classical
   simp [presentation, successfulNonterminals,
     OutputTypeRefinementPresentation.HasNonterminal,
@@ -250,6 +274,12 @@ theorem canonicalTerminalRule_mem
   let τ :=
     ConcreteOutputTypeRefinement.canonicalTerminalRule
       hworking.basic ρ hρ
+  change
+    τ ∈
+      (ConcreteOutputTypeRefinement.allTypedTerminalRules
+        (G := G) hworking.basic).filter
+        (fun τ =>
+          TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs))
   apply Finset.mem_filter.mpr
   refine
     ⟨ConcreteOutputTypeRefinement.canonicalTerminalRule_mem
@@ -257,6 +287,7 @@ theorem canonicalTerminalRule_mem
       ?_⟩
   exact
     TypedNonterminal.hasSuccessfulOccurrence_of_matches
+      (obs := obs)
       (τ.lhs obs)
       O
       (τ.cast_outputTuple_matches_lhs obs)
@@ -291,6 +322,14 @@ theorem canonicalBinaryRule_mem
   let τ :=
     ConcreteOutputTypeRefinement.canonicalBinaryRule
       ρ hρ (tupleType obs x) (tupleType obs y)
+  change
+    τ ∈
+      (ConcreteOutputTypeRefinement.allTypedBinaryRules
+        (G := G) (M := M)).filter
+        (fun τ =>
+          TypedNonterminal.HasSuccessfulOccurrence obs τ.left ∧
+            TypedNonterminal.HasSuccessfulOccurrence obs τ.right ∧
+              TypedNonterminal.HasSuccessfulOccurrence obs (τ.lhs obs))
   apply Finset.mem_filter.mpr
   refine
     ⟨ConcreteOutputTypeRefinement.canonicalBinaryRule_mem
@@ -311,6 +350,7 @@ theorem canonicalBinaryRule_mem
         (obs := obs) rightOccurrence
   · exact
       TypedNonterminal.hasSuccessfulOccurrence_of_matches
+        (obs := obs)
         (τ.lhs obs)
         parentOccurrence
         (τ.apply_matches_lhs obs rfl rfl)
@@ -332,6 +372,12 @@ theorem canonicalStartRule_mem
   let σ :=
     ConcreteOutputTypeRefinement.canonicalStartRule
       hworking.basic ρ hρ (tupleType obs x)
+  change
+    σ ∈
+      (ConcreteOutputTypeRefinement.allTypedStartRules
+        (G := G) hworking.basic).filter
+        (fun σ =>
+          TypedNonterminal.HasSuccessfulOccurrence obs σ.child)
   apply Finset.mem_filter.mpr
   refine
     ⟨ConcreteOutputTypeRefinement.canonicalStartRule_mem
@@ -485,17 +531,37 @@ theorem toConcreteSuccessfulPresentation
           TypedBinaryRule.right,
           TypedNonterminal.ofTuple] using ihy'
 
-      have hparent :
-          τ.lhs obs =
-            TypedNonterminal.ofTuple obs ρ.lhs
-              (ρ.apply x y) :=
-        TypedNonterminal.eq_of_matches
-          (τ.lhs obs)
-          (ρ.apply x y)
-          (τ.apply_matches_lhs obs rfl rfl)
+      have hbinary :
+          PresentationDerives
+            (ConcreteSuccessfulOutputTypeRefinement.presentation
+              (G := G) (obs := obs) hworking.basic)
+            (τ.lhs obs)
+            (ρ.apply x y) :=
+        PresentationDerives.binary hmem ihxτ ihyτ
 
-      rw [← hparent]
-      exact PresentationDerives.binary hmem ihxτ ihyτ
+      have hbinary_explicit :
+          PresentationDerives
+            (ConcreteSuccessfulOutputTypeRefinement.presentation
+              (G := G) (obs := obs) hworking.basic)
+            ({ base := ρ.lhs,
+               out := (τ.lhs obs).out } :
+              TypedNonterminal G M)
+            (ρ.apply x y) := by
+        simpa [τ,
+          ConcreteOutputTypeRefinement.canonicalBinaryRule,
+          TypedBinaryRule.lhs] using hbinary
+
+      have hout :
+          (τ.lhs obs).out =
+            tupleType obs (ρ.apply x y) :=
+        (τ.apply_matches_lhs obs rfl rfl).symm
+
+      simpa [TypedNonterminal.ofTuple] using
+        (PresentationDerives.congr_output
+          (P := ConcreteSuccessfulOutputTypeRefinement.presentation
+            (G := G) (obs := obs) hworking.basic)
+          (A := ρ.lhs)
+          hout hbinary_explicit)
 
 end StartFreeDerives
 
@@ -678,7 +744,7 @@ noncomputable def concretePresentTypedSuccessfulOccurrence
     PresentTypedSuccessfulOccurrence X := by
   classical
   have hs :
-      X.node.HasSuccessfulOccurrence :=
+      TypedNonterminal.HasSuccessfulOccurrence obs X.node :=
     (ConcreteSuccessfulOutputTypeRefinement.hasNonterminal_iff
       (obs := obs) hworking.basic X.node).mp X.mem
   rcases hs with ⟨x, c, O, hx⟩
