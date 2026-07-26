@@ -127,7 +127,8 @@ theorem exactReachableSampleStringLanguage_mono
     ExactReachableSampleStringLanguage S obs f ⊆
       ExactReachableSampleStringLanguage K obs f := by
   intro word hword
-  exact hword.mono hSK
+  rcases hword with ⟨D⟩
+  exact ⟨D.mono hSK⟩
 
 end ExactReachabilityMonotonicity
 
@@ -156,10 +157,10 @@ theorem presentationDerives_exactReachable_from_typed_anchor
       x := by
   induction h with
 
-  | terminal hτ =>
+  | @terminal τ hτ =>
       let τa :
           S.completePresentation.presentation.terminalRules.attach :=
-        ⟨τ, hτ⟩
+        ⟨⟨τ, hτ⟩, by simp⟩
 
       have hnode :
           (PresentationDerives.terminal hτ).presentNode =
@@ -178,10 +179,10 @@ theorem presentationDerives_exactReachable_from_typed_anchor
             (castTuple τ.wellTyped.symm
               τ.baseRule.outputTuple))
 
-  | binary hτ hx hy ihx ihy =>
+  | @binary τ hτ x y hx hy ihx ihy =>
       let τa :
           S.completePresentation.presentation.binaryRules.attach :=
-        ⟨τ, hτ⟩
+        ⟨⟨τ, hτ⟩, by simp⟩
 
       have hleft :
           hx.presentNode =
@@ -289,7 +290,7 @@ theorem presentationStringDerives_exactReachable
 
   let σa :
       S.completePresentation.presentation.startRules.attach :=
-    ⟨D.startRule, D.start_mem⟩
+    ⟨⟨D.startRule, D.start_mem⟩, by simp⟩
 
   let childPresent :=
     typedStartChild S σa
@@ -353,21 +354,21 @@ theorem presentationStringDerives_exactReachable
       D.start_arity D.word_eq
 
   exact
-    { startWord :=
+    ⟨{ startWord :=
         typedStartWord S D.start_arity σa
 
-      start_mem := by
-        have hp :
-            D.start_arity =
-              hworking.basic.1.symm :=
-          Subsingleton.elim _ _
-        cases hp
-        exact typedStartWord_mem
-          S σa hworking.basic.1.symm
+       start_mem := by
+         have hp :
+             D.start_arity =
+               hworking.basic.1.symm :=
+           Subsingleton.elim _ _
+         cases hp
+         exact typedStartWord_mem
+           S σa hworking.basic.1.symm
 
-      reachable := by
-        rw [hsource, ← htarget]
-        exact hone }
+       reachable := by
+         rw [hsource, ← htarget]
+         exact hone }⟩
 
 /-- Completeness of exact reachable semantics for a complete successful typed
 presentation. -/
@@ -381,9 +382,11 @@ theorem completePresentation_subset_exactReachable_typedSample
         obs f := by
   intro word hword
 
+  rcases
+      S.completePresentation.complete.mem_presentation hword with
+    ⟨D⟩
   exact presentationStringDerives_exactReachable
-    S hworking hfan
-    (S.completePresentation.complete.mem_presentation hword)
+    S hworking hfan D
 
 /-- Exact reachable semantics is sound for every promised positive target. -/
 theorem exactReachableSampleStringLanguage_sound
@@ -398,9 +401,10 @@ theorem exactReachableSampleStringLanguage_sound
       G.StringLanguage := by
   intro word hword
 
+  rcases hword with ⟨D⟩
   exact
-    hword.toReachableSampleStringDerives.
-      sound_for_grammar G hL hK
+    (D.toReachableSampleStringDerives).sound_for_grammar
+      G hL hK
 
 /-- Exact reconstruction in the exact-once reachable semantics for a complete
 successful typed presentation. -/
@@ -418,7 +422,7 @@ theorem typedCharacteristicSample_exactReachable_reconstruction
   apply Set.Subset.antisymm
 
   · exact exactReachableSampleStringLanguage_sound
-      G
+      (G := G)
       (typedCharacteristicSample
         S hworking.basic.1.symm)
       hL
@@ -530,7 +534,8 @@ theorem concreteTypedCharacteristicSample_correctedConcrete_exact_for_positive_s
       exactReachableSampleStringLanguage_mono
         hSK hbase
 
-    exact hlarger.toCorrectedConcrete
+    rcases hlarger with ⟨D⟩
+    exact ⟨D.toCorrectedConcrete⟩
 
 /-- Every positive text eventually yields the target language under the
 corrected concrete canonical learner. -/

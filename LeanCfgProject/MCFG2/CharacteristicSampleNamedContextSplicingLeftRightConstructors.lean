@@ -132,8 +132,8 @@ splicing-constructor target. -/
 def toPreferredSplicingConstructorTarget
     (C : NamedContextLeftRightSplicingConstructors α) :
     PaperPreferredSplicingConstructorTarget (α := α) :=
-  C.toNamedContextSplicingConstructionData
-    .toPreferredSplicingConstructorTarget
+  NamedContextSplicingConstructionData.toPreferredSplicingConstructorTarget
+    C.toNamedContextSplicingConstructionData
 
 end NamedContextLeftRightSplicingConstructors
 
