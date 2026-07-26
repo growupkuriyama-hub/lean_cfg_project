@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.2.28)  26 JUL 2026 16:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.2.28)  26 JUL 2026 17:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -337,8 +337,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count315
-)
-No file primitive_dyck_tkuriyama_arxiv.aux.
+) (primitive_dyck_tkuriyama_arxiv.aux)
 \openout1 = `primitive_dyck_tkuriyama_arxiv.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
@@ -359,6 +358,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 36.
 LaTeX Font Info:    ... okay on input line 36.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 36.
 LaTeX Font Info:    ... okay on input line 36.
+
 (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -437,10 +437,12 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring OFF on input line 36.
+(primitive_dyck_tkuriyama_arxiv.out) (primitive_dyck_tkuriyama_arxiv.out)
 \@outlinefile=\write3
 \openout3 = `primitive_dyck_tkuriyama_arxiv.out'.
 
 LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
+
 
 (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -451,408 +453,24 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
 (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-
-LaTeX Warning: Citation `BHS' on page 1 undefined on input line 78.
-
-
-LaTeX Warning: Citation `RSS' on page 1 undefined on input line 79.
-
-
-LaTeX Warning: Citation `MNRS' on page 1 undefined on input line 79.
-
-
-LaTeX Warning: Citation `BLS' on page 1 undefined on input line 83.
-
-
-LaTeX Warning: Citation `Nederhof' on page 1 undefined on input line 87.
-
-
-LaTeX Warning: Citation `MohriNederhof' on page 1 undefined on input line 87.
-
-
-LaTeX Warning: Citation `RigoNumeration' on page 1 undefined on input line 90.
-
-
-LaTeX Warning: Citation `CLGR' on page 1 undefined on input line 92.
-
-
-LaTeX Warning: Citation `DeutschShapiro' on page 1 undefined on input line 96.
-
 [1
 
 {C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
-
-LaTeX Warning: Reference `sec:preliminaries' on page 3 undefined on input line 
-194.
-
-
-LaTeX Warning: Reference `sec:base4' on page 3 undefined on input line 195.
-
-
-LaTeX Warning: Reference `sec:lifting' on page 3 undefined on input line 196.
-
-
-LaTeX Warning: Reference `sec:exceptions' on page 3 undefined on input line 198
-.
-
-
-LaTeX Warning: Reference `sec:asymptotic' on page 3 undefined on input line 199
-.
-
-
-LaTeX Warning: Reference `sec:verification' on page 3 undefined on input line 2
-01.
-
-[3]
-
-LaTeX Warning: Reference `lem:mod4' on page 4 undefined on input line 259.
-
-
-LaTeX Warning: Citation `DeutschShapiro' on page 4 undefined on input line 276.
-
-
-[4]
-
-LaTeX Warning: Reference `eq:block-height' on page 5 undefined on input line 33
-1.
-
-
-LaTeX Warning: Reference `thm:block-coding' on page 5 undefined on input line 3
-73.
-
-
-LaTeX Warning: Reference `cor:base4' on page 5 undefined on input line 383.
-
-
-LaTeX Warning: Reference `cor:base4' on page 5 undefined on input line 398.
-
-[5] [6]
-
-LaTeX Warning: Reference `cor:base4' on page 7 undefined on input line 508.
-
-
-LaTeX Warning: Reference `lem:extremal' on page 7 undefined on input line 517.
-
-
-LaTeX Warning: Reference `eq:motzkin-extrema' on page 7 undefined on input line
- 540.
-
-
-LaTeX Warning: Reference `eq:generation-value' on page 7 undefined on input lin
-e 546.
-
-
-LaTeX Warning: Reference `eq:generation-interval' on page 7 undefined on input 
-line 547.
-
-[7]
-
-LaTeX Warning: Reference `eq:general-digit-closure' on page 8 undefined on inpu
-t line 582.
-
-
-LaTeX Warning: Reference `thm:general-digit-lifting' on page 8 undefined on inp
-ut line 601.
-
-
-LaTeX Warning: Reference `eq:digit-closure' on page 8 undefined on input line 6
-08.
-
-
-LaTeX Warning: Reference `lem:digit-lifting' on page 8 undefined on input line 
-631.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 8 undefined on input li
-ne 639.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 8 undefined on input li
-ne 653.
-
-[8]
-
-LaTeX Warning: Reference `eq:digit-closure' on page 9 undefined on input line 6
-62.
-
-
-LaTeX Warning: Reference `thm:block-coding' on page 9 undefined on input line 6
-74.
-
-
-LaTeX Warning: Reference `cor:base4' on page 9 undefined on input line 690.
-
-
-LaTeX Warning: Reference `eq:NpD-decomp' on page 9 undefined on input line 694.
-
-
-[9]
-
-LaTeX Warning: Reference `eq:E-small-certificate' on page 10 undefined on input
- line 769.
-
-
-LaTeX Warning: Reference `eq:E-tail-certificate' on page 10 undefined on input 
-line 773.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 10 undefined on input l
-ine 784.
-
-
-LaTeX Warning: Reference `eq:digit-closure' on page 10 undefined on input line 
-787.
-
-
-LaTeX Warning: Reference `eq:digit-closure' on page 10 undefined on input line 
-789.
-
-
-LaTeX Warning: Reference `eq:Eclosure' on page 10 undefined on input line 789.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 10 undefined on input l
-ine 798.
-
-[10]
-
-LaTeX Warning: Reference `prop:E' on page 11 undefined on input line 812.
-
-
-LaTeX Warning: Reference `eq:4E' on page 11 undefined on input line 812.
-
-[11]
-
-LaTeX Warning: Reference `cor:base4' on page 12 undefined on input line 882.
-
-
-LaTeX Warning: Reference `cor:gen' on page 12 undefined on input line 950.
-
-[12]
-
-LaTeX Warning: Reference `eq:finite-interval-certificate' on page 13 undefined 
-on input line 989.
-
-
-LaTeX Warning: Reference `eq:finite-five-lower-certificate' on page 13 undefine
-d on input line 990.
-
-
-LaTeX Warning: Reference `lem:Ecertificate' on page 13 undefined on input line 
-993.
-
-
-LaTeX Warning: Reference `lem:finitefive' on page 13 undefined on input line 99
-7.
-
-
-LaTeX Warning: Reference `cor:Pclosure' on page 13 undefined on input line 1013
-.
-
-
-LaTeX Warning: Reference `eq:fiveP-seed' on page 13 undefined on input line 101
-7.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 13 undefined on input l
-ine 1025.
-
-[13]
-
-LaTeX Warning: Reference `eq:P-small' on page 14 undefined on input line 1039.
-
-
-LaTeX Warning: Reference `eq:finite-five-lower-certificate' on page 14 undefine
-d on input line 1039.
-
-
-LaTeX Warning: Reference `lem:mod4' on page 14 undefined on input line 1097.
-
-[14]
-
-LaTeX Warning: Reference `eq:mod4-sumcriterion' on page 15 undefined on input l
-ine 1109.
-
-
-LaTeX Warning: Reference `lem:mod4-sumcriterion' on page 15 undefined on input 
-line 1124.
-
-
-LaTeX Warning: Reference `eq:L-def' on page 15 undefined on input line 1150.
-
-
-LaTeX Warning: Reference `eq:finiteexception' on page 15 undefined on input lin
-e 1164.
-
-
-LaTeX Warning: Reference `thm:classification' on page 15 undefined on input lin
-e 1168.
-
-
-LaTeX Warning: Reference `prop:E' on page 15 undefined on input line 1170.
-
-
-LaTeX Warning: Reference `eq:4E' on page 15 undefined on input line 1170.
-
-
-LaTeX Warning: Reference `lem:smallmultiples' on page 15 undefined on input lin
-e 1172.
-
-
-LaTeX Warning: Reference `prop:fiveP' on page 15 undefined on input line 1176.
-
-
-LaTeX Warning: Reference `cor:sixcriterion' on page 15 undefined on input line 
-1177.
-
-
-LaTeX Warning: Reference `eq:P-small' on page 15 undefined on input line 1184.
-
-
-LaTeX Warning: Reference `lem:finiteexception' on page 15 undefined on input li
-ne 1184.
-
-
-LaTeX Warning: Reference `cor:sixcriterion' on page 15 undefined on input line 
-1185.
-
-[15]
-
-LaTeX Warning: Reference `prop:46' on page 16 undefined on input line 1208.
-
-
-LaTeX Warning: Reference `thm:classification' on page 16 undefined on input lin
-e 1218.
-
-
-LaTeX Warning: Reference `thm:classification' on page 16 undefined on input lin
-e 1230.
-
-
-LaTeX Warning: Citation `Nathanson' on page 16 undefined on input line 1233.
-
-
-LaTeX Warning: Reference `thm:classification' on page 16 undefined on input lin
-e 1242.
-
-
-LaTeX Warning: Reference `cor:eight' on page 16 undefined on input line 1243.
-
-
-LaTeX Warning: Reference `cor:threshold' on page 16 undefined on input line 124
-5.
-
-[16]
-
-LaTeX Warning: Reference `lem:mod4-sumcriterion' on page 17 undefined on input 
-line 1264.
-
-
-LaTeX Warning: Reference `cor:gen' on page 17 undefined on input line 1295.
-
-
-LaTeX Warning: Reference `eq:three-g' on page 17 undefined on input line 1332.
-
-[17]
-
-LaTeX Warning: Reference `prop:fiveP' on page 18 undefined on input line 1344.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 18 undefined on input line 1
-346.
-
-
-LaTeX Warning: Reference `prop:fiveP' on page 18 undefined on input line 1363.
-
-
-LaTeX Warning: Reference `lem:mod4-sumcriterion' on page 18 undefined on input 
-line 1367.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 18 undefined on input line 1
-374.
-
-
-LaTeX Warning: Reference `thm:asymptotic-order' on page 18 undefined on input l
-ine 1379.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 18 undefined on input line 1
-384.
-
-
-LaTeX Warning: Reference `cor:fivecrit' on page 18 undefined on input line 1390
-.
-
-
-LaTeX Warning: Reference `thm:classification' on page 18 undefined on input lin
-e 1392.
-
-
-LaTeX Warning: Reference `thm:classification' on page 18 undefined on input lin
-e 1394.
-
-
-LaTeX Warning: Reference `cor:five-multiples' on page 18 undefined on input lin
-e 1400.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 18 undefined on input line 1
-404.
-
-
-LaTeX Warning: Reference `thm:classification' on page 18 undefined on input lin
-e 1435.
-
-[18]
-
-LaTeX Warning: Reference `eq:E-small-certificate' on page 19 undefined on input
- line 1442.
-
-
-LaTeX Warning: Reference `eq:E-tail-certificate' on page 19 undefined on input 
-line 1442.
-
-
-LaTeX Warning: Reference `eq:finite-interval-certificate' on page 19 undefined 
-on input line 1443.
-
-
-LaTeX Warning: Reference `eq:finite-five-lower-certificate' on page 19 undefine
-d on input line 1444.
-
-
-LaTeX Warning: Reference `eq:finiteexception' on page 19 undefined on input lin
-e 1445.
-
+[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
 [19] [20] (primitive_dyck_tkuriyama_arxiv.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `primitive_dyck_tkuriyama_arxiv.out' has c
-hanged.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `primitive_dyck_tkuriyama_arxiv.out'
-:
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  1C6176E95F526357DFED7F74FCBC977F;2490.
+Package rerunfilecheck Info: File `primitive_dyck_tkuriyama_arxiv.out' has not 
+changed.
+(rerunfilecheck)             Checksum: 1C6176E95F526357DFED7F74FCBC977F;2490.
  ) 
 Here is how much of TeX's memory you used:
- 11824 strings out of 467867
- 181016 string characters out of 5418334
- 609521 words of memory out of 5000000
- 40449 multiletter control sequences out of 15000+600000
+ 11843 strings out of 467867
+ 181662 string characters out of 5418334
+ 613392 words of memory out of 5000000
+ 40462 multiletter control sequences out of 15000+600000
  648608 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,19n,79p,569b,626s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -883,9 +501,9 @@ Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
 C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cms
 y8.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
 s/symbols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_arxiv.pdf (20 pages, 347973 bytes).
+Output written on primitive_dyck_tkuriyama_arxiv.pdf (20 pages, 370346 bytes).
 PDF statistics:
- 685 PDF objects out of 1000 (max. 8388607)
+ 815 PDF objects out of 1000 (max. 8388607)
  106 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 81 words of extra memory for PDF output out of 10000 (max. 10000000)
 

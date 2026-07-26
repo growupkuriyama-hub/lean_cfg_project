@@ -747,12 +747,24 @@ noncomputable def concretePresentTypedSuccessfulOccurrence
       TypedNonterminal.HasSuccessfulOccurrence obs X.node :=
     (ConcreteSuccessfulOutputTypeRefinement.hasNonterminal_iff
       (obs := obs) hworking.basic X.node).mp X.mem
-  rcases hs with ⟨x, c, O, hx⟩
+  let x : Tuple α (G.arity X.node.base) :=
+    Classical.choose hs
+  have hsx :
+      ∃ c : NamedSentenceContext α (G.arity X.node.base),
+        ExactSuccessfulDerivationOccurrence G X.node.base x c ∧
+          X.node.Matches obs x :=
+    Classical.choose_spec hs
+  let c : NamedSentenceContext α (G.arity X.node.base) :=
+    Classical.choose hsx
+  have hxc :
+      ExactSuccessfulDerivationOccurrence G X.node.base x c ∧
+        X.node.Matches obs x :=
+    Classical.choose_spec hsx
   exact
     { anchor := x
       expose := c
-      occurrence := O
-      anchor_matches := hx }
+      occurrence := hxc.1
+      anchor_matches := hxc.2 }
 
 /-- The successful trim carries a concrete successful occurrence for every
 present typed nonterminal; this family is no longer an external assumption. -/
