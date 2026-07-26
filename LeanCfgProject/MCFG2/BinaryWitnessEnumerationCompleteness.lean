@@ -159,7 +159,20 @@ theorem totalLeftVarCount_leftVar_cons
           ∑ i : Fin dB, if k = i then 1 else 0 := by
       rw [Finset.sum_add_distrib]
     _ = (∑ i : Fin dB, leftVarCount i rest) + 1 := by
-      simp [eq_comm]
+      have hdelta :
+          (∑ i : Fin dB,
+            if k = i then (1 : Nat) else 0) = 1 := by
+        simpa using
+          (Finset.sum_eq_single_of_mem
+            (s := Finset.univ)
+            (f := fun i : Fin dB =>
+              if k = i then (1 : Nat) else 0)
+            k
+            (Finset.mem_univ k)
+            (by
+              intro i hi hik
+              simp [hik, eq_comm]))
+      rw [hdelta]
     _ = totalLeftVarCount rest + 1 := by
       rfl
 
@@ -191,7 +204,20 @@ theorem totalRightVarCount_rightVar_cons
           ∑ j : Fin dC, if k = j then 1 else 0 := by
       rw [Finset.sum_add_distrib]
     _ = (∑ j : Fin dC, rightVarCount j rest) + 1 := by
-      simp [eq_comm]
+      have hdelta :
+          (∑ j : Fin dC,
+            if k = j then (1 : Nat) else 0) = 1 := by
+        simpa using
+          (Finset.sum_eq_single_of_mem
+            (s := Finset.univ)
+            (f := fun j : Fin dC =>
+              if k = j then (1 : Nat) else 0)
+            k
+            (Finset.mem_univ k)
+            (by
+              intro j hj hjk
+              simp [hjk, eq_comm]))
+      rw [hdelta]
     _ = totalRightVarCount rest + 1 := by
       rfl
 
