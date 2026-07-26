@@ -243,8 +243,7 @@ theorem canonicalTerminalRule_mem
           (hworking.basic.2.2.1 ρ hρ).symm
           ρ.outputTuple)
         c) :
-    (presentation (G := G) (obs := obs) hworking.basic).
-      HasTerminalRule
+    (presentation (G := G) (obs := obs) hworking.basic).HasTerminalRule
         (ConcreteOutputTypeRefinement.canonicalTerminalRule
           hworking.basic ρ hρ) := by
   classical
@@ -285,8 +284,7 @@ theorem canonicalBinaryRule_mem
         (ExactSplicing.rightContextNSC
           parentContext ρ.body
           (hworking.2 ρ hρ).2.2 x)) :
-    (presentation (G := G) (obs := obs) hworking.basic).
-      HasBinaryRule
+    (presentation (G := G) (obs := obs) hworking.basic).HasBinaryRule
         (ConcreteOutputTypeRefinement.canonicalBinaryRule
           ρ hρ (tupleType obs x) (tupleType obs y)) := by
   classical
@@ -327,8 +325,7 @@ theorem canonicalStartRule_mem
     {c : NamedSentenceContext α (G.arity ρ.child)}
     (O :
       ExactSuccessfulDerivationOccurrence G ρ.child x c) :
-    (presentation (G := G) (obs := obs) hworking.basic).
-      HasStartRule
+    (presentation (G := G) (obs := obs) hworking.basic).HasStartRule
         (ConcreteOutputTypeRefinement.canonicalStartRule
           hworking.basic ρ hρ (tupleType obs x)) := by
   classical
@@ -376,7 +373,7 @@ theorem toConcreteSuccessfulPresentation
           x := by
   induction h with
 
-  | terminal hρ hwt =>
+  | @terminal ρ hρ hwt =>
       intro c O
       let τ : TypedTerminalRule G :=
         { baseRule := ρ
@@ -384,8 +381,7 @@ theorem toConcreteSuccessfulPresentation
           wellTyped := hwt }
       have hmem :
           (ConcreteSuccessfulOutputTypeRefinement.presentation
-            (G := G) (obs := obs) hworking.basic).
-            HasTerminalRule τ := by
+            (G := G) (obs := obs) hworking.basic).HasTerminalRule τ := by
         simpa [τ,
           ConcreteOutputTypeRefinement.canonicalTerminalRule] using
           (ConcreteSuccessfulOutputTypeRefinement.canonicalTerminalRule_mem
@@ -416,7 +412,7 @@ theorem toConcreteSuccessfulPresentation
             (G := G) (obs := obs) hworking.basic)
           hout hterminal)
 
-  | binary hρ hx hy ihx ihy =>
+  | @binary ρ hρ x y hx hy ihx ihy =>
       intro parentContext parentOccurrence
       let leftOccurrence :
           ExactSuccessfulDerivationOccurrence G ρ.left x
@@ -464,8 +460,7 @@ theorem toConcreteSuccessfulPresentation
 
       have hmem :
           (ConcreteSuccessfulOutputTypeRefinement.presentation
-            (G := G) (obs := obs) hworking.basic).
-            HasBinaryRule τ :=
+            (G := G) (obs := obs) hworking.basic).HasBinaryRule τ :=
         ConcreteSuccessfulOutputTypeRefinement.canonicalBinaryRule_mem
           (obs := obs) hworking ρ hρ
           parentOccurrence leftOccurrence rightOccurrence
@@ -523,9 +518,10 @@ theorem stringLanguage_subset_concreteSuccessfulPresentation
         (ConcreteSuccessfulOutputTypeRefinement.presentation
           (G := G) (obs := obs) hworking.basic) := by
   intro word hword
-  let D : StartRootedStringDerives G word :=
-    stringLanguage_subset_startRooted_of_startSeparated
-      hworking.basic hsep hword
+  rcases
+      stringLanguage_subset_startRooted_of_startSeparated
+        hworking.basic hsep hword with
+    ⟨D⟩
 
   have hchildDerives :
       DerivesTuple G D.startRule.child D.childTuple :=
@@ -577,8 +573,7 @@ theorem stringLanguage_subset_concreteSuccessfulPresentation
 
   have hσmem :
       (ConcreteSuccessfulOutputTypeRefinement.presentation
-        (G := G) (obs := obs) hworking.basic).
-        HasStartRule σ :=
+        (G := G) (obs := obs) hworking.basic).HasStartRule σ :=
     ConcreteSuccessfulOutputTypeRefinement.canonicalStartRule_mem
       (obs := obs) hworking
       D.startRule D.start_mem childOccurrence
@@ -594,17 +589,17 @@ theorem stringLanguage_subset_concreteSuccessfulPresentation
       TypedNonterminal.ofTuple] using hchild
 
   exact
-    { startRule := σ
-      start_mem := hσmem
-      childTuple := D.childTuple
-      child_derives := hchildσ
-      start_arity := D.start_arity
-      word_eq := by
-        have hp :
-            D.start_wellTyped = σ.wellTyped :=
-          Subsingleton.elim _ _
-        cases hp
-        exact D.word_eq }
+    ⟨{ startRule := σ
+       start_mem := hσmem
+       childTuple := D.childTuple
+       child_derives := hchildσ
+       start_arity := D.start_arity
+       word_eq := by
+         have hp :
+             D.start_wellTyped = σ.wellTyped :=
+           Subsingleton.elim _ _
+         cases hp
+         exact D.word_eq }⟩
 
 /-- The concrete successful trim is complete for the original grammar
 language. -/
@@ -648,13 +643,11 @@ theorem concreteSuccessfulWorkingGrammar_stringLanguage_eq_original
     (hworking : G.ExactWorkingConditions)
     (hsep : G.StartSeparated) :
     (ConcreteSuccessfulOutputTypeRefinement.presentation
-      (G := G) (obs := obs) hworking.basic).
-        toWorkingMCFG.StringLanguage =
+      (G := G) (obs := obs) hworking.basic).toWorkingMCFG.StringLanguage =
       G.StringLanguage := by
   calc
     (ConcreteSuccessfulOutputTypeRefinement.presentation
-      (G := G) (obs := obs) hworking.basic).
-        toWorkingMCFG.StringLanguage =
+      (G := G) (obs := obs) hworking.basic).toWorkingMCFG.StringLanguage =
         PresentationStringLanguage
           (ConcreteSuccessfulOutputTypeRefinement.presentation
             (G := G) (obs := obs) hworking.basic) :=
@@ -727,8 +720,7 @@ noncomputable def concreteTrimmedOutputTypePresentation
     (hsep : G.StartSeparated) :
     TrimmedOutputTypePresentation G obs :=
   (concreteSuccessfulOccurrenceCompletePresentation
-    (obs := obs) hworking hsep).
-      toTrimmedOutputTypePresentation
+    (obs := obs) hworking hsep).toTrimmedOutputTypePresentation
 
 /-- Every typed nonterminal present in the concrete trim has an explicitly
 extracted successful occurrence. -/
