@@ -109,13 +109,7 @@ theorem fillNamedAux_chunk_length_le
       | nil =>
           simp at hlen
       | cons chunk rest =>
-          have hrestLength :
-              rest.length = 0 := by
-            simp at hlen
-            exact hlen
-          have hrest :
-              rest = [] :=
-            List.length_eq_zero.mp hrestLength
+          simp at hlen
           subst rest
           simp only [List.mem_singleton] at hword
           subst word
@@ -166,13 +160,7 @@ theorem fillNamedAux_mem_of_mem_chunk
       | nil =>
           simp at hlen
       | cons chunk rest =>
-          have hrestLength :
-              rest.length = 0 := by
-            simp at hlen
-            exact hlen
-          have hrest :
-              rest = [] :=
-            List.length_eq_zero.mp hrestLength
+          simp at hlen
           subst rest
           simp only [List.mem_singleton] at hword
           subst word
@@ -230,7 +218,9 @@ theorem fillNamedAux_component_length_le
             exact hlen
           rcases List.mem_cons.mp hi with
             rfl | hi'
-          · simp [fillNamedAux]
+          · simp only [fillNamedAux,
+              List.length_append]
+            omega
           · have htail :
                 (x i).length ≤
                   (fillNamedAux x holes rest).length :=
