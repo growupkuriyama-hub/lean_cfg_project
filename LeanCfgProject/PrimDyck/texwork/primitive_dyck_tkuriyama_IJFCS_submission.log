@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.2.28)  26 JUL 2026 15:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.2.28)  26 JUL 2026 15:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -332,8 +332,7 @@ Package hyperref Info: Option `colorlinks' set `false' on input line 12.
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count314
-)
-No file primitive_dyck_tkuriyama_IJFCS_submission.aux.
+) (primitive_dyck_tkuriyama_IJFCS_submission.aux)
 \openout1 = `primitive_dyck_tkuriyama_IJFCS_submission.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
@@ -385,11 +384,14 @@ Package hyperref Warning: Height of page (\paperheight) is invalid (0.0pt),
 (hyperref)                using 11in.
 
 Package hyperref Info: Link coloring OFF on input line 20.
+(primitive_dyck_tkuriyama_IJFCS_submission.out)
+(primitive_dyck_tkuriyama_IJFCS_submission.out)
 \@outlinefile=\write3
 \openout3 = `primitive_dyck_tkuriyama_IJFCS_submission.out'.
 
 Package hyperref Info: Anchor `Doc-Start' on input line 20.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 39.
+
 
 (C:\Users\Owner\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -408,69 +410,49 @@ Package hyperref Info: bookmark on input line 69:
 (hyperref)             reference {section.1}
 (hyperref)             toclevel {1}
 (hyperref)             type {toc}.
-
-
-LaTeX Warning: Citation `BHS' on page 1 undefined on input line 78.
-
-
-LaTeX Warning: Citation `RSS' on page 1 undefined on input line 79.
-
-
-LaTeX Warning: Citation `MNRS' on page 1 undefined on input line 79.
-
-
-LaTeX Warning: Citation `BLS' on page 1 undefined on input line 83.
-
-
-LaTeX Warning: Citation `Nederhof' on page 1 undefined on input line 87.
-
-
-LaTeX Warning: Citation `MohriNederhof' on page 1 undefined on input line 87.
-
+Package hyperref Info: Reference (cite) `cite.BHS' on input line 78.
+Package hyperref Info: Reference (cite) `cite.RSS' on input line 79.
+Package hyperref Info: Reference (cite) `cite.MNRS' on input line 79.
+Package hyperref Info: Reference (cite) `cite.BLS' on input line 83.
+Package hyperref Info: Reference (cite) `cite.Nederhof' on input line 87.
+Package hyperref Info: Reference (cite) `cite.MohriNederhof' on input line 87.
 Package hyperref Info: Anchor `page.1' on input line 88.
+
 [1{C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}
 
+Package `hyperref' Info: End of reference (cite) `cite.BHS', line 78.
+Package `hyperref' Info: End of reference (cite) `cite.RSS', line 79.
+Package `hyperref' Info: End of reference (cite) `cite.MNRS', line 79.
 ]
+Package hyperref Info: Reference (cite) `cite.RigoNumeration' on input line 90.
 
-LaTeX Warning: Citation `RigoNumeration' on page 2 undefined on input line 90.
-
-
-LaTeX Warning: Citation `CLGR' on page 2 undefined on input line 92.
-
-
-LaTeX Warning: Citation `DeutschShapiro' on page 2 undefined on input line 96.
+Package hyperref Info: Reference (cite) `cite.CLGR' on input line 92.
+Package hyperref Info: Reference (cite) `cite.DeutschShapiro' on input line 96.
 
 Package hyperref Info: Anchor `Item.2' on input line 142.
 Package hyperref Info: Anchor `page.2' on input line 145.
-[2]
+ [2
+Package `hyperref' Info: End of reference (cite) `cite.BLS', line 83.
+Package `hyperref' Info: End of reference (cite) `cite.Nederhof', line 87.
+Package `hyperref' Info: End of reference (cite) `cite.MohriNederhof', line 87.
+
+Package `hyperref' Info: End of reference (cite) `cite.RigoNumeration', line 90
+.
+Package `hyperref' Info: End of reference (cite) `cite.CLGR', line 92.
+Package `hyperref' Info: End of reference (cite) `cite.DeutschShapiro', line 96
+.
+]
 Package hyperref Info: Anchor `Item.3' on input line 145.
 Package hyperref Info: Anchor `Item.4' on input line 149.
 Package hyperref Info: Anchor `Item.5' on input line 153.
 Package hyperref Info: Anchor `theorem.1' on input line 164.
 Package hyperref Info: Anchor `theorem.2' on input line 180.
-
-
-LaTeX Warning: Reference `sec:preliminaries' on page 3 undefined on input line 
-194.
-
-
-LaTeX Warning: Reference `sec:base4' on page 3 undefined on input line 195.
-
-
-LaTeX Warning: Reference `sec:lifting' on page 3 undefined on input line 196.
-
-
-LaTeX Warning: Reference `sec:exceptions' on page 3 undefined on input line 198
-.
-
-
-LaTeX Warning: Reference `sec:asymptotic' on page 3 undefined on input line 199
-.
-
-
-LaTeX Warning: Reference `sec:verification' on page 3 undefined on input line 2
-01.
-
+Package hyperref Info: Reference (link) `section.6' on input line 194.
+Package hyperref Info: Reference (link) `section.9' on input line 195.
+Package hyperref Info: Reference (link) `section.19' on input line 196.
+Package hyperref Info: Reference (link) `section.38' on input line 198.
+Package hyperref Info: Reference (link) `section.42' on input line 199.
+Package hyperref Info: Reference (link) `section.45' on input line 201.
 Package hyperref Info: Anchor `section.6' on input line 203.
 Package hyperref Info: bookmark on input line 203:
 (hyperref)             thecounter {2}
@@ -480,12 +462,17 @@ Package hyperref Info: bookmark on input line 203:
 (hyperref)             toclevel {1}
 (hyperref)             type {toc}.
 Package hyperref Info: Anchor `page.3' on input line 212.
-[3]
+
+[3
+Package `hyperref' Info: End of reference (link) `section.6', line 194.
+Package `hyperref' Info: End of reference (link) `section.9', line 195.
+Package `hyperref' Info: End of reference (link) `section.19', line 196.
+Package `hyperref' Info: End of reference (link) `section.38', line 198.
+Package `hyperref' Info: End of reference (link) `section.42', line 199.
+Package `hyperref' Info: End of reference (link) `section.45', line 201.
+]
 Package hyperref Info: Anchor `theorem.3' on input line 226.
-
-
-LaTeX Warning: Reference `lem:mod4' on page 4 undefined on input line 259.
-
+Package hyperref Info: Reference (link) `theorem.3' on input line 259.
 Package hyperref Info: Anchor `equation.7' on input line 260.
 Package hyperref Info: Anchor `equation.7' on input line 260.
 Package hyperref Info: Anchor `equation.7' on input line 260.
@@ -495,7 +482,9 @@ Package hyperref Info: Anchor `equation.8' on input line 264.
 Package hyperref Info: Anchor `equation.8' on input line 264.
 Package hyperref Info: Anchor `equation.8' on input line 264.
 Package hyperref Info: Anchor `page.4' on input line 266.
-[4]
+ [4
+Package `hyperref' Info: End of reference (link) `theorem.3', line 259.
+]
 Package hyperref Info: Anchor `section.9' on input line 272.
 Package hyperref Info: bookmark on input line 272:
 (hyperref)             thecounter {3}
@@ -504,11 +493,8 @@ Package hyperref Info: bookmark on input line 272:
 (hyperref)             reference {section.9}
 (hyperref)             toclevel {1}
 (hyperref)             type {toc}.
-
-
-LaTeX Warning: Citation `DeutschShapiro' on page 5 undefined on input line 276.
-
-
+Package hyperref Info: Reference (cite) `cite.DeutschShapiro' on input line 276
+.
 Package hyperref Info: Anchor `theorem.4' on input line 307.
 Package hyperref Info: Anchor `equation.10' on input line 309.
 Package hyperref Info: Anchor `equation.10' on input line 309.
@@ -518,48 +504,42 @@ Package hyperref Info: Anchor `equation.11' on input line 322.
 Package hyperref Info: Anchor `equation.11' on input line 322.
 Package hyperref Info: Anchor `equation.11' on input line 322.
 Package hyperref Info: Anchor `equation.11' on input line 322.
-
-LaTeX Warning: Reference `eq:block-height' on page 5 undefined on input line 33
-1.
-
+Package hyperref Info: Reference (link) `equation.11' on input line 331.
 Package hyperref Info: Anchor `page.5' on input line 335.
-[5]
+ [5
+Package `hyperref' Info: End of reference (cite) `cite.DeutschShapiro', line 27
+6.
+]
 Package hyperref Info: Anchor `theorem.5' on input line 362.
 Package hyperref Info: Anchor `equation.12' on input line 365.
 Package hyperref Info: Anchor `equation.12' on input line 365.
 Package hyperref Info: Anchor `equation.12' on input line 365.
 Package hyperref Info: Anchor `equation.12' on input line 365.
-
-
-LaTeX Warning: Reference `thm:block-coding' on page 6 undefined on input line 3
-73.
-
+Package hyperref Info: Reference (link) `theorem.4' on input line 373.
 Package hyperref Info: Anchor `theorem.6' on input line 378.
-
-LaTeX Warning: Reference `cor:base4' on page 6 undefined on input line 383.
-
-
-LaTeX Warning: Reference `cor:base4' on page 6 undefined on input line 398.
-
+Package hyperref Info: Reference (link) `theorem.5' on input line 383.
+Package hyperref Info: Reference (link) `theorem.5' on input line 398.
 Package hyperref Info: Anchor `page.6' on input line 399.
-[6]
+ [6
+Package `hyperref' Info: End of reference (link) `equation.11', line 331.
+Package `hyperref' Info: End of reference (link) `theorem.4', line 373.
+Package `hyperref' Info: End of reference (link) `theorem.5', line 383.
+]
 Package hyperref Info: Anchor `theorem.7' on input line 403.
 Package hyperref Info: Anchor `equation.13' on input line 405.
 Package hyperref Info: Anchor `equation.13' on input line 405.
 Package hyperref Info: Anchor `equation.13' on input line 405.
 Package hyperref Info: Anchor `equation.13' on input line 405.
 Package hyperref Info: Anchor `page.7' on input line 465.
- [7]
-
-LaTeX Warning: Reference `cor:base4' on page 8 undefined on input line 508.
-
+ [7
+Package `hyperref' Info: End of reference (link) `theorem.5', line 398.
+]
+Package hyperref Info: Reference (link) `theorem.5' on input line 508.
 Package hyperref Info: Anchor `equation.14' on input line 514.
 Package hyperref Info: Anchor `equation.14' on input line 514.
 Package hyperref Info: Anchor `equation.14' on input line 514.
 Package hyperref Info: Anchor `equation.14' on input line 514.
-
-LaTeX Warning: Reference `lem:extremal' on page 8 undefined on input line 517.
-
+Package hyperref Info: Reference (link) `theorem.7' on input line 517.
 Package hyperref Info: Anchor `theorem.8' on input line 519.
 Package hyperref Info: Anchor `equation.15' on input line 521.
 Package hyperref Info: Anchor `equation.15' on input line 521.
@@ -572,19 +552,13 @@ Package hyperref Info: Anchor `equation.18' on input line 532.
 Package hyperref Info: Anchor `equation.18' on input line 532.
 Package hyperref Info: Anchor `equation.18' on input line 532.
 Package hyperref Info: Anchor `page.8' on input line 534.
-[8]
-
-LaTeX Warning: Reference `eq:motzkin-extrema' on page 9 undefined on input line
- 540.
-
-
-LaTeX Warning: Reference `eq:generation-value' on page 9 undefined on input lin
-e 546.
-
-
-LaTeX Warning: Reference `eq:generation-interval' on page 9 undefined on input 
-line 547.
-
+ [8
+Package `hyperref' Info: End of reference (link) `theorem.5', line 508.
+Package `hyperref' Info: End of reference (link) `theorem.7', line 517.
+]
+Package hyperref Info: Reference (link) `equation.13' on input line 540.
+Package hyperref Info: Reference (link) `equation.14' on input line 546.
+Package hyperref Info: Reference (link) `equation.15' on input line 547.
 Package hyperref Info: Anchor `section.19' on input line 558.
 Package hyperref Info: bookmark on input line 558:
 (hyperref)             thecounter {4}
@@ -603,10 +577,7 @@ Package hyperref Info: Anchor `equation.21' on input line 571.
 Package hyperref Info: Anchor `equation.21' on input line 571.
 Package hyperref Info: Anchor `equation.21' on input line 571.
 Package hyperref Info: Anchor `equation.21' on input line 571.
-
-LaTeX Warning: Reference `eq:general-digit-closure' on page 9 undefined on inpu
-t line 582.
-
+Package hyperref Info: Reference (link) `equation.20' on input line 582.
 Package hyperref Info: Anchor `theorem.10' on input line 589.
 Package hyperref Info: Anchor `equation.22' on input line 591.
 Package hyperref Info: Anchor `equation.22' on input line 591.
@@ -616,38 +587,26 @@ Package hyperref Info: Anchor `equation.23' on input line 595.
 Package hyperref Info: Anchor `equation.23' on input line 595.
 Package hyperref Info: Anchor `equation.23' on input line 595.
 Package hyperref Info: Anchor `equation.23' on input line 595.
-
-LaTeX Warning: Reference `thm:general-digit-lifting' on page 9 undefined on inp
-ut line 601.
-
+Package hyperref Info: Reference (link) `theorem.9' on input line 601.
 Package hyperref Info: Anchor `theorem.11' on input line 605.
-
-LaTeX Warning: Reference `eq:digit-closure' on page 9 undefined on input line 6
-08.
-
+Package hyperref Info: Reference (link) `equation.22' on input line 608.
 Package hyperref Info: Anchor `equation.24' on input line 609.
 Package hyperref Info: Anchor `equation.24' on input line 609.
 Package hyperref Info: Anchor `equation.24' on input line 609.
 Package hyperref Info: Anchor `equation.24' on input line 609.
 Package hyperref Info: Anchor `page.9' on input line 621.
-[9]
-
-LaTeX Warning: Reference `lem:digit-lifting' on page 10 undefined on input line
- 631.
-
+ [9
+Package `hyperref' Info: End of reference (link) `equation.13', line 540.
+Package `hyperref' Info: End of reference (link) `equation.14', line 546.
+Package `hyperref' Info: End of reference (link) `equation.15', line 547.
+Package `hyperref' Info: End of reference (link) `equation.20', line 582.
+Package `hyperref' Info: End of reference (link) `theorem.9', line 601.
+]
+Package hyperref Info: Reference (link) `theorem.10' on input line 631.
 Package hyperref Info: Anchor `theorem.12' on input line 637.
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 10 undefined on input l
-ine 639.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 10 undefined on input l
-ine 653.
-
-
-LaTeX Warning: Reference `eq:digit-closure' on page 10 undefined on input line 
-662.
-
+Package hyperref Info: Reference (link) `theorem.11' on input line 639.
+Package hyperref Info: Reference (link) `theorem.11' on input line 653.
+Package hyperref Info: Reference (link) `equation.22' on input line 662.
 Package hyperref Info: Anchor `subsection.25' on input line 668.
 Package hyperref Info: bookmark on input line 668:
 (hyperref)             thecounter {4.1}
@@ -657,19 +616,17 @@ es of four}
 (hyperref)             reference {subsection.25}
 (hyperref)             toclevel {2}
 (hyperref)             type {toc}.
-
-LaTeX Warning: Reference `thm:block-coding' on page 10 undefined on input line 
-674.
-
+Package hyperref Info: Reference (link) `theorem.4' on input line 674.
 Package hyperref Info: Anchor `page.10' on input line 679.
-[10]
-
-LaTeX Warning: Reference `cor:base4' on page 11 undefined on input line 690.
-
-
-LaTeX Warning: Reference `eq:NpD-decomp' on page 11 undefined on input line 694
-.
-
+ [10
+Package `hyperref' Info: End of reference (link) `equation.22', line 608.
+Package `hyperref' Info: End of reference (link) `theorem.10', line 631.
+Package `hyperref' Info: End of reference (link) `theorem.11', line 639.
+Package `hyperref' Info: End of reference (link) `theorem.11', line 653.
+Package `hyperref' Info: End of reference (link) `equation.22', line 662.
+]
+Package hyperref Info: Reference (link) `theorem.5' on input line 690.
+Package hyperref Info: Reference (link) `equation.8' on input line 694.
 Package hyperref Info: Anchor `equation.26' on input line 695.
 Package hyperref Info: Anchor `equation.26' on input line 695.
 Package hyperref Info: Anchor `equation.26' on input line 695.
@@ -688,48 +645,35 @@ Package hyperref Info: Anchor `equation.29' on input line 741.
 Package hyperref Info: Anchor `equation.29' on input line 741.
 Package hyperref Info: Anchor `equation.29' on input line 741.
 Package hyperref Info: Anchor `page.11' on input line 750.
-[11]
+ [11
+Package `hyperref' Info: End of reference (link) `theorem.4', line 674.
+Package `hyperref' Info: End of reference (link) `theorem.5', line 690.
+Package `hyperref' Info: End of reference (link) `equation.8', line 694.
+]
 Package hyperref Info: Anchor `theorem.14' on input line 764.
-
-
-LaTeX Warning: Reference `eq:E-small-certificate' on page 12 undefined on input
- line 769.
-
-
-LaTeX Warning: Reference `eq:E-tail-certificate' on page 12 undefined on input 
-line 773.
-
+Package hyperref Info: Reference (link) `equation.28' on input line 769.
+Package hyperref Info: Reference (link) `equation.29' on input line 773.
 Package hyperref Info: Anchor `equation.30' on input line 780.
 Package hyperref Info: Anchor `equation.30' on input line 780.
 Package hyperref Info: Anchor `equation.30' on input line 780.
 Package hyperref Info: Anchor `equation.30' on input line 780.
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 12 undefined on input l
-ine 784.
-
-
-LaTeX Warning: Reference `eq:digit-closure' on page 12 undefined on input line 
-787.
-
-
-LaTeX Warning: Reference `eq:digit-closure' on page 12 undefined on input line 
-789.
-
-
-LaTeX Warning: Reference `eq:Eclosure' on page 12 undefined on input line 789.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 12 undefined on input l
-ine 798.
-
-
-LaTeX Warning: Reference `prop:E' on page 12 undefined on input line 812.
-
-
-LaTeX Warning: Reference `eq:4E' on page 12 undefined on input line 812.
-
+Package hyperref Info: Reference (link) `theorem.11' on input line 784.
+Package hyperref Info: Reference (link) `equation.22' on input line 787.
+Package hyperref Info: Reference (link) `equation.22' on input line 789.
+Package hyperref Info: Reference (link) `equation.27' on input line 789.
+Package hyperref Info: Reference (link) `theorem.11' on input line 798.
+Package hyperref Info: Reference (link) `theorem.14' on input line 812.
+Package hyperref Info: Reference (link) `equation.26' on input line 812.
 Package hyperref Info: Anchor `page.12' on input line 816.
-[12]
+ [12
+Package `hyperref' Info: End of reference (link) `equation.28', line 769.
+Package `hyperref' Info: End of reference (link) `equation.29', line 773.
+Package `hyperref' Info: End of reference (link) `theorem.11', line 784.
+Package `hyperref' Info: End of reference (link) `equation.22', line 787.
+Package `hyperref' Info: End of reference (link) `equation.22', line 789.
+Package `hyperref' Info: End of reference (link) `equation.27', line 789.
+Package `hyperref' Info: End of reference (link) `theorem.11', line 798.
+]
 Package hyperref Info: Anchor `subsection.31' on input line 816.
 Package hyperref Info: bookmark on input line 816:
 (hyperref)             thecounter {4.2}
@@ -740,24 +684,24 @@ t-free family}
 (hyperref)             toclevel {2}
 (hyperref)             type {toc}.
 Package hyperref Info: Anchor `page.13' on input line 879.
- [13]
-
-LaTeX Warning: Reference `cor:base4' on page 14 undefined on input line 882.
-
+ [13
+Package `hyperref' Info: End of reference (link) `theorem.14', line 812.
+Package `hyperref' Info: End of reference (link) `equation.26', line 812.
+]
+Package hyperref Info: Reference (link) `theorem.5' on input line 882.
 Package hyperref Info: Anchor `equation.32' on input line 884.
 Package hyperref Info: Anchor `equation.32' on input line 884.
 Package hyperref Info: Anchor `equation.32' on input line 884.
 Package hyperref Info: Anchor `equation.32' on input line 884.
 Package hyperref Info: Anchor `page.14' on input line 936.
-[14]
+ [14
+Package `hyperref' Info: End of reference (link) `theorem.5', line 882.
+]
 Package hyperref Info: Anchor `equation.33' on input line 940.
 Package hyperref Info: Anchor `equation.33' on input line 940.
 Package hyperref Info: Anchor `equation.33' on input line 940.
 Package hyperref Info: Anchor `equation.33' on input line 940.
-
-
-LaTeX Warning: Reference `cor:gen' on page 15 undefined on input line 950.
-
+Package hyperref Info: Reference (link) `theorem.8' on input line 950.
 Package hyperref Info: Anchor `equation.34' on input line 966.
 Package hyperref Info: Anchor `equation.34' on input line 966.
 Package hyperref Info: Anchor `equation.34' on input line 966.
@@ -771,48 +715,28 @@ Package hyperref Info: Anchor `equation.36' on input line 983.
 Package hyperref Info: Anchor `equation.36' on input line 983.
 Package hyperref Info: Anchor `equation.36' on input line 983.
 Package hyperref Info: Anchor `equation.36' on input line 983.
-
-LaTeX Warning: Reference `eq:finite-interval-certificate' on page 15 undefined 
-on input line 989.
-
-
-LaTeX Warning: Reference `eq:finite-five-lower-certificate' on page 15 undefine
-d on input line 990.
-
-
-LaTeX Warning: Reference `lem:Ecertificate' on page 15 undefined on input line 
-993.
-
-
-LaTeX Warning: Reference `lem:finitefive' on page 15 undefined on input line 99
-7.
-
+Package hyperref Info: Reference (link) `equation.35' on input line 989.
+Package hyperref Info: Reference (link) `equation.36' on input line 990.
+Package hyperref Info: Reference (link) `theorem.13' on input line 993.
+Package hyperref Info: Reference (link) `theorem.15' on input line 997.
 Package hyperref Info: Anchor `equation.37' on input line 998.
 Package hyperref Info: Anchor `equation.37' on input line 998.
 Package hyperref Info: Anchor `equation.37' on input line 998.
 Package hyperref Info: Anchor `equation.37' on input line 998.
 Package hyperref Info: Anchor `theorem.16' on input line 1002.
 Package hyperref Info: Anchor `page.15' on input line 1007.
-[15]
-
-LaTeX Warning: Reference `cor:Pclosure' on page 16 undefined on input line 1013
-.
-
-
-LaTeX Warning: Reference `eq:fiveP-seed' on page 16 undefined on input line 101
-7.
-
-
-LaTeX Warning: Reference `cor:tail-propagation' on page 16 undefined on input l
-ine 1025.
-
-
-LaTeX Warning: Reference `eq:P-small' on page 16 undefined on input line 1039.
-
-
-LaTeX Warning: Reference `eq:finite-five-lower-certificate' on page 16 undefine
-d on input line 1039.
-
+ [15
+Package `hyperref' Info: End of reference (link) `theorem.8', line 950.
+Package `hyperref' Info: End of reference (link) `equation.35', line 989.
+Package `hyperref' Info: End of reference (link) `equation.36', line 990.
+Package `hyperref' Info: End of reference (link) `theorem.13', line 993.
+Package `hyperref' Info: End of reference (link) `theorem.15', line 997.
+]
+Package hyperref Info: Reference (link) `theorem.6' on input line 1013.
+Package hyperref Info: Reference (link) `equation.37' on input line 1017.
+Package hyperref Info: Reference (link) `theorem.11' on input line 1025.
+Package hyperref Info: Reference (link) `equation.34' on input line 1039.
+Package hyperref Info: Reference (link) `equation.36' on input line 1039.
 Package hyperref Info: Anchor `section.38' on input line 1044.
 Package hyperref Info: bookmark on input line 1044:
 (hyperref)             thecounter {5}
@@ -823,107 +747,72 @@ Package hyperref Info: bookmark on input line 1044:
 (hyperref)             type {toc}.
 Package hyperref Info: Anchor `theorem.17' on input line 1048.
 Package hyperref Info: Anchor `page.16' on input line 1077.
-[16]
+ [16
+Package `hyperref' Info: End of reference (link) `theorem.6', line 1013.
+Package `hyperref' Info: End of reference (link) `equation.37', line 1017.
+Package `hyperref' Info: End of reference (link) `theorem.11', line 1025.
+Package `hyperref' Info: End of reference (link) `equation.34', line 1039.
+Package `hyperref' Info: End of reference (link) `equation.36', line 1039.
+]
 Package hyperref Info: Anchor `theorem.18' on input line 1081.
 Package hyperref Info: Anchor `equation.39' on input line 1085.
 Package hyperref Info: Anchor `equation.39' on input line 1085.
 Package hyperref Info: Anchor `equation.39' on input line 1085.
 Package hyperref Info: Anchor `equation.39' on input line 1085.
-
-
-LaTeX Warning: Reference `lem:mod4' on page 17 undefined on input line 1097.
-
-
-LaTeX Warning: Reference `eq:mod4-sumcriterion' on page 17 undefined on input l
-ine 1109.
-
+Package hyperref Info: Reference (link) `theorem.3' on input line 1097.
+Package hyperref Info: Reference (link) `equation.39' on input line 1109.
 Package hyperref Info: Anchor `theorem.19' on input line 1113.
 Package hyperref Info: Anchor `equation.40' on input line 1116.
 Package hyperref Info: Anchor `equation.40' on input line 1116.
 Package hyperref Info: Anchor `equation.40' on input line 1116.
 Package hyperref Info: Anchor `equation.40' on input line 1116.
-
-LaTeX Warning: Reference `lem:mod4-sumcriterion' on page 17 undefined on input 
-line 1124.
-
+Package hyperref Info: Reference (link) `theorem.18' on input line 1124.
 Package hyperref Info: Anchor `theorem.20' on input line 1128.
 Package hyperref Info: Anchor `page.17' on input line 1147.
-[17]
+ [17
+Package `hyperref' Info: End of reference (link) `theorem.3', line 1097.
+Package `hyperref' Info: End of reference (link) `equation.39', line 1109.
+Package `hyperref' Info: End of reference (link) `theorem.18', line 1124.
+]
 Package hyperref Info: Anchor `theorem.21' on input line 1149.
-
-
-LaTeX Warning: Reference `eq:L-def' on page 18 undefined on input line 1150.
-
+Package hyperref Info: Reference (link) `equation.32' on input line 1150.
 Package hyperref Info: Anchor `equation.41' on input line 1151.
 Package hyperref Info: Anchor `equation.41' on input line 1151.
 Package hyperref Info: Anchor `equation.41' on input line 1151.
 Package hyperref Info: Anchor `equation.41' on input line 1151.
-
-LaTeX Warning: Reference `eq:finiteexception' on page 18 undefined on input lin
-e 1164.
-
-
-LaTeX Warning: Reference `thm:classification' on page 18 undefined on input lin
-e 1168.
-
-
-LaTeX Warning: Reference `prop:E' on page 18 undefined on input line 1170.
-
-
-LaTeX Warning: Reference `eq:4E' on page 18 undefined on input line 1170.
-
-
-LaTeX Warning: Reference `lem:smallmultiples' on page 18 undefined on input lin
-e 1172.
-
-
-LaTeX Warning: Reference `prop:fiveP' on page 18 undefined on input line 1176.
-
-
-LaTeX Warning: Reference `cor:sixcriterion' on page 18 undefined on input line 
-1177.
-
-
-LaTeX Warning: Reference `eq:P-small' on page 18 undefined on input line 1184.
-
-
-LaTeX Warning: Reference `lem:finiteexception' on page 18 undefined on input li
-ne 1184.
-
-
-LaTeX Warning: Reference `cor:sixcriterion' on page 18 undefined on input line 
-1185.
-
-
-LaTeX Warning: Reference `prop:46' on page 18 undefined on input line 1208.
-
+Package hyperref Info: Reference (link) `equation.41' on input line 1164.
+Package hyperref Info: Reference (link) `theorem.1' on input line 1168.
+Package hyperref Info: Reference (link) `theorem.14' on input line 1170.
+Package hyperref Info: Reference (link) `equation.26' on input line 1170.
+Package hyperref Info: Reference (link) `theorem.20' on input line 1172.
+Package hyperref Info: Reference (link) `theorem.16' on input line 1176.
+Package hyperref Info: Reference (link) `theorem.19' on input line 1177.
+Package hyperref Info: Reference (link) `equation.34' on input line 1184.
+Package hyperref Info: Reference (link) `theorem.21' on input line 1184.
+Package hyperref Info: Reference (link) `theorem.19' on input line 1185.
+Package hyperref Info: Reference (link) `theorem.17' on input line 1208.
 Package hyperref Info: Anchor `page.18' on input line 1210.
-[18]
+ [18
+Package `hyperref' Info: End of reference (link) `equation.32', line 1150.
+Package `hyperref' Info: End of reference (link) `equation.41', line 1164.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1168.
+Package `hyperref' Info: End of reference (link) `theorem.14', line 1170.
+Package `hyperref' Info: End of reference (link) `equation.26', line 1170.
+Package `hyperref' Info: End of reference (link) `theorem.20', line 1172.
+Package `hyperref' Info: End of reference (link) `theorem.16', line 1176.
+Package `hyperref' Info: End of reference (link) `theorem.19', line 1177.
+Package `hyperref' Info: End of reference (link) `equation.34', line 1184.
+Package `hyperref' Info: End of reference (link) `theorem.21', line 1184.
+Package `hyperref' Info: End of reference (link) `theorem.19', line 1185.
+]
 Package hyperref Info: Anchor `theorem.22' on input line 1212.
-
-
-LaTeX Warning: Reference `thm:classification' on page 19 undefined on input lin
-e 1218.
-
+Package hyperref Info: Reference (link) `theorem.1' on input line 1218.
 Package hyperref Info: Anchor `theorem.23' on input line 1222.
-
-LaTeX Warning: Reference `thm:classification' on page 19 undefined on input lin
-e 1230.
-
-
-LaTeX Warning: Citation `Nathanson' on page 19 undefined on input line 1233.
-
-
-LaTeX Warning: Reference `thm:classification' on page 19 undefined on input lin
-e 1242.
-
-
-LaTeX Warning: Reference `cor:eight' on page 19 undefined on input line 1243.
-
-
-LaTeX Warning: Reference `cor:threshold' on page 19 undefined on input line 124
-5.
-
+Package hyperref Info: Reference (link) `theorem.1' on input line 1230.
+Package hyperref Info: Reference (cite) `cite.Nathanson' on input line 1233.
+Package hyperref Info: Reference (link) `theorem.1' on input line 1242.
+Package hyperref Info: Reference (link) `theorem.23' on input line 1243.
+Package hyperref Info: Reference (link) `theorem.22' on input line 1245.
 Package hyperref Info: Anchor `section.42' on input line 1248.
 Package hyperref Info: bookmark on input line 1248:
 (hyperref)             thecounter {6}
@@ -937,75 +826,46 @@ Package hyperref Info: Anchor `equation.43' on input line 1258.
 Package hyperref Info: Anchor `equation.43' on input line 1258.
 Package hyperref Info: Anchor `equation.43' on input line 1258.
 Package hyperref Info: Anchor `equation.43' on input line 1258.
-
-LaTeX Warning: Reference `lem:mod4-sumcriterion' on page 19 undefined on input 
-line 1264.
-
+Package hyperref Info: Reference (link) `theorem.18' on input line 1264.
 Package hyperref Info: Anchor `theorem.25' on input line 1275.
 Package hyperref Info: Anchor `page.19' on input line 1276.
-[19]
+
+[19
+Package `hyperref' Info: End of reference (link) `theorem.17', line 1208.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1218.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1230.
+Package `hyperref' Info: End of reference (cite) `cite.Nathanson', line 1233.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1242.
+Package `hyperref' Info: End of reference (link) `theorem.23', line 1243.
+Package `hyperref' Info: End of reference (link) `theorem.22', line 1245.
+Package `hyperref' Info: End of reference (link) `theorem.18', line 1264.
+]
 Package hyperref Info: Anchor `equation.44' on input line 1281.
 Package hyperref Info: Anchor `equation.44' on input line 1281.
 Package hyperref Info: Anchor `equation.44' on input line 1281.
 Package hyperref Info: Anchor `equation.44' on input line 1281.
-
-
-LaTeX Warning: Reference `cor:gen' on page 20 undefined on input line 1295.
-
-
-LaTeX Warning: Reference `eq:three-g' on page 20 undefined on input line 1332.
-
+Package hyperref Info: Reference (link) `theorem.8' on input line 1295.
+Package hyperref Info: Reference (link) `equation.18' on input line 1332.
 Package hyperref Info: Anchor `theorem.26' on input line 1336.
-
-LaTeX Warning: Reference `prop:fiveP' on page 20 undefined on input line 1344.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 20 undefined on input line 1
-346.
-
+Package hyperref Info: Reference (link) `theorem.16' on input line 1344.
+Package hyperref Info: Reference (link) `theorem.25' on input line 1346.
 Package hyperref Info: Anchor `theorem.27' on input line 1351.
 Package hyperref Info: Anchor `page.20' on input line 1353.
-[20]
-
-LaTeX Warning: Reference `prop:fiveP' on page 21 undefined on input line 1363.
-
-
-LaTeX Warning: Reference `lem:mod4-sumcriterion' on page 21 undefined on input 
-line 1367.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 21 undefined on input line 1
-374.
-
-
-LaTeX Warning: Reference `thm:asymptotic-order' on page 21 undefined on input l
-ine 1379.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 21 undefined on input line 1
-384.
-
-
-LaTeX Warning: Reference `cor:fivecrit' on page 21 undefined on input line 1390
-.
-
-
-LaTeX Warning: Reference `thm:classification' on page 21 undefined on input lin
-e 1392.
-
-
-LaTeX Warning: Reference `thm:classification' on page 21 undefined on input lin
-e 1394.
-
+ [20
+Package `hyperref' Info: End of reference (link) `theorem.8', line 1295.
+Package `hyperref' Info: End of reference (link) `equation.18', line 1332.
+]
+Package hyperref Info: Reference (link) `theorem.16' on input line 1363.
+Package hyperref Info: Reference (link) `theorem.18' on input line 1367.
+Package hyperref Info: Reference (link) `theorem.25' on input line 1374.
+Package hyperref Info: Reference (link) `theorem.2' on input line 1379.
+Package hyperref Info: Reference (link) `theorem.25' on input line 1384.
+Package hyperref Info: Reference (link) `theorem.24' on input line 1390.
+Package hyperref Info: Reference (link) `theorem.1' on input line 1392.
+Package hyperref Info: Reference (link) `theorem.1' on input line 1394.
 Package hyperref Info: Anchor `theorem.28' on input line 1398.
-
-LaTeX Warning: Reference `cor:five-multiples' on page 21 undefined on input lin
-e 1400.
-
-
-LaTeX Warning: Reference `lem:obstruction' on page 21 undefined on input line 1
-404.
-
+Package hyperref Info: Reference (link) `theorem.27' on input line 1400.
+Package hyperref Info: Reference (link) `theorem.25' on input line 1404.
 Package hyperref Info: Anchor `section.45' on input line 1408.
 Package hyperref Info: bookmark on input line 1408:
 (hyperref)             thecounter {7}
@@ -1016,31 +876,26 @@ Package hyperref Info: bookmark on input line 1408:
 (hyperref)             toclevel {1}
 (hyperref)             type {toc}.
 Package hyperref Info: Anchor `page.21' on input line 1426.
-[21]
-
-LaTeX Warning: Reference `thm:classification' on page 22 undefined on input lin
-e 1435.
-
-
-LaTeX Warning: Reference `eq:E-small-certificate' on page 22 undefined on input
- line 1442.
-
-
-LaTeX Warning: Reference `eq:E-tail-certificate' on page 22 undefined on input 
-line 1442.
-
-
-LaTeX Warning: Reference `eq:finite-interval-certificate' on page 22 undefined 
-on input line 1443.
-
-
-LaTeX Warning: Reference `eq:finite-five-lower-certificate' on page 22 undefine
-d on input line 1444.
-
-
-LaTeX Warning: Reference `eq:finiteexception' on page 22 undefined on input lin
-e 1445.
-
+ [21
+Package `hyperref' Info: End of reference (link) `theorem.16', line 1344.
+Package `hyperref' Info: End of reference (link) `theorem.25', line 1346.
+Package `hyperref' Info: End of reference (link) `theorem.16', line 1363.
+Package `hyperref' Info: End of reference (link) `theorem.18', line 1367.
+Package `hyperref' Info: End of reference (link) `theorem.25', line 1374.
+Package `hyperref' Info: End of reference (link) `theorem.2', line 1379.
+Package `hyperref' Info: End of reference (link) `theorem.25', line 1384.
+Package `hyperref' Info: End of reference (link) `theorem.24', line 1390.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1392.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1394.
+Package `hyperref' Info: End of reference (link) `theorem.27', line 1400.
+Package `hyperref' Info: End of reference (link) `theorem.25', line 1404.
+]
+Package hyperref Info: Reference (link) `theorem.1' on input line 1435.
+Package hyperref Info: Reference (link) `equation.28' on input line 1442.
+Package hyperref Info: Reference (link) `equation.29' on input line 1442.
+Package hyperref Info: Reference (link) `equation.35' on input line 1443.
+Package hyperref Info: Reference (link) `equation.36' on input line 1444.
+Package hyperref Info: Reference (link) `equation.41' on input line 1445.
 Package hyperref Info: Anchor `section.46' on input line 1455.
 Package hyperref Info: bookmark on input line 1455:
 (hyperref)             thecounter {8}
@@ -1050,9 +905,15 @@ Package hyperref Info: bookmark on input line 1455:
 (hyperref)             toclevel {1}
 (hyperref)             type {toc}.
 Package hyperref Info: Anchor `page.22' on input line 1483.
-[22
-Package `hyperref' Info: End of reference <VerboseLinkInfo>.
-Package `hyperref' Info: End of reference <VerboseLinkInfo>.
+ [22
+Package `hyperref' Info: End of reference (link) `theorem.22', line 1245.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1435.
+Package `hyperref' Info: End of reference (link) `theorem.1', line 1435.
+Package `hyperref' Info: End of reference (link) `equation.28', line 1442.
+Package `hyperref' Info: End of reference (link) `equation.29', line 1442.
+Package `hyperref' Info: End of reference (link) `equation.35', line 1443.
+Package `hyperref' Info: End of reference (link) `equation.36', line 1444.
+Package `hyperref' Info: End of reference (link) `equation.41', line 1445.
 ]
 Package hyperref Info: Anchor `section*.47' on input line 1483.
 Package hyperref Info: Anchor `cite.BHS' on input line 1485.
@@ -1071,32 +932,18 @@ Package hyperref Info: Anchor `page.23' on input line 1546.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `primitive_dyck_tkuriyama_IJFCS_submission
-.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `primitive_dyck_tkuriyama_IJFCS_subm
-ission.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  C9EEDE83B3F152BE7F094AC3B607E629;2489.
+Package rerunfilecheck Info: File `primitive_dyck_tkuriyama_IJFCS_submission.ou
+t' has not changed.
+(rerunfilecheck)             Checksum: C9EEDE83B3F152BE7F094AC3B607E629;2489.
  ) 
 Here is how much of TeX's memory you used:
- 11189 strings out of 467867
- 171147 string characters out of 5418334
- 598332 words of memory out of 5000000
- 39831 multiletter control sequences out of 15000+600000
+ 11208 strings out of 467867
+ 171880 string characters out of 5418334
+ 602676 words of memory out of 5000000
+ 39844 multiletter control sequences out of 15000+600000
  640946 words of font info for 88 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,19n,79p,345b,603s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,19n,79p,471b,603s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Owner\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 0800.pk><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbsy10.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/pub
@@ -1124,10 +971,10 @@ nts/cm/cmti8.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/publ
 ic/amsfonts/cm/cmti9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/public/amsfonts/cm/cmtt10.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX
 /fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on primitive_dyck_tkuriyama_IJFCS_submission.pdf (23 pages, 4050
-37 bytes).
+Output written on primitive_dyck_tkuriyama_IJFCS_submission.pdf (23 pages, 4292
+08 bytes).
 PDF statistics:
- 335 PDF objects out of 1000 (max. 8388607)
+ 464 PDF objects out of 1000 (max. 8388607)
  109 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 81 words of extra memory for PDF output out of 10000 (max. 10000000)
 

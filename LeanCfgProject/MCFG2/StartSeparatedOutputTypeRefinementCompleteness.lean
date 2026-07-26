@@ -157,14 +157,14 @@ theorem startRule_startFree_of_eq_start
     {A : N}
     {x : Tuple α (G.arity A)}
     (h : DerivesTuple G A x) :
-    A = G.start →
+    ∀ hA : A = G.start,
       ∃ ρ : StartRule N,
         ∃ hρ : ρ ∈ G.startRules,
           ∃ childTuple : Tuple α (G.arity ρ.child),
             StartFreeDerives G ρ.child childTuple ∧
-              x = castTuple
-                (hworking.2.1 ρ hρ)
-                childTuple := by
+              x =
+                castTuple (congrArg G.arity hA).symm
+                  (castTuple (hworking.2.1 ρ hρ) childTuple) := by
   induction h with
   | terminal hρ hwt =>
       intro hA
@@ -177,11 +177,14 @@ theorem startRule_startFree_of_eq_start
         ((hsep.binary_lhs_ne_start _ hρ) hA)
 
   | start hρ hx hwt ihx =>
-      intro _
-      refine ⟨_, hρ, _, ?_, ?_⟩
+      intro hA
+      refine ⟨ρ, hρ, x, ?_, ?_⟩
       · exact hx.toStartFreeOfNeStart hsep
           (hsep.start_child_ne_start _ hρ)
-      · have hp : hwt = hworking.2.1 _ hρ :=
+      · have hA_rfl : hA = rfl :=
+          Subsingleton.elim _ _
+        cases hA_rfl
+        have hp : hwt = hworking.2.1 ρ hρ :=
           Subsingleton.elim _ _
         cases hp
         rfl
@@ -203,8 +206,11 @@ theorem start_iff_startRule_startFree
                 childTuple := by
   constructor
   · intro h
-    exact startRule_startFree_of_eq_start
-      hworking hsep h rfl
+    rcases
+        (startRule_startFree_of_eq_start
+          hworking hsep h rfl) with
+      ⟨ρ, hρ, childTuple, hchild, htuple⟩
+    simpa using ⟨ρ, hρ, childTuple, hchild, htuple⟩
 
   · rintro ⟨ρ, hρ, childTuple, hchild, rfl⟩
     exact DerivesTuple.start
