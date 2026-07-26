@@ -454,7 +454,8 @@ theorem canonicalBinaryRule_mem
   rw [R.anchor_tupleType ρ.left,
       R.anchor_tupleType ρ.right] at hmem
   simpa
-    [successfulPresentation,
+    [R,
+     successfulPresentation,
      representatives,
      concreteSuccessfulOccurrenceCompletePresentation,
      concreteSuccessfulCompleteOutputTypePresentation,
@@ -482,7 +483,8 @@ theorem canonicalStartRule_mem
       (R.baseOccurrence ρ.child)
   rw [R.anchor_tupleType ρ.child] at hmem
   simpa
-    [successfulPresentation,
+    [R,
+     successfulPresentation,
      representatives,
      concreteSuccessfulOccurrenceCompletePresentation,
      concreteSuccessfulCompleteOutputTypePresentation,
