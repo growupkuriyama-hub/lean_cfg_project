@@ -101,7 +101,7 @@ def toLeftFillingIdentity
     (y : Tuple α dC) :
     LeftFillingIdentity namedFill parent body y where
   ctx := L.leftContext y
-  fill_eq := by
+  identity := by
     intro x
     exact L.left_fill_eq y x
 
@@ -127,7 +127,7 @@ def toRightFillingIdentity
     (u : Tuple α dB) :
     RightFillingIdentity namedFill parent body u where
   ctx := R.rightContext u
-  fill_eq := by
+  identity := by
     intro v
     exact R.right_fill_eq u v
 
@@ -233,8 +233,8 @@ def toNamedContextSplicingConstructionData
 def toPreferredSplicingConstructorTarget
     (C : NamedContextSplicingPiecewiseConstructor α) :
     PaperPreferredSplicingConstructorTarget (α := α) :=
-  C.toNamedContextSplicingConstructionData
-    .toPreferredSplicingConstructorTarget
+  NamedContextSplicingConstructionData.toPreferredSplicingConstructorTarget
+    C.toNamedContextSplicingConstructionData
 
 end NamedContextSplicingPiecewiseConstructor
 

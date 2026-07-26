@@ -217,8 +217,8 @@ theorem tupleType_eq_for_grammar
     (h :
       ExactSampleLearnerReachable K obs f x y) :
     tupleType obs y = tupleType obs x :=
-  h.toSampleLearnerReachable.
-    tupleType_eq_for_grammar G hL hK
+  (h.toSampleLearnerReachable).tupleType_eq_for_grammar
+    G hL hK
 
 end ExactSampleLearnerReachable
 
@@ -354,6 +354,10 @@ theorem toExact
       rw [← B.source_eq_composition] at hbinary
       exact hbinary
 
+  | trans hxy hyz ihxy ihyz =>
+      exact ExactSampleLearnerReachable.trans
+        ihxy ihyz
+
 /-- Corrected concrete derivations inherit broad reachable semantics. -/
 theorem toSampleLearnerReachable
     {d : Nat}
@@ -444,19 +448,13 @@ theorem toCorrectedConcrete
         correctedConcreteBinaryRuleOfEvidence
           K B hexact
 
-      have hleft :
-          CorrectedConcreteCanonicalLearnerDerives
-            K obs f R.leftSource _ := by
-        rw [correctedConcreteBinaryRuleOfEvidence_leftSource
-          K B hexact]
-        exact ihx
+      have hleft := ihx
+      rw [← correctedConcreteBinaryRuleOfEvidence_leftSource
+        K B hexact] at hleft
 
-      have hright :
-          CorrectedConcreteCanonicalLearnerDerives
-            K obs f R.rightSource _ := by
-        rw [correctedConcreteBinaryRuleOfEvidence_rightSource
-          K B hexact]
-        exact ihy
+      have hright := ihy
+      rw [← correctedConcreteBinaryRuleOfEvidence_rightSource
+        K B hexact] at hright
 
       have hbinary :
           CorrectedConcreteCanonicalLearnerDerives
@@ -537,8 +535,9 @@ def ExactReachableSampleStringLanguage
     (f : Nat) :
     Set (Word α) :=
   { word |
-      ExactReachableSampleStringDerives
-        K obs f word }
+      Nonempty
+        (ExactReachableSampleStringDerives
+          K obs f word) }
 
 /-- String derivation of the corrected finite enumerated learner. -/
 structure CorrectedConcreteCanonicalStringDerives
@@ -565,8 +564,9 @@ def CorrectedConcreteCanonicalLearnerLanguage
     (f : Nat) :
     Set (Word α) :=
   { word |
-      CorrectedConcreteCanonicalStringDerives
-        K obs f word }
+      Nonempty
+        (CorrectedConcreteCanonicalStringDerives
+          K obs f word) }
 
 namespace ExactReachableSampleStringDerives
 
@@ -659,8 +659,8 @@ theorem sound_for_grammar
       CorrectedConcreteCanonicalStringDerives
         K obs f word) :
     word ∈ G.StringLanguage :=
-  D.toExact.toReachableSampleStringDerives.
-    sound_for_grammar G hL hK
+  (D.toExact.toReachableSampleStringDerives).sound_for_grammar
+    G hL hK
 
 end CorrectedConcreteCanonicalStringDerives
 
@@ -676,7 +676,8 @@ theorem correctedConcreteCanonicalLearnerLanguage_subset_exactReachable
       ExactReachableSampleStringLanguage
         K obs f := by
   intro word hword
-  exact hword.toExact
+  rcases hword with ⟨D⟩
+  exact ⟨D.toExact⟩
 
 /-- Exact reachable semantics is contained in the corrected finite learner
 language. -/
@@ -689,7 +690,8 @@ theorem exactReachable_subset_correctedConcreteCanonicalLearnerLanguage
       CorrectedConcreteCanonicalLearnerLanguage
         K obs f := by
   intro word hword
-  exact hword.toCorrectedConcrete
+  rcases hword with ⟨D⟩
+  exact ⟨D.toCorrectedConcrete⟩
 
 /-- The corrected finite enumerated learner and exact reachable semantics
 generate exactly the same string language. -/
@@ -718,7 +720,8 @@ theorem exactReachableSampleStringLanguage_subset_reachable
     ExactReachableSampleStringLanguage K obs f ⊆
       ReachableSampleStringLanguage K obs f := by
   intro word hword
-  exact hword.toReachableSampleStringDerives
+  rcases hword with ⟨D⟩
+  exact ⟨D.toReachableSampleStringDerives⟩
 
 /-- The corrected finite learner language is contained in the older broad
 reachable language. -/
@@ -744,8 +747,8 @@ theorem sample_subset_correctedConcreteCanonicalLearnerLanguage
         K obs f := by
   intro word hword
   exact
-    CorrectedConcreteCanonicalStringDerives.of_sample_word
-      (obs := obs) (f := f) hword
+    ⟨CorrectedConcreteCanonicalStringDerives.of_sample_word
+      (obs := obs) (f := f) hword⟩
 
 /-- Soundness of the corrected concrete learner language. -/
 theorem correctedConcreteCanonicalLearnerLanguage_sound
@@ -762,7 +765,8 @@ theorem correctedConcreteCanonicalLearnerLanguage_sound
         K obs f ⊆
       G.StringLanguage := by
   intro word hword
-  exact hword.sound_for_grammar G hL hK
+  rcases hword with ⟨D⟩
+  exact D.sound_for_grammar G hL hK
 
 end ExactAndConcreteStringLanguages
 
