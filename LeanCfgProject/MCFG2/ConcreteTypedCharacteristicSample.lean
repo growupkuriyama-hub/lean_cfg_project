@@ -422,8 +422,8 @@ theorem typedStartWord_positive
       σ.1.wellTyped
   apply mem_StringLanguage_of_start_derives
     G (typedStartWord S hstart σ) hstart
-  rw [castTuple_singleton_tupleWordOfArityOne]
-  exact hderives
+  simpa [typedStartWord, O,
+    castTuple_singleton_tupleWordOfArityOne] using hderives
 
 /-- The concrete finite typed characteristic sample is positive. -/
 theorem typedCharacteristicSample_positive
@@ -626,6 +626,10 @@ theorem presentationDerives_reachable_from_typed_anchor
       obs f
       (successfulTypedAnchor S h.presentNode)
       x := by
+  have hbasic : G.BasicWorkingConditions :=
+    hworking.basic
+  have hstart : 1 = G.arity G.start := by
+    exact hbasic.1.symm
   induction h with
 
   | @terminal τ hτ =>
@@ -636,13 +640,13 @@ theorem presentationDerives_reachable_from_typed_anchor
           (PresentationDerives.terminal hτ).presentNode =
             typedTerminalLHS S τa :=
         PresentTypedNonterminal.eq_of_node_eq rfl
-      rw [hnode]
+      cases hnode
       exact
         SampleLearnerReachable.unit
           (hfan τ.baseRule.lhs)
           (G.arity_pos τ.baseRule.lhs)
           (typedTerminalUnitEvidence
-            S hworking.basic.1.symm τa)
+            S hstart τa)
           (SampleLearnerReachable.self
             (castTuple τ.wellTyped.symm
               τ.baseRule.outputTuple))
@@ -666,14 +670,14 @@ theorem presentationDerives_reachable_from_typed_anchor
         PresentTypedNonterminal.eq_of_node_eq rfl
 
       have ihx' := ihx
-      rw [hleft] at ihx'
+      cases hleft
 
       have ihy' := ihy
-      rw [hright] at ihy'
+      cases hright
 
       have hparent :
           SampleLearnerReachable
-            (typedCharacteristicSample S hworking.basic.1.symm)
+            (typedCharacteristicSample S hstart)
             obs f
             (successfulTypedAnchor S
               (typedBinaryLHS S τa))
@@ -686,12 +690,12 @@ theorem presentationDerives_reachable_from_typed_anchor
           (hfan τ.baseRule.lhs)
           (G.arity_pos τ.baseRule.lhs)
           (typedBinaryUnitEvidence
-            S hworking.basic.1.symm τa)
+            S hstart τa)
           (SampleLearnerReachable.self _)
 
       have hchildren :
           SampleLearnerReachable
-            (typedCharacteristicSample S hworking.basic.1.symm)
+            (typedCharacteristicSample S hstart)
             obs f
             (τ.baseRule.apply
               (successfulTypedAnchor S
@@ -701,7 +705,7 @@ theorem presentationDerives_reachable_from_typed_anchor
             (τ.baseRule.apply x y) := by
         change
           SampleLearnerReachable
-            (typedCharacteristicSample S hworking.basic.1.symm)
+            (typedCharacteristicSample S hstart)
             obs f
             (evalTemplateTuple τ.baseRule.body
               (successfulTypedAnchor S
@@ -714,10 +718,10 @@ theorem presentationDerives_reachable_from_typed_anchor
             (hfan τ.baseRule.lhs)
             (G.arity_pos τ.baseRule.lhs)
             (typedBinaryEvidence
-              S hworking hworking.basic.1.symm τa)
+              S hworking hstart τa)
             ihx' ihy'
 
-      rw [hlhs]
+      cases hlhs
       exact SampleLearnerReachable.trans
         hparent hchildren
 
@@ -765,7 +769,8 @@ theorem presentationStringDerives_reachable
         obs f
         (successfulTypedAnchor S childPresent)
         D.childTuple := by
-    simpa [hchildNode] using
+    cases hchildNode
+    exact
       presentationDerives_reachable_from_typed_anchor
         S hworking hfan D.child_derives
 
