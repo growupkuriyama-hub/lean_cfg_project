@@ -46,11 +46,14 @@ variable {α : Type u}
 variable {M : Type v} [Monoid M]
 
 /-- A concrete unit rule is literally an element of the finite unit-rule set. -/
-abbrev ConcreteUnitRule
+noncomputable abbrev ConcreteUnitRule
     (K : Finset (Word α))
     (obs : α → M)
     (d : Nat) :=
-  (concreteUnitRules K obs d).attach
+  { U :
+      FiniteTupleOccurrenceCandidate α d ×
+        FiniteTupleOccurrenceCandidate α d //
+      U ∈ concreteUnitRules K obs d }
 
 namespace ConcreteUnitRule
 
@@ -87,10 +90,13 @@ end ConcreteUnitRule
 
 /-- A concrete binary rule is literally an element of the finite
 binary-witness set. -/
-abbrev ConcreteBinaryRule
+noncomputable abbrev ConcreteBinaryRule
     (K : Finset (Word α))
     (e dB dC : Nat) :=
-  (concreteBinaryWitnesses K e dB dC).attach
+  { B :
+      FiniteBinaryWitnessCandidate
+        K e dB dC (sampleLengthBudget K) //
+      B ∈ concreteBinaryWitnesses K e dB dC }
 
 namespace ConcreteBinaryRule
 
@@ -361,8 +367,9 @@ def ConcreteCanonicalLearnerLanguage
     (f : Nat) :
     Set (Word α) :=
   { word |
-      ConcreteCanonicalStringDerives
-        K obs f word }
+      Nonempty
+        (ConcreteCanonicalStringDerives
+          K obs f word) }
 
 namespace ConcreteCanonicalStringDerives
 
@@ -423,7 +430,8 @@ theorem concreteCanonicalLearnerLanguage_subset_reachable
     ConcreteCanonicalLearnerLanguage K obs f ⊆
       ReachableSampleStringLanguage K obs f := by
   intro word hword
-  exact hword.toReachableSampleStringDerives
+  rcases hword with ⟨D⟩
+  exact ⟨D.toReachableSampleStringDerives⟩
 
 /-- The finite sample itself is included in the concrete learner language. -/
 theorem sample_subset_concreteCanonicalLearnerLanguage
@@ -434,8 +442,8 @@ theorem sample_subset_concreteCanonicalLearnerLanguage
       ConcreteCanonicalLearnerLanguage K obs f := by
   intro word hword
   exact
-    ConcreteCanonicalStringDerives.of_sample_word
-      (obs := obs) (f := f) hword
+    ⟨ConcreteCanonicalStringDerives.of_sample_word
+      (obs := obs) (f := f) hword⟩
 
 /-- Soundness of the concrete canonical learner language. -/
 theorem concreteCanonicalLearnerLanguage_sound
@@ -451,7 +459,8 @@ theorem concreteCanonicalLearnerLanguage_sound
     ConcreteCanonicalLearnerLanguage K obs f ⊆
       G.StringLanguage := by
   intro word hword
-  exact hword.sound_for_grammar G hL hK
+  rcases hword with ⟨D⟩
+  exact D.sound_for_grammar G hL hK
 
 end ConcreteStringLanguage
 
