@@ -146,7 +146,8 @@ noncomputable def finiteExactTemplateTupleCodesUpTo
     (e dB dC bound : Nat) :
     Finset (FiniteExactTemplateTupleCode α e dB dC) := by
   classical
-  let good :=
+  let good :
+      Finset (FiniteTemplateTupleCode α e dB dC) :=
     (finiteTemplateTupleCodesUpTo A e dB dC bound).filter
       (fun C =>
         TemplateTuple.ExactlyOnce C.body)
@@ -154,8 +155,15 @@ noncomputable def finiteExactTemplateTupleCodesUpTo
     good.attach.image
       (fun C =>
         { code := C.1
-          exactOnce :=
-            (Finset.mem_filter.mp C.2).2 })
+          exactOnce := by
+            have hmem :
+                C.1 ∈
+                  (finiteTemplateTupleCodesUpTo
+                    A e dB dC bound).filter
+                    (fun D =>
+                      TemplateTuple.ExactlyOnce D.body) := by
+              simpa [good] using C.2
+            exact (Finset.mem_filter.mp hmem).2 })
 
 /-- Every enumerated exact template carries an exact-once body. -/
 theorem finiteExactTemplateTupleCode_exactOnce
