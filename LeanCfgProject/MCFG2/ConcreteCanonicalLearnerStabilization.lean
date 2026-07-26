@@ -456,7 +456,6 @@ theorem correctedConcreteCanonicalLearner_stabilization_conclusion_package :
         obs f hL,
       ?_⟩
   intro T
-  dsimp
   constructor
   · intro n hn
     exact
