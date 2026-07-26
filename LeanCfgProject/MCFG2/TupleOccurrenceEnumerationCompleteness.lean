@@ -149,7 +149,9 @@ theorem mem_sampleAlphabet_of_mem_word
     (ha : a ∈ word) :
     a ∈ sampleAlphabet K := by
   classical
-  simp [sampleAlphabet, hword, ha]
+  unfold sampleAlphabet
+  apply Finset.mem_biUnion.mpr
+  exact ⟨word, hword, by simpa using ha⟩
 
 /-- Every sample word uses only letters of the finite sample alphabet. -/
 theorem sample_word_alphabet_subset
@@ -170,8 +172,8 @@ theorem sample_word_length_le_budget
   classical
   unfold sampleLengthBudget
   have hsum :
-      (∑ w in K.erase word, w.length) + word.length =
-        ∑ w in K, w.length :=
+      (K.erase word).sum (fun w => w.length) + word.length =
+        K.sum (fun w => w.length) :=
     Finset.sum_erase_add _ hword
   rw [← hsum]
   exact Nat.le_add_left _ _
@@ -507,7 +509,10 @@ noncomputable def concreteUnitRuleOfEvidenceUpTo
         y i ∈
           finiteWordsUpTo
             (sampleAlphabet K) bound) :
-    (concreteUnitRulesUpTo K obs d bound).attach := by
+    { Q :
+        FiniteTupleOccurrenceCandidate α d ×
+          FiniteTupleOccurrenceCandidate α d //
+        Q ∈ concreteUnitRulesUpTo K obs d bound } := by
   classical
   let hex :=
     exists_concreteUnitRuleOfEvidenceUpTo
