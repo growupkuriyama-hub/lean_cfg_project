@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.NamedFillEnumerationBounds
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # BinaryWitnessEnumerationCompleteness.lean
@@ -158,7 +159,7 @@ theorem totalLeftVarCount_leftVar_cons
           ∑ i : Fin dB, if k = i then 1 else 0 := by
       rw [Finset.sum_add_distrib]
     _ = (∑ i : Fin dB, leftVarCount i rest) + 1 := by
-      simp
+      simp [eq_comm]
     _ = totalLeftVarCount rest + 1 := by
       rfl
 
@@ -190,7 +191,7 @@ theorem totalRightVarCount_rightVar_cons
           ∑ j : Fin dC, if k = j then 1 else 0 := by
       rw [Finset.sum_add_distrib]
     _ = (∑ j : Fin dC, rightVarCount j rest) + 1 := by
-      simp
+      simp [eq_comm]
     _ = totalRightVarCount rest + 1 := by
       rfl
 
@@ -262,6 +263,7 @@ theorem leftVarCount_le_one_of_exactOnce
   · subst o
     rw [hselected]
   · rw [hother o h]
+    exact Nat.zero_le _
 
 /-- Right-variable analogue. -/
 theorem rightVarCount_le_one_of_exactOnce
@@ -277,6 +279,7 @@ theorem rightVarCount_le_one_of_exactOnce
   · subst o
     rw [hselected]
   · rw [hother o h]
+    exact Nat.zero_le _
 
 /-- At most `dB` left-variable atoms occur in one output component of an
 exact-once body. -/
@@ -529,6 +532,18 @@ noncomputable def exactTemplateTupleCodeOf
       body := by
   exact templateTupleCodeOf_body body
 
+private theorem finiteExactTemplateTupleCode_ext
+    {e dB dC : Nat}
+    {C D : FiniteExactTemplateTupleCode α e dB dC}
+    (hcode : C.code = D.code) :
+    C = D := by
+  cases C with
+  | mk c hc =>
+      cases D with
+      | mk d hd =>
+          cases hcode
+          rfl
+
 /-- Completeness of the corrected finite exact-template enumeration for one
 sample binary witness. -/
 theorem exactTemplateTupleCodeOf_mem_for_binaryEvidence
@@ -589,7 +604,7 @@ theorem exactTemplateTupleCodeOf_mem_for_binaryEvidence
   apply Finset.mem_image.mpr
   refine ⟨attached, ?_, ?_⟩
   · simp
-  · apply FiniteExactTemplateTupleCode.ext
+  · apply finiteExactTemplateTupleCode_ext
     rfl
 
 end ExactTemplateEnumerationCompleteness
@@ -661,11 +676,15 @@ noncomputable def correctedConcreteBinaryWitnesses
 
 /-- A corrected concrete binary rule is literally a member of the corrected
 finite witness set. -/
-abbrev CorrectedConcreteBinaryRule
+noncomputable abbrev CorrectedConcreteBinaryRule
     (K : Finset (Word α))
     (e dB dC : Nat) :=
-  (correctedConcreteBinaryWitnesses
-    K e dB dC).attach
+  { R :
+      FiniteBinaryWitnessCandidate
+        K e dB dC
+          (exactBinaryWitnessBudget K dB dC) //
+      R ∈ correctedConcreteBinaryWitnesses
+        K e dB dC }
 
 namespace CorrectedConcreteBinaryRule
 
@@ -765,15 +784,10 @@ theorem exists_correctedConcreteBinaryRuleOfEvidence
     {y : Tuple α dC}
     (B : SampleBinaryEvidence K parent body x y)
     (hexact : TemplateTuple.ExactlyOnce body) :
-    ∃ R :
-        FiniteBinaryWitnessCandidate
-          K e dB dC
-            (exactBinaryWitnessBudget K dB dC),
-      R ∈ correctedConcreteBinaryWitnesses
-          K e dB dC ∧
-        R.parentContext = parent ∧
-        R.leftTuple = x ∧
-        R.rightTuple = y ∧
+    ∃ R : CorrectedConcreteBinaryRule K e dB dC,
+      R.parentContext = parent ∧
+        R.leftSource = x ∧
+        R.rightSource = y ∧
         R.body = body := by
   classical
   let bound :=
@@ -883,17 +897,30 @@ theorem exists_correctedConcreteBinaryRuleOfEvidence
     apply Finset.mem_filter.mpr
     refine ⟨hcandidate, ?_⟩
     simp [R, parentOccurrence,
+      leftOccurrence, rightOccurrence,
       FiniteBinaryWitnessCandidate.composedTuple,
       FiniteBinaryWitnessCandidate.body,
       FiniteBinaryWitnessCandidate.leftTuple,
       FiniteBinaryWitnessCandidate.rightTuple,
       templateCode]
 
-  refine ⟨R, hR, ?_, ?_, ?_, ?_⟩
-  · rfl
-  · simp [R, leftOccurrence]
-  · simp [R, rightOccurrence]
-  · simp [R, templateCode]
+  refine ⟨⟨R, hR⟩, ?_, ?_, ?_, ?_⟩
+  · simp [CorrectedConcreteBinaryRule.parentContext,
+      CorrectedConcreteBinaryRule.witness,
+      R, parentOccurrence,
+      FiniteBinaryWitnessCandidate.parentContext]
+  · simp [CorrectedConcreteBinaryRule.leftSource,
+      CorrectedConcreteBinaryRule.witness,
+      R, leftOccurrence,
+      FiniteBinaryWitnessCandidate.leftTuple]
+  · simp [CorrectedConcreteBinaryRule.rightSource,
+      CorrectedConcreteBinaryRule.witness,
+      R, rightOccurrence,
+      FiniteBinaryWitnessCandidate.rightTuple]
+  · simp [CorrectedConcreteBinaryRule.body,
+      CorrectedConcreteBinaryRule.witness,
+      R, templateCode,
+      FiniteBinaryWitnessCandidate.body]
 
 /-- Select the corrected finite binary rule after finite membership existence
 has been proved. -/
@@ -911,9 +938,7 @@ noncomputable def correctedConcreteBinaryRuleOfEvidence
   let hex :=
     exists_correctedConcreteBinaryRuleOfEvidence
       K B hexact
-  exact
-    ⟨Classical.choose hex,
-      (Classical.choose_spec hex).1⟩
+  exact Classical.choose hex
 
 theorem correctedConcreteBinaryRuleOfEvidence_parentContext
     (K : Finset (Word α))
@@ -927,10 +952,10 @@ theorem correctedConcreteBinaryRuleOfEvidence_parentContext
     (correctedConcreteBinaryRuleOfEvidence
       K B hexact).parentContext = parent := by
   classical
-  exact
+  simpa [correctedConcreteBinaryRuleOfEvidence] using
     (Classical.choose_spec
       (exists_correctedConcreteBinaryRuleOfEvidence
-        K B hexact)).2.1
+        K B hexact)).1
 
 theorem correctedConcreteBinaryRuleOfEvidence_leftSource
     (K : Finset (Word α))
@@ -944,10 +969,10 @@ theorem correctedConcreteBinaryRuleOfEvidence_leftSource
     (correctedConcreteBinaryRuleOfEvidence
       K B hexact).leftSource = x := by
   classical
-  exact
+  simpa [correctedConcreteBinaryRuleOfEvidence] using
     (Classical.choose_spec
       (exists_correctedConcreteBinaryRuleOfEvidence
-        K B hexact)).2.2.1
+        K B hexact)).2.1
 
 theorem correctedConcreteBinaryRuleOfEvidence_rightSource
     (K : Finset (Word α))
@@ -961,10 +986,10 @@ theorem correctedConcreteBinaryRuleOfEvidence_rightSource
     (correctedConcreteBinaryRuleOfEvidence
       K B hexact).rightSource = y := by
   classical
-  exact
+  simpa [correctedConcreteBinaryRuleOfEvidence] using
     (Classical.choose_spec
       (exists_correctedConcreteBinaryRuleOfEvidence
-        K B hexact)).2.2.2.1
+        K B hexact)).2.2.1
 
 theorem correctedConcreteBinaryRuleOfEvidence_body
     (K : Finset (Word α))
@@ -978,10 +1003,10 @@ theorem correctedConcreteBinaryRuleOfEvidence_body
     (correctedConcreteBinaryRuleOfEvidence
       K B hexact).body = body := by
   classical
-  exact
+  simpa [correctedConcreteBinaryRuleOfEvidence] using
     (Classical.choose_spec
       (exists_correctedConcreteBinaryRuleOfEvidence
-        K B hexact)).2.2.2.2
+        K B hexact)).2.2.2
 
 /-- The selected corrected binary rule reconstructs the original evidence
 source tuple. -/
