@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteTypedCharacteristicSample
+import Mathlib.Data.Finset.Prod
+import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 
 /-!
 # TupleOccurrences.lean
@@ -371,15 +373,20 @@ def sampleUnitEvidenceOfConcreteRuleUpTo
     SampleUnitEvidence K obs
       U.1.tuple U.2.tuple := by
   classical
-  have hfilter := Finset.mem_filter.mp hU
-  have hproduct := Finset.mem_product.mp hfilter.1
+  have hspec :
+      (U.1 ∈ tupleOccurrencesUpTo K d bound ∧
+        U.2 ∈ tupleOccurrencesUpTo K d bound) ∧
+        (U.1.context = U.2.context ∧
+          tupleType obs U.1.tuple =
+            tupleType obs U.2.tuple) := by
+    simpa [concreteUnitRulesUpTo] using hU
   have hleft :
       U.1.word ∈ K :=
-    tupleOccurrence_word_mem K d bound hproduct.1
+    tupleOccurrence_word_mem K d bound hspec.1.1
   have hright :
       U.2.word ∈ K :=
-    tupleOccurrence_word_mem K d bound hproduct.2
-  rcases hfilter.2 with ⟨hcontext, htype⟩
+    tupleOccurrence_word_mem K d bound hspec.1.2
+  rcases hspec.2 with ⟨hcontext, htype⟩
   exact
     { context := U.1.context
       type_eq := htype
@@ -422,13 +429,18 @@ theorem concreteUnitRule_spec
       tupleType obs U.1.tuple =
         tupleType obs U.2.tuple := by
   classical
-  have hfilter := Finset.mem_filter.mp hU
-  have hproduct := Finset.mem_product.mp hfilter.1
+  have hspec :
+      (U.1 ∈ tupleOccurrencesUpTo K d bound ∧
+        U.2 ∈ tupleOccurrencesUpTo K d bound) ∧
+        (U.1.context = U.2.context ∧
+          tupleType obs U.1.tuple =
+            tupleType obs U.2.tuple) := by
+    simpa [concreteUnitRulesUpTo] using hU
   exact
-    ⟨tupleOccurrence_word_mem K d bound hproduct.1,
-      tupleOccurrence_word_mem K d bound hproduct.2,
-      hfilter.2.1,
-      hfilter.2.2⟩
+    ⟨tupleOccurrence_word_mem K d bound hspec.1.1,
+      tupleOccurrence_word_mem K d bound hspec.1.2,
+      hspec.2.1,
+      hspec.2.2⟩
 
 end ConcreteUnitRules
 
