@@ -133,7 +133,7 @@ noncomputable def sampleAlphabet
 def sampleLengthBudget
     (K : Finset (Word α)) :
     Nat :=
-  ∑ word in K, word.length
+  K.sum (fun word => word.length)
 
 /-- The finite set of candidate words used by the default learner
 enumeration. -/
