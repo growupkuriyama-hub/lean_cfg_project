@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearner
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # TupleOccurrenceEnumerationCompleteness.lean
