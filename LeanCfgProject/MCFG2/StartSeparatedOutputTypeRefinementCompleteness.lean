@@ -176,7 +176,7 @@ theorem startRule_startFree_of_eq_start
       exact False.elim
         ((hsep.binary_lhs_ne_start _ hρ) hA)
 
-  | start hρ hx hwt ihx =>
+  | @start ρ hρ x hx hwt ihx =>
       intro hA
       refine ⟨ρ, hρ, x, ?_, ?_⟩
       · exact hx.toStartFreeOfNeStart hsep
