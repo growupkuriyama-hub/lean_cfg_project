@@ -139,7 +139,7 @@ variable {G : WorkingMCFG N α} {obs : α → M}
 /-- The present typed lhs of an attached terminal rule. -/
 def typedTerminalLHS
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.terminalRules.attach) :
+    (τ : S.completePresentation.presentation.terminalRules) :
     PresentTypedNonterminal
       S.completePresentation.presentation :=
   ⟨τ.1.lhs obs,
@@ -148,7 +148,7 @@ def typedTerminalLHS
 /-- The present typed lhs of an attached binary rule. -/
 def typedBinaryLHS
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     PresentTypedNonterminal
       S.completePresentation.presentation :=
   ⟨τ.1.lhs obs,
@@ -157,7 +157,7 @@ def typedBinaryLHS
 /-- The present typed left child of an attached binary rule. -/
 def typedBinaryLeft
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     PresentTypedNonterminal
       S.completePresentation.presentation :=
   ⟨τ.1.left,
@@ -166,7 +166,7 @@ def typedBinaryLeft
 /-- The present typed right child of an attached binary rule. -/
 def typedBinaryRight
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     PresentTypedNonterminal
       S.completePresentation.presentation :=
   ⟨τ.1.right,
@@ -175,7 +175,7 @@ def typedBinaryRight
 /-- The present typed child of an attached start rule. -/
 def typedStartChild
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (σ : S.completePresentation.presentation.startRules.attach) :
+    (σ : S.completePresentation.presentation.startRules) :
     PresentTypedNonterminal
       S.completePresentation.presentation :=
   ⟨σ.1.child,
@@ -184,7 +184,7 @@ def typedStartChild
 /-- Exposed anchor word of one attached present typed nonterminal. -/
 def typedAnchorWord
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (X : S.completePresentation.presentation.nonterminals.attach) :
+    (X : S.completePresentation.presentation.nonterminals) :
     Word α :=
   let PX :
       PresentTypedNonterminal
@@ -197,7 +197,7 @@ def typedAnchorWord
 /-- Terminal comparison word attached to a present typed terminal rule. -/
 def typedTerminalWord
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.terminalRules.attach) :
+    (τ : S.completePresentation.presentation.terminalRules) :
     Word α :=
   let O :=
     S.occurrences.occurrence
@@ -211,7 +211,7 @@ def typedTerminalWord
 /-- Binary comparison word attached to a present typed binary rule. -/
 def typedBinaryWord
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     Word α :=
   let OL :=
     S.occurrences.occurrence
@@ -233,7 +233,7 @@ This replaces the single global start anchor used by the base-indexed route. -/
 def typedStartWord
     (S : SuccessfulOccurrenceCompletePresentation G obs)
     (hstart : 1 = G.arity G.start)
-    (σ : S.completePresentation.presentation.startRules.attach) :
+    (σ : S.completePresentation.presentation.startRules) :
     Word α :=
   let O :=
     S.occurrences.occurrence
@@ -295,7 +295,7 @@ theorem typedAnchorWord_mem
       S.completePresentation.presentation)
     (hstart : 1 = G.arity G.start) :
     let AX :
-      S.completePresentation.presentation.nonterminals.attach :=
+      S.completePresentation.presentation.nonterminals :=
         ⟨X.node, X.mem⟩
     typedAnchorWord S AX ∈
       typedCharacteristicSample S hstart := by
@@ -307,7 +307,7 @@ theorem typedAnchorWord_mem
 
 theorem typedTerminalWord_mem
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.terminalRules.attach)
+    (τ : S.completePresentation.presentation.terminalRules)
     (hstart : 1 = G.arity G.start) :
     typedTerminalWord S τ ∈
       typedCharacteristicSample S hstart := by
@@ -320,7 +320,7 @@ theorem typedTerminalWord_mem
 
 theorem typedBinaryWord_mem
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.binaryRules.attach)
+    (τ : S.completePresentation.presentation.binaryRules)
     (hstart : 1 = G.arity G.start) :
     typedBinaryWord S τ ∈
       typedCharacteristicSample S hstart := by
@@ -335,7 +335,7 @@ theorem typedBinaryWord_mem
 
 theorem typedStartWord_mem
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (σ : S.completePresentation.presentation.startRules.attach)
+    (σ : S.completePresentation.presentation.startRules)
     (hstart : 1 = G.arity G.start) :
     typedStartWord S hstart σ ∈
       typedCharacteristicSample S hstart := by
@@ -362,7 +362,7 @@ theorem typedAnchorWord_positive
     (X : PresentTypedNonterminal
       S.completePresentation.presentation) :
     let AX :
-      S.completePresentation.presentation.nonterminals.attach :=
+      S.completePresentation.presentation.nonterminals :=
         ⟨X.node, X.mem⟩
     typedAnchorWord S AX ∈ G.StringLanguage := by
   dsimp [typedAnchorWord]
@@ -370,7 +370,7 @@ theorem typedAnchorWord_positive
 
 theorem typedTerminalWord_positive
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.terminalRules.attach) :
+    (τ : S.completePresentation.presentation.terminalRules) :
     typedTerminalWord S τ ∈ G.StringLanguage := by
   let O :=
     S.occurrences.occurrence
@@ -385,7 +385,7 @@ theorem typedTerminalWord_positive
 
 theorem typedBinaryWord_positive
     (S : SuccessfulOccurrenceCompletePresentation G obs)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     typedBinaryWord S τ ∈ G.StringLanguage := by
   let OL :=
     S.occurrences.occurrence
@@ -408,7 +408,7 @@ theorem typedBinaryWord_positive
 theorem typedStartWord_positive
     (S : SuccessfulOccurrenceCompletePresentation G obs)
     (hstart : 1 = G.arity G.start)
-    (σ : S.completePresentation.presentation.startRules.attach) :
+    (σ : S.completePresentation.presentation.startRules) :
     typedStartWord S hstart σ ∈ G.StringLanguage := by
   let O :=
     S.occurrences.occurrence
@@ -432,6 +432,7 @@ theorem typedCharacteristicSample_positive
     (typedCharacteristicSample S hstart : Set (Word α)) ⊆
       G.StringLanguage := by
   intro word hword
+  change word ∈ typedCharacteristicSample S hstart at hword
   simp only [typedCharacteristicSample,
     Finset.mem_union] at hword
   rcases hword with hA | hT | hB | hS
@@ -517,7 +518,7 @@ theorem successfulTypedAnchor_mem
 def typedTerminalUnitEvidence
     (S : SuccessfulOccurrenceCompletePresentation G obs)
     (hstart : 1 = G.arity G.start)
-    (τ : S.completePresentation.presentation.terminalRules.attach) :
+    (τ : S.completePresentation.presentation.terminalRules) :
     SampleUnitEvidence
       (typedCharacteristicSample S hstart)
       obs
@@ -542,7 +543,7 @@ def typedTerminalUnitEvidence
 def typedBinaryUnitEvidence
     (S : SuccessfulOccurrenceCompletePresentation G obs)
     (hstart : 1 = G.arity G.start)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     SampleUnitEvidence
       (typedCharacteristicSample S hstart)
       obs
@@ -581,7 +582,7 @@ def typedBinaryEvidence
     (S : SuccessfulOccurrenceCompletePresentation G obs)
     (hworking : G.ExactWorkingConditions)
     (hstart : 1 = G.arity G.start)
-    (τ : S.completePresentation.presentation.binaryRules.attach) :
+    (τ : S.completePresentation.presentation.binaryRules) :
     SampleBinaryEvidence
       (typedCharacteristicSample S hstart)
       (successfulTypedExpose S (typedBinaryLHS S τ))
@@ -627,9 +628,9 @@ theorem presentationDerives_reachable_from_typed_anchor
       x := by
   induction h with
 
-  | terminal hτ =>
+  | @terminal τ hτ =>
       let τa :
-          S.completePresentation.presentation.terminalRules.attach :=
+          S.completePresentation.presentation.terminalRules :=
         ⟨τ, hτ⟩
       have hnode :
           (PresentationDerives.terminal hτ).presentNode =
@@ -646,9 +647,9 @@ theorem presentationDerives_reachable_from_typed_anchor
             (castTuple τ.wellTyped.symm
               τ.baseRule.outputTuple))
 
-  | binary hτ hx hy ihx ihy =>
+  | @binary τ hτ x y hx hy ihx ihy =>
       let τa :
-          S.completePresentation.presentation.binaryRules.attach :=
+          S.completePresentation.presentation.binaryRules :=
         ⟨τ, hτ⟩
 
       have hleft :
@@ -747,7 +748,7 @@ theorem presentationStringDerives_reachable
         obs f := by
 
   let σa :
-      S.completePresentation.presentation.startRules.attach :=
+      S.completePresentation.presentation.startRules :=
     ⟨D.startRule, D.start_mem⟩
 
   let childPresent :=
@@ -812,19 +813,19 @@ theorem presentationStringDerives_reachable
       D.start_arity D.word_eq
 
   exact
-    { startWord :=
-        typedStartWord S D.start_arity σa
-      start_mem := by
-        have hp :
-            D.start_arity =
-              hworking.basic.1.symm :=
-          Subsingleton.elim _ _
-        cases hp
-        exact typedStartWord_mem
-          S σa hworking.basic.1.symm
-      reachable := by
-        rw [hsource, ← htarget]
-        exact hone }
+    ⟨{ startWord :=
+         typedStartWord S D.start_arity σa
+       start_mem := by
+         have hp :
+             D.start_arity =
+               hworking.basic.1.symm :=
+           Subsingleton.elim _ _
+         cases hp
+         exact typedStartWord_mem
+           S σa hworking.basic.1.symm
+       reachable := by
+         rw [hsource, ← htarget]
+         exact hone }⟩
 
 /-- The language of a complete successful typed presentation is contained in
 the reachable sample language generated by its concrete typed characteristic
@@ -838,9 +839,9 @@ theorem completePresentation_subset_reachable_typedSample
         (typedCharacteristicSample S hworking.basic.1.symm)
         obs f := by
   intro word hword
+  rcases S.completePresentation.complete.mem_presentation hword with ⟨D⟩
   exact presentationStringDerives_reachable
-    S hworking hfan
-    (S.completePresentation.complete.mem_presentation hword)
+    S hworking hfan D
 
 /-- Exact reconstruction for a complete successful typed presentation. -/
 theorem typedCharacteristicSample_exact_reconstruction
@@ -1033,14 +1034,13 @@ theorem concreteTypedCharacteristicSample_exact_for_positive_superset
       rw [concreteTypedCharacteristicSample_exact_reconstruction
         (obs := obs) hworking hsep hfan hL]
       exact hword
-    rcases hbase with
-      ⟨startWord, hstartMem, hreach⟩
+    rcases hbase with ⟨D⟩
     exact
-      { startWord := startWord
-        start_mem := hSK hstartMem
-        reachable :=
-          SampleLearnerReachable.mono
-            hSK hreach }
+      ⟨{ startWord := D.startWord
+         start_mem := hSK D.start_mem
+         reachable :=
+           SampleLearnerReachable.mono
+             hSK D.reachable }⟩
 
 /-- Eventual prefix-exact reconstruction on every positive text. -/
 theorem concreteTypedCharacteristicSample_prefix_exact
