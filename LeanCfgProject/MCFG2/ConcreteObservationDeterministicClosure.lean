@@ -167,8 +167,8 @@ theorem terminal_lhs_rep_of_tupleTypeDeterministic
     ((representatives
       (obs := obs) hworking hsep hred).rep ρ.lhs).node =
       ((representatives
-        (obs := obs) hworking hsep hred).
-          canonicalTerminalRule ρ hρ hwt).lhs obs := by
+        (obs := obs) hworking hsep hred).canonicalTerminalRule
+          ρ hρ hwt).lhs obs := by
   let R :=
     representatives (obs := obs) hworking hsep hred
   let τ :=
@@ -194,7 +194,8 @@ theorem terminal_lhs_rep_of_tupleTypeDeterministic
         (τ.lhs obs) x
         (τ.cast_outputTuple_matches_lhs obs)
     simpa [τ, x,
-      SuccessfulOccurrenceBaseRepresentativeSelection.canonicalTerminalRule]
+      SuccessfulOccurrenceBaseRepresentativeSelection.canonicalTerminalRule,
+      TypedTerminalRule.lhs]
       using h
 
   exact hrep.trans hlhs.symm
@@ -211,8 +212,8 @@ theorem binary_lhs_rep_of_tupleTypeDeterministic
     ((representatives
       (obs := obs) hworking hsep hred).rep ρ.lhs).node =
       ((representatives
-        (obs := obs) hworking hsep hred).
-          canonicalBinaryRule ρ hρ).lhs obs := by
+        (obs := obs) hworking hsep hred).canonicalBinaryRule
+          ρ hρ).lhs obs := by
   let R :=
     representatives (obs := obs) hworking hsep hred
   let τ :=
@@ -247,7 +248,8 @@ theorem binary_lhs_rep_of_tupleTypeDeterministic
       TypedNonterminal.eq_of_matches
         (τ.lhs obs) z hmatch
     simpa [τ, z,
-      SuccessfulOccurrenceBaseRepresentativeSelection.canonicalBinaryRule]
+      SuccessfulOccurrenceBaseRepresentativeSelection.canonicalBinaryRule,
+      TypedBinaryRule.lhs]
       using h
 
   exact hrep.trans hlhs.symm
@@ -262,8 +264,8 @@ theorem canonicalStartRule_parent_eq_ofTuple
     (hρ : ρ ∈ G.startRules)
     (hwt : G.arity ρ.child = G.arity G.start) :
     ((representatives
-      (obs := obs) hworking hsep hred).
-        canonicalStartRule ρ hρ hwt).parent =
+      (obs := obs) hworking hsep hred).canonicalStartRule
+        ρ hρ hwt).parent =
       TypedNonterminal.ofTuple obs G.start
         (castTuple hwt
           ((representatives
@@ -279,12 +281,12 @@ theorem canonicalStartRule_parent_eq_ofTuple
       σ.parent.Matches obs z := by
     change
       tupleType obs (castTuple hwt x) =
-        castTuple σ.wellTyped σ.childOut
+        castOutputType σ.wellTyped σ.childOut
     rw [tupleType_castTuple_transport]
     have hp : σ.wellTyped = hwt :=
       Subsingleton.elim _ _
     cases hp
-    exact congrArg (castTuple hwt)
+    exact congrArg (castOutputType hwt)
       (R.anchor_tupleType ρ.child)
 
   have h :=
@@ -308,8 +310,8 @@ theorem start_parent_rep_of_tupleTypeDeterministic
     ((representatives
       (obs := obs) hworking hsep hred).rep G.start).node =
       ((representatives
-        (obs := obs) hworking hsep hred).
-          canonicalStartRule ρ hρ hwt).parent := by
+        (obs := obs) hworking hsep hred).canonicalStartRule
+          ρ hρ hwt).parent := by
   let R :=
     representatives (obs := obs) hworking hsep hred
   let x := R.anchor ρ.child
@@ -429,9 +431,8 @@ noncomputable def concreteObservationDeterministicPreCoreConstruction
       (obs := obs) hworking hsep hred
 
   canonicalClosure :=
-    ConcreteReducedRepresentativeSelection.
-      canonicalRuleClosure_of_tupleTypeDeterministic
-        (obs := obs) hworking hsep hred hdet
+    ConcreteReducedRepresentativeSelection.canonicalRuleClosure_of_tupleTypeDeterministic
+      (obs := obs) hworking hsep hred hdet
 
 end ConcreteCanonicalClosure
 
@@ -454,8 +455,7 @@ noncomputable def concreteObservationDeterministicFiniteSample
     (hdet : G.TupleTypeDeterministic obs) :
     Finset (Word α) :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      finiteSample (f := f) hworking
+    (obs := obs) hworking hsep hred hdet).finiteSample (f := f) hworking
 
 /-- The concretely generated finite sample is positive. -/
 theorem concreteObservationDeterministicFiniteSample_positive
@@ -468,8 +468,7 @@ theorem concreteObservationDeterministicFiniteSample_positive
       hworking hsep hred hdet : Set (Word α)) ⊆
       G.StringLanguage :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      finiteSample_positive (f := f) hworking
+    (obs := obs) hworking hsep hred hdet).finiteSample_positive (f := f) hworking
 
 /-- Exact reconstruction on every positive finite superset of the concretely
 generated sample. -/
@@ -490,9 +489,8 @@ theorem concreteObservationDeterministic_exact_for_positive_superset
     ReachableSampleStringLanguage K obs f =
       G.StringLanguage :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      exact_for_positive_superset
-        (f := f) hworking hfan hL hSK hKpos
+    (obs := obs) hworking hsep hred hdet).exact_for_positive_superset
+      (f := f) hworking hfan hL hSK hKpos
 
 /-- Eventual exact reconstruction on every positive text. -/
 theorem concreteObservationDeterministic_prefix_exact
@@ -508,9 +506,8 @@ theorem concreteObservationDeterministic_prefix_exact
             (Ttxt.prefixSample n) obs f =
           G.StringLanguage :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      exact_prefix_reconstruction
-        (f := f) hworking hfan hL
+    (obs := obs) hworking hsep hred hdet).exact_prefix_reconstruction
+      (f := f) hworking hfan hL
 
 /-- Gold identification from the now-concrete presentation, successful trim,
 representatives, and canonical rule closure. -/
@@ -527,9 +524,8 @@ theorem concreteObservationDeterministic_identifies_from_positive_text
         (reachableSampleLearner (α := α))
         Ttxt :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      identifies_from_positive_text
-        (f := f) hworking hfan hL
+    (obs := obs) hworking hsep hred hdet).identifies_from_positive_text
+      (f := f) hworking hfan hL
 
 /-- Paper-facing identification conclusion with no supplied presentation,
 successful-occurrence family, representative-selection record, output
@@ -543,9 +539,8 @@ theorem concreteObservationDeterministic_paper_main_theorem
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveIdentificationConclusion G obs :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      exact_working_paper_main_theorem
-        (f := f) hworking hfan hL
+    (obs := obs) hworking hsep hred hdet).exact_working_paper_main_theorem
+      (f := f) hworking hfan hL
 
 /-- Full characteristic-sample, prefix-exact, and Gold-identification package
 under the concrete tuple-type-deterministic route. -/
@@ -558,9 +553,8 @@ theorem concreteObservationDeterministic_paper_conclusion_package
     (hL : FixedNamedTupleSubstitutable f obs G.StringLanguage) :
     PaperConstructiveLearningConclusionPackage G obs :=
   (concreteObservationDeterministicPreCoreConstruction
-    (obs := obs) hworking hsep hred hdet).
-      exact_working_paper_conclusion_package
-        (f := f) hworking hfan hL
+    (obs := obs) hworking hsep hred hdet).exact_working_paper_conclusion_package
+      (f := f) hworking hfan hL
 
 end ConcreteLearningConsequences
 
