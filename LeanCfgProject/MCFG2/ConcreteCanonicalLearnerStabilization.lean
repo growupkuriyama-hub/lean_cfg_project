@@ -59,56 +59,56 @@ Classical choice is used only after the class theorem has proved existence. -/
 noncomputable def correctedConcreteTargetCharacteristicSample
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     Finset (Word α) :=
   Classical.choose
     (correctedConcreteCanonicalLearner_characteristicSample_for_targetClass
-      (v := v) obs f hL)
+      obs f hL)
 
 /-- The selected target sample is a genuine characteristic sample for the
 single corrected concrete learner. -/
 theorem correctedConcreteTargetCharacteristicSample_characteristic
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     CharacteristicSample
       (correctedConcreteCanonicalHypLanguage
         obs f)
       (correctedConcreteCanonicalLearner
         (α := α))
       (correctedConcreteTargetCharacteristicSample
-        (v := v) obs f hL)
+        obs f hL)
       L :=
   Classical.choose_spec
     (correctedConcreteCanonicalLearner_characteristicSample_for_targetClass
-      (v := v) obs f hL)
+      obs f hL)
 
 /-- Positivity of the selected target sample. -/
 theorem correctedConcreteTargetCharacteristicSample_positive
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     (correctedConcreteTargetCharacteristicSample
-        (v := v) obs f hL :
+        obs f hL :
       Set (Word α)) ⊆
       L :=
   (correctedConcreteTargetCharacteristicSample_characteristic
-    (v := v) obs f hL).1
+    obs f hL).1
 
 /-- Every positive finite extension of the selected sample yields the target
 language exactly. -/
 theorem correctedConcreteTargetCharacteristicSample_exact_for_positive_superset
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     {K : Finset (Word α)}
     (hSK :
       (correctedConcreteTargetCharacteristicSample
-          (v := v) obs f hL :
+          obs f hL :
         Set (Word α)) ⊆
         (K : Set (Word α)))
     (hKpositive :
@@ -119,7 +119,7 @@ theorem correctedConcreteTargetCharacteristicSample_exact_for_positive_superset
           (α := α) K) =
       L :=
   (correctedConcreteTargetCharacteristicSample_characteristic
-    (v := v) obs f hL).2
+    obs f hL).2
       K hSK hKpositive
 
 /-- Exact reconstruction already holds on the selected characteristic sample
@@ -127,22 +127,22 @@ itself. -/
 theorem correctedConcreteTargetCharacteristicSample_exact
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     correctedConcreteCanonicalHypLanguage
         obs f
         (correctedConcreteCanonicalLearner
           (α := α)
           (correctedConcreteTargetCharacteristicSample
-            (v := v) obs f hL)) =
+            obs f hL)) =
       L := by
   apply
     correctedConcreteTargetCharacteristicSample_exact_for_positive_superset
-      (v := v) obs f hL
+      obs f hL
   · exact Set.Subset.rfl
   · exact
       correctedConcreteTargetCharacteristicSample_positive
-        (v := v) obs f hL
+        obs f hL
 
 end TargetCharacteristicSampleSelector
 
@@ -162,16 +162,16 @@ is contained in every prefix sample. -/
 noncomputable def correctedConcreteTargetCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L) :
     Nat :=
   Classical.choose
     (TextFor.eventuallyContains_finite_subset
       (correctedConcreteTargetCharacteristicSample
-        (v := v) obs f hL)
+        obs f hL)
       (correctedConcreteTargetCharacteristicSample_positive
-        (v := v) obs f hL)
+        obs f hL)
       T)
 
 /-- Every prefix after the selected coverage stage contains the selected
@@ -179,24 +179,24 @@ characteristic sample. -/
 theorem correctedConcreteTargetCharacteristicSample_subset_prefix_after
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       correctedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     (correctedConcreteTargetCharacteristicSample
-        (v := v) obs f hL :
+        obs f hL :
       Set (Word α)) ⊆
       (T.prefixSample n : Set (Word α)) := by
   exact
     (Classical.choose_spec
       (TextFor.eventuallyContains_finite_subset
         (correctedConcreteTargetCharacteristicSample
-          (v := v) obs f hL)
+          obs f hL)
         (correctedConcreteTargetCharacteristicSample_positive
-          (v := v) obs f hL)
+          obs f hL)
         T))
       n hn
 
@@ -205,13 +205,13 @@ language. -/
 theorem correctedConcreteCanonicalLearner_correct_after_coverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       correctedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     correctedConcreteCanonicalHypLanguage
         obs f
         (correctedConcreteCanonicalLearner
@@ -219,35 +219,35 @@ theorem correctedConcreteCanonicalLearner_correct_after_coverageStage
       L := by
   exact
     correctedConcreteTargetCharacteristicSample_exact_for_positive_superset
-      (v := v) obs f hL
+      obs f hL
       (correctedConcreteTargetCharacteristicSample_subset_prefix_after
-        (v := v) obs f hL T hn)
+        obs f hL T hn)
       (T.prefixSample_subset n)
 
 /-- Expanded form using the corrected concrete learner language directly. -/
 theorem correctedConcreteCanonicalLearnerLanguage_correct_after_coverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       correctedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     CorrectedConcreteCanonicalLearnerLanguage
         (T.prefixSample n) obs f =
       L := by
   exact
     correctedConcreteCanonicalLearner_correct_after_coverageStage
-      (v := v) obs f hL T hn
+      obs f hL T hn
 
 /-- At the selected coverage stage itself, the learner is already correct. -/
 theorem correctedConcreteCanonicalLearner_correct_at_coverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L) :
     correctedConcreteCanonicalHypLanguage
         obs f
@@ -255,11 +255,11 @@ theorem correctedConcreteCanonicalLearner_correct_at_coverageStage
           (α := α)
           (T.prefixSample
             (correctedConcreteTargetCoverageStage
-              (v := v) obs f hL T))) =
+              obs f hL T))) =
       L := by
   exact
     correctedConcreteCanonicalLearner_correct_after_coverageStage
-      (v := v) obs f hL T
+      obs f hL T
       (Nat.le_refl _)
 
 /-- Any two learner hypotheses after the selected stage have the same
@@ -267,16 +267,16 @@ interpreted language. -/
 theorem correctedConcreteCanonicalLearner_eventually_language_constant
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {m n : Nat}
     (hm :
       correctedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ m)
+          obs f hL T ≤ m)
     (hn :
       correctedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     correctedConcreteCanonicalHypLanguage
         obs f
         (correctedConcreteCanonicalLearner
@@ -287,9 +287,9 @@ theorem correctedConcreteCanonicalLearner_eventually_language_constant
           (α := α) (T.prefixSample n)) := by
   rw [
     correctedConcreteCanonicalLearner_correct_after_coverageStage
-      (v := v) obs f hL T hm,
+      obs f hL T hm,
     correctedConcreteCanonicalLearner_correct_after_coverageStage
-      (v := v) obs f hL T hn
+      obs f hL T hn
   ]
 
 /-- The selected coverage stage is an explicit witness of eventual semantic
@@ -297,8 +297,8 @@ stability. -/
 theorem correctedConcreteCanonicalLearner_has_stabilizationStage
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L) :
     ∃ n0 : Nat,
       (∀ n : Nat, n0 ≤ n →
@@ -318,17 +318,17 @@ theorem correctedConcreteCanonicalLearner_has_stabilizationStage
               (α := α) (T.prefixSample n))) := by
   refine
     ⟨correctedConcreteTargetCoverageStage
-        (v := v) obs f hL T,
+        obs f hL T,
       ?_,
       ?_⟩
   · intro n hn
     exact
       correctedConcreteCanonicalLearner_correct_after_coverageStage
-        (v := v) obs f hL T hn
+        obs f hL T hn
   · intro m n hm hn
     exact
       correctedConcreteCanonicalLearner_eventually_language_constant
-        (v := v) obs f hL T hm hn
+        obs f hL T hm hn
 
 end CoverageStageSelector
 
@@ -351,20 +351,20 @@ only `L`, its class-membership witness, and the positive text vary. -/
 theorem correctedConcreteCanonicalLearner_uniform_selected_stabilization :
     ∀ L : Set (Word α),
       ∀ hL :
-        L ∈ CorrectedConcreteTargetClass
-          (v := v) α M obs f,
+        L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f,
         CharacteristicSample
           (correctedConcreteCanonicalHypLanguage
             obs f)
           (correctedConcreteCanonicalLearner
             (α := α))
           (correctedConcreteTargetCharacteristicSample
-            (v := v) obs f hL)
+            obs f hL)
           L ∧
         ∀ T : TextFor L,
           ∀ n : Nat,
             correctedConcreteTargetCoverageStage
-                (v := v) obs f hL T ≤ n →
+                obs f hL T ≤ n →
               correctedConcreteCanonicalHypLanguage
                   obs f
                   (correctedConcreteCanonicalLearner
@@ -374,18 +374,18 @@ theorem correctedConcreteCanonicalLearner_uniform_selected_stabilization :
   constructor
   · exact
       correctedConcreteTargetCharacteristicSample_characteristic
-        (v := v) obs f hL
+        obs f hL
   · intro T n hn
     exact
       correctedConcreteCanonicalLearner_correct_after_coverageStage
-        (v := v) obs f hL T hn
+        obs f hL T hn
 
 /-- Uniform eventual-constancy form over the whole corrected concrete target
 class. -/
 theorem correctedConcreteCanonicalLearner_uniform_eventual_language_constancy :
     ∀ L : Set (Word α),
-      L ∈ CorrectedConcreteTargetClass
-          (v := v) α M obs f →
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ m n : Nat,
@@ -402,12 +402,12 @@ theorem correctedConcreteCanonicalLearner_uniform_eventual_language_constancy :
   intro L hL T
   refine
     ⟨correctedConcreteTargetCoverageStage
-        (v := v) obs f hL T,
+        obs f hL T,
       ?_⟩
   intro m n hm hn
   exact
     correctedConcreteCanonicalLearner_eventually_language_constant
-      (v := v) obs f hL T hm hn
+      obs f hL T hm hn
 
 /-- Paper-style final stabilization package.
 
@@ -417,11 +417,11 @@ hypothesis languages are exactly the target and hence pairwise equal. -/
 theorem correctedConcreteCanonicalLearner_stabilization_conclusion_package :
     ∀ L : Set (Word α),
       ∀ hL :
-        L ∈ CorrectedConcreteTargetClass
-          (v := v) α M obs f,
+        L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f,
         let S :=
           correctedConcreteTargetCharacteristicSample
-            (v := v) obs f hL
+            obs f hL
         (S : Set (Word α)) ⊆ L ∧
         correctedConcreteCanonicalHypLanguage
             obs f
@@ -431,7 +431,7 @@ theorem correctedConcreteCanonicalLearner_stabilization_conclusion_package :
         ∀ T : TextFor L,
           let n0 :=
             correctedConcreteTargetCoverageStage
-              (v := v) obs f hL T
+              obs f hL T
           (∀ n : Nat, n0 ≤ n →
             correctedConcreteCanonicalHypLanguage
                 obs f
@@ -451,9 +451,9 @@ theorem correctedConcreteCanonicalLearner_stabilization_conclusion_package :
   dsimp
   refine
     ⟨correctedConcreteTargetCharacteristicSample_positive
-        (v := v) obs f hL,
+        obs f hL,
       correctedConcreteTargetCharacteristicSample_exact
-        (v := v) obs f hL,
+        obs f hL,
       ?_⟩
   intro T
   dsimp
@@ -461,11 +461,11 @@ theorem correctedConcreteCanonicalLearner_stabilization_conclusion_package :
   · intro n hn
     exact
       correctedConcreteCanonicalLearner_correct_after_coverageStage
-        (v := v) obs f hL T hn
+        obs f hL T hn
   · intro m n hm hn
     exact
       correctedConcreteCanonicalLearner_eventually_language_constant
-        (v := v) obs f hL T hm hn
+        obs f hL T hm hn
 
 end UniformClassStabilization
 
