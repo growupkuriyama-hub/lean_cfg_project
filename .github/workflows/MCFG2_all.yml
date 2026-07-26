@@ -32,7 +32,9 @@ jobs:
             exit 1
           fi
 
-          if grep -RInE             '^[[:space:]]*import[[:space:]]+LeanCfgProject\.MCFG(\.|$)'             LeanCfgProject/MCFG2
+          if grep -RInE \
+            '^[[:space:]]*import[[:space:]]+LeanCfgProject\.MCFG(\.|$)' \
+            LeanCfgProject/MCFG2
           then
             echo "::error::Old LeanCfgProject.MCFG imports remain under MCFG2."
             echo "Replace them with LeanCfgProject.MCFG2 imports."
@@ -45,7 +47,10 @@ jobs:
           set -euo pipefail
 
           mapfile -d '' files < <(
-            find LeanCfgProject/MCFG2               -type f               -name '*.lean'               -print0 |
+            find LeanCfgProject/MCFG2 \
+              -type f \
+              -name '*.lean' \
+              -print0 |
             sort -z
           )
 
@@ -59,6 +64,8 @@ jobs:
           echo "Found ${total} Lean files under LeanCfgProject/MCFG2."
 
           current=0
+          logfile="$(mktemp)"
+          trap 'rm -f "$logfile"' EXIT
 
           for file in "${files[@]}"; do
             current=$((current + 1))
@@ -66,9 +73,18 @@ jobs:
             module="${file%.lean}"
             module="${module//\//.}"
 
-            echo "::group::[${current}/${total}] ${module}"
-            lake build "${module}"
-            echo "::endgroup::"
+            printf '[%d/%d] %s ... ' "$current" "$total" "$module"
+
+            if lake build "$module" >"$logfile" 2>&1; then
+              echo "PASS"
+            else
+              echo "FAIL"
+              echo "::error::Build failed for ${module}"
+              echo "----- Lean output for ${module} -----"
+              cat "$logfile"
+              echo "----- end Lean output -----"
+              exit 1
+            fi
           done
 
           echo "All ${total} MCFG2 modules passed."
