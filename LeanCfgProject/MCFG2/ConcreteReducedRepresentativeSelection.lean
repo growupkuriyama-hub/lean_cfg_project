@@ -65,35 +65,32 @@ def occurrenceOfDerives
     (S : ExactSuccessfulDerivationSpine G A c) :
     ∀ {x : Tuple α (G.arity A)},
       DerivesTuple G A x →
-        ExactSuccessfulDerivationOccurrence G A x c :=
-  match S with
-  | .root hstart =>
-      fun {_x} hx =>
-        ExactSuccessfulDerivationOccurrence.root hstart hx
+        ExactSuccessfulDerivationOccurrence G A x c := by
+  induction S with
+  | root hstart =>
+      intro x hx
+      exact ExactSuccessfulDerivationOccurrence.root hstart hx
 
-  | .throughStart hρ hwt parentSpine =>
-      fun {x} hx =>
+  | throughStart hρ hwt parentSpine ih =>
+      intro x hx
+      exact
         ExactSuccessfulDerivationOccurrence.throughStart
           hρ hwt hx
-          (occurrenceOfDerives parentSpine
-            (DerivesTuple.start hρ hx hwt))
+          (ih (DerivesTuple.start hρ hx hwt))
 
-  | .throughLeft hρ hexact hy parentSpine =>
-      fun {x} hx =>
-        let parentOccurrence :=
-          occurrenceOfDerives parentSpine
-            (DerivesTuple.binary hρ hx hy)
+  | throughLeft hρ hexact hy parentSpine ih =>
+      intro x hx
+      exact
         ExactSuccessfulDerivationOccurrence.throughLeft
-          hρ hexact hx hy parentOccurrence
+          hρ hexact hx hy
+          (ih (DerivesTuple.binary hρ hx hy))
 
-  | .throughRight hρ hexact hx parentSpine =>
-      fun {y} hy =>
-        let parentOccurrence :=
-          occurrenceOfDerives parentSpine
-            (DerivesTuple.binary hρ hx hy)
+  | throughRight hρ hexact hx parentSpine ih =>
+      intro y hy
+      exact
         ExactSuccessfulDerivationOccurrence.throughRight
-          hρ hexact hx hy parentOccurrence
-termination_by S
+          hρ hexact hx hy
+          (ih (DerivesTuple.binary hρ hx hy))
 
 /-- Successful occurrence is exactly the conjunction of a tuple derivation and
 a successful spine carrying the same context. -/
@@ -323,8 +320,7 @@ noncomputable def concreteReducedTrimmedBaseRepresentatives
         (G := G) (obs := obs) hworking hsep) := by
   simpa [concreteTrimmedOutputTypePresentation] using
     (concreteReducedBaseRepresentativeSelection
-      (obs := obs) hworking hsep hred).
-        toTrimmedBaseRepresentatives
+      (obs := obs) hworking hsep hred).toTrimmedBaseRepresentatives
 
 end ConcreteRepresentativeExtraction
 
@@ -365,11 +361,9 @@ theorem canonicalTerminalRule_mem
     (ρ : TerminalRule N α)
     (hρ : ρ ∈ G.terminalRules)
     (hwt : G.arity ρ.lhs = 1) :
-    (successfulPresentation (obs := obs) hworking hsep).
-      completePresentation.presentation.HasTerminalRule
+    (successfulPresentation (obs := obs) hworking hsep).completePresentation.presentation.HasTerminalRule
         ((representatives
-          (obs := obs) hworking hsep hred).
-            canonicalTerminalRule ρ hρ hwt) := by
+          (obs := obs) hworking hsep hred).canonicalTerminalRule ρ hρ hwt) := by
   let R :=
     representatives (obs := obs) hworking hsep hred
   have hterm :
@@ -380,8 +374,7 @@ theorem canonicalTerminalRule_mem
       ExactSuccessfulDerivationOccurrence G ρ.lhs
         (castTuple hwt.symm ρ.outputTuple)
         (R.expose ρ.lhs) :=
-    (R.baseOccurrence ρ.lhs).spine.
-      occurrenceOfDerives hterm
+    (R.baseOccurrence ρ.lhs).spine.occurrenceOfDerives hterm
   have hmem :=
     ConcreteSuccessfulOutputTypeRefinement.canonicalTerminalRule_mem
       (obs := obs) hworking ρ hρ O
@@ -402,11 +395,9 @@ theorem canonicalBinaryRule_mem
     (hred : G.SuccessfullyReduced)
     (ρ : BinaryRule N α G.arity)
     (hρ : ρ ∈ G.binaryRules) :
-    (successfulPresentation (obs := obs) hworking hsep).
-      completePresentation.presentation.HasBinaryRule
+    (successfulPresentation (obs := obs) hworking hsep).completePresentation.presentation.HasBinaryRule
         ((representatives
-          (obs := obs) hworking hsep hred).
-            canonicalBinaryRule ρ hρ) := by
+          (obs := obs) hworking hsep hred).canonicalBinaryRule ρ hρ) := by
   let R :=
     representatives (obs := obs) hworking hsep hred
   let leftOccurrence :=
@@ -427,8 +418,7 @@ theorem canonicalBinaryRule_mem
           (R.anchor ρ.left)
           (R.anchor ρ.right))
         (R.expose ρ.lhs) :=
-    (R.baseOccurrence ρ.lhs).spine.
-      occurrenceOfDerives hparentDerives
+    (R.baseOccurrence ρ.lhs).spine.occurrenceOfDerives hparentDerives
   let inducedLeft :
       ExactSuccessfulDerivationOccurrence G ρ.left
         (R.anchor ρ.left)
@@ -481,11 +471,9 @@ theorem canonicalStartRule_mem
     (ρ : StartRule N)
     (hρ : ρ ∈ G.startRules)
     (hwt : G.arity ρ.child = G.arity G.start) :
-    (successfulPresentation (obs := obs) hworking hsep).
-      completePresentation.presentation.HasStartRule
+    (successfulPresentation (obs := obs) hworking hsep).completePresentation.presentation.HasStartRule
         ((representatives
-          (obs := obs) hworking hsep hred).
-            canonicalStartRule ρ hρ hwt) := by
+          (obs := obs) hworking hsep hred).canonicalStartRule ρ hρ hwt) := by
   let R :=
     representatives (obs := obs) hworking hsep hred
   have hmem :=
@@ -513,8 +501,7 @@ theorem binary_left_rep
     ((representatives
       (obs := obs) hworking hsep hred).rep ρ.left).node =
       ((representatives
-        (obs := obs) hworking hsep hred).
-          canonicalBinaryRule ρ hρ).left := by
+        (obs := obs) hworking hsep hred).canonicalBinaryRule ρ hρ).left := by
   rfl
 
 /-- The right endpoint of a canonical binary rule is definitionally the
@@ -528,8 +515,7 @@ theorem binary_right_rep
     ((representatives
       (obs := obs) hworking hsep hred).rep ρ.right).node =
       ((representatives
-        (obs := obs) hworking hsep hred).
-          canonicalBinaryRule ρ hρ).right := by
+        (obs := obs) hworking hsep hred).canonicalBinaryRule ρ hρ).right := by
   rfl
 
 /-- The child endpoint of a canonical start rule is definitionally the selected
@@ -544,8 +530,7 @@ theorem start_child_rep
     ((representatives
       (obs := obs) hworking hsep hred).rep ρ.child).node =
       ((representatives
-        (obs := obs) hworking hsep hred).
-          canonicalStartRule ρ hρ hwt).child := by
+        (obs := obs) hworking hsep hred).canonicalStartRule ρ hρ hwt).child := by
   rfl
 
 end ConcreteReducedRepresentativeSelection
