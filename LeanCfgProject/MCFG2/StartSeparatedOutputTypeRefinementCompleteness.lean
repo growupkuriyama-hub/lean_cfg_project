@@ -157,13 +157,14 @@ theorem startRule_startFree_of_eq_start
     {A : N}
     {x : Tuple α (G.arity A)}
     (h : DerivesTuple G A x) :
-    ∀ hA : A = G.start,
+    A = G.start →
       ∃ ρ : StartRule N,
         ∃ hρ : ρ ∈ G.startRules,
           ∃ childTuple : Tuple α (G.arity ρ.child),
             StartFreeDerives G ρ.child childTuple ∧
-              HEq x
-                (castTuple (hworking.2.1 ρ hρ) childTuple) := by
+              x = castTuple
+                (hworking.2.1 ρ hρ)
+                childTuple := by
   induction h with
   | terminal hρ hwt =>
       intro hA
@@ -176,14 +177,14 @@ theorem startRule_startFree_of_eq_start
         ((hsep.binary_lhs_ne_start _ hρ) hA)
 
   | start hρ hx hwt ihx =>
-      intro hA
+      intro _
       refine ⟨_, hρ, _, ?_, ?_⟩
       · exact hx.toStartFreeOfNeStart hsep
           (hsep.start_child_ne_start _ hρ)
       · have hp : hwt = hworking.2.1 _ hρ :=
           Subsingleton.elim _ _
         cases hp
-        exact HEq.rfl
+        rfl
 
 /-- A derivation rooted at the distinguished start symbol is exactly one start
 rule followed by a start-free child derivation. -/
@@ -202,11 +203,8 @@ theorem start_iff_startRule_startFree
                 childTuple := by
   constructor
   · intro h
-    rcases
-        (startRule_startFree_of_eq_start
-          hworking hsep h rfl) with
-      ⟨ρ, hρ, childTuple, hchild, htuple⟩
-    exact ⟨ρ, hρ, childTuple, hchild, eq_of_heq htuple⟩
+    exact startRule_startFree_of_eq_start
+      hworking hsep h rfl
 
   · rintro ⟨ρ, hρ, childTuple, hchild, rfl⟩
     exact DerivesTuple.start
