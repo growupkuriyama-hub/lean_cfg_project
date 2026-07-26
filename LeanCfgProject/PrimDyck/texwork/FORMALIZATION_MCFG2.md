@@ -1,9 +1,9 @@
-# FORMALIZATION_MCFG
+# FORMALIZATION_MCFG2_RESTART
 
-Lean formalization log and roadmap for the MCFG fixed finite-observation paper.
+Current clean-restart verification ledger for the MCFG fixed finite-observation paper, with the former cumulative experiment retained only as an archival reference.
 
-Last updated: 2026-07-21  
-Current confirmed CI point: Lean CI #774, commit `276209a`, pushed by `growupkuriyama-hub`.
+Last updated: 2026-07-26  
+Current clean-restart checkpoint: workflow run `MCFG2 Target Error #20`, commit `6f304b6`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -23,7 +23,68 @@ The previous zip contained many useful experimental files from an earlier paper 
 4. separate what is fully Lean-verified from what is currently an explicit skeleton/bridge assumption;
 5. reuse old files only as design references or for small ideas, not as opaque trusted infrastructure.
 
-At the current stage, the positive-learning route is no longer merely a reachable-model or presentation-level scaffold.  The development now constructs the full finite output-type presentation from `G` and `obs`, proves exact language equivalence for its concrete working grammar, builds the successful typed trim and extracts successful occurrences, constructs a typed-indexed finite characteristic sample, explicitly enumerates finite tuple occurrences, unit rules, exact-once binary witnesses, and a target-independent concrete canonical learner, and proves exact reconstruction and Gold identification for that finite learner.  The final CI-confirmed class theorem states that one corrected concrete learner identifies every language represented by a finite exact working MCFG satisfying semantic start-rooted normality, the fixed fan-out bound, and the fixed-observation substitutability promise.  The main remaining work is no longer the positive-learning existence theorem; it is executable/complexity refinement, removal or normalization of the start-rooted assumption if desired, and the paper's boundary and non-identifiability results.
+The authoritative status of the clean restart is currently narrower.  The active workflow builds only `LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness`.  That target passed at workflow run `MCFG2 Target Error #20`, commit `6f304b6`.  In the supplied MCFG2 snapshot there are `304` Lean files.  The target's MCFG2-local transitive import closure contains `150` files, while `154` files lie outside that closure.  Thus the current restart covers `150/304` files (49.3%) by dependency-closure count; it does not yet constitute an all-files MCFG2 verification.
+
+
+## 0.1 Authoritative clean-restart status
+
+The present source of truth is the supplied workflow `MCFG2_target(1).yml`.
+
+It executes exactly:
+
+```bash
+target="LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness"
+lake build "$target"
+```
+
+It does **not** enumerate every `.lean` file in `LeanCfgProject/MCFG2`, and it
+does not create an aggregate module importing the whole folder.
+
+Current measured scope:
+
+| Item | Current value |
+|---|---:|
+| Lean files in the supplied `MCFG2` snapshot | 304 |
+| Files in the MCFG2-local dependency closure of the target | 150 |
+| Files outside that dependency closure | 154 |
+| Dependency-closure coverage | 150/304 = 49.3% |
+| Current target result | PASS |
+| Workflow run | `MCFG2 Target Error #20` |
+| Commit | `6f304b6` |
+
+Interpretation:
+
+```text
+BinaryWitnessEnumerationCompleteness target route: confirmed PASS
+all MCFG2 files: not yet checked by the present YML
+files outside the target import closure: still pending in the clean restart
+```
+
+The workflow also restores Lake caches and does not run `lake clean`.
+Accordingly, the final successful run is an incremental target build, not a
+forced from-scratch recompilation of all 150 files in one job.
+The target and the dependency state accepted by Lake are confirmed; an
+all-files clean rebuild remains a separate experiment.
+
+## 0.2 Status of the former CI #583--#774 record
+
+The long CI history preserved below is **archival material** from the former
+experiment.  It is useful for theorem names, intended dependency structure, and
+research planning, but it is not accepted as proof that the current `MCFG2`
+folder has been reverified.
+
+In particular:
+
+```text
+the former “282 CI-confirmed files” count is not the current restart count;
+old checkmarks must not be merged with the present MCFG2 verification ledger;
+only the 150-file target dependency closure is currently covered;
+the remaining 154 MCFG2 files must still be tested by a new all-files workflow.
+```
+
+---
+
+### Archival cumulative narrative begins here
 
 The CI-confirmed phase from CI #583 to CI #603 did not pretend to discharge those remaining mathematical construction obligations.  Instead, it reorganized them into clean construction layers and then wrapped them in stable final names suitable for the paper and blueprint.
 
@@ -180,9 +241,9 @@ machine model, and a proved runtime bound for that concrete verifier.
 
 ---
 
-## 1. Current high-level status
+## 1. Archival high-level status from the former experiment
 
-The current verified chain is:
+The former document recorded the following chain as passed.  These checkmarks are preserved as historical notes and are not the authoritative current MCFG2 restart ledger:
 
 ```text
 Basic.lean ✅
@@ -469,16 +530,19 @@ ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialWitne
 ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean ✅
 ```
 
-All files marked ✅ above are user-confirmed as passed.  The latest named CI/commit explicitly recorded in this document is:
+The checkmarks above are retained as historical records from the former
+experiment.  The former endpoint recorded here was:
 
 ```text
 Lean CI #774
 Commit: 276209a
+Historical claimed chain size: 282 files
 ```
 
-`ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean`
-is now confirmed passed at Lean CI #774.  The verified chain listed above
-contains 282 CI-confirmed files.
+That 282-file figure is **not** the current clean-restart verification count.
+The authoritative current count is `150` MCFG2 files inside the
+dependency closure of the passing target, with `154` MCFG2 files
+still outside the tested closure.
 
 The current state is best described as:
 
@@ -1633,7 +1697,7 @@ equivalence tasks are now CI-confirmed.
 
 ---
 
-## 2. File-by-file progress
+## 2. Archival file-by-file progress
 
 ### 2.1 `Basic.lean`
 
@@ -8734,7 +8798,7 @@ correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankSelector_
 ```
 
 
-## 3. Overall dependency chain
+## 3. Archival overall dependency chain
 
 Current import chain:
 
@@ -9251,7 +9315,7 @@ selector.
 
 ---
 
-## 4. What is genuinely verified so far?
+## 4. Former experiment's verification claims
 
 The following are genuinely Lean-checked:
 
@@ -10381,7 +10445,7 @@ that subset is irredundant, coordinate-essential, globally optimal, and certifie
 ```
 
 
-## 5. What remains as explicit assumptions or unfinished work?
+## 5. Former experiment's unfinished work
 
 CI #774 completes the qualitative positive-learning theorem, actual finite
 grammar compilation, exact semantic reconstruction, closed checked
@@ -10554,7 +10618,7 @@ The repository now contains a long verified linear history.  A final public
 import should expose the CI #774 endpoints and place historical facades and
 intermediate decomposition files behind internal/legacy imports.
 
-## 6. Immediate next files
+## 6. Former experiment's proposed next files
 
 The current CI #774 endpoint is:
 
@@ -10632,7 +10696,7 @@ CopyLanguageExclusion.lean
 MemberKernelExclusion.lean
 ```
 
-## 7. Updated roadmap toward the full paper theorem
+## 7. Former experiment's roadmap
 
 ### Stage A: Reachable semantic theorem
 
@@ -10764,7 +10828,7 @@ Status: optional/open.
 
 Status: open.
 
-## 8. Trust map
+## 8. Former experiment's trust map
 
 ### Strongly verified now
 
@@ -10884,141 +10948,385 @@ Keep each new file small and CI-confirmed.
 
 ---
 
+---
 
+## 10. Current clean-restart ledger and next action
 
-## 10. Current recommended next command
+### 10.1 Latest confirmed result
 
-Latest confirmed command/CI target:
+```text
+Workflow run: MCFG2 Target Error #20
+Commit: 6f304b6
+Command: lake build LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness
+Result: PASS
+```
+
+This confirms the `BinaryWitnessEnumerationCompleteness` route and the
+dependency state required by that target.  It does not test every file in the
+folder.
+
+### 10.2 Current restart accounting
+
+```text
+MCFG2 Lean files in supplied snapshot: 304
+covered by current target closure:     150
+outside current target closure:        154
+current closure coverage:              49.3%
+```
+
+A file counted as “covered” here is present in the MCFG2-local transitive import
+closure of the passing target.  This is not the same as having run every file
+as an independent root target, and the cache-enabled workflow is not a forced
+clean rebuild.
+
+### 10.3 Next experiment required
+
+The next workflow must enumerate all `.lean` files under
+`LeanCfgProject/MCFG2` and build every corresponding module, or build one
+generated aggregate module importing all 304 files.  Until that job
+passes, the clean restart is incomplete.
+
+The intended next command at the conceptual level is:
 
 ```bash
-lake build LeanCfgProject.MCFG.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness
+find LeanCfgProject/MCFG2 -maxdepth 1 -type f -name '*.lean' -print0 |
+  sort -z |
+  while IFS= read -r -d '' file; do
+    module="${file%.lean}"
+    module="${module//\//.}"
+    lake build "$module" || exit 1
+  done
 ```
 
-Latest confirmed CI point:
+For stronger evidence, the all-files workflow should avoid relying on a
+cross-commit project build cache or should explicitly remove the project's
+compiled MCFG2 artifacts before testing.
+
+### 10.4 Files covered by the current target closure (150)
+
+<details>
+<summary>Show the 150 covered files</summary>
+
+- `Basic.lean`
+- `BinaryRuleSplicingEvidence.lean`
+- `BinaryWitnessEnumerationCompleteness.lean`
+- `BinaryWitnesses.lean`
+- `BlueprintFiniteSample.lean`
+- `CharacteristicDataMonotone.lean`
+- `CharacteristicSampleAnchorCommonContext.lean`
+- `CharacteristicSampleAnchorCommonContextFinal.lean`
+- `CharacteristicSampleAnchorCommonTransportConstruction.lean`
+- `CharacteristicSampleAnchorDistributionTransport.lean`
+- `CharacteristicSampleBaseConstructionLayers.lean`
+- `CharacteristicSampleBoundedGlobalPaperTheorem.lean`
+- `CharacteristicSampleBuilderSkeleton.lean`
+- `CharacteristicSampleCommonToExposingTargetDiagram.lean`
+- `CharacteristicSampleComponentEnumeration.lean`
+- `CharacteristicSampleComponentPackage.lean`
+- `CharacteristicSampleConstructiveLearnabilityFacade.lean`
+- `CharacteristicSampleConstructiveLearningTheorem.lean`
+- `CharacteristicSampleContextTransport.lean`
+- `CharacteristicSampleCoreConstructionExistential.lean`
+- `CharacteristicSampleCoreConstructionLayers.lean`
+- `CharacteristicSampleExactOnceCanonicalRuleClosureRoute.lean`
+- `CharacteristicSampleExactOnceDerivationalExposureRoute.lean`
+- `CharacteristicSampleExactOnceExposingTransportRoute.lean`
+- `CharacteristicSampleExactOnceFiniteDerivationalExposureRoute.lean`
+- `CharacteristicSampleExactOnceFiniteNonterminalDerivationalExposureRoute.lean`
+- `CharacteristicSampleExactOnceMinimalPaperRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulDerivationSpineRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulOccurrenceRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulPresentationRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulRuleRealizationRoute.lean`
+- `CharacteristicSampleExistentialPaperTheorem.lean`
+- `CharacteristicSampleExposingAsCommonContext.lean`
+- `CharacteristicSampleExposingCoreFinal.lean`
+- `CharacteristicSampleExposingTransport.lean`
+- `CharacteristicSampleExposingTransportConstruction.lean`
+- `CharacteristicSampleFinalConstructionFacade.lean`
+- `CharacteristicSampleFiniteBuilder.lean`
+- `CharacteristicSampleFiniteUnionBuilder.lean`
+- `CharacteristicSampleFiniteUnionPackage.lean`
+- `CharacteristicSampleFlatConstructionChoice.lean`
+- `CharacteristicSampleFlatConstructionData.lean`
+- `CharacteristicSampleFlatConstructionDisjunction.lean`
+- `CharacteristicSampleFromTrimmedPresentation.lean`
+- `CharacteristicSampleGlobalAssumptionLayers.lean`
+- `CharacteristicSampleGlobalPaperWitnessTheorem.lean`
+- `CharacteristicSampleGrammarRuleBuilder.lean`
+- `CharacteristicSampleGrammarRulePositivity.lean`
+- `CharacteristicSampleNamedContextSplicingConstruction.lean`
+- `CharacteristicSampleNamedContextSplicingExactOnceConstruction.lean`
+- `CharacteristicSampleNamedContextSplicingExactOnceIntegration.lean`
+- `CharacteristicSamplePackage.lean`
+- `CharacteristicSamplePaperAssumptionDiagram.lean`
+- `CharacteristicSamplePaperConstructiveRouteCorollaries.lean`
+- `CharacteristicSamplePaperConstructiveStatement.lean`
+- `CharacteristicSamplePaperMainTheorem.lean`
+- `CharacteristicSamplePaperMainVariants.lean`
+- `CharacteristicSamplePaperWitnessTheorem.lean`
+- `CharacteristicSamplePreferredAllPieces.lean`
+- `CharacteristicSamplePreferredAnchorCommonConstruction.lean`
+- `CharacteristicSamplePreferredAnchorCommonTargetPieces.lean`
+- `CharacteristicSamplePreferredAnchorCommonTargets.lean`
+- `CharacteristicSamplePreferredGlobalPieces.lean`
+- `CharacteristicSamplePreferredSplitCorePieces.lean`
+- `CharacteristicSampleRuleCoverage.lean`
+- `CharacteristicSampleRuleEnumeration.lean`
+- `CharacteristicSampleRuleTransportFinal.lean`
+- `CharacteristicSampleRuleWitnessTransport.lean`
+- `CharacteristicSampleSameContextCore.lean`
+- `CharacteristicSampleSameContextTransportConstruction.lean`
+- `CharacteristicSampleSameContextTransportTargetLevels.lean`
+- `CharacteristicSampleSameContextTransportTargets.lean`
+- `CharacteristicSampleSemanticConstructionTargetLevels.lean`
+- `CharacteristicSampleSemanticConstructionTargets.lean`
+- `CharacteristicSampleSemanticMainTheorems.lean`
+- `CharacteristicSampleSemanticTransportTargetDiagram.lean`
+- `CharacteristicSampleSemanticTransportTargetLevels.lean`
+- `CharacteristicSampleSemanticTransportTargets.lean`
+- `CharacteristicSampleSkeleton.lean`
+- `CharacteristicSampleSplitCoreGlobalLayer.lean`
+- `CharacteristicSampleStartWordEvidence.lean`
+- `CharacteristicSampleStartWordFromSample.lean`
+- `CharacteristicSampleTargetAssumptionLayers.lean`
+- `CharacteristicSampleTransportConstructionBase.lean`
+- `CharacteristicSampleTransportConstructionChoice.lean`
+- `CharacteristicSampleTransportConstructionDiagram.lean`
+- `CharacteristicSampleTransportConstructionExistential.lean`
+- `CharacteristicSampleTransportInterfaceDiagram.lean`
+- `CharacteristicSampleTransportObligations.lean`
+- `CharacteristicSampleTransportObligationsFromAnchorData.lean`
+- `CharacteristicSampleTransportObligationsFromBuilders.lean`
+- `CharacteristicSampleTransportObligationsFromComponents.lean`
+- `CharacteristicSampleTransportObligationsFromCoreData.lean`
+- `CharacteristicSampleTransportObligationsFromExistingSamples.lean`
+- `CharacteristicSampleTransportObligationsFromRuleData.lean`
+- `CharacteristicSampleTransportObligationsFromRules.lean`
+- `CharacteristicSampleTransportObligationsFromSample.lean`
+- `CharacteristicSampleWitnessSet.lean`
+- `CharacteristicSampleWitnessSetMonotone.lean`
+- `CompletenessSkeleton.lean`
+- `ConcreteCanonicalLearner.lean`
+- `ConcreteLearnerEvidence.lean`
+- `ConcreteObservationDeterministicClosure.lean`
+- `ConcreteOutputTypeRefinementPresentation.lean`
+- `ConcreteReducedRepresentativeSelection.lean`
+- `ConcreteTrimmedSuccessfulPresentation.lean`
+- `ConcreteTypedCharacteristicSample.lean`
+- `DistributionalEquivalence.lean`
+- `ExactOnce.lean`
+- `ExactReconstructionSkeleton.lean`
+- `FillingIdentity.lean`
+- `FillingIdentityConstructionSkeleton.lean`
+- `FinalReachableTheorem.lean`
+- `FiniteTextCoverage.lean`
+- `GoldIdentificationSkeleton.lean`
+- `LearnerDerivationSoundness.lean`
+- `LearnerSoundnessCore.lean`
+- `MainReachableTheorem.lean`
+- `NamedContextSplicingConstructor.lean`
+- `NamedContextSplicingSkeleton.lean`
+- `NamedFillEnumerationBounds.lean`
+- `OutputTypeLift.lean`
+- `OutputTypePresentationCompleteness.lean`
+- `OutputTypePresentationLanguage.lean`
+- `OutputTypePresentationMonotone.lean`
+- `OutputTypePresentationWorkingGrammar.lean`
+- `OutputTypePresentationWorkingGrammarEquivalence.lean`
+- `OutputTypeRefinement.lean`
+- `OutputTypeRefinementPresentation.lean`
+- `OutputTypeTrimmedPresentationSkeleton.lean`
+- `OutputTypeTrimmedPresentationSuccessfulOccurrenceConstruction.lean`
+- `PrefixExactReconstruction.lean`
+- `ReachableGoldTheorem.lean`
+- `ReachableStartBridge.lean`
+- `SplicingBlueprint.lean`
+- `SplicingBlueprintMainData.lean`
+- `SplicingBlueprintMainDataMonotone.lean`
+- `SplicingCharacteristicPackage.lean`
+- `SplicingMainDataMonotone.lean`
+- `SplicingMainTheorem.lean`
+- `StartAnchorCanonical.lean`
+- `StartRuleSoundness.lean`
+- `StartSeparatedOutputTypeRefinementCompleteness.lean`
+- `TrimmedPresentationFinalTheorem.lean`
+- `TrimmedPresentationPreCore.lean`
+- `TrimmedPresentationSample.lean`
+- `TrimmedPresentationSampleMonotone.lean`
+- `TupleOccurrenceEnumerationCompleteness.lean`
+- `TupleOccurrences.lean`
+- `WitnessedComposition.lean`
+
+</details>
+
+### 10.5 Files still outside the current target closure (154)
+
+<details>
+<summary>Show the 154 pending files</summary>
+
+- `CharacteristicSampleNamedContextSplicingContextEquations.lean`
+- `CharacteristicSampleNamedContextSplicingContextFamilies.lean`
+- `CharacteristicSampleNamedContextSplicingLeftRightConstructors.lean`
+- `CharacteristicSampleNamedContextSplicingLocalTargets.lean`
+- `CharacteristicSampleNamedContextSplicingParentChoices.lean`
+- `CharacteristicSampleNamedContextSplicingPieces.lean`
+- `CharacteristicSampleNamedContextSplicingTemplateChoices.lean`
+- `CharacteristicSampleNamedContextSplicingTemplateTargets.lean`
+- `CharacteristicSampleSemanticConstructionTargets(1).lean`
+- `ConcreteCanonicalLearnerClassTheorem.lean`
+- `ConcreteCanonicalLearnerFiniteEnumerationBounds.lean`
+- `ConcreteCanonicalLearnerFiniteHypothesis.lean`
+- `ConcreteCanonicalLearnerFiniteHypothesisSize.lean`
+- `ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean`
+- `ConcreteCanonicalLearnerFiniteObjectIdentification.lean`
+- `ConcreteCanonicalLearnerFiniteObjectMonotone.lean`
+- `ConcreteCanonicalLearnerIdentification.lean`
+- `ConcreteCanonicalLearnerLengthOnlyBounds.lean`
+- `ConcreteCanonicalLearnerPolynomialExponentBounds.lean`
+- `ConcreteCanonicalLearnerSinglePowerBounds.lean`
+- `ConcreteCanonicalLearnerStabilization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarAutomaticBitWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarAutomaticNaturalFieldBitWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleFamilyBodyBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTerminalClosure.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTokenPayloadBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCanonicalDecodedSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCanonicalSearchSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionProfile.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputLearner.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputMindChanges.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCheckedBitRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarConstruction.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarDenseEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarDescriptionSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarFinalDescriptionPackage.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarFiniteCodeUniverse.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarFiniteDecodedSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarIdentification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldClassification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldFullyExplicitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldMaximum.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationAblation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationEquivalenceChain.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationProduct.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationRefinementFailure.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionBoundedDecisionSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificate.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDecisionProblem.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSpecification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertifiedSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactInstance.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactVerifierRuntime.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionOptimization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionThreshold.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedExecutableVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedExecutableVerifierComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstance.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstanceSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSemanticOracleBoundary.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedCertificateVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedDecisionProblem.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedMachineModelAdapter.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleCanonicalWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleClass.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleMembership.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleMinimumBudgetSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleThreshold.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedPolynomialDecisionProblem.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedPolynomialWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedStandardMachineRealization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedVerifierComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedThresholdSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedTotalSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedVerifierComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumBudgetSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumCertificateSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileExtremes.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetBijection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetFirstGapBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapAlternative.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapDecision.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapFree.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapSelectionFamily.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGaps.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetOrder.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsets.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfiles.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObstruction.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPaperBitEnvelope.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPaperPowerBitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPresentationNaturalSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarSampleParametricBitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseDecoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTemplateSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTemplateTupleFraming.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTerminalAlphabetEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarUnaryBitSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarUniformNaturalFieldBound.lean`
+- `ExactConcreteCanonicalLearnerEquivalence.lean`
+- `StartRootedConcreteCanonicalLearnerClassTheorem.lean`
+- `StartRootedConcreteCanonicalLearnerIdentification.lean`
+
+</details>
+
+### 10.6 Current conclusion
 
 ```text
-Lean CI #774
-Commit: 276209a
+Former cumulative experiment: archived; not trusted as current restart evidence
+Current BinaryWitnessEnumerationCompleteness route: PASS
+Current MCFG2 all-files experiment: NOT YET DONE
+Clean-restart completion criterion: all 304 MCFG2 modules pass the new all-files workflow
 ```
-
-Current strongest semantic/certified endpoints:
-
-```lean
-correctedConcreteCertifiedWorkingGrammarLearner_identification_descriptionRankObstruction_package
-correctedConcreteCertifiedWorkingGrammar_observationRefinementFailure_package
-correctedConcreteCertifiedWorkingGrammar_observationRefinementChain_package
-correctedConcreteCertifiedWorkingGrammar_observationAblation_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionRank_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionCardinalityRank_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionPositiveAdditiveRank_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankEnvelope_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankProfileOffsetGapSelectionFamily_package
-correctedConcreteWorkingGrammar_observationSelectionDecisionProblem_package
-correctedConcreteWorkingGrammar_observationSelectionComplexityCertificate_package
-correctedConcreteWorkingGrammar_observationSelectionBoundedDecisionSearch_package
-correctedConcreteWorkingGrammar_observationSelectionMinimumBudgetSelector_package
-correctedConcreteWorkingGrammar_observationSelectionMinimumCertificateSelector_package
-correctedConcreteWorkingGrammar_observationSelectionCanonicalMinimumCertificate_package
-correctedConcreteWorkingGrammar_observationSelectionCanonicalMinimumCertificateSearch_package
-correctedConcreteWorkingGrammar_observationSelectionDenseCertificateEncoding_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedCertificateSearch_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedCanonicalSelector_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedCertifiedSelector_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedDecisionThreshold_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedThresholdSearch_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedTotalSearch_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedDecisionOptimization_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedCertificateSpecification_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedVerifierComplexity_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedPolynomialVerifier_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedPolynomialWitness_package
-correctedConcreteWorkingGrammar_observationSelectionEncodedCanonicalPolynomialWitness_package
-```
-
-Current strongest checked-description and finite-search endpoints:
-
-```lean
-correctedConcreteFiniteHypothesis_logarithmicBitCount_le_paperPower
-correctedConcreteWorkingGrammarLearner_finalDescriptionConclusion_package
-correctedConcreteWorkingGrammarLearner_identification_finiteCodeUniverse_package
-correctedConcreteWorkingGrammarLearner_identification_finiteDecodedSearch_package
-correctedConcreteWorkingGrammarLearner_identification_canonicalDecodedSearch_package
-correctedConcreteWorkingGrammarLearner_identification_canonicalSelector_package
-```
-
-Confirmed end-to-end positive-learning implication:
-
-```text
-finite N and finite observation monoid M
-+
-ExactWorkingConditions
-+
-StartRootedNormal
-+
-FanoutAtMost f
-+
-FixedNamedTupleSubstitutable f obs L(G)
-+
-Nonempty terminal alphabet
-⇒ finite typed characteristic sample
-⇒ corrected finite canonical learner
-⇒ actual finite hypothesis
-⇒ actual cut-compiled WorkingMCFG output with exactly the same language
-⇒ explicit grammar and presentation bounds
-⇒ complete checked natural and logarithmic bit serialization
-⇒ closed sample/fan-out single-power bit bound
-⇒ finite checked code universe
-⇒ finite exhaustive and canonical decoded search
-⇒ exact code-indexed recovery of the actual presentation
-⇒ certificate-carrying learner output
-⇒ attained minimum certified bit/search complexities
-⇒ attained minimum simultaneous certified-description rank
-⇒ profile obstructions yielding characteristic-rank lower bounds
-⇒ Gold identification and semantic mind-change stabilization.
-```
-
-Observation design now additionally gives:
-
-```text
-paired and finite selected products preserve every selected factor's targets
-minimum-cardinality and minimum weighted selections are attained
-minimum and Pareto selections are irredundant and coordinate-essential
-finite feasible/minimum/Pareto searches have at most 2^|U| candidates
-cost budgets form a monotone filtration whose first nonempty layer is the rank
-every full-product target lies in one unique exact selection-rank shell
-pointwise cost order and bounded perturbations control rank changes
-fixed overhead shifts rank exactly without changing minimum/Pareto subsets
-cardinality and positive-additive rank-zero/one/arbitrary shells are characterized
-positive-additive rank is the minimum scalar value on the additive Pareto frontier
-rank-minimizing Pareto profile geometry and gap alternatives are certified
-a correct finite decision table yields exact Boolean decision procedures
-intrinsic dense subset certificates have checked round trips and code < 2^|U|
-accepted budgets form the exact interval from the minimum rank to the ceiling
-total Option-valued searches return none exactly on rejection
-ordinary-cost and Pareto-scalar searches agree on optimum and accepted interval
-the exact minimum budget is the Boolean decision threshold
-the canonical least dense code decodes to a Pareto-optimal certificate
-the encoded decision problem has a generic sound/complete certificate specification
-certificate length and abstract verifier work have explicit polynomial envelopes
-the abstract verifier has an NP-style bounded witness relation
-the canonical polynomial witness is exactly the earlier canonical dense code.
-```
-
-Recommended next file:
-
-```text
-ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstance.lean
-```
-
-Reason:
-
-CI #774 closes the intrinsic dense certificate, encoded minimum selector,
-decision-threshold, total-search, abstract polynomial-verifier, NP-style witness,
-and canonical least machine-witness layers relative to a correct finite decision
-table and a supplied work bound.  The remaining semantic oracle is the table
-itself.  The next file should define a fully explicit external finite instance
-and connect its coordinate enumeration, weights, budgets, feasibility data,
-dense certificates, and input-size measure to the current table interface.
-That will make the subsequent executable verifier/runtime theorem precise and
-will expose exactly what is still needed for a genuine standard-machine
-NP-membership result.

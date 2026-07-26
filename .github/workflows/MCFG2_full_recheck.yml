@@ -1,0 +1,188 @@
+name: MCFG2 Full Recheck
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcfg2-full-recheck-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-all-mcfg2:
+    name: Rebuild every MCFG2 Lean module
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Remove cached MCFG2 build products
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Keep downloaded Mathlib/package caches, but force every module under
+          # LeanCfgProject/MCFG2 to be rebuilt in this job.
+          rm -rf .lake/build/lib/lean/LeanCfgProject/MCFG2
+          rm -rf .lake/build/ir/LeanCfgProject/MCFG2
+
+      - name: Enumerate and build every MCFG2 module
+        id: mcfg2_full_recheck
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          root="LeanCfgProject/MCFG2"
+          artifact_dir="ci-artifacts"
+          target_file="${artifact_dir}/mcfg2-targets.txt"
+          log_file="${artifact_dir}/mcfg2-full-build.log"
+
+          mkdir -p "$artifact_dir"
+
+          if [[ ! -d "$root" ]]; then
+            echo "::error::Directory not found: $root"
+            exit 1
+          fi
+
+          mapfile -d '' files < <(
+            find "$root" -type f -name '*.lean' -print0 | sort -z
+          )
+
+          total="${#files[@]}"
+          if (( total == 0 )); then
+            echo "::error::No Lean files found under $root"
+            exit 1
+          fi
+
+          targets=()
+          : > "$target_file"
+
+          for file in "${files[@]}"; do
+            module="${file%.lean}"
+            module="${module//\//.}"
+            targets+=("$module")
+            printf '%s\n' "$module" >> "$target_file"
+          done
+
+          echo "Discovered ${total} MCFG2 Lean modules."
+          echo "First target: ${targets[0]}"
+          echo "Last target:  ${targets[$((total - 1))]}"
+
+          {
+            echo "## MCFG2 full recheck"
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Discovered modules: **${total}**"
+            echo "- Build mode: every discovered module supplied as a root target"
+            echo "- MCFG2 project build products removed before the build"
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if lake build "${targets[@]}" >"$log_file" 2>&1; then
+            echo "MCFG2 FULL RECHECK: PASS (${total}/${total} modules)"
+            {
+              echo "### Result: PASS"
+              echo
+              echo "All **${total}** discovered MCFG2 modules built successfully."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo "::error::MCFG2 FULL RECHECK: FAIL"
+          {
+            echo "### Result: FAIL"
+            echo
+            echo "At least one of the **${total}** discovered MCFG2 modules failed."
+            echo "See the focused diagnostics in the job log and the uploaded full log."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "----- focused Lean diagnostics -----"
+
+          python3 - "$log_file" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          lines = Path(sys.argv[1]).read_text(errors="replace").splitlines()
+
+          patterns = [
+              re.compile(r"^✖"),
+              re.compile(r"\berror:", re.I),
+              re.compile(r"application type mismatch", re.I),
+              re.compile(r"\btype mismatch\b", re.I),
+              re.compile(r"unknown (identifier|constant|declaration)", re.I),
+              re.compile(r"failed to synthesize", re.I),
+              re.compile(r"unsolved goals?", re.I),
+              re.compile(r"unexpected token", re.I),
+              re.compile(r"invalid (field|constructor|declaration|syntax|pattern)", re.I),
+              re.compile(r"declaration uses \.sorry", re.I),
+              re.compile(r"declaration has metavariables", re.I),
+              re.compile(r"maximum recursion depth", re.I),
+              re.compile(r"(deterministic )?timeout", re.I),
+          ]
+
+          hits = [
+              i for i, line in enumerate(lines)
+              if any(pattern.search(line) for pattern in patterns)
+          ]
+
+          if not hits:
+              print("No standard error marker found. Final 250 lines:")
+              start = max(0, len(lines) - 250)
+              for n in range(start, len(lines)):
+                  print(f"{n + 1}: {lines[n]}")
+              raise SystemExit(0)
+
+          ranges = []
+          for i in hits:
+              start = max(0, i - 12)
+              end = min(len(lines), i + 55)
+              if ranges and start <= ranges[-1][1]:
+                  ranges[-1] = (
+                      ranges[-1][0],
+                      max(ranges[-1][1], end),
+                  )
+              else:
+                  ranges.append((start, end))
+
+          # Avoid flooding the GitHub log while retaining the complete artifact.
+          max_ranges = 20
+          for start, end in ranges[:max_ranges]:
+              for n in range(start, end):
+                  print(f"{n + 1}: {lines[n]}")
+              print("---")
+
+          if len(ranges) > max_ranges:
+              print(
+                  f"Focused output truncated: "
+                  f"{len(ranges) - max_ranges} additional diagnostic ranges "
+                  f"remain in the uploaded full log."
+              )
+          PY
+
+          echo "----- end focused diagnostics -----"
+          exit 1
+
+      - name: Upload complete failure log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcfg2-full-recheck-${{ github.run_number }}
+          path: |
+            ci-artifacts/mcfg2-full-build.log
+            ci-artifacts/mcfg2-targets.txt
+          if-no-files-found: warn
+          retention-days: 14

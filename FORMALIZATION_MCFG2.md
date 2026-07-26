@@ -1,9 +1,9 @@
-# FORMALIZATION_MCFG
+# FORMALIZATION_MCFG2_RESTART
 
-Lean formalization log and roadmap for the MCFG fixed finite-observation paper.
+Current clean-restart verification ledger for the MCFG fixed finite-observation paper, with the former cumulative experiment retained only as an archival reference.
 
-Last updated: 2026-07-20  
-Current confirmed CI point: Lean CI #761, commit `1e4048d`, pushed by `growupkuriyama-hub`.
+Last updated: 2026-07-26  
+Current clean-restart checkpoint: workflow run `MCFG2 Target Error #20`, commit `6f304b6`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -23,7 +23,68 @@ The previous zip contained many useful experimental files from an earlier paper 
 4. separate what is fully Lean-verified from what is currently an explicit skeleton/bridge assumption;
 5. reuse old files only as design references or for small ideas, not as opaque trusted infrastructure.
 
-At the current stage, the positive-learning route is no longer merely a reachable-model or presentation-level scaffold.  The development now constructs the full finite output-type presentation from `G` and `obs`, proves exact language equivalence for its concrete working grammar, builds the successful typed trim and extracts successful occurrences, constructs a typed-indexed finite characteristic sample, explicitly enumerates finite tuple occurrences, unit rules, exact-once binary witnesses, and a target-independent concrete canonical learner, and proves exact reconstruction and Gold identification for that finite learner.  The final CI-confirmed class theorem states that one corrected concrete learner identifies every language represented by a finite exact working MCFG satisfying semantic start-rooted normality, the fixed fan-out bound, and the fixed-observation substitutability promise.  The main remaining work is no longer the positive-learning existence theorem; it is executable/complexity refinement, removal or normalization of the start-rooted assumption if desired, and the paper's boundary and non-identifiability results.
+The authoritative status of the clean restart is currently narrower.  The active workflow builds only `LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness`.  That target passed at workflow run `MCFG2 Target Error #20`, commit `6f304b6`.  In the supplied MCFG2 snapshot there are `304` Lean files.  The target's MCFG2-local transitive import closure contains `150` files, while `154` files lie outside that closure.  Thus the current restart covers `150/304` files (49.3%) by dependency-closure count; it does not yet constitute an all-files MCFG2 verification.
+
+
+## 0.1 Authoritative clean-restart status
+
+The present source of truth is the supplied workflow `MCFG2_target(1).yml`.
+
+It executes exactly:
+
+```bash
+target="LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness"
+lake build "$target"
+```
+
+It does **not** enumerate every `.lean` file in `LeanCfgProject/MCFG2`, and it
+does not create an aggregate module importing the whole folder.
+
+Current measured scope:
+
+| Item | Current value |
+|---|---:|
+| Lean files in the supplied `MCFG2` snapshot | 304 |
+| Files in the MCFG2-local dependency closure of the target | 150 |
+| Files outside that dependency closure | 154 |
+| Dependency-closure coverage | 150/304 = 49.3% |
+| Current target result | PASS |
+| Workflow run | `MCFG2 Target Error #20` |
+| Commit | `6f304b6` |
+
+Interpretation:
+
+```text
+BinaryWitnessEnumerationCompleteness target route: confirmed PASS
+all MCFG2 files: not yet checked by the present YML
+files outside the target import closure: still pending in the clean restart
+```
+
+The workflow also restores Lake caches and does not run `lake clean`.
+Accordingly, the final successful run is an incremental target build, not a
+forced from-scratch recompilation of all 150 files in one job.
+The target and the dependency state accepted by Lake are confirmed; an
+all-files clean rebuild remains a separate experiment.
+
+## 0.2 Status of the former CI #583--#774 record
+
+The long CI history preserved below is **archival material** from the former
+experiment.  It is useful for theorem names, intended dependency structure, and
+research planning, but it is not accepted as proof that the current `MCFG2`
+folder has been reverified.
+
+In particular:
+
+```text
+the former “282 CI-confirmed files” count is not the current restart count;
+old checkmarks must not be merged with the present MCFG2 verification ledger;
+only the 150-file target dependency closure is currently covered;
+the remaining 154 MCFG2 files must still be tested by a new all-files workflow.
+```
+
+---
+
+### Archival cumulative narrative begins here
 
 The CI-confirmed phase from CI #583 to CI #603 did not pretend to discharge those remaining mathematical construction obligations.  Instead, it reorganized them into clean construction layers and then wrapped them in stable final names suitable for the paper and blueprint.
 
@@ -152,11 +213,37 @@ finite decision table; they do not yet construct that table from a fully
 encoded grammar instance, establish polynomial verification time, or prove NP
 membership/hardness.
 
+The CI #762--#774 phase substantially closes the intrinsic certificate and
+abstract verifier side of that bridge.  It constructs a dense natural-number
+code for subsets of the finite observation universe, proves checked
+encode/decode round trips, injectivity on valid certificates, and the exact
+exclusive bound `2 ^ U.card`, and then replaces the former external code
+hypothesis throughout the canonical minimum-certificate search.  The encoded
+search is refined into a least accepted code selector, a proof-carrying
+budget/code/certificate output, an exact Boolean threshold theorem, a complete
+accepted-budget interval search, and a total `Option`-valued decision and
+optimization procedure.  Ordinary-cost and Pareto-scalar procedures are proved
+to agree on success, minimum budget, and accepted-budget intervals in the
+positive-additive setting.
+
+The same phase extracts a generic encoded-certificate specification, explicit
+certificate-size and verifier-work resource interfaces, an abstract polynomial
+verifier machine, a bounded machine-witness relation, and a canonical least
+polynomial witness.  At the exact semantic positive-additive minimum rank, the
+selected least dense Pareto code is proved to be the same canonical code chosen
+by the earlier selector, to decode to a Pareto-optimal certificate, and to
+carry the declared certificate-length and verifier-work bounds.  This is now a
+complete NP-style logical witness interface relative to a correct finite
+decision table and an abstract work bound.  What remains before a genuine
+complexity-class theorem is a fully encoded external instance, an executable
+construction of the feasibility table or verifier data, a concrete standard
+machine model, and a proved runtime bound for that concrete verifier.
+
 ---
 
-## 1. Current high-level status
+## 1. Archival high-level status from the former experiment
 
-The current verified chain is:
+The former document recorded the following chain as passed.  These checkmarks are preserved as historical notes and are not the authoritative current MCFG2 restart ledger:
 
 ```text
 Basic.lean ✅
@@ -428,18 +515,34 @@ ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumBudgetSelector.
 ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumCertificateSelector.lean ✅
 ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificate.lean ✅
 ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSearch.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalSelector.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertifiedSelector.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionThreshold.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedThresholdSearch.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedTotalSearch.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionOptimization.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSpecification.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedVerifierComplexity.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialVerifier.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialWitness.lean ✅
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean ✅
 ```
 
-All files marked ✅ above are user-confirmed as passed.  The latest named CI/commit explicitly recorded in this document is:
+The checkmarks above are retained as historical records from the former
+experiment.  The former endpoint recorded here was:
 
 ```text
-Lean CI #761
-Commit: 1e4048d
+Lean CI #774
+Commit: 276209a
+Historical claimed chain size: 282 files
 ```
 
-`ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch.lean`
-is now confirmed passed at Lean CI #761.  The verified chain listed above
-contains 269 CI-confirmed files.
+That 282-file figure is **not** the current clean-restart verification count.
+The authoritative current count is `150` MCFG2 files inside the
+dependency closure of the passing target, with `154` MCFG2 files
+still outside the tested closure.
 
 The current state is best described as:
 
@@ -524,17 +627,89 @@ least accepted ordinary/Pareto budgets and their equality with true minimum rank
 minimum-cost and minimum-Pareto certificates with exact objective values: selected
 least-external-code canonical minimum certificates: selected
 finite canonical minimum-certificate search is a singleton under injective coding: proved
-fully encoded construction of the feasibility table and formal NP complexity: still open
+fully encoded construction of the feasibility table and formal standard-machine NP membership: still open
 current strongest certified identification/rank endpoint:
   correctedConcreteCertifiedWorkingGrammarLearner_identification_descriptionRankObstruction_package
 current strongest observation endpoint:
-  correctedConcreteWorkingGrammar_observationSelectionCanonicalMinimumCertificateSearch_package
+  correctedConcreteWorkingGrammar_observationSelectionEncodedCanonicalPolynomialWitness_package
 current strongest checked-description endpoint:
   correctedConcreteWorkingGrammarLearner_finalDescriptionConclusion_package
 current strongest finite-search endpoint:
   correctedConcreteWorkingGrammarLearner_identification_canonicalSelector_package
 ```
 
+
+Most important progress since CI #761:
+
+```text
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding.lean
+constructs the intrinsic dense natural-number code for subsets of U, proves
+checked encode/decode round trips, injectivity on valid subsets, the exact
+exclusive bound 2^|U|, and removes the former external injective-code premise
+from the canonical minimum-certificate theorem.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSearch.lean
+turns the dense code universe into explicit ordinary-cost and Pareto-scalar
+verified-code searches, proves exact decision/nonemptiness equivalences and
+2^|U| cardinality bounds, and identifies the canonical minimum-code searches
+as singletons.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalSelector.lean
+selects the least accepted dense code at the minimum budget, proves
+decode/re-encode round trips and least-code uniqueness, and identifies the
+singleton canonical search with that selected code.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertifiedSelector.lean
+packages minimum budget, least dense code, decoded subset certificate,
+verification, objective minimality, Pareto optimality, and code/resource bounds
+into proof-carrying ordinary and Pareto outputs.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionThreshold.lean
+proves that the selected minimum budget is the exact Boolean threshold:
+decision b = true iff selectedBudget ≤ b.  In the positive-additive setting
+this threshold is the semantic minimum observation-selection rank.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedThresholdSearch.lean
+stores every accepted budget up to a ceiling and proves that the resulting
+finite set is exactly the interval from the selected threshold to the ceiling.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedTotalSearch.lean
+internalizes the success proof and defines total Option-valued optimization
+searches.  It proves none exactly for terminal rejection and some exactly for
+a certified bounded optimum.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionOptimization.lean
+gives a unified decision/optimization API and proves that positive-additive
+ordinary-cost and Pareto-scalar searches agree on success, minimum budget, and
+the complete accepted-budget interval.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSpecification.lean
+isolates a generic natural-code verifier specification with exact
+soundness/completeness and specializes it to cost, Pareto, minimum-rank, and
+positive-additive rank threshold questions.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedVerifierComplexity.lean
+adds explicit input-size, certificate-size, verifier-work, and polynomial
+envelope fields.  Dense certificate length is discharged internally as U.card;
+the concrete verifier-work bound remains an explicit obligation.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialVerifier.lean
+attaches the logical verifier and work measure to one abstract verifier machine
+and proves machine acceptance, certificate-size bounds, and machine-work bounds
+for the same execution interface.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialWitness.lean
+defines the bounded machine-witness relation, proves
+Q(b) iff there exists a witness code, constructs the finite witness set, and
+proves nonemptiness, soundness, candidate-count, certificate-size, and work
+bounds.
+
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean
+proves that the earlier canonical least dense code is also the canonical least
+polynomial machine witness.  At the semantic positive-additive minimum rank it
+decodes to a Pareto-optimal certificate and retains the same verifier-resource
+bounds.  This is the current strongest observation-selection endpoint.
+```
 
 Most important progress since CI #751:
 
@@ -1119,31 +1294,33 @@ finite observation products and semantic selection optimization: complete
 cardinality/weighted/Pareto/rank hierarchy and selectors: complete semantically
 Pareto rank-profile geometry, endpoint width, offset equivalence, and exact order theory: complete semantically
 gap-free/gap/first-gap/defect/certificate/selection-family theory: complete semantically
-finite decision-table, bounded-certificate, minimum-budget, and canonical-certificate search layer: complete relative to a correct table
+finite decision-table, intrinsic dense certificate, threshold, total-search, and canonical-witness layer: complete relative to a correct table
+NP-style logical witness and abstract polynomial-verifier interface: complete relative to a supplied verifier-work bound
 concrete strict observation-separation examples: not yet constructed
 executable polynomial learner implementation: about 60--70%
-observation-selection finite decision/certificate/search layer: about 75--85%
-formal observation-selection complexity classes and hardness: about 25--35%
+observation-selection encoded decision/certificate/search/witness layer: about 95--98%
+formal standard-machine NP membership and hardness: about 40--50%
 negative/no-advice and copy/member-kernel boundary results: about 25--35%
 positive-learning plus quantitative/certification half: about 95--98%
 observation-design mathematical framework: about 99% semantically
-whole intended paper formalization: about 91--94%
+whole intended paper formalization: about 93--96%
 ```
 
 The principal remaining work is still divided into three tracks.  On the
 executable side: replace brute-force bounded-word enumeration by actual sample
 factorization, remove remaining `noncomputable` finite selections, and verify
 construction time.  On the observation side, the semantic optimization,
-profile/gap theory, and the table-relative decision/certificate/search layer are
-now essentially closed.  The remaining work is to construct concrete
-strict-gain witnesses, build the finite feasibility table from a fully encoded
-selection instance rather than assume its semantic correctness, give an
-intrinsic injective certificate encoding, prove verifier/runtime bounds and a
-formal NP-membership statement, and then establish NP-hardness or
-NP-completeness if valid.  On the boundary side: prove no-advice
-non-identifiability and the proposed copy/member-kernel exclusions, and decide
-whether strict output/start normalization is required by the final paper
-statement.
+profile/gap theory, intrinsic dense certificates, total encoded search, and
+NP-style logical witness layer are now essentially closed relative to a correct
+finite decision table.  The remaining work is to construct concrete strict-gain
+witnesses, define a fully encoded external selection instance, construct or
+verify its feasibility data without consulting semantic target membership,
+realize the verifier in a fixed standard machine model, prove the concrete
+runtime envelope, state the resulting formal NP-membership theorem, and then
+establish NP-hardness or NP-completeness if valid.  On the boundary side: prove
+no-advice non-identifiability and the proposed copy/member-kernel exclusions,
+and decide whether strict output/start normalization is required by the final
+paper statement.
 
 Most important progress since CI #624:
 
@@ -1520,7 +1697,7 @@ equivalence tasks are now CI-confirmed.
 
 ---
 
-## 2. File-by-file progress
+## 2. Archival file-by-file progress
 
 ### 2.1 `Basic.lean`
 
@@ -8621,7 +8798,7 @@ correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankSelector_
 ```
 
 
-## 3. Overall dependency chain
+## 3. Archival overall dependency chain
 
 Current import chain:
 
@@ -9138,7 +9315,7 @@ selector.
 
 ---
 
-## 4. What is genuinely verified so far?
+## 4. Former experiment's verification claims
 
 The following are genuinely Lean-checked:
 
@@ -10268,9 +10445,9 @@ that subset is irredundant, coordinate-essential, globally optimal, and certifie
 ```
 
 
-## 5. What remains as explicit assumptions or unfinished work?
+## 5. Former experiment's unfinished work
 
-CI #738 completes the qualitative positive-learning theorem, actual finite
+CI #774 completes the qualitative positive-learning theorem, actual finite
 grammar compilation, exact semantic reconstruction, closed checked
 sample-parametric description-size analysis, finite exhaustive checked-code
 search, certified output learner, minimum certified description-rank framework,
@@ -10281,11 +10458,12 @@ The remaining limitations are now much more concentrated.
 
 ### 5.1 Executable coding versus `noncomputable` finite definitions
 
-The current learner, finite code search, minimum-rank witnesses, and dense-code
-choices are mathematically finite but still use classical choice,
-function-valued `Finset`s, and noncomputable filters/images.  The codecs and
-finite search theorems are checked, but an extracted executable implementation
-equivalent to the present learner is still absent.
+The current learner, finite code searches, minimum-rank witnesses, and the
+intrinsic dense subset codec are mathematically finite but still use classical
+choice, function-valued `Finset`s, `Fintype.equivFin`, and noncomputable
+filters/images.  The encode/decode and finite-search theorems are checked, but
+an extracted list/index-based executable implementation equivalent to the
+present learner and observation selector is still absent.
 
 ### 5.2 Polynomial-time construction
 
@@ -10390,7 +10568,7 @@ rank-zero/rank-one/arbitrary-rank witness theorems
 Pareto-envelope characterization and certified Pareto-rank selection.
 ```
 
-Newly verified after CI #751:
+Verified through CI #774:
 
 ```text
 finite Boolean decision-table interface with semantic correctness theorem
@@ -10398,16 +10576,27 @@ ordinary-cost, minimum-rank, and Pareto-scalar decision equivalences
 bounded subset certificates and Boolean verifiers
 finite accepted-budget searches and exact interval structure
 least accepted-budget and minimum-certificate selectors
-least-code canonical certificates and singleton finite search under injective coding.
+intrinsic dense subset code with checked decoding, injectivity, and 2^|U| bound
+least dense-code canonical certificate and singleton encoded search
+proof-carrying minimum budget/code/certificate outputs
+exact Boolean threshold and accepted-budget interval theorems
+total Option-valued decision/optimization searches
+ordinary-cost/Pareto success, minimum-budget, and interval agreement
+generic encoded certificate soundness/completeness specification
+certificate-size and verifier-work polynomial resource interfaces
+abstract verifier machine and NP-style bounded witness relation
+canonical least polynomial witness matching the earlier dense selector.
 ```
 
 Still open:
 
 ```text
 one concrete strict-gain witness for a chosen observation pair
-construction of the feasibility table from a fully encoded grammar/target instance
-an intrinsic dense injective code for observation-subset certificates
-formal polynomial verifier bounds and complexity-class membership
+fully encoded external grammar/target/observation-selection instance
+construction or verification of the finite feasibility table from that instance
+list/index-based executable replacement for the noncomputable dense coordinate equivalence
+concrete verifier implementation and proved runtime bound
+fixed standard machine model and formal complexity-class membership
 NP-hardness or NP-completeness of observation design
 concrete quantitative comparisons across explicit observation families.
 ```
@@ -10426,72 +10615,78 @@ other observation-independent lower bounds.
 ### 5.10 Paper/API cleanup
 
 The repository now contains a long verified linear history.  A final public
-import should expose the CI #761 endpoints and place historical facades and
+import should expose the CI #774 endpoints and place historical facades and
 intermediate decomposition files behind internal/legacy imports.
 
-## 6. Immediate next files
+## 6. Former experiment's proposed next files
 
-The current CI #761 endpoint is:
+The current CI #774 endpoint is:
 
 ```lean
-ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch.lean
+ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean
 ```
 
-The finite decision/certificate/search layer is now complete relative to a
-correct feasibility table and an externally supplied injective certificate
-code.  The cleanest next step is to internalize that code before attempting a
-complexity-class theorem.
+The intrinsic dense certificate, total search, exact threshold, abstract
+polynomial verifier, NP-style witness relation, and canonical least machine
+witness are now closed relative to a correct finite semantic decision table and
+a supplied verifier-work bound.  The cleanest next step is to make the verifier
+instance itself explicit and executable.
 
-### 6.1 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding.lean`
+### 6.1 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstance.lean`
 
-Construct a canonical dense code for certificates `certificate : Finset ι`
-with `certificate ⊆ U`, for example by their bit vectors/positions in the finite
-universe `U`.  Prove:
+Define one external finite input record containing, at minimum:
 
 ```text
-code injectivity on subsets of U
-code < 2 ^ U.card
-checked decode/encode round trip
-membership/subset preservation
-replacement of the external certificateCode hypothesis in the canonical search.
+finite coordinate enumeration
+budget and coordinate weights
+encoded feasibility data or a concrete feasibility predicate
+dense certificate code/decoder
+input-size measure.
 ```
+
+Prove exact round trips and connect the encoded instance to the current
+decision-table interface.
 
 ### 6.2 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionExecutableVerifier.lean`
 
-Package the finite decision table, dense certificate codec, and Boolean
-verifier as an encoded finite instance.  Prove exact verifier correctness and
-explicit operation/size bounds without consulting semantic target membership
-during verification.
+Replace the abstract machine wrapper by an explicit list/index-based Boolean
+verifier over the encoded instance.  Prove exact agreement with the current
+dense verifier and give a concrete operation-count recurrence.
 
-### 6.3 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionNP.lean`
+### 6.3 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionVerifierRuntime.lean`
 
-Once the encoded verifier and size model are stable, formalize polynomially
-bounded certificates and verification and state the appropriate NP-membership
-theorem.  Do not claim NP-hardness until a concrete reduction is separately
-constructed and checked.
+Bound the explicit verifier's operation count by a polynomial in the encoded
+instance and certificate lengths.  This file should discharge the
+`hVerifierWork` premise used by the CI #771--#774 interfaces.
 
-### 6.4 `ConcreteCanonicalLearnerWorkingGrammarObservationStrictGainWitness.lean`
+### 6.4 `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionNP.lean`
+
+Choose or import a standard machine/complexity-class model and transfer the
+explicit verifier theorem to formal NP membership.  Do not claim NP-hardness
+until a concrete reduction is separately constructed and checked.
+
+### 6.5 `ConcreteCanonicalLearnerWorkingGrammarObservationStrictGainWitness.lean`
 
 Construct one explicit refinement and one explicit finite exact start-rooted
 working MCFG language lying in the fine target class but not the coarse target
-class.  This remains the main missing concrete observation-separation example.
+class.
 
-### 6.5 `ExecutableConcreteCanonicalLearner.lean`
+### 6.6 `ExecutableConcreteCanonicalLearner.lean`
 
-Replace classical/function-valued finite learner objects by decidable list-based
-codes and prove semantic equivalence with the present certified learner and
-checked serializer.
+Replace classical/function-valued learner objects by decidable list-based codes
+and prove semantic equivalence with the present certified learner and checked
+serializer.
 
-### 6.6 `SampleFactorizationEnumeration.lean`
+### 6.7 `SampleFactorizationEnumeration.lean`
 
 Replace all-bounded-word enumeration by decompositions of actual sample words.
 
-### 6.7 `ConcreteCanonicalLearnerConstructionComplexity.lean`
+### 6.8 `ConcreteCanonicalLearnerConstructionComplexity.lean`
 
 Prove fixed-parameter or polynomial construction-time bounds for the executable
 factorization learner.
 
-### 6.8 Boundary theorem files
+### 6.9 Boundary theorem files
 
 ```text
 StrictWorkingGrammarNormalization.lean
@@ -10501,7 +10696,7 @@ CopyLanguageExclusion.lean
 MemberKernelExclusion.lean
 ```
 
-## 7. Updated roadmap toward the full paper theorem
+## 7. Former experiment's roadmap
 
 ### Stage A: Reachable semantic theorem
 
@@ -10575,8 +10770,9 @@ exact-rank shell partition.
 
 ### Stage J: Observation refinement, products, semantic optimization, and finite decisions
 
-Status: semantic framework complete at the present abstraction level; finite
-decision/certificate/search theory complete relative to a correct encoded table.
+Status: semantic framework complete at the present abstraction level; intrinsic
+dense coding, total finite optimization search, and NP-style logical witness
+theory complete relative to a correct finite table and an abstract work bound.
 
 Verified:
 
@@ -10598,16 +10794,25 @@ finite Boolean decision-table equivalence
 bounded certificates and Boolean verification
 bounded accepted-budget search and exact interval characterization
 minimum-budget and minimum-certificate selectors
-least-code canonical certificate and singleton search under injective coding.
+intrinsic dense subset code with checked decoder and exact 2^|U| bound
+least-code canonical certificate and singleton encoded search
+certified encoded selectors and exact decision thresholds
+total Option-valued ordinary/Pareto optimization searches
+ordinary/Pareto minimum-budget and accepted-interval agreement
+generic encoded certificate and verifier-resource specifications
+abstract polynomial verifier machine
+NP-style bounded witness relation and finite witness set
+canonical least polynomial witness equal to the earlier canonical dense code.
 ```
 
 Still needed:
 
 ```text
 concrete strict-gain example
-fully encoded construction of the correct feasibility table
-intrinsic dense certificate code and checked decoder
-formal polynomial verifier/NP-membership theorem
+fully encoded external observation-selection instance
+construction or verification of the correct feasibility table from that instance
+explicit executable verifier and concrete runtime proof
+standard machine-model transfer and formal NP membership
 selection hardness and NP-completeness, if valid.
 ```
 
@@ -10623,7 +10828,7 @@ Status: optional/open.
 
 Status: open.
 
-## 8. Trust map
+## 8. Former experiment's trust map
 
 ### Strongly verified now
 
@@ -10665,8 +10870,15 @@ finite observation-selection Boolean decision-table equivalences
 bounded subset certificates, verifiers, and 2^|U| family bounds
 exact accepted-budget interval searches
 minimum-budget and minimum-certificate selection
-least-code canonical certificates
-singleton canonical minimum-certificate search under injective coding.
+intrinsic dense subset certificates with checked encode/decode and exact 2^|U| bound
+singleton canonical dense-code searches
+certified minimum budget/code/certificate outputs
+exact decision thresholds and accepted-budget intervals
+total Option-valued decision/optimization searches
+generic certificate/resource specifications
+abstract polynomial verifier machines
+NP-style bounded witness relations
+canonical least polynomial witness matching the canonical dense selector.
 ```
 
 ### Verified but intentionally non-executable or broader than paper working conditions
@@ -10674,15 +10886,16 @@ singleton canonical minimum-certificate search under injective coding.
 ```text
 classical selection of characteristic samples, minimum-rank witnesses, and coverage stages
 noncomputable Finset images/filters over function-valued objects
-classical dense-code and finite-search constructions
+noncomputable `Fintype.equivFin`-based dense-code and finite-search constructions
+abstract verifier work bound supplied as a premise
 fixed-observation substitutability as a semantic target promise
 semantic StartRootedNormal as a target-class condition
 dummy-terminal cut-saturated compiler
 compiled language exactness despite failure of nondeleting/exact-working output conditions
 minimum complexities and ranks as semantic Nat.find invariants
 observation gain/essentiality results conditional on an inhabited strict-gain class
-decision/search executability relative to an externally supplied correct feasibility table
-canonical-certificate uniqueness relative to an externally supplied injective certificate code.
+decision/search and NP-style witness correctness relative to an externally supplied correct feasibility table
+polynomial-verifier conclusions relative to an abstract supplied work bound.
 ```
 
 ### Not yet verified
@@ -10695,8 +10908,8 @@ strict compiler preserving exact-working output conditions
 general start-rooted normalization
 concrete strict observation-gain witness
 construction of a correct feasibility table from a fully encoded instance
-intrinsic checked dense encoding of observation-subset certificates
-formal polynomial observation-selection verification and NP membership
+list/index-based executable dense coordinate codec
+concrete polynomial-time observation-selection verifier and standard-machine NP membership
 NP-hardness or NP-completeness of observation design
 no-advice non-identifiability
 copy-language and member-kernel exclusions.
@@ -10735,121 +10948,385 @@ Keep each new file small and CI-confirmed.
 
 ---
 
+---
 
+## 10. Current clean-restart ledger and next action
 
-## 10. Current recommended next command
+### 10.1 Latest confirmed result
 
-Latest confirmed command/CI target:
+```text
+Workflow run: MCFG2 Target Error #20
+Commit: 6f304b6
+Command: lake build LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness
+Result: PASS
+```
+
+This confirms the `BinaryWitnessEnumerationCompleteness` route and the
+dependency state required by that target.  It does not test every file in the
+folder.
+
+### 10.2 Current restart accounting
+
+```text
+MCFG2 Lean files in supplied snapshot: 304
+covered by current target closure:     150
+outside current target closure:        154
+current closure coverage:              49.3%
+```
+
+A file counted as “covered” here is present in the MCFG2-local transitive import
+closure of the passing target.  This is not the same as having run every file
+as an independent root target, and the cache-enabled workflow is not a forced
+clean rebuild.
+
+### 10.3 Next experiment required
+
+The next workflow must enumerate all `.lean` files under
+`LeanCfgProject/MCFG2` and build every corresponding module, or build one
+generated aggregate module importing all 304 files.  Until that job
+passes, the clean restart is incomplete.
+
+The intended next command at the conceptual level is:
 
 ```bash
-lake build LeanCfgProject.MCFG.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch
+find LeanCfgProject/MCFG2 -maxdepth 1 -type f -name '*.lean' -print0 |
+  sort -z |
+  while IFS= read -r -d '' file; do
+    module="${file%.lean}"
+    module="${module//\//.}"
+    lake build "$module" || exit 1
+  done
 ```
 
-Latest confirmed CI point:
+For stronger evidence, the all-files workflow should avoid relying on a
+cross-commit project build cache or should explicitly remove the project's
+compiled MCFG2 artifacts before testing.
+
+### 10.4 Files covered by the current target closure (150)
+
+<details>
+<summary>Show the 150 covered files</summary>
+
+- `Basic.lean`
+- `BinaryRuleSplicingEvidence.lean`
+- `BinaryWitnessEnumerationCompleteness.lean`
+- `BinaryWitnesses.lean`
+- `BlueprintFiniteSample.lean`
+- `CharacteristicDataMonotone.lean`
+- `CharacteristicSampleAnchorCommonContext.lean`
+- `CharacteristicSampleAnchorCommonContextFinal.lean`
+- `CharacteristicSampleAnchorCommonTransportConstruction.lean`
+- `CharacteristicSampleAnchorDistributionTransport.lean`
+- `CharacteristicSampleBaseConstructionLayers.lean`
+- `CharacteristicSampleBoundedGlobalPaperTheorem.lean`
+- `CharacteristicSampleBuilderSkeleton.lean`
+- `CharacteristicSampleCommonToExposingTargetDiagram.lean`
+- `CharacteristicSampleComponentEnumeration.lean`
+- `CharacteristicSampleComponentPackage.lean`
+- `CharacteristicSampleConstructiveLearnabilityFacade.lean`
+- `CharacteristicSampleConstructiveLearningTheorem.lean`
+- `CharacteristicSampleContextTransport.lean`
+- `CharacteristicSampleCoreConstructionExistential.lean`
+- `CharacteristicSampleCoreConstructionLayers.lean`
+- `CharacteristicSampleExactOnceCanonicalRuleClosureRoute.lean`
+- `CharacteristicSampleExactOnceDerivationalExposureRoute.lean`
+- `CharacteristicSampleExactOnceExposingTransportRoute.lean`
+- `CharacteristicSampleExactOnceFiniteDerivationalExposureRoute.lean`
+- `CharacteristicSampleExactOnceFiniteNonterminalDerivationalExposureRoute.lean`
+- `CharacteristicSampleExactOnceMinimalPaperRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulDerivationSpineRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulOccurrenceRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulPresentationRoute.lean`
+- `CharacteristicSampleExactOnceSuccessfulRuleRealizationRoute.lean`
+- `CharacteristicSampleExistentialPaperTheorem.lean`
+- `CharacteristicSampleExposingAsCommonContext.lean`
+- `CharacteristicSampleExposingCoreFinal.lean`
+- `CharacteristicSampleExposingTransport.lean`
+- `CharacteristicSampleExposingTransportConstruction.lean`
+- `CharacteristicSampleFinalConstructionFacade.lean`
+- `CharacteristicSampleFiniteBuilder.lean`
+- `CharacteristicSampleFiniteUnionBuilder.lean`
+- `CharacteristicSampleFiniteUnionPackage.lean`
+- `CharacteristicSampleFlatConstructionChoice.lean`
+- `CharacteristicSampleFlatConstructionData.lean`
+- `CharacteristicSampleFlatConstructionDisjunction.lean`
+- `CharacteristicSampleFromTrimmedPresentation.lean`
+- `CharacteristicSampleGlobalAssumptionLayers.lean`
+- `CharacteristicSampleGlobalPaperWitnessTheorem.lean`
+- `CharacteristicSampleGrammarRuleBuilder.lean`
+- `CharacteristicSampleGrammarRulePositivity.lean`
+- `CharacteristicSampleNamedContextSplicingConstruction.lean`
+- `CharacteristicSampleNamedContextSplicingExactOnceConstruction.lean`
+- `CharacteristicSampleNamedContextSplicingExactOnceIntegration.lean`
+- `CharacteristicSamplePackage.lean`
+- `CharacteristicSamplePaperAssumptionDiagram.lean`
+- `CharacteristicSamplePaperConstructiveRouteCorollaries.lean`
+- `CharacteristicSamplePaperConstructiveStatement.lean`
+- `CharacteristicSamplePaperMainTheorem.lean`
+- `CharacteristicSamplePaperMainVariants.lean`
+- `CharacteristicSamplePaperWitnessTheorem.lean`
+- `CharacteristicSamplePreferredAllPieces.lean`
+- `CharacteristicSamplePreferredAnchorCommonConstruction.lean`
+- `CharacteristicSamplePreferredAnchorCommonTargetPieces.lean`
+- `CharacteristicSamplePreferredAnchorCommonTargets.lean`
+- `CharacteristicSamplePreferredGlobalPieces.lean`
+- `CharacteristicSamplePreferredSplitCorePieces.lean`
+- `CharacteristicSampleRuleCoverage.lean`
+- `CharacteristicSampleRuleEnumeration.lean`
+- `CharacteristicSampleRuleTransportFinal.lean`
+- `CharacteristicSampleRuleWitnessTransport.lean`
+- `CharacteristicSampleSameContextCore.lean`
+- `CharacteristicSampleSameContextTransportConstruction.lean`
+- `CharacteristicSampleSameContextTransportTargetLevels.lean`
+- `CharacteristicSampleSameContextTransportTargets.lean`
+- `CharacteristicSampleSemanticConstructionTargetLevels.lean`
+- `CharacteristicSampleSemanticConstructionTargets.lean`
+- `CharacteristicSampleSemanticMainTheorems.lean`
+- `CharacteristicSampleSemanticTransportTargetDiagram.lean`
+- `CharacteristicSampleSemanticTransportTargetLevels.lean`
+- `CharacteristicSampleSemanticTransportTargets.lean`
+- `CharacteristicSampleSkeleton.lean`
+- `CharacteristicSampleSplitCoreGlobalLayer.lean`
+- `CharacteristicSampleStartWordEvidence.lean`
+- `CharacteristicSampleStartWordFromSample.lean`
+- `CharacteristicSampleTargetAssumptionLayers.lean`
+- `CharacteristicSampleTransportConstructionBase.lean`
+- `CharacteristicSampleTransportConstructionChoice.lean`
+- `CharacteristicSampleTransportConstructionDiagram.lean`
+- `CharacteristicSampleTransportConstructionExistential.lean`
+- `CharacteristicSampleTransportInterfaceDiagram.lean`
+- `CharacteristicSampleTransportObligations.lean`
+- `CharacteristicSampleTransportObligationsFromAnchorData.lean`
+- `CharacteristicSampleTransportObligationsFromBuilders.lean`
+- `CharacteristicSampleTransportObligationsFromComponents.lean`
+- `CharacteristicSampleTransportObligationsFromCoreData.lean`
+- `CharacteristicSampleTransportObligationsFromExistingSamples.lean`
+- `CharacteristicSampleTransportObligationsFromRuleData.lean`
+- `CharacteristicSampleTransportObligationsFromRules.lean`
+- `CharacteristicSampleTransportObligationsFromSample.lean`
+- `CharacteristicSampleWitnessSet.lean`
+- `CharacteristicSampleWitnessSetMonotone.lean`
+- `CompletenessSkeleton.lean`
+- `ConcreteCanonicalLearner.lean`
+- `ConcreteLearnerEvidence.lean`
+- `ConcreteObservationDeterministicClosure.lean`
+- `ConcreteOutputTypeRefinementPresentation.lean`
+- `ConcreteReducedRepresentativeSelection.lean`
+- `ConcreteTrimmedSuccessfulPresentation.lean`
+- `ConcreteTypedCharacteristicSample.lean`
+- `DistributionalEquivalence.lean`
+- `ExactOnce.lean`
+- `ExactReconstructionSkeleton.lean`
+- `FillingIdentity.lean`
+- `FillingIdentityConstructionSkeleton.lean`
+- `FinalReachableTheorem.lean`
+- `FiniteTextCoverage.lean`
+- `GoldIdentificationSkeleton.lean`
+- `LearnerDerivationSoundness.lean`
+- `LearnerSoundnessCore.lean`
+- `MainReachableTheorem.lean`
+- `NamedContextSplicingConstructor.lean`
+- `NamedContextSplicingSkeleton.lean`
+- `NamedFillEnumerationBounds.lean`
+- `OutputTypeLift.lean`
+- `OutputTypePresentationCompleteness.lean`
+- `OutputTypePresentationLanguage.lean`
+- `OutputTypePresentationMonotone.lean`
+- `OutputTypePresentationWorkingGrammar.lean`
+- `OutputTypePresentationWorkingGrammarEquivalence.lean`
+- `OutputTypeRefinement.lean`
+- `OutputTypeRefinementPresentation.lean`
+- `OutputTypeTrimmedPresentationSkeleton.lean`
+- `OutputTypeTrimmedPresentationSuccessfulOccurrenceConstruction.lean`
+- `PrefixExactReconstruction.lean`
+- `ReachableGoldTheorem.lean`
+- `ReachableStartBridge.lean`
+- `SplicingBlueprint.lean`
+- `SplicingBlueprintMainData.lean`
+- `SplicingBlueprintMainDataMonotone.lean`
+- `SplicingCharacteristicPackage.lean`
+- `SplicingMainDataMonotone.lean`
+- `SplicingMainTheorem.lean`
+- `StartAnchorCanonical.lean`
+- `StartRuleSoundness.lean`
+- `StartSeparatedOutputTypeRefinementCompleteness.lean`
+- `TrimmedPresentationFinalTheorem.lean`
+- `TrimmedPresentationPreCore.lean`
+- `TrimmedPresentationSample.lean`
+- `TrimmedPresentationSampleMonotone.lean`
+- `TupleOccurrenceEnumerationCompleteness.lean`
+- `TupleOccurrences.lean`
+- `WitnessedComposition.lean`
+
+</details>
+
+### 10.5 Files still outside the current target closure (154)
+
+<details>
+<summary>Show the 154 pending files</summary>
+
+- `CharacteristicSampleNamedContextSplicingContextEquations.lean`
+- `CharacteristicSampleNamedContextSplicingContextFamilies.lean`
+- `CharacteristicSampleNamedContextSplicingLeftRightConstructors.lean`
+- `CharacteristicSampleNamedContextSplicingLocalTargets.lean`
+- `CharacteristicSampleNamedContextSplicingParentChoices.lean`
+- `CharacteristicSampleNamedContextSplicingPieces.lean`
+- `CharacteristicSampleNamedContextSplicingTemplateChoices.lean`
+- `CharacteristicSampleNamedContextSplicingTemplateTargets.lean`
+- `CharacteristicSampleSemanticConstructionTargets(1).lean`
+- `ConcreteCanonicalLearnerClassTheorem.lean`
+- `ConcreteCanonicalLearnerFiniteEnumerationBounds.lean`
+- `ConcreteCanonicalLearnerFiniteHypothesis.lean`
+- `ConcreteCanonicalLearnerFiniteHypothesisSize.lean`
+- `ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean`
+- `ConcreteCanonicalLearnerFiniteObjectIdentification.lean`
+- `ConcreteCanonicalLearnerFiniteObjectMonotone.lean`
+- `ConcreteCanonicalLearnerIdentification.lean`
+- `ConcreteCanonicalLearnerLengthOnlyBounds.lean`
+- `ConcreteCanonicalLearnerPolynomialExponentBounds.lean`
+- `ConcreteCanonicalLearnerSinglePowerBounds.lean`
+- `ConcreteCanonicalLearnerStabilization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarAutomaticBitWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarAutomaticNaturalFieldBitWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleFamilyBodyBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTerminalClosure.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTokenPayloadBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCanonicalDecodedSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCanonicalSearchSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionProfile.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputLearner.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputMindChanges.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCheckedBitRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarConstruction.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarDenseEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarDescriptionSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarFinalDescriptionPackage.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarFiniteCodeUniverse.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarFiniteDecodedSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarIdentification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldClassification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldFullyExplicitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldMaximum.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationAblation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationEquivalenceChain.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationProduct.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationRefinementFailure.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionBoundedDecisionSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificate.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDecisionProblem.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSpecification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertifiedSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactInstance.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactVerifierRuntime.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionOptimization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionThreshold.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedExecutableVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedExecutableVerifierComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstance.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstanceSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSemanticOracleBoundary.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedCertificateVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedDecisionProblem.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedMachineModelAdapter.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleCanonicalWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleClass.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleMembership.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleMinimumBudgetSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleThreshold.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedPolynomialDecisionProblem.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedPolynomialWitness.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedStandardMachineRealization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedVerifier.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedVerifierComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedThresholdSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedTotalSearch.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedVerifierComplexity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumBudgetSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumCertificateSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileExtremes.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetBijection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetFirstGapBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapAlternative.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapDecision.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapFree.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapSelectionFamily.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGaps.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetOrder.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsets.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfiles.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObstruction.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPaperBitEnvelope.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPaperPowerBitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPresentationNaturalSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarSampleParametricBitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseDecoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTemplateSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTemplateTupleFraming.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTerminalAlphabetEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarUnaryBitSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarUniformNaturalFieldBound.lean`
+- `ExactConcreteCanonicalLearnerEquivalence.lean`
+- `StartRootedConcreteCanonicalLearnerClassTheorem.lean`
+- `StartRootedConcreteCanonicalLearnerIdentification.lean`
+
+</details>
+
+### 10.6 Current conclusion
 
 ```text
-Lean CI #761
-Commit: 1e4048d
+Former cumulative experiment: archived; not trusted as current restart evidence
+Current BinaryWitnessEnumerationCompleteness route: PASS
+Current MCFG2 all-files experiment: NOT YET DONE
+Clean-restart completion criterion: all 304 MCFG2 modules pass the new all-files workflow
 ```
-
-Current strongest semantic/certified endpoints:
-
-```lean
-correctedConcreteCertifiedWorkingGrammarLearner_identification_descriptionRankObstruction_package
-correctedConcreteCertifiedWorkingGrammar_observationRefinementFailure_package
-correctedConcreteCertifiedWorkingGrammar_observationRefinementChain_package
-correctedConcreteCertifiedWorkingGrammar_observationAblation_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionRank_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionCardinalityRank_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionPositiveAdditiveRank_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankEnvelope_package
-correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankProfileOffsetGapSelectionFamily_package
-correctedConcreteWorkingGrammar_observationSelectionDecisionProblem_package
-correctedConcreteWorkingGrammar_observationSelectionComplexityCertificate_package
-correctedConcreteWorkingGrammar_observationSelectionBoundedDecisionSearch_package
-correctedConcreteWorkingGrammar_observationSelectionMinimumBudgetSelector_package
-correctedConcreteWorkingGrammar_observationSelectionMinimumCertificateSelector_package
-correctedConcreteWorkingGrammar_observationSelectionCanonicalMinimumCertificate_package
-correctedConcreteWorkingGrammar_observationSelectionCanonicalMinimumCertificateSearch_package
-```
-
-Current strongest checked-description and finite-search endpoints:
-
-```lean
-correctedConcreteFiniteHypothesis_logarithmicBitCount_le_paperPower
-correctedConcreteWorkingGrammarLearner_finalDescriptionConclusion_package
-correctedConcreteWorkingGrammarLearner_identification_finiteCodeUniverse_package
-correctedConcreteWorkingGrammarLearner_identification_finiteDecodedSearch_package
-correctedConcreteWorkingGrammarLearner_identification_canonicalDecodedSearch_package
-correctedConcreteWorkingGrammarLearner_identification_canonicalSelector_package
-```
-
-Confirmed end-to-end positive-learning implication:
-
-```text
-finite N and finite observation monoid M
-+
-ExactWorkingConditions
-+
-StartRootedNormal
-+
-FanoutAtMost f
-+
-FixedNamedTupleSubstitutable f obs L(G)
-+
-Nonempty terminal alphabet
-⇒ finite typed characteristic sample
-⇒ corrected finite canonical learner
-⇒ actual finite hypothesis
-⇒ actual cut-compiled WorkingMCFG output with exactly the same language
-⇒ explicit grammar and presentation bounds
-⇒ complete checked natural and logarithmic bit serialization
-⇒ closed sample/fan-out single-power bit bound
-⇒ finite checked code universe
-⇒ finite exhaustive and canonical decoded search
-⇒ exact code-indexed recovery of the actual presentation
-⇒ certificate-carrying learner output
-⇒ attained minimum certified bit/search complexities
-⇒ attained minimum simultaneous certified-description rank
-⇒ profile obstructions yielding characteristic-rank lower bounds
-⇒ Gold identification and semantic mind-change stabilization.
-```
-
-Observation design now additionally gives:
-
-```text
-paired and finite selected products preserve every selected factor's targets
-minimum-cardinality and minimum weighted selections are attained
-minimum and Pareto selections are irredundant and coordinate-essential
-finite feasible/minimum/Pareto searches have at most 2^|U| candidates
-cost budgets form a monotone filtration whose first nonempty layer is the rank
-every full-product target lies in one unique exact selection-rank shell
-pointwise cost order and bounded perturbations control rank changes
-fixed overhead shifts rank exactly without changing minimum/Pareto subsets
-cardinality and positive-additive rank-zero/one/arbitrary shells are characterized
-positive-additive rank is the minimum scalar value on the additive Pareto frontier
-rank-minimizing Pareto profile geometry and gap alternatives are certified
-a correct finite decision table yields exact Boolean decision procedures
-accepted budgets form the exact interval from the minimum rank to the ceiling
-minimum budgets and realizing subset certificates are selected
-least-code minimum certificates are canonical
-finite canonical search is a singleton under injective certificate coding.
-```
-
-Recommended next file:
-
-```text
-ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding.lean
-```
-
-Reason:
-
-CI #761 closes the finite decision, certificate, bounded-search,
-minimum-selector, and least-code canonical-search layers relative to a correct
-feasibility table.  The remaining artificial input in the final theorem is the
-external function `certificateCode : Finset ι → Nat` together with an
-injectivity assumption.  The next file should construct a dense checked code
-intrinsically from the finite coordinate universe `U`, prove injectivity and a
-`2 ^ U.card` bound, and instantiate the canonical singleton-search theorem
-without any external coding hypothesis.  After that, the verifier/runtime and
-formal NP-membership layer can be stated on genuinely encoded instances.
