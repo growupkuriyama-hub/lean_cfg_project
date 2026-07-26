@@ -171,12 +171,15 @@ theorem sample_word_length_le_budget
     word.length ≤ sampleLengthBudget K := by
   classical
   unfold sampleLengthBudget
-  have hsum :
-      (K.erase word).sum (fun w => w.length) + word.length =
-        K.sum (fun w => w.length) :=
-    Finset.sum_erase_add _ hword
-  rw [← hsum]
-  exact Nat.le_add_left _ _
+  induction K using Finset.induction_on with
+  | empty =>
+      simp at hword
+  | @insert a s ha ih =>
+      rw [Finset.sum_insert ha]
+      simp only [Finset.mem_insert] at hword
+      rcases hword with rfl | hword
+      · exact Nat.le_add_right _ _
+      · exact le_trans (ih hword) (Nat.le_add_left _ _)
 
 /-- Every sample word belongs to the default bounded word enumeration. -/
 theorem sample_word_mem_sampleBoundedWords
