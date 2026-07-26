@@ -468,8 +468,7 @@ theorem toConcretePresentation
         apply tupleType_castTuple_constant
           obs hwt.symm ρ.outputTuple
           (evalObs obs [ρ.terminal])
-        simpa [TerminalRule.outputType] using
-          (TerminalRule.tupleType_outputTuple obs ρ)
+        rfl
       simpa [TypedNonterminal.ofTuple] using
         (PresentationDerives.congr_output
           (P := ConcreteOutputTypeRefinement.presentation
