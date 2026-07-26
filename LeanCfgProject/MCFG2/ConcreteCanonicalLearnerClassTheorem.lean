@@ -91,7 +91,7 @@ theorem correctedConcreteCanonicalLearner_consistent
       correctedConcreteCanonicalHypLanguage obs f
         (correctedConcreteCanonicalLearner
           (α := α) K) := by
-  simpa using
+  simpa only [correctedConcreteCanonicalHypLanguage_apply] using
     sample_subset_correctedConcreteCanonicalLearnerLanguage
       K obs f
 
@@ -159,7 +159,7 @@ def CorrectedConcreteTargetClass :
     Set (Set (Word α)) :=
   fun L =>
     Nonempty
-      (CorrectedConcreteTargetWitness
+      (CorrectedConcreteTargetWitness.{u, v, w}
         α M obs f L)
 
 end TargetWitness
@@ -259,8 +259,10 @@ theorem CorrectedConcreteTargetWitness.exists_characteristicSample
           W.grammar.StringLanguage :=
       hSupersets K hSK hKgrammar
 
-    simpa [W.language_eq] using
-      hExactGrammar
+    simpa only [
+      correctedConcreteCanonicalHypLanguage_apply,
+      W.language_eq
+    ] using hExactGrammar
 
 /-- Every target witness is identified from every positive text by the same
 corrected concrete learner. -/
@@ -329,8 +331,8 @@ the single corrected concrete canonical learner. -/
 theorem correctedConcreteCanonicalLearner_characteristicSample_for_targetClass
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     ∃ S : Finset (Word α),
       CharacteristicSample
         (correctedConcreteCanonicalHypLanguage
@@ -341,8 +343,8 @@ theorem correctedConcreteCanonicalLearner_characteristicSample_for_targetClass
 
   change
     Nonempty
-      (CorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (CorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -352,8 +354,8 @@ theorem correctedConcreteCanonicalLearner_characteristicSample_for_targetClass
 theorem correctedConcreteCanonicalLearner_finite_tellTale_for_targetClass
     {L : Set (Word α)}
     (hL :
-      L ∈ CorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       ∀ K : Finset (Word α),
@@ -368,8 +370,8 @@ theorem correctedConcreteCanonicalLearner_finite_tellTale_for_targetClass
 
   change
     Nonempty
-      (CorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (CorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -384,15 +386,15 @@ theorem correctedConcreteCanonicalLearner_identifies_targetClass :
         obs f)
       (correctedConcreteCanonicalLearner
         (α := α))
-      (CorrectedConcreteTargetClass
-        (v := v) α M obs f) := by
+      (CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) := by
 
   intro L hL
 
   change
     Nonempty
-      (CorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (CorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -402,8 +404,8 @@ theorem correctedConcreteCanonicalLearner_identifies_targetClass :
 languages and positive texts. -/
 theorem correctedConcreteCanonicalLearner_identifies_every_target_text :
     ∀ L : Set (Word α),
-      L ∈ CorrectedConcreteTargetClass
-          (v := v) α M obs f →
+      L ∈ CorrectedConcreteTargetClass.{u, v, w}
+          α M obs f →
       ∀ T : TextFor L,
         EventuallyCorrectOnText
           (correctedConcreteCanonicalHypLanguage
@@ -416,7 +418,7 @@ theorem correctedConcreteCanonicalLearner_identifies_every_target_text :
 
   exact
     correctedConcreteCanonicalLearner_identifies_targetClass
-      (v := v) obs f L hL T
+      obs f L hL T
 
 /-- Paper-style class conclusion package.
 
@@ -441,8 +443,8 @@ theorem correctedConcreteCanonicalLearner_class_conclusion_package :
             (correctedConcreteCanonicalLearner
               (α := α) K))) ∧
     ((∀ L : Set (Word α),
-        L ∈ CorrectedConcreteTargetClass
-            (v := v) α M obs f →
+        L ∈ CorrectedConcreteTargetClass.{u, v, w}
+            α M obs f →
         ∃ S : Finset (Word α),
           CharacteristicSample
             (correctedConcreteCanonicalHypLanguage
@@ -455,8 +457,8 @@ theorem correctedConcreteCanonicalLearner_class_conclusion_package :
         obs f)
       (correctedConcreteCanonicalLearner
         (α := α))
-      (CorrectedConcreteTargetClass
-        (v := v) α M obs f) := by
+      (CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) := by
 
   refine ⟨?_, ?_, ?_, ?_⟩
 
@@ -471,11 +473,11 @@ theorem correctedConcreteCanonicalLearner_class_conclusion_package :
   · intro L hL
     exact
       correctedConcreteCanonicalLearner_characteristicSample_for_targetClass
-        (v := v) obs f hL
+        obs f hL
 
   · exact
       correctedConcreteCanonicalLearner_identifies_targetClass
-        (v := v) obs f
+        obs f
 
 end ClassTheorem
 
