@@ -438,19 +438,17 @@ theorem toConcretePresentation
       (TypedNonterminal.ofTuple obs A x) x := by
   induction h with
   | @terminal ρ hρ hwt =>
-      let τ := ConcreteOutputTypeRefinement.canonicalTerminalRule
-        hworking ρ hρ
+      let τ : TypedTerminalRule G :=
+        { baseRule := ρ
+          inGrammar := hρ
+          wellTyped := hwt }
       have hmem :
           (ConcreteOutputTypeRefinement.presentation
-            (G := G) (obs := obs) hworking).HasTerminalRule τ :=
-        ConcreteOutputTypeRefinement.presentation_hasCanonicalTerminalRule
-          hworking ρ hρ
-      have hproof : τ.wellTyped.symm = hwt.symm :=
-        Subsingleton.elim _ _
-      have htuple :
-          castTuple τ.wellTyped.symm ρ.outputTuple =
-            castTuple hwt.symm ρ.outputTuple :=
-        congrArg (fun e => castTuple e ρ.outputTuple) hproof
+            (G := G) (obs := obs) hworking).HasTerminalRule τ := by
+        simpa [τ,
+          ConcreteOutputTypeRefinement.canonicalTerminalRule] using
+          (ConcreteOutputTypeRefinement.presentation_hasCanonicalTerminalRule
+            (G := G) (obs := obs) hworking ρ hρ)
       have hterminal :
           PresentationDerives
             (ConcreteOutputTypeRefinement.presentation
@@ -458,34 +456,25 @@ theorem toConcretePresentation
             ({ base := ρ.lhs,
                out := fun _ => evalObs obs [ρ.terminal] } :
               TypedNonterminal G M)
-            (castTuple τ.wellTyped.symm ρ.outputTuple) := by
-        simpa [τ,
-          ConcreteOutputTypeRefinement.canonicalTerminalRule,
-          TypedTerminalRule.lhs] using
+            (castTuple hwt.symm ρ.outputTuple) := by
+        simpa [τ, TypedTerminalRule.lhs] using
           (PresentationDerives.terminal hmem)
       have hout :
           (fun _ : Fin (G.arity ρ.lhs) =>
               evalObs obs [ρ.terminal]) =
             tupleType obs
-              (castTuple τ.wellTyped.symm ρ.outputTuple) := by
-        have hm := τ.cast_outputTuple_matches_lhs obs
-        unfold TypedNonterminal.Matches at hm
-        simpa [τ,
-          ConcreteOutputTypeRefinement.canonicalTerminalRule,
-          TypedTerminalRule.lhs] using hm.symm
-      have hcanonical :
-          PresentationDerives
-            (ConcreteOutputTypeRefinement.presentation
-              (G := G) (obs := obs) hworking)
-            (TypedNonterminal.ofTuple obs ρ.lhs
-              (castTuple τ.wellTyped.symm ρ.outputTuple))
-            (castTuple τ.wellTyped.symm ρ.outputTuple) := by
-        simpa [TypedNonterminal.ofTuple] using
-          (PresentationDerives.congr_output
-            (P := ConcreteOutputTypeRefinement.presentation
-              (G := G) (obs := obs) hworking)
-            hout hterminal)
-      simpa only [htuple] using hcanonical
+              (castTuple hwt.symm ρ.outputTuple) := by
+        symm
+        apply tupleType_castTuple_constant
+          obs hwt.symm ρ.outputTuple
+          (evalObs obs [ρ.terminal])
+        simpa [TerminalRule.outputType] using
+          (TerminalRule.tupleType_outputTuple obs ρ)
+      simpa [TypedNonterminal.ofTuple] using
+        (PresentationDerives.congr_output
+          (P := ConcreteOutputTypeRefinement.presentation
+            (G := G) (obs := obs) hworking)
+          hout hterminal)
 
   | @binary ρ hρ x y hx hy ihx ihy =>
       let τ := ConcreteOutputTypeRefinement.canonicalBinaryRule
