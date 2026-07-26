@@ -1,0 +1,90 @@
+name: MCFG2 Target Error
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-target:
+    name: Build BinaryWitnessEnumerationCompleteness
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Build target and print focused diagnostics
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          logfile="$(mktemp)"
+          trap 'rm -f "$logfile"' EXIT
+
+          target="LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness"
+
+          if lake build "$target" >"$logfile" 2>&1; then
+            echo "${target}: PASS"
+            exit 0
+          fi
+
+          echo "::error::${target}: FAIL"
+          echo "----- focused Lean diagnostics -----"
+
+          python3 - "$logfile" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          lines = Path(sys.argv[1]).read_text(errors="replace").splitlines()
+
+          patterns = [
+              re.compile(r"^✖"),
+              re.compile(r"\berror:", re.I),
+              re.compile(r"application type mismatch", re.I),
+              re.compile(r"\btype mismatch\b", re.I),
+              re.compile(r"unknown identifier", re.I),
+              re.compile(r"failed to synthesize", re.I),
+              re.compile(r"unsolved goals?", re.I),
+              re.compile(r"unexpected token", re.I),
+              re.compile(r"invalid (field|constructor|declaration|syntax|pattern)", re.I),
+              re.compile(r"declaration uses .sorry.", re.I),
+          ]
+
+          hits = [
+              i for i, line in enumerate(lines)
+              if any(pattern.search(line) for pattern in patterns)
+          ]
+
+          if not hits:
+              print("No standard marker found. Final 200 lines:")
+              start = max(0, len(lines) - 200)
+              for n in range(start, len(lines)):
+                  print(f"{n + 1}: {lines[n]}")
+              raise SystemExit(0)
+
+          ranges = []
+          for i in hits:
+              start = max(0, i - 10)
+              end = min(len(lines), i + 45)
+              if ranges and start <= ranges[-1][1]:
+                  ranges[-1] = (ranges[-1][0], max(ranges[-1][1], end))
+              else:
+                  ranges.append((start, end))
+
+          for start, end in ranges:
+              for n in range(start, end):
+                  print(f"{n + 1}: {lines[n]}")
+              print("---")
+          PY
+
+          echo "----- end focused diagnostics -----"
+          exit 1

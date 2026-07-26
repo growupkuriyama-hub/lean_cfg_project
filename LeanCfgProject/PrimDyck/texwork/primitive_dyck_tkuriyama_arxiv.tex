@@ -1,15 +1,24 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% IJFCS submission manuscript prepared with the official World Scientific
-%% ws-ijfcs class (version 1.5g, 14 January 2025).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass{ws-ijfcs}
+% arXiv preprint version of the manuscript submitted to IJFCS.
+% This file is self-contained and uses only standard TeX Live packages.
+\pdfoutput=1
+\documentclass[11pt]{article}
 
-\usepackage{mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{enumerate}
+\usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{xurl}
-\usepackage[verbose,hypertexnames=false]{hyperref}
-\hypersetup{colorlinks=false,allbordercolors=blue,pdfborderstyle={/S/U/W 1}}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks,hypertexnames=false]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
 
 \newcommand{\val}[2]{[#1]_{#2}}
 \newcommand{\NpD}{\mathcal{N}_{\mathrm{pD}}}
@@ -17,24 +26,14 @@
 \newcommand{\DP}{\mathcal{D}_{\mathrm{P}}}
 \newcommand{\Pset}{\mathcal P}
 
-\begin{document}
-
-\markboth{T. Kuriyama}
-{Additive Bases from Primitive Dyck Words}
-
-%%%%%%%%%%%%%%%%%%%%% Publisher's Area please ignore %%%%%%%%%%%%%%%
-\catchline{}{}{}{}{}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \title{Additive Bases from Primitive Dyck Words:\\
 Regular Underapproximations, Motzkin Coding, and Digit Lifting}
+\author{Takayuki Kuriyama\\
+\small Growup Learning Academy, Tokyo, Japan\\
+\small \texttt{growup.kuriyama@gmail.com}}
+\date{}
 
-\author{Takayuki Kuriyama}
-
-\address{Growup Learning Academy\\
-4-8-3 Shakujii-machi, Nerima-ku, Tokyo 177-0041, Japan\\
-\email{growup.kuriyama@gmail.com}}
-
+\begin{document}
 \maketitle
 
 \begin{abstract}
@@ -59,9 +58,10 @@ halved family has exact asymptotic additive order five.  Supplementary
 programs reproduce all finite certificates using exact integer arithmetic.
 \end{abstract}
 
-\keywords{Dyck language; primitive Dyck word; deterministic context-free
+\medskip
+\noindent\textbf{Keywords:} Dyck language; primitive Dyck word; deterministic context-free
 language; regular underapproximation; additive basis; two-coloured Motzkin
-word; numeration system; digit lifting.}
+word; numeration system; digit lifting.
 
 \noindent\textbf{2020 Mathematics Subject Classification:}
 Primary 68Q45, 11B13; Secondary 05A15.
