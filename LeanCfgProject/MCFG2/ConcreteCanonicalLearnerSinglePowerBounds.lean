@@ -83,11 +83,11 @@ theorem sum_range_le_mul
     (h :
       ∀ i ∈ Finset.range f,
         g i ≤ bound) :
-    (∑ i in Finset.range f, g i) ≤
+    Finset.sum (Finset.range f) (fun i => g i) ≤
       f * bound := by
   calc
-    (∑ i in Finset.range f, g i) ≤
-        ∑ _i in Finset.range f, bound := by
+    Finset.sum (Finset.range f) (fun i => g i) ≤
+        Finset.sum (Finset.range f) (fun _i => bound) := by
       apply Finset.sum_le_sum
       intro i hi
       exact h i hi
@@ -104,10 +104,10 @@ theorem sum_range_le_next_power
     (hg :
       ∀ i ∈ Finset.range f,
         g i ≤ base ^ exponent) :
-    (∑ i in Finset.range f, g i) ≤
+    Finset.sum (Finset.range f) (fun i => g i) ≤
       base ^ (exponent + 1) := by
   calc
-    (∑ i in Finset.range f, g i) ≤
+    Finset.sum (Finset.range f) (fun i => g i) ≤
         f * (base ^ exponent) :=
       sum_range_le_mul f (base ^ exponent) g hg
     _ ≤
@@ -214,8 +214,8 @@ theorem finiteWordEnumerationBound_le_singlePower
   calc
     finiteWordEnumerationBound
         alphabetSize bound =
-        ∑ n in Finset.range (bound + 1),
-          alphabetSize ^ n := by
+        Finset.sum (Finset.range (bound + 1))
+          (fun n => alphabetSize ^ n) := by
       rfl
     _ ≤
         (bound + 1) * (base ^ bound) :=
@@ -341,8 +341,8 @@ theorem two_le_base
     2 ≤
       uniformEnumerationBase
         sampleLength f := by
-  exact Nat.le_of_lt
-    (base_gt_one sampleLength f)
+  unfold uniformEnumerationBase
+  omega
 
 theorem fanout_le_base
     (sampleLength f : Nat) :
@@ -973,9 +973,11 @@ theorem sampleLengthOnlyCorrectedRuleCountBound_le_singlePower
         (hbinary.trans hbinaryCommon)
     _ ≤
         base * base ^ commonExponent := by
-      apply Nat.mul_le_mul_right
-      exact UniformParameters.two_le_base
-        sampleLength f
+      simpa [two_mul] using
+        (Nat.mul_le_mul_right
+          (base ^ commonExponent)
+          (UniformParameters.two_le_base
+            sampleLength f))
     _ =
         base ^ (commonExponent + 1) := by
       simpa [Nat.pow_add_one', Nat.mul_comm]
