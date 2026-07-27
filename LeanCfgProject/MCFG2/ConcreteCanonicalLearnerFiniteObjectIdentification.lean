@@ -51,7 +51,7 @@ No `sorry`, `admit`, or `axiom` is used.
 
 namespace MCFG
 
-universe u v w
+universe u v
 
 section ListedFiniteDerivations
 
@@ -268,8 +268,9 @@ def CorrectedConcreteFiniteHypothesis.Language
         K obs f) :
     Set (Word α) :=
   {word |
-    ListedFiniteCorrectedConcreteStringDerives
-      K obs f H word}
+    Nonempty
+      (ListedFiniteCorrectedConcreteStringDerives
+        K obs f H word)}
 
 namespace ListedFiniteCorrectedConcreteStringDerives
 
@@ -344,7 +345,8 @@ theorem correctedConcreteFiniteHypothesis_language_subset_finite
       FiniteCorrectedConcreteLearnerLanguage
         K obs f := by
   intro word hword
-  exact hword.toFinite
+  rcases hword with ⟨D⟩
+  exact ⟨D.toFinite⟩
 
 /-- Completeness of the stored rule lists gives the reverse inclusion. -/
 theorem finiteCorrectedConcreteLearnerLanguage_subset_hypothesis
@@ -358,7 +360,8 @@ theorem finiteCorrectedConcreteLearnerLanguage_subset_hypothesis
         K obs f ⊆
       H.Language := by
   intro word hword
-  exact hword.toListed H
+  rcases hword with ⟨D⟩
+  exact ⟨D.toListed H⟩
 
 /-- The language read from any complete finite rule object equals the finite
 dependent learner language. -/
@@ -640,7 +643,7 @@ theorem correctedConcreteFiniteObjectLearner_characteristicSample_for_startRoote
     {L : Set (Word α)}
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+        α M obs f) :
     ∃ S : Finset (Word α),
       CharacteristicSample
         (correctedConcreteFiniteObjectHypLanguage
@@ -651,7 +654,7 @@ theorem correctedConcreteFiniteObjectLearner_characteristicSample_for_startRoote
 
   obtain ⟨S, hS⟩ :=
     correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTargetClass
-      (v := w) obs f hL
+      obs f hL
 
   exact
     ⟨S,
@@ -667,13 +670,13 @@ theorem correctedConcreteFiniteObjectLearner_identifies_startRootedTargetClass :
       (correctedConcreteFiniteObjectLearner
         obs f)
       (StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) := by
+        α M obs f) := by
 
   intro L hL
 
   obtain ⟨S, hS⟩ :=
     correctedConcreteFiniteObjectLearner_characteristicSample_for_startRootedTargetClass
-      (v := w) obs f hL
+      obs f hL
 
   intro T
 
@@ -689,7 +692,7 @@ theorem correctedConcreteFiniteObjectLearner_identifies_startRootedTargetClass :
 theorem correctedConcreteFiniteObjectLearner_identifies_every_startRooted_text :
     ∀ L : Set (Word α),
       L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+          α M obs f →
       ∀ T : TextFor L,
         EventuallyCorrectOnText
           (correctedConcreteFiniteObjectHypLanguage
@@ -700,7 +703,7 @@ theorem correctedConcreteFiniteObjectLearner_identifies_every_startRooted_text :
   intro L hL T
   exact
     correctedConcreteFiniteObjectLearner_identifies_startRootedTargetClass
-      (v := w) obs f L hL T
+      obs f L hL T
 
 end StartRootedFiniteObjectClassTheorem
 
@@ -769,12 +772,12 @@ theorem correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageSt
     {L : Set (Word α)}
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := w) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     correctedConcreteFiniteObjectHypLanguage
         obs f
         (correctedConcreteFiniteObjectLearner
@@ -787,7 +790,7 @@ theorem correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageSt
 
   exact
     correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-      (v := w) obs f hL T hn
+      obs f hL T hn
 
 /-- At the selected coverage stage itself, the actual finite-object hypothesis
 is already semantically correct. -/
@@ -795,7 +798,7 @@ theorem correctedConcreteFiniteObjectLearner_correct_at_startRootedCoverageStage
     {L : Set (Word α)}
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+        α M obs f)
     (T : TextFor L) :
     correctedConcreteFiniteObjectHypLanguage
         obs f
@@ -803,12 +806,12 @@ theorem correctedConcreteFiniteObjectLearner_correct_at_startRootedCoverageStage
           obs f
           (T.prefixSample
             (startRootedCorrectedConcreteTargetCoverageStage
-              (v := w) obs f hL T))) =
+              obs f hL T))) =
       L := by
 
   exact
     correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-      (v := w) obs f hL T
+      obs f hL T
       (Nat.le_refl _)
 
 /-- After the selected stage, every output is both semantically exact and
@@ -817,7 +820,7 @@ theorem correctedConcreteFiniteObjectLearner_correct_and_bounded_after_stage
     {L : Set (Word α)}
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+        α M obs f)
     (T : TextFor L) :
     ∃ n0 : Nat,
       ∀ n : Nat, n0 ≤ n →
@@ -839,14 +842,14 @@ theorem correctedConcreteFiniteObjectLearner_correct_and_bounded_after_stage
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+        obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-        (v := w) obs f hL T hn,
+        obs f hL T hn,
       correctedConcreteFiniteObjectLearner_prefix_ruleCount_le
         obs f T n⟩
 
@@ -860,7 +863,7 @@ theorem correctedConcreteFiniteObjectLearner_class_size_semantic_package :
         (correctedConcreteFiniteObjectLearner
           obs f)
         (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+          α M obs f) ∧
       (∀ K : Finset (Word α),
         correctedConcreteFiniteObjectHypLanguage
             obs f
@@ -878,7 +881,7 @@ theorem correctedConcreteFiniteObjectLearner_class_size_semantic_package :
 
   exact
     ⟨correctedConcreteFiniteObjectLearner_identifies_startRootedTargetClass
-        (v := w) obs f,
+        obs f,
       correctedConcreteFiniteObjectHypLanguage_apply
         obs f,
       correctedConcreteFiniteObjectLearner_ruleCount_le_explicit_paperPower
