@@ -76,7 +76,7 @@ theorem alphabet_nonempty
     Nonempty α := by
   induction h with
 
-  | terminal hρ hwt =>
+  | @terminal ρ hρ hwt =>
       exact ⟨ρ.terminal⟩
 
   | binary hρ hx hy ihx ihy =>
@@ -205,7 +205,7 @@ symbol. -/
 theorem alphabet_nonempty_of_sample_nonempty
     (R :
       CorrectedConcreteFiniteObjectWorkingGrammarRealization
-        (w := w) K obs f)
+        K obs f)
     (hK : K.Nonempty) :
     Nonempty α := by
 
@@ -232,7 +232,7 @@ theorem sample_eq_empty_of_isEmpty
     [IsEmpty α]
     (R :
       CorrectedConcreteFiniteObjectWorkingGrammarRealization
-        (w := w) K obs f) :
+        K obs f) :
     K = ∅ := by
   classical
 
@@ -291,13 +291,13 @@ theorem emptyLanguageWorkingMCFG_no_derives
   induction h with
 
   | terminal hρ hwt =>
-      simp [emptyLanguageWorkingMCFG] at hρ
+      simpa [emptyLanguageWorkingMCFG] using hρ
 
   | binary hρ hx hy ihx ihy =>
-      simp [emptyLanguageWorkingMCFG] at hρ
+      simpa [emptyLanguageWorkingMCFG] using hρ
 
   | start hρ hx hwt ih =>
-      simp [emptyLanguageWorkingMCFG] at hρ
+      simpa [emptyLanguageWorkingMCFG] using hρ
 
 /-- The rule-free working grammar has empty string language. -/
 theorem emptyLanguageWorkingMCFG_stringLanguage_eq :
@@ -351,7 +351,6 @@ noncomputable def emptySampleWorkingGrammarRealization
     (obs : α → M)
     (f : Nat) :
     CorrectedConcreteFiniteObjectWorkingGrammarRealization
-      (w := 0)
       (∅ : Finset (Word α))
       obs f where
 
@@ -445,7 +444,7 @@ theorem no_workingGrammarRealization_emptyAlphabet_epsilonSample
     (f : Nat) :
     ¬ Nonempty
       (CorrectedConcreteFiniteObjectWorkingGrammarRealization
-        (w := w)
+
         emptyAlphabetEpsilonSample
         emptyAlphabetObservation
         f) := by
@@ -464,7 +463,7 @@ theorem unconditional_workingGrammar_realization_is_false :
       (∀ f : Nat,
         Nonempty
           (CorrectedConcreteFiniteObjectWorkingGrammarRealization
-            (w := w)
+
             emptyAlphabetEpsilonSample
             emptyAlphabetObservation
             f)) := by
@@ -472,7 +471,7 @@ theorem unconditional_workingGrammar_realization_is_false :
   intro h
   exact
     no_workingGrammarRealization_emptyAlphabet_epsilonSample
-      (w := w) 0
+      0
       (h 0)
 
 end EmptyAlphabetCounterexample
@@ -499,7 +498,7 @@ theorem workingGrammarRealization_implies_compilationDomain
     {f : Nat}
     (R :
       CorrectedConcreteFiniteObjectWorkingGrammarRealization
-        (w := w) K obs f) :
+        K obs f) :
     FiniteObjectWorkingGrammarCompilationDomain
       K := by
   classical
@@ -532,7 +531,7 @@ theorem correctedConcreteFiniteObject_workingGrammar_obstruction_package :
     (∀ f : Nat,
       ¬ Nonempty
         (CorrectedConcreteFiniteObjectWorkingGrammarRealization
-          (w := w)
+
           emptyAlphabetEpsilonSample
           emptyAlphabetObservation
           f)) ∧
@@ -542,12 +541,11 @@ theorem correctedConcreteFiniteObject_workingGrammar_obstruction_package :
       K.Nonempty →
       ∀ R :
         CorrectedConcreteFiniteObjectWorkingGrammarRealization
-          (w := w) K obs f,
+          K obs f,
         Nonempty α) ∧
     (∀ (obs : α → M) (f : Nat),
       Nonempty
         (CorrectedConcreteFiniteObjectWorkingGrammarRealization
-          (w := 0)
           (∅ : Finset (Word α))
           obs f)) := by
 
@@ -555,8 +553,7 @@ theorem correctedConcreteFiniteObject_workingGrammar_obstruction_package :
     ⟨fun G f =>
         emptyAlphabet_epsilonSample_not_represented
           G f,
-      no_workingGrammarRealization_emptyAlphabet_epsilonSample
-        (w := w),
+      no_workingGrammarRealization_emptyAlphabet_epsilonSample,
       fun K obs f hK R =>
         R.alphabet_nonempty_of_sample_nonempty hK,
       fun obs f =>

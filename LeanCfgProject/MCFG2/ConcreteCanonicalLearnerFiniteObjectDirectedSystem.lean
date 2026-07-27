@@ -58,7 +58,7 @@ No `sorry`, `admit`, or `axiom` is used.
 
 namespace MCFG
 
-universe u v w
+universe u v
 
 section RuleTransportCoherence
 
@@ -79,17 +79,15 @@ theorem CorrectedConcreteUnitRuleCode.mono_trans_source
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    ((U.mono hSK).mono hKT).source =
+    HEq ((U.mono hSK).mono hKT).source
       (U.mono (hSK.trans hKT)).source := by
-  calc
-    ((U.mono hSK).mono hKT).source =
-        (U.mono hSK).source :=
-      (U.mono hSK).mono_source hKT
-    _ = U.source :=
-      U.mono_source hSK
-    _ =
-        (U.mono (hSK.trans hKT)).source :=
-      (U.mono_source (hSK.trans hKT)).symm
+  exact
+    HEq.trans
+      ((U.mono hSK).mono_source hKT)
+      (HEq.trans
+        (U.mono_source hSK)
+        (HEq.symm
+          (U.mono_source (hSK.trans hKT))))
 
 /-- Two-step and direct unit-rule transport have the same target tuple. -/
 theorem CorrectedConcreteUnitRuleCode.mono_trans_target
@@ -102,27 +100,26 @@ theorem CorrectedConcreteUnitRuleCode.mono_trans_target
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    ((U.mono hSK).mono hKT).target =
+    HEq ((U.mono hSK).mono hKT).target
       (U.mono (hSK.trans hKT)).target := by
-  calc
-    ((U.mono hSK).mono hKT).target =
-        (U.mono hSK).target :=
-      (U.mono hSK).mono_target hKT
-    _ = U.target :=
-      U.mono_target hSK
-    _ =
-        (U.mono (hSK.trans hKT)).target :=
-      (U.mono_target (hSK.trans hKT)).symm
+  exact
+    HEq.trans
+      ((U.mono hSK).mono_target hKT)
+      (HEq.trans
+        (U.mono_target hSK)
+        (HEq.symm
+          (U.mono_target (hSK.trans hKT))))
 
 /-- Identity unit-rule transport preserves the source tuple. -/
 theorem CorrectedConcreteUnitRuleCode.mono_refl_source
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    (U.mono
-      (Set.Subset.rfl :
-        (S : Set (Word α)) ⊆
-          (S : Set (Word α)))).source =
+    HEq
+      (U.mono
+        (Set.Subset.rfl :
+          (S : Set (Word α)) ⊆
+            (S : Set (Word α)))).source
       U.source :=
   U.mono_source Set.Subset.rfl
 
@@ -131,10 +128,11 @@ theorem CorrectedConcreteUnitRuleCode.mono_refl_target
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    (U.mono
-      (Set.Subset.rfl :
-        (S : Set (Word α)) ⊆
-          (S : Set (Word α)))).target =
+    HEq
+      (U.mono
+        (Set.Subset.rfl :
+          (S : Set (Word α)) ⊆
+            (S : Set (Word α)))).target
       U.target :=
   U.mono_target Set.Subset.rfl
 
@@ -150,17 +148,15 @@ theorem CorrectedConcreteBinaryRuleCode.mono_trans_source
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    ((B.mono hSK).mono hKT).source =
+    HEq ((B.mono hSK).mono hKT).source
       (B.mono (hSK.trans hKT)).source := by
-  calc
-    ((B.mono hSK).mono hKT).source =
-        (B.mono hSK).source :=
-      (B.mono hSK).mono_source hKT
-    _ = B.source :=
-      B.mono_source hSK
-    _ =
-        (B.mono (hSK.trans hKT)).source :=
-      (B.mono_source (hSK.trans hKT)).symm
+  exact
+    HEq.trans
+      ((B.mono hSK).mono_source hKT)
+      (HEq.trans
+        (B.mono_source hSK)
+        (HEq.symm
+          (B.mono_source (hSK.trans hKT))))
 
 /-- Two-step and direct binary-rule transport have the same left source. -/
 theorem CorrectedConcreteBinaryRuleCode.mono_trans_leftSource
@@ -173,17 +169,15 @@ theorem CorrectedConcreteBinaryRuleCode.mono_trans_leftSource
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    ((B.mono hSK).mono hKT).leftSource =
+    HEq ((B.mono hSK).mono hKT).leftSource
       (B.mono (hSK.trans hKT)).leftSource := by
-  calc
-    ((B.mono hSK).mono hKT).leftSource =
-        (B.mono hSK).leftSource :=
-      (B.mono hSK).mono_leftSource hKT
-    _ = B.leftSource :=
-      B.mono_leftSource hSK
-    _ =
-        (B.mono (hSK.trans hKT)).leftSource :=
-      (B.mono_leftSource (hSK.trans hKT)).symm
+  exact
+    HEq.trans
+      ((B.mono hSK).mono_leftSource hKT)
+      (HEq.trans
+        (B.mono_leftSource hSK)
+        (HEq.symm
+          (B.mono_leftSource (hSK.trans hKT))))
 
 /-- Two-step and direct binary-rule transport have the same right source. -/
 theorem CorrectedConcreteBinaryRuleCode.mono_trans_rightSource
@@ -196,17 +190,15 @@ theorem CorrectedConcreteBinaryRuleCode.mono_trans_rightSource
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    ((B.mono hSK).mono hKT).rightSource =
+    HEq ((B.mono hSK).mono hKT).rightSource
       (B.mono (hSK.trans hKT)).rightSource := by
-  calc
-    ((B.mono hSK).mono hKT).rightSource =
-        (B.mono hSK).rightSource :=
-      (B.mono hSK).mono_rightSource hKT
-    _ = B.rightSource :=
-      B.mono_rightSource hSK
-    _ =
-        (B.mono (hSK.trans hKT)).rightSource :=
-      (B.mono_rightSource (hSK.trans hKT)).symm
+  exact
+    HEq.trans
+      ((B.mono hSK).mono_rightSource hKT)
+      (HEq.trans
+        (B.mono_rightSource hSK)
+        (HEq.symm
+          (B.mono_rightSource (hSK.trans hKT))))
 
 /-- Two-step and direct binary-rule transport have the same template body. -/
 theorem CorrectedConcreteBinaryRuleCode.mono_trans_body
@@ -219,27 +211,26 @@ theorem CorrectedConcreteBinaryRuleCode.mono_trans_body
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    ((B.mono hSK).mono hKT).body =
+    HEq ((B.mono hSK).mono hKT).body
       (B.mono (hSK.trans hKT)).body := by
-  calc
-    ((B.mono hSK).mono hKT).body =
-        (B.mono hSK).body :=
-      (B.mono hSK).mono_body hKT
-    _ = B.body :=
-      B.mono_body hSK
-    _ =
-        (B.mono (hSK.trans hKT)).body :=
-      (B.mono_body (hSK.trans hKT)).symm
+  exact
+    HEq.trans
+      ((B.mono hSK).mono_body hKT)
+      (HEq.trans
+        (B.mono_body hSK)
+        (HEq.symm
+          (B.mono_body (hSK.trans hKT))))
 
 /-- Identity binary-rule transport preserves the parent source. -/
 theorem CorrectedConcreteBinaryRuleCode.mono_refl_source
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono
-      (Set.Subset.rfl :
-        (S : Set (Word α)) ⊆
-          (S : Set (Word α)))).source =
+    HEq
+      (B.mono
+        (Set.Subset.rfl :
+          (S : Set (Word α)) ⊆
+            (S : Set (Word α)))).source
       B.source :=
   B.mono_source Set.Subset.rfl
 
@@ -248,10 +239,11 @@ theorem CorrectedConcreteBinaryRuleCode.mono_refl_leftSource
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono
-      (Set.Subset.rfl :
-        (S : Set (Word α)) ⊆
-          (S : Set (Word α)))).leftSource =
+    HEq
+      (B.mono
+        (Set.Subset.rfl :
+          (S : Set (Word α)) ⊆
+            (S : Set (Word α)))).leftSource
       B.leftSource :=
   B.mono_leftSource Set.Subset.rfl
 
@@ -260,10 +252,11 @@ theorem CorrectedConcreteBinaryRuleCode.mono_refl_rightSource
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono
-      (Set.Subset.rfl :
-        (S : Set (Word α)) ⊆
-          (S : Set (Word α)))).rightSource =
+    HEq
+      (B.mono
+        (Set.Subset.rfl :
+          (S : Set (Word α)) ⊆
+            (S : Set (Word α)))).rightSource
       B.rightSource :=
   B.mono_rightSource Set.Subset.rfl
 
@@ -272,10 +265,11 @@ theorem CorrectedConcreteBinaryRuleCode.mono_refl_body
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono
-      (Set.Subset.rfl :
-        (S : Set (Word α)) ⊆
-          (S : Set (Word α)))).body =
+    HEq
+      (B.mono
+        (Set.Subset.rfl :
+          (S : Set (Word α)) ⊆
+            (S : Set (Word α)))).body
       B.body :=
   B.mono_body Set.Subset.rfl
 
@@ -310,10 +304,10 @@ def refl
     fun U => rfl
 
   unitMap_source :=
-    fun U => rfl
+    fun U => HEq.rfl
 
   unitMap_target :=
-    fun U => rfl
+    fun U => HEq.rfl
 
   binaryMap :=
     fun B => B
@@ -331,16 +325,16 @@ def refl
     fun B => rfl
 
   binaryMap_source :=
-    fun B => rfl
+    fun B => HEq.rfl
 
   binaryMap_leftSource :=
-    fun B => rfl
+    fun B => HEq.rfl
 
   binaryMap_rightSource :=
-    fun B => rfl
+    fun B => HEq.rfl
 
   binaryMap_body :=
-    fun B => rfl
+    fun B => HEq.rfl
 
   derives :=
     fun h => h
@@ -525,7 +519,8 @@ theorem language_subset
     HS.Language ⊆
       HK.Language := by
   intro word hword
-  exact hword.mono hSK Φ
+  rcases hword with ⟨D⟩
+  exact ⟨D.mono hSK Φ⟩
 
 /-- Language inclusion induced by composite simulations is the transitive
 composite of the two component inclusions. -/
@@ -599,9 +594,9 @@ theorem ofSampleSubset_comp_unit_coherent
       comp
         (ofSampleSubset hSK HS HK)
         (ofSampleSubset hKT HK HT)
-    (sequential.unitMap U).source =
+    HEq (sequential.unitMap U).source
         (direct.unitMap U).source ∧
-      (sequential.unitMap U).target =
+      HEq (sequential.unitMap U).target
         (direct.unitMap U).target := by
   dsimp [ofSampleSubset, comp]
   exact
@@ -636,13 +631,13 @@ theorem ofSampleSubset_comp_binary_coherent
       comp
         (ofSampleSubset hSK HS HK)
         (ofSampleSubset hKT HK HT)
-    (sequential.binaryMap B).source =
+    HEq (sequential.binaryMap B).source
         (direct.binaryMap B).source ∧
-      (sequential.binaryMap B).leftSource =
+      HEq (sequential.binaryMap B).leftSource
         (direct.binaryMap B).leftSource ∧
-      (sequential.binaryMap B).rightSource =
+      HEq (sequential.binaryMap B).rightSource
         (direct.binaryMap B).rightSource ∧
-      (sequential.binaryMap B).body =
+      HEq (sequential.binaryMap B).body
         (direct.binaryMap B).body := by
   dsimp [ofSampleSubset, comp]
   exact
@@ -903,7 +898,7 @@ theorem correctedConcreteTextSimulation_eventually_languageExact
     {L : Set (Word α)}
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+        α M obs f)
     (T : TextFor L) :
     ∃ n0 : Nat,
       ∀ m n : Nat,
@@ -924,7 +919,7 @@ theorem correctedConcreteTextSimulation_eventually_languageExact
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+        obs f hL T,
       ?_⟩
 
   intro m n hm hmn
@@ -932,7 +927,7 @@ theorem correctedConcreteTextSimulation_eventually_languageExact
 
   have hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := w) obs f hL T ≤ n :=
+          obs f hL T ≤ n :=
     hm.trans hmn
 
   have hmExact :
@@ -946,7 +941,7 @@ theorem correctedConcreteTextSimulation_eventually_languageExact
         L
     exact
       correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-        (v := w) obs f hL T hm
+        obs f hL T hm
 
   have hnExact :
       (correctedConcreteTextFiniteHypothesis
@@ -959,7 +954,7 @@ theorem correctedConcreteTextSimulation_eventually_languageExact
         L
     exact
       correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-        (v := w) obs f hL T hn
+        obs f hL T hn
 
   exact
     ⟨⟨correctedConcreteTextSimulation
@@ -974,7 +969,7 @@ theorem correctedConcreteTextFiniteHypothesis_eventually_constant_directedSystem
     {L : Set (Word α)}
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+        α M obs f)
     (T : TextFor L) :
     ∃ n0 : Nat,
       (∀ n : Nat, n0 ≤ n →
@@ -995,7 +990,7 @@ theorem correctedConcreteTextFiniteHypothesis_eventually_constant_directedSystem
 
   let n0 :=
     startRootedCorrectedConcreteTargetCoverageStage
-      (v := w) obs f hL T
+      obs f hL T
 
   refine ⟨n0, ?_, ?_⟩
 
@@ -1008,7 +1003,7 @@ theorem correctedConcreteTextFiniteHypothesis_eventually_constant_directedSystem
         L
     exact
       correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-        (v := w) obs f hL T hn
+        obs f hL T hn
 
   · intro m n hm hmn
 
@@ -1027,7 +1022,7 @@ theorem correctedConcreteTextFiniteHypothesis_eventually_constant_directedSystem
           L
       exact
         correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-          (v := w) obs f hL T hm
+          obs f hL T hm
 
     have hnExact :
         (correctedConcreteTextFiniteHypothesis
@@ -1040,7 +1035,7 @@ theorem correctedConcreteTextFiniteHypothesis_eventually_constant_directedSystem
           L
       exact
         correctedConcreteFiniteObjectLearner_correct_after_startRootedCoverageStage
-          (v := w) obs f hL T hn
+          obs f hL T hn
 
     exact
       ⟨⟨correctedConcreteTextSimulation
@@ -1053,7 +1048,7 @@ after the selected characteristic-sample stage. -/
 theorem correctedConcreteFiniteObject_directedStabilization_package :
     ∀ L : Set (Word α),
       L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+          α M obs f →
       ∀ T : TextFor L,
         (∀ m n : Nat, m ≤ n →
           Nonempty
@@ -1094,7 +1089,7 @@ theorem correctedConcreteFiniteObject_directedStabilization_package :
         correctedConcreteTextFiniteHypothesis_language_mono
           obs f T hmn,
       correctedConcreteTextFiniteHypothesis_eventually_constant_directedSystem
-        (v := w) obs f hL T⟩
+        obs f hL T⟩
 
 end EventuallyExactDirectedSystem
 
