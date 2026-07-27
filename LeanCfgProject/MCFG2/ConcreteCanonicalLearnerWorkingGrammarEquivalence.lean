@@ -176,7 +176,7 @@ inductive CorrectedConcreteCutWorkingGrammarDerivationView
         x
 
   | start
-      (sampleWord : K.attach)
+      (sampleWord : K)
       {x : Tuple α 1}
       (derives :
         CutNormalizedListedFiniteDerives
@@ -297,33 +297,33 @@ theorem ofDerives
   | @binary ρ hρ x y hx hy ihx ihy =>
       change
         ρ ∈
-          H.controlCodes.attach.toList.map
+          (H.controlCodes.attach.toList.map
               (correctedConcreteCutConstantRule H) ++
-            (H.binaryRuleCodes.attach.toList.map
-                (correctedConcreteCutLiftedBinaryRule H) ++
-              H.cutPairs.attach.toList.map
-                (correctedConcreteCutSaturationRule H))
+            H.binaryRuleCodes.attach.toList.map
+              (correctedConcreteCutLiftedBinaryRule H)) ++
+          H.cutPairs.attach.toList.map
+            (correctedConcreteCutSaturationRule H)
         at hρ
 
       rw [List.mem_append] at hρ
 
-      rcases hρ with hconstant | hrest
-
-      · rcases List.mem_map.mp hconstant with
-          ⟨X, hX, rfl⟩
-
-        rw [
-          correctedConcreteCutConstantRule_apply
-        ]
-
-        exact
-          .control X
-            (CutNormalizedListedFiniteDerives.self
-              X.1 X.2)
+      rcases hρ with hrest | hcut
 
       · rw [List.mem_append] at hrest
 
-        rcases hrest with hlifted | hcut
+        rcases hrest with hconstant | hlifted
+
+        · rcases List.mem_map.mp hconstant with
+            ⟨X, hX, rfl⟩
+
+          rw [
+            correctedConcreteCutConstantRule_apply
+          ]
+
+          exact
+            .control X
+              (CutNormalizedListedFiniteDerives.self
+                X.1 X.2)
 
         · rcases List.mem_map.mp hlifted with
             ⟨B, hB, rfl⟩
@@ -352,67 +352,67 @@ theorem ofDerives
               (CutNormalizedListedFiniteDerives.binary
                 B.1 B.2 hleft hright)
 
-        · rcases List.mem_map.mp hcut with
-            ⟨p, hp, rfl⟩
+      · rcases List.mem_map.mp hcut with
+          ⟨p, hp, rfl⟩
 
-          let harity :
-              p.1.1.arity =
-                p.1.2.arity :=
-            H.cutPairArityEq p
+        let harity :
+            p.1.1.arity =
+              p.1.2.arity :=
+          H.cutPairArityEq p
 
-          have hchild :
-              CutNormalizedListedFiniteDerives
-                H p.1.2.tuple _ :=
-            ihx.controlNode_derives
-              p.1.2
-              (H.cutPair_target_control
-                p.2)
+        have hchild :
+            CutNormalizedListedFiniteDerives
+              H p.1.2.tuple _ :=
+          ihx.controlNode_derives
+            p.1.2
+            (H.cutPair_target_control
+              p.2)
 
-          have hchildCast :
-              CutNormalizedListedFiniteDerives
-                H
+        have hchildCast :
+            CutNormalizedListedFiniteDerives
+              H
+              (castTuple
+                harity.symm
+                p.1.2.tuple)
+              (castTuple
+                harity.symm
+                _) :=
+          hchild.castArity
+            harity.symm
+
+        have hmiddleControl :
+            H.IsControlCode
+              (FiniteObjectTupleCode.mk
                 (castTuple
                   harity.symm
-                  p.1.2.tuple)
-                (castTuple
-                  harity.symm
-                  _) :=
-            hchild.castArity
-              harity.symm
-
-          have hmiddleControl :
-              H.IsControlCode
-                (FiniteObjectTupleCode.mk
-                  (castTuple
-                    harity.symm
-                    p.1.2.tuple)) := by
-            rw [
-              FiniteObjectTupleCode.mk_castTuple_symm_eq
-                harity p.1.2.tuple
-            ]
-            exact
-              H.cutPair_target_control
-                p.2
-
-          have hnormalized :
-              CutNormalizedListedFiniteDerives
-                H p.1.1.tuple
-                (castTuple
-                  harity.symm
-                  _) :=
-            CutNormalizedListedFiniteDerives.cut
-              (H.cutPair_source_control
-                p.2)
-              hmiddleControl
-              (H.cutPairDerives p)
-              hchildCast
-
+                  p.1.2.tuple)) := by
+          rw [
+            FiniteObjectTupleCode.mk_castTuple_symm_eq
+              harity p.1.2.tuple
+          ]
           exact
-            .control
-              ⟨p.1.1,
-                H.cutPair_source_control
-                  p.2⟩
-              hnormalized
+            H.cutPair_target_control
+              p.2
+
+        have hnormalized :
+            CutNormalizedListedFiniteDerives
+              H p.1.1.tuple
+              (castTuple
+                harity.symm
+                _) :=
+          CutNormalizedListedFiniteDerives.cut
+            (H.cutPair_source_control
+              p.2)
+            hmiddleControl
+            (H.cutPairDerives p)
+            hchildCast
+
+        exact
+          .control
+            ⟨p.1.1,
+              H.cutPair_source_control
+                p.2⟩
+            hnormalized
 
   | @start ρ hρ x hx hwt ihx =>
       change
@@ -511,9 +511,34 @@ theorem cutWorkingGrammar_control_derives_iff
     have hgrammar :=
       D.toCutWorkingMCFG dummy
 
-    simpa [
-      correctedConcreteControlNode
-    ] using hgrammar
+    have hcode :
+        (⟨FiniteObjectTupleCode.mk X.tuple,
+            D.source_control⟩ :
+          H.controlCodes) =
+          ⟨X, hX⟩ := by
+      apply Subtype.ext
+      exact
+        FiniteObjectTupleCode.mk_tuple_eq X
+
+    change
+      DerivesTuple
+        (H.toCutWorkingMCFG dummy)
+        (.control
+          (⟨FiniteObjectTupleCode.mk X.tuple,
+              D.source_control⟩ :
+            H.controlCodes))
+        x
+      at hgrammar
+
+    change
+      DerivesTuple
+        (H.toCutWorkingMCFG dummy)
+        (.control
+          (⟨X, hX⟩ :
+            H.controlCodes))
+        x
+
+    simpa only [hcode] using hgrammar
 
 /-- A derivation of the seed nonterminal produces exactly the dummy singleton
 tuple. -/
@@ -549,7 +574,7 @@ theorem cutWorkingGrammar_start_derives_iff
         (.start :
           CorrectedConcreteCutGrammarNonterminal H)
         x ↔
-      ∃ sampleWord : K.attach,
+      ∃ sampleWord : K,
         CutNormalizedListedFiniteDerives
           H
           (singletonTuple sampleWord.1)
@@ -622,12 +647,11 @@ theorem cutWorkingGrammarStringLanguage_subset_finiteHypothesis
     ⟨sampleWord, hnormalized⟩
 
   exact
-    ⟨{ startWord :=
-        sampleWord.1
-      start_mem :=
-        sampleWord.2
-      derives :=
-        hnormalized.toListed }⟩
+    ⟨{
+      startWord := sampleWord.1,
+      start_mem := sampleWord.2,
+      derives := hnormalized.toListed
+    }⟩
 
 /-- Exact language equivalence between the concrete working grammar and the
 actual listed finite learner object. -/
@@ -722,37 +746,39 @@ variable {K : Finset (Word α)}
 variable {obs : α → M}
 variable {f : Nat}
 
-/-- Realization of one finite learner object by the concrete cut-saturated
-working grammar, given a selected dummy terminal. -/
+/-- Realization of the canonical finite learner object by the concrete
+cut-saturated working grammar, given a selected dummy terminal. -/
 noncomputable def correctedConcreteFiniteHypothesis_cutWorkingGrammarRealization
-    (H :
-      CorrectedConcreteFiniteHypothesis
-        K obs f)
+    (K : Finset (Word α))
+    (obs : α → M)
+    (f : Nat)
     (dummy : α) :
-    CorrectedConcreteFiniteObjectWorkingGrammarRealization
-      K obs f where
+    CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
+      K obs f := by
+  let H :=
+    correctedConcreteFiniteHypothesis
+      K obs f
+  exact {
+    Nonterminal :=
+      CorrectedConcreteCutGrammarNonterminal H
+    grammar :=
+      H.toCutWorkingMCFG dummy
+    language_eq :=
+      correctedConcreteCanonicalFiniteHypothesis_cutWorkingGrammar_language_eq
+        K obs f dummy
+  }
 
-  Nonterminal :=
-    CorrectedConcreteCutGrammarNonterminal H
-
-  grammar :=
-    H.toCutWorkingMCFG dummy
-
-  language_eq :=
-    correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
-      H dummy
-
-/-- A nonempty terminal alphabet is sufficient for realization of every finite
-learner object. -/
+/-- A nonempty terminal alphabet is sufficient for realization of the canonical
+finite learner object. -/
 noncomputable def correctedConcreteFiniteHypothesis_workingGrammarRealization_of_nonempty
-    (H :
-      CorrectedConcreteFiniteHypothesis
-        K obs f)
+    (K : Finset (Word α))
+    (obs : α → M)
+    (f : Nat)
     (hα : Nonempty α) :
-    CorrectedConcreteFiniteObjectWorkingGrammarRealization
+    CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
       K obs f :=
   correctedConcreteFiniteHypothesis_cutWorkingGrammarRealization
-    H (Classical.choice hα)
+    K obs f (Classical.choice hα)
 
 /-- Canonical finite learner object realization under a nonempty-alphabet
 hypothesis. -/
@@ -761,12 +787,10 @@ noncomputable def correctedConcreteCanonicalFiniteHypothesis_workingGrammarReali
     (obs : α → M)
     (f : Nat)
     (hα : Nonempty α) :
-    CorrectedConcreteFiniteObjectWorkingGrammarRealization
+    CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
       K obs f :=
   correctedConcreteFiniteHypothesis_workingGrammarRealization_of_nonempty
-    (correctedConcreteFiniteHypothesis
-      K obs f)
-    hα
+    K obs f hα
 
 end RealizationConstruction
 
@@ -785,7 +809,7 @@ theorem compilationDomain_implies_workingGrammarRealization
       FiniteObjectWorkingGrammarCompilationDomain
         K) :
     Nonempty
-      (CorrectedConcreteFiniteObjectWorkingGrammarRealization
+      (CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
         K obs f) := by
   classical
 
@@ -805,7 +829,7 @@ theorem compilationDomain_implies_workingGrammarRealization
 syntax can represent the actual finite learner object. -/
 theorem workingGrammarRealization_iff_compilationDomain :
     Nonempty
-        (CorrectedConcreteFiniteObjectWorkingGrammarRealization
+        (CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
           K obs f) ↔
       FiniteObjectWorkingGrammarCompilationDomain
         K := by
@@ -822,7 +846,7 @@ theorem workingGrammarRealization_iff_compilationDomain :
 /-- Expanded form of the exact compilation-domain theorem. -/
 theorem workingGrammarRealization_iff_emptySample_or_nonemptyAlphabet :
     Nonempty
-        (CorrectedConcreteFiniteObjectWorkingGrammarRealization
+        (CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
           K obs f) ↔
       K = ∅ ∨ Nonempty α :=
   workingGrammarRealization_iff_compilationDomain
@@ -886,13 +910,13 @@ theorem correctedConcreteFiniteObject_workingGrammar_exact_domain_package :
         (f : Nat),
       Nonempty α →
       Nonempty
-        (CorrectedConcreteFiniteObjectWorkingGrammarRealization
+        (CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
           K obs f)) ∧
     (∀ (K : Finset (Word α))
         (obs : α → M)
         (f : Nat),
       Nonempty
-          (CorrectedConcreteFiniteObjectWorkingGrammarRealization
+          (CorrectedConcreteFiniteObjectWorkingGrammarRealization.{u, v, u}
             K obs f) ↔
         K = ∅ ∨ Nonempty α) ∧
     (∀ f : Nat,
