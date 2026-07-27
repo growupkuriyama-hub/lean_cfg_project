@@ -93,7 +93,7 @@ structure CorrectedConcreteWorkingGrammarHypothesis where
       sample obs f
 
   Nonterminal :
-    Type (max u v)
+    Type u
 
   grammar :
     WorkingMCFG Nonterminal α
@@ -159,29 +159,21 @@ noncomputable def correctedConcreteWorkingGrammarHypothesis
     (f : Nat)
     (K : Finset (Word α)) :
     CorrectedConcreteWorkingGrammarHypothesis
-      α M obs f := by
-
+      α M obs f :=
   let H :=
     correctedConcreteFiniteHypothesis
       K obs f
-
   let dummy :=
     Classical.choice hα
-
-  exact
-    { sample := K
-
-      rules := H
-
-      Nonterminal :=
-        CorrectedConcreteCutGrammarNonterminal H
-
-      grammar :=
-        H.toCutWorkingMCFG dummy
-
-      language_eq :=
-        H.cutWorkingGrammar_language_eq
-          dummy }
+  { sample := K
+    rules := H
+    Nonterminal :=
+      CorrectedConcreteCutGrammarNonterminal H
+    grammar :=
+      H.toCutWorkingMCFG dummy
+    language_eq :=
+      correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+        H dummy }
 
 /-- Set-driven learner whose outputs are actual compiled working grammars. -/
 noncomputable def correctedConcreteWorkingGrammarLearner
@@ -212,8 +204,8 @@ def correctedConcreteWorkingGrammarHypLanguage
     (K : Finset (Word α)) :
     (correctedConcreteWorkingGrammarHypothesis
       hα obs f K).sample =
-        K :=
-  rfl
+        K := by
+  simp [correctedConcreteWorkingGrammarHypothesis]
 
 @[simp] theorem correctedConcreteWorkingGrammarHypothesis_rules
     (hα : Nonempty α)
@@ -223,8 +215,8 @@ def correctedConcreteWorkingGrammarHypLanguage
     (correctedConcreteWorkingGrammarHypothesis
       hα obs f K).rules =
         correctedConcreteFiniteHypothesis
-          K obs f :=
-  rfl
+          K obs f := by
+  simp [correctedConcreteWorkingGrammarHypothesis]
 
 @[simp] theorem correctedConcreteWorkingGrammarLearner_sample
     (hα : Nonempty α)
@@ -233,8 +225,11 @@ def correctedConcreteWorkingGrammarHypLanguage
     (K : Finset (Word α)) :
     (correctedConcreteWorkingGrammarLearner
       hα obs f K).sample =
-        K :=
-  rfl
+        K := by
+  simp [
+    correctedConcreteWorkingGrammarLearner,
+    correctedConcreteWorkingGrammarHypothesis
+  ]
 
 @[simp] theorem correctedConcreteWorkingGrammarLearner_rules
     (hα : Nonempty α)
@@ -244,8 +239,11 @@ def correctedConcreteWorkingGrammarHypLanguage
     (correctedConcreteWorkingGrammarLearner
       hα obs f K).rules =
         correctedConcreteFiniteHypothesis
-          K obs f :=
-  rfl
+          K obs f := by
+  simp [
+    correctedConcreteWorkingGrammarLearner,
+    correctedConcreteWorkingGrammarHypothesis
+  ]
 
 @[simp] theorem correctedConcreteWorkingGrammarLearner_sourceRuleCount
     (hα : Nonempty α)
@@ -255,8 +253,12 @@ def correctedConcreteWorkingGrammarHypLanguage
     (correctedConcreteWorkingGrammarLearner
       hα obs f K).sourceRuleCount =
         (correctedConcreteFiniteHypothesis
-          K obs f).ruleCount :=
-  rfl
+          K obs f).ruleCount := by
+  simp [
+    CorrectedConcreteWorkingGrammarHypothesis.sourceRuleCount,
+    correctedConcreteWorkingGrammarLearner,
+    correctedConcreteWorkingGrammarHypothesis
+  ]
 
 /-- The actual compiled output grammar has exactly the listed finite-object
 language. -/
@@ -272,14 +274,11 @@ theorem correctedConcreteWorkingGrammarHypLanguage_eq_finiteObject
       (correctedConcreteFiniteHypothesis
         K obs f).Language := by
 
-  change
-    ((correctedConcreteFiniteHypothesis
-        K obs f).toCutWorkingMCFG
-      (Classical.choice hα)).StringLanguage =
-      (correctedConcreteFiniteHypothesis
-        K obs f).Language
-
-  exact
+  simpa only [
+    correctedConcreteWorkingGrammarHypLanguage,
+    correctedConcreteWorkingGrammarLearner,
+    correctedConcreteWorkingGrammarHypothesis
+  ] using
     correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
       (correctedConcreteFiniteHypothesis
         K obs f)
@@ -413,7 +412,7 @@ theorem correctedConcreteWorkingGrammarLearner_language_mono
 
   exact
     correctedConcreteCanonicalLearnerLanguage_mono
-      obs f hSK
+      hSK
 
 /-- The compiled learner agrees sample-by-sample with the actual finite-object
 learner. -/
@@ -585,8 +584,8 @@ the learner whose outputs are actual `WorkingMCFG` objects. -/
 theorem correctedConcreteWorkingGrammarLearner_characteristicSample_for_startRootedTargetClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+        α M obs f) :
     ∃ S : Finset (Word α),
       CharacteristicSample
         (correctedConcreteWorkingGrammarHypLanguage
@@ -597,7 +596,7 @@ theorem correctedConcreteWorkingGrammarLearner_characteristicSample_for_startRoo
 
   obtain ⟨S, hS⟩ :=
     correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTargetClass
-      (v := w) obs f hL
+      obs f hL
 
   exact
     ⟨S,
@@ -612,14 +611,14 @@ theorem correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
         obs f)
       (correctedConcreteWorkingGrammarLearner
         hα obs f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+        α M obs f) := by
 
   intro L hL
 
   obtain ⟨S, hS⟩ :=
     correctedConcreteWorkingGrammarLearner_characteristicSample_for_startRootedTargetClass
-      (v := w) hα obs f hL
+      hα obs f hL
 
   intro T
 
@@ -634,8 +633,8 @@ theorem correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
 /-- Expanded positive-text form of the actual-working-grammar class theorem. -/
 theorem correctedConcreteWorkingGrammarLearner_identifies_every_startRooted_text :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+          α M obs f →
       ∀ T : TextFor L,
         EventuallyCorrectOnText
           (correctedConcreteWorkingGrammarHypLanguage
@@ -648,7 +647,7 @@ theorem correctedConcreteWorkingGrammarLearner_identifies_every_startRooted_text
 
   exact
     correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-      (v := w) hα obs f L hL T
+      hα obs f L hL T
 
 end StartRootedWorkingGrammarClassTheorem
 
@@ -670,13 +669,13 @@ has exactly the target string language. -/
 theorem correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := w) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     (correctedConcreteWorkingGrammarLearner
         hα obs f
         (T.prefixSample n)).grammar.StringLanguage =
@@ -688,26 +687,26 @@ theorem correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverage
 
   exact
     correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-      (v := w) obs f hL T hn
+      obs f hL T hn
 
 /-- At the selected coverage stage itself, the actual output `WorkingMCFG` is
 already semantically exact. -/
 theorem correctedConcreteWorkingGrammarLearner_correct_at_startRootedCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+        α M obs f)
     (T : TextFor L) :
     (correctedConcreteWorkingGrammarLearner
         hα obs f
         (T.prefixSample
           (startRootedCorrectedConcreteTargetCoverageStage
-            (v := w) obs f hL T))).grammar.StringLanguage =
+            obs f hL T))).grammar.StringLanguage =
       L := by
 
   exact
     correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-      (v := w) hα obs f hL T
+      hα obs f hL T
       (Nat.le_refl _)
 
 /-- The actual working-grammar outputs are eventually language constant and
@@ -715,8 +714,8 @@ equal to the target. -/
 theorem correctedConcreteWorkingGrammarLearner_eventually_language_constant
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+        α M obs f)
     (T : TextFor L) :
     ∃ n0 : Nat,
       ∀ n : Nat, n0 ≤ n →
@@ -727,14 +726,14 @@ theorem correctedConcreteWorkingGrammarLearner_eventually_language_constant
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+        obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-      (v := w) hα obs f hL T hn
+      hα obs f hL T hn
 
 end SelectedStageWorkingGrammarExactness
 
@@ -759,7 +758,9 @@ theorem correctedConcreteWorkingGrammarLearner_sourceRuleCount_le_explicit_paper
           (sampleLengthBudget K + f + 1) *
           (sampleLengthBudget K + f + 1)) := by
 
-  exact
+  simpa only [
+    correctedConcreteWorkingGrammarLearner_sourceRuleCount
+  ] using
     correctedConcreteFiniteHypothesis_ruleCount_le_explicit_paperPower
       K obs f
 
@@ -816,8 +817,8 @@ theorem correctedConcreteWorkingGrammarLearner_class_conclusion_package :
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+          α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearner
             hα obs f K).grammar.StringLanguage =
@@ -844,7 +845,7 @@ theorem correctedConcreteWorkingGrammarLearner_class_conclusion_package :
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+        hα obs f,
       correctedConcreteWorkingGrammarLearner_stringLanguage_eq_corrected
         hα obs f,
       correctedConcreteWorkingGrammarLearner_consistent
@@ -860,8 +861,8 @@ coverage stage, every actual grammar output is exact and its retained source
 rule object satisfies the verified size estimate. -/
 theorem correctedConcreteWorkingGrammarLearner_selectedStage_package :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+          α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 ≤ n →
@@ -888,14 +889,14 @@ theorem correctedConcreteWorkingGrammarLearner_selectedStage_package :
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+        obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+        hα obs f hL T hn,
       correctedConcreteWorkingGrammarLearner_prefix_sourceRuleCount_le
         hα obs f T n⟩
 
