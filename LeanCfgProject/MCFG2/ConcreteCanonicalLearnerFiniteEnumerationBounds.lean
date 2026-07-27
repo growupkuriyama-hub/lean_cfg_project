@@ -46,7 +46,7 @@ theorem finset_card_biUnion_le_sum_card
     (s : Finset ι)
     (t : ι → Finset β) :
     (s.biUnion t).card ≤
-      ∑ i in s, (t i).card := by
+      Finset.sum s (fun i => (t i).card) := by
   classical
   induction s using Finset.induction_on with
 
@@ -61,9 +61,10 @@ theorem finset_card_biUnion_le_sum_card
         _ ≤ (t a).card + (s.biUnion t).card :=
           Finset.card_union_le _ _
         _ ≤ (t a).card +
-              ∑ i in s, (t i).card :=
+              Finset.sum s (fun i => (t i).card) :=
           Nat.add_le_add_left ih _
-        _ = ∑ i in insert a s, (t i).card := by
+        _ =
+            Finset.sum (insert a s) (fun i => (t i).card) := by
           simp [ha]
 
 end GenericFinsetBounds
@@ -76,8 +77,8 @@ of size `alphabetSize`. -/
 def finiteWordEnumerationBound
     (alphabetSize bound : Nat) :
     Nat :=
-  ∑ n in Finset.range (bound + 1),
-    alphabetSize ^ n
+  Finset.sum (Finset.range (bound + 1))
+    (fun n => alphabetSize ^ n)
 
 /-- Cardinality bound for well-formed named contexts of arity `d`.
 
@@ -210,14 +211,14 @@ theorem card_finiteWordsUpTo_le
   calc
     ((Finset.range (bound + 1)).biUnion
         (fun n => finiteWordsOfLength A n)).card ≤
-        ∑ n in Finset.range (bound + 1),
-          (finiteWordsOfLength A n).card :=
+        Finset.sum (Finset.range (bound + 1))
+          (fun n => (finiteWordsOfLength A n).card) :=
       finset_card_biUnion_le_sum_card
         (Finset.range (bound + 1))
         (fun n => finiteWordsOfLength A n)
     _ ≤
-        ∑ n in Finset.range (bound + 1),
-          A.card ^ n := by
+        Finset.sum (Finset.range (bound + 1))
+          (fun n => A.card ^ n) := by
       apply Finset.sum_le_sum
       intro n hn
       exact card_finiteWordsOfLength_le A n
@@ -911,19 +912,20 @@ noncomputable def concreteUnitRuleCountUpToFanout
     (obs : α → M)
     (f : Nat) :
     Nat :=
-  ∑ k in Finset.range f,
-    (concreteUnitRules K obs (k + 1)).card
+  Finset.sum (Finset.range f)
+    (fun k => (concreteUnitRules K obs (k + 1)).card)
 
 /-- Explicit numerical bound for the total unit-rule count up to fan-out `f`. -/
 def concreteUnitRuleCountBound
     (K : Finset (Word α))
     (f : Nat) :
     Nat :=
-  ∑ k in Finset.range f,
-    unitRuleEnumerationBound
-      (sampleAlphabet K).card
-      (sampleLengthBudget K)
-      (k + 1)
+  Finset.sum (Finset.range f)
+    (fun k =>
+      unitRuleEnumerationBound
+        (sampleAlphabet K).card
+        (sampleLengthBudget K)
+        (k + 1))
 
 /-- Total number of corrected binary witnesses over all positive arities at
 most `f`. -/
@@ -931,11 +933,11 @@ noncomputable def correctedBinaryRuleCountUpToFanout
     (K : Finset (Word α))
     (f : Nat) :
     Nat :=
-  ∑ e0 in Finset.range f,
-    ∑ dB0 in Finset.range f,
-      ∑ dC0 in Finset.range f,
+  Finset.sum (Finset.range f) (fun e0 =>
+    Finset.sum (Finset.range f) (fun dB0 =>
+      Finset.sum (Finset.range f) (fun dC0 =>
         (correctedConcreteBinaryWitnesses
-          K (e0 + 1) (dB0 + 1) (dC0 + 1)).card
+          K (e0 + 1) (dB0 + 1) (dC0 + 1)).card)))
 
 /-- Explicit numerical bound for the total corrected binary-rule count up to
 fan-out `f`. -/
@@ -943,14 +945,14 @@ def correctedBinaryRuleCountBound
     (K : Finset (Word α))
     (f : Nat) :
     Nat :=
-  ∑ e0 in Finset.range f,
-    ∑ dB0 in Finset.range f,
-      ∑ dC0 in Finset.range f,
+  Finset.sum (Finset.range f) (fun e0 =>
+    Finset.sum (Finset.range f) (fun dB0 =>
+      Finset.sum (Finset.range f) (fun dC0 =>
         correctedBinaryWitnessEnumerationBound
           (sampleAlphabet K).card
           (exactBinaryWitnessBudget
             K (dB0 + 1) (dC0 + 1))
-          (e0 + 1) (dB0 + 1) (dC0 + 1)
+          (e0 + 1) (dB0 + 1) (dC0 + 1))))
 
 /-- The total enumerated rule count is the sum of unit and corrected binary
 rule counts. -/
