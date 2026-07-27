@@ -77,6 +77,13 @@ theorem FiniteObjectTupleCode.mk_castTuple_symm_eq
   cases h
   rfl
 
+/-- Rebundling the tuple carried by a finite tuple code recovers the code. -/
+@[simp] theorem FiniteObjectTupleCode.mk_tuple_eq
+    (X : FiniteObjectTupleCode α) :
+    FiniteObjectTupleCode.mk X.tuple = X := by
+  rcases X with ⟨d, x⟩
+  rfl
+
 /-- Cut-normal derivations transport along an equality of arities. -/
 theorem CutNormalizedListedFiniteDerives.castArity
     {M : Type v}
@@ -265,7 +272,7 @@ theorem ofDerives
 
   induction h with
 
-  | terminal hρ hwt =>
+  | @terminal ρ hρ hwt =>
       change
         ρ ∈
           [correctedConcreteCutSeedRule
@@ -287,7 +294,7 @@ theorem ofDerives
 
       exact .seed rfl
 
-  | binary hρ hx hy ihx ihy =>
+  | @binary ρ hρ x y hx hy ihx ihy =>
       change
         ρ ∈
           H.controlCodes.attach.toList.map
@@ -407,7 +414,7 @@ theorem ofDerives
                   p.2⟩
               hnormalized
 
-  | start hρ hx hwt ihx =>
+  | @start ρ hρ x hx hwt ihx =>
       change
         ρ ∈
           K.attach.toList.map
@@ -615,12 +622,12 @@ theorem cutWorkingGrammarStringLanguage_subset_finiteHypothesis
     ⟨sampleWord, hnormalized⟩
 
   exact
-    { startWord :=
+    ⟨{ startWord :=
         sampleWord.1
       start_mem :=
         sampleWord.2
       derives :=
-        hnormalized.toListed }
+        hnormalized.toListed }⟩
 
 /-- Exact language equivalence between the concrete working grammar and the
 actual listed finite learner object. -/
@@ -651,8 +658,8 @@ theorem correctedConcreteFiniteHypothesis_language_eq_cutWorkingGrammar
     H.Language =
       (H.toCutWorkingMCFG
         dummy).StringLanguage :=
-  (H.cutWorkingGrammar_language_eq
-    dummy).symm
+  (correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+    H dummy).symm
 
 /-- Canonical finite learner object version of the exact compilation theorem. -/
 theorem correctedConcreteCanonicalFiniteHypothesis_cutWorkingGrammar_language_eq
@@ -732,8 +739,8 @@ noncomputable def correctedConcreteFiniteHypothesis_cutWorkingGrammarRealization
     H.toCutWorkingMCFG dummy
 
   language_eq :=
-    H.cutWorkingGrammar_language_eq
-      dummy
+    correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+      H dummy
 
 /-- A nonempty terminal alphabet is sufficient for realization of every finite
 learner object. -/
@@ -744,8 +751,8 @@ noncomputable def correctedConcreteFiniteHypothesis_workingGrammarRealization_of
     (hα : Nonempty α) :
     CorrectedConcreteFiniteObjectWorkingGrammarRealization
       K obs f :=
-  H.cutWorkingGrammarRealization
-    (Classical.choice hα)
+  correctedConcreteFiniteHypothesis_cutWorkingGrammarRealization
+    H (Classical.choice hα)
 
 /-- Canonical finite learner object realization under a nonempty-alphabet
 hypothesis. -/
@@ -756,9 +763,10 @@ noncomputable def correctedConcreteCanonicalFiniteHypothesis_workingGrammarReali
     (hα : Nonempty α) :
     CorrectedConcreteFiniteObjectWorkingGrammarRealization
       K obs f :=
-  (correctedConcreteFiniteHypothesis
-    K obs f).workingGrammarRealization_of_nonempty
-      hα
+  correctedConcreteFiniteHypothesis_workingGrammarRealization_of_nonempty
+    (correctedConcreteFiniteHypothesis
+      K obs f)
+    hα
 
 end RealizationConstruction
 
@@ -833,7 +841,7 @@ theorem correctedConcreteFiniteHypothesis_workingGrammar_compilation_package
     (obs : α → M)
     (f : Nat)
     (hα : Nonempty α) :
-    ∃ N : Type (max u v),
+    ∃ N : Type u,
       ∃ G : WorkingMCFG N α,
         G.StringLanguage =
             (correctedConcreteFiniteHypothesis
@@ -860,8 +868,8 @@ theorem correctedConcreteFiniteHypothesis_workingGrammar_compilation_package
       ?_⟩
 
   · exact
-      H.cutWorkingGrammar_language_eq
-        dummy
+      correctedConcreteFiniteHypothesis_cutWorkingGrammar_language_eq
+        H dummy
 
   · exact
       correctedConcreteCanonicalFiniteHypothesis_cutWorkingGrammar_eq_corrected
@@ -900,8 +908,7 @@ theorem correctedConcreteFiniteObject_workingGrammar_exact_domain_package :
           K obs f hα⟩,
       fun K obs f =>
         workingGrammarRealization_iff_emptySample_or_nonemptyAlphabet,
-      no_workingGrammarRealization_emptyAlphabet_epsilonSample
-        (w := max u v)⟩
+      no_workingGrammarRealization_emptyAlphabet_epsilonSample⟩
 
 end PaperFacingCompilationPackage
 
