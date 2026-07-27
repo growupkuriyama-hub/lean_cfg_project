@@ -216,7 +216,13 @@ theorem word_control
   unfold IsControlCode
   unfold controlCodes
   simp only [Finset.mem_union, Finset.mem_image]
-  exact Or.inl ⟨word, hword, rfl⟩
+  exact
+    Or.inl
+      (Or.inl
+        (Or.inl
+          (Or.inl
+            (Or.inl
+              ⟨word, hword, rfl⟩))))
 
 /-- Every listed unit-rule source is a control tuple. -/
 theorem unitSource_control
@@ -230,7 +236,13 @@ theorem unitSource_control
   unfold IsControlCode
   unfold controlCodes
   simp only [Finset.mem_union, Finset.mem_image]
-  exact Or.inr (Or.inl ⟨U, hU, rfl⟩)
+  exact
+    Or.inl
+      (Or.inl
+        (Or.inl
+          (Or.inl
+            (Or.inr
+              ⟨U, hU, rfl⟩))))
 
 /-- Every listed unit-rule target is a control tuple. -/
 theorem unitTarget_control
@@ -244,7 +256,12 @@ theorem unitTarget_control
   unfold IsControlCode
   unfold controlCodes
   simp only [Finset.mem_union, Finset.mem_image]
-  exact Or.inr (Or.inr (Or.inl ⟨U, hU, rfl⟩))
+  exact
+    Or.inl
+      (Or.inl
+        (Or.inl
+          (Or.inr
+            ⟨U, hU, rfl⟩)))
 
 /-- Every listed binary-rule parent source is a control tuple. -/
 theorem binarySource_control
@@ -258,7 +275,11 @@ theorem binarySource_control
   unfold IsControlCode
   unfold controlCodes
   simp only [Finset.mem_union, Finset.mem_image]
-  exact Or.inr (Or.inr (Or.inr (Or.inl ⟨B, hB, rfl⟩)))
+  exact
+    Or.inl
+      (Or.inl
+        (Or.inr
+          ⟨B, hB, rfl⟩))
 
 /-- Every listed binary-rule left source is a control tuple. -/
 theorem binaryLeftSource_control
@@ -273,11 +294,9 @@ theorem binaryLeftSource_control
   unfold controlCodes
   simp only [Finset.mem_union, Finset.mem_image]
   exact
-    Or.inr
+    Or.inl
       (Or.inr
-        (Or.inr
-          (Or.inr
-            (Or.inl ⟨B, hB, rfl⟩))))
+        ⟨B, hB, rfl⟩)
 
 /-- Every listed binary-rule right source is a control tuple. -/
 theorem binaryRightSource_control
@@ -293,11 +312,7 @@ theorem binaryRightSource_control
   simp only [Finset.mem_union, Finset.mem_image]
   exact
     Or.inr
-      (Or.inr
-        (Or.inr
-          (Or.inr
-            (Or.inr
-              ⟨B, hB, rfl⟩))))
+      ⟨B, hB, rfl⟩
 
 /-- The set of control tuple codes is finite as a set. -/
 theorem controlCodes_finite :
@@ -664,17 +679,17 @@ theorem mem_cutPairs_iff
       H.IsControlCode Y ∧
       H.CutAdmissible X Y := by
   classical
-  simp only [
-    cutPairs,
-    Finset.mem_filter,
-    Finset.mem_product,
-    IsControlCode
-  ]
+  unfold cutPairs
   constructor
-  · rintro ⟨⟨hX, hY⟩, hXY⟩
-    exact ⟨hX, hY, hXY⟩
+  · intro h
+    have hfilter := Finset.mem_filter.mp h
+    have hproduct := Finset.mem_product.mp hfilter.1
+    exact
+      ⟨hproduct.1, hproduct.2, hfilter.2⟩
   · rintro ⟨hX, hY, hXY⟩
-    exact ⟨⟨hX, hY⟩, hXY⟩
+    exact
+      Finset.mem_filter.mpr
+        ⟨Finset.mem_product.mpr ⟨hX, hY⟩, hXY⟩
 
 /-- Every cut pair has a controlled source. -/
 theorem cutPair_source_control
