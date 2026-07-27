@@ -376,10 +376,20 @@ theorem listedFiniteCorrectedConcreteLearnerDerives_mono
       have hsource : U'.source = R.source := by
         exact concreteUnitRuleOfEvidence_source
           K obs (R.evidence.mono hSK)
-      rw [← htarget] at ih
+      change
+        ListedFiniteCorrectedConcreteLearnerDerives
+          K obs f HK R.target u✝
+        at ih
+      have ih' :
+          ListedFiniteCorrectedConcreteLearnerDerives
+            K obs f HK U'.target u✝ := by
+        simpa only [htarget] using ih
       have hstep :=
         ListedFiniteCorrectedConcreteLearnerDerives.unit
-          U' (HK.unitRuleCodes_complete U') ih
+          U' (HK.unitRuleCodes_complete U') ih'
+      change
+        ListedFiniteCorrectedConcreteLearnerDerives
+          K obs f HK R.source u✝
       simpa only [hsource] using hstep
   | binary B hB hleft hright ihleft ihright =>
       rcases B with ⟨e, dB, dC, R⟩
@@ -407,11 +417,29 @@ theorem listedFiniteCorrectedConcreteLearnerDerives_mono
             correctedConcreteBinaryRuleOfEvidence_source
               K (R.evidence.mono hSK) R.witness.body_exactOnce
           _ = R.source := R.source_eq_composition.symm
-      rw [← hleftSource] at ihleft
-      rw [← hrightSource] at ihright
+      change
+        ListedFiniteCorrectedConcreteLearnerDerives
+          K obs f HK R.leftSource u✝
+        at ihleft
+      change
+        ListedFiniteCorrectedConcreteLearnerDerives
+          K obs f HK R.rightSource v✝
+        at ihright
+      have ihleft' :
+          ListedFiniteCorrectedConcreteLearnerDerives
+            K obs f HK B'.leftSource u✝ := by
+        simpa only [hleftSource] using ihleft
+      have ihright' :
+          ListedFiniteCorrectedConcreteLearnerDerives
+            K obs f HK B'.rightSource v✝ := by
+        simpa only [hrightSource] using ihright
       have hstep :=
         ListedFiniteCorrectedConcreteLearnerDerives.binary
-          B' (HK.binaryRuleCodes_complete B') ihleft ihright
+          B' (HK.binaryRuleCodes_complete B') ihleft' ihright'
+      change
+        ListedFiniteCorrectedConcreteLearnerDerives
+          K obs f HK R.source
+            (evalTemplateTuple R.body u✝ v✝)
       simpa only [hsource, hbody] using hstep
   | trans hxy hyz ihxy ihyz =>
       exact
