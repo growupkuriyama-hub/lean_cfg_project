@@ -973,11 +973,16 @@ theorem sampleLengthOnlyCorrectedRuleCountBound_le_singlePower
         (hbinary.trans hbinaryCommon)
     _ ≤
         base * base ^ commonExponent := by
-      simpa [two_mul] using
-        (Nat.mul_le_mul_right
-          (base ^ commonExponent)
-          (UniformParameters.two_le_base
-            sampleLength f))
+      calc
+        base ^ commonExponent + base ^ commonExponent =
+            2 * base ^ commonExponent := by
+          omega
+        _ ≤
+            base * base ^ commonExponent :=
+          Nat.mul_le_mul_right
+            (base ^ commonExponent)
+            (UniformParameters.two_le_base
+              sampleLength f)
     _ =
         base ^ (commonExponent + 1) := by
       simpa [Nat.pow_add_one', Nat.mul_comm]
