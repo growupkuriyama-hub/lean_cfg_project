@@ -308,6 +308,15 @@ theorem ofDerives
         · rcases List.mem_map.mp hconstant with
             ⟨X, hX, rfl⟩
 
+          change Tuple α 1 at x
+          change Tuple α 1 at y
+          change
+            CorrectedConcreteCutWorkingGrammarDerivationView
+              H dummy
+              (.control X)
+              ((correctedConcreteCutConstantRule H X).apply
+                x y)
+
           rw [
             correctedConcreteCutConstantRule_apply
           ]
@@ -346,6 +355,9 @@ theorem ofDerives
 
       · rcases List.mem_map.mp hcut with
           ⟨p, hp, rfl⟩
+
+        change Tuple α p.1.2.arity at x
+        change Tuple α 1 at y
 
         let harity :
             p.1.1.arity =
@@ -398,6 +410,15 @@ theorem ofDerives
             hmiddleControl
             (H.cutPairDerives p)
             hchildCast
+
+        change
+          CorrectedConcreteCutWorkingGrammarDerivationView
+            H dummy
+            (correctedConcreteControlNode
+              H p.1.1
+              (H.cutPair_source_control p.2))
+            ((correctedConcreteCutSaturationRule H p).apply
+              x y)
 
         rw [
           correctedConcreteCutSaturationRule_apply
@@ -528,7 +549,7 @@ theorem cutWorkingGrammar_control_derives_iff
         CorrectedConcreteCutGrammarNonterminal.control
         hcode
 
-    rw [hnode] at hgrammar
+    cases hnode
     exact hgrammar
 
 /-- A derivation of the seed nonterminal produces exactly the dummy singleton
