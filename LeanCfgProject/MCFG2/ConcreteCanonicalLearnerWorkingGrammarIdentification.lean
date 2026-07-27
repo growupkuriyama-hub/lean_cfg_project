@@ -276,6 +276,7 @@ theorem correctedConcreteWorkingGrammarHypLanguage_eq_finiteObject
 
   simpa only [
     correctedConcreteWorkingGrammarHypLanguage,
+    CorrectedConcreteWorkingGrammarHypothesis.Language,
     correctedConcreteWorkingGrammarLearner,
     correctedConcreteWorkingGrammarHypothesis
   ] using
