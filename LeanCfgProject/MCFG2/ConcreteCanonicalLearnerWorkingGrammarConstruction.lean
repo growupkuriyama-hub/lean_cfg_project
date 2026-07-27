@@ -627,6 +627,8 @@ theorem cutConstantRule_mem
   unfold CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
   apply List.mem_append.mpr
   left
+  apply List.mem_append.mpr
+  left
   apply List.mem_map.mpr
   exact ⟨X, by simp, rfl⟩
 
@@ -638,9 +640,9 @@ theorem cutLiftedBinaryRule_mem
         dummy).binaryRules := by
   unfold CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
   apply List.mem_append.mpr
-  right
-  apply List.mem_append.mpr
   left
+  apply List.mem_append.mpr
+  right
   apply List.mem_map.mpr
   exact ⟨B, by simp, rfl⟩
 
@@ -651,8 +653,6 @@ theorem cutSaturationRule_mem
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
   unfold CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
-  apply List.mem_append.mpr
-  right
   apply List.mem_append.mpr
   right
   apply List.mem_map.mpr
@@ -735,16 +735,25 @@ theorem correctedConcreteCutControl_self_derives
       (correctedConcreteCutSeed_derives
         H dummy)
 
-  rw [
-    correctedConcreteCutConstantRule_apply
-  ] at h
   change
     DerivesTuple
       (H.toCutWorkingMCFG dummy)
       (.control X :
         CorrectedConcreteCutGrammarNonterminal H)
-      X.1.tuple
+      ((correctedConcreteCutConstantRule H X).apply
+        (correctedConcreteCutSeedTuple dummy)
+        (correctedConcreteCutSeedTuple dummy))
     at h
+  have happ :
+      (correctedConcreteCutConstantRule H X).apply
+          (correctedConcreteCutSeedTuple dummy)
+          (correctedConcreteCutSeedTuple dummy) =
+        X.1.tuple :=
+    correctedConcreteCutConstantRule_apply
+      H X
+      (correctedConcreteCutSeedTuple dummy)
+      (correctedConcreteCutSeedTuple dummy)
+  rw [happ] at h
   exact h
 
 end BasicGrammarDerivations
@@ -791,9 +800,6 @@ theorem toCutWorkingMCFG
         correctedConcreteCutControl_self_derives
           H dummy X
 
-      rw [
-        correctedConcreteCutConstantRule_apply
-      ] at hself
       change
         DerivesTuple
           (H.toCutWorkingMCFG dummy)
@@ -825,9 +831,6 @@ theorem toCutWorkingMCFG
           ihleft
           ihright
 
-      rw [
-        correctedConcreteCutLiftedBinaryRule_apply
-      ] at hstep
       change
         DerivesTuple
           (H.toCutWorkingMCFG dummy)
@@ -888,10 +891,28 @@ theorem toCutWorkingMCFG
           (H.cutPairArityEq p).symm
           z
 
-      rw [
-        correctedConcreteCutSaturationRule_apply,
-        hcast
-      ] at hstep
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            p.1.1
+            (H.cutPair_source_control p.2))
+          ((correctedConcreteCutSaturationRule H p).apply
+            z
+            (correctedConcreteCutSeedTuple dummy))
+        at hstep
+      have happ :
+          (correctedConcreteCutSaturationRule H p).apply
+              z
+              (correctedConcreteCutSeedTuple dummy) =
+            castTuple
+              (H.cutPairArityEq p).symm
+              z :=
+        correctedConcreteCutSaturationRule_apply
+          H p z
+          (correctedConcreteCutSeedTuple dummy)
+      rw [happ, hcast] at hstep
       change
         DerivesTuple
           (H.toCutWorkingMCFG dummy)
