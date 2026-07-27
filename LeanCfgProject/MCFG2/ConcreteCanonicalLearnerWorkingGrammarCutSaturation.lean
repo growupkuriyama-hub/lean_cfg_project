@@ -215,9 +215,8 @@ theorem word_control
   classical
   unfold IsControlCode
   unfold controlCodes
-  apply Finset.mem_union_left
-  exact Finset.mem_image.mpr
-    ⟨word, hword, rfl⟩
+  simp only [Finset.mem_union, Finset.mem_image]
+  exact Or.inl ⟨word, hword, rfl⟩
 
 /-- Every listed unit-rule source is a control tuple. -/
 theorem unitSource_control
@@ -230,10 +229,8 @@ theorem unitSource_control
   classical
   unfold IsControlCode
   unfold controlCodes
-  apply Finset.mem_union_right
-  apply Finset.mem_union_left
-  exact Finset.mem_image.mpr
-    ⟨U, hU, rfl⟩
+  simp only [Finset.mem_union, Finset.mem_image]
+  exact Or.inr (Or.inl ⟨U, hU, rfl⟩)
 
 /-- Every listed unit-rule target is a control tuple. -/
 theorem unitTarget_control
@@ -246,11 +243,8 @@ theorem unitTarget_control
   classical
   unfold IsControlCode
   unfold controlCodes
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_left
-  exact Finset.mem_image.mpr
-    ⟨U, hU, rfl⟩
+  simp only [Finset.mem_union, Finset.mem_image]
+  exact Or.inr (Or.inr (Or.inl ⟨U, hU, rfl⟩))
 
 /-- Every listed binary-rule parent source is a control tuple. -/
 theorem binarySource_control
@@ -263,12 +257,8 @@ theorem binarySource_control
   classical
   unfold IsControlCode
   unfold controlCodes
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_left
-  exact Finset.mem_image.mpr
-    ⟨B, hB, rfl⟩
+  simp only [Finset.mem_union, Finset.mem_image]
+  exact Or.inr (Or.inr (Or.inr (Or.inl ⟨B, hB, rfl⟩)))
 
 /-- Every listed binary-rule left source is a control tuple. -/
 theorem binaryLeftSource_control
@@ -281,13 +271,13 @@ theorem binaryLeftSource_control
   classical
   unfold IsControlCode
   unfold controlCodes
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_left
-  exact Finset.mem_image.mpr
-    ⟨B, hB, rfl⟩
+  simp only [Finset.mem_union, Finset.mem_image]
+  exact
+    Or.inr
+      (Or.inr
+        (Or.inr
+          (Or.inr
+            (Or.inl ⟨B, hB, rfl⟩))))
 
 /-- Every listed binary-rule right source is a control tuple. -/
 theorem binaryRightSource_control
@@ -300,13 +290,14 @@ theorem binaryRightSource_control
   classical
   unfold IsControlCode
   unfold controlCodes
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  apply Finset.mem_union_right
-  exact Finset.mem_image.mpr
-    ⟨B, hB, rfl⟩
+  simp only [Finset.mem_union, Finset.mem_image]
+  exact
+    Or.inr
+      (Or.inr
+        (Or.inr
+          (Or.inr
+            (Or.inr
+              ⟨B, hB, rfl⟩))))
 
 /-- The set of control tuple codes is finite as a set. -/
 theorem controlCodes_finite :
@@ -363,7 +354,7 @@ theorem eq_of_source_not_control
       exact hx
         (H.binarySource_control B hB)
 
-  | trans hxy hyz ihxy ihyz =>
+  | @trans d x y z hxy hyz ihxy ihyz =>
       have hyx :
           y = x :=
         ihxy hx
@@ -575,7 +566,7 @@ theorem toCutNormalized
           (ihright
             (H.binaryRightSource_control B hB))
 
-  | trans hxy hyz ihxy ihyz =>
+  | @trans d x y z hxy hyz ihxy ihyz =>
       intro hx
 
       by_cases hy :
@@ -673,10 +664,17 @@ theorem mem_cutPairs_iff
       H.IsControlCode Y ∧
       H.CutAdmissible X Y := by
   classical
-  simp [
+  simp only [
     cutPairs,
+    Finset.mem_filter,
+    Finset.mem_product,
     IsControlCode
   ]
+  constructor
+  · rintro ⟨⟨hX, hY⟩, hXY⟩
+    exact ⟨hX, hY, hXY⟩
+  · rintro ⟨hX, hY, hXY⟩
+    exact ⟨⟨hX, hY⟩, hXY⟩
 
 /-- Every cut pair has a controlled source. -/
 theorem cutPair_source_control
@@ -772,12 +770,14 @@ theorem correctedConcreteFiniteHypothesis_language_iff_cutNormalized
   constructor
 
   · intro hword
+    rcases hword with ⟨D⟩
     exact
-      ⟨hword.startWord,
-        hword.start_mem,
-        hword.toCutNormalized⟩
+      ⟨D.startWord,
+        D.start_mem,
+        D.toCutNormalized⟩
 
   · rintro ⟨startWord, hstart, hderives⟩
+    refine ⟨?_⟩
     exact
       { startWord := startWord
         start_mem := hstart
@@ -816,7 +816,9 @@ theorem correctedConcreteFiniteHypothesis_cutSaturation_package
       H.cutPairs_finite,
       fun d x y hx h =>
         h.eq_of_source_not_control hx,
-      H.language_iff_cutNormalized⟩
+      fun word =>
+        correctedConcreteFiniteHypothesis_language_iff_cutNormalized
+          H word⟩
 
 end SampleStartNormalization
 
