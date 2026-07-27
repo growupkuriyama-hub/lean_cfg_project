@@ -291,13 +291,13 @@ theorem emptyLanguageWorkingMCFG_no_derives
   induction h with
 
   | terminal hρ hwt =>
-      simpa [emptyLanguageWorkingMCFG] using hρ
+      simp [emptyLanguageWorkingMCFG] at hρ
 
   | binary hρ hx hy ihx ihy =>
-      simpa [emptyLanguageWorkingMCFG] using hρ
+      simp [emptyLanguageWorkingMCFG] at hρ
 
   | start hρ hx hwt ih =>
-      simpa [emptyLanguageWorkingMCFG] using hρ
+      simp [emptyLanguageWorkingMCFG] at hρ
 
 /-- The rule-free working grammar has empty string language. -/
 theorem emptyLanguageWorkingMCFG_stringLanguage_eq :
