@@ -86,23 +86,26 @@ noncomputable def CorrectedConcreteUnitRuleCode.mono
         S obs f) :
     CorrectedConcreteUnitRuleCode
       K obs f :=
-  ⟨U.index,
-    concreteUnitRuleOfEvidence
-      K obs
-      (U.rule.evidence.mono hSK)⟩
+  match U with
+  | ⟨d, R⟩ =>
+      ⟨d,
+        concreteUnitRuleOfEvidence
+          K obs
+          (R.evidence.mono hSK)⟩
 
 namespace CorrectedConcreteUnitRuleCode
 
-/-- Arity is unchanged by sample-extension transport. -/
-@[simp] theorem mono_arity
+/-- The complete positive-arity index is unchanged by sample-extension
+transport. -/
+@[simp] theorem mono_index
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    (U.mono hSK).arity = U.arity := by
-  change U.index.arity = U.index.arity
+    (U.mono hSK).index = U.index := by
+  rcases U with ⟨d, R⟩
   rfl
 
 /-- Unit-rule source is preserved, including its dependent arity index. -/
@@ -115,15 +118,16 @@ theorem mono_source
         S obs f) :
     HEq (U.mono hSK).source
       U.source := by
+  rcases U with ⟨d, R⟩
   change HEq
     (concreteUnitRuleOfEvidence
       K obs
-      (U.rule.evidence.mono hSK)).source
-    U.rule.source
+      (R.evidence.mono hSK)).source
+    R.source
   exact heq_of_eq
     (concreteUnitRuleOfEvidence_source
       K obs
-      (U.rule.evidence.mono hSK))
+      (R.evidence.mono hSK))
 
 /-- Unit-rule target is preserved, including its dependent arity index. -/
 theorem mono_target
@@ -135,15 +139,16 @@ theorem mono_target
         S obs f) :
     HEq (U.mono hSK).target
       U.target := by
+  rcases U with ⟨d, R⟩
   change HEq
     (concreteUnitRuleOfEvidence
       K obs
-      (U.rule.evidence.mono hSK)).target
-    U.rule.target
+      (R.evidence.mono hSK)).target
+    R.target
   exact heq_of_eq
     (concreteUnitRuleOfEvidence_target
       K obs
-      (U.rule.evidence.mono hSK))
+      (R.evidence.mono hSK))
 
 /-- The transported code is listed in every complete finite hypothesis over
 the enlarged sample. -/
@@ -196,40 +201,40 @@ noncomputable abbrev CorrectedConcreteBinaryRuleCode.mono
 
 namespace CorrectedConcreteBinaryRuleCode
 
-/-- Parent arity is unchanged. -/
-@[simp] theorem mono_parentArity
+/-- The complete parent positive-arity index is unchanged. -/
+@[simp] theorem mono_parentIndex
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).parentArity =
-      B.parentArity :=
+    (B.mono hSK).parentIndex =
+      B.parentIndex :=
   rfl
 
-/-- Left arity is unchanged. -/
-@[simp] theorem mono_leftArity
+/-- The complete left positive-arity index is unchanged. -/
+@[simp] theorem mono_leftIndex
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).leftArity =
-      B.leftArity :=
+    (B.mono hSK).leftIndex =
+      B.leftIndex :=
   rfl
 
-/-- Right arity is unchanged. -/
-@[simp] theorem mono_rightArity
+/-- The complete right positive-arity index is unchanged. -/
+@[simp] theorem mono_rightIndex
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).rightArity =
-      B.rightArity :=
+    (B.mono hSK).rightIndex =
+      B.rightIndex :=
   rfl
 
 /-- Left source tuple is preserved. -/
@@ -355,9 +360,9 @@ structure CorrectedConcreteFiniteHypothesisSimulation
       U ∈ HS.unitRuleCodes →
         unitMap U ∈ HK.unitRuleCodes
 
-  unitMap_arity :
+  unitMap_index :
     ∀ U,
-      (unitMap U).arity = U.arity
+      (unitMap U).index = U.index
 
   unitMap_source :
     ∀ U,
@@ -380,20 +385,20 @@ structure CorrectedConcreteFiniteHypothesisSimulation
       B ∈ HS.binaryRuleCodes →
         binaryMap B ∈ HK.binaryRuleCodes
 
-  binaryMap_parentArity :
+  binaryMap_parentIndex :
     ∀ B,
-      (binaryMap B).parentArity =
-        B.parentArity
+      (binaryMap B).parentIndex =
+        B.parentIndex
 
-  binaryMap_leftArity :
+  binaryMap_leftIndex :
     ∀ B,
-      (binaryMap B).leftArity =
-        B.leftArity
+      (binaryMap B).leftIndex =
+        B.leftIndex
 
-  binaryMap_rightArity :
+  binaryMap_rightIndex :
     ∀ B,
-      (binaryMap B).rightArity =
-        B.rightArity
+      (binaryMap B).rightIndex =
+        B.rightIndex
 
   binaryMap_source :
     ∀ B,
@@ -440,8 +445,8 @@ noncomputable def ofSampleSubset
       HK.unitRuleCodes_complete
         (U.mono hSK)
 
-  unitMap_arity :=
-    fun U => U.mono_arity hSK
+  unitMap_index :=
+    fun U => U.mono_index hSK
 
   unitMap_source :=
     fun U => U.mono_source hSK
@@ -457,14 +462,14 @@ noncomputable def ofSampleSubset
       HK.binaryRuleCodes_complete
         (B.mono hSK)
 
-  binaryMap_parentArity :=
-    fun B => B.mono_parentArity hSK
+  binaryMap_parentIndex :=
+    fun B => B.mono_parentIndex hSK
 
-  binaryMap_leftArity :=
-    fun B => B.mono_leftArity hSK
+  binaryMap_leftIndex :=
+    fun B => B.mono_leftIndex hSK
 
-  binaryMap_rightArity :=
-    fun B => B.mono_rightArity hSK
+  binaryMap_rightIndex :=
+    fun B => B.mono_rightIndex hSK
 
   binaryMap_source :=
     fun B => B.mono_source hSK
@@ -506,8 +511,8 @@ theorem derives
           x
 
   | unit U hU hrest ih =>
-      have harity := Φ.unitMap_arity U
-      cases harity
+      have hindex := Φ.unitMap_index U
+      cases hindex
       have htarget :
           (Φ.unitMap U).target = U.target :=
         eq_of_heq (Φ.unitMap_target U)
@@ -523,15 +528,15 @@ theorem derives
       simpa only [hsource] using hstep
 
   | binary B hB hleft hright ihleft ihright =>
-      have hparentArity :=
-        Φ.binaryMap_parentArity B
-      cases hparentArity
-      have hleftArity :=
-        Φ.binaryMap_leftArity B
-      cases hleftArity
-      have hrightArity :=
-        Φ.binaryMap_rightArity B
-      cases hrightArity
+      have hparentIndex :=
+        Φ.binaryMap_parentIndex B
+      cases hparentIndex
+      have hleftIndex :=
+        Φ.binaryMap_leftIndex B
+      cases hleftIndex
+      have hrightIndex :=
+        Φ.binaryMap_rightIndex B
+      cases hrightIndex
       have hleftSource :
           (Φ.binaryMap B).leftSource =
             B.leftSource :=
