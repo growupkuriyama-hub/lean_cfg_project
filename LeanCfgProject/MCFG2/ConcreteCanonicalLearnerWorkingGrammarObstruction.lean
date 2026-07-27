@@ -294,7 +294,7 @@ theorem emptyLanguageWorkingMCFG_no_derives
       simp [emptyLanguageWorkingMCFG] at hρ
 
   | binary hρ hx hy ihx ihy =>
-      simp [emptyLanguageWorkingMCFG] at hρ
+      exact ihx
 
   | start hρ hx hwt ih =>
       simp [emptyLanguageWorkingMCFG] at hρ
