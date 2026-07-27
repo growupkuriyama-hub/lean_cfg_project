@@ -321,10 +321,17 @@ theorem ofDerives
             correctedConcreteCutConstantRule_apply
           ]
 
+          have hXcontrol :
+              H.IsControlCode
+                (FiniteObjectTupleCode.mk X.1.tuple) := by
+            simpa only [
+              FiniteObjectTupleCode.mk_tuple_eq
+            ] using X.2
+
           exact
             .control X
               (CutNormalizedListedFiniteDerives.self
-                X.1 X.2)
+                X.1.tuple hXcontrol)
 
         · rcases List.mem_map.mp hlifted with
             ⟨B, hB, rfl⟩
