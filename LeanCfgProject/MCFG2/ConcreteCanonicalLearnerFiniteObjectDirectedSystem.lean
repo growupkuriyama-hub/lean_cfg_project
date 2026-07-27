@@ -306,6 +306,9 @@ def refl
   unitMap_mem :=
     fun U hU => hU
 
+  unitMap_index :=
+    fun U => rfl
+
   unitMap_source :=
     fun U => rfl
 
@@ -318,6 +321,15 @@ def refl
   binaryMap_mem :=
     fun B hB => hB
 
+  binaryMap_parentIndex :=
+    fun B => rfl
+
+  binaryMap_leftIndex :=
+    fun B => rfl
+
+  binaryMap_rightIndex :=
+    fun B => rfl
+
   binaryMap_source :=
     fun B => rfl
 
@@ -329,6 +341,9 @@ def refl
 
   binaryMap_body :=
     fun B => rfl
+
+  derives :=
+    fun h => h
 
 /-- Composition of finite-hypothesis simulations. -/
 def comp
@@ -360,23 +375,22 @@ def comp
         (Φ.unitMap U)
         (Φ.unitMap_mem U hU)
 
+  unitMap_index :=
+    fun U =>
+      (Ψ.unitMap_index (Φ.unitMap U)).trans
+        (Φ.unitMap_index U)
+
   unitMap_source :=
-    fun U => by
-      calc
-        (Ψ.unitMap (Φ.unitMap U)).source =
-            (Φ.unitMap U).source :=
-          Ψ.unitMap_source (Φ.unitMap U)
-        _ = U.source :=
-          Φ.unitMap_source U
+    fun U =>
+      HEq.trans
+        (Ψ.unitMap_source (Φ.unitMap U))
+        (Φ.unitMap_source U)
 
   unitMap_target :=
-    fun U => by
-      calc
-        (Ψ.unitMap (Φ.unitMap U)).target =
-            (Φ.unitMap U).target :=
-          Ψ.unitMap_target (Φ.unitMap U)
-        _ = U.target :=
-          Φ.unitMap_target U
+    fun U =>
+      HEq.trans
+        (Ψ.unitMap_target (Φ.unitMap U))
+        (Φ.unitMap_target U)
 
   binaryMap :=
     fun B =>
@@ -388,41 +402,48 @@ def comp
         (Φ.binaryMap B)
         (Φ.binaryMap_mem B hB)
 
+  binaryMap_parentIndex :=
+    fun B =>
+      (Ψ.binaryMap_parentIndex (Φ.binaryMap B)).trans
+        (Φ.binaryMap_parentIndex B)
+
+  binaryMap_leftIndex :=
+    fun B =>
+      (Ψ.binaryMap_leftIndex (Φ.binaryMap B)).trans
+        (Φ.binaryMap_leftIndex B)
+
+  binaryMap_rightIndex :=
+    fun B =>
+      (Ψ.binaryMap_rightIndex (Φ.binaryMap B)).trans
+        (Φ.binaryMap_rightIndex B)
+
   binaryMap_source :=
-    fun B => by
-      calc
-        (Ψ.binaryMap (Φ.binaryMap B)).source =
-            (Φ.binaryMap B).source :=
-          Ψ.binaryMap_source (Φ.binaryMap B)
-        _ = B.source :=
-          Φ.binaryMap_source B
+    fun B =>
+      HEq.trans
+        (Ψ.binaryMap_source (Φ.binaryMap B))
+        (Φ.binaryMap_source B)
 
   binaryMap_leftSource :=
-    fun B => by
-      calc
-        (Ψ.binaryMap (Φ.binaryMap B)).leftSource =
-            (Φ.binaryMap B).leftSource :=
-          Ψ.binaryMap_leftSource (Φ.binaryMap B)
-        _ = B.leftSource :=
-          Φ.binaryMap_leftSource B
+    fun B =>
+      HEq.trans
+        (Ψ.binaryMap_leftSource (Φ.binaryMap B))
+        (Φ.binaryMap_leftSource B)
 
   binaryMap_rightSource :=
-    fun B => by
-      calc
-        (Ψ.binaryMap (Φ.binaryMap B)).rightSource =
-            (Φ.binaryMap B).rightSource :=
-          Ψ.binaryMap_rightSource (Φ.binaryMap B)
-        _ = B.rightSource :=
-          Φ.binaryMap_rightSource B
+    fun B =>
+      HEq.trans
+        (Ψ.binaryMap_rightSource (Φ.binaryMap B))
+        (Φ.binaryMap_rightSource B)
 
   binaryMap_body :=
-    fun B => by
-      calc
-        (Ψ.binaryMap (Φ.binaryMap B)).body =
-            (Φ.binaryMap B).body :=
-          Ψ.binaryMap_body (Φ.binaryMap B)
-        _ = B.body :=
-          Φ.binaryMap_body B
+    fun B =>
+      HEq.trans
+        (Ψ.binaryMap_body (Φ.binaryMap B))
+        (Φ.binaryMap_body B)
+
+  derives :=
+    fun h =>
+      Ψ.derives (Φ.derives h)
 
 /-- Identity simulation does not change the proposition proved by a listed
 derivation. -/

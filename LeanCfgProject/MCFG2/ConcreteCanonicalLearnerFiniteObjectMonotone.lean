@@ -336,6 +336,88 @@ variable {S K : Finset (Word α)}
 variable {obs : α → M}
 variable {f : Nat}
 
+
+/-- Direct transport of listed tuple derivations along a sample inclusion.
+
+The transported rule codes are built from the concrete sample-evidence
+transport. Pattern matching on the dependent rule codes keeps every arity
+index definitionally fixed. -/
+theorem listedFiniteCorrectedConcreteLearnerDerives_mono
+    (hSK :
+      (S : Set (Word α)) ⊆
+        (K : Set (Word α)))
+    (HS :
+      CorrectedConcreteFiniteHypothesis
+        S obs f)
+    (HK :
+      CorrectedConcreteFiniteHypothesis
+        K obs f)
+    {d : Nat}
+    {x y : Tuple α d}
+    (h :
+      ListedFiniteCorrectedConcreteLearnerDerives
+        S obs f HS x y) :
+    ListedFiniteCorrectedConcreteLearnerDerives
+      K obs f HK x y := by
+  induction h with
+  | self x =>
+      exact ListedFiniteCorrectedConcreteLearnerDerives.self x
+  | unit U hU hrest ih =>
+      rcases U with ⟨d, R⟩
+      let U' :
+          CorrectedConcreteUnitRuleCode K obs f :=
+        ⟨d,
+          concreteUnitRuleOfEvidence
+            K obs
+            (R.evidence.mono hSK)⟩
+      have htarget : U'.target = R.target := by
+        exact concreteUnitRuleOfEvidence_target
+          K obs (R.evidence.mono hSK)
+      have hsource : U'.source = R.source := by
+        exact concreteUnitRuleOfEvidence_source
+          K obs (R.evidence.mono hSK)
+      rw [← htarget] at ih
+      have hstep :=
+        ListedFiniteCorrectedConcreteLearnerDerives.unit
+          U' (HK.unitRuleCodes_complete U') ih
+      simpa only [hsource] using hstep
+  | binary B hB hleft hright ihleft ihright =>
+      rcases B with ⟨e, dB, dC, R⟩
+      let B' :
+          CorrectedConcreteBinaryRuleCode K f :=
+        ⟨e, dB, dC,
+          correctedConcreteBinaryRuleOfEvidence
+            K
+            (R.evidence.mono hSK)
+            R.witness.body_exactOnce⟩
+      have hleftSource : B'.leftSource = R.leftSource := by
+        exact correctedConcreteBinaryRuleOfEvidence_leftSource
+          K (R.evidence.mono hSK) R.witness.body_exactOnce
+      have hrightSource : B'.rightSource = R.rightSource := by
+        exact correctedConcreteBinaryRuleOfEvidence_rightSource
+          K (R.evidence.mono hSK) R.witness.body_exactOnce
+      have hbody : B'.body = R.body := by
+        exact correctedConcreteBinaryRuleOfEvidence_body
+          K (R.evidence.mono hSK) R.witness.body_exactOnce
+      have hsource : B'.source = R.source := by
+        calc
+          B'.source =
+              evalTemplateTuple R.body
+                R.leftSource R.rightSource :=
+            correctedConcreteBinaryRuleOfEvidence_source
+              K (R.evidence.mono hSK) R.witness.body_exactOnce
+          _ = R.source := R.source_eq_composition.symm
+      rw [← hleftSource] at ihleft
+      rw [← hrightSource] at ihright
+      have hstep :=
+        ListedFiniteCorrectedConcreteLearnerDerives.binary
+          B' (HK.binaryRuleCodes_complete B') ihleft ihright
+      simpa only [hsource, hbody] using hstep
+  | trans hxy hyz ihxy ihyz =>
+      exact
+        ListedFiniteCorrectedConcreteLearnerDerives.trans
+          ihxy ihyz
+
 /-- A semantic rule simulation between two actual finite hypothesis objects.
 
 The source and target samples may differ.  Every listed source rule is mapped
@@ -420,6 +502,14 @@ structure CorrectedConcreteFiniteHypothesisSimulation
       HEq (binaryMap B).body
         B.body
 
+  derives :
+    ∀ {d : Nat}
+      {x y : Tuple α d},
+      ListedFiniteCorrectedConcreteLearnerDerives
+          S obs f HS x y →
+        ListedFiniteCorrectedConcreteLearnerDerives
+          K obs f HK x y
+
 namespace CorrectedConcreteFiniteHypothesisSimulation
 
 /-- Sample extension produces a semantic simulation between any complete finite
@@ -483,9 +573,13 @@ noncomputable def ofSampleSubset
   binaryMap_body :=
     fun B => B.mono_body hSK
 
-/-- Transport a listed tuple derivation through a finite-hypothesis
-simulation. -/
-theorem derives
+  derives :=
+    fun h =>
+      listedFiniteCorrectedConcreteLearnerDerives_mono
+        hSK HS HK h
+
+/-- The stored transport has its declared endpoint type. -/
+theorem derives_stored
     {HS :
       CorrectedConcreteFiniteHypothesis
         S obs f}
@@ -501,72 +595,8 @@ theorem derives
       ListedFiniteCorrectedConcreteLearnerDerives
         S obs f HS x y) :
     ListedFiniteCorrectedConcreteLearnerDerives
-      K obs f HK x y := by
-
-  induction h with
-
-  | self x =>
-      exact
-        ListedFiniteCorrectedConcreteLearnerDerives.self
-          x
-
-  | unit U hU hrest ih =>
-      have hindex := Φ.unitMap_index U
-      cases hindex
-      have htarget :
-          (Φ.unitMap U).target = U.target :=
-        eq_of_heq (Φ.unitMap_target U)
-      have hsource :
-          (Φ.unitMap U).source = U.source :=
-        eq_of_heq (Φ.unitMap_source U)
-      rw [← htarget] at ih
-      have hstep :=
-        ListedFiniteCorrectedConcreteLearnerDerives.unit
-          (Φ.unitMap U)
-          (Φ.unitMap_mem U hU)
-          ih
-      simpa only [hsource] using hstep
-
-  | binary B hB hleft hright ihleft ihright =>
-      have hparentIndex :=
-        Φ.binaryMap_parentIndex B
-      cases hparentIndex
-      have hleftIndex :=
-        Φ.binaryMap_leftIndex B
-      cases hleftIndex
-      have hrightIndex :=
-        Φ.binaryMap_rightIndex B
-      cases hrightIndex
-      have hleftSource :
-          (Φ.binaryMap B).leftSource =
-            B.leftSource :=
-        eq_of_heq (Φ.binaryMap_leftSource B)
-      have hrightSource :
-          (Φ.binaryMap B).rightSource =
-            B.rightSource :=
-        eq_of_heq (Φ.binaryMap_rightSource B)
-      have hsource :
-          (Φ.binaryMap B).source =
-            B.source :=
-        eq_of_heq (Φ.binaryMap_source B)
-      have hbody :
-          (Φ.binaryMap B).body =
-            B.body :=
-        eq_of_heq (Φ.binaryMap_body B)
-      rw [← hleftSource] at ihleft
-      rw [← hrightSource] at ihright
-      have hstep :=
-        ListedFiniteCorrectedConcreteLearnerDerives.binary
-          (Φ.binaryMap B)
-          (Φ.binaryMap_mem B hB)
-          ihleft
-          ihright
-      simpa only [hsource, hbody] using hstep
-
-  | trans hxy hyz ihxy ihyz =>
-      exact
-        ListedFiniteCorrectedConcreteLearnerDerives.trans
-          ihxy ihyz
+      K obs f HK x y :=
+  Φ.derives h
 
 end CorrectedConcreteFiniteHypothesisSimulation
 
