@@ -916,7 +916,7 @@ noncomputable def concreteUnitRuleCountUpToFanout
     (fun k => (concreteUnitRules K obs (k + 1)).card)
 
 /-- Explicit numerical bound for the total unit-rule count up to fan-out `f`. -/
-def concreteUnitRuleCountBound
+noncomputable def concreteUnitRuleCountBound
     (K : Finset (Word α))
     (f : Nat) :
     Nat :=
@@ -941,7 +941,7 @@ noncomputable def correctedBinaryRuleCountUpToFanout
 
 /-- Explicit numerical bound for the total corrected binary-rule count up to
 fan-out `f`. -/
-def correctedBinaryRuleCountBound
+noncomputable def correctedBinaryRuleCountBound
     (K : Finset (Word α))
     (f : Nat) :
     Nat :=
@@ -965,7 +965,7 @@ noncomputable def correctedConcreteRuleCountUpToFanout
     correctedBinaryRuleCountUpToFanout K f
 
 /-- Explicit total rule-count bound. -/
-def correctedConcreteRuleCountBound
+noncomputable def correctedConcreteRuleCountBound
     (K : Finset (Word α))
     (f : Nat) :
     Nat :=
