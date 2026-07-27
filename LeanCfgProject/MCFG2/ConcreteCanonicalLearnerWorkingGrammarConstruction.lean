@@ -70,39 +70,39 @@ theorem CorrectedConcreteFiniteHypothesis.controlCode_arity_pos
   unfold CorrectedConcreteFiniteHypothesis.IsControlCode at hX
   unfold CorrectedConcreteFiniteHypothesis.controlCodes at hX
 
-  rcases Finset.mem_union.mp hX with hword | hrest
+  rcases Finset.mem_union.mp hX with hrest | hbinaryRight
 
-  · rcases Finset.mem_image.mp hword with
-      ⟨word, hword, rfl⟩
-    omega
+  · rcases Finset.mem_union.mp hrest with hrest | hbinaryLeft
 
-  · rcases Finset.mem_union.mp hrest with hunitSource | hrest
+    · rcases Finset.mem_union.mp hrest with hrest | hbinarySource
 
-    · rcases Finset.mem_image.mp hunitSource with
-        ⟨U, hU, rfl⟩
-      exact U.arity_pos
+      · rcases Finset.mem_union.mp hrest with hrest | hunitTarget
 
-    · rcases Finset.mem_union.mp hrest with hunitTarget | hrest
+        · rcases Finset.mem_union.mp hrest with hword | hunitSource
 
-      · rcases Finset.mem_image.mp hunitTarget with
-          ⟨U, hU, rfl⟩
-        exact U.arity_pos
+          · rcases Finset.mem_image.mp hword with
+              ⟨word, hword, rfl⟩
+            exact Nat.zero_lt_one
 
-      · rcases Finset.mem_union.mp hrest with hbinarySource | hrest
+          · rcases Finset.mem_image.mp hunitSource with
+              ⟨U, hU, rfl⟩
+            exact U.arity_pos
 
-        · rcases Finset.mem_image.mp hbinarySource with
-            ⟨B, hB, rfl⟩
-          exact B.parentArity_pos
+        · rcases Finset.mem_image.mp hunitTarget with
+            ⟨U, hU, rfl⟩
+          exact U.arity_pos
 
-        · rcases Finset.mem_union.mp hrest with hbinaryLeft | hbinaryRight
+      · rcases Finset.mem_image.mp hbinarySource with
+          ⟨B, hB, rfl⟩
+        exact B.parentArity_pos
 
-          · rcases Finset.mem_image.mp hbinaryLeft with
-              ⟨B, hB, rfl⟩
-            exact B.leftArity_pos
+    · rcases Finset.mem_image.mp hbinaryLeft with
+        ⟨B, hB, rfl⟩
+      exact B.leftArity_pos
 
-          · rcases Finset.mem_image.mp hbinaryRight with
-              ⟨B, hB, rfl⟩
-            exact B.rightArity_pos
+  · rcases Finset.mem_image.mp hbinaryRight with
+      ⟨B, hB, rfl⟩
+    exact B.rightArity_pos
 
 end ControlArity
 
@@ -247,12 +247,12 @@ theorem eval_terminalTemplateWord
       rfl
 
   | cons a rest ih =>
-      simp [
-        terminalTemplateWord,
-        evalTemplateWord,
-        evalTemplateAtom,
-        ih
-      ]
+      change
+        a ::
+            evalTemplateWord x y
+              (terminalTemplateWord rest) =
+          a :: rest
+      rw [ih]
 
 /-- A binary template that returns one fixed tuple and ignores both children. -/
 def constantTupleTemplate
@@ -378,7 +378,7 @@ def correctedConcreteCutStartRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (w : K.attach) :
+    (w : K) :
     StartRule
       (CorrectedConcreteCutGrammarNonterminal H) where
 
@@ -408,7 +408,7 @@ def correctedConcreteCutConstantRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (X : H.controlCodes.attach) :
+    (X : H.controlCodes) :
     BinaryRule
       (CorrectedConcreteCutGrammarNonterminal H)
       α
@@ -431,7 +431,7 @@ def correctedConcreteCutLiftedBinaryRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (B : H.binaryRuleCodes.attach) :
+    (B : H.binaryRuleCodes) :
     BinaryRule
       (CorrectedConcreteCutGrammarNonterminal H)
       α
@@ -463,7 +463,7 @@ noncomputable def correctedConcreteCutSaturationRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (p : H.cutPairs.attach) :
+    (p : H.cutPairs) :
     BinaryRule
       (CorrectedConcreteCutGrammarNonterminal H)
       α
@@ -491,7 +491,7 @@ noncomputable def correctedConcreteCutSaturationRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (X : H.controlCodes.attach)
+    (X : H.controlCodes)
     (left right : Tuple α 1) :
     (correctedConcreteCutConstantRule
       H X).apply left right =
@@ -504,7 +504,7 @@ noncomputable def correctedConcreteCutSaturationRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (B : H.binaryRuleCodes.attach)
+    (B : H.binaryRuleCodes)
     (left : Tuple α B.1.leftArity)
     (right : Tuple α B.1.rightArity) :
     (correctedConcreteCutLiftedBinaryRule
@@ -517,7 +517,7 @@ noncomputable def correctedConcreteCutSaturationRule
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (p : H.cutPairs.attach)
+    (p : H.cutPairs)
     (x : Tuple α p.1.2.arity)
     (seed : Tuple α 1) :
     (correctedConcreteCutSaturationRule
@@ -563,10 +563,10 @@ noncomputable def CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
     cases A with
 
     | start =>
-        omega
+        exact Nat.zero_lt_one
 
     | seed =>
-        omega
+        exact Nat.zero_lt_one
 
     | control X =>
         exact
@@ -600,7 +600,7 @@ variable
 
 /-- Every sample start rule occurs in the concrete grammar. -/
 theorem cutStartRule_mem
-    (w : K.attach) :
+    (w : K) :
     correctedConcreteCutStartRule H w ∈
       (H.toCutWorkingMCFG
         dummy).startRules := by
@@ -620,7 +620,7 @@ theorem cutSeedRule_mem :
 
 /-- Every control constant rule occurs in the concrete grammar. -/
 theorem cutConstantRule_mem
-    (X : H.controlCodes.attach) :
+    (X : H.controlCodes) :
     correctedConcreteCutConstantRule H X ∈
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
@@ -630,7 +630,7 @@ theorem cutConstantRule_mem
 
 /-- Every listed binary rule occurs in the concrete grammar. -/
 theorem cutLiftedBinaryRule_mem
-    (B : H.binaryRuleCodes.attach) :
+    (B : H.binaryRuleCodes) :
     correctedConcreteCutLiftedBinaryRule H B ∈
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
@@ -640,7 +640,7 @@ theorem cutLiftedBinaryRule_mem
 
 /-- Every saturated cut rule occurs in the concrete grammar. -/
 theorem cutSaturationRule_mem
-    (p : H.cutPairs.attach) :
+    (p : H.cutPairs) :
     correctedConcreteCutSaturationRule H p ∈
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
@@ -706,7 +706,7 @@ theorem correctedConcreteCutSeed_derives :
 /-- Every control nonterminal derives its own stored tuple via its constant
 rule. -/
 theorem correctedConcreteCutControl_self_derives
-    (X : H.controlCodes.attach) :
+    (X : H.controlCodes) :
     DerivesTuple
       (H.toCutWorkingMCFG dummy)
       (.control X :
@@ -760,7 +760,7 @@ theorem toCutWorkingMCFG
 
   | self x hx =>
       let X :
-          H.controlCodes.attach :=
+          H.controlCodes :=
         ⟨FiniteObjectTupleCode.mk x, hx⟩
 
       have hself :=
@@ -772,9 +772,9 @@ theorem toCutWorkingMCFG
         correctedConcreteControlNode
       ] using hself
 
-  | binary B hB hleft hright ihleft ihright =>
+  | @binary B hB u v hleft hright ihleft ihright =>
       let B' :
-          H.binaryRuleCodes.attach :=
+          H.binaryRuleCodes :=
         ⟨B, hB⟩
 
       have hstep :=
@@ -790,7 +790,7 @@ theorem toCutWorkingMCFG
         correctedConcreteControlNode
       ] using hstep
 
-  | cut hx hy hxy hyz ihyz =>
+  | @cut d x y z hx hy hxy hyz ihyz =>
       have hadmissible :
           H.CutAdmissible
             (FiniteObjectTupleCode.mk x)
@@ -806,7 +806,7 @@ theorem toCutWorkingMCFG
           hx hy hadmissible
 
       let p :
-          H.cutPairs.attach :=
+          H.cutPairs :=
         ⟨(FiniteObjectTupleCode.mk x,
           FiniteObjectTupleCode.mk y),
           hpair⟩
@@ -867,7 +867,7 @@ theorem correctedConcreteFiniteHypothesis_language_subset_cutWorkingGrammar
     ⟨startWord, hstart, hderives⟩
 
   let w :
-      K.attach :=
+      K :=
     ⟨startWord, hstart⟩
 
   have hchild :=
