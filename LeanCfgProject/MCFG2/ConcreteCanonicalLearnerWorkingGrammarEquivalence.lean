@@ -270,6 +270,10 @@ theorem ofDerives
     CorrectedConcreteCutWorkingGrammarDerivationView
       H dummy A x := by
 
+  unfold
+    CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
+    at h
+
   induction h with
 
   | @terminal ρ hρ hwt =>
@@ -295,19 +299,7 @@ theorem ofDerives
       exact .seed rfl
 
   | @binary ρ hρ x y hx hy ihx ihy =>
-      have hρ' :
-          ρ ∈
-            (H.controlCodes.attach.toList.map
-                (correctedConcreteCutConstantRule H) ++
-              H.binaryRuleCodes.attach.toList.map
-                (correctedConcreteCutLiftedBinaryRule H)) ++
-            H.cutPairs.attach.toList.map
-              (correctedConcreteCutSaturationRule H) := by
-        simpa only [
-          CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
-        ] using hρ
-
-      rcases List.mem_append.mp hρ' with
+      rcases List.mem_append.mp hρ with
         hrest | hcut
 
       · rcases List.mem_append.mp hrest with
@@ -406,6 +398,10 @@ theorem ofDerives
             hmiddleControl
             (H.cutPairDerives p)
             hchildCast
+
+        rw [
+          correctedConcreteCutSaturationRule_apply
+        ]
 
         exact
           .control
@@ -520,7 +516,19 @@ theorem cutWorkingGrammar_control_derives_iff
       exact
         FiniteObjectTupleCode.mk_tuple_eq X
 
-    rw [hcode] at hgrammar
+    have hnode :
+        correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk X.tuple)
+            D.source_control =
+          correctedConcreteControlNode
+            H X hX := by
+      unfold correctedConcreteControlNode
+      exact congrArg
+        CorrectedConcreteCutGrammarNonterminal.control
+        hcode
+
+    rw [hnode] at hgrammar
     exact hgrammar
 
 /-- A derivation of the seed nonterminal produces exactly the dummy singleton
