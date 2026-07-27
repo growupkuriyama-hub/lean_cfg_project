@@ -77,7 +77,7 @@ concrete rule over S
 → completeness of the finite unit-rule enumeration over K.
 ```
 -/
-noncomputable def CorrectedConcreteUnitRuleCode.mono
+noncomputable abbrev CorrectedConcreteUnitRuleCode.mono
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
@@ -104,7 +104,7 @@ namespace CorrectedConcreteUnitRuleCode
     (U.mono hSK).arity = U.arity :=
   rfl
 
-/-- Unit-rule source is preserved. -/
+/-- Unit-rule source is preserved, including its dependent arity index. -/
 theorem mono_source
     (hSK :
       (S : Set (Word α)) ⊆
@@ -112,14 +112,14 @@ theorem mono_source
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    (U.mono hSK).source =
+    HEq (U.mono hSK).source
       U.source := by
-  exact
-    concreteUnitRuleOfEvidence_source
+  exact heq_of_eq
+    (concreteUnitRuleOfEvidence_source
       K obs
-      (U.rule.evidence.mono hSK)
+      (U.rule.evidence.mono hSK))
 
-/-- Unit-rule target is preserved. -/
+/-- Unit-rule target is preserved, including its dependent arity index. -/
 theorem mono_target
     (hSK :
       (S : Set (Word α)) ⊆
@@ -127,12 +127,12 @@ theorem mono_target
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    (U.mono hSK).target =
+    HEq (U.mono hSK).target
       U.target := by
-  exact
-    concreteUnitRuleOfEvidence_target
+  exact heq_of_eq
+    (concreteUnitRuleOfEvidence_target
       K obs
-      (U.rule.evidence.mono hSK)
+      (U.rule.evidence.mono hSK))
 
 /-- The transported code is listed in every complete finite hypothesis over
 the enlarged sample. -/
@@ -166,7 +166,7 @@ variable {f : Nat}
 Exact-once syntax is retained from the old rule body, while its sample evidence
 is transported to the larger sample and re-enumerated there.
 -/
-noncomputable def CorrectedConcreteBinaryRuleCode.mono
+noncomputable abbrev CorrectedConcreteBinaryRuleCode.mono
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
@@ -229,13 +229,13 @@ theorem mono_leftSource
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).leftSource =
+    HEq (B.mono hSK).leftSource
       B.leftSource := by
-  exact
-    correctedConcreteBinaryRuleOfEvidence_leftSource
+  exact heq_of_eq
+    (correctedConcreteBinaryRuleOfEvidence_leftSource
       K
       (B.rule.evidence.mono hSK)
-      B.rule.witness.body_exactOnce
+      B.rule.witness.body_exactOnce)
 
 /-- Right source tuple is preserved. -/
 theorem mono_rightSource
@@ -245,13 +245,13 @@ theorem mono_rightSource
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).rightSource =
+    HEq (B.mono hSK).rightSource
       B.rightSource := by
-  exact
-    correctedConcreteBinaryRuleOfEvidence_rightSource
+  exact heq_of_eq
+    (correctedConcreteBinaryRuleOfEvidence_rightSource
       K
       (B.rule.evidence.mono hSK)
-      B.rule.witness.body_exactOnce
+      B.rule.witness.body_exactOnce)
 
 /-- Template body is preserved. -/
 theorem mono_body
@@ -261,13 +261,13 @@ theorem mono_body
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).body =
+    HEq (B.mono hSK).body
       B.body := by
-  exact
-    correctedConcreteBinaryRuleOfEvidence_body
+  exact heq_of_eq
+    (correctedConcreteBinaryRuleOfEvidence_body
       K
       (B.rule.evidence.mono hSK)
-      B.rule.witness.body_exactOnce
+      B.rule.witness.body_exactOnce)
 
 /-- Parent source tuple is preserved. -/
 theorem mono_source
@@ -277,19 +277,19 @@ theorem mono_source
     (B :
       CorrectedConcreteBinaryRuleCode
         S f) :
-    (B.mono hSK).source =
+    HEq (B.mono hSK).source
       B.source := by
-
-  calc
-    (B.mono hSK).source =
-        evalTemplateTuple B.body
-          B.leftSource B.rightSource :=
-      correctedConcreteBinaryRuleOfEvidence_source
-        K
-        (B.rule.evidence.mono hSK)
-        B.rule.witness.body_exactOnce
-    _ = B.source :=
-      B.rule.source_eq_composition.symm
+  exact heq_of_eq
+    (calc
+      (B.mono hSK).source =
+          evalTemplateTuple B.body
+            B.leftSource B.rightSource :=
+        correctedConcreteBinaryRuleOfEvidence_source
+          K
+          (B.rule.evidence.mono hSK)
+          B.rule.witness.body_exactOnce
+      _ = B.source :=
+        B.rule.source_eq_composition.symm)
 
 /-- The transported code is listed in every complete finite hypothesis over
 the enlarged sample. -/
@@ -346,12 +346,12 @@ structure CorrectedConcreteFiniteHypothesisSimulation
 
   unitMap_source :
     ∀ U,
-      (unitMap U).source =
+      HEq (unitMap U).source
         U.source
 
   unitMap_target :
     ∀ U,
-      (unitMap U).target =
+      HEq (unitMap U).target
         U.target
 
   binaryMap :
@@ -367,22 +367,22 @@ structure CorrectedConcreteFiniteHypothesisSimulation
 
   binaryMap_source :
     ∀ B,
-      (binaryMap B).source =
+      HEq (binaryMap B).source
         B.source
 
   binaryMap_leftSource :
     ∀ B,
-      (binaryMap B).leftSource =
+      HEq (binaryMap B).leftSource
         B.leftSource
 
   binaryMap_rightSource :
     ∀ B,
-      (binaryMap B).rightSource =
+      HEq (binaryMap B).rightSource
         B.rightSource
 
   binaryMap_body :
     ∀ B,
-      (binaryMap B).body =
+      HEq (binaryMap B).body
         B.body
 
 namespace CorrectedConcreteFiniteHypothesisSimulation
@@ -464,58 +464,31 @@ theorem derives
           x
 
   | unit U hU hrest ih =>
-      let U' :=
-        Φ.unitMap U
-
-      have ih' :
-          ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK U'.target _ := by
-        rw [Φ.unitMap_target U]
-        exact ih
-
-      have hstep :
-          ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK U'.source _ :=
+      have htarget := Φ.unitMap_target U
+      cases htarget
+      have hsource := Φ.unitMap_source U
+      cases hsource
+      exact
         ListedFiniteCorrectedConcreteLearnerDerives.unit
-          U'
+          (Φ.unitMap U)
           (Φ.unitMap_mem U hU)
-          ih'
-
-      rw [Φ.unitMap_source U] at hstep
-      exact hstep
+          ih
 
   | binary B hB hleft hright ihleft ihright =>
-      let B' :=
-        Φ.binaryMap B
-
-      have ihleft' :
-          ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK B'.leftSource _ := by
-        rw [Φ.binaryMap_leftSource B]
-        exact ihleft
-
-      have ihright' :
-          ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK B'.rightSource _ := by
-        rw [Φ.binaryMap_rightSource B]
-        exact ihright
-
-      have hstep :
-          ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK B'.source
-              (evalTemplateTuple B'.body _ _) :=
+      have hleftSource := Φ.binaryMap_leftSource B
+      cases hleftSource
+      have hrightSource := Φ.binaryMap_rightSource B
+      cases hrightSource
+      have hsource := Φ.binaryMap_source B
+      cases hsource
+      have hbody := Φ.binaryMap_body B
+      cases hbody
+      exact
         ListedFiniteCorrectedConcreteLearnerDerives.binary
-          B'
+          (Φ.binaryMap B)
           (Φ.binaryMap_mem B hB)
-          ihleft'
-          ihright'
-
-      rw [
-        Φ.binaryMap_source B,
-        Φ.binaryMap_body B
-      ] at hstep
-
-      exact hstep
+          ihleft
+          ihright
 
   | trans hxy hyz ihxy ihyz =>
       exact
@@ -587,8 +560,8 @@ theorem correctedConcreteFiniteHypothesis_language_mono
       hSK HS HK
 
   intro word hword
-
-  exact hword.mono hSK Φ
+  rcases hword with ⟨D⟩
+  exact ⟨D.mono hSK Φ⟩
 
 /-- Structural monotonicity specialized to the canonical finite hypothesis
 objects output by the learner. -/
@@ -726,18 +699,18 @@ theorem correctedConcreteFiniteHypothesis_sampleExtension_package
         (correctedConcreteFiniteHypothesis
           K obs f),
       (∀ U,
-        (Φ.unitMap U).source =
+        HEq (Φ.unitMap U).source
           U.source ∧
-        (Φ.unitMap U).target =
+        HEq (Φ.unitMap U).target
           U.target) ∧
       (∀ B,
-        (Φ.binaryMap B).source =
+        HEq (Φ.binaryMap B).source
             B.source ∧
-        (Φ.binaryMap B).leftSource =
+        HEq (Φ.binaryMap B).leftSource
             B.leftSource ∧
-        (Φ.binaryMap B).rightSource =
+        HEq (Φ.binaryMap B).rightSource
             B.rightSource ∧
-        (Φ.binaryMap B).body =
+        HEq (Φ.binaryMap B).body
             B.body)) ∧
     (correctedConcreteFiniteHypothesis
         S obs f).Language ⊆
