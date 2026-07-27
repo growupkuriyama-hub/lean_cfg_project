@@ -77,7 +77,7 @@ concrete rule over S
 → completeness of the finite unit-rule enumeration over K.
 ```
 -/
-noncomputable abbrev CorrectedConcreteUnitRuleCode.mono
+noncomputable def CorrectedConcreteUnitRuleCode.mono
     (hSK :
       (S : Set (Word α)) ⊆
         (K : Set (Word α)))
@@ -101,7 +101,8 @@ namespace CorrectedConcreteUnitRuleCode
     (U :
       CorrectedConcreteUnitRuleCode
         S obs f) :
-    (U.mono hSK).arity = U.arity :=
+    (U.mono hSK).arity = U.arity := by
+  change U.index.arity = U.index.arity
   rfl
 
 /-- Unit-rule source is preserved, including its dependent arity index. -/
@@ -114,6 +115,11 @@ theorem mono_source
         S obs f) :
     HEq (U.mono hSK).source
       U.source := by
+  change HEq
+    (concreteUnitRuleOfEvidence
+      K obs
+      (U.rule.evidence.mono hSK)).source
+    U.rule.source
   exact heq_of_eq
     (concreteUnitRuleOfEvidence_source
       K obs
@@ -129,6 +135,11 @@ theorem mono_target
         S obs f) :
     HEq (U.mono hSK).target
       U.target := by
+  change HEq
+    (concreteUnitRuleOfEvidence
+      K obs
+      (U.rule.evidence.mono hSK)).target
+    U.rule.target
   exact heq_of_eq
     (concreteUnitRuleOfEvidence_target
       K obs
@@ -344,6 +355,10 @@ structure CorrectedConcreteFiniteHypothesisSimulation
       U ∈ HS.unitRuleCodes →
         unitMap U ∈ HK.unitRuleCodes
 
+  unitMap_arity :
+    ∀ U,
+      (unitMap U).arity = U.arity
+
   unitMap_source :
     ∀ U,
       HEq (unitMap U).source
@@ -364,6 +379,21 @@ structure CorrectedConcreteFiniteHypothesisSimulation
     ∀ B,
       B ∈ HS.binaryRuleCodes →
         binaryMap B ∈ HK.binaryRuleCodes
+
+  binaryMap_parentArity :
+    ∀ B,
+      (binaryMap B).parentArity =
+        B.parentArity
+
+  binaryMap_leftArity :
+    ∀ B,
+      (binaryMap B).leftArity =
+        B.leftArity
+
+  binaryMap_rightArity :
+    ∀ B,
+      (binaryMap B).rightArity =
+        B.rightArity
 
   binaryMap_source :
     ∀ B,
@@ -410,6 +440,9 @@ noncomputable def ofSampleSubset
       HK.unitRuleCodes_complete
         (U.mono hSK)
 
+  unitMap_arity :=
+    fun U => U.mono_arity hSK
+
   unitMap_source :=
     fun U => U.mono_source hSK
 
@@ -423,6 +456,15 @@ noncomputable def ofSampleSubset
     fun B hB =>
       HK.binaryRuleCodes_complete
         (B.mono hSK)
+
+  binaryMap_parentArity :=
+    fun B => B.mono_parentArity hSK
+
+  binaryMap_leftArity :=
+    fun B => B.mono_leftArity hSK
+
+  binaryMap_rightArity :=
+    fun B => B.mono_rightArity hSK
 
   binaryMap_source :=
     fun B => B.mono_source hSK
@@ -464,31 +506,57 @@ theorem derives
           x
 
   | unit U hU hrest ih =>
-      have htarget := Φ.unitMap_target U
-      cases htarget
-      have hsource := Φ.unitMap_source U
-      cases hsource
-      exact
+      have harity := Φ.unitMap_arity U
+      cases harity
+      have htarget :
+          (Φ.unitMap U).target = U.target :=
+        eq_of_heq (Φ.unitMap_target U)
+      have hsource :
+          (Φ.unitMap U).source = U.source :=
+        eq_of_heq (Φ.unitMap_source U)
+      rw [← htarget] at ih
+      have hstep :=
         ListedFiniteCorrectedConcreteLearnerDerives.unit
           (Φ.unitMap U)
           (Φ.unitMap_mem U hU)
           ih
+      simpa only [hsource] using hstep
 
   | binary B hB hleft hright ihleft ihright =>
-      have hleftSource := Φ.binaryMap_leftSource B
-      cases hleftSource
-      have hrightSource := Φ.binaryMap_rightSource B
-      cases hrightSource
-      have hsource := Φ.binaryMap_source B
-      cases hsource
-      have hbody := Φ.binaryMap_body B
-      cases hbody
-      exact
+      have hparentArity :=
+        Φ.binaryMap_parentArity B
+      cases hparentArity
+      have hleftArity :=
+        Φ.binaryMap_leftArity B
+      cases hleftArity
+      have hrightArity :=
+        Φ.binaryMap_rightArity B
+      cases hrightArity
+      have hleftSource :
+          (Φ.binaryMap B).leftSource =
+            B.leftSource :=
+        eq_of_heq (Φ.binaryMap_leftSource B)
+      have hrightSource :
+          (Φ.binaryMap B).rightSource =
+            B.rightSource :=
+        eq_of_heq (Φ.binaryMap_rightSource B)
+      have hsource :
+          (Φ.binaryMap B).source =
+            B.source :=
+        eq_of_heq (Φ.binaryMap_source B)
+      have hbody :
+          (Φ.binaryMap B).body =
+            B.body :=
+        eq_of_heq (Φ.binaryMap_body B)
+      rw [← hleftSource] at ihleft
+      rw [← hrightSource] at ihright
+      have hstep :=
         ListedFiniteCorrectedConcreteLearnerDerives.binary
           (Φ.binaryMap B)
           (Φ.binaryMap_mem B hB)
           ihleft
           ihright
+      simpa only [hsource, hbody] using hstep
 
   | trans hxy hyz ihxy ihyz =>
       exact
