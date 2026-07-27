@@ -91,7 +91,7 @@ def StartRootedCorrectedConcreteTargetClass :
     Set (Set (Word α)) :=
   fun L =>
     Nonempty
-      (StartRootedCorrectedConcreteTargetWitness
+      (StartRootedCorrectedConcreteTargetWitness.{u, v, w}
         α M obs f L)
 
 end StartRootedTargetWitness
@@ -148,16 +148,16 @@ theorem correctedConcreteTargetClass_subset_startRooted
     [Monoid M]
     (obs : α → M)
     (f : Nat) :
-    CorrectedConcreteTargetClass
-        (v := v) α M obs f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f := by
+    CorrectedConcreteTargetClass.{u, v, w}
+        α M obs f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f := by
   intro L hL
 
   change
     Nonempty
-      (CorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (CorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -229,8 +229,10 @@ theorem StartRootedCorrectedConcreteTargetWitness.exists_characteristicSample
           W.grammar.StringLanguage :=
       hSupersets K hSK hKgrammar
 
-    simpa [W.language_eq] using
-      hExactGrammar
+    simpa only [
+      correctedConcreteCanonicalHypLanguage_apply,
+      W.language_eq
+    ] using hExactGrammar
 
 /-- Every semantic start-rooted target witness is identified from every
 positive text by the uniform corrected concrete learner. -/
@@ -299,8 +301,8 @@ characteristic sample for the uniform learner. -/
 theorem correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTargetClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     ∃ S : Finset (Word α),
       CharacteristicSample
         (correctedConcreteCanonicalHypLanguage
@@ -311,8 +313,8 @@ theorem correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTa
 
   change
     Nonempty
-      (StartRootedCorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (StartRootedCorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -323,8 +325,8 @@ class. -/
 theorem correctedConcreteCanonicalLearner_finite_tellTale_for_startRootedTargetClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       ∀ K : Finset (Word α),
@@ -339,8 +341,8 @@ theorem correctedConcreteCanonicalLearner_finite_tellTale_for_startRootedTargetC
 
   change
     Nonempty
-      (StartRootedCorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (StartRootedCorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -353,15 +355,15 @@ theorem correctedConcreteCanonicalLearner_identifies_startRootedTargetClass :
         obs f)
       (correctedConcreteCanonicalLearner
         (α := α))
-      (StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) := by
 
   intro L hL
 
   change
     Nonempty
-      (StartRootedCorrectedConcreteTargetWitness
-        (v := v) α M obs f L) at hL
+      (StartRootedCorrectedConcreteTargetWitness.{u, v, w}
+        α M obs f L) at hL
 
   rcases hL with ⟨W⟩
 
@@ -370,8 +372,8 @@ theorem correctedConcreteCanonicalLearner_identifies_startRootedTargetClass :
 /-- Expanded positive-text form of the semantic start-rooted class theorem. -/
 theorem correctedConcreteCanonicalLearner_identifies_every_startRooted_target_text :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := v) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+          α M obs f →
       ∀ T : TextFor L,
         EventuallyCorrectOnText
           (correctedConcreteCanonicalHypLanguage
@@ -384,7 +386,7 @@ theorem correctedConcreteCanonicalLearner_identifies_every_startRooted_target_te
 
   exact
     correctedConcreteCanonicalLearner_identifies_startRootedTargetClass
-      (v := v) obs f L hL T
+      obs f L hL T
 
 /-- Paper-style class conclusion package under semantic start-rooted
 normality. -/
@@ -407,8 +409,8 @@ theorem correctedConcreteCanonicalLearner_startRooted_class_conclusion_package :
             (correctedConcreteCanonicalLearner
               (α := α) K))) ∧
     ((∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := v) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+            α M obs f →
         ∃ S : Finset (Word α),
           CharacteristicSample
             (correctedConcreteCanonicalHypLanguage
@@ -421,8 +423,8 @@ theorem correctedConcreteCanonicalLearner_startRooted_class_conclusion_package :
         obs f)
       (correctedConcreteCanonicalLearner
         (α := α))
-      (StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) := by
 
   refine ⟨?_, ?_, ?_, ?_⟩
 
@@ -439,11 +441,11 @@ theorem correctedConcreteCanonicalLearner_startRooted_class_conclusion_package :
   · intro L hL
     exact
       correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTargetClass
-        (v := v) obs f hL
+        obs f hL
 
   · exact
       correctedConcreteCanonicalLearner_identifies_startRootedTargetClass
-        (v := v) obs f
+        obs f
 
 end StartRootedClassTheorem
 
@@ -463,55 +465,55 @@ semantic start-rooted class. -/
 noncomputable def startRootedCorrectedConcreteTargetCharacteristicSample
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     Finset (Word α) :=
   Classical.choose
     (correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTargetClass
-      (v := v) obs f hL)
+      obs f hL)
 
 /-- The selected finite sample is characteristic. -/
 theorem startRootedCorrectedConcreteTargetCharacteristicSample_characteristic
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     CharacteristicSample
       (correctedConcreteCanonicalHypLanguage
         obs f)
       (correctedConcreteCanonicalLearner
         (α := α))
       (startRootedCorrectedConcreteTargetCharacteristicSample
-        (v := v) obs f hL)
+        obs f hL)
       L :=
   Classical.choose_spec
     (correctedConcreteCanonicalLearner_characteristicSample_for_startRootedTargetClass
-      (v := v) obs f hL)
+      obs f hL)
 
 /-- Positivity of the selected finite sample. -/
 theorem startRootedCorrectedConcreteTargetCharacteristicSample_positive
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     (startRootedCorrectedConcreteTargetCharacteristicSample
-        (v := v) obs f hL :
+        obs f hL :
       Set (Word α)) ⊆
       L :=
   (startRootedCorrectedConcreteTargetCharacteristicSample_characteristic
-    (v := v) obs f hL).1
+    obs f hL).1
 
 /-- Every positive finite extension of the selected sample yields the target
 language exactly. -/
 theorem startRootedCorrectedConcreteTargetCharacteristicSample_exact_for_positive_superset
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     {K : Finset (Word α)}
     (hSK :
       (startRootedCorrectedConcreteTargetCharacteristicSample
-          (v := v) obs f hL :
+          obs f hL :
         Set (Word α)) ⊆
         (K : Set (Word α)))
     (hKpositive :
@@ -522,32 +524,32 @@ theorem startRootedCorrectedConcreteTargetCharacteristicSample_exact_for_positiv
           (α := α) K) =
       L :=
   (startRootedCorrectedConcreteTargetCharacteristicSample_characteristic
-    (v := v) obs f hL).2
+    obs f hL).2
       K hSK hKpositive
 
 /-- Exact reconstruction on the selected sample itself. -/
 theorem startRootedCorrectedConcreteTargetCharacteristicSample_exact
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f) :
     correctedConcreteCanonicalHypLanguage
         obs f
         (correctedConcreteCanonicalLearner
           (α := α)
           (startRootedCorrectedConcreteTargetCharacteristicSample
-            (v := v) obs f hL)) =
+            obs f hL)) =
       L := by
 
   apply
     startRootedCorrectedConcreteTargetCharacteristicSample_exact_for_positive_superset
-      (v := v) obs f hL
+      obs f hL
 
   · exact Set.Subset.rfl
 
   · exact
       startRootedCorrectedConcreteTargetCharacteristicSample_positive
-        (v := v) obs f hL
+        obs f hL
 
 end StartRootedTargetSelectors
 
@@ -567,16 +569,16 @@ start-rooted target characteristic sample. -/
 noncomputable def startRootedCorrectedConcreteTargetCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L) :
     Nat :=
   Classical.choose
     (TextFor.eventuallyContains_finite_subset
       (startRootedCorrectedConcreteTargetCharacteristicSample
-        (v := v) obs f hL)
+        obs f hL)
       (startRootedCorrectedConcreteTargetCharacteristicSample_positive
-        (v := v) obs f hL)
+        obs f hL)
       T)
 
 /-- Every prefix after the selected stage contains the selected finite
@@ -584,15 +586,15 @@ characteristic sample. -/
 theorem startRootedCorrectedConcreteTargetCharacteristicSample_subset_prefix_after
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     (startRootedCorrectedConcreteTargetCharacteristicSample
-        (v := v) obs f hL :
+        obs f hL :
       Set (Word α)) ⊆
       (T.prefixSample n : Set (Word α)) := by
 
@@ -600,9 +602,9 @@ theorem startRootedCorrectedConcreteTargetCharacteristicSample_subset_prefix_aft
     (Classical.choose_spec
       (TextFor.eventuallyContains_finite_subset
         (startRootedCorrectedConcreteTargetCharacteristicSample
-          (v := v) obs f hL)
+          obs f hL)
         (startRootedCorrectedConcreteTargetCharacteristicSample_positive
-          (v := v) obs f hL)
+          obs f hL)
         T))
       n hn
 
@@ -610,13 +612,13 @@ theorem startRootedCorrectedConcreteTargetCharacteristicSample_subset_prefix_aft
 theorem correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     correctedConcreteCanonicalHypLanguage
         obs f
         (correctedConcreteCanonicalLearner
@@ -625,17 +627,17 @@ theorem correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
 
   exact
     startRootedCorrectedConcreteTargetCharacteristicSample_exact_for_positive_superset
-      (v := v) obs f hL
+      obs f hL
       (startRootedCorrectedConcreteTargetCharacteristicSample_subset_prefix_after
-        (v := v) obs f hL T hn)
+        obs f hL T hn)
       (T.prefixSample_subset n)
 
 /-- At the selected stage itself the learner is already correct. -/
 theorem correctedConcreteCanonicalLearner_correct_at_startRootedCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L) :
     correctedConcreteCanonicalHypLanguage
         obs f
@@ -643,28 +645,28 @@ theorem correctedConcreteCanonicalLearner_correct_at_startRootedCoverageStage
           (α := α)
           (T.prefixSample
             (startRootedCorrectedConcreteTargetCoverageStage
-              (v := v) obs f hL T))) =
+              obs f hL T))) =
       L := by
 
   exact
     correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-      (v := v) obs f hL T
+      obs f hL T
       (Nat.le_refl _)
 
 /-- Any two hypothesis languages after the selected stage are equal. -/
 theorem correctedConcreteCanonicalLearner_eventually_language_constant_of_startRootedClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L)
     {m n : Nat}
     (hm :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ m)
+          obs f hL T ≤ m)
     (hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := v) obs f hL T ≤ n) :
+          obs f hL T ≤ n) :
     correctedConcreteCanonicalHypLanguage
         obs f
         (correctedConcreteCanonicalLearner
@@ -676,9 +678,9 @@ theorem correctedConcreteCanonicalLearner_eventually_language_constant_of_startR
 
   rw [
     correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-      (v := v) obs f hL T hm,
+      obs f hL T hm,
     correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-      (v := v) obs f hL T hn
+      obs f hL T hn
   ]
 
 /-- Selected-stage semantic stabilization theorem for every target in the
@@ -686,8 +688,8 @@ semantic start-rooted class. -/
 theorem correctedConcreteCanonicalLearner_has_startRooted_stabilizationStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := v) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+        α M obs f)
     (T : TextFor L) :
     ∃ n0 : Nat,
       (∀ n : Nat, n0 ≤ n →
@@ -708,19 +710,19 @@ theorem correctedConcreteCanonicalLearner_has_startRooted_stabilizationStage
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := v) obs f hL T,
+        obs f hL T,
       ?_,
       ?_⟩
 
   · intro n hn
     exact
       correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-        (v := v) obs f hL T hn
+        obs f hL T hn
 
   · intro m n hm hn
     exact
       correctedConcreteCanonicalLearner_eventually_language_constant_of_startRootedClass
-        (v := v) obs f hL T hm hn
+        obs f hL T hm hn
 
 end StartRootedCoverageStage
 
@@ -740,20 +742,20 @@ start-rooted target class. -/
 theorem correctedConcreteCanonicalLearner_uniform_startRooted_selected_stabilization :
     ∀ L : Set (Word α),
       ∀ hL :
-        L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := v) α M obs f,
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+          α M obs f,
         CharacteristicSample
           (correctedConcreteCanonicalHypLanguage
             obs f)
           (correctedConcreteCanonicalLearner
             (α := α))
           (startRootedCorrectedConcreteTargetCharacteristicSample
-            (v := v) obs f hL)
+            obs f hL)
           L ∧
         ∀ T : TextFor L,
           ∀ n : Nat,
             startRootedCorrectedConcreteTargetCoverageStage
-                (v := v) obs f hL T ≤ n →
+                obs f hL T ≤ n →
               correctedConcreteCanonicalHypLanguage
                   obs f
                   (correctedConcreteCanonicalLearner
@@ -766,22 +768,22 @@ theorem correctedConcreteCanonicalLearner_uniform_startRooted_selected_stabiliza
 
   · exact
       startRootedCorrectedConcreteTargetCharacteristicSample_characteristic
-        (v := v) obs f hL
+        obs f hL
 
   · intro T n hn
     exact
       correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-        (v := v) obs f hL T hn
+        obs f hL T hn
 
 /-- Paper-style stabilization package for the larger semantic class. -/
 theorem correctedConcreteCanonicalLearner_startRooted_stabilization_conclusion_package :
     ∀ L : Set (Word α),
       ∀ hL :
-        L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := v) α M obs f,
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, v, w}
+          α M obs f,
         let S :=
           startRootedCorrectedConcreteTargetCharacteristicSample
-            (v := v) obs f hL
+            obs f hL
         (S : Set (Word α)) ⊆ L ∧
         correctedConcreteCanonicalHypLanguage
             obs f
@@ -791,7 +793,7 @@ theorem correctedConcreteCanonicalLearner_startRooted_stabilization_conclusion_p
         ∀ T : TextFor L,
           let n0 :=
             startRootedCorrectedConcreteTargetCoverageStage
-              (v := v) obs f hL T
+              obs f hL T
           (∀ n : Nat, n0 ≤ n →
             correctedConcreteCanonicalHypLanguage
                 obs f
@@ -813,9 +815,9 @@ theorem correctedConcreteCanonicalLearner_startRooted_stabilization_conclusion_p
 
   refine
     ⟨startRootedCorrectedConcreteTargetCharacteristicSample_positive
-        (v := v) obs f hL,
+        obs f hL,
       startRootedCorrectedConcreteTargetCharacteristicSample_exact
-        (v := v) obs f hL,
+        obs f hL,
       ?_⟩
 
   intro T
@@ -826,12 +828,12 @@ theorem correctedConcreteCanonicalLearner_startRooted_stabilization_conclusion_p
   · intro n hn
     exact
       correctedConcreteCanonicalLearner_correct_after_startRootedCoverageStage
-        (v := v) obs f hL T hn
+        obs f hL T hn
 
   · intro m n hm hn
     exact
       correctedConcreteCanonicalLearner_eventually_language_constant_of_startRootedClass
-        (v := v) obs f hL T hm hn
+        obs f hL T hm hn
 
 end StartRootedUniformStabilization
 
