@@ -295,23 +295,23 @@ theorem ofDerives
       exact .seed rfl
 
   | @binary ρ hρ x y hx hy ihx ihy =>
-      change
-        ρ ∈
-          (H.controlCodes.attach.toList.map
-              (correctedConcreteCutConstantRule H) ++
-            H.binaryRuleCodes.attach.toList.map
-              (correctedConcreteCutLiftedBinaryRule H)) ++
-          H.cutPairs.attach.toList.map
-            (correctedConcreteCutSaturationRule H)
-        at hρ
+      have hρ' :
+          ρ ∈
+            (H.controlCodes.attach.toList.map
+                (correctedConcreteCutConstantRule H) ++
+              H.binaryRuleCodes.attach.toList.map
+                (correctedConcreteCutLiftedBinaryRule H)) ++
+            H.cutPairs.attach.toList.map
+              (correctedConcreteCutSaturationRule H) := by
+        simpa only [
+          CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
+        ] using hρ
 
-      rw [List.mem_append] at hρ
+      rcases List.mem_append.mp hρ' with
+        hrest | hcut
 
-      rcases hρ with hrest | hcut
-
-      · rw [List.mem_append] at hrest
-
-        rcases hrest with hconstant | hlifted
+      · rcases List.mem_append.mp hrest with
+          hconstant | hlifted
 
         · rcases List.mem_map.mp hconstant with
             ⟨X, hX, rfl⟩
@@ -520,25 +520,8 @@ theorem cutWorkingGrammar_control_derives_iff
       exact
         FiniteObjectTupleCode.mk_tuple_eq X
 
-    change
-      DerivesTuple
-        (H.toCutWorkingMCFG dummy)
-        (.control
-          (⟨FiniteObjectTupleCode.mk X.tuple,
-              D.source_control⟩ :
-            H.controlCodes))
-        x
-      at hgrammar
-
-    change
-      DerivesTuple
-        (H.toCutWorkingMCFG dummy)
-        (.control
-          (⟨X, hX⟩ :
-            H.controlCodes))
-        x
-
-    simpa only [hcode] using hgrammar
+    rw [hcode] at hgrammar
+    exact hgrammar
 
 /-- A derivation of the seed nonterminal produces exactly the dummy singleton
 tuple. -/
