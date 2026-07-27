@@ -624,9 +624,11 @@ theorem cutConstantRule_mem
     correctedConcreteCutConstantRule H X ∈
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
-  simp [
-    CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
-  ]
+  unfold CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
+  apply List.mem_append.mpr
+  left
+  apply List.mem_map.mpr
+  exact ⟨X, by simp, rfl⟩
 
 /-- Every listed binary rule occurs in the concrete grammar. -/
 theorem cutLiftedBinaryRule_mem
@@ -634,9 +636,13 @@ theorem cutLiftedBinaryRule_mem
     correctedConcreteCutLiftedBinaryRule H B ∈
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
-  simp [
-    CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
-  ]
+  unfold CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
+  apply List.mem_append.mpr
+  right
+  apply List.mem_append.mpr
+  left
+  apply List.mem_map.mpr
+  exact ⟨B, by simp, rfl⟩
 
 /-- Every saturated cut rule occurs in the concrete grammar. -/
 theorem cutSaturationRule_mem
@@ -644,9 +650,13 @@ theorem cutSaturationRule_mem
     correctedConcreteCutSaturationRule H p ∈
       (H.toCutWorkingMCFG
         dummy).binaryRules := by
-  simp [
-    CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
-  ]
+  unfold CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
+  apply List.mem_append.mpr
+  right
+  apply List.mem_append.mpr
+  right
+  apply List.mem_map.mpr
+  exact ⟨p, by simp, rfl⟩
 
 /-- The fresh grammar start has arity one. -/
 @[simp] theorem toCutWorkingMCFG_start_arity :
@@ -698,10 +708,14 @@ theorem correctedConcreteCutSeed_derives :
               H dummy).lhs =
           1)
 
-  simpa [
-    correctedConcreteCutSeedTuple,
-    correctedConcreteCutSeedRule
-  ] using h
+  change
+    DerivesTuple
+      (H.toCutWorkingMCFG dummy)
+      (.seed :
+        CorrectedConcreteCutGrammarNonterminal H)
+      (correctedConcreteCutSeedTuple dummy)
+    at h
+  exact h
 
 /-- Every control nonterminal derives its own stored tuple via its constant
 rule. -/
@@ -721,7 +735,17 @@ theorem correctedConcreteCutControl_self_derives
       (correctedConcreteCutSeed_derives
         H dummy)
 
-  simpa using h
+  rw [
+    correctedConcreteCutConstantRule_apply
+  ] at h
+  change
+    DerivesTuple
+      (H.toCutWorkingMCFG dummy)
+      (.control X :
+        CorrectedConcreteCutGrammarNonterminal H)
+      X.1.tuple
+    at h
+  exact h
 
 end BasicGrammarDerivations
 
@@ -767,10 +791,27 @@ theorem toCutWorkingMCFG
         correctedConcreteCutControl_self_derives
           H dummy X
 
-      simpa [
-        X,
-        correctedConcreteControlNode
-      ] using hself
+      rw [
+        correctedConcreteCutConstantRule_apply
+      ] at hself
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk x)
+            hx)
+          x
+        at hself
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk x)
+            hx)
+          x
+      exact hself
 
   | @binary B hB u v hleft hright ihleft ihright =>
       let B' :
@@ -784,11 +825,27 @@ theorem toCutWorkingMCFG
           ihleft
           ihright
 
-      simpa [
-        B',
-        correctedConcreteCutLiftedBinaryRule,
-        correctedConcreteControlNode
-      ] using hstep
+      rw [
+        correctedConcreteCutLiftedBinaryRule_apply
+      ] at hstep
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk B.source)
+            (H.binarySource_control B hB))
+          (evalTemplateTuple B.body u v)
+        at hstep
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk B.source)
+            (H.binarySource_control B hB))
+          (evalTemplateTuple B.body u v)
+      exact hstep
 
   | @cut d x y z hx hy hxy hyz ihyz =>
       have hadmissible :
@@ -796,7 +853,10 @@ theorem toCutWorkingMCFG
             (FiniteObjectTupleCode.mk x)
             (FiniteObjectTupleCode.mk y) := by
         refine ⟨rfl, ?_⟩
-        simpa using hxy
+        change
+          ListedFiniteCorrectedConcreteLearnerDerives
+            K obs f H x y
+        exact hxy
 
       have hpair :
           (FiniteObjectTupleCode.mk x,
@@ -822,18 +882,34 @@ theorem toCutWorkingMCFG
       have hcast :
           castTuple
               (H.cutPairArityEq p).symm
-              y =
-            y :=
+              z =
+            z :=
         castTuple_self
           (H.cutPairArityEq p).symm
-          y
+          z
 
-      simpa [
-        p,
-        correctedConcreteCutSaturationRule,
-        correctedConcreteControlNode,
+      rw [
+        correctedConcreteCutSaturationRule_apply,
         hcast
-      ] using hstep
+      ] at hstep
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk x)
+            hx)
+          z
+        at hstep
+      change
+        DerivesTuple
+          (H.toCutWorkingMCFG dummy)
+          (correctedConcreteControlNode
+            H
+            (FiniteObjectTupleCode.mk x)
+            hx)
+          z
+      exact hstep
 
 end CutNormalizedListedFiniteDerives
 
@@ -887,11 +963,13 @@ theorem correctedConcreteFiniteHypothesis_language_subset_cutWorkingGrammar
 
   refine ⟨rfl, ?_⟩
 
-  simpa [
-    w,
-    correctedConcreteCutStartRule,
-    correctedConcreteControlNode
-  ] using hstartDerives
+  change
+    DerivesTuple
+      (H.toCutWorkingMCFG dummy)
+      (H.toCutWorkingMCFG dummy).start
+      (singletonTuple word)
+    at hstartDerives
+  exact hstartDerives
 
 /-- Canonical finite learner object version of the forward compilation
 theorem. -/
