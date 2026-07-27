@@ -821,7 +821,6 @@ theorem correctedConcreteCanonicalLearner_startRooted_stabilization_conclusion_p
       ?_⟩
 
   intro T
-  dsimp
 
   constructor
 
