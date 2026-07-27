@@ -92,7 +92,7 @@ theorem positiveArities_eq_image_succ
   rw [Finset.card_image_of_injective]
   · simp
   · intro a b hab
-    omega
+    exact Nat.add_right_cancel hab
 
 /-- The attached positive-arity index set also has cardinality `f`. -/
 @[simp] theorem card_positiveArities_attach
@@ -121,8 +121,8 @@ theorem card_finset_sigma_le_card_mul
   classical
   rw [Finset.card_sigma]
   calc
-    (∑ i in s, (t i).card) ≤
-        ∑ _i in s, bound := by
+    Finset.sum s (fun i => (t i).card) ≤
+        Finset.sum s (fun _i => bound) := by
       apply Finset.sum_le_sum
       intro i hi
       exact hbound i hi
@@ -139,6 +139,9 @@ theorem card_finset_sigma₂_le
     (t : ∀ i, Finset (β i))
     (r : ∀ i j, Finset (γ i j))
     (bound : Nat)
+    (hcard :
+      ∀ i ∈ s,
+        (t i).card ≤ s.card)
     (hbound :
       ∀ i ∈ s,
         ∀ j ∈ t i,
@@ -170,12 +173,10 @@ theorem card_finset_sigma₂_le
         bound
         (hbound i hi)
     _ ≤
-        s.card * bound := by
-      apply Nat.mul_le_mul_right
-      exact Finset.card_le_card
-        (by
-          intro j hj
-          exact hj)
+        s.card * bound :=
+      Nat.mul_le_mul_right
+        bound
+        (hcard i hi)
 
 /-- Three nested sigma levels over the same finite index set contribute at most
 the cube of its cardinality. -/
@@ -264,7 +265,7 @@ theorem card_finiteCorrectedConcreteUnitRuleCodes_le_mul
       ((positiveArities f).attach.sigma
         (fun d =>
           (concreteUnitRules
-            K obs d.arity).attach)).card ≤
+            K obs d.1).attach)).card ≤
         (positiveArities f).attach.card *
           (uniformEnumerationBase
               (sampleLengthBudget K) f ^
@@ -277,9 +278,9 @@ theorem card_finiteCorrectedConcreteUnitRuleCodes_le_mul
 
     simpa using
       (card_concreteUnitRules_le_lengthOnly
-        K obs d.arity).trans
+        K obs d.1).trans
         (sampleLengthOnlyUnitRuleBound_le_uniform
-          d.le_fanout)
+          (PositiveArityIndex.le_fanout d))
 
   simpa using hsigma
 
@@ -353,8 +354,8 @@ theorem card_finiteCorrectedConcreteBinaryRuleCodes_le_mul
               (positiveArities f).attach.sigma
                 (fun dC =>
                   (correctedConcreteBinaryWitnesses
-                    K e.arity
-                      dB.arity dC.arity).attach)))).card ≤
+                    K e.1
+                      dB.1 dC.1).attach)))).card ≤
         (positiveArities f).attach.card *
           ((positiveArities f).attach.card *
             ((positiveArities f).attach.card *
@@ -369,11 +370,11 @@ theorem card_finiteCorrectedConcreteBinaryRuleCodes_le_mul
 
     simpa using
       (card_correctedConcreteBinaryWitnesses_le_lengthOnly
-        K e.arity dB.arity dC.arity).trans
+        K e.1 dB.1 dC.1).trans
         (sampleLengthOnlyCorrectedBinaryWitnessBound_le_uniform
-          e.le_fanout
-          dB.le_fanout
-          dC.le_fanout)
+          (PositiveArityIndex.le_fanout e)
+          (PositiveArityIndex.le_fanout dB)
+          (PositiveArityIndex.le_fanout dC))
 
   simpa using hsigma
 
@@ -533,9 +534,16 @@ theorem correctedConcreteFiniteHypothesis_ruleCount_le_singlePower
         (hbinary.trans hbinaryCommon)
     _ ≤
         base * (base ^ commonExponent) := by
-      apply Nat.mul_le_mul_right
-      exact UniformParameters.two_le_base
-        (sampleLengthBudget K) f
+      calc
+        base ^ commonExponent + base ^ commonExponent =
+            2 * base ^ commonExponent := by
+          omega
+        _ ≤
+            base * base ^ commonExponent :=
+          Nat.mul_le_mul_right
+            (base ^ commonExponent)
+            (UniformParameters.two_le_base
+              (sampleLengthBudget K) f)
     _ =
         base ^ (commonExponent + 1) := by
       simpa [Nat.pow_add_one', Nat.mul_comm]
