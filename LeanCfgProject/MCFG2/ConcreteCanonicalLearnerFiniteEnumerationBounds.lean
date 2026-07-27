@@ -43,6 +43,7 @@ cardinalities of its fibers. -/
 theorem finset_card_biUnion_le_sum_card
     {ι : Type u}
     {β : Type v}
+    [DecidableEq β]
     (s : Finset ι)
     (t : ι → Finset β) :
     (s.biUnion t).card ≤
