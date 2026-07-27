@@ -102,7 +102,8 @@ theorem le_fanout
   have h :=
     (Finset.mem_filter.mp d.2).1
   simp only [Finset.mem_range] at h
-  omega
+  change d.1 ≤ f
+  exact Nat.le_of_lt_succ h
 
 /-- Construct a positive arity index from the two usual arity premises. -/
 def ofBounds
@@ -419,7 +420,7 @@ noncomputable def finiteCorrectedConcreteUnitRuleCodes
     (positiveArities f).attach.sigma
       (fun d =>
         (concreteUnitRules
-          K obs d.arity).attach)
+          K obs d.1).attach)
 
 /-- Complete finite enumeration of all corrected binary-rule codes whose three
 arities are positive and at most `f`. -/
@@ -438,8 +439,8 @@ noncomputable def finiteCorrectedConcreteBinaryRuleCodes
             (positiveArities f).attach.sigma
               (fun dC =>
                 (correctedConcreteBinaryWitnesses
-                  K e.arity
-                    dB.arity dC.arity).attach)))
+                  K e.1
+                    dB.1 dC.1).attach)))
 
 /-- Every dependent unit-rule code occurs in the complete finite
 enumeration. -/
@@ -903,8 +904,9 @@ def FiniteCorrectedConcreteLearnerLanguage
     (f : Nat) :
     Set (Word α) :=
   {word |
-    FiniteCorrectedConcreteStringDerives
-      K obs f word}
+    Nonempty
+      (FiniteCorrectedConcreteStringDerives
+        K obs f word)}
 
 namespace FiniteCorrectedConcreteStringDerives
 
@@ -973,7 +975,8 @@ theorem finiteCorrectedConcreteLearnerLanguage_subset
       CorrectedConcreteCanonicalLearnerLanguage
         K obs f := by
   intro word hword
-  exact hword.toConcrete
+  rcases hword with ⟨D⟩
+  exact ⟨D.toConcrete⟩
 
 /-- Every derivation of the existing corrected concrete learner is represented
 inside the finite dependent hypothesis. -/
@@ -986,7 +989,8 @@ theorem correctedConcreteCanonicalLearnerLanguage_subset_finite
       FiniteCorrectedConcreteLearnerLanguage
         K obs f := by
   intro word hword
-  exact hword.toFinite
+  rcases hword with ⟨D⟩
+  exact ⟨D.toFinite⟩
 
 /-- Exact equality of the actual finite-hypothesis language and the previously
 verified corrected concrete canonical learner language. -/
