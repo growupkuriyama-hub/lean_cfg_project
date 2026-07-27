@@ -32,6 +32,8 @@ No `sorry`, `admit`, or `axiom` is used.
 
 namespace MCFG
 
+open scoped BigOperators
+
 universe u v
 
 section GenericFinsetBounds
@@ -156,12 +158,12 @@ theorem card_finiteListsOver_le
 
   | succ n ih =>
       classical
+      rw [finiteListsOver]
       calc
-        (finiteListsOver A (n + 1)).card ≤
+        _ ≤
             (A.product
-              (finiteListsOver A n)).card := by
-          unfold finiteListsOver
-          exact Finset.card_image_le
+              (finiteListsOver A n)).card :=
+          Finset.card_image_le
         _ =
             A.card *
               (finiteListsOver A n).card := by
@@ -312,14 +314,9 @@ theorem card_namedContextCandidates_le_raw
     (namedContextCandidates A bound d).card ≤
       (rawNamedContextCandidates A bound d).card := by
   classical
-  unfold namedContextCandidates
-  dsimp
+  rw [namedContextCandidates]
   calc
-    (((rawNamedContextCandidates A bound d).filter
-        RawNamedSentenceContext.WellFormed).attach.image
-      (fun c =>
-        ⟨c.1,
-          (Finset.mem_filter.mp c.2).2⟩)).card ≤
+    _ ≤
         ((rawNamedContextCandidates A bound d).filter
           RawNamedSentenceContext.WellFormed).attach.card :=
       Finset.card_image_le
@@ -599,10 +596,33 @@ theorem card_finiteTemplateAtoms_le
           rightVariables.card :=
     Finset.card_union_le _ _
 
-  unfold finiteTemplateAtoms
-  dsimp
-  unfold templateAtomEnumerationBound
-  omega
+  have htotal :
+      (terminals ∪ leftVariables ∪
+        rightVariables).card ≤
+      A.card + dB + dC := by
+    calc
+      (terminals ∪ leftVariables ∪
+          rightVariables).card ≤
+          (terminals ∪ leftVariables).card +
+            rightVariables.card :=
+        hunion2
+      _ ≤
+          (terminals.card + leftVariables.card) +
+            rightVariables.card :=
+        Nat.add_le_add_right hunion1 _
+      _ ≤
+          (A.card + dB) + dC :=
+        Nat.add_le_add
+          (Nat.add_le_add hterminals hleft)
+          hright
+
+  simpa only [
+    finiteTemplateAtoms,
+    terminals,
+    leftVariables,
+    rightVariables,
+    templateAtomEnumerationBound
+  ] using htotal
 
 /-- Template-word enumeration has the corresponding explicit bounded-word
 estimate over the finite atom alphabet. -/
@@ -688,17 +708,9 @@ theorem card_finiteExactTemplateTupleCodesUpTo_le_tupleCodes
       (finiteTemplateTupleCodesUpTo
         A e dB dC bound).card := by
   classical
-  unfold finiteExactTemplateTupleCodesUpTo
-  dsimp
+  rw [finiteExactTemplateTupleCodesUpTo]
   calc
-    (((finiteTemplateTupleCodesUpTo
-        A e dB dC bound).filter
-        (fun C =>
-          TemplateTuple.ExactlyOnce C.body)).attach.image
-      (fun C =>
-        { code := C.1
-          exactOnce :=
-            (Finset.mem_filter.mp C.2).2 })).card ≤
+    _ ≤
         ((finiteTemplateTupleCodesUpTo
           A e dB dC bound).filter
           (fun C =>
