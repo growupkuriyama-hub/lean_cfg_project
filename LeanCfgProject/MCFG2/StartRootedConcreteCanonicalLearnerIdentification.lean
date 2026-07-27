@@ -101,8 +101,7 @@ theorem stringLanguage_subset_concreteSuccessfulPresentation_of_startRooted
           (G := G) (obs := obs) hworking.basic) := by
   intro word hword
 
-  let D : StartRootedStringDerives G word :=
-    hnormal hword
+  rcases hnormal hword with ⟨D⟩
 
   have hchildDerives :
       DerivesTuple G D.startRule.child D.childTuple :=
@@ -153,9 +152,9 @@ theorem stringLanguage_subset_concreteSuccessfulPresentation_of_startRooted
       (tupleType obs D.childTuple)
 
   have hσmem :
-      (ConcreteSuccessfulOutputTypeRefinement.presentation
-        (G := G) (obs := obs) hworking.basic).
-        HasStartRule σ :=
+      σ ∈
+        (ConcreteSuccessfulOutputTypeRefinement.presentation
+          (G := G) (obs := obs) hworking.basic).startRules :=
     ConcreteSuccessfulOutputTypeRefinement.canonicalStartRule_mem
       (obs := obs) hworking
       D.startRule D.start_mem childOccurrence
@@ -171,17 +170,17 @@ theorem stringLanguage_subset_concreteSuccessfulPresentation_of_startRooted
       TypedNonterminal.ofTuple] using hchild
 
   exact
-    { startRule := σ
-      start_mem := hσmem
-      childTuple := D.childTuple
-      child_derives := hchildσ
-      start_arity := D.start_arity
-      word_eq := by
-        have hp :
-            D.start_wellTyped = σ.wellTyped :=
-          Subsingleton.elim _ _
-        cases hp
-        exact D.word_eq }
+    ⟨{ startRule := σ
+       start_mem := hσmem
+       childTuple := D.childTuple
+       child_derives := hchildσ
+       start_arity := D.start_arity
+       word_eq := by
+         have hp :
+             D.start_wellTyped = σ.wellTyped :=
+           Subsingleton.elim _ _
+         cases hp
+         exact D.word_eq }⟩
 
 /-- Completeness of the concrete successful trim under semantic start-rooted
 normality. -/
@@ -226,13 +225,11 @@ theorem concreteSuccessfulWorkingGrammar_stringLanguage_eq_original_of_startRoot
     (hworking : G.ExactWorkingConditions)
     (hnormal : G.StartRootedNormal) :
     (ConcreteSuccessfulOutputTypeRefinement.presentation
-      (G := G) (obs := obs) hworking.basic).
-        toWorkingMCFG.StringLanguage =
+      (G := G) (obs := obs) hworking.basic).toWorkingMCFG.StringLanguage =
       G.StringLanguage := by
   calc
     (ConcreteSuccessfulOutputTypeRefinement.presentation
-      (G := G) (obs := obs) hworking.basic).
-        toWorkingMCFG.StringLanguage =
+      (G := G) (obs := obs) hworking.basic).toWorkingMCFG.StringLanguage =
         PresentationStringLanguage
           (ConcreteSuccessfulOutputTypeRefinement.presentation
             (G := G) (obs := obs) hworking.basic) :=
@@ -270,8 +267,7 @@ noncomputable def concreteTrimmedOutputTypePresentation_of_startRooted
     (hnormal : G.StartRootedNormal) :
     TrimmedOutputTypePresentation G obs :=
   (concreteSuccessfulOccurrenceCompletePresentation_of_startRooted
-    (obs := obs) hworking hnormal).
-      toTrimmedOutputTypePresentation
+    (obs := obs) hworking hnormal).toTrimmedOutputTypePresentation
 
 /-- The selected anchor and exposing context carry a concrete exact successful
 occurrence. -/
@@ -279,9 +275,8 @@ theorem concreteTrimmed_anchor_occurrence_of_startRooted
     (hworking : G.ExactWorkingConditions)
     (hnormal : G.StartRootedNormal)
     (X :
-      PresentTypedNonterminal
-        (ConcreteSuccessfulOutputTypeRefinement.presentation
-          (G := G) (obs := obs) hworking.basic)) :
+      (concreteTrimmedOutputTypePresentation_of_startRooted
+        (obs := obs) hworking hnormal).Present) :
     ExactSuccessfulDerivationOccurrence G X.node.base
       ((concreteTrimmedOutputTypePresentation_of_startRooted
         (obs := obs) hworking hnormal).anchor X)
@@ -394,7 +389,8 @@ theorem concreteTypedCharacteristicSample_correctedConcrete_exact_for_positive_s
       exactReachableSampleStringLanguage_mono
         hSK hbase
 
-    exact hlarger.toCorrectedConcrete
+    rcases hlarger with ⟨D⟩
+    exact ⟨D.toCorrectedConcrete⟩
 
 /-- Eventual exactness on every positive text under semantic start-rooted
 normality. -/
