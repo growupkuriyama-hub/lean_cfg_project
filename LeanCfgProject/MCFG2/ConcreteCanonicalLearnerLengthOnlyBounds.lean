@@ -62,6 +62,7 @@ variable {α : Type u}
 
 /-- The number of distinct letters in a word is at most its length. -/
 theorem card_list_toFinset_le_length
+    [decEqα : DecidableEq α]
     (word : Word α) :
     word.toFinset.card ≤ word.length := by
   classical
@@ -89,11 +90,11 @@ theorem card_sampleAlphabet_le_sampleLengthBudget
   calc
     (K.biUnion
       (fun word => word.toFinset)).card ≤
-        ∑ word in K, word.toFinset.card :=
+        Finset.sum K (fun word => word.toFinset.card) :=
       finset_card_biUnion_le_sum_card
         K (fun word => word.toFinset)
     _ ≤
-        ∑ word in K, word.length := by
+        Finset.sum K (fun word => word.length) := by
       apply Finset.sum_le_sum
       intro word hword
       exact card_list_toFinset_le_length word
@@ -281,23 +282,23 @@ def sampleLengthOnlyCorrectedBinaryWitnessBound
 def sampleLengthOnlyUnitRuleCountBound
     (sampleLength f : Nat) :
     Nat :=
-  ∑ d0 in Finset.range f,
+  Finset.sum (Finset.range f) (fun d0 =>
     sampleLengthOnlyUnitRuleBound
-      sampleLength (d0 + 1)
+      sampleLength (d0 + 1))
 
 /-- Sum of all corrected binary-witness bounds over positive arities at most
 `f`. -/
 def sampleLengthOnlyCorrectedBinaryRuleCountBound
     (sampleLength f : Nat) :
     Nat :=
-  ∑ e0 in Finset.range f,
-    ∑ dB0 in Finset.range f,
-      ∑ dC0 in Finset.range f,
+  Finset.sum (Finset.range f) (fun e0 =>
+    Finset.sum (Finset.range f) (fun dB0 =>
+      Finset.sum (Finset.range f) (fun dC0 =>
         sampleLengthOnlyCorrectedBinaryWitnessBound
           sampleLength
           (e0 + 1)
           (dB0 + 1)
-          (dC0 + 1)
+          (dC0 + 1))))
 
 /-- Total corrected concrete rule-count bound depending only on total sample
 length and fan-out. -/
