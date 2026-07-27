@@ -325,6 +325,7 @@ theorem ofDerives
               H.IsControlCode
                 (FiniteObjectTupleCode.mk X.1.tuple) := by
             simpa only [
+              CorrectedConcreteFiniteHypothesis.IsControlCode,
               FiniteObjectTupleCode.mk_tuple_eq
             ] using X.2
 
