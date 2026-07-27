@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerSinglePowerBounds
+import Mathlib.Tactic
 
 /-!
 # ConcreteCanonicalLearnerPolynomialExponentBounds.lean
