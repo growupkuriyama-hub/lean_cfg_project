@@ -362,7 +362,7 @@ theorem listedFiniteCorrectedConcreteLearnerDerives_mono
   induction h with
   | self x =>
       exact ListedFiniteCorrectedConcreteLearnerDerives.self x
-  | unit U hU hrest ih =>
+  | @unit U hU u hrest ih =>
       rcases U with ⟨d, R⟩
       let U' :
           CorrectedConcreteUnitRuleCode K obs f :=
@@ -378,20 +378,20 @@ theorem listedFiniteCorrectedConcreteLearnerDerives_mono
           K obs (R.evidence.mono hSK)
       change
         ListedFiniteCorrectedConcreteLearnerDerives
-          K obs f HK R.target u✝
+          K obs f HK R.target u
         at ih
       have ih' :
           ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK U'.target u✝ := by
+            K obs f HK U'.target u := by
         simpa only [htarget] using ih
       have hstep :=
         ListedFiniteCorrectedConcreteLearnerDerives.unit
           U' (HK.unitRuleCodes_complete U') ih'
       change
         ListedFiniteCorrectedConcreteLearnerDerives
-          K obs f HK R.source u✝
+          K obs f HK R.source u
       simpa only [hsource] using hstep
-  | binary B hB hleft hright ihleft ihright =>
+  | @binary B hB u v hleft hright ihleft ihright =>
       rcases B with ⟨e, dB, dC, R⟩
       let B' :
           CorrectedConcreteBinaryRuleCode K f :=
@@ -419,19 +419,19 @@ theorem listedFiniteCorrectedConcreteLearnerDerives_mono
           _ = R.source := R.source_eq_composition.symm
       change
         ListedFiniteCorrectedConcreteLearnerDerives
-          K obs f HK R.leftSource u✝
+          K obs f HK R.leftSource u
         at ihleft
       change
         ListedFiniteCorrectedConcreteLearnerDerives
-          K obs f HK R.rightSource v✝
+          K obs f HK R.rightSource v
         at ihright
       have ihleft' :
           ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK B'.leftSource u✝ := by
+            K obs f HK B'.leftSource u := by
         simpa only [hleftSource] using ihleft
       have ihright' :
           ListedFiniteCorrectedConcreteLearnerDerives
-            K obs f HK B'.rightSource v✝ := by
+            K obs f HK B'.rightSource v := by
         simpa only [hrightSource] using ihright
       have hstep :=
         ListedFiniteCorrectedConcreteLearnerDerives.binary
@@ -439,7 +439,7 @@ theorem listedFiniteCorrectedConcreteLearnerDerives_mono
       change
         ListedFiniteCorrectedConcreteLearnerDerives
           K obs f HK R.source
-            (evalTemplateTuple R.body u✝ v✝)
+            (evalTemplateTuple R.body u v)
       simpa only [hsource, hbody] using hstep
   | trans hxy hyz ihxy ihyz =>
       exact
