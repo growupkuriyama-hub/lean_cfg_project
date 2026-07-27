@@ -1,0 +1,66 @@
+name: Verify 4SQ4GBS
+
+on:
+  push:
+    paths:
+      - "LeanCfgProject/4SQ4GBS/**"
+      - ".github/workflows/verify-4sq4gbs.yml"
+  pull_request:
+    paths:
+      - "LeanCfgProject/4SQ4GBS/**"
+      - ".github/workflows/verify-4sq4gbs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-4sq4gbs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Python proof verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: LeanCfgProject/4SQ4GBS
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: LeanCfgProject/4SQ4GBS/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Check Python syntax
+        run: |
+          python -m compileall -q .
+
+      - name: Run complete certificate verification
+        env:
+          PYTHONHASHSEED: "0"
+          NUMBA_CACHE_DIR: "${{ runner.temp }}/numba-cache"
+        run: |
+          python run_all.py
+
+      - name: Upload verification log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 4sq4gbs-verification-log
+          path: LeanCfgProject/4SQ4GBS/verification.log
+          if-no-files-found: warn
+          retention-days: 30
