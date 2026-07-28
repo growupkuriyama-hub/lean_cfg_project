@@ -304,9 +304,7 @@ theorem fanoutAtMost
       max 1 f = f :=
     max_eq_right hf
 
-  rw [← hmax]
-
-  exact R.conditions.2.2.2
+  simpa [hmax] using R.conditions.2.2.2
 
 end BoundedCutCompiledWorkingGrammarRepresentation
 
