@@ -169,6 +169,7 @@ theorem mem_compiledGrammarNonterminals
     List.length_nil,
     List.length_map
   ]
+  rw [hcontrolLength]
   omega
 
 /-- Every nonterminal used by the actual grammar object is covered by the
