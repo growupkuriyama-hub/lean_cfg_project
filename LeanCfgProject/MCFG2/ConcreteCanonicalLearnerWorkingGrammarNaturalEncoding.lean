@@ -97,7 +97,7 @@ namespace CorrectedConcreteCompiledGrammarEntryCost
 
 /-- Maximum encoding cost among all entries actually stored in the compiled
 presentation. -/
-def maxEntryCost
+noncomputable def maxEntryCost
     (C :
       CorrectedConcreteCompiledGrammarEntryCost H)
     (dummy : α) :
@@ -291,7 +291,7 @@ def toEntryCost
 
 /-- Total length of the unary serialization of all explicit entries in the
 compiled presentation. -/
-def unaryDescriptionSize
+noncomputable def unaryDescriptionSize
     (E :
       CorrectedConcreteCompiledGrammarNaturalEncoding H)
     (dummy : α) :
@@ -388,7 +388,7 @@ theorem unaryDescriptionSize_le_structuralSquare_mul
 
 /-- Maximum unary code length among all entries actually occurring in the
 compiled presentation. -/
-def maxUnaryEntryCodeLength
+noncomputable def maxUnaryEntryCodeLength
     (E :
       CorrectedConcreteCompiledGrammarNaturalEncoding H)
     (dummy : α) :
@@ -470,6 +470,7 @@ theorem correctedConcreteFiniteHypothesis_unaryDescriptionSize_le_paperBound
 
   simpa [
     correctedConcreteCompiledGrammarUnaryDescriptionBound,
+    correctedConcreteCompiledGrammarDescriptionBound,
     CorrectedConcreteCompiledGrammarNaturalEncoding.toEntryCost
   ] using
     correctedConcreteFiniteHypothesis_descriptionSize_le_paperBound
