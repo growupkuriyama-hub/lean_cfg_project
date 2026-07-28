@@ -620,6 +620,7 @@ theorem correctedConcreteFiniteHypothesis_compiledGrammarRuleCount_le_paperBound
         K obs f).compiledGrammarRuleCount ≤
       correctedConcreteCompiledGrammarRuleCountBound
         (sampleLengthBudget K) f := by
+  classical
 
   let H :=
     correctedConcreteFiniteHypothesis
