@@ -152,12 +152,11 @@ theorem mem_compiledGrammarNonterminals
 @[simp] theorem compiledGrammarNonterminals_length :
     H.compiledGrammarNonterminals.length =
       H.controlCodes.card + 2 := by
-  simp [
-    CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminals,
-    Finset.length_toList,
-    Finset.card_attach,
-    Nat.add_comm
-  ]
+  change
+    1 + (1 + H.controlCodes.attach.toList.length) =
+      H.controlCodes.card + 2
+  rw [Finset.length_toList, Finset.card_attach]
+  omega
 
 /-- Every nonterminal used by the actual grammar object is covered by the
 explicit finite enumeration. -/
