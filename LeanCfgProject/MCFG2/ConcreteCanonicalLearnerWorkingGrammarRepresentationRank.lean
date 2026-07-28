@@ -91,8 +91,7 @@ def HasBoundedCutCompiledWorkingGrammarRepresentation
     Prop :=
   ∃ n : Nat,
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f n
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, w} α f n
 
 /-- Least finite budget at which a represented language enters the bounded
 cut-compiled hierarchy. -/
@@ -100,10 +99,13 @@ noncomputable def boundedCutCompiledWorkingGrammarRepresentationRank
     {f : Nat}
     {L : Set (Word α)}
     (hL :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L) :
-    Nat :=
-  Nat.find hL
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L) :
+    Nat := by
+
+  classical
+
+  exact
+    Nat.find hL
 
 namespace HasBoundedCutCompiledWorkingGrammarRepresentation
 
@@ -114,13 +116,15 @@ variable {L : Set (Word α)}
 /-- The least bounded-representation budget really represents the language. -/
 theorem rank_mem
     (hL :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L) :
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L) :
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f
-        (boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := w) α hL) := by
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, w} α f
+        (boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α hL) := by
+
+  classical
+
+  unfold
+    boundedCutCompiledWorkingGrammarRepresentationRank
 
   exact
     Nat.find_spec hL
@@ -128,16 +132,18 @@ theorem rank_mem
 /-- Minimality of the bounded representation rank. -/
 theorem rank_le_of_mem
     (hL :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L)
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L)
     {n : Nat}
     (hn :
       L ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := w) α f n) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := w) α hL ≤
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, w} α f n) :
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α hL ≤
       n := by
+
+  classical
+
+  unfold
+    boundedCutCompiledWorkingGrammarRepresentationRank
 
   exact
     Nat.find_min' hL hn
@@ -146,14 +152,11 @@ theorem rank_le_of_mem
 representation rank. -/
 theorem mem_iff_rank_le
     (hL :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L)
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L)
     (n : Nat) :
     L ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := w) α f n ↔
-      boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := w) α hL ≤
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, w} α f n ↔
+      boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α hL ≤
         n := by
 
   constructor
@@ -164,23 +167,19 @@ theorem mem_iff_rank_le
   · intro hrank
 
     exact
-      boundedCutCompiledWorkingGrammarLanguageClass_mono
-        (w := w) hrank
+      boundedCutCompiledWorkingGrammarLanguageClass_mono.{u, w} hrank
         hL.rank_mem
 
 /-- No budget below the representation rank can represent the language. -/
 theorem not_mem_of_lt_rank
     (hL :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L)
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L)
     {n : Nat}
     (hn :
       n <
-        boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := w) α hL) :
+        boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α hL) :
     L ∉
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f n := by
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, w} α f n := by
 
   intro hmem
 
@@ -192,14 +191,11 @@ theorem not_mem_of_lt_rank
 /-- Rank zero is equivalent to membership at level zero. -/
 theorem rank_eq_zero_iff
     (hL :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := w) α hL =
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L) :
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α hL =
         0 ↔
       L ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := w) α f 0 := by
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, w} α f 0 := by
 
   constructor
 
@@ -221,12 +217,9 @@ theorem rank_eq_zero_iff
 representability. -/
 theorem rank_proof_irrel
     (h₁ h₂ :
-      HasBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f L) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := w) α h₁ =
-      boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := w) α h₂ := by
+      HasBoundedCutCompiledWorkingGrammarRepresentation.{u, w} α f L) :
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α h₁ =
+      boundedCutCompiledWorkingGrammarRepresentationRank.{u, w} α h₂ := by
 
   have hp :
       h₁ = h₂ :=
@@ -254,8 +247,7 @@ theorem correctedConcreteCanonicalLearnerLanguage_hasBoundedRepresentation
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    HasBoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
+    HasBoundedCutCompiledWorkingGrammarRepresentation.{u, u}
       α f
       (CorrectedConcreteCanonicalLearnerLanguage
         K obs f) := by
@@ -273,8 +265,7 @@ noncomputable def correctedConcreteCanonicalLearnerLanguageRepresentationRank
     (f : Nat)
     (K : Finset (Word α)) :
     Nat :=
-  boundedCutCompiledWorkingGrammarRepresentationRank
-    (w := max u v)
+  boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
     α
     (correctedConcreteCanonicalLearnerLanguage_hasBoundedRepresentation
       hα obs f K)
@@ -307,8 +298,7 @@ theorem correctedConcreteCanonicalLearnerLanguage_mem_at_representationRank
     (K : Finset (Word α)) :
     CorrectedConcreteCanonicalLearnerLanguage
         K obs f ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
         α f
         (correctedConcreteCanonicalLearnerLanguageRepresentationRank
           hα obs f K) := by
@@ -323,8 +313,7 @@ theorem exactReachableSampleStringLanguage_hasBoundedRepresentation
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    HasBoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
+    HasBoundedCutCompiledWorkingGrammarRepresentation.{u, u}
       α f
       (ExactReachableSampleStringLanguage
         K obs f) := by
@@ -342,8 +331,7 @@ noncomputable def exactReachableSampleStringLanguageRepresentationRank
     (f : Nat)
     (K : Finset (Word α)) :
     Nat :=
-  boundedCutCompiledWorkingGrammarRepresentationRank
-    (w := max u v)
+  boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
     α
     (exactReachableSampleStringLanguage_hasBoundedRepresentation
       hα obs f K)
@@ -437,8 +425,12 @@ noncomputable def correctedConcreteWorkingGrammarExactOutputRank
     (hL :
       HasCorrectedConcreteWorkingGrammarExactOutputBudget
         hα obs f L) :
-    Nat :=
-  Nat.find hL
+    Nat := by
+
+  classical
+
+  exact
+    Nat.find hL
 
 namespace HasCorrectedConcreteWorkingGrammarExactOutputBudget
 
@@ -460,6 +452,11 @@ theorem rank_spec
       (correctedConcreteWorkingGrammarExactOutputRank
         hL) := by
 
+  classical
+
+  unfold
+    correctedConcreteWorkingGrammarExactOutputRank
+
   exact
     Nat.find_spec hL
 
@@ -475,6 +472,11 @@ theorem rank_le_of_exactOutputAtBudget
     correctedConcreteWorkingGrammarExactOutputRank
         hL ≤
       n := by
+
+  classical
+
+  unfold
+    correctedConcreteWorkingGrammarExactOutputRank
 
   exact
     Nat.find_min' hL hn
@@ -669,8 +671,7 @@ theorem boundedRepresentation_of_exactOutputAtBudget
       CorrectedConcreteWorkingGrammarExactOutputAtBudget
         hα obs f L n) :
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v) α f n := by
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u} α f n := by
 
   rcases h with
     ⟨K, hpositive, hlength, hexact⟩
@@ -682,8 +683,7 @@ theorem boundedRepresentation_of_exactOutputAtBudget
   have hRK :
       CorrectedConcreteCanonicalLearnerLanguage
           K obs f ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
           α f
           (sampleLengthBudget K) :=
     correctedConcreteCanonicalLearnerLanguage_mem_boundedCutCompiledClass
@@ -704,8 +704,7 @@ theorem boundedRepresentation_of_exactOutputAtBudget
   rw [hlanguage] at hRK
 
   exact
-    boundedCutCompiledWorkingGrammarLanguageClass_mono
-      (w := max u v)
+    boundedCutCompiledWorkingGrammarLanguageClass_mono.{u, u}
       hlength
       hRK
 
@@ -718,8 +717,7 @@ theorem hasBoundedRepresentation_of_hasExactOutputBudget
     (hL :
       HasCorrectedConcreteWorkingGrammarExactOutputBudget
         hα obs f L) :
-    HasBoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v) α f L := by
+    HasBoundedCutCompiledWorkingGrammarRepresentation.{u, u} α f L := by
 
   rcases hL with ⟨n, hn⟩
 
@@ -737,8 +735,7 @@ theorem boundedRepresentationRank_le_exactOutputRank
     (hL :
       HasCorrectedConcreteWorkingGrammarExactOutputBudget
         hα obs f L) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := max u v)
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
         α
         (hasBoundedRepresentation_of_hasExactOutputBudget
           hL) ≤
@@ -923,8 +920,7 @@ theorem startRootedTarget_boundedRepresentationRank_le_exactOutputRank
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
          α M obs f) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := max u v)
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
         α
         (hasBoundedRepresentation_of_hasExactOutputBudget
           (startRootedTarget_hasExactOutputBudget
@@ -995,8 +991,7 @@ theorem correctedConcreteWorkingGrammarLearner_representationRank_package :
       ∀ hL :
         L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f,
-      boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := max u v)
+      boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
           α
           (hasBoundedRepresentation_of_hasExactOutputBudget
             (startRootedTarget_hasExactOutputBudget
