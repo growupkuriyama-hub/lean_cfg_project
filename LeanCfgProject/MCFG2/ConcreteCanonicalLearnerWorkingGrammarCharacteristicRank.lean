@@ -183,8 +183,12 @@ noncomputable def correctedConcreteWorkingGrammarCharacteristicRank
     (hL :
       HasCorrectedConcreteWorkingGrammarCharacteristicBudget
         hα obs f L) :
-    Nat :=
-  Nat.find hL
+    Nat := by
+
+  classical
+
+  exact
+    Nat.find hL
 
 namespace HasCorrectedConcreteWorkingGrammarCharacteristicBudget
 
@@ -203,6 +207,11 @@ theorem rank_spec
       (correctedConcreteWorkingGrammarCharacteristicRank
         hL) := by
 
+  classical
+
+  unfold
+    correctedConcreteWorkingGrammarCharacteristicRank
+
   exact
     Nat.find_spec hL
 
@@ -218,6 +227,11 @@ theorem rank_le_of_characteristicAtBudget
     correctedConcreteWorkingGrammarCharacteristicRank
         hL ≤
       n := by
+
+  classical
+
+  unfold
+    correctedConcreteWorkingGrammarCharacteristicRank
 
   exact
     Nat.find_min' hL hn
@@ -432,8 +446,7 @@ theorem boundedRepresentation_of_characteristicAtBudget
       CorrectedConcreteWorkingGrammarCharacteristicAtBudget
         hα obs f L n) :
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v) α f n := by
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u} α f n := by
 
   exact
     boundedRepresentation_of_exactOutputAtBudget
@@ -450,8 +463,7 @@ theorem hasBoundedRepresentation_of_hasCharacteristicBudget
     (hL :
       HasCorrectedConcreteWorkingGrammarCharacteristicBudget
         hα obs f L) :
-    HasBoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v) α f L := by
+    HasBoundedCutCompiledWorkingGrammarRepresentation.{u, u} α f L := by
 
   rcases hL with
     ⟨n, hn⟩
@@ -471,8 +483,7 @@ theorem boundedRepresentationRank_le_characteristicRank
     (hCharacteristic :
       HasCorrectedConcreteWorkingGrammarCharacteristicBudget
         hα obs f L) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := max u v)
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
         α
         (hasBoundedRepresentation_of_hasCharacteristicBudget
           hCharacteristic) ≤
@@ -499,8 +510,7 @@ theorem representationRank_le_exactOutputRank_le_characteristicRank
     (hCharacteristic :
       HasCorrectedConcreteWorkingGrammarCharacteristicBudget
         hα obs f L) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := max u v)
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
           α
           (hasBoundedRepresentation_of_hasExactOutputBudget
             hExact) ≤
@@ -551,6 +561,8 @@ theorem characteristicRank_le_sampleLength
       hα obs f S L hS).rank_le_of_characteristicAtBudget
         (correctedConcreteWorkingGrammarCharacteristicAtBudget_of_sample
           hα obs f S L hS)
+
+variable [DecidableEq α]
 
 /-- One explicit characteristic sample gives the complete three-rank upper
 chain ending at its total word length. -/
@@ -709,8 +721,7 @@ theorem startRootedTarget_boundedRepresentationRank_le_characteristicRank
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
          α M obs f) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-        (w := max u v)
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
         α
         (hasBoundedRepresentation_of_hasExactOutputBudget
           (startRootedTarget_hasExactOutputBudget
@@ -795,8 +806,7 @@ theorem startRootedTarget_fullRankChain
     (hL :
       L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
          α M obs f) :
-    boundedCutCompiledWorkingGrammarRepresentationRank
-          (w := max u v)
+    boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
           α
           (hasBoundedRepresentation_of_hasExactOutputBudget
             (startRootedTarget_hasExactOutputBudget
@@ -887,8 +897,7 @@ theorem correctedConcreteWorkingGrammarLearner_identification_characteristicRank
         ∀ hL :
           L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
              α M obs f,
-        boundedCutCompiledWorkingGrammarRepresentationRank
-              (w := max u v)
+        boundedCutCompiledWorkingGrammarRepresentationRank.{u, u}
               α
               (hasBoundedRepresentation_of_hasExactOutputBudget
                 (startRootedTarget_hasExactOutputBudget
