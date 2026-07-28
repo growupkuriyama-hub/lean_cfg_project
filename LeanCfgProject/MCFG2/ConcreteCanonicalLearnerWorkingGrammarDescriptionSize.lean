@@ -132,7 +132,7 @@ variable
 
 /-- Total encoded cost of all explicit nonterminal entries and all three rule
 lists in the actual compiled grammar. -/
-def descriptionSize
+noncomputable def descriptionSize
     (C :
       CorrectedConcreteCompiledGrammarEntryCost H)
     (dummy : α) :
