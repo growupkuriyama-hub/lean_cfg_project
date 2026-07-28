@@ -120,8 +120,7 @@ abbrev FiniteObjectControlCode
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f) :=
-  {X : FiniteObjectTupleCode α //
-    H.IsControlCode X}
+  ↥H.controlCodes
 
 /-- Nonterminals of the concrete cut-saturated grammar. -/
 inductive CorrectedConcreteCutGrammarNonterminal
