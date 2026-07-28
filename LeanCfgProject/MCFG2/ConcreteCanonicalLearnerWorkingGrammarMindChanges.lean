@@ -243,6 +243,8 @@ variable {M : Type v}
 variable [Monoid M]
 variable [DecidableEq α]
 
+local attribute [instance] Classical.propDecidable
+
 /-- Number of semantic output-language changes before stage `N`. -/
 noncomputable def correctedConcreteWorkingGrammarMindChangeCount
     {L : Set (Word α)}
