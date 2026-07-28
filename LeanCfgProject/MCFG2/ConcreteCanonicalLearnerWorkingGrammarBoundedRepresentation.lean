@@ -207,8 +207,8 @@ def BoundedCutCompiledWorkingGrammarLanguageClass
     Set (Set (Word α)) :=
   {L |
     Nonempty
-      (BoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f n L)}
+      (BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+        α f n L)}
 
 namespace BoundedCutCompiledWorkingGrammarRepresentation
 
@@ -220,10 +220,10 @@ variable {L : Set (Word α)}
 cut-compiled representation. -/
 def forgetBound
     (R :
-      BoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f n L) :
-    CutCompiledWorkingGrammarRepresentation
-      (w := w) α f L where
+      BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+        α f n L) :
+    CutCompiledWorkingGrammarRepresentation.{u, w}
+      α f L where
 
   Nonterminal :=
     R.Nonterminal
@@ -241,11 +241,11 @@ def forgetBound
 cut-compiled language class. -/
 theorem target_mem_unboundedClass
     (R :
-      BoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f n L) :
+      BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+        α f n L) :
     L ∈
-      CutCompiledWorkingGrammarLanguageClass
-        (w := w) α f := by
+      CutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f := by
 
   exact
     ⟨R.forgetBound⟩
@@ -254,11 +254,11 @@ theorem target_mem_unboundedClass
 def mono
     {m : Nat}
     (R :
-      BoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f n L)
+      BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+        α f n L)
     (hnm : n ≤ m) :
-    BoundedCutCompiledWorkingGrammarRepresentation
-      (w := w) α f m L where
+    BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+      α f m L where
 
   Nonterminal :=
     R.Nonterminal
@@ -287,16 +287,16 @@ def mono
 equality. -/
 theorem target_eq_language
     (R :
-      BoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f n L) :
+      BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+        α f n L) :
     L = R.grammar.StringLanguage :=
   R.language_eq.symm
 
 /-- Positive fan-out form for a positive fixed fan-out parameter. -/
 theorem fanoutAtMost
     (R :
-      BoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) α f n L)
+      BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+        α f n L)
     (hf : 1 ≤ f) :
     R.grammar.FanoutAtMost f := by
 
@@ -322,10 +322,10 @@ hierarchy. -/
 theorem boundedCutCompiledWorkingGrammarLanguageClass_mono
     {f n m : Nat}
     (hnm : n ≤ m) :
-    BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f n ⊆
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f m := by
+    BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f n ⊆
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f m := by
 
   intro L hL
 
@@ -338,10 +338,10 @@ theorem boundedCutCompiledWorkingGrammarLanguageClass_mono
 cut-compiled representation class. -/
 theorem boundedCutCompiledWorkingGrammarLanguageClass_subset_unbounded
     (f n : Nat) :
-    BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f n ⊆
-      CutCompiledWorkingGrammarLanguageClass
-        (w := w) α f := by
+    BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f n ⊆
+      CutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f := by
 
   intro L hL
 
@@ -358,17 +358,17 @@ theorem exists_boundedRepresentation_implies_unbounded
     (hL :
       ∃ n : Nat,
         L ∈
-          BoundedCutCompiledWorkingGrammarLanguageClass
-            (w := w) α f n) :
+          BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+            α f n) :
     L ∈
-      CutCompiledWorkingGrammarLanguageClass
-        (w := w) α f := by
+      CutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f := by
 
   rcases hL with ⟨n, hn⟩
 
   exact
-    boundedCutCompiledWorkingGrammarLanguageClass_subset_unbounded
-      (w := w) f n hn
+    boundedCutCompiledWorkingGrammarLanguageClass_subset_unbounded.{u, w}
+      f n hn
 
 end BoundedClassHierarchy
 
@@ -387,8 +387,7 @@ noncomputable def correctedConcreteWorkingGrammarLearner_boundedRepresentation
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    BoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
+    BoundedCutCompiledWorkingGrammarRepresentation.{u, u}
       α f
       (sampleLengthBudget K)
       (CorrectedConcreteCanonicalLearnerLanguage
@@ -447,8 +446,7 @@ theorem correctedConcreteCanonicalLearnerLanguage_mem_boundedCutCompiledClass
     (K : Finset (Word α)) :
     CorrectedConcreteCanonicalLearnerLanguage
         K obs f ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
         α f
         (sampleLengthBudget K) := by
 
@@ -463,8 +461,7 @@ noncomputable def exactReachableSampleStringLanguage_boundedRepresentation
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    BoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
+    BoundedCutCompiledWorkingGrammarRepresentation.{u, u}
       α f
       (sampleLengthBudget K)
       (ExactReachableSampleStringLanguage
@@ -522,8 +519,7 @@ theorem exactReachableSampleStringLanguage_mem_boundedCutCompiledClass
     (K : Finset (Word α)) :
     ExactReachableSampleStringLanguage
         K obs f ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
         α f
         (sampleLengthBudget K) := by
 
@@ -555,8 +551,7 @@ structure CorrectedConcreteBoundedWorkingGrammarTargetWitness
     (sample : Set (Word α)) ⊆ L
 
   representation :
-    BoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
+    BoundedCutCompiledWorkingGrammarRepresentation.{u, u}
       α f
       (sampleLengthBudget sample)
       L
@@ -574,8 +569,7 @@ theorem target_mem_boundedClass
       CorrectedConcreteBoundedWorkingGrammarTargetWitness
         hα obs f L) :
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
         α f
         (sampleLengthBudget W.sample) := by
 
@@ -626,11 +620,9 @@ noncomputable def correctedConcreteBoundedWorkingGrammarTargetWitness_of_charact
         Set.Subset.rfl
         hS.1
 
-    rw [
-      correctedConcreteWorkingGrammarLearner_stringLanguage_eq_corrected
-    ] at houtput
-
-    exact houtput
+    exact
+      (correctedConcreteWorkingGrammarHypLanguage_apply
+        hα obs f S).symm.trans houtput
 
   exact
     { sample :=
@@ -677,8 +669,7 @@ theorem exists_boundedCutCompiledRepresentation_of_characteristicSample
           hα obs f)
         S L) :
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
         α f
         (sampleLengthBudget S) := by
 
@@ -703,6 +694,8 @@ variable [Monoid M]
 variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
+
+include hα
 
 /-- Every semantic start-rooted target has a finite positive bounded grammar
 certificate. -/
@@ -732,8 +725,8 @@ theorem startRootedTarget_mem_some_boundedCutCompiledClass
          α M obs f) :
     ∃ n : Nat,
       L ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v) α f n := by
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
+          α f n := by
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_boundedTargetWitness
@@ -751,8 +744,8 @@ theorem startRootedTargetClass_subset_exists_boundedCutCompiledClass :
       {L : Set (Word α) |
         ∃ n : Nat,
           L ∈
-            BoundedCutCompiledWorkingGrammarLanguageClass
-              (w := max u v) α f n} := by
+            BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
+              α f n} := by
 
   intro L hL
 
@@ -770,8 +763,7 @@ theorem correctedConcreteWorkingGrammarLearner_exists_positive_boundedRepresenta
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       L ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
           α f
           (sampleLengthBudget S) := by
 
@@ -800,36 +792,37 @@ variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
 
+include hα
+
 /-- Paper-facing bounded-representation hierarchy package. -/
 theorem correctedConcreteWorkingGrammarLearner_boundedRepresentation_package :
     (∀ n m : Nat,
       n ≤ m →
-      BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v) α f n ⊆
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v) α f m) ∧
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
+          α f n ⊆
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
+          α f m) ∧
       (StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f ⊆
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
-              BoundedCutCompiledWorkingGrammarLanguageClass
-                (w := max u v) α f n}) ∧
+              BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
+                α f n}) ∧
       (∀ L : Set (Word α),
         L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
              α M obs f →
         ∃ S : Finset (Word α),
           (S : Set (Word α)) ⊆ L ∧
           L ∈
-            BoundedCutCompiledWorkingGrammarLanguageClass
-              (w := max u v)
+            BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
               α f
               (sampleLengthBudget S)) := by
 
   exact
     ⟨fun n m hnm =>
-        boundedCutCompiledWorkingGrammarLanguageClass_mono
-          (w := max u v) hnm,
+        boundedCutCompiledWorkingGrammarLanguageClass_mono.{u, u}
+          hnm,
       startRootedTargetClass_subset_exists_boundedCutCompiledClass
          hα obs f,
       fun L hL =>
@@ -850,13 +843,12 @@ theorem correctedConcreteWorkingGrammarLearner_identification_boundedRepresentat
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
-              BoundedCutCompiledWorkingGrammarLanguageClass
-                (w := max u v) α f n}) ∧
+              BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
+                α f n}) ∧
       (∀ K : Finset (Word α),
         CorrectedConcreteCanonicalLearnerLanguage
             K obs f ∈
-          BoundedCutCompiledWorkingGrammarLanguageClass
-            (w := max u v)
+          BoundedCutCompiledWorkingGrammarLanguageClass.{u, u}
             α f
             (sampleLengthBudget K)) := by
 
