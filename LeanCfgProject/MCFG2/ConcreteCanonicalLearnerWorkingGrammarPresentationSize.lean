@@ -125,6 +125,7 @@ theorem control_mem_compiledGrammarNonterminals
   simp [
     CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminals
   ]
+  exact Finset.mem_toList.mpr (Finset.mem_attach H.controlCodes X)
 
 /-- Every nonterminal of the constructed grammar occurs in the explicit
 enumeration. -/
@@ -153,9 +154,9 @@ theorem mem_compiledGrammarNonterminals
       H.controlCodes.card + 2 := by
   simp [
     CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminals,
-    Nat.add_comm,
-    Nat.add_left_comm,
-    Nat.add_assoc
+    Finset.length_toList,
+    Finset.card_attach,
+    Nat.add_comm
   ]
 
 /-- Every nonterminal used by the actual grammar object is covered by the
@@ -181,7 +182,7 @@ variable {obs : α → M}
 variable {f : Nat}
 
 /-- Number of entries in the explicit nonterminal enumeration. -/
-def CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminalCount
+noncomputable def CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminalCount
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f) :
@@ -243,7 +244,7 @@ variable {f : Nat}
 
 /-- Total number of top-level entries in the compiled finite presentation:
 nonterminal entries plus rule entries. -/
-def CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationItemCount
+noncomputable def CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationItemCount
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f) :
@@ -328,7 +329,7 @@ variable {f : Nat}
 
 /-- Top-level item count read directly from the actual compiled grammar:
 explicit nonterminal enumeration plus all three rule lists. -/
-def CorrectedConcreteFiniteHypothesis.toCutWorkingMCFGPresentationItemCount
+noncomputable def CorrectedConcreteFiniteHypothesis.toCutWorkingMCFGPresentationItemCount
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
@@ -359,9 +360,10 @@ theorem toCutWorkingMCFGPresentationItemCount_eq
     compiledGrammarPresentationItemCount
     compiledGrammarNonterminalCount
 
-  rw [
+  have hrules :=
     H.toCutWorkingMCFG_totalRuleCount_eq
-  ]
+      dummy
+  omega
 
 /-- The directly read actual grammar presentation satisfies the structural
 square bound. -/
@@ -409,6 +411,7 @@ theorem correctedConcreteFiniteHypothesis_presentationItemCount_le_paperBound
         K obs f).compiledGrammarPresentationItemCount ≤
       correctedConcreteCompiledGrammarPresentationItemBound
         (sampleLengthBudget K) f := by
+  classical
 
   let H :=
     correctedConcreteFiniteHypothesis
@@ -494,10 +497,12 @@ section WorkingGrammarLearnerPresentationSize
 
 variable {α : Type u}
 variable {M : Type v} [Monoid M]
+variable {obs : α → M}
+variable {f : Nat}
 
 /-- Number of nonterminal entries in the explicit enumeration attached to an
 actual learner output. -/
-def CorrectedConcreteWorkingGrammarHypothesis.nonterminalCount
+noncomputable def CorrectedConcreteWorkingGrammarHypothesis.nonterminalCount
     (H :
       CorrectedConcreteWorkingGrammarHypothesis
         α M obs f) :
@@ -506,7 +511,7 @@ def CorrectedConcreteWorkingGrammarHypothesis.nonterminalCount
 
 /-- Total nonterminal-plus-rule item count attached to an actual learner
 output. -/
-def CorrectedConcreteWorkingGrammarHypothesis.presentationItemCount
+noncomputable def CorrectedConcreteWorkingGrammarHypothesis.presentationItemCount
     (H :
       CorrectedConcreteWorkingGrammarHypothesis
         α M obs f) :
