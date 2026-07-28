@@ -84,49 +84,49 @@ theorem CorrectedConcreteFiniteHypothesis.controlCode_arity_le_max
   unfold CorrectedConcreteFiniteHypothesis.IsControlCode at hX
   unfold CorrectedConcreteFiniteHypothesis.controlCodes at hX
 
-  rcases Finset.mem_union.mp hX with hword | hrest
+  rcases Finset.mem_union.mp hX with hrest | hbinaryRight
 
-  · rcases Finset.mem_image.mp hword with
-      ⟨word, hword, rfl⟩
-    exact Nat.le_max_left 1 f
+  · rcases Finset.mem_union.mp hrest with hrest | hbinaryLeft
 
-  · rcases Finset.mem_union.mp hrest with hunitSource | hrest
+    · rcases Finset.mem_union.mp hrest with hrest | hbinarySource
 
-    · rcases Finset.mem_image.mp hunitSource with
-        ⟨U, hU, rfl⟩
-      exact
-        U.arity_le.trans
-          (Nat.le_max_right 1 f)
+      · rcases Finset.mem_union.mp hrest with hrest | hunitTarget
 
-    · rcases Finset.mem_union.mp hrest with hunitTarget | hrest
+        · rcases Finset.mem_union.mp hrest with hword | hunitSource
 
-      · rcases Finset.mem_image.mp hunitTarget with
-          ⟨U, hU, rfl⟩
-        exact
-          U.arity_le.trans
-            (Nat.le_max_right 1 f)
+          · rcases Finset.mem_image.mp hword with
+              ⟨word, hword, rfl⟩
+            exact Nat.le_max_left 1 f
 
-      · rcases Finset.mem_union.mp hrest with hbinarySource | hrest
+          · rcases Finset.mem_image.mp hunitSource with
+              ⟨U, hU, rfl⟩
+            exact
+              U.arity_le.trans
+                (Nat.le_max_right 1 f)
 
-        · rcases Finset.mem_image.mp hbinarySource with
-            ⟨B, hB, rfl⟩
+        · rcases Finset.mem_image.mp hunitTarget with
+            ⟨U, hU, rfl⟩
           exact
-            B.parentArity_le.trans
+            U.arity_le.trans
               (Nat.le_max_right 1 f)
 
-        · rcases Finset.mem_union.mp hrest with hbinaryLeft | hbinaryRight
+      · rcases Finset.mem_image.mp hbinarySource with
+          ⟨B, hB, rfl⟩
+        exact
+          B.parentArity_le.trans
+            (Nat.le_max_right 1 f)
 
-          · rcases Finset.mem_image.mp hbinaryLeft with
-              ⟨B, hB, rfl⟩
-            exact
-              B.leftArity_le.trans
-                (Nat.le_max_right 1 f)
+    · rcases Finset.mem_image.mp hbinaryLeft with
+        ⟨B, hB, rfl⟩
+      exact
+        B.leftArity_le.trans
+          (Nat.le_max_right 1 f)
 
-          · rcases Finset.mem_image.mp hbinaryRight with
-              ⟨B, hB, rfl⟩
-            exact
-              B.rightArity_le.trans
-                (Nat.le_max_right 1 f)
+  · rcases Finset.mem_image.mp hbinaryRight with
+      ⟨B, hB, rfl⟩
+    exact
+      B.rightArity_le.trans
+        (Nat.le_max_right 1 f)
 
 /-- If the fixed fan-out bound is positive, every finite control tuple code has
 arity at most `f` itself. -/
@@ -405,7 +405,7 @@ theorem correctedConcreteCutConstantRule_not_nondeleting
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f)
-    (X : H.controlCodes.attach) :
+    (X : H.controlCodes) :
     ¬
       (correctedConcreteCutConstantRule
         H X).Nondeleting := by
@@ -435,7 +435,7 @@ theorem CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG_not_binaryRulesNondel
     ⟨X, hX⟩
 
   let Xcode :
-      H.controlCodes.attach :=
+      H.controlCodes :=
     ⟨X, hX⟩
 
   have hrule :
