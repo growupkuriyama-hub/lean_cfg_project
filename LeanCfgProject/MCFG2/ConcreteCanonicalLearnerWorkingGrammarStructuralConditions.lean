@@ -702,8 +702,8 @@ theorem correctedConcreteWorkingGrammarLearner_class_structuralBoundary_package 
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearner
           hα obs f K).grammar.CutCompiledConditions f) ∧
@@ -720,7 +720,7 @@ theorem correctedConcreteWorkingGrammarLearner_class_structuralBoundary_package 
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearner_cutCompiledConditions
         hα obs f,
       correctedConcreteWorkingGrammarLearner_stringLanguage_eq_corrected

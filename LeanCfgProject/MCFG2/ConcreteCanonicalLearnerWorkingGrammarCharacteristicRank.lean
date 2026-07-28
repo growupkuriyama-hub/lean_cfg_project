@@ -607,14 +607,14 @@ budget for the actual working-grammar learner. -/
 theorem startRootedTarget_hasCharacteristicBudget
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     HasCorrectedConcreteWorkingGrammarCharacteristicBudget
       hα obs f L := by
 
   let S :=
     startRootedCorrectedConcreteTargetCharacteristicSample
-      (v := w) obs f hL
+       obs f hL
 
   have hS :
       CharacteristicSample
@@ -624,7 +624,7 @@ theorem startRootedTarget_hasCharacteristicBudget
           hα obs f)
         S L :=
     selectedStartRootedCharacteristicSample_workingGrammar_characteristic
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     hasCharacteristicBudget_of_characteristicSample
@@ -635,36 +635,36 @@ target. -/
 noncomputable def startRootedTargetCharacteristicRank
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     Nat :=
   correctedConcreteWorkingGrammarCharacteristicRank
     (startRootedTarget_hasCharacteristicBudget
-      (v := w) hα obs f hL)
+       hα obs f hL)
 
 /-- At the target's characteristic rank, there exists an actual finite
 characteristic sample. -/
 theorem startRootedTarget_characteristicAt_rank
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     CorrectedConcreteWorkingGrammarCharacteristicAtBudget
       hα obs f L
       (startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL) := by
+         hα obs f hL) := by
 
   exact
     (startRootedTarget_hasCharacteristicBudget
-      (v := w) hα obs f hL).rank_spec
+       hα obs f hL).rank_spec
 
 /-- Expanded minimum witness: a finite positive characteristic sample exists
 at the target's least characteristic budget. -/
 theorem startRootedTarget_exists_characteristicSample_at_rank
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ S : Finset (Word α),
       CharacteristicSample
           (correctedConcreteWorkingGrammarHypLanguage
@@ -674,22 +674,22 @@ theorem startRootedTarget_exists_characteristicSample_at_rank
           S L ∧
         sampleLengthBudget S ≤
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL := by
+             hα obs f hL := by
 
   exact
     (startRootedTarget_hasCharacteristicBudget
-      (v := w) hα obs f hL).exists_characteristicSample_at_rank
+       hα obs f hL).exists_characteristicSample_at_rank
 
 /-- Exact learner-output rank is bounded by the target's characteristic rank. -/
 theorem startRootedTargetExactOutputRank_le_characteristicRank
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     startRootedTargetExactOutputRank
-        (v := w) hα obs f hL ≤
+         hα obs f hL ≤
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   unfold
     startRootedTargetExactOutputRank
@@ -698,48 +698,48 @@ theorem startRootedTargetExactOutputRank_le_characteristicRank
   exact
     exactOutputRank_le_characteristicRank
       (startRootedTarget_hasExactOutputBudget
-        (v := w) hα obs f hL)
+         hα obs f hL)
       (startRootedTarget_hasCharacteristicBudget
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- The bounded grammar representation rank is bounded by the target's
 characteristic rank. -/
 theorem startRootedTarget_boundedRepresentationRank_le_characteristicRank
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     boundedCutCompiledWorkingGrammarRepresentationRank
         (w := max u v)
         α
         (hasBoundedRepresentation_of_hasExactOutputBudget
           (startRootedTarget_hasExactOutputBudget
-            (v := w) hα obs f hL)) ≤
+             hα obs f hL)) ≤
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   exact
     (startRootedTarget_boundedRepresentationRank_le_exactOutputRank
-      (v := w) hα obs f hL).trans
+       hα obs f hL).trans
         (startRootedTargetExactOutputRank_le_characteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
 
 /-- The selected characteristic sample from the constructive theorem
 upper-bounds the least characteristic rank. -/
 theorem startRootedTargetCharacteristicRank_le_selectedCharacteristicSampleLength
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL ≤
+         hα obs f hL ≤
       sampleLengthBudget
         (startRootedCorrectedConcreteTargetCharacteristicSample
-          (v := w) obs f hL) := by
+           obs f hL) := by
 
   let S :=
     startRootedCorrectedConcreteTargetCharacteristicSample
-      (v := w) obs f hL
+       obs f hL
 
   have hS :
       CharacteristicSample
@@ -749,14 +749,14 @@ theorem startRootedTargetCharacteristicRank_le_selectedCharacteristicSampleLengt
           hα obs f)
         S L :=
     selectedStartRootedCharacteristicSample_workingGrammar_characteristic
-      (v := w) hα obs f hL
+       hα obs f hL
 
   unfold
     startRootedTargetCharacteristicRank
 
   exact
     (startRootedTarget_hasCharacteristicBudget
-      (v := w) hα obs f hL).rank_le_of_characteristicAtBudget
+       hα obs f hL).rank_le_of_characteristicAtBudget
         (correctedConcreteWorkingGrammarCharacteristicAtBudget_of_sample
           hα obs f S L hS)
 
@@ -765,8 +765,8 @@ characteristic rank. -/
 theorem startRootedTargetCharacteristicRank_le_sampleLength_of_characteristic
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f)
     (S : Finset (Word α))
     (hS :
       CharacteristicSample
@@ -776,7 +776,7 @@ theorem startRootedTargetCharacteristicRank_le_sampleLength_of_characteristic
           hα obs f)
         S L) :
     startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL ≤
+         hα obs f hL ≤
       sampleLengthBudget S := by
 
   unfold
@@ -784,7 +784,7 @@ theorem startRootedTargetCharacteristicRank_le_sampleLength_of_characteristic
 
   exact
     (startRootedTarget_hasCharacteristicBudget
-      (v := w) hα obs f hL).rank_le_of_characteristicAtBudget
+       hα obs f hL).rank_le_of_characteristicAtBudget
         (correctedConcreteWorkingGrammarCharacteristicAtBudget_of_sample
           hα obs f S L hS)
 
@@ -793,33 +793,33 @@ sample. -/
 theorem startRootedTarget_fullRankChain
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     boundedCutCompiledWorkingGrammarRepresentationRank
           (w := max u v)
           α
           (hasBoundedRepresentation_of_hasExactOutputBudget
             (startRootedTarget_hasExactOutputBudget
-              (v := w) hα obs f hL)) ≤
+               hα obs f hL)) ≤
         startRootedTargetExactOutputRank
-          (v := w) hα obs f hL ∧
+           hα obs f hL ∧
       startRootedTargetExactOutputRank
-          (v := w) hα obs f hL ≤
+           hα obs f hL ≤
         startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL ∧
+           hα obs f hL ∧
       startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL ≤
+           hα obs f hL ≤
         sampleLengthBudget
           (startRootedCorrectedConcreteTargetCharacteristicSample
-            (v := w) obs f hL) := by
+             obs f hL) := by
 
   exact
     ⟨startRootedTarget_boundedRepresentationRank_le_exactOutputRank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetExactOutputRank_le_characteristicRank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetCharacteristicRank_le_selectedCharacteristicSampleLength
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 end StartRootedCharacteristicRank
 
@@ -841,31 +841,31 @@ start-rooted target. -/
 theorem correctedConcreteWorkingGrammarLearner_characteristicRank_package :
     ∀ L : Set (Word α),
       ∀ hL :
-        L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f,
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f,
       CorrectedConcreteWorkingGrammarCharacteristicAtBudget
           hα obs f L
           (startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL) ∧
+             hα obs f hL) ∧
         startRootedTargetExactOutputRank
-            (v := w) hα obs f hL ≤
+             hα obs f hL ≤
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL ∧
+             hα obs f hL ∧
         startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL ≤
+             hα obs f hL ≤
           sampleLengthBudget
             (startRootedCorrectedConcreteTargetCharacteristicSample
-              (v := w) obs f hL) := by
+               obs f hL) := by
 
   intro L hL
 
   exact
     ⟨startRootedTarget_characteristicAt_rank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetExactOutputRank_le_characteristicRank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetCharacteristicRank_le_selectedCharacteristicSampleLength
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 /-- Final identification-and-rank endpoint.
 
@@ -881,36 +881,36 @@ theorem correctedConcreteWorkingGrammarLearner_identification_characteristicRank
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ L : Set (Word α),
         ∀ hL :
-          L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f,
+          L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f,
         boundedCutCompiledWorkingGrammarRepresentationRank
               (w := max u v)
               α
               (hasBoundedRepresentation_of_hasExactOutputBudget
                 (startRootedTarget_hasExactOutputBudget
-                  (v := w) hα obs f hL)) ≤
+                   hα obs f hL)) ≤
             startRootedTargetExactOutputRank
-              (v := w) hα obs f hL ∧
+               hα obs f hL ∧
           startRootedTargetExactOutputRank
-              (v := w) hα obs f hL ≤
+               hα obs f hL ≤
             startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL ∧
+               hα obs f hL ∧
           startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL ≤
+               hα obs f hL ≤
             sampleLengthBudget
               (startRootedCorrectedConcreteTargetCharacteristicSample
-                (v := w) obs f hL)) := by
+                 obs f hL)) := by
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       fun L hL =>
         startRootedTarget_fullRankChain
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 end CharacteristicRankPackages
 

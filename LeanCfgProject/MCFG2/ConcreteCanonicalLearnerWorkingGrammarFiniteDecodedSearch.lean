@@ -994,8 +994,8 @@ theorem
     (obs : α → M)
     (f : Nat)
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃
       (S : Finset (Word α))
       (R :
@@ -1023,7 +1023,7 @@ theorem
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_checkedBitBoundedTargetWitness
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -1056,8 +1056,8 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearnerDecodedPresentationSearch
             hα obs f K).length <=
@@ -1075,8 +1075,8 @@ theorem
           correctedConcreteWorkingGrammarLearnerDecodedPresentationSearch
             hα obs f K) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∃
           (S : Finset (Word α))
           (R :
@@ -1104,14 +1104,14 @@ theorem
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearnerDecodedPresentationSearch_length_le
         hα obs f,
       correctedConcreteWorkingGrammarLearner_actualCodePresentation_mem_decodedSearch
         hα obs f,
       fun L hL =>
         startRootedTarget_exists_positive_finiteDecodedSearchWitness
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 end FinalFiniteDecodedSearchPackage
 

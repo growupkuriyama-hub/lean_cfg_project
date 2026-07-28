@@ -705,8 +705,8 @@ theorem
     correctedConcreteWorkingGrammarLearner_exists_checkedBitBoundedTargetWitness
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     Nonempty
       (CorrectedConcreteCheckedBitBoundedWorkingGrammarTargetWitness
         hα obs f L) := by
@@ -714,7 +714,7 @@ theorem
   obtain
     ⟨S, hS⟩ :=
       correctedConcreteWorkingGrammarLearner_characteristicSample_for_startRootedTargetClass
-        (v := w) hα obs f hL
+         hα obs f hL
 
   exact
     ⟨correctedConcreteCheckedBitBoundedWorkingGrammarTargetWitness_of_characteristicSample
@@ -725,8 +725,8 @@ theorem
     startRootedTarget_mem_some_checkedBitBoundedCutCompiledClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ n : Nat,
       L ∈
         CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
@@ -736,7 +736,7 @@ theorem
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_checkedBitBoundedTargetWitness
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -746,8 +746,8 @@ theorem
 /-- Class-level inclusion into the union of finite checked bit-bounded levels. -/
 theorem
     startRootedTargetClass_subset_exists_checkedBitBoundedCutCompiledClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f ⊆
+    StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f ⊆
       {L : Set (Word α) |
         ∃ n : Nat,
           L ∈
@@ -760,15 +760,15 @@ theorem
 
   exact
     startRootedTarget_mem_some_checkedBitBoundedCutCompiledClass
-      (v := w) hα obs f hL
+       hα obs f hL
 
 /-- Expanded positive-sample witness form. -/
 theorem
     correctedConcreteWorkingGrammarLearner_exists_positive_checkedBitBoundedRepresentation
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       L ∈
@@ -780,7 +780,7 @@ theorem
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_checkedBitBoundedTargetWitness
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -816,8 +816,8 @@ theorem
           (w := max u v)
           (z := max u v)
           α f m) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f ⊆
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f ⊆
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
@@ -834,8 +834,8 @@ theorem
             α f
             (sampleLengthBudget K)) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∃ S : Finset (Word α),
           (S : Set (Word α)) ⊆ L ∧
           L ∈
@@ -852,12 +852,12 @@ theorem
           (z := max u v)
           hnm,
       startRootedTargetClass_subset_exists_checkedBitBoundedCutCompiledClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteCanonicalLearnerLanguage_mem_checkedBitBoundedClass
         hα obs f,
       fun L hL =>
         correctedConcreteWorkingGrammarLearner_exists_positive_checkedBitBoundedRepresentation
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 /-- Combined identification and checked bit-bounded finite-representation
 endpoint. -/
@@ -868,10 +868,10 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f ⊆
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f ⊆
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
@@ -904,9 +904,9 @@ theorem
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       startRootedTargetClass_subset_exists_checkedBitBoundedCutCompiledClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearner_language_mem_checkedBitBoundedClass
         hα obs f,
       fun K =>

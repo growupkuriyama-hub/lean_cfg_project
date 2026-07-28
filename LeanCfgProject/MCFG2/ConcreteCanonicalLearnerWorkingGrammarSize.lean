@@ -118,6 +118,7 @@ end FinsetCardinalityHelpers
 section SampleCardinality
 
 variable {α : Type u}
+variable [DecidableEq α]
 
 /-- A finite set of words has cardinality at most its total length plus the
 possible exceptional empty word. -/
@@ -135,7 +136,7 @@ theorem card_sample_le_lengthBudget_add_emptyIndicator
 
   | @insert word K hword ih =>
       rw [
-        Finset.card_insert_of_not_mem hword
+        Finset.card_insert_of_notMem hword
       ]
 
       simp only [sampleLengthBudget] at ih ⊢
@@ -422,7 +423,7 @@ variable {f : Nat}
 
 /-- Exact total rule count of the concrete compiled grammar, expressed through
 the finite control and cut-saturation sets. -/
-def CorrectedConcreteFiniteHypothesis.compiledGrammarRuleCount
+noncomputable def CorrectedConcreteFiniteHypothesis.compiledGrammarRuleCount
     (H :
       CorrectedConcreteFiniteHypothesis
         K obs f) :
@@ -869,8 +870,8 @@ theorem correctedConcreteWorkingGrammarLearner_size_semantic_package :
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearner
             hα obs f K).grammar.StringLanguage =
@@ -889,7 +890,7 @@ theorem correctedConcreteWorkingGrammarLearner_size_semantic_package :
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearner_stringLanguage_eq_corrected
         hα obs f,
       fun K =>
@@ -903,8 +904,8 @@ the actual output grammar is exact and both source and compiled grammar counts
 satisfy their verified bounds. -/
 theorem correctedConcreteWorkingGrammarLearner_selectedStage_size_package :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 ≤ n →
@@ -931,14 +932,14 @@ theorem correctedConcreteWorkingGrammarLearner_selectedStage_size_package :
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       correctedConcreteFiniteHypothesis_ruleCount_le_paperBound
         (T.prefixSample n) obs f,
       correctedConcreteWorkingGrammarLearner_prefix_grammarRuleCount_le

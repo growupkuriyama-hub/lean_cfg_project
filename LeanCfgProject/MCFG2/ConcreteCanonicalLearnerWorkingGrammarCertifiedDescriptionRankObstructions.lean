@@ -156,8 +156,8 @@ theorem startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (rank : Nat) :
     L ∉
         CorrectedConcreteCertifiedRankProfileClass
@@ -166,7 +166,7 @@ theorem startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
           obs f rank ↔
       rank <
         startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL := by
+           hα obs f hL := by
 
   constructor
 
@@ -176,24 +176,24 @@ theorem startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
 
     have hle :
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           rank := by
       omega
 
     exact
       hnot
         ((startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-          (v := w) hα obs f hL rank).mpr
+           hα obs f hL rank).mpr
           hle)
 
   · intro hrank hmem
 
     have hle :
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           rank :=
       (startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-        (v := w) hα obs f hL rank).mp
+         hα obs f hL rank).mp
         hmem
 
     omega
@@ -205,8 +205,8 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hnot :
       L ∉
@@ -216,21 +216,21 @@ theorem
           obs f rank) :
     rank <
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   have hdescription :
       rank <
         startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL :=
+           hα obs f hL :=
     (startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
-      (v := w) hα obs f hL rank).mp
+       hα obs f hL rank).mp
       hnot
 
   exact
     lt_of_lt_of_le
       hdescription
       (startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- If the target characteristic rank is at most `rank`, profile membership at
 `rank` is mandatory. -/
@@ -239,12 +239,12 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hrank :
       startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank) :
     L ∈
       CorrectedConcreteCertifiedRankProfileClass
@@ -254,7 +254,7 @@ theorem
 
   exact
     startRootedTarget_mem_certifiedRankProfileClass_of_characteristicRank_le
-      (v := w) hα obs f hL hrank
+       hα obs f hL hrank
 
 /-- Profile non-membership is incompatible with a characteristic-rank upper
 bound at the same level. -/
@@ -263,8 +263,8 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hnot :
       L ∉
@@ -274,7 +274,7 @@ theorem
           obs f rank) :
     ¬
       startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank := by
 
   intro hrank
@@ -282,7 +282,7 @@ theorem
   exact
     hnot
       (startRootedTarget_mem_certifiedRankProfile_of_characteristicRank_le
-        (v := w) hα obs f hL hrank)
+         hα obs f hL hrank)
 
 end TargetProfileObstructions
 
@@ -306,40 +306,40 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hcomplexity :
       correctedConcreteCertifiedRankBitBudget
           rank f <
         startRootedTargetCertifiedBitDescriptionComplexity
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     rank <
       startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   by_contra hnot
 
   have hrank :
       startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank := by
     omega
 
   have hminimum :
       startRootedTargetCertifiedBitDescriptionComplexity
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         correctedConcreteCertifiedRankBitBudget
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f :=
     startRootedTargetCertifiedBitDescriptionComplexity_le_descriptionRankBudget
-      (v := w) hα obs f hL
+       hα obs f hL
 
   have hbudget :
       correctedConcreteCertifiedRankBitBudget
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f <=
         correctedConcreteCertifiedRankBitBudget
           rank f :=
@@ -348,7 +348,7 @@ theorem
 
   have hupper :
       startRootedTargetCertifiedBitDescriptionComplexity
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         correctedConcreteCertifiedRankBitBudget
           rank f :=
     hminimum.trans hbudget
@@ -362,40 +362,40 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hcomplexity :
       correctedConcreteCertifiedRankSearchBudget
           rank f <
         startRootedTargetCertifiedCanonicalSearchComplexity
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     rank <
       startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   by_contra hnot
 
   have hrank :
       startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank := by
     omega
 
   have hminimum :
       startRootedTargetCertifiedCanonicalSearchComplexity
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         correctedConcreteCertifiedRankSearchBudget
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f :=
     startRootedTargetCertifiedCanonicalSearchComplexity_le_descriptionRankBudget
-      (v := w) hα obs f hL
+       hα obs f hL
 
   have hbudget :
       correctedConcreteCertifiedRankSearchBudget
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f <=
         correctedConcreteCertifiedRankSearchBudget
           rank f :=
@@ -404,7 +404,7 @@ theorem
 
   have hupper :
       startRootedTargetCertifiedCanonicalSearchComplexity
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         correctedConcreteCertifiedRankSearchBudget
           rank f :=
     hminimum.trans hbudget
@@ -418,24 +418,24 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hcomplexity :
       correctedConcreteCertifiedRankBitBudget
           rank f <
         startRootedTargetCertifiedBitDescriptionComplexity
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     rank <
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   exact
     lt_of_lt_of_le
       (startRootedTarget_descriptionRank_gt_of_bitComplexity_gt_rankBudget
-        (v := w) hα obs f hL hcomplexity)
+         hα obs f hL hcomplexity)
       (startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- A certified finite-search-complexity lower bound implies the corresponding
 strict characteristic-rank lower bound. -/
@@ -444,24 +444,24 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hcomplexity :
       correctedConcreteCertifiedRankSearchBudget
           rank f <
         startRootedTargetCertifiedCanonicalSearchComplexity
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     rank <
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   exact
     lt_of_lt_of_le
       (startRootedTarget_descriptionRank_gt_of_searchComplexity_gt_rankBudget
-        (v := w) hα obs f hL hcomplexity)
+         hα obs f hL hcomplexity)
       (startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- Bit-budget obstruction directly implies profile non-membership. -/
 theorem
@@ -469,14 +469,14 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hcomplexity :
       correctedConcreteCertifiedRankBitBudget
           rank f <
         startRootedTargetCertifiedBitDescriptionComplexity
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     L ∉
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
@@ -485,9 +485,9 @@ theorem
 
   exact
     (startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
-      (v := w) hα obs f hL rank).mpr
+       hα obs f hL rank).mpr
       (startRootedTarget_descriptionRank_gt_of_bitComplexity_gt_rankBudget
-        (v := w) hα obs f hL hcomplexity)
+         hα obs f hL hcomplexity)
 
 /-- Search-budget obstruction directly implies profile non-membership. -/
 theorem
@@ -495,14 +495,14 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hcomplexity :
       correctedConcreteCertifiedRankSearchBudget
           rank f <
         startRootedTargetCertifiedCanonicalSearchComplexity
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     L ∉
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
@@ -511,9 +511,9 @@ theorem
 
   exact
     (startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
-      (v := w) hα obs f hL rank).mpr
+       hα obs f hL rank).mpr
       (startRootedTarget_descriptionRank_gt_of_searchComplexity_gt_rankBudget
-        (v := w) hα obs f hL hcomplexity)
+         hα obs f hL hcomplexity)
 
 end TargetComplexityObstructions
 
@@ -537,16 +537,16 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL =
+         hα obs f hL =
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL ↔
+         hα obs f hL ↔
     ∀ rank : Nat,
       rank <
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL →
+             hα obs f hL →
         L ∉
           CorrectedConcreteCertifiedRankProfileClass
             (α := α)
@@ -559,7 +559,7 @@ theorem
 
     apply
       startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
-        (v := w) hα obs f hL rank
+         hα obs f hL rank
         |>.mpr
 
     simpa [heq] using hrank
@@ -568,11 +568,11 @@ theorem
 
     have hle :
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL :=
+             hα obs f hL :=
       startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL
+         hα obs f hL
 
     apply Nat.le_antisymm hle
 
@@ -580,18 +580,18 @@ theorem
 
     have hlt :
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL <
+             hα obs f hL <
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL := by
+             hα obs f hL := by
       omega
 
     exact
       hlower
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         hlt
         (startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-          (v := w) hα obs f hL)
+           hα obs f hL)
 
 /-- A lower-profile obstruction at every rank below the characteristic rank
 proves exact equality of the two ranks. -/
@@ -600,26 +600,26 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (hlower :
       ∀ rank : Nat,
         rank <
             startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL →
+               hα obs f hL →
           L ∉
             CorrectedConcreteCertifiedRankProfileClass
               (α := α)
               (M := M)
               obs f rank) :
     startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL =
+         hα obs f hL =
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   exact
     (startRootedTarget_descriptionRank_eq_characteristicRank_iff_no_lower_profile
-      (v := w) hα obs f hL).mpr
+       hα obs f hL).mpr
       hlower
 
 /-- If the target already lies below its characteristic-rank level, then the
@@ -629,13 +629,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hrank :
       rank <
         startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
     (hmem :
       L ∈
         CorrectedConcreteCertifiedRankProfileClass
@@ -643,16 +643,16 @@ theorem
           (M := M)
           obs f rank) :
     startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL <
+         hα obs f hL <
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   have hdescription :
       startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank :=
     (startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-      (v := w) hα obs f hL rank).mp
+       hα obs f hL rank).mp
       hmem
 
   exact
@@ -684,10 +684,10 @@ def StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
     ∃
       hL :
         L ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f,
+          StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f,
       startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL =
+           hα obs f hL =
         rank}
 
 /-- Exact-shell membership is equivalent to membership at `rank` together with
@@ -698,12 +698,12 @@ theorem
     (L : Set (Word α)) :
     L ∈
         StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-          (v := w) hα obs f rank ↔
+           hα obs f rank ↔
       ∃
         hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         L ∈
             CorrectedConcreteCertifiedRankProfileClass
               (α := α)
@@ -733,13 +733,13 @@ theorem
 
       exact
         startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-          (v := w) hα obs f hL
+           hα obs f hL
 
     · intro lower hlower
 
       apply
         startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
-          (v := w) hα obs f hL lower
+           hα obs f hL lower
           |>.mpr
 
       simpa [hRank] using hlower
@@ -751,32 +751,32 @@ theorem
 
     have hle :
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           rank :=
       (startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-        (v := w) hα obs f hL rank).mp
+         hα obs f hL rank).mp
         hmem
 
     have hge :
         rank <=
           startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL := by
+             hα obs f hL := by
 
       by_contra hnot
 
       have hlt :
           startRootedTargetCertifiedDescriptionRank
-              (v := w) hα obs f hL <
+               hα obs f hL <
             rank := by
         omega
 
       exact
         hlower
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           hlt
           (startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-            (v := w) hα obs f hL)
+             hα obs f hL)
 
     exact
       ⟨hL,
@@ -788,9 +788,9 @@ theorem
     startRootedTargetCertifiedDescriptionRankExactClass_subset_atMostClass
     (rank : Nat) :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-        (v := w) hα obs f rank ⊆
+         hα obs f rank ⊆
       StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f rank := by
+         hα obs f rank := by
 
   intro L hL
 
@@ -808,7 +808,7 @@ theorem
     startRootedTargetCertifiedDescriptionRankExactClass_subset_rankProfileClass
     (rank : Nat) :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-        (v := w) hα obs f rank ⊆
+         hα obs f rank ⊆
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
         (M := M)
@@ -823,7 +823,7 @@ theorem
 
   exact
     startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-      (v := w) hα obs f hTarget
+       hα obs f hTarget
 
 /-- Exact certified-description rank is unique. -/
 theorem startRootedTargetCertifiedDescriptionRankExactClass_rank_unique
@@ -832,11 +832,11 @@ theorem startRootedTargetCertifiedDescriptionRankExactClass_rank_unique
     (hRank :
       L ∈
         StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-          (v := w) hα obs f rank)
+           hα obs f rank)
     (hRank' :
       L ∈
         StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-          (v := w) hα obs f rank') :
+           hα obs f rank') :
     rank = rank' := by
 
   rcases hRank with
@@ -859,9 +859,9 @@ theorem
       rank ≠ rank') :
     Set.Disjoint
       (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-        (v := w) hα obs f rank)
+         hα obs f rank)
       (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-        (v := w) hα obs f rank') := by
+         hα obs f rank') := by
 
   rw [Set.disjoint_left]
 
@@ -870,7 +870,7 @@ theorem
   exact
     hne
       (startRootedTargetCertifiedDescriptionRankExactClass_rank_unique
-        (v := w) hα obs f hRank hRank')
+         hα obs f hRank hRank')
 
 /-- Every semantic target belongs to the exact shell indexed by its own minimum
 certified-description rank. -/
@@ -879,13 +879,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     L ∈
       StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-        (v := w) hα obs f
+         hα obs f
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL) := by
+           hα obs f hL) := by
 
   exact
     ⟨hL,
@@ -895,13 +895,13 @@ theorem
 semantic target class. -/
 theorem
     startRootedTargetClass_eq_exists_certifiedDescriptionRankExactClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f =
+    StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f =
       {L : Set (Word α) |
         ∃ rank : Nat,
           L ∈
             StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-              (v := w) hα obs f rank} := by
+               hα obs f rank} := by
 
   ext L
 
@@ -911,9 +911,9 @@ theorem
 
     exact
       ⟨startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL,
+           hα obs f hL,
         startRootedTarget_mem_ownCertifiedDescriptionRankExactClass
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
   · intro hL
 
@@ -945,8 +945,8 @@ theorem startRootedTargetCertifiedDescriptionRankObstruction_package
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (∀ rank : Nat,
       L ∉
           CorrectedConcreteCertifiedRankProfileClass
@@ -955,7 +955,7 @@ theorem startRootedTargetCertifiedDescriptionRankObstruction_package
             obs f rank ↔
         rank <
           startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL) ∧
+             hα obs f hL) ∧
       (∀ rank : Nat,
         L ∉
             CorrectedConcreteCertifiedRankProfileClass
@@ -964,31 +964,31 @@ theorem startRootedTargetCertifiedDescriptionRankObstruction_package
               obs f rank →
           rank <
             startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL) ∧
+               hα obs f hL) ∧
       (∀ rank : Nat,
         correctedConcreteCertifiedRankBitBudget
               rank f <
             startRootedTargetCertifiedBitDescriptionComplexity
-              (v := w) hα obs f hL →
+               hα obs f hL →
           rank <
             startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL) ∧
+               hα obs f hL) ∧
       (∀ rank : Nat,
         correctedConcreteCertifiedRankSearchBudget
               rank f <
             startRootedTargetCertifiedCanonicalSearchComplexity
-              (v := w) hα obs f hL →
+               hα obs f hL →
           rank <
             startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL) ∧
+               hα obs f hL) ∧
       (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL =
+           hα obs f hL =
         startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL ↔
+           hα obs f hL ↔
         ∀ rank : Nat,
           rank <
               startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL →
+                 hα obs f hL →
             L ∉
               CorrectedConcreteCertifiedRankProfileClass
                 (α := α)
@@ -996,27 +996,27 @@ theorem startRootedTargetCertifiedDescriptionRankObstruction_package
                 obs f rank) ∧
       (L ∈
         StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-          (v := w) hα obs f
+           hα obs f
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)) := by
+             hα obs f hL)) := by
 
   exact
     ⟨fun rank =>
         startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
-          (v := w) hα obs f hL rank,
+           hα obs f hL rank,
       fun rank hnot =>
         startRootedTarget_characteristicRank_gt_of_not_mem_certifiedRankProfile
-          (v := w) hα obs f hL hnot,
+           hα obs f hL hnot,
       fun rank hcomplexity =>
         startRootedTarget_characteristicRank_gt_of_bitComplexity_gt_rankBudget
-          (v := w) hα obs f hL hcomplexity,
+           hα obs f hL hcomplexity,
       fun rank hcomplexity =>
         startRootedTarget_characteristicRank_gt_of_searchComplexity_gt_rankBudget
-          (v := w) hα obs f hL hcomplexity,
+           hα obs f hL hcomplexity,
       startRootedTarget_descriptionRank_eq_characteristicRank_iff_no_lower_profile
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTarget_mem_ownCertifiedDescriptionRankExactClass
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 /-- Final class-level identification and certified-description obstruction
 package. -/
@@ -1027,14 +1027,14 @@ theorem
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∀ rank : Nat,
           L ∉
               CorrectedConcreteCertifiedRankProfileClass
@@ -1043,13 +1043,13 @@ theorem
                 obs f rank ↔
             rank <
               startRootedTargetCertifiedDescriptionRank
-                (v := w) hα obs f hL) ∧
+                 hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∀ rank : Nat,
           L ∉
               CorrectedConcreteCertifiedRankProfileClass
@@ -1058,49 +1058,49 @@ theorem
                 obs f rank →
             rank <
               startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL) ∧
+                 hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∀ rank : Nat,
           correctedConcreteCertifiedRankBitBudget
                 rank f <
               startRootedTargetCertifiedBitDescriptionComplexity
-                (v := w) hα obs f hL →
+                 hα obs f hL →
             rank <
               startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL) ∧
+                 hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∀ rank : Nat,
           correctedConcreteCertifiedRankSearchBudget
                 rank f <
               startRootedTargetCertifiedCanonicalSearchComplexity
-                (v := w) hα obs f hL →
+                 hα obs f hL →
             rank <
               startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL) ∧
+                 hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL =
+             hα obs f hL =
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL ↔
+             hα obs f hL ↔
           ∀ rank : Nat,
             rank <
                 startRootedTargetCharacteristicRank
-                  (v := w) hα obs f hL →
+                   hα obs f hL →
               L ∉
                 CorrectedConcreteCertifiedRankProfileClass
                   (α := α)
@@ -1110,40 +1110,40 @@ theorem
         rank ≠ rank' →
         Set.Disjoint
           (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-            (v := w) hα obs f rank)
+             hα obs f rank)
           (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-            (v := w) hα obs f rank')) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f =
+             hα obs f rank')) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f =
         {L : Set (Word α) |
           ∃ rank : Nat,
             L ∈
               StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
-                (v := w) hα obs f rank}) := by
+                 hα obs f rank}) := by
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       fun L hL rank =>
         startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
-          (v := w) hα obs f hL rank,
+           hα obs f hL rank,
       fun L hL rank hnot =>
         startRootedTarget_characteristicRank_gt_of_not_mem_certifiedRankProfile
-          (v := w) hα obs f hL hnot,
+           hα obs f hL hnot,
       fun L hL rank hcomplexity =>
         startRootedTarget_characteristicRank_gt_of_bitComplexity_gt_rankBudget
-          (v := w) hα obs f hL hcomplexity,
+           hα obs f hL hcomplexity,
       fun L hL rank hcomplexity =>
         startRootedTarget_characteristicRank_gt_of_searchComplexity_gt_rankBudget
-          (v := w) hα obs f hL hcomplexity,
+           hα obs f hL hcomplexity,
       fun L hL =>
         startRootedTarget_descriptionRank_eq_characteristicRank_iff_no_lower_profile
-          (v := w) hα obs f hL,
+           hα obs f hL,
       fun rank rank' hne =>
         startRootedTargetCertifiedDescriptionRankExactClasses_disjoint
-          (v := w) hα obs f hne,
+           hα obs f hne,
       startRootedTargetClass_eq_exists_certifiedDescriptionRankExactClass
-        (v := w) hα obs f⟩
+         hα obs f⟩
 
 end CertifiedDescriptionRankObstructionPackages
 

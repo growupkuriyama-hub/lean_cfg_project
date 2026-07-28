@@ -798,14 +798,14 @@ theorem
         obs f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) := by
 
   intro L hL T
 
   rcases
       correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f
+         hα obs f
         L hL T with
     ⟨n0, hcorrect⟩
 
@@ -827,13 +827,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedCorrectedConcreteTargetCoverageStage
-          (v := w) obs f hL T <=
+           obs f hL T <=
         n) :
     (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs f
@@ -842,7 +842,7 @@ theorem
 
   exact
     correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-      (v := w) hα obs f hL T hn
+       hα obs f hL T hn
 
 end CertifiedLearnerSemanticProperties
 
@@ -866,8 +866,8 @@ theorem
     correctedConcreteCertifiedWorkingGrammarLearner_selectedStage_package :
     ∀ L : Set (Word α),
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 <= n →
@@ -925,7 +925,7 @@ theorem
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
@@ -937,7 +937,7 @@ theorem
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       C.selector_exact,
       C.decode_bits,
       C.reencode_presentation,
@@ -953,8 +953,8 @@ theorem
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (K : Set (Word α)) ⊆
           correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1019,7 +1019,7 @@ theorem
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteCertifiedWorkingGrammarLearner_consistent
         hα obs f,
       fun S K hSK =>

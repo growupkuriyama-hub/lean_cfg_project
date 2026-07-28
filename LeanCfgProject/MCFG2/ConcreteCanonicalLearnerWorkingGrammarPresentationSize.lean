@@ -657,8 +657,8 @@ theorem correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearner
             hα obs f K).grammar.StringLanguage =
@@ -682,7 +682,7 @@ theorem correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearner_stringLanguage_eq_corrected
         hα obs f,
       fun K =>
@@ -696,8 +696,8 @@ theorem correctedConcreteWorkingGrammarLearner_presentationSize_semantic_package
 /-- Selected-stage complete-presentation package. -/
 theorem correctedConcreteWorkingGrammarLearner_selectedStage_presentationSize_package :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 ≤ n →
@@ -717,14 +717,14 @@ theorem correctedConcreteWorkingGrammarLearner_selectedStage_presentationSize_pa
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       correctedConcreteWorkingGrammarLearner_prefix_presentationItemCount_le
         hα obs f T n⟩
 

@@ -575,7 +575,7 @@ theorem
     correctedConcreteObservationPositiveAdditiveParetoRankProfileFirstGapPrefixWithMaximum
 
   rw [
-    Finset.card_insert_of_not_mem
+    Finset.card_insert_of_notMem
       (positiveAdditiveParetoProfileTradeoffWidth_not_mem_firstGapPrefix
         minimumCardinalityResult
         minimumAdditiveResult

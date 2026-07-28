@@ -484,15 +484,15 @@ sample whose actual learner output grammar is exactly the target. -/
 theorem correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     Nonempty
       (CorrectedConcreteWorkingGrammarTargetRepresentationWitness
         hα obs f L) := by
 
   obtain ⟨S, hS⟩ :=
     correctedConcreteWorkingGrammarLearner_characteristicSample_for_startRootedTargetClass
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨correctedConcreteWorkingGrammarTargetRepresentation_of_characteristicSample
@@ -503,23 +503,23 @@ by actual cut-compiled working grammars. -/
 theorem correctedConcreteWorkingGrammarLearner_target_mem_cutCompiledClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     L ∈
       CutCompiledWorkingGrammarLanguageClass
         (w := max u v) α f := by
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact W.target_mem_cutCompiledClass
 
 /-- Class inclusion form of the target representation theorem. -/
 theorem startRootedTargetClass_subset_cutCompiledWorkingGrammarLanguageClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f ⊆
+    StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f ⊆
       CutCompiledWorkingGrammarLanguageClass
         (w := max u v) α f := by
 
@@ -527,15 +527,15 @@ theorem startRootedTargetClass_subset_cutCompiledWorkingGrammarLanguageClass :
 
   exact
     correctedConcreteWorkingGrammarLearner_target_mem_cutCompiledClass
-      (v := w) hα obs f hL
+       hα obs f hL
 
 /-- Expanded exact-representation statement exposing the finite positive
 construction sample and actual learner output. -/
 theorem correctedConcreteWorkingGrammarLearner_exists_exact_output_for_target
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       (correctedConcreteWorkingGrammarLearner
@@ -546,7 +546,7 @@ theorem correctedConcreteWorkingGrammarLearner_exists_exact_output_for_target
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -559,8 +559,8 @@ theorem correctedConcreteWorkingGrammarLearner_exists_exact_output_for_target
 theorem correctedConcreteWorkingGrammarLearner_exists_bounded_exact_output_for_target
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       (correctedConcreteWorkingGrammarLearner
@@ -581,7 +581,7 @@ theorem correctedConcreteWorkingGrammarLearner_exists_bounded_exact_output_for_t
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -613,13 +613,13 @@ Each semantic target has a finite positive construction sample, an actual
 bounded-fan-out working grammar with exact target language, and the verified
 finite size bounds. -/
 theorem correctedConcreteWorkingGrammarLearner_targetRepresentation_package :
-    (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f ⊆
+    (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f ⊆
         CutCompiledWorkingGrammarLanguageClass
           (w := max u v) α f) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∃ S : Finset (Word α),
           (S : Set (Word α)) ⊆ L ∧
           (correctedConcreteWorkingGrammarLearner
@@ -642,14 +642,14 @@ theorem correctedConcreteWorkingGrammarLearner_targetRepresentation_package :
 
   refine
     ⟨startRootedTargetClass_subset_cutCompiledWorkingGrammarLanguageClass
-        (v := w) hα obs f,
+         hα obs f,
       ?_⟩
 
   intro L hL
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -672,27 +672,27 @@ theorem correctedConcreteWorkingGrammarLearner_representation_identification_pac
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f ⊆
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f ⊆
         CutCompiledWorkingGrammarLanguageClass
           (w := max u v) α f) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         Nonempty
           (CorrectedConcreteWorkingGrammarTargetRepresentationWitness
             hα obs f L)) := by
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       startRootedTargetClass_subset_cutCompiledWorkingGrammarLanguageClass
-        (v := w) hα obs f,
+         hα obs f,
       fun L hL =>
         correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 end RepresentationPackages
 

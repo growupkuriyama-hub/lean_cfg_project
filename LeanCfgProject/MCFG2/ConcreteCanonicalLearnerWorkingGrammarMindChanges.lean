@@ -678,80 +678,80 @@ budget of a semantic start-rooted target. -/
 noncomputable def startRootedTargetMinimalCharacteristicSample
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     Finset (Word α) :=
   Classical.choose
     (startRootedTarget_exists_characteristicSample_at_rank
-      (v := w) hα obs f hL)
+       hα obs f hL)
 
 /-- The selected minimum-budget sample is characteristic. -/
 theorem startRootedTargetMinimalCharacteristicSample_characteristic
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     CharacteristicSample
       (correctedConcreteWorkingGrammarHypLanguage
         obs f)
       (correctedConcreteWorkingGrammarLearner
         hα obs f)
       (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL)
+         hα obs f hL)
       L := by
 
   exact
     (Classical.choose_spec
       (startRootedTarget_exists_characteristicSample_at_rank
-        (v := w) hα obs f hL)).1
+         hα obs f hL)).1
 
 /-- The selected minimum-budget sample has total length at most the
 characteristic rank. -/
 theorem startRootedTargetMinimalCharacteristicSample_length_le_rank
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     sampleLengthBudget
         (startRootedTargetMinimalCharacteristicSample
-          (v := w) hα obs f hL) ≤
+           hα obs f hL) ≤
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   exact
     (Classical.choose_spec
       (startRootedTarget_exists_characteristicSample_at_rank
-        (v := w) hα obs f hL)).2
+         hα obs f hL)).2
 
 /-- The selected minimum sample is positive. -/
 theorem startRootedTargetMinimalCharacteristicSample_positive
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL :
+         hα obs f hL :
       Set (Word α)) ⊆
         L := by
 
   exact
     (startRootedTargetMinimalCharacteristicSample_characteristic
-      (v := w) hα obs f hL).1
+       hα obs f hL).1
 
 /-- Coverage stage of a minimum-budget characteristic sample along one text. -/
 noncomputable def startRootedTargetMinimalCharacteristicCoverageStage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f)
     (T : TextFor L) :
     Nat :=
   correctedConcreteWorkingGrammarCharacteristicCoverageStage
     hα obs f
     (startRootedTargetMinimalCharacteristicSample
-      (v := w) hα obs f hL)
+       hα obs f hL)
     (startRootedTargetMinimalCharacteristicSample_characteristic
-      (v := w) hα obs f hL)
+       hα obs f hL)
     T
 
 /-- Every output after minimum-characteristic-sample coverage has exactly the
@@ -759,13 +759,13 @@ target language. -/
 theorem correctedConcreteWorkingGrammar_correct_after_minimalCharacteristicCoverage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T ≤ n) :
+           hα obs f hL T ≤ n) :
     correctedConcreteWorkingGrammarTextLanguage
         hα obs f T n =
       L := by
@@ -774,9 +774,9 @@ theorem correctedConcreteWorkingGrammar_correct_after_minimalCharacteristicCover
     correctedConcreteWorkingGrammar_correct_after_characteristicCoverage
       hα obs f
       (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL)
+         hα obs f hL)
       (startRootedTargetMinimalCharacteristicSample_characteristic
-        (v := w) hα obs f hL)
+         hα obs f hL)
       T hn
 
 /-- No language mind changes occur after minimum-characteristic-sample
@@ -784,13 +784,13 @@ coverage. -/
 theorem correctedConcreteWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T ≤ n) :
+           hα obs f hL T ≤ n) :
     ¬
       CorrectedConcreteWorkingGrammarLanguageChangesAt
         hα obs f T n := by
@@ -799,9 +799,9 @@ theorem correctedConcreteWorkingGrammar_no_mindChanges_after_minimalCharacterist
     correctedConcreteWorkingGrammar_not_languageChangesAt_after_characteristicCoverage
       hα obs f
       (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL)
+         hα obs f hL)
       (startRootedTargetMinimalCharacteristicSample_characteristic
-        (v := w) hα obs f hL)
+         hα obs f hL)
       T hn
 
 /-- The cumulative semantic mind-change count stabilizes at the coverage stage
@@ -809,27 +809,27 @@ of a minimum-budget characteristic sample. -/
 theorem correctedConcreteWorkingGrammarMindChangeCount_constant_after_minimalCharacteristicCoverage
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f)
     (T : TextFor L)
     {N : Nat}
     (hN :
       startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T ≤ N) :
+           hα obs f hL T ≤ N) :
     correctedConcreteWorkingGrammarMindChangeCount
         hα obs f T N =
       correctedConcreteWorkingGrammarMindChangeCount
         hα obs f T
         (startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T) := by
+           hα obs f hL T) := by
 
   exact
     correctedConcreteWorkingGrammarMindChangeCount_constant_after_characteristicCoverage
       hα obs f
       (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL)
+         hα obs f hL)
       (startRootedTargetMinimalCharacteristicSample_characteristic
-        (v := w) hα obs f hL)
+         hα obs f hL)
       T hN
 
 end MinimumCharacteristicSample
@@ -851,8 +851,8 @@ variable (f : Nat)
 theorem correctedConcreteWorkingGrammarLearner_mindChange_stabilization_package
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f)
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f)
     (T : TextFor L) :
     (∀ N : Nat,
       correctedConcreteWorkingGrammarMindChangeCount
@@ -860,38 +860,38 @@ theorem correctedConcreteWorkingGrammarLearner_mindChange_stabilization_package
         (T.prefixSample N).card) ∧
       (∀ n : Nat,
         startRootedTargetMinimalCharacteristicCoverageStage
-            (v := w) hα obs f hL T ≤ n →
+             hα obs f hL T ≤ n →
           correctedConcreteWorkingGrammarTextLanguage
               hα obs f T n =
             L) ∧
       (∀ n : Nat,
         startRootedTargetMinimalCharacteristicCoverageStage
-            (v := w) hα obs f hL T ≤ n →
+             hα obs f hL T ≤ n →
           ¬
             CorrectedConcreteWorkingGrammarLanguageChangesAt
               hα obs f T n) ∧
       (∀ N : Nat,
         startRootedTargetMinimalCharacteristicCoverageStage
-            (v := w) hα obs f hL T ≤ N →
+             hα obs f hL T ≤ N →
           correctedConcreteWorkingGrammarMindChangeCount
               hα obs f T N =
             correctedConcreteWorkingGrammarMindChangeCount
               hα obs f T
               (startRootedTargetMinimalCharacteristicCoverageStage
-                (v := w) hα obs f hL T)) := by
+                 hα obs f hL T)) := by
 
   exact
     ⟨correctedConcreteWorkingGrammarMindChangeCount_le_prefixSample_card
         hα obs f T,
       fun n hn =>
         correctedConcreteWorkingGrammar_correct_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hn,
+           hα obs f hL T hn,
       fun n hn =>
         correctedConcreteWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hn,
+           hα obs f hL T hn,
       fun N hN =>
         correctedConcreteWorkingGrammarMindChangeCount_constant_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hN⟩
+           hα obs f hL T hN⟩
 
 /-- Class-level endpoint: every positive text has finitely many semantic
 language changes and stabilizes to the target after coverage of a
@@ -899,8 +899,8 @@ minimum-budget characteristic sample. -/
 theorem correctedConcreteWorkingGrammarLearner_class_mindChange_package :
     ∀ L : Set (Word α),
       ∀ hL :
-        L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f,
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f,
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           (∀ n : Nat, n0 ≤ n →
@@ -921,7 +921,7 @@ theorem correctedConcreteWorkingGrammarLearner_class_mindChange_package :
 
   refine
     ⟨startRootedTargetMinimalCharacteristicCoverageStage
-        (v := w) hα obs f hL T,
+         hα obs f hL T,
       ?_,
       ?_,
       ?_⟩
@@ -930,19 +930,19 @@ theorem correctedConcreteWorkingGrammarLearner_class_mindChange_package :
 
     exact
       correctedConcreteWorkingGrammar_correct_after_minimalCharacteristicCoverage
-        (v := w) hα obs f hL T hn
+         hα obs f hL T hn
 
   · intro n hn
 
     exact
       correctedConcreteWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
-        (v := w) hα obs f hL T hn
+         hα obs f hL T hn
 
   · intro N hN
 
     exact
       correctedConcreteWorkingGrammarMindChangeCount_constant_after_minimalCharacteristicCoverage
-        (v := w) hα obs f hL T hN
+         hα obs f hL T hN
 
 end StartRootedMindChangePackages
 

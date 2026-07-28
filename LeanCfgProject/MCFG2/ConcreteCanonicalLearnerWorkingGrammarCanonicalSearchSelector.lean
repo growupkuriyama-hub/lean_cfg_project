@@ -913,8 +913,8 @@ actual presentation. -/
 theorem
     correctedConcreteWorkingGrammarLearner_selectedStage_canonicalSelector_package :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 <= n →
@@ -951,14 +951,14 @@ theorem
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       correctedConcreteWorkingGrammarLearnerCanonicalPairSelectorResult_eq
         hα obs f
         (T.prefixSample n),
@@ -977,8 +977,8 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         correctedConcreteWorkingGrammarLearnerCanonicalPairSelectorResult
             hα obs f K =
@@ -1002,8 +1002,8 @@ theorem
                 f +
               1)) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∀ T : TextFor L,
           ∃ n0 : Nat,
             ∀ n : Nat, n0 <= n →
@@ -1021,7 +1021,7 @@ theorem
 
   refine
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearnerCanonicalPairSelectorResult_eq
         hα obs f,
       correctedConcreteWorkingGrammarLearnerCanonicalPresentationSelectorResult_eq
@@ -1034,7 +1034,7 @@ theorem
 
   rcases
       correctedConcreteWorkingGrammarLearner_selectedStage_canonicalSelector_package
-        (v := w) hα obs f L hL T with
+         hα obs f L hL T with
     ⟨n0, hstage⟩
 
   exact

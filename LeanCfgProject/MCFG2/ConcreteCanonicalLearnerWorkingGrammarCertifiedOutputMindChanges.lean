@@ -642,25 +642,25 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     CharacteristicSample
       (correctedConcreteCertifiedWorkingGrammarHypLanguage
         obs f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs f)
       (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL)
+         hα obs f hL)
       L := by
 
   exact
     characteristicSample_certifiedWorkingGrammar_of_original
       hα obs f
       (startRootedTargetMinimalCharacteristicSample
-        (v := w) hα obs f hL)
+         hα obs f hL)
       L
       (startRootedTargetMinimalCharacteristicSample_characteristic
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- Every certified output after minimum-characteristic-sample coverage has
 exactly the target language. -/
@@ -669,13 +669,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T <=
+           hα obs f hL T <=
         n) :
     correctedConcreteCertifiedWorkingGrammarTextLanguage
         hα obs f T n =
@@ -687,7 +687,7 @@ theorem
 
   exact
     correctedConcreteWorkingGrammar_correct_after_minimalCharacteristicCoverage
-      (v := w) hα obs f hL T hn
+       hα obs f hL T hn
 
 /-- No certified semantic language mind change occurs after
 minimum-characteristic-sample coverage. -/
@@ -696,13 +696,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (T : TextFor L)
     {n : Nat}
     (hn :
       startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T <=
+           hα obs f hL T <=
         n) :
     ¬
       CorrectedConcreteCertifiedWorkingGrammarLanguageChangesAt
@@ -719,7 +719,7 @@ theorem
 
   exact
     correctedConcreteWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
-      (v := w) hα obs f hL T hn
+       hα obs f hL T hn
       horiginal
 
 /-- The certified cumulative semantic mind-change count is constant after
@@ -729,20 +729,20 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (T : TextFor L)
     {N : Nat}
     (hN :
       startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T <=
+           hα obs f hL T <=
         N) :
     correctedConcreteCertifiedWorkingGrammarMindChangeCount
         hα obs f T N =
       correctedConcreteCertifiedWorkingGrammarMindChangeCount
         hα obs f T
         (startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T) := by
+           hα obs f hL T) := by
 
   rw [
     correctedConcreteCertifiedWorkingGrammarMindChangeCount_eq_original,
@@ -751,7 +751,7 @@ theorem
 
   exact
     correctedConcreteWorkingGrammarMindChangeCount_constant_after_minimalCharacteristicCoverage
-      (v := w) hα obs f hL T hN
+       hα obs f hL T hN
 
 end MinimumCharacteristicCertifiedStabilization
 
@@ -774,14 +774,14 @@ noncomputable def
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     CorrectedConcreteCertifiedWorkingGrammarHypothesis
       α M obs f :=
   correctedConcreteCertifiedWorkingGrammarLearner
     hα obs f
     (startRootedTargetMinimalCharacteristicSample
-      (v := w) hα obs f hL)
+       hα obs f hL)
 
 /-- The minimum-characteristic certified output has exactly the target
 language. -/
@@ -790,15 +790,15 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).output.grammar.StringLanguage =
+         hα obs f hL).output.grammar.StringLanguage =
       L := by
 
   let S :=
     startRootedTargetMinimalCharacteristicSample
-      (v := w) hα obs f hL
+       hα obs f hL
 
   have hcharacteristic :
       CharacteristicSample
@@ -808,7 +808,7 @@ theorem
           hα obs f)
         S L :=
     startRootedTargetMinimalCharacteristicSample_characteristic
-      (v := w) hα obs f hL
+       hα obs f hL
 
   have hpositive :
       (S : Set (Word α)) ⊆ L :=
@@ -839,18 +839,18 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).bits.length <=
+         hα obs f hL).bits.length <=
       correctedConcreteCompiledGrammarPaperPowerBitBound
         (startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f := by
 
   let S :=
     startRootedTargetMinimalCharacteristicSample
-      (v := w) hα obs f hL
+       hα obs f hL
 
   have hlength :
       (correctedConcreteCertifiedWorkingGrammarLearner
@@ -864,11 +864,11 @@ theorem
   have hrank :
       sampleLengthBudget S <=
         startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL := by
+           hα obs f hL := by
 
     simpa [S] using
       startRootedTargetMinimalCharacteristicSample_length_le_rank
-        (v := w) hα obs f hL
+         hα obs f hL
 
   exact
     hlength.trans
@@ -882,20 +882,20 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).canonicalSearch.length <=
+         hα obs f hL).canonicalSearch.length <=
       2 ^
         (correctedConcreteCompiledGrammarPaperPowerBitBound
             (startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f +
           1) := by
 
   let S :=
     startRootedTargetMinimalCharacteristicSample
-      (v := w) hα obs f hL
+       hα obs f hL
 
   have hsearch :
       (correctedConcreteCertifiedWorkingGrammarLearner
@@ -911,11 +911,11 @@ theorem
   have hrank :
       sampleLengthBudget S <=
         startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL := by
+           hα obs f hL := by
 
     simpa [S] using
       startRootedTargetMinimalCharacteristicSample_length_le_rank
-        (v := w) hα obs f hL
+         hα obs f hL
 
   have hbudget :
       correctedConcreteCompiledGrammarPaperPowerBitBound
@@ -924,7 +924,7 @@ theorem
           1 <=
         correctedConcreteCompiledGrammarPaperPowerBitBound
             (startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f +
           1 :=
     Nat.add_le_add_right
@@ -941,7 +941,7 @@ theorem
         2 ^
           (correctedConcreteCompiledGrammarPaperPowerBitBound
               (startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL)
+                 hα obs f hL)
               f +
             1) :=
     Nat.pow_le_pow_of_le
@@ -959,31 +959,31 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).decode
+         hα obs f hL).decode
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).bits =
+           hα obs f hL).bits =
       some
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).presentation ∧
+           hα obs f hL).presentation ∧
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).reencode
+           hα obs f hL).reencode
           (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).presentation =
+             hα obs f hL).presentation =
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).bits ∧
+           hα obs f hL).bits ∧
       ((startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).bits,
+             hα obs f hL).bits,
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).presentation) ∈
+             hα obs f hL).presentation) ∈
           (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).canonicalSearch := by
+             hα obs f hL).canonicalSearch := by
 
   let C :=
     startRootedTargetMinimalCharacteristicCertifiedOutput
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨C.decode_bits,
@@ -996,51 +996,51 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).output.grammar.StringLanguage =
+         hα obs f hL).output.grammar.StringLanguage =
       L ∧
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).bits.length <=
+           hα obs f hL).bits.length <=
         correctedConcreteCompiledGrammarPaperPowerBitBound
           (startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f ∧
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).canonicalSearch.length <=
+           hα obs f hL).canonicalSearch.length <=
         2 ^
           (correctedConcreteCompiledGrammarPaperPowerBitBound
               (startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL)
+                 hα obs f hL)
               f +
             1) ∧
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).decode
+           hα obs f hL).decode
           (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).bits =
+             hα obs f hL).bits =
         some
           (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).presentation ∧
+             hα obs f hL).presentation ∧
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).reencode
+           hα obs f hL).reencode
           (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).presentation =
+             hα obs f hL).presentation =
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).bits := by
+           hα obs f hL).bits := by
 
   rcases
       startRootedTargetMinimalCharacteristicCertifiedOutput_checked
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨hdecode, hreencode, hpair⟩
 
   exact
     ⟨startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetMinimalCharacteristicCertifiedOutput_bitLength_le_rank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetMinimalCharacteristicCertifiedOutput_searchLength_le_rank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       hdecode,
       hreencode⟩
 
@@ -1066,8 +1066,8 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (T : TextFor L) :
     (∀ N : Nat,
       correctedConcreteCertifiedWorkingGrammarMindChangeCount
@@ -1075,40 +1075,40 @@ theorem
         (T.prefixSample N).card) ∧
       (∀ n : Nat,
         startRootedTargetMinimalCharacteristicCoverageStage
-            (v := w) hα obs f hL T <=
+             hα obs f hL T <=
           n →
         correctedConcreteCertifiedWorkingGrammarTextLanguage
             hα obs f T n =
           L) ∧
       (∀ n : Nat,
         startRootedTargetMinimalCharacteristicCoverageStage
-            (v := w) hα obs f hL T <=
+             hα obs f hL T <=
           n →
         ¬
           CorrectedConcreteCertifiedWorkingGrammarLanguageChangesAt
             hα obs f T n) ∧
       (∀ N : Nat,
         startRootedTargetMinimalCharacteristicCoverageStage
-            (v := w) hα obs f hL T <=
+             hα obs f hL T <=
           N →
         correctedConcreteCertifiedWorkingGrammarMindChangeCount
             hα obs f T N =
           correctedConcreteCertifiedWorkingGrammarMindChangeCount
             hα obs f T
             (startRootedTargetMinimalCharacteristicCoverageStage
-              (v := w) hα obs f hL T)) ∧
+               hα obs f hL T)) ∧
       ((startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).bits.length <=
+           hα obs f hL).bits.length <=
         correctedConcreteCompiledGrammarPaperPowerBitBound
           (startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f) ∧
       ((startRootedTargetMinimalCharacteristicCertifiedOutput
-          (v := w) hα obs f hL).canonicalSearch.length <=
+           hα obs f hL).canonicalSearch.length <=
         2 ^
           (correctedConcreteCompiledGrammarPaperPowerBitBound
               (startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL)
+                 hα obs f hL)
               f +
             1)) := by
 
@@ -1117,17 +1117,17 @@ theorem
         hα obs f T,
       fun n hn =>
         correctedConcreteCertifiedWorkingGrammar_correct_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hn,
+           hα obs f hL T hn,
       fun n hn =>
         correctedConcreteCertifiedWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hn,
+           hα obs f hL T hn,
       fun N hN =>
         correctedConcreteCertifiedWorkingGrammarMindChangeCount_constant_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hN,
+           hα obs f hL T hN,
       startRootedTargetMinimalCharacteristicCertifiedOutput_bitLength_le_rank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetMinimalCharacteristicCertifiedOutput_searchLength_le_rank
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 /-- Final class-level certified-output theorem combining identification,
 semantic mind-change control, minimum-characteristic stabilization, and one
@@ -1139,13 +1139,13 @@ theorem
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀
         L : Set (Word α),
         L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f →
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f →
         ∀ T : TextFor L,
           ∀ N : Nat,
             correctedConcreteCertifiedWorkingGrammarMindChangeCount
@@ -1155,8 +1155,8 @@ theorem
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∀ T : TextFor L,
           ∃ n0 : Nat,
             (∀ n : Nat, n0 <= n →
@@ -1176,29 +1176,29 @@ theorem
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).output.grammar.StringLanguage =
+             hα obs f hL).output.grammar.StringLanguage =
           L ∧
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).bits.length <=
+             hα obs f hL).bits.length <=
           correctedConcreteCompiledGrammarPaperPowerBitBound
             (startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f ∧
         (startRootedTargetMinimalCharacteristicCertifiedOutput
-            (v := w) hα obs f hL).canonicalSearch.length <=
+             hα obs f hL).canonicalSearch.length <=
           2 ^
             (correctedConcreteCompiledGrammarPaperPowerBitBound
                 (startRootedTargetCharacteristicRank
-                  (v := w) hα obs f hL)
+                   hα obs f hL)
                 f +
               1)) := by
 
   refine
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       ?_,
       ?_,
       ?_⟩
@@ -1213,7 +1213,7 @@ theorem
 
     refine
       ⟨startRootedTargetMinimalCharacteristicCoverageStage
-          (v := w) hα obs f hL T,
+           hα obs f hL T,
         ?_,
         ?_,
         ?_⟩
@@ -1222,29 +1222,29 @@ theorem
 
       exact
         correctedConcreteCertifiedWorkingGrammar_correct_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hn
+           hα obs f hL T hn
 
     · intro n hn
 
       exact
         correctedConcreteCertifiedWorkingGrammar_no_mindChanges_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hn
+           hα obs f hL T hn
 
     · intro N hN
 
       exact
         correctedConcreteCertifiedWorkingGrammarMindChangeCount_constant_after_minimalCharacteristicCoverage
-          (v := w) hα obs f hL T hN
+           hα obs f hL T hN
 
   · intro L hL
 
     exact
       ⟨startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-          (v := w) hα obs f hL,
+           hα obs f hL,
         startRootedTargetMinimalCharacteristicCertifiedOutput_bitLength_le_rank
-          (v := w) hα obs f hL,
+           hα obs f hL,
         startRootedTargetMinimalCharacteristicCertifiedOutput_searchLength_le_rank
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 end CertifiedMindChangePackages
 

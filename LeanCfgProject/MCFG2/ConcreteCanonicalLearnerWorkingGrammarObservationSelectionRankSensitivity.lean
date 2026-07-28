@@ -845,7 +845,7 @@ theorem finsetNatWeightedSum_le_add_delta_mul_card
                 (insert selectedIndex S).card := by
           rw [
             Finset.sum_insert hNotMem,
-            Finset.card_insert_of_not_mem hNotMem,
+            Finset.card_insert_of_notMem hNotMem,
             Nat.mul_add,
             Nat.mul_one
           ]

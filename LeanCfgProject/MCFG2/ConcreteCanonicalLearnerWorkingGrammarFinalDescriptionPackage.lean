@@ -374,8 +374,8 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearner
             hα obs f K).grammar.StringLanguage =
@@ -433,7 +433,7 @@ theorem
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearner_stringLanguage_eq_corrected
         hα obs f,
       correctedConcreteWorkingGrammarLearner_consistent
@@ -481,8 +481,8 @@ single-power estimate. -/
 theorem
     correctedConcreteWorkingGrammarLearner_selectedStage_checkedDescription_package :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 <= n →
@@ -519,14 +519,14 @@ theorem
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       correctedConcreteWorkingGrammarLearnerLogarithmicBitDecode_encode
         hα obs f
         (T.prefixSample n),
@@ -545,8 +545,8 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         correctedConcreteWorkingGrammarLearnerLogarithmicBitDecode
             hα obs f K
@@ -563,8 +563,8 @@ theorem
             (sampleLengthBudget K)
             f) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∀ T : TextFor L,
           ∃ n0 : Nat,
             ∀ n : Nat, n0 <= n →
@@ -582,7 +582,7 @@ theorem
 
   refine
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearnerLogarithmicBitDecode_encode
         hα obs f,
       correctedConcreteWorkingGrammarLearnerLogarithmicBitList_length_le_paperPower
@@ -593,14 +593,14 @@ theorem
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       correctedConcreteWorkingGrammarLearner_prefix_logarithmicBitList_length_le_paperPower
         hα obs f T n⟩
 

@@ -562,8 +562,8 @@ theorem startRootedTarget_hasCertifiedBitDescription
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     HasCorrectedConcreteCertifiedBitDescription
       (obs := obs)
       (f := f)
@@ -571,22 +571,22 @@ theorem startRootedTarget_hasCertifiedBitDescription
 
   let C :=
     startRootedTargetMinimalCharacteristicCertifiedOutput
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨correctedConcreteCompiledGrammarPaperPowerBitBound
         (startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f,
       C,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-            (v := w) hα obs f hL,
+             hα obs f hL,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_bitLength_le_rank
-            (v := w) hα obs f hL⟩
+             hα obs f hL⟩
 
 /-- Every semantic start-rooted target has some finite exact certified
 canonical search. -/
@@ -594,8 +594,8 @@ theorem startRootedTarget_hasCertifiedCanonicalSearch
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     HasCorrectedConcreteCertifiedCanonicalSearch
       (obs := obs)
       (f := f)
@@ -603,36 +603,36 @@ theorem startRootedTarget_hasCertifiedCanonicalSearch
 
   let C :=
     startRootedTargetMinimalCharacteristicCertifiedOutput
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨2 ^
         (correctedConcreteCompiledGrammarPaperPowerBitBound
             (startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f +
           1),
       C,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-            (v := w) hα obs f hL,
+             hα obs f hL,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_searchLength_le_rank
-            (v := w) hα obs f hL⟩
+             hα obs f hL⟩
 
 /-- Target-specific least checked bit length among all exact certified outputs. -/
 noncomputable def startRootedTargetCertifiedBitDescriptionComplexity
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     Nat :=
   correctedConcreteCertifiedBitDescriptionComplexity
     (startRootedTarget_hasCertifiedBitDescription
-      (v := w) hα obs f hL)
+       hα obs f hL)
 
 /-- Target-specific least canonical-search-list length among all exact certified
 outputs. -/
@@ -640,20 +640,20 @@ noncomputable def startRootedTargetCertifiedCanonicalSearchComplexity
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     Nat :=
   correctedConcreteCertifiedCanonicalSearchComplexity
     (startRootedTarget_hasCertifiedCanonicalSearch
-      (v := w) hα obs f hL)
+       hα obs f hL)
 
 /-- The target's minimum certified bit complexity is attained exactly. -/
 theorem startRootedTarget_exists_exact_minimumCertifiedBitDescription
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     ∃
       C :
         CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -661,11 +661,11 @@ theorem startRootedTarget_exists_exact_minimumCertifiedBitDescription
       C.output.grammar.StringLanguage = L ∧
         C.bits.length =
           startRootedTargetCertifiedBitDescriptionComplexity
-            (v := w) hα obs f hL := by
+             hα obs f hL := by
 
   exact
     (startRootedTarget_hasCertifiedBitDescription
-      (v := w) hα obs f hL).exists_output_exact_complexity
+       hα obs f hL).exists_output_exact_complexity
 
 /-- The target's minimum certified canonical-search complexity is attained
 exactly. -/
@@ -673,8 +673,8 @@ theorem startRootedTarget_exists_exact_minimumCertifiedCanonicalSearch
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     ∃
       C :
         CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -682,11 +682,11 @@ theorem startRootedTarget_exists_exact_minimumCertifiedCanonicalSearch
       C.output.grammar.StringLanguage = L ∧
         C.canonicalSearch.length =
           startRootedTargetCertifiedCanonicalSearchComplexity
-            (v := w) hα obs f hL := by
+             hα obs f hL := by
 
   exact
     (startRootedTarget_hasCertifiedCanonicalSearch
-      (v := w) hα obs f hL).exists_output_exact_complexity
+       hα obs f hL).exists_output_exact_complexity
 
 /-- Characteristic rank upper-bounds the minimum certified bit-description
 complexity through the final paper-power function. -/
@@ -695,13 +695,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedBitDescriptionComplexity
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       correctedConcreteCompiledGrammarPaperPowerBitBound
         (startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f := by
 
   unfold
@@ -709,22 +709,22 @@ theorem
 
   apply
     (startRootedTarget_hasCertifiedBitDescription
-      (v := w) hα obs f hL).complexity_le_of_atBudget
+       hα obs f hL).complexity_le_of_atBudget
 
   let C :=
     startRootedTargetMinimalCharacteristicCertifiedOutput
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨C,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-            (v := w) hα obs f hL,
+             hα obs f hL,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_bitLength_le_rank
-            (v := w) hα obs f hL⟩
+             hα obs f hL⟩
 
 /-- Characteristic rank upper-bounds the minimum certified canonical-search
 complexity through the finite code-universe estimate. -/
@@ -733,14 +733,14 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedCanonicalSearchComplexity
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       2 ^
         (correctedConcreteCompiledGrammarPaperPowerBitBound
             (startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f +
           1) := by
 
@@ -749,22 +749,22 @@ theorem
 
   apply
     (startRootedTarget_hasCertifiedCanonicalSearch
-      (v := w) hα obs f hL).complexity_le_of_atBudget
+       hα obs f hL).complexity_le_of_atBudget
 
   let C :=
     startRootedTargetMinimalCharacteristicCertifiedOutput
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨C,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-            (v := w) hα obs f hL,
+             hα obs f hL,
       by
         simpa [C] using
           startRootedTargetMinimalCharacteristicCertifiedOutput_searchLength_le_rank
-            (v := w) hα obs f hL⟩
+             hα obs f hL⟩
 
 /-- The minimum bit complexity is no larger than the actual checked code length
 of the selected minimum-characteristic output. -/
@@ -773,23 +773,23 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedBitDescriptionComplexity
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).bits.length := by
+         hα obs f hL).bits.length := by
 
   unfold
     startRootedTargetCertifiedBitDescriptionComplexity
 
   apply
     (startRootedTarget_hasCertifiedBitDescription
-      (v := w) hα obs f hL).complexity_le_output_bitLength
+       hα obs f hL).complexity_le_output_bitLength
 
   exact
     startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-      (v := w) hα obs f hL
+       hα obs f hL
 
 /-- The minimum search complexity is no larger than the actual finite search of
 the selected minimum-characteristic output. -/
@@ -798,31 +798,31 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedCanonicalSearchComplexity
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       (startRootedTargetMinimalCharacteristicCertifiedOutput
-        (v := w) hα obs f hL).canonicalSearch.length := by
+         hα obs f hL).canonicalSearch.length := by
 
   unfold
     startRootedTargetCertifiedCanonicalSearchComplexity
 
   apply
     (startRootedTarget_hasCertifiedCanonicalSearch
-      (v := w) hα obs f hL).complexity_le_output_searchLength
+       hα obs f hL).complexity_le_output_searchLength
 
   exact
     startRootedTargetMinimalCharacteristicCertifiedOutput_language_eq
-      (v := w) hα obs f hL
+       hα obs f hL
 
 /-- Compact target-specific certified complexity package. -/
 theorem startRootedTargetCertifiedDescriptionComplexity_package
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (∃
       C :
         CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -830,12 +830,12 @@ theorem startRootedTargetCertifiedDescriptionComplexity_package
       C.output.grammar.StringLanguage = L ∧
         C.bits.length =
           startRootedTargetCertifiedBitDescriptionComplexity
-            (v := w) hα obs f hL) ∧
+             hα obs f hL) ∧
       (startRootedTargetCertifiedBitDescriptionComplexity
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         correctedConcreteCompiledGrammarPaperPowerBitBound
           (startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL)
+             hα obs f hL)
           f) ∧
       (∃
         C :
@@ -844,25 +844,25 @@ theorem startRootedTargetCertifiedDescriptionComplexity_package
         C.output.grammar.StringLanguage = L ∧
           C.canonicalSearch.length =
             startRootedTargetCertifiedCanonicalSearchComplexity
-              (v := w) hα obs f hL) ∧
+               hα obs f hL) ∧
       (startRootedTargetCertifiedCanonicalSearchComplexity
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         2 ^
           (correctedConcreteCompiledGrammarPaperPowerBitBound
               (startRootedTargetCharacteristicRank
-                (v := w) hα obs f hL)
+                 hα obs f hL)
               f +
             1)) := by
 
   exact
     ⟨startRootedTarget_exists_exact_minimumCertifiedBitDescription
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetCertifiedBitDescriptionComplexity_le_characteristicRankPower
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTarget_exists_exact_minimumCertifiedCanonicalSearch
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTargetCertifiedCanonicalSearchComplexity_le_characteristicRankPower
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 end StartRootedTargetCertifiedComplexities
 
@@ -888,14 +888,14 @@ theorem
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∃
           C :
             CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -903,25 +903,25 @@ theorem
           C.output.grammar.StringLanguage = L ∧
             C.bits.length =
               startRootedTargetCertifiedBitDescriptionComplexity
-                (v := w) hα obs f hL) ∧
+                 hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         startRootedTargetCertifiedBitDescriptionComplexity
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           correctedConcreteCompiledGrammarPaperPowerBitBound
             (startRootedTargetCharacteristicRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∃
           C :
             CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -929,37 +929,37 @@ theorem
           C.output.grammar.StringLanguage = L ∧
             C.canonicalSearch.length =
               startRootedTargetCertifiedCanonicalSearchComplexity
-                (v := w) hα obs f hL) ∧
+                 hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         startRootedTargetCertifiedCanonicalSearchComplexity
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           2 ^
             (correctedConcreteCompiledGrammarPaperPowerBitBound
                 (startRootedTargetCharacteristicRank
-                  (v := w) hα obs f hL)
+                   hα obs f hL)
                 f +
               1)) := by
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       fun L hL =>
         startRootedTarget_exists_exact_minimumCertifiedBitDescription
-          (v := w) hα obs f hL,
+           hα obs f hL,
       fun L hL =>
         startRootedTargetCertifiedBitDescriptionComplexity_le_characteristicRankPower
-          (v := w) hα obs f hL,
+           hα obs f hL,
       fun L hL =>
         startRootedTarget_exists_exact_minimumCertifiedCanonicalSearch
-          (v := w) hα obs f hL,
+           hα obs f hL,
       fun L hL =>
         startRootedTargetCertifiedCanonicalSearchComplexity_le_characteristicRankPower
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 end CertifiedDescriptionComplexityClassPackage
 

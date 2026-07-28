@@ -475,8 +475,8 @@ theorem startRootedTarget_hasCertifiedRankProfile
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     HasCorrectedConcreteCertifiedRankProfile
       (obs := obs)
       (f := f)
@@ -484,21 +484,21 @@ theorem startRootedTarget_hasCertifiedRankProfile
 
   exact
     ⟨startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTarget_mem_certifiedCharacteristicRankProfileClass
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 /-- Minimum simultaneous certified-description rank of one semantic target. -/
 noncomputable def startRootedTargetCertifiedDescriptionRank
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     Nat :=
   correctedConcreteCertifiedDescriptionRank
     (startRootedTarget_hasCertifiedRankProfile
-      (v := w) hα obs f hL)
+       hα obs f hL)
 
 /-- The target belongs to the profile hierarchy at its minimum certified
 description rank. -/
@@ -506,19 +506,19 @@ theorem startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     L ∈
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
         (M := M)
         obs f
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL) := by
+           hα obs f hL) := by
 
   exact
     (startRootedTarget_hasCertifiedRankProfile
-      (v := w) hα obs f hL).descriptionRank_spec
+       hα obs f hL).descriptionRank_spec
 
 /-- The target's minimum simultaneous certified-description rank is no larger
 than its characteristic rank. -/
@@ -527,29 +527,29 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL := by
+         hα obs f hL := by
 
   unfold
     startRootedTargetCertifiedDescriptionRank
 
   exact
     (startRootedTarget_hasCertifiedRankProfile
-      (v := w) hα obs f hL).descriptionRank_le_of_mem
+       hα obs f hL).descriptionRank_le_of_mem
       (startRootedTarget_mem_certifiedCharacteristicRankProfileClass
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- Exact threshold theorem for one semantic target. -/
 theorem startRootedTarget_mem_rankProfile_iff_descriptionRank_le
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     (rank : Nat) :
     L ∈
         CorrectedConcreteCertifiedRankProfileClass
@@ -557,12 +557,12 @@ theorem startRootedTarget_mem_rankProfile_iff_descriptionRank_le
           (M := M)
           obs f rank ↔
       startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank := by
 
   exact
     (startRootedTarget_hasCertifiedRankProfile
-      (v := w) hα obs f hL).mem_rankProfile_iff_descriptionRank_le
+       hα obs f hL).mem_rankProfile_iff_descriptionRank_le
       rank
 
 /-- No rank below the target's minimum certified-description rank contains the
@@ -571,13 +571,13 @@ theorem startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f)
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f)
     {rank : Nat}
     (hrank :
       rank <
         startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL) :
+           hα obs f hL) :
     L ∉
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
@@ -586,7 +586,7 @@ theorem startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
 
   exact
     (startRootedTarget_hasCertifiedRankProfile
-      (v := w) hα obs f hL).not_mem_rankProfile_of_lt_descriptionRank
+       hα obs f hL).not_mem_rankProfile_of_lt_descriptionRank
       hrank
 
 /-- The minimum target description rank is witnessed by one exact certified
@@ -595,8 +595,8 @@ theorem startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     ∃
       C :
         CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -605,17 +605,17 @@ theorem startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
         C.bits.length <=
           correctedConcreteCertifiedRankBitBudget
             (startRootedTargetCertifiedDescriptionRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f ∧
         C.canonicalSearch.length <=
           correctedConcreteCertifiedRankSearchBudget
             (startRootedTargetCertifiedDescriptionRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f := by
 
   exact
     (startRootedTarget_hasCertifiedRankProfile
-      (v := w) hα obs f hL).exists_output_at_exact_descriptionRank
+       hα obs f hL).exists_output_at_exact_descriptionRank
 
 /-- The separately minimized target bit complexity is bounded already at the
 minimum simultaneous certified-description rank. -/
@@ -624,22 +624,22 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedBitDescriptionComplexity
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       correctedConcreteCertifiedRankBitBudget
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f := by
 
   let hprofile :=
     startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     startRootedTargetCertifiedBitDescriptionComplexity_le_of_profile
-      (v := w) hα obs f hL hprofile
+       hα obs f hL hprofile
 
 /-- The separately minimized target search complexity is bounded already at the
 minimum simultaneous certified-description rank. -/
@@ -648,22 +648,22 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     startRootedTargetCertifiedCanonicalSearchComplexity
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       correctedConcreteCertifiedRankSearchBudget
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f := by
 
   let hprofile :=
     startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     startRootedTargetCertifiedCanonicalSearchComplexity_le_of_profile
-      (v := w) hα obs f hL hprofile
+       hα obs f hL hprofile
 
 /-- The minimum-description-rank bit budget is no larger than the
 characteristic-rank bit budget. -/
@@ -672,21 +672,21 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     correctedConcreteCertifiedRankBitBudget
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f <=
       correctedConcreteCertifiedRankBitBudget
         (startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f := by
 
   exact
     correctedConcreteCertifiedRankBitBudget_mono
       (startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- The minimum-description-rank search budget is no larger than the
 characteristic-rank search budget. -/
@@ -695,44 +695,44 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     correctedConcreteCertifiedRankSearchBudget
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f <=
       correctedConcreteCertifiedRankSearchBudget
         (startRootedTargetCharacteristicRank
-          (v := w) hα obs f hL)
+           hα obs f hL)
         f := by
 
   exact
     correctedConcreteCertifiedRankSearchBudget_mono
       (startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL)
+         hα obs f hL)
 
 /-- Compact target minimum simultaneous-description-rank package. -/
 theorem startRootedTargetCertifiedDescriptionRank_package
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     (startRootedTargetCertifiedDescriptionRank
-        (v := w) hα obs f hL <=
+         hα obs f hL <=
       startRootedTargetCharacteristicRank
-        (v := w) hα obs f hL) ∧
+         hα obs f hL) ∧
       (L ∈
         CorrectedConcreteCertifiedRankProfileClass
           (α := α)
           (M := M)
           obs f
           (startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL)) ∧
+             hα obs f hL)) ∧
       (∀ rank : Nat,
         rank <
             startRootedTargetCertifiedDescriptionRank
-              (v := w) hα obs f hL →
+               hα obs f hL →
           L ∉
             CorrectedConcreteCertifiedRankProfileClass
               (α := α)
@@ -746,24 +746,24 @@ theorem startRootedTargetCertifiedDescriptionRank_package
           C.bits.length <=
             correctedConcreteCertifiedRankBitBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := w) hα obs f hL)
+                 hα obs f hL)
               f ∧
           C.canonicalSearch.length <=
             correctedConcreteCertifiedRankSearchBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := w) hα obs f hL)
+                 hα obs f hL)
               f) := by
 
   exact
     ⟨startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := w) hα obs f hL,
+         hα obs f hL,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := w) hα obs f hL,
+         hα obs f hL,
       fun rank hrank =>
         startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
-          (v := w) hα obs f hL hrank,
+           hα obs f hL hrank,
       startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := w) hα obs f hL⟩
+         hα obs f hL⟩
 
 end StartRootedTargetCertifiedDescriptionRank
 
@@ -789,10 +789,10 @@ def StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
     ∃
       hL :
         L ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f,
+          StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f,
       startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL <=
+           hα obs f hL <=
         rank}
 
 /-- The minimum certified-description-rank strata are increasing. -/
@@ -802,9 +802,9 @@ theorem
     (hrank :
       rank <= rank') :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f rank ⊆
+         hα obs f rank ⊆
       StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f rank' := by
+         hα obs f rank' := by
 
   intro L hL
 
@@ -822,11 +822,11 @@ theorem
     startRootedTargetCertifiedDescriptionRankAtMostClass_eq_target_inter_rankProfile
     (rank : Nat) :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f rank =
+         hα obs f rank =
       {L : Set (Word α) |
         L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f ∧
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f ∧
           L ∈
             CorrectedConcreteCertifiedRankProfileClass
               (α := α)
@@ -845,7 +845,7 @@ theorem
     exact
       ⟨hTarget,
         (startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-          (v := w) hα obs f hTarget rank).mpr
+           hα obs f hTarget rank).mpr
           hbound⟩
 
   · intro hL
@@ -856,7 +856,7 @@ theorem
     exact
       ⟨hTarget,
         (startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-          (v := w) hα obs f hTarget rank).mp
+           hα obs f hTarget rank).mp
           hprofile⟩
 
 /-- Every minimum-description-rank stratum is contained in the semantic target
@@ -865,9 +865,9 @@ theorem
     startRootedTargetCertifiedDescriptionRankAtMostClass_subset_targetClass
     (rank : Nat) :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f rank ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f := by
+         hα obs f rank ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f := by
 
   intro L hL
 
@@ -882,7 +882,7 @@ theorem
     startRootedTargetCertifiedDescriptionRankAtMostClass_subset_rankProfileClass
     (rank : Nat) :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f rank ⊆
+         hα obs f rank ⊆
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
         (M := M)
@@ -895,7 +895,7 @@ theorem
 
   exact
     (startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-      (v := w) hα obs f hTarget rank).mpr
+       hα obs f hTarget rank).mpr
       hbound
 
 /-- Every semantic target lies in the stratum indexed by its own minimum
@@ -905,13 +905,13 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) :
     L ∈
       StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-        (v := w) hα obs f
+         hα obs f
         (startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL) := by
+           hα obs f hL) := by
 
   exact
     ⟨hL,
@@ -921,13 +921,13 @@ theorem
 semantic target class, stated as mutual inclusion. -/
 theorem
     startRootedTargetClass_eq_exists_certifiedDescriptionRankAtMostClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f =
+    StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f =
       {L : Set (Word α) |
         ∃ rank : Nat,
           L ∈
             StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-              (v := w) hα obs f rank} := by
+               hα obs f rank} := by
 
   ext L
 
@@ -937,9 +937,9 @@ theorem
 
     exact
       ⟨startRootedTargetCertifiedDescriptionRank
-          (v := w) hα obs f hL,
+           hα obs f hL,
         startRootedTarget_mem_ownCertifiedDescriptionRankAtMostClass
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
   · intro hL
 
@@ -948,7 +948,7 @@ theorem
 
     exact
       startRootedTargetCertifiedDescriptionRankAtMostClass_subset_targetClass
-        (v := w) hα obs f rank hRank
+         hα obs f rank hRank
 
 end CertifiedDescriptionRankStrata
 
@@ -974,24 +974,24 @@ theorem
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         startRootedTargetCertifiedDescriptionRank
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           startRootedTargetCharacteristicRank
-            (v := w) hα obs f hL) ∧
+             hα obs f hL) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∀ rank : Nat,
           L ∈
               CorrectedConcreteCertifiedRankProfileClass
@@ -999,14 +999,14 @@ theorem
                 (M := M)
                 obs f rank ↔
             startRootedTargetCertifiedDescriptionRank
-                (v := w) hα obs f hL <=
+                 hα obs f hL <=
               rank) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         ∃
           C :
             CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -1015,38 +1015,38 @@ theorem
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := w) hα obs f hL)
+                   hα obs f hL)
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := w) hα obs f hL)
+                   hα obs f hL)
                 f) ∧
       (∀
         L : Set (Word α),
         ∀ hL :
           L ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := w) α M obs f,
+            StartRootedCorrectedConcreteTargetClass.{u, w, v}
+               α M obs f,
         startRootedTargetCertifiedBitDescriptionComplexity
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           correctedConcreteCertifiedRankBitBudget
             (startRootedTargetCertifiedDescriptionRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f ∧
         startRootedTargetCertifiedCanonicalSearchComplexity
-            (v := w) hα obs f hL <=
+             hα obs f hL <=
           correctedConcreteCertifiedRankSearchBudget
             (startRootedTargetCertifiedDescriptionRank
-              (v := w) hα obs f hL)
+               hα obs f hL)
             f) ∧
       (∀ rank : Nat,
         StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
-            (v := w) hα obs f rank =
+             hα obs f rank =
           {L : Set (Word α) |
             L ∈
-                StartRootedCorrectedConcreteTargetClass
-                  (v := w) α M obs f ∧
+                StartRootedCorrectedConcreteTargetClass.{u, w, v}
+                   α M obs f ∧
               L ∈
                 CorrectedConcreteCertifiedRankProfileClass
                   (α := α)
@@ -1055,23 +1055,23 @@ theorem
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       fun L hL =>
         startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-          (v := w) hα obs f hL,
+           hα obs f hL,
       fun L hL rank =>
         startRootedTarget_mem_rankProfile_iff_descriptionRank_le
-          (v := w) hα obs f hL rank,
+           hα obs f hL rank,
       fun L hL =>
         startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-          (v := w) hα obs f hL,
+           hα obs f hL,
       fun L hL =>
         ⟨startRootedTargetCertifiedBitDescriptionComplexity_le_descriptionRankBudget
-            (v := w) hα obs f hL,
+             hα obs f hL,
           startRootedTargetCertifiedCanonicalSearchComplexity_le_descriptionRankBudget
-            (v := w) hα obs f hL⟩,
+             hα obs f hL⟩,
       startRootedTargetCertifiedDescriptionRankAtMostClass_eq_target_inter_rankProfile
-        (v := w) hα obs f⟩
+         hα obs f⟩
 
 end CertifiedDescriptionRankPackages
 

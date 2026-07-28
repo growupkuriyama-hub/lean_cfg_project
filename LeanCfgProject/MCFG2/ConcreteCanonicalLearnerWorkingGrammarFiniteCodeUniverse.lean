@@ -749,8 +749,8 @@ theorem
     startRootedTarget_exists_positive_finiteCodeWitness
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃
       (S : Finset (Word α))
       (R :
@@ -771,7 +771,7 @@ theorem
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_checkedBitBoundedTargetWitness
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -793,8 +793,8 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ n : Nat,
         (correctedConcreteCompiledGrammarCheckedBitCodeUniverse
             n f).length <=
@@ -809,8 +809,8 @@ theorem
             (sampleLengthBudget K)
             f) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∃
           (S : Finset (Word α))
           (R :
@@ -831,7 +831,7 @@ theorem
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       fun n =>
         correctedConcreteCompiledGrammarCheckedBitCodeUniverse_length_le
           n f,
@@ -839,7 +839,7 @@ theorem
         hα obs f,
       fun L hL =>
         startRootedTarget_exists_positive_finiteCodeWitness
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 end StartRootedFiniteCodeConclusion
 

@@ -1415,8 +1415,8 @@ pair. -/
 theorem
     correctedConcreteWorkingGrammarLearner_selectedStage_canonicalDecodedSearch_package :
     ∀ L : Set (Word α),
-      L ∈ StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f →
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f →
       ∀ T : TextFor L,
         ∃ n0 : Nat,
           ∀ n : Nat, n0 <= n →
@@ -1448,14 +1448,14 @@ theorem
 
   refine
     ⟨startRootedCorrectedConcreteTargetCoverageStage
-        (v := w) obs f hL T,
+         obs f hL T,
       ?_⟩
 
   intro n hn
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_correct_after_startRootedCoverageStage
-        (v := w) hα obs f hL T hn,
+         hα obs f hL T hn,
       correctedConcreteWorkingGrammarLearner_actualCodePresentation_mem_canonicalSearch
         hα obs f
         (T.prefixSample n),
@@ -1471,8 +1471,8 @@ theorem
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
             hα obs f K).length <=
@@ -1504,8 +1504,8 @@ theorem
                 hα obs f K presentation =
               bits) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∀ T : TextFor L,
           ∃ n0 : Nat,
             ∀ n : Nat, n0 <= n →
@@ -1526,7 +1526,7 @@ theorem
 
   refine
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch_length_le
         hα obs f,
       correctedConcreteWorkingGrammarLearner_actualCodePresentation_mem_canonicalSearch
@@ -1549,7 +1549,7 @@ theorem
 
     rcases
         correctedConcreteWorkingGrammarLearner_selectedStage_canonicalDecodedSearch_package
-          (v := w) hα obs f L hL T with
+           hα obs f L hL T with
       ⟨n0, hstage⟩
 
     exact

@@ -709,15 +709,15 @@ certificate. -/
 theorem correctedConcreteWorkingGrammarLearner_exists_boundedTargetWitness
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     Nonempty
       (CorrectedConcreteBoundedWorkingGrammarTargetWitness
         hα obs f L) := by
 
   obtain ⟨S, hS⟩ :=
     correctedConcreteWorkingGrammarLearner_characteristicSample_for_startRootedTargetClass
-      (v := w) hα obs f hL
+       hα obs f hL
 
   exact
     ⟨correctedConcreteBoundedWorkingGrammarTargetWitness_of_characteristicSample
@@ -728,8 +728,8 @@ hierarchy. -/
 theorem startRootedTarget_mem_some_boundedCutCompiledClass
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ n : Nat,
       L ∈
         BoundedCutCompiledWorkingGrammarLanguageClass
@@ -737,7 +737,7 @@ theorem startRootedTarget_mem_some_boundedCutCompiledClass
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_boundedTargetWitness
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -746,8 +746,8 @@ theorem startRootedTarget_mem_some_boundedCutCompiledClass
 
 /-- Class-level inclusion into the union of all finite bounded levels. -/
 theorem startRootedTargetClass_subset_exists_boundedCutCompiledClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f ⊆
+    StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f ⊆
       {L : Set (Word α) |
         ∃ n : Nat,
           L ∈
@@ -758,15 +758,15 @@ theorem startRootedTargetClass_subset_exists_boundedCutCompiledClass :
 
   exact
     startRootedTarget_mem_some_boundedCutCompiledClass
-      (v := w) hα obs f hL
+       hα obs f hL
 
 /-- Expanded witness form exposing the positive construction sample and its
 budget level. -/
 theorem correctedConcreteWorkingGrammarLearner_exists_positive_boundedRepresentation
     {L : Set (Word α)}
     (hL :
-      L ∈ StartRootedCorrectedConcreteTargetClass
-        (v := w) α M obs f) :
+      L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+         α M obs f) :
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       L ∈
@@ -777,7 +777,7 @@ theorem correctedConcreteWorkingGrammarLearner_exists_positive_boundedRepresenta
 
   rcases
       correctedConcreteWorkingGrammarLearner_exists_boundedTargetWitness
-        (v := w) hα obs f hL with
+         hα obs f hL with
     ⟨W⟩
 
   exact
@@ -808,16 +808,16 @@ theorem correctedConcreteWorkingGrammarLearner_boundedRepresentation_package :
           (w := max u v) α f n ⊆
         BoundedCutCompiledWorkingGrammarLanguageClass
           (w := max u v) α f m) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f ⊆
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f ⊆
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
               BoundedCutCompiledWorkingGrammarLanguageClass
                 (w := max u v) α f n}) ∧
       (∀ L : Set (Word α),
-        L ∈ StartRootedCorrectedConcreteTargetClass
-            (v := w) α M obs f →
+        L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
+             α M obs f →
         ∃ S : Finset (Word α),
           (S : Set (Word α)) ⊆ L ∧
           L ∈
@@ -831,10 +831,10 @@ theorem correctedConcreteWorkingGrammarLearner_boundedRepresentation_package :
         boundedCutCompiledWorkingGrammarLanguageClass_mono
           (w := max u v) hnm,
       startRootedTargetClass_subset_exists_boundedCutCompiledClass
-        (v := w) hα obs f,
+         hα obs f,
       fun L hL =>
         correctedConcreteWorkingGrammarLearner_exists_positive_boundedRepresentation
-          (v := w) hα obs f hL⟩
+           hα obs f hL⟩
 
 /-- Combined identification and bounded finite-representation endpoint. -/
 theorem correctedConcreteWorkingGrammarLearner_identification_boundedRepresentation_package :
@@ -843,10 +843,10 @@ theorem correctedConcreteWorkingGrammarLearner_identification_boundedRepresentat
           obs f)
         (correctedConcreteWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := w) α M obs f ⊆
+        (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, w, v}
+           α M obs f ⊆
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
@@ -862,9 +862,9 @@ theorem correctedConcreteWorkingGrammarLearner_identification_boundedRepresentat
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := w) hα obs f,
+         hα obs f,
       startRootedTargetClass_subset_exists_boundedCutCompiledClass
-        (v := w) hα obs f,
+         hα obs f,
       correctedConcreteCanonicalLearnerLanguage_mem_boundedCutCompiledClass
         hα obs f⟩
 
