@@ -125,7 +125,6 @@ theorem control_mem_compiledGrammarNonterminals
   simp [
     CorrectedConcreteFiniteHypothesis.compiledGrammarNonterminals
   ]
-  exact Finset.mem_toList.mpr (Finset.mem_attach H.controlCodes X)
 
 /-- Every nonterminal of the constructed grammar occurs in the explicit
 enumeration. -/
