@@ -170,7 +170,7 @@ noncomputable def correctedConcreteWorkingGrammarOutputRepresentation
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    CutCompiledWorkingGrammarRepresentation.{u, max u v}
+    CutCompiledWorkingGrammarRepresentation.{u, u}
       α f
       ((correctedConcreteWorkingGrammarLearner
         hα obs f K).grammar.StringLanguage) where
@@ -199,7 +199,7 @@ theorem correctedConcreteCanonicalLearnerLanguage_mem_cutCompiledClass
     (K : Finset (Word α)) :
     CorrectedConcreteCanonicalLearnerLanguage
         K obs f ∈
-      CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+      CutCompiledWorkingGrammarLanguageClass.{u, u}
         α f := by
 
   unfold
@@ -230,7 +230,7 @@ theorem exactReachableSampleStringLanguage_mem_cutCompiledClass
     (K : Finset (Word α)) :
     ExactReachableSampleStringLanguage
         K obs f ∈
-      CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+      CutCompiledWorkingGrammarLanguageClass.{u, u}
         α f := by
 
   unfold
@@ -314,7 +314,7 @@ noncomputable def toCutCompiledRepresentation
     (W :
       CorrectedConcreteWorkingGrammarTargetRepresentationWitness
         hα obs f L) :
-    CutCompiledWorkingGrammarRepresentation.{u, max u v}
+    CutCompiledWorkingGrammarRepresentation.{u, u}
       α f L where
 
   Nonterminal :=
@@ -335,7 +335,7 @@ theorem target_mem_cutCompiledClass
       CorrectedConcreteWorkingGrammarTargetRepresentationWitness
         hα obs f L) :
     L ∈
-      CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+      CutCompiledWorkingGrammarLanguageClass.{u, u}
         α f := by
 
   exact
@@ -478,6 +478,8 @@ variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
 
+include hα
+
 /-- Every target in the semantic start-rooted class has a finite positive
 sample whose actual learner output grammar is exactly the target. -/
 theorem correctedConcreteWorkingGrammarLearner_exists_targetRepresentation
@@ -505,7 +507,7 @@ theorem correctedConcreteWorkingGrammarLearner_target_mem_cutCompiledClass
       L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
          α M obs f) :
     L ∈
-      CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+      CutCompiledWorkingGrammarLanguageClass.{u, u}
         α f := by
 
   rcases
@@ -519,7 +521,7 @@ theorem correctedConcreteWorkingGrammarLearner_target_mem_cutCompiledClass
 theorem startRootedTargetClass_subset_cutCompiledWorkingGrammarLanguageClass :
     StartRootedCorrectedConcreteTargetClass.{u, w, v}
          α M obs f ⊆
-      CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+      CutCompiledWorkingGrammarLanguageClass.{u, u}
         α f := by
 
   intro L hL
@@ -614,7 +616,7 @@ finite size bounds. -/
 theorem correctedConcreteWorkingGrammarLearner_targetRepresentation_package :
     (StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f ⊆
-        CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+        CutCompiledWorkingGrammarLanguageClass.{u, u}
           α f) ∧
       (∀ L : Set (Word α),
         L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
@@ -675,7 +677,7 @@ theorem correctedConcreteWorkingGrammarLearner_representation_identification_pac
            α M obs f) ∧
       (StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f ⊆
-        CutCompiledWorkingGrammarLanguageClass.{u, max u v}
+        CutCompiledWorkingGrammarLanguageClass.{u, u}
           α f) ∧
       (∀ L : Set (Word α),
         L ∈ StartRootedCorrectedConcreteTargetClass.{u, w, v}
