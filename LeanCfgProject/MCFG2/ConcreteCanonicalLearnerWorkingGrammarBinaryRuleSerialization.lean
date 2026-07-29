@@ -301,9 +301,9 @@ rule after structural packet encoding. -/
 
   classical
 
-  unfold decodeCompiledBinaryRuleStructuralPacket
+  unfold encodeCompiledBinaryRuleStructuralPacket
 
-  simp only [encodeCompiledBinaryRuleStructuralPacket]
+  unfold decodeCompiledBinaryRuleStructuralPacket
 
   simp only [
     H.decodeCompiledNonterminalCode_encode dummy rho.lhs,
