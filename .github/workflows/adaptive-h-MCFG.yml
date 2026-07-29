@@ -1,4 +1,4 @@
-name: OpenTelemetry V11 experiment
+name: ADP - OpenTelemetry V11 experiment
 
 on:
   workflow_dispatch:
@@ -36,12 +36,6 @@ concurrency:
   group: opentelemetry-v11-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  EXPERIMENT_DIR: ${{ github.workspace }}/LeanCfgProject/adaptive_h_mcfg
-  DEMO_DIR: ${{ runner.temp }}/opentelemetry-demo
-  OUTPUT_DIR: ${{ github.workspace }}/mcfg-v11-experiment
-  DIAGNOSTICS_DIR: ${{ github.workspace }}/github-actions-diagnostics
-
 jobs:
   experiment:
     name: Collect and evaluate traces
@@ -50,14 +44,24 @@ jobs:
 
     steps:
       - name: Check out lean_cfg_project
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
+
+      # runner.temp cannot be evaluated in workflow-level env.
+      # RUNNER_TEMP is available after the runner starts, so persist the
+      # absolute paths for all later steps through GITHUB_ENV.
+      - name: Initialize experiment paths
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/LeanCfgProject/adaptive_h_mcfg" >> "$GITHUB_ENV"
+          echo "DEMO_DIR=$RUNNER_TEMP/opentelemetry-demo" >> "$GITHUB_ENV"
+          echo "OUTPUT_DIR=$GITHUB_WORKSPACE/mcfg-v11-experiment" >> "$GITHUB_ENV"
+          echo "DIAGNOSTICS_DIR=$GITHUB_WORKSPACE/github-actions-diagnostics" >> "$GITHUB_ENV"
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: LeanCfgProject/adaptive_h_mcfg/pyproject.toml
 
       - name: Verify repository layout
         shell: bash
@@ -68,7 +72,7 @@ jobs:
           test -f "$EXPERIMENT_DIR/run_v11_end_to_end.py"
           test -f "$EXPERIMENT_DIR/otel_demo/run_normal_v11.py"
           printf 'Experiment directory: %s\n' "$EXPERIMENT_DIR"
-          find "$EXPERIMENT_DIR" -maxdepth 2 -type f | sort | sed -n '1,120p'
+          find "$EXPERIMENT_DIR" -maxdepth 2 -type f | sort | sed -n '1,160p'
 
       - name: Install experiment dependencies
         shell: bash
@@ -99,8 +103,6 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          # GitHub-hosted runners contain SDKs that this experiment does not use.
-          # Remove them to make room for the Demo's container images.
           sudo rm -rf /usr/local/lib/android || true
           sudo rm -rf /usr/share/dotnet || true
           sudo rm -rf /opt/ghc || true
@@ -181,12 +183,13 @@ jobs:
 
       - name: Upload traces, results, and diagnostics
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: mcfg-v11-experiment-${{ github.run_id }}
           path: |
             mcfg-v11-experiment
             github-actions-diagnostics
+            opentelemetry-demo-commit.txt
           if-no-files-found: warn
           retention-days: 14
           compression-level: 6
