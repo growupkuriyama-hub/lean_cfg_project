@@ -1,13 +1,23 @@
-name: ADP MCFG V12 - projected-word-disjoint OpenTelemetry experiment
+name: ADP MCFG V12.1 - robust projected-word-disjoint OpenTelemetry experiment
 
 run-name: >-
-  ADP MCFG V12 WORD-DISJOINT • manual • run #${{ github.run_number }}
+  ADP MCFG V12.1 ROBUST WORD-DISJOINT • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-V12-word-disjoint.yml"
+      - "LeanCfgProject/adaptive_h_mcfg2/**"
   workflow_dispatch:
     inputs:
-      replicas:
-        description: Independent checkout traces collected for each cart size
+      requested_replicas:
+        description: Acquisition attempts per cart size (oversampled before balancing)
+        required: true
+        default: 10
+        type: number
+      minimum_replicas:
+        description: Accepted traces retained per cart size
         required: true
         default: 5
         type: number
@@ -24,7 +34,7 @@ on:
       flush_seconds:
         description: Telemetry flush delay after each checkout
         required: true
-        default: 5
+        default: 10
         type: number
       demo_ref:
         description: Pinned OpenTelemetry Demo commit
@@ -40,7 +50,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  WORKFLOW_REVISION: "2026-07-29-v12-word-disjoint-manual"
+  WORKFLOW_REVISION: "2026-07-30-v12.1-oversample-balance-acquisition-dropout"
   BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
   PATCH_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
   MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v12_merged
@@ -75,7 +85,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: open-telemetry/opentelemetry-demo
-          ref: ${{ inputs.demo_ref }}
+          ref: ${{ github.event.inputs.demo_ref || '3684411da9a4dc3e77cddfef929a630d6f5af6c5' }}
           path: _opentelemetry-demo
           fetch-depth: 1
           persist-credentials: false
@@ -85,12 +95,14 @@ jobs:
         run: |
           set -euxo pipefail
 
-          REPLICAS='${{ inputs.replicas }}'
-          MAX_COUNT='${{ inputs.max_count }}'
-          WARMUP_SECONDS='${{ inputs.warmup_seconds }}'
-          FLUSH_SECONDS='${{ inputs.flush_seconds }}'
+          REQUESTED_REPLICAS='${{ github.event.inputs.requested_replicas || '10' }}'
+          MINIMUM_REPLICAS='${{ github.event.inputs.minimum_replicas || '5' }}'
+          MAX_COUNT='${{ github.event.inputs.max_count || '10' }}'
+          WARMUP_SECONDS='${{ github.event.inputs.warmup_seconds || '45' }}'
+          FLUSH_SECONDS='${{ github.event.inputs.flush_seconds || '10' }}'
 
-          test "$REPLICAS" -ge 1
+          test "$REQUESTED_REPLICAS" -ge "$MINIMUM_REPLICAS"
+          test "$MINIMUM_REPLICAS" -ge 1
           test "$MAX_COUNT" -ge 4
           test "$MAX_COUNT" -le 10
           test "$WARMUP_SECONDS" -ge 0
@@ -104,7 +116,8 @@ jobs:
             echo "OUTPUT_DIR=$GITHUB_WORKSPACE/$OUTPUT_RELATIVE_DIR"
             echo "DIAGNOSTICS_DIR=$GITHUB_WORKSPACE/$DIAGNOSTICS_RELATIVE_DIR"
             echo "PYTHONPATH=$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
-            echo "REPLICAS=$REPLICAS"
+            echo "REQUESTED_REPLICAS=$REQUESTED_REPLICAS"
+            echo "MINIMUM_REPLICAS=$MINIMUM_REPLICAS"
             echo "MAX_COUNT=$MAX_COUNT"
             echo "TEST_COUNTS=4-$MAX_COUNT"
             echo "WARMUP_SECONDS=$WARMUP_SECONDS"
@@ -133,6 +146,38 @@ jobs:
           find "$EXPERIMENT_DIR" -maxdepth 3 -type f -print | sort \
             > "$GITHUB_WORKSPACE/v12-merged-file-list.txt"
           cat "$GITHUB_WORKSPACE/v12-merged-file-list.txt"
+
+      - name: Make dataset construction dropout-tolerant but trace-strict
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$DIAGNOSTICS_DIR"
+          cp "$EXPERIMENT_DIR/otel_demo/build_v12_dataset.py"             "$DIAGNOSTICS_DIR/build_v12_dataset.original.py"
+
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["EXPERIMENT_DIR"]) / "otel_demo" / "build_v12_dataset.py"
+          text = path.read_text(encoding="utf-8")
+          old = '''    if rejected and not args.allow_multiple_matching_traces:
+                  raise SystemExit(
+                      f"strict dataset build rejected {len(rejected)} run(s); inspect dataset_summary.json"
+                  )
+          '''
+          new = '''    if rejected and not args.allow_multiple_matching_traces:
+                  print(
+                      f"strict projection filter excluded {len(rejected)} acquisition attempt(s); "
+                      "the downstream minimum-replica validator decides dataset sufficiency",
+                      file=sys.stderr,
+                  )
+          '''
+          if old not in text:
+              raise SystemExit("Expected strict-rejection block was not found; refusing unsafe patch")
+          path.write_text(text.replace(old, new), encoding="utf-8")
+          PY
+
+          cp "$EXPERIMENT_DIR/otel_demo/build_v12_dataset.py"             "$DIAGNOSTICS_DIR/build_v12_dataset.dropout_tolerant.py"
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
@@ -171,7 +216,7 @@ jobs:
 
           touch "$DEMO_DIR/.env.override"
           git -C "$DEMO_DIR" rev-parse HEAD | tee "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v12.txt"
-          test "$(cat "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v12.txt")" = '${{ inputs.demo_ref }}'
+          test "$(cat "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v12.txt")" = '${{ github.event.inputs.demo_ref || '3684411da9a4dc3e77cddfef929a630d6f5af6c5' }}'
 
       - name: Install dependencies and run V12 tests
         shell: bash
@@ -266,7 +311,7 @@ jobs:
             --output "$OUTPUT_DIR/normal-runs" \
             --min-count 1 \
             --max-count "$MAX_COUNT" \
-            --replicas "$REPLICAS" \
+            --replicas "$REQUESTED_REPLICAS" \
             --warmup-seconds "$WARMUP_SECONDS" \
             --flush-seconds "$FLUSH_SECONDS" \
             --frontend-base "http://localhost:8080" \
@@ -275,19 +320,116 @@ jobs:
             --compose-file compose.observability.yaml \
             --compose-file compose.extras.yaml
 
-      - name: Build and evaluate projected-word-disjoint V12 dataset
+      - name: Build strict projections from all acquisition attempts
+        shell: bash
+        timeout-minutes: 20
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          rm -rf "$OUTPUT_DIR/dataset" "$OUTPUT_DIR/results"
+
+          python otel_demo/build_v12_dataset.py "$OUTPUT_DIR/normal-runs" \
+            --output "$OUTPUT_DIR/dataset" \
+            --train-counts 1,2 \
+            --validation-counts 3 \
+            --test-counts "$TEST_COUNTS"
+
+      - name: Balance to exactly the minimum accepted traces per cart size
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+
+          python - <<'PY'
+          import csv
+          import json
+          import os
+          from collections import defaultdict
+          from pathlib import Path
+
+          output = Path(os.environ["OUTPUT_DIR"])
+          minimum = int(os.environ["MINIMUM_REPLICAS"])
+          source = output / "dataset" / "projections.csv"
+          backup = output / "dataset" / "projections_all_accepted.csv"
+          rows = list(csv.DictReader(source.open(encoding="utf-8", newline="")))
+
+          normal_run_ids = defaultdict(list)
+          for row in rows:
+              if row["label"] == "normal":
+                  count = int(row["item_count"])
+                  normal_run_ids[count].append(row["run_id"])
+
+          selected = {}
+          deficits = {}
+          for count in range(1, int(os.environ["MAX_COUNT"]) + 1):
+              available = sorted(set(normal_run_ids[count]))
+              if len(available) < minimum:
+                  deficits[count] = {"available": len(available), "required": minimum}
+              else:
+                  selected[count] = available[:minimum]
+
+          selection_report = {
+              "selection_rule": "lexicographically first accepted run IDs per item count",
+              "minimum_replicas_per_count": minimum,
+              "available_run_ids": {
+                  str(k): sorted(set(v)) for k, v in sorted(normal_run_ids.items())
+              },
+              "selected_run_ids": {str(k): v for k, v in sorted(selected.items())},
+              "deficits": {str(k): v for k, v in sorted(deficits.items())},
+          }
+          (output / "dataset" / "balanced_selection.json").write_text(
+              json.dumps(selection_report, indent=2), encoding="utf-8"
+          )
+          if deficits:
+              raise SystemExit(
+                  "Insufficient accepted traces after oversampling:\n"
+                  + json.dumps(selection_report, indent=2)
+              )
+
+          keep = {
+              run_id
+              for run_ids in selected.values()
+              for run_id in run_ids
+          }
+          fieldnames = list(rows[0].keys())
+          backup.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+          balanced = [row for row in rows if row["run_id"] in keep]
+          with source.open("w", encoding="utf-8", newline="") as handle:
+              writer = csv.DictWriter(handle, fieldnames=fieldnames)
+              writer.writeheader()
+              writer.writerows(balanced)
+
+          print(json.dumps(selection_report, indent=2))
+          print(f"balanced rows: {len(balanced)}")
+          PY
+
+      - name: Validate and evaluate balanced projected-word-disjoint dataset
         shell: bash
         timeout-minutes: 60
         run: |
           set -euxo pipefail
           cd "$EXPERIMENT_DIR"
+          mkdir -p "$OUTPUT_DIR/results"
 
-          python run_v12_end_to_end.py "$OUTPUT_DIR/normal-runs" \
-            --output "$OUTPUT_DIR" \
+          python validate_v12_dataset.py "$OUTPUT_DIR/dataset/projections.csv" \
+            --output "$OUTPUT_DIR/dataset/validation_report.json" \
             --train-counts 1,2 \
             --validation-counts 3 \
             --test-counts "$TEST_COUNTS" \
-            --minimum-replicas "$REPLICAS"
+            --minimum-replicas "$MINIMUM_REPLICAS"
+
+          python run_word_disjoint_v12.py "$OUTPUT_DIR/dataset/projections.csv" \
+            --output "$OUTPUT_DIR/results" \
+            --train-counts 1,2 \
+            --validation-counts 3 \
+            --test-counts "$TEST_COUNTS" \
+            --minimum-replicas "$MINIMUM_REPLICAS"
+
+          python run_scaling_v12.py "$OUTPUT_DIR/dataset/projections.csv" \
+            --output "$OUTPUT_DIR/results/training_scaling.csv" \
+            --max-training-count 4 \
+            --memory-gib 12 \
+            --timeout-seconds 600
 
       - name: Enforce V12 success criteria
         shell: bash
@@ -296,6 +438,9 @@ jobs:
 
           test -f "$OUTPUT_DIR/dataset/projections.csv"
           test -f "$OUTPUT_DIR/dataset/validation_report.json"
+          test -f "$OUTPUT_DIR/dataset/dataset_summary.json"
+          test -f "$OUTPUT_DIR/dataset/projections_all_accepted.csv"
+          test -f "$OUTPUT_DIR/dataset/balanced_selection.json"
           test -f "$OUTPUT_DIR/results/metrics_unique_projection.csv"
           test -f "$OUTPUT_DIR/results/metrics_trace_instance.csv"
           test -f "$OUTPUT_DIR/results/model_complexity_and_runtime.csv"
@@ -362,6 +507,7 @@ jobs:
           docker ps -a > "$DIAGNOSTICS_DIR/docker-containers.txt" 2>&1
           cp "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v12.txt" "$DIAGNOSTICS_DIR/" 2>/dev/null
           cp "$GITHUB_WORKSPACE/v12-merged-file-list.txt" "$DIAGNOSTICS_DIR/" 2>/dev/null
+          cp "$GITHUB_WORKSPACE/.github/workflows/adaptive-h-MCFG-V12-word-disjoint.yml" "$DIAGNOSTICS_DIR/" 2>/dev/null
 
           if [ -d "$DEMO_DIR" ]; then
             (

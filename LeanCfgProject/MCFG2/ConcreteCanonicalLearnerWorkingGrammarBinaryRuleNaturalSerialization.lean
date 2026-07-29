@@ -281,6 +281,8 @@ fields. -/
         Nat.add_left_comm
       ]
 
+      omega
+
 /-- Compact pair-stream codec endpoint. -/
 theorem framedTemplateBodyNaturalStreamCodec_package
     (tokens : List FramedTemplateBodyNaturalToken) :
@@ -536,6 +538,8 @@ packet. -/
     Nat.add_left_comm
   ]
 
+  omega
+
 /-- Natural terminal coding preserves the body-token count of a complete binary
 rule packet. -/
 @[simp] theorem encodeCompiledBinaryRuleNaturalPacket_bodyTokens_length
@@ -544,8 +548,7 @@ rule packet. -/
       (CorrectedConcreteCutGrammarNonterminal H)
       α
       (correctedConcreteCutGrammarArity H)) :
-    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-        bodyTokens.length =
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length =
       rho.framedStructuralBodyTokens.length := by
 
   simp [
