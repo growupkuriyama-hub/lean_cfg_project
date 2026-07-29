@@ -313,11 +313,8 @@ theorem leftIdentityTupleTemplate_terminalsIn
 
   intro i atom hatom
 
-  simp [
-    leftIdentityTupleTemplate,
-    TemplateWord.TerminalsIn,
-    TemplateAtom.TerminalsIn
-  ] at hatom ⊢
+  rw [hatom]
+  trivial
 
 end ElementaryTemplateSupport
 
@@ -377,102 +374,102 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
   unfold controlCodes at hX
 
   rcases Finset.mem_union.mp hX with
-    hword | hrest
-
-  · rcases Finset.mem_image.mp hword with
-      ⟨word, hword, rfl⟩
-
-    intro i a ha
-
-    exact
-      mem_sampleAlphabet_of_mem_word
-        K hword
-        (by simpa using ha)
+    hrest | hbinaryRight
 
   · rcases Finset.mem_union.mp hrest with
-      hunitSource | hrest
-
-    · rcases Finset.mem_image.mp hunitSource with
-        ⟨U, hU, rfl⟩
-
-      intro i a ha
-
-      change a ∈ U.source i at ha
-
-      exact
-        mem_sampleAlphabet_of_namedFill_component
-          U.rule.evidence.left_mem i ha
+      hrest | hbinaryLeft
 
     · rcases Finset.mem_union.mp hrest with
-        hunitTarget | hrest
-
-      · rcases Finset.mem_image.mp hunitTarget with
-          ⟨U, hU, rfl⟩
-
-        intro i a ha
-
-        change a ∈ U.target i at ha
-
-        exact
-          mem_sampleAlphabet_of_namedFill_component
-            U.rule.evidence.right_mem i ha
+        hrest | hbinarySource
 
       · rcases Finset.mem_union.mp hrest with
-          hbinarySource | hrest
+          hrest | hunitTarget
 
-        · rcases Finset.mem_image.mp hbinarySource with
-            ⟨B, hB, rfl⟩
+        · rcases Finset.mem_union.mp hrest with
+            hword | hunitSource
+
+          · rcases Finset.mem_image.mp hword with
+              ⟨word, hword, rfl⟩
+
+            intro i a ha
+
+            exact
+              mem_sampleAlphabet_of_mem_word
+                K hword
+                (by simpa using ha)
+
+          · rcases Finset.mem_image.mp hunitSource with
+              ⟨U, hU, rfl⟩
+
+            intro i a ha
+
+            change a ∈ U.source i at ha
+
+            exact
+              mem_sampleAlphabet_of_namedFill_component
+                U.rule.evidence.left_mem i ha
+
+        · rcases Finset.mem_image.mp hunitTarget with
+            ⟨U, hU, rfl⟩
 
           intro i a ha
 
-          change a ∈ B.source i at ha
+          change a ∈ U.target i at ha
 
           exact
-            mem_sampleAlphabet_of_mem_word
-              K
-              B.rule.witness.parent.word_mem
-              (namedFill_mem_of_mem_component
-                B.rule.witness.parent.1.context
-                B.rule.witness.parent.1.tuple
-                i
-                (by simpa using ha))
+            mem_sampleAlphabet_of_namedFill_component
+              U.rule.evidence.right_mem i ha
 
-        · rcases Finset.mem_union.mp hrest with
-            hbinaryLeft | hbinaryRight
+      · rcases Finset.mem_image.mp hbinarySource with
+          ⟨B, hB, rfl⟩
 
-          · rcases Finset.mem_image.mp hbinaryLeft with
-              ⟨B, hB, rfl⟩
+        intro i a ha
 
-            intro i a ha
+        change a ∈ B.source i at ha
 
-            change a ∈ B.leftSource i at ha
+        exact
+          mem_sampleAlphabet_of_mem_word
+            K
+            B.rule.witness.parent.word_mem
+            (namedFill_mem_of_mem_component
+              B.rule.witness.parent.1.context
+              B.rule.witness.parent.1.tuple
+              i
+              (by simpa using ha))
 
-            exact
-              mem_sampleAlphabet_of_mem_word
-                K
-                B.rule.witness.left.word_mem
-                (namedFill_mem_of_mem_component
-                  B.rule.witness.left.1.context
-                  B.rule.witness.left.1.tuple
-                  i
-                  (by simpa using ha))
+    · rcases Finset.mem_image.mp hbinaryLeft with
+        ⟨B, hB, rfl⟩
 
-          · rcases Finset.mem_image.mp hbinaryRight with
-              ⟨B, hB, rfl⟩
+      intro i a ha
 
-            intro i a ha
+      change a ∈ B.leftSource i at ha
 
-            change a ∈ B.rightSource i at ha
+      exact
+        mem_sampleAlphabet_of_mem_word
+          K
+          B.rule.witness.left.word_mem
+          (namedFill_mem_of_mem_component
+            B.rule.witness.left.1.context
+            B.rule.witness.left.1.tuple
+            i
+            (by simpa using ha))
 
-            exact
-              mem_sampleAlphabet_of_mem_word
-                K
-                B.rule.witness.right.word_mem
-                (namedFill_mem_of_mem_component
-                  B.rule.witness.right.1.context
-                  B.rule.witness.right.1.tuple
-                  i
-                  (by simpa using ha))
+  · rcases Finset.mem_image.mp hbinaryRight with
+      ⟨B, hB, rfl⟩
+
+    intro i a ha
+
+    change a ∈ B.rightSource i at ha
+
+    exact
+      mem_sampleAlphabet_of_mem_word
+        K
+        B.rule.witness.right.word_mem
+        (namedFill_mem_of_mem_component
+          B.rule.witness.right.1.context
+          B.rule.witness.right.1.tuple
+          i
+          (by simpa using ha))
 
 end CorrectedConcreteFiniteHypothesis
 
@@ -497,7 +494,7 @@ variable
 /-- Every control constant rule uses only terminals from the augmented compiled
 alphabet. -/
 theorem cutConstantRule_body_terminalsIn
-    (X : H.controlCodes.attach) :
+    (X : H.controlCodes) :
     (correctedConcreteCutConstantRule H X).body.TerminalsIn
       (compiledTerminalAlphabet K dummy) := by
 
@@ -519,7 +516,7 @@ theorem cutConstantRule_body_terminalsIn
 /-- Every lifted corrected binary rule uses only terminals visible in its
 sample parent witness. -/
 theorem cutLiftedBinaryRule_body_terminalsIn
-    (B : H.binaryRuleCodes.attach) :
+    (B : H.binaryRuleCodes) :
     (correctedConcreteCutLiftedBinaryRule H B).body.TerminalsIn
       (compiledTerminalAlphabet K dummy) := by
 
@@ -548,7 +545,7 @@ theorem cutLiftedBinaryRule_body_terminalsIn
 
 /-- Every saturated cut rule is terminal-free. -/
 theorem cutSaturationRule_body_terminalsIn
-    (p : H.cutPairs.attach) :
+    (p : H.cutPairs) :
     (correctedConcreteCutSaturationRule H p).body.TerminalsIn
       (compiledTerminalAlphabet K dummy) := by
 
@@ -565,10 +562,9 @@ theorem cutSaturationRule_body_terminalsIn
 
 /-- Framed terminal support for a control constant rule. -/
 theorem cutConstantRule_framedTokens_terminalsIn
-    (X : H.controlCodes.attach) :
+    (X : H.controlCodes) :
     ∀ token ∈
-        (correctedConcreteCutConstantRule H X).
-          framedStructuralBodyTokens,
+        (correctedConcreteCutConstantRule H X).framedStructuralBodyTokens,
       token.TerminalsIn
         (compiledTerminalAlphabet K dummy) := by
 
@@ -581,10 +577,9 @@ theorem cutConstantRule_framedTokens_terminalsIn
 
 /-- Framed terminal support for one lifted corrected sample rule. -/
 theorem cutLiftedBinaryRule_framedTokens_terminalsIn
-    (B : H.binaryRuleCodes.attach) :
+    (B : H.binaryRuleCodes) :
     ∀ token ∈
-        (correctedConcreteCutLiftedBinaryRule H B).
-          framedStructuralBodyTokens,
+        (correctedConcreteCutLiftedBinaryRule H B).framedStructuralBodyTokens,
       token.TerminalsIn
         (compiledTerminalAlphabet K dummy) := by
 
@@ -597,10 +592,9 @@ theorem cutLiftedBinaryRule_framedTokens_terminalsIn
 
 /-- Framed terminal support for one saturated cut rule. -/
 theorem cutSaturationRule_framedTokens_terminalsIn
-    (p : H.cutPairs.attach) :
+    (p : H.cutPairs) :
     ∀ token ∈
-        (correctedConcreteCutSaturationRule H p).
-          framedStructuralBodyTokens,
+        (correctedConcreteCutSaturationRule H p).framedStructuralBodyTokens,
       token.TerminalsIn
         (compiledTerminalAlphabet K dummy) := by
 
@@ -656,17 +650,17 @@ theorem cutWorkingGrammar_binaryRule_framedTokens_terminalsIn
     at hrho
 
   rcases List.mem_append.mp hrho with
-    hconstant | hrest
-
-  · rcases List.mem_map.mp hconstant with
-      ⟨X, hX, rfl⟩
-
-    exact
-      H.cutConstantRule_framedTokens_terminalsIn
-        dummy X
+    hrest | hsaturated
 
   · rcases List.mem_append.mp hrest with
-      hlifted | hsaturated
+      hconstant | hlifted
+
+    · rcases List.mem_map.mp hconstant with
+        ⟨X, hX, rfl⟩
+
+      exact
+        H.cutConstantRule_framedTokens_terminalsIn
+          dummy X
 
     · rcases List.mem_map.mp hlifted with
         ⟨B, hB, rfl⟩
@@ -675,12 +669,12 @@ theorem cutWorkingGrammar_binaryRule_framedTokens_terminalsIn
         H.cutLiftedBinaryRule_framedTokens_terminalsIn
           dummy B
 
-    · rcases List.mem_map.mp hsaturated with
-        ⟨p, hp, rfl⟩
+  · rcases List.mem_map.mp hsaturated with
+      ⟨p, hp, rfl⟩
 
-      exact
-        H.cutSaturationRule_framedTokens_terminalsIn
-          dummy p
+    exact
+      H.cutSaturationRule_framedTokens_terminalsIn
+        dummy p
 
 /-- The pure-natural-list binary-rule codec is unconditional for every rule
 actually stored in the cut-compiled grammar. -/
