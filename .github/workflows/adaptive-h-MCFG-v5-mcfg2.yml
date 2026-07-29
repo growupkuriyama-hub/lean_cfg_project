@@ -1,0 +1,262 @@
+name: ADP MCFG - count-controlled projected-word-disjoint experiment v5 (mcfg2)
+
+run-name: >-
+  ADP MCFG v5 mcfg2 • ${{ github.event_name }} • run #${{ github.run_number }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      replicas:
+        description: Controlled checkout replicas per item count
+        required: true
+        default: 5
+        type: number
+      max_count:
+        description: Largest held-out test cart size (minimum 4, maximum 10)
+        required: true
+        default: 10
+        type: number
+      warmup_seconds:
+        description: One-time warm-up after the Demo becomes ready
+        required: true
+        default: 45
+        type: number
+      flush_seconds:
+        description: Telemetry flush delay after each checkout
+        required: true
+        default: 5
+        type: number
+      demo_ref:
+        description: Fixed OpenTelemetry Demo commit, unless intentionally overridden
+        required: true
+        default: 3684411da9a4dc3e77cddfef929a630d6f5af6c5
+        type: string
+  push:
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-v5-mcfg2.yml"
+      - "LeanCfgProject/adaptive_h_mcfg2/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: adaptive-h-mcfg-v5-mcfg2-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_REVISION: "2026-07-29-v5-count-word-disjoint"
+  EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  DEMO_RELATIVE_DIR: _opentelemetry-demo
+  OUTPUT_RELATIVE_DIR: mcfg-v12-experiment-mcfg2
+  DIAGNOSTICS_RELATIVE_DIR: github-actions-diagnostics-v5-mcfg2
+
+jobs:
+  experiment:
+    name: Count-controlled trace collection and word-disjoint evaluation
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out lean_cfg_project
+        uses: actions/checkout@v6
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/.ghcup /usr/local/share/boost /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get clean
+          docker system prune --all --force || true
+          df -h
+
+      - name: Check out the fixed OpenTelemetry Demo
+        uses: actions/checkout@v6
+        with:
+          repository: open-telemetry/opentelemetry-demo
+          ref: ${{ github.event.inputs.demo_ref || '3684411da9a4dc3e77cddfef929a630d6f5af6c5' }}
+          path: _opentelemetry-demo
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Initialize paths and parameters
+        shell: bash
+        run: |
+          set -euxo pipefail
+          REPLICAS='${{ github.event.inputs.replicas || '5' }}'
+          MAX_COUNT='${{ github.event.inputs.max_count || '10' }}'
+          WARMUP_SECONDS='${{ github.event.inputs.warmup_seconds || '45' }}'
+          FLUSH_SECONDS='${{ github.event.inputs.flush_seconds || '5' }}'
+          test "$REPLICAS" -ge 1
+          test "$MAX_COUNT" -ge 4
+          test "$MAX_COUNT" -le 10
+          {
+            echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/$EXPERIMENT_RELATIVE_DIR"
+            echo "DEMO_DIR=$GITHUB_WORKSPACE/$DEMO_RELATIVE_DIR"
+            echo "OUTPUT_DIR=$GITHUB_WORKSPACE/$OUTPUT_RELATIVE_DIR"
+            echo "DIAGNOSTICS_DIR=$GITHUB_WORKSPACE/$DIAGNOSTICS_RELATIVE_DIR"
+            echo "REPLICAS=$REPLICAS"
+            echo "MAX_COUNT=$MAX_COUNT"
+            echo "TEST_COUNTS=4-$MAX_COUNT"
+            echo "WARMUP_SECONDS=$WARMUP_SECONDS"
+            echo "FLUSH_SECONDS=$FLUSH_SECONDS"
+          } >> "$GITHUB_ENV"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify repository layouts and pinned Demo commit
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -f "$EXPERIMENT_DIR/pyproject.toml"
+          test -f "$EXPERIMENT_DIR/otel_demo/collect_jaeger_v11.py"
+          test -f "$EXPERIMENT_DIR/otel_demo/run_count_controlled_v12.py"
+          test -f "$EXPERIMENT_DIR/otel_demo/build_v12_dataset.py"
+          test -f "$EXPERIMENT_DIR/validate_v12_dataset.py"
+          test -f "$EXPERIMENT_DIR/run_word_disjoint_v12.py"
+          test -f "$EXPERIMENT_DIR/run_scaling_v12.py"
+          test -f "$DEMO_DIR/compose.yaml"
+          test -f "$DEMO_DIR/compose.observability.yaml"
+          test -f "$DEMO_DIR/compose.extras.yaml"
+          test -f "$DEMO_DIR/.env"
+          touch "$DEMO_DIR/.env.override"
+          git -C "$DEMO_DIR" rev-parse HEAD | tee "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v5.txt"
+
+      - name: Install and test adaptive_h_mcfg2 experiment
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg2
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --editable .
+          python -m pip install pytest scikit-learn
+          python -m pytest -q
+          python -m compileall -q adaptive_h_mcfg otel_demo \
+            validate_v12_dataset.py run_word_disjoint_v12.py run_scaling_v12.py run_v12_end_to_end.py
+
+      - name: Validate current Demo compose configuration
+        shell: bash
+        working-directory: _opentelemetry-demo
+        env:
+          COMPOSE_ENV_FILES: .env,.env.override
+        run: |
+          set -euxo pipefail
+          mkdir -p "$DIAGNOSTICS_DIR"
+          docker compose \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f compose.extras.yaml \
+            config --services | tee "$DIAGNOSTICS_DIR/compose-services.txt"
+          grep -Ei 'checkout' "$DIAGNOSTICS_DIR/compose-services.txt"
+          grep -Ei 'load' "$DIAGNOSTICS_DIR/compose-services.txt"
+          grep -Ei 'jaeger' "$DIAGNOSTICS_DIR/compose-services.txt"
+
+      - name: Collect count-controlled normal traces
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg2
+        env:
+          COMPOSE_ENV_FILES: .env,.env.override
+        run: |
+          set -euxo pipefail
+          rm -rf "$OUTPUT_DIR"
+          mkdir -p "$OUTPUT_DIR/normal-runs"
+          python otel_demo/run_count_controlled_v12.py "$DEMO_DIR" \
+            --output "$OUTPUT_DIR/normal-runs" \
+            --min-count 1 \
+            --max-count "$MAX_COUNT" \
+            --replicas "$REPLICAS" \
+            --warmup-seconds "$WARMUP_SECONDS" \
+            --flush-seconds "$FLUSH_SECONDS" \
+            --frontend-base "http://localhost:8080" \
+            --jaeger-base "http://localhost:8080/jaeger/ui" \
+            --compose-file compose.yaml \
+            --compose-file compose.observability.yaml \
+            --compose-file compose.extras.yaml
+
+      - name: Build, validate, and evaluate without projection leakage
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg2
+        run: |
+          set -euxo pipefail
+          python run_v12_end_to_end.py "$OUTPUT_DIR/normal-runs" \
+            --output "$OUTPUT_DIR" \
+            --train-counts 1,2 \
+            --validation-counts 3 \
+            --test-counts "$TEST_COUNTS" \
+            --minimum-replicas "$REPLICAS"
+
+      - name: Print completed summary
+        if: success()
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo '--- dataset audit ---'
+          cat "$OUTPUT_DIR/dataset/validation_report.json"
+          echo '--- unique-projection metrics ---'
+          cat "$OUTPUT_DIR/results/metrics_unique_projection.csv"
+          echo '--- trace-instance metrics ---'
+          cat "$OUTPUT_DIR/results/metrics_trace_instance.csv"
+          echo '--- runtime and model complexity ---'
+          cat "$OUTPUT_DIR/results/model_complexity_and_runtime.csv"
+          echo '--- recognition scaling ---'
+          cat "$OUTPUT_DIR/results/recognition_scaling_by_count.csv"
+          echo '--- training scaling ---'
+          cat "$OUTPUT_DIR/results/training_scaling.csv"
+
+      - name: Save diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          mkdir -p "$DIAGNOSTICS_DIR"
+          date --iso-8601=seconds > "$DIAGNOSTICS_DIR/date.txt"
+          printf '%s\n' "$WORKFLOW_REVISION" > "$DIAGNOSTICS_DIR/workflow-revision.txt"
+          printf 'event=%s\nrun_id=%s\nrun_number=%s\nsha=%s\n' \
+            "$GITHUB_EVENT_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_NUMBER" "$GITHUB_SHA" \
+            > "$DIAGNOSTICS_DIR/github-run.txt"
+          python --version > "$DIAGNOSTICS_DIR/python.txt" 2>&1
+          docker version > "$DIAGNOSTICS_DIR/docker-version.txt" 2>&1
+          docker compose version > "$DIAGNOSTICS_DIR/compose-version.txt" 2>&1
+          df -h > "$DIAGNOSTICS_DIR/disk.txt"
+          free -h > "$DIAGNOSTICS_DIR/memory.txt"
+          docker system df > "$DIAGNOSTICS_DIR/docker-disk.txt" 2>&1
+          docker ps -a > "$DIAGNOSTICS_DIR/docker-containers.txt" 2>&1
+          cp "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v5.txt" "$DIAGNOSTICS_DIR/" 2>/dev/null
+          if [ -d "$DEMO_DIR" ]; then
+            (
+              cd "$DEMO_DIR" || exit 0
+              COMPOSE_ENV_FILES=.env,.env.override docker compose \
+                -f compose.yaml -f compose.observability.yaml -f compose.extras.yaml \
+                ps -a > "$DIAGNOSTICS_DIR/compose-ps.txt" 2>&1
+              COMPOSE_ENV_FILES=.env,.env.override docker compose \
+                -f compose.yaml -f compose.observability.yaml -f compose.extras.yaml \
+                logs --no-color --tail=1500 > "$DIAGNOSTICS_DIR/compose-logs.txt" 2>&1
+            )
+          fi
+
+      - name: Ensure Demo containers are stopped
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          if [ -d "$DEMO_DIR" ]; then
+            cd "$DEMO_DIR" || exit 0
+            COMPOSE_ENV_FILES=.env,.env.override docker compose \
+              -f compose.yaml -f compose.observability.yaml -f compose.extras.yaml \
+              down --remove-orphans --volumes
+          fi
+
+      - name: Upload traces, audits, results, and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adaptive-h-mcfg-v5-mcfg2-${{ github.run_id }}
+          path: |
+            mcfg-v12-experiment-mcfg2
+            github-actions-diagnostics-v5-mcfg2
+            opentelemetry-demo-commit-v5.txt
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 6
