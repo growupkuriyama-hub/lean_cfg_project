@@ -335,8 +335,7 @@ theorem denseNaturalEncoding_binaryDescriptionSize_le_itemCount_mul_logWidth
     (H.denseNaturalEncoding dummy).binaryDescriptionSize dummy ≤
         H.compiledGrammarPresentationItemCount *
           (H.denseNaturalEncoding dummy).automaticBitWidth dummy :=
-      (H.denseNaturalEncoding dummy).
-        binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
+      (H.denseNaturalEncoding dummy).binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
           dummy
 
     _ ≤
@@ -404,8 +403,7 @@ theorem denseNaturalEncoding_binaryDescriptionSize_le_bound_mul_logWidth
     (H.denseNaturalEncoding dummy).binaryDescriptionSize dummy ≤
         H.compiledGrammarPresentationItemCount *
           (H.denseNaturalEncoding dummy).automaticBitWidth dummy :=
-      (H.denseNaturalEncoding dummy).
-        binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
+      (H.denseNaturalEncoding dummy).binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
           dummy
 
     _ ≤
@@ -448,8 +446,7 @@ theorem correctedConcreteFiniteHypothesis_denseBinaryDescriptionSize_le_paperBou
   dsimp
 
   exact
-    (correctedConcreteFiniteHypothesis K obs f).
-      denseNaturalEncoding_binaryDescriptionSize_le_bound_mul_logWidth
+    (correctedConcreteFiniteHypothesis K obs f).denseNaturalEncoding_binaryDescriptionSize_le_bound_mul_logWidth
         dummy
         (correctedConcreteCompiledGrammarPresentationItemBound
           (sampleLengthBudget K) f)
@@ -483,8 +480,7 @@ theorem correctedConcreteFiniteHypothesis_denseBinaryDescriptionSize_le_explicit
   dsimp
 
   exact
-    (correctedConcreteFiniteHypothesis K obs f).
-      denseNaturalEncoding_binaryDescriptionSize_le_bound_mul_logWidth
+    (correctedConcreteFiniteHypothesis K obs f).denseNaturalEncoding_binaryDescriptionSize_le_bound_mul_logWidth
         dummy
         ((sampleLengthBudget K +
             3 *
