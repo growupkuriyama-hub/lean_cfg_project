@@ -334,13 +334,20 @@ augmented compiled alphabet. -/
   cases token with
 
   | terminal a =>
-      simpa [
-        TemplateAtomStructuralToken.TerminalsIn,
-        encodeTemplateAtomNatural,
-        decodeTemplateAtomNatural
-      ] using
+      change
+        (match
+            compiledTerminalDenseDecode K dummy
+              (compiledTerminalDenseCode K dummy a) with
+          | none =>
+              none
+          | some decoded =>
+              some (.terminal decoded)) =
+          some (.terminal a)
+
+      rw [
         compiledTerminalDenseDecode_encode_of_mem
           K dummy a hterminal
+      ]
 
   | leftVar i =>
       rfl
@@ -422,13 +429,20 @@ noncomputable def decodeFramedTemplateBodyTokenNatural
       rfl
 
   | atom token =>
-      simpa [
-        FramedTemplateBodyToken.TerminalsIn,
-        encodeFramedTemplateBodyTokenNatural,
-        decodeFramedTemplateBodyTokenNatural
-      ] using
+      change
+        (match
+            decodeTemplateAtomNatural K dummy
+              (encodeTemplateAtomNatural K dummy token) with
+          | none =>
+              none
+          | some decoded =>
+              some (.atom decoded)) =
+          some (.atom token)
+
+      rw [
         decodeTemplateAtomNatural_encode
           K dummy token hterminal
+      ]
 
 /-- Encode a complete framed body stream with natural terminal payloads. -/
 noncomputable def encodeFramedTemplateBodyNatural
@@ -494,11 +508,30 @@ to the augmented compiled alphabet. -/
         intro next hnext
         exact hterminals next (by simp [hnext])
 
-      simp [
-        encodeFramedTemplateBodyNatural,
-        decodeFramedTemplateBodyNatural,
+      change
+        (match
+            decodeFramedTemplateBodyTokenNatural K dummy
+              (encodeFramedTemplateBodyTokenNatural
+                K dummy token) with
+          | none =>
+              none
+          | some decodedToken =>
+              match
+                  decodeFramedTemplateBodyNatural K dummy
+                    (encodeFramedTemplateBodyNatural
+                      K dummy rest) with
+              | none =>
+                  none
+              | some decodedRest =>
+                  some (decodedToken :: decodedRest)) =
+          some (token :: rest)
+
+      rw [
         decodeFramedTemplateBodyTokenNatural_encode
-          K dummy token hhead,
+          K dummy token hhead
+      ]
+
+      rw [
         decodeFramedTemplateBodyNatural_encode
           K dummy rest htail
       ]

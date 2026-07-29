@@ -1,7 +1,7 @@
-name: ADP MCFG - count-controlled projected-word-disjoint experiment v5.1 (mcfg2)
+name: ADP MCFG - count-controlled projected-word-disjoint experiment v5.2 (mcfg2, resilient pull)
 
 run-name: >-
-  ADP MCFG v5.1 mcfg2 • ${{ github.event_name }} • run #${{ github.run_number }}
+  ADP MCFG v5.2 mcfg2 • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
   workflow_dispatch:
@@ -45,13 +45,16 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  WORKFLOW_REVISION: "2026-07-29-v5.1-merged-base-and-v12-patch"
+  WORKFLOW_REVISION: "2026-07-29-v5.2-resilient-compose-pull"
   BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
   PATCH_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
   MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v5_merged
   DEMO_RELATIVE_DIR: _opentelemetry-demo
   OUTPUT_RELATIVE_DIR: mcfg-v12-experiment-mcfg2
   DIAGNOSTICS_RELATIVE_DIR: github-actions-diagnostics-v5-mcfg2
+  COMPOSE_PARALLEL_LIMIT: "2"
+  DOCKER_CLIENT_TIMEOUT: "600"
+  COMPOSE_HTTP_TIMEOUT: "600"
 
 jobs:
   experiment:
@@ -227,6 +230,39 @@ jobs:
           grep -Ei 'checkout' "$DIAGNOSTICS_DIR/compose-services.txt"
           grep -Ei 'load' "$DIAGNOSTICS_DIR/compose-services.txt"
           grep -Ei 'jaeger' "$DIAGNOSTICS_DIR/compose-services.txt"
+
+      - name: Pull Demo images with bounded parallelism and retry
+        shell: bash
+        env:
+          COMPOSE_ENV_FILES: .env,.env.override
+        run: |
+          set -euo pipefail
+          cd "$DEMO_DIR"
+          mkdir -p "$DIAGNOSTICS_DIR"
+
+          success=0
+          for attempt in 1 2 3; do
+            log="$DIAGNOSTICS_DIR/compose-pull-attempt-${attempt}.log"
+            echo "Docker Compose pull attempt ${attempt}/3"
+            if docker compose               -f compose.yaml               -f compose.observability.yaml               -f compose.extras.yaml               pull --ignore-buildable >"$log" 2>&1; then
+              success=1
+              echo "Docker image pull completed."
+              tail -n 80 "$log" || true
+              break
+            fi
+
+            echo "::warning::Docker image pull attempt ${attempt} failed."
+            tail -n 120 "$log" || true
+            docker system df || true
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 30))
+            fi
+          done
+
+          if [ "$success" -ne 1 ]; then
+            echo "::error::OpenTelemetry Demo images could not be pulled after three attempts."
+            exit 1
+          fi
 
       - name: Collect count-controlled normal traces
         shell: bash
