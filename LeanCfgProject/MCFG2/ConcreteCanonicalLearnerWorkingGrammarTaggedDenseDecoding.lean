@@ -43,6 +43,28 @@ No target grammar is supplied to the learner.
 No `sorry`, `admit`, or `axiom` is used.
 -/
 
+universe w
+
+namespace List
+
+/-- Compatibility definition for the list lookup operation removed from the
+Lean 4.31 core API. -/
+def get?
+    {β : Type w} :
+    List β → Nat → Option β
+
+  | [], _ =>
+      none
+
+  | x :: _, 0 =>
+      some x
+
+  | _ :: xs, Nat.succ n =>
+      get? xs n
+
+end List
+
+
 namespace MCFG
 
 universe u v
@@ -291,8 +313,8 @@ theorem compiledGrammarGlobalDenseDecode_encode_of_mem
   classical
 
   exact
-    (H.compiledGrammarTaggedDenseCodec dummy).
-      decode_encode_of_mem entry hentry
+    (H.compiledGrammarTaggedDenseCodec dummy).decode_encode_of_mem
+      entry hentry
 
 /-- Every successfully decoded tagged entry really occurs in the compiled
 grammar presentation. -/
@@ -309,8 +331,8 @@ theorem compiledGrammarGlobalDenseDecode_sound
   classical
 
   exact
-    (H.compiledGrammarTaggedDenseCodec dummy).
-      decode_sound code entry hdecode
+    (H.compiledGrammarTaggedDenseCodec dummy).decode_sound
+      code entry hdecode
 
 /-- Any successful global decoding uses a code below the complete presentation
 item count. -/
@@ -368,7 +390,7 @@ theorem compiledGrammarGlobalDenseDecode_eq_none_of_presentationItemCount_le
       H.compiledGrammarGlobalDenseDecode dummy code with
 
   | none =>
-      exact hdecode
+      rfl
 
   | some entry =>
       have hlt :
