@@ -239,9 +239,15 @@ def decodeTemplateWordStructural
       rfl
 
   | cons atom rest ih =>
-      simp [
-        encodeTemplateWordStructural,
+      change
+        decodeTemplateWordStructural dB dC
+            (encodeTemplateAtomStructural atom ::
+              encodeTemplateWordStructural rest) =
+          some (atom :: rest)
+
+      simp only [
         decodeTemplateWordStructural,
+        decodeTemplateAtomStructural_encode,
         ih
       ]
 
@@ -306,11 +312,12 @@ theorem encodeTemplateWordStructural_of_decode_eq_some
                 encodeTemplateWordStructural_of_decode_eq_some
                   dB dC rest decodedRest hrest
 
-              simp [
-                encodeTemplateWordStructural,
-                hatomEncode,
-                hrestEncode
-              ]
+              change
+                encodeTemplateAtomStructural atom ::
+                    encodeTemplateWordStructural decodedRest =
+                  token :: rest
+
+              rw [hatomEncode, hrestEncode]
 
 /-- Pointwise structural encoding of a complete template tuple.  The output
 arity remains in the outer finite index, while all inner child-variable indices
