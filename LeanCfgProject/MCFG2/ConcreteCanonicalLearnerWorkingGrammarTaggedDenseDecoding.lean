@@ -49,7 +49,7 @@ namespace List
 
 /-- Compatibility definition for the list lookup operation removed from the
 Lean 4.31 core API. -/
-def get?
+@[simp] def get?
     {β : Type w} :
     List β → Nat → Option β
 
