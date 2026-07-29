@@ -301,11 +301,18 @@ rule after structural packet encoding. -/
 
   classical
 
-  simp [
-    decodeCompiledBinaryRuleStructuralPacket,
-    encodeCompiledBinaryRuleStructuralPacket,
-    templateTupleOfExactLength_ofFn
+  unfold decodeCompiledBinaryRuleStructuralPacket
+
+  simp only [encodeCompiledBinaryRuleStructuralPacket]
+
+  rw [
+    H.decodeCompiledNonterminalCode_encode dummy rho.lhs,
+    H.decodeCompiledNonterminalCode_encode dummy rho.left,
+    H.decodeCompiledNonterminalCode_encode dummy rho.right,
+    rho.decode_framedStructuralBodyTokens
   ]
+
+  simp [templateTupleOfExactLength_ofFn]
 
 /-- Exact number of framed body tokens stored by the complete structural packet. -/
 @[simp] theorem encodeCompiledBinaryRuleStructuralPacket_bodyTokens_length
@@ -314,8 +321,7 @@ rule after structural packet encoding. -/
       (CorrectedConcreteCutGrammarNonterminal H)
       α
       (correctedConcreteCutGrammarArity H)) :
-    (H.encodeCompiledBinaryRuleStructuralPacket dummy rho).
-        bodyTokens.length =
+    (H.encodeCompiledBinaryRuleStructuralPacket dummy rho).bodyTokens.length =
       correctedConcreteCutGrammarArity H rho.lhs +
         ((List.ofFn rho.body).map List.length).sum := by
 
@@ -331,8 +337,7 @@ def compiledBinaryRuleStructuralFieldCount
       (correctedConcreteCutGrammarArity H)) :
     Nat :=
   3 +
-    (H.encodeCompiledBinaryRuleStructuralPacket dummy rho).
-      bodyTokens.length
+    (H.encodeCompiledBinaryRuleStructuralPacket dummy rho).bodyTokens.length
 
 /-- Exact complete field count after expanding the framed body length. -/
 @[simp] theorem compiledBinaryRuleStructuralFieldCount_eq
