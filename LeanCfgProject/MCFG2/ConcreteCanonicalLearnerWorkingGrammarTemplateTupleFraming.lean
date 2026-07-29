@@ -63,34 +63,34 @@ def takeExactly : Nat → List β → Option (List β × List β)
       match takeExactly n xs with
       | none =>
           none
-      | some (prefix, suffix) =>
-          some (x :: prefix, suffix)
+      | some (taken, suffix) =>
+          some (x :: taken, suffix)
 
 /-- Extracting the length of an explicit prefix from `prefix ++ suffix`
 recovers exactly that prefix and suffix. -/
 @[simp] theorem takeExactly_length_append
-    (prefix suffix : List β) :
-    takeExactly prefix.length (prefix ++ suffix) =
-      some (prefix, suffix) := by
+    (taken suffix : List β) :
+    takeExactly taken.length (taken ++ suffix) =
+      some (taken, suffix) := by
 
-  induction prefix with
+  induction taken with
 
   | nil =>
       rfl
 
-  | cons x prefix ih =>
+  | cons x taken ih =>
       simp [takeExactly, ih]
 
 /-- A convenient variant with an externally supplied length equality. -/
 theorem takeExactly_append_of_length
     {n : Nat}
-    (prefix suffix : List β)
-    (hlength : prefix.length = n) :
-    takeExactly n (prefix ++ suffix) =
-      some (prefix, suffix) := by
+    (taken suffix : List β)
+    (hlength : taken.length = n) :
+    takeExactly n (taken ++ suffix) =
+      some (taken, suffix) := by
 
   subst n
-  exact takeExactly_length_append prefix suffix
+  exact takeExactly_length_append taken suffix
 
 end ExactPrefixExtraction
 
@@ -144,8 +144,12 @@ def unwrapStructuralAtomTokens :
       rfl
 
   | cons token tokens ih =>
-      simp [
-        wrapStructuralAtomTokens,
+      change
+        unwrapStructuralAtomTokens
+            (.atom token :: wrapStructuralAtomTokens tokens) =
+          some (token :: tokens)
+
+      simp only [
         unwrapStructuralAtomTokens,
         ih
       ]
