@@ -398,10 +398,11 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
 
             intro i a ha
 
+            change a ∈ word at ha
+
             exact
               mem_sampleAlphabet_of_mem_word
-                K hwordK
-                (by simpa using ha)
+                K hwordK ha
 
           · rcases Finset.mem_image.mp hunitSource with
               ⟨U, hU, rfl⟩
