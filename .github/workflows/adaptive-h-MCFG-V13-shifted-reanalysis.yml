@@ -1,0 +1,699 @@
+name: ADP MCFG V13 - shifted-split artifact reanalysis
+
+run-name: >-
+  ADP MCFG V13 SHIFTED SPLIT • source ${{ github.event.inputs.source_run_id || '30488051834' }} • run #${{ github.run_number }}
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-V13-shifted-reanalysis.yml"
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful V12 workflow run ID containing the source artifact
+        required: true
+        default: "30488051834"
+        type: string
+      source_artifact_name:
+        description: Exact V12 artifact name
+        required: true
+        default: "adp-mcfg-v12-word-disjoint-30488051834"
+        type: string
+      minimum_replicas:
+        description: Minimum normal trace replicas required per item count
+        required: true
+        default: 5
+        type: number
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: adp-mcfg-v13-shifted-reanalysis-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_REVISION: "2026-07-30-v13-shifted-split-mutation-sweep"
+  BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  PATCH_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v13_merged
+  SOURCE_ARTIFACT_RELATIVE_DIR: _v12_source_artifact
+  OUTPUT_RELATIVE_DIR: adp-mcfg-v13-shifted-reanalysis
+  TRAIN_COUNTS: "1-3"
+  VALIDATION_COUNTS: "4"
+  TEST_COUNTS: "5-10"
+  MINIMUM_REPLICAS: ${{ github.event.inputs.minimum_replicas || 5 }}
+  SOURCE_RUN_ID: ${{ github.event.inputs.source_run_id || '30488051834' }}
+  SOURCE_ARTIFACT_NAME: ${{ github.event.inputs.source_artifact_name || 'adp-mcfg-v12-word-disjoint-30488051834' }}
+
+jobs:
+  shifted_reanalysis:
+    name: Shifted split and validation-mutation sweep
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out lean_cfg_project
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Initialize paths
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "BASE_EXPERIMENT_DIR=$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "PATCH_EXPERIMENT_DIR=$GITHUB_WORKSPACE/$PATCH_EXPERIMENT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "SOURCE_ARTIFACT_DIR=$GITHUB_WORKSPACE/$SOURCE_ARTIFACT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "OUTPUT_DIR=$GITHUB_WORKSPACE/$OUTPUT_RELATIVE_DIR" >> "$GITHUB_ENV"
+
+      - name: Assemble legacy implementation and V12 patch
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -d "$BASE_EXPERIMENT_DIR"
+          test -d "$PATCH_EXPERIMENT_DIR"
+          rm -rf "$EXPERIMENT_DIR"
+          mkdir -p "$EXPERIMENT_DIR"
+          cp -a "$BASE_EXPERIMENT_DIR/." "$EXPERIMENT_DIR/"
+          cp -a "$PATCH_EXPERIMENT_DIR/." "$EXPERIMENT_DIR/"
+          test -f "$EXPERIMENT_DIR/pyproject.toml"
+          test -f "$EXPERIMENT_DIR/run_word_disjoint_v12.py"
+          test -f "$EXPERIMENT_DIR/validate_v12_dataset.py"
+          test -f "$EXPERIMENT_DIR/adaptive_h_mcfg/v12_protocol.py"
+
+      - name: Make full-evaluation JSON NumPy-safe
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["EXPERIMENT_DIR"]) / "run_word_disjoint_v12.py"
+          text = path.read_text(encoding="utf-8")
+          helper = '''
+
+          def json_compatible(value: Any) -> Any:
+              """Convert NumPy/pandas scalar values to standard JSON values."""
+              item = getattr(value, "item", None)
+              if callable(item):
+                  try:
+                      return item()
+                  except (TypeError, ValueError):
+                      pass
+              tolist = getattr(value, "tolist", None)
+              if callable(tolist):
+                  return tolist()
+              if isinstance(value, Path):
+                  return str(value)
+              if isinstance(value, (set, frozenset)):
+                  return sorted(value)
+              raise TypeError(
+                  f"Object of type {value.__class__.__name__} is not JSON serializable"
+              )
+          '''
+          marker = "\ndef main() -> None:\n"
+          if "def json_compatible(value: Any)" not in text:
+              if marker not in text:
+                  raise SystemExit("Could not locate main() insertion point")
+              text = text.replace(marker, helper + marker, 1)
+          old = 'json.dumps(summary, indent=2), encoding="utf-8"'
+          new = 'json.dumps(summary, indent=2, default=json_compatible), encoding="utf-8"'
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit("Could not locate summary JSON serialization call")
+          path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Install experiment dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install pytest scikit-learn
+          python -m pip install --editable .
+          python -m compileall -q adaptive_h_mcfg validate_v12_dataset.py run_word_disjoint_v12.py
+          python -m pytest -q
+
+      - name: Download successful V12 artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          gh --version
+          rm -rf "$SOURCE_ARTIFACT_DIR"
+          mkdir -p "$SOURCE_ARTIFACT_DIR"
+          cd "$SOURCE_ARTIFACT_DIR"
+          gh run download "$SOURCE_RUN_ID" -n "$SOURCE_ARTIFACT_NAME"
+          find . -maxdepth 5 -type f -print | sort | tee "$GITHUB_WORKSPACE/v13-source-file-list.txt"
+
+          SOURCE_PROJECTIONS="$(find "$SOURCE_ARTIFACT_DIR" -type f -path '*/dataset/projections.csv' -print -quit)"
+          test -n "$SOURCE_PROJECTIONS"
+          test -f "$SOURCE_PROJECTIONS"
+          echo "SOURCE_PROJECTIONS=$SOURCE_PROJECTIONS" >> "$GITHUB_ENV"
+
+      - name: Recode stored split roles for the shifted protocol
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm -rf "$OUTPUT_DIR"
+          mkdir -p "$OUTPUT_DIR/input" "$OUTPUT_DIR/full-evaluation" "$OUTPUT_DIR/selection-sweep"
+          python - <<'PY'
+          import csv
+          import json
+          import os
+          from pathlib import Path
+
+          source = Path(os.environ["SOURCE_PROJECTIONS"])
+          target = Path(os.environ["OUTPUT_DIR"]) / "input" / "projections-shifted.csv"
+          counts = {"train": {1, 2, 3}, "validation": {4}, "test": set(range(5, 11))}
+          role_by_count = {count: role for role, values in counts.items() for count in values}
+
+          with source.open(newline="", encoding="utf-8") as src:
+              rows = list(csv.DictReader(src))
+              fieldnames = list(rows[0])
+          if "split_role" not in fieldnames:
+              fieldnames.append("split_role")
+          for row in rows:
+              item_count = int(row["item_count"])
+              if item_count not in role_by_count:
+                  raise SystemExit(f"Unexpected item count {item_count}")
+              row["split_role"] = role_by_count[item_count]
+
+          with target.open("w", newline="", encoding="utf-8") as dst:
+              writer = csv.DictWriter(dst, fieldnames=fieldnames)
+              writer.writeheader()
+              writer.writerows(rows)
+
+          manifest = {
+              "source_run_id": os.environ["SOURCE_RUN_ID"],
+              "source_artifact_name": os.environ["SOURCE_ARTIFACT_NAME"],
+              "source_projections": str(source),
+              "output_projections": str(target),
+              "train_counts": [1, 2, 3],
+              "validation_counts": [4],
+              "test_counts": list(range(5, 11)),
+              "rows": len(rows),
+              "normal_rows": sum(row["label"] == "normal" for row in rows),
+              "anomaly_rows": sum(row["label"] == "anomaly" for row in rows),
+          }
+          (Path(os.environ["OUTPUT_DIR"]) / "input" / "reanalysis_manifest.json").write_text(
+              json.dumps(manifest, indent=2), encoding="utf-8"
+          )
+          print(json.dumps(manifest, indent=2))
+          PY
+          echo "SHIFTED_PROJECTIONS=$OUTPUT_DIR/input/projections-shifted.csv" >> "$GITHUB_ENV"
+
+      - name: Validate shifted word-disjoint protocol
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python validate_v12_dataset.py "$SHIFTED_PROJECTIONS" \
+            --output "$OUTPUT_DIR/input/protocol_audit.json" \
+            --train-counts "$TRAIN_COUNTS" \
+            --validation-counts "$VALIDATION_COUNTS" \
+            --test-counts "$TEST_COUNTS" \
+            --minimum-replicas "$MINIMUM_REPLICAS"
+
+      - name: Run full shifted-split baseline evaluation
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python run_word_disjoint_v12.py "$SHIFTED_PROJECTIONS" \
+            --output "$OUTPUT_DIR/full-evaluation" \
+            --train-counts "$TRAIN_COUNTS" \
+            --validation-counts "$VALIDATION_COUNTS" \
+            --test-counts "$TEST_COUNTS" \
+            --minimum-replicas "$MINIMUM_REPLICAS" \
+            --selection-budget 2 \
+            --max-values-per-nt 25000 \
+            --max-total-values 2000000
+
+      - name: Create validation-mutation observer sweep
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cat > "$EXPERIMENT_DIR/run_selection_sweep_v13.py" <<'PY'
+          #!/usr/bin/env python3
+          from __future__ import annotations
+
+          import argparse
+          import csv
+          import json
+          import os
+          import platform
+          import resource
+          import sys
+          import time
+          from pathlib import Path
+          from typing import Any, Callable, Iterable, Sequence
+
+          from adaptive_h_mcfg.binary_learner import BoundedCanonicalMCFGLearner
+          from adaptive_h_mcfg.observers import (
+              ModularCountObserver,
+              TrivialObserver,
+              block_envelope_observer,
+          )
+          from adaptive_h_mcfg.selection import greedy_select
+          from adaptive_h_mcfg.v12_protocol import (
+              ProjectionRow,
+              audit_word_disjoint_protocol,
+              load_projection_rows,
+              parse_int_spec,
+              partition_rows_by_count,
+          )
+
+          MUTATIONS = (
+              "currency-server-phase-inversion",
+              "drop-product-server-occurrence",
+              "duplicate-product-server-occurrence",
+              "drop-product-currency-server-occurrence",
+              "duplicate-product-currency-server-occurrence",
+              "duplicate-shipping-currency-server-occurrence",
+          )
+
+          def candidates():
+              return (
+                  block_envelope_observer(
+                      (("p",), ("c", "s"), ("p", "c", "s")),
+                      name="checkout-phase-envelope",
+                  ),
+                  ModularCountObserver(("s",), 2, "shipping-phase-count-mod-2"),
+                  ModularCountObserver(("p",), 2, "product-count-mod-2"),
+                  ModularCountObserver(("c",), 2, "currency-product-count-mod-2"),
+                  ModularCountObserver(("#",), 2, "separator-parity-decoy"),
+              )
+
+          def unique_words(rows: Iterable[ProjectionRow]) -> tuple[str, ...]:
+              return tuple(dict.fromkeys(row.word for row in rows))
+
+          def timed(call: Callable[[], Any]) -> tuple[Any, float]:
+              started = time.perf_counter()
+              return call(), time.perf_counter() - started
+
+          def peak_rss_mib() -> float:
+              raw = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+              return raw / (1024.0 * 1024.0) if sys.platform == "darwin" else raw / 1024.0
+
+          def json_compatible(value: Any) -> Any:
+              item = getattr(value, "item", None)
+              if callable(item):
+                  try:
+                      return item()
+                  except (TypeError, ValueError):
+                      pass
+              tolist = getattr(value, "tolist", None)
+              if callable(tolist):
+                  return tolist()
+              if isinstance(value, Path):
+                  return str(value)
+              if isinstance(value, (set, frozenset)):
+                  return sorted(value)
+              raise TypeError(f"{value.__class__.__name__} is not JSON serializable")
+
+          def decisions(model: Any, words: Sequence[str], per_nt: int, total: int) -> dict[str, bool]:
+              if hasattr(model, "accepts_many_guided"):
+                  return dict(model.accepts_many_guided(
+                      tuple(words), max_values_per_nt=per_nt, max_total_values=total
+                  ))
+              if hasattr(model, "accepts_many"):
+                  return dict(model.accepts_many(tuple(words)))
+              return {word: bool(model.accepts(word)) for word in words}
+
+          def error_counts(
+              model_decisions: dict[str, bool],
+              normal_words: Sequence[str],
+              fault_words: Sequence[str],
+          ) -> tuple[int, int]:
+              false_rejects = sum(not model_decisions[word] for word in normal_words)
+              false_accepts = sum(model_decisions[word] for word in fault_words)
+              return false_rejects, false_accepts
+
+          def dedupe_rows(rows: Sequence[ProjectionRow]) -> list[ProjectionRow]:
+              seen: set[tuple[str, str, int, str]] = set()
+              output: list[ProjectionRow] = []
+              for row in rows:
+                  key = (row.label, row.mutation, row.item_count, row.word)
+                  if key not in seen:
+                      seen.add(key)
+                      output.append(row)
+              return output
+
+          def write_csv(path: Path, rows: Sequence[dict[str, Any]]) -> None:
+              path.parent.mkdir(parents=True, exist_ok=True)
+              fields = list(rows[0]) if rows else []
+              with path.open("w", newline="", encoding="utf-8") as handle:
+                  writer = csv.DictWriter(handle, fieldnames=fields)
+                  if fields:
+                      writer.writeheader()
+                      writer.writerows(rows)
+
+          def model_meta(model: Any) -> dict[str, Any]:
+              unit_rules = getattr(model, "unit_rules", {})
+              unit_count = sum(len(v) for v in unit_rules.values()) if isinstance(unit_rules, dict) else ""
+              return {
+                  "rule_count": getattr(model, "rule_count", ""),
+                  "unit_rule_count": unit_count,
+                  "observed_type_count": getattr(model, "observed_type_count", ""),
+                  "occurrence_count": getattr(model, "occurrence_count", ""),
+              }
+
+          def main() -> None:
+              parser = argparse.ArgumentParser()
+              parser.add_argument("projections_csv", type=Path)
+              parser.add_argument("--output", type=Path, required=True)
+              parser.add_argument("--train-counts", default="1-3")
+              parser.add_argument("--validation-counts", default="4")
+              parser.add_argument("--test-counts", default="5-10")
+              parser.add_argument("--minimum-replicas", type=int, default=5)
+              parser.add_argument("--selection-budget", type=int, default=2)
+              parser.add_argument("--max-values-per-nt", type=int, default=25000)
+              parser.add_argument("--max-total-values", type=int, default=2000000)
+              args = parser.parse_args()
+              args.output.mkdir(parents=True, exist_ok=True)
+
+              train_counts = parse_int_spec(args.train_counts)
+              validation_counts = parse_int_spec(args.validation_counts)
+              test_counts = parse_int_spec(args.test_counts)
+              rows = load_projection_rows(args.projections_csv)
+              audit = audit_word_disjoint_protocol(
+                  rows,
+                  train_counts=train_counts,
+                  validation_counts=validation_counts,
+                  test_counts=test_counts,
+                  diagnostic_mutation=MUTATIONS[0],
+                  expected_mutations=MUTATIONS,
+                  minimum_replicas_per_count=args.minimum_replicas,
+              )
+              (args.output / "protocol_audit.json").write_text(
+                  json.dumps(audit, indent=2, default=json_compatible), encoding="utf-8"
+              )
+              if not audit["ready_for_word_disjoint_evaluation"]:
+                  raise SystemExit("shifted protocol audit failed")
+
+              parts = partition_rows_by_count(rows, train_counts, validation_counts, test_counts)
+              training_words = unique_words(r for r in parts["train"] if r.label == "normal")
+              validation_normal = unique_words(r for r in parts["validation"] if r.label == "normal")
+              test_rows = dedupe_rows(parts["test"])
+              test_words = unique_words(test_rows)
+
+              learner = BoundedCanonicalMCFGLearner(fanout=3)
+              basis, basis_seconds = timed(lambda: learner.prepare(training_words))
+              trivial, trivial_fit_seconds = timed(
+                  lambda: learner.fit_prepared(basis, TrivialObserver())
+              )
+              candidate_list = candidates()
+
+              validation_models: dict[str, Any] = {"trivial": trivial}
+              validation_fit_seconds: dict[str, float] = {"trivial": trivial_fit_seconds}
+              for observer in candidate_list:
+                  model, elapsed = timed(lambda observer=observer: learner.fit_prepared(basis, observer))
+                  validation_models[observer.name] = model
+                  validation_fit_seconds[observer.name] = elapsed
+
+              validation_matrix: list[dict[str, Any]] = []
+              validation_words_all = list(validation_normal)
+              for mutation in MUTATIONS:
+                  fault_words = unique_words(
+                      r for r in parts["validation"]
+                      if r.label == "anomaly" and r.mutation == mutation
+                  )
+                  if not fault_words:
+                      raise SystemExit(f"validation lacks mutation {mutation}")
+                  combined = tuple(dict.fromkeys((*validation_normal, *fault_words)))
+                  for model_name, model in validation_models.items():
+                      model_decisions, recognition_seconds = timed(
+                          lambda model=model, combined=combined: decisions(
+                              model, combined, args.max_values_per_nt, args.max_total_values
+                          )
+                      )
+                      false_rejects, false_accepts = error_counts(
+                          model_decisions, validation_normal, fault_words
+                      )
+                      row = {
+                          "diagnostic_mutation": mutation,
+                          "observer_model": model_name,
+                          "validation_normal_words": len(validation_normal),
+                          "validation_fault_words": len(fault_words),
+                          "normal_false_rejects": false_rejects,
+                          "mutant_false_accepts": false_accepts,
+                          "validation_errors": false_rejects + false_accepts,
+                          "fit_seconds": validation_fit_seconds[model_name],
+                          "recognition_seconds": recognition_seconds,
+                      }
+                      row.update(model_meta(model))
+                      validation_matrix.append(row)
+
+              sweep_rows: list[dict[str, Any]] = []
+              selection_details: list[dict[str, Any]] = []
+              signature_models: dict[tuple[str, ...], Any] = {(): trivial}
+              mutation_signatures: dict[str, tuple[str, ...]] = {}
+
+              for mutation in MUTATIONS:
+                  fault_words = unique_words(
+                      r for r in parts["validation"]
+                      if r.label == "anomaly" and r.mutation == mutation
+                  )
+                  selection, elapsed = timed(lambda mutation=mutation, fault_words=fault_words: greedy_select(
+                      learner,
+                      training_words,
+                      validation_normal,
+                      fault_words,
+                      candidate_list,
+                      budget=args.selection_budget,
+                      min_improvement=1e-9,
+                      complexity_weight=1e-8,
+                      type_weight=1e-6,
+                      guided=False,
+                  ))
+                  signature = tuple(observer.name for observer in selection.selected_observers)
+                  signature_models.setdefault(signature, selection.model)
+                  mutation_signatures[mutation] = signature
+                  combined = tuple(dict.fromkeys((*validation_normal, *fault_words)))
+                  selected_decisions = decisions(
+                      selection.model, combined, args.max_values_per_nt, args.max_total_values
+                  )
+                  trivial_decisions = decisions(
+                      trivial, combined, args.max_values_per_nt, args.max_total_values
+                  )
+                  selected_fr, selected_fa = error_counts(
+                      selected_decisions, validation_normal, fault_words
+                  )
+                  trivial_fr, trivial_fa = error_counts(
+                      trivial_decisions, validation_normal, fault_words
+                  )
+                  final_history = selection.history[-1]
+                  row = {
+                      "diagnostic_mutation": mutation,
+                      "selected_observers": ";".join(signature),
+                      "selected_observer_count": len(signature),
+                      "trivial_normal_false_rejects": trivial_fr,
+                      "trivial_mutant_false_accepts": trivial_fa,
+                      "adaptive_normal_false_rejects": selected_fr,
+                      "adaptive_mutant_false_accepts": selected_fa,
+                      "validation_error_improvement": (trivial_fr + trivial_fa) - (selected_fr + selected_fa),
+                      "selection_seconds": elapsed,
+                      "final_objective": final_history.objective,
+                      "final_rule_count": final_history.rule_count,
+                      "final_observed_type_count": final_history.observed_type_count,
+                  }
+                  sweep_rows.append(row)
+                  selection_details.append({
+                      "diagnostic_mutation": mutation,
+                      "selected_observers": list(signature),
+                      "history": [entry.__dict__ for entry in selection.history],
+                  })
+
+              signature_decisions: dict[tuple[str, ...], dict[str, bool]] = {}
+              signature_timings: dict[tuple[str, ...], float] = {}
+              for signature, model in signature_models.items():
+                  model_decisions, elapsed = timed(
+                      lambda model=model: decisions(
+                          model, test_words, args.max_values_per_nt, args.max_total_values
+                      )
+                  )
+                  signature_decisions[signature] = model_decisions
+                  signature_timings[signature] = elapsed
+
+              test_metrics: list[dict[str, Any]] = []
+              groups: list[tuple[str, list[ProjectionRow], bool]] = [
+                  ("normal-all", [r for r in test_rows if r.label == "normal"], True),
+                  ("fault-all", [r for r in test_rows if r.label == "anomaly"], False),
+              ]
+              for mutation in MUTATIONS:
+                  groups.append((
+                      f"fault:{mutation}",
+                      [r for r in test_rows if r.label == "anomaly" and r.mutation == mutation],
+                      False,
+                  ))
+
+              for signature, model_decisions in signature_decisions.items():
+                  signature_name = ";".join(signature) if signature else "trivial"
+                  for group_name, selected, expected_accept in groups:
+                      if not selected:
+                          continue
+                      correct = sum(model_decisions[r.word] == expected_accept for r in selected)
+                      test_metrics.append({
+                          "observer_signature": signature_name,
+                          "group": group_name,
+                          "correct": correct,
+                          "count": len(selected),
+                          "rate": correct / len(selected),
+                          "recognition_seconds_all_test_words": signature_timings[signature],
+                      })
+
+              trivial_total = sum(
+                  signature_decisions[()][r.word] == (r.label == "normal") for r in test_rows
+              )
+              for row in sweep_rows:
+                  signature = mutation_signatures[row["diagnostic_mutation"]]
+                  adaptive_total = sum(
+                      signature_decisions[signature][r.word] == (r.label == "normal") for r in test_rows
+                  )
+                  row["trivial_test_correct"] = trivial_total
+                  row["adaptive_test_correct"] = adaptive_total
+                  row["test_correct_improvement"] = adaptive_total - trivial_total
+                  row["test_row_count"] = len(test_rows)
+
+              write_csv(args.output / "candidate_validation_matrix.csv", validation_matrix)
+              write_csv(args.output / "greedy_selection_sweep.csv", sweep_rows)
+              write_csv(args.output / "test_metrics_by_observer_signature.csv", test_metrics)
+
+              summary = {
+                  "protocol": "ADP-MCFG V13 shifted split and validation-mutation sweep",
+                  "train_counts": list(train_counts),
+                  "validation_counts": list(validation_counts),
+                  "test_counts": list(test_counts),
+                  "training_words": list(training_words),
+                  "validation_normal_words": list(validation_normal),
+                  "basis_construction_seconds": basis_seconds,
+                  "basis_training_word_count": len(training_words),
+                  "candidate_observers": [observer.name for observer in candidate_list],
+                  "any_observer_selected": any(mutation_signatures[m] for m in MUTATIONS),
+                  "mutation_to_selected_observers": {
+                      mutation: list(signature) for mutation, signature in mutation_signatures.items()
+                  },
+                  "selection_details": selection_details,
+                  "candidate_validation_matrix": validation_matrix,
+                  "greedy_selection_sweep": sweep_rows,
+                  "test_metrics_by_observer_signature": test_metrics,
+                  "peak_rss_mib": peak_rss_mib(),
+                  "environment": {
+                      "platform": platform.platform(),
+                      "python": sys.version,
+                      "cpu_count": os.cpu_count(),
+                  },
+                  "protocol_audit": audit,
+              }
+              (args.output / "summary.json").write_text(
+                  json.dumps(summary, indent=2, default=json_compatible), encoding="utf-8"
+              )
+              print(json.dumps({
+                  "ready": True,
+                  "any_observer_selected": summary["any_observer_selected"],
+                  "mutation_to_selected_observers": summary["mutation_to_selected_observers"],
+                  "output": str(args.output),
+              }, indent=2))
+
+          if __name__ == "__main__":
+              main()
+          PY
+          python -m py_compile "$EXPERIMENT_DIR/run_selection_sweep_v13.py"
+
+      - name: Run validation-mutation observer sweep
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python run_selection_sweep_v13.py "$SHIFTED_PROJECTIONS" \
+            --output "$OUTPUT_DIR/selection-sweep" \
+            --train-counts "$TRAIN_COUNTS" \
+            --validation-counts "$VALIDATION_COUNTS" \
+            --test-counts "$TEST_COUNTS" \
+            --minimum-replicas "$MINIMUM_REPLICAS" \
+            --selection-budget 2 \
+            --max-values-per-nt 25000 \
+            --max-total-values 2000000
+
+      - name: Enforce V13 outputs and print headline
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -f "$OUTPUT_DIR/input/protocol_audit.json"
+          test -f "$OUTPUT_DIR/full-evaluation/summary.json"
+          test -f "$OUTPUT_DIR/full-evaluation/metrics_unique_projection.csv"
+          test -f "$OUTPUT_DIR/selection-sweep/summary.json"
+          test -f "$OUTPUT_DIR/selection-sweep/candidate_validation_matrix.csv"
+          test -f "$OUTPUT_DIR/selection-sweep/greedy_selection_sweep.csv"
+
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["OUTPUT_DIR"])
+          audit = json.loads((root / "input" / "protocol_audit.json").read_text())
+          full = json.loads((root / "full-evaluation" / "summary.json").read_text())
+          sweep = json.loads((root / "selection-sweep" / "summary.json").read_text())
+          assert audit["ready_for_word_disjoint_evaluation"] is True
+          report = {
+              "ready": True,
+              "train_counts": full["train_counts"],
+              "validation_counts": full["validation_counts"],
+              "test_counts": full["test_counts"],
+              "full_evaluation_selected_observers": full["selected_observers"],
+              "any_observer_selected_in_mutation_sweep": sweep["any_observer_selected"],
+              "mutation_to_selected_observers": sweep["mutation_to_selected_observers"],
+              "test_unique_surface_words": full["test_unique_surface_words"],
+          }
+          (root / "V13_SUCCESS.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+          print(json.dumps(report, indent=2))
+          PY
+
+          echo '===== FULL EVALUATION UNIQUE METRICS ====='
+          cat "$OUTPUT_DIR/full-evaluation/metrics_unique_projection.csv"
+          echo '===== GREEDY SELECTION SWEEP ====='
+          cat "$OUTPUT_DIR/selection-sweep/greedy_selection_sweep.csv"
+          echo '===== CANDIDATE VALIDATION MATRIX ====='
+          cat "$OUTPUT_DIR/selection-sweep/candidate_validation_matrix.csv"
+
+      - name: Save workflow diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          mkdir -p "$OUTPUT_DIR/diagnostics"
+          date --iso-8601=seconds > "$OUTPUT_DIR/diagnostics/date.txt"
+          python --version > "$OUTPUT_DIR/diagnostics/python.txt" 2>&1
+          gh --version > "$OUTPUT_DIR/diagnostics/gh.txt" 2>&1
+          df -h > "$OUTPUT_DIR/diagnostics/disk.txt"
+          free -h > "$OUTPUT_DIR/diagnostics/memory.txt"
+          printf '%s\n' "$WORKFLOW_REVISION" > "$OUTPUT_DIR/diagnostics/workflow-revision.txt"
+          printf 'source_run_id=%s\nsource_artifact_name=%s\n' \
+            "$SOURCE_RUN_ID" "$SOURCE_ARTIFACT_NAME" \
+            > "$OUTPUT_DIR/diagnostics/source-artifact.txt"
+          cp "$GITHUB_WORKSPACE/.github/workflows/adaptive-h-MCFG-V13-shifted-reanalysis.yml" \
+            "$OUTPUT_DIR/diagnostics/" 2>/dev/null
+          cp "$GITHUB_WORKSPACE/v13-source-file-list.txt" "$OUTPUT_DIR/diagnostics/" 2>/dev/null
+
+      - name: Upload V13 shifted-split reanalysis
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v13-shifted-reanalysis-${{ github.run_id }}
+          path: adp-mcfg-v13-shifted-reanalysis
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
