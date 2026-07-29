@@ -341,8 +341,8 @@ augmented compiled alphabet. -/
           | none =>
               none
           | some decoded =>
-              some (.terminal decoded)) =
-          some (.terminal a)
+              some (TemplateAtomStructuralToken.terminal decoded)) =
+          some (TemplateAtomStructuralToken.terminal a)
 
       rw [
         compiledTerminalDenseDecode_encode_of_mem
@@ -436,8 +436,8 @@ noncomputable def decodeFramedTemplateBodyTokenNatural
           | none =>
               none
           | some decoded =>
-              some (.atom decoded)) =
-          some (.atom token)
+              some (FramedTemplateBodyToken.atom decoded)) =
+          some (FramedTemplateBodyToken.atom token)
 
       rw [
         decodeTemplateAtomNatural_encode
