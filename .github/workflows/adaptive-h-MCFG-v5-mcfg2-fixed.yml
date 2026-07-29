@@ -1,7 +1,7 @@
-name: ADP MCFG - count-controlled projected-word-disjoint experiment v5 (mcfg2)
+name: ADP MCFG - count-controlled projected-word-disjoint experiment v5.1 (mcfg2)
 
 run-name: >-
-  ADP MCFG v5 mcfg2 • ${{ github.event_name }} • run #${{ github.run_number }}
+  ADP MCFG v5.1 mcfg2 • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
   workflow_dispatch:
@@ -34,6 +34,7 @@ on:
   push:
     paths:
       - ".github/workflows/adaptive-h-MCFG-v5-mcfg2.yml"
+      - "LeanCfgProject/adaptive_h_mcfg/**"
       - "LeanCfgProject/adaptive_h_mcfg2/**"
 
 permissions:
@@ -44,8 +45,10 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  WORKFLOW_REVISION: "2026-07-29-v5-count-word-disjoint"
-  EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  WORKFLOW_REVISION: "2026-07-29-v5.1-merged-base-and-v12-patch"
+  BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  PATCH_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v5_merged
   DEMO_RELATIVE_DIR: _opentelemetry-demo
   OUTPUT_RELATIVE_DIR: mcfg-v12-experiment-mcfg2
   DIAGNOSTICS_RELATIVE_DIR: github-actions-diagnostics-v5-mcfg2
@@ -55,6 +58,7 @@ jobs:
     name: Count-controlled trace collection and word-disjoint evaluation
     runs-on: ubuntu-latest
     timeout-minutes: 180
+
     steps:
       - name: Check out lean_cfg_project
         uses: actions/checkout@v6
@@ -86,14 +90,19 @@ jobs:
           MAX_COUNT='${{ github.event.inputs.max_count || '10' }}'
           WARMUP_SECONDS='${{ github.event.inputs.warmup_seconds || '45' }}'
           FLUSH_SECONDS='${{ github.event.inputs.flush_seconds || '5' }}'
+
           test "$REPLICAS" -ge 1
           test "$MAX_COUNT" -ge 4
           test "$MAX_COUNT" -le 10
+
           {
-            echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/$EXPERIMENT_RELATIVE_DIR"
+            echo "BASE_EXPERIMENT_DIR=$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR"
+            echo "PATCH_EXPERIMENT_DIR=$GITHUB_WORKSPACE/$PATCH_EXPERIMENT_RELATIVE_DIR"
+            echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
             echo "DEMO_DIR=$GITHUB_WORKSPACE/$DEMO_RELATIVE_DIR"
             echo "OUTPUT_DIR=$GITHUB_WORKSPACE/$OUTPUT_RELATIVE_DIR"
             echo "DIAGNOSTICS_DIR=$GITHUB_WORKSPACE/$DIAGNOSTICS_RELATIVE_DIR"
+            echo "PYTHONPATH=$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
             echo "REPLICAS=$REPLICAS"
             echo "MAX_COUNT=$MAX_COUNT"
             echo "TEST_COUNTS=4-$MAX_COUNT"
@@ -101,48 +110,114 @@ jobs:
             echo "FLUSH_SECONDS=$FLUSH_SECONDS"
           } >> "$GITHUB_ENV"
 
+      - name: Assemble legacy implementation plus V12 patch
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          if [ ! -d "$BASE_EXPERIMENT_DIR" ]; then
+            echo "::error::Base experiment directory is missing: $BASE_EXPERIMENT_DIR"
+            find "$GITHUB_WORKSPACE/LeanCfgProject" -maxdepth 2 -type d -print | sort
+            exit 1
+          fi
+
+          if [ ! -d "$PATCH_EXPERIMENT_DIR" ]; then
+            echo "::error::V12 patch directory is missing: $PATCH_EXPERIMENT_DIR"
+            find "$GITHUB_WORKSPACE/LeanCfgProject" -maxdepth 2 -type d -print | sort
+            exit 1
+          fi
+
+          rm -rf "$EXPERIMENT_DIR"
+          mkdir -p "$EXPERIMENT_DIR"
+
+          # The old experiment supplies the learner, observers, baselines,
+          # Jaeger collector, and packaging metadata.  adaptive_h_mcfg2 then
+          # overwrites/adds the V12 word-disjoint experiment files.
+          cp -a "$BASE_EXPERIMENT_DIR/." "$EXPERIMENT_DIR/"
+          cp -a "$PATCH_EXPERIMENT_DIR/." "$EXPERIMENT_DIR/"
+
+          echo "Merged experiment tree:"
+          find "$EXPERIMENT_DIR" -maxdepth 3 -type f -print | sort
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
-      - name: Verify repository layouts and pinned Demo commit
+      - name: Verify merged experiment and pinned Demo commit
         shell: bash
         run: |
           set -euxo pipefail
-          test -f "$EXPERIMENT_DIR/pyproject.toml"
-          test -f "$EXPERIMENT_DIR/otel_demo/collect_jaeger_v11.py"
-          test -f "$EXPERIMENT_DIR/otel_demo/run_count_controlled_v12.py"
-          test -f "$EXPERIMENT_DIR/otel_demo/build_v12_dataset.py"
-          test -f "$EXPERIMENT_DIR/validate_v12_dataset.py"
-          test -f "$EXPERIMENT_DIR/run_word_disjoint_v12.py"
-          test -f "$EXPERIMENT_DIR/run_scaling_v12.py"
-          test -f "$DEMO_DIR/compose.yaml"
-          test -f "$DEMO_DIR/compose.observability.yaml"
-          test -f "$DEMO_DIR/compose.extras.yaml"
-          test -f "$DEMO_DIR/.env"
+
+          require_file() {
+            if [ ! -f "$1" ]; then
+              echo "::error::Missing required file after merge: $1"
+              find "$EXPERIMENT_DIR" -maxdepth 4 -type f -print | sort
+              exit 1
+            fi
+          }
+
+          require_file "$EXPERIMENT_DIR/otel_demo/collect_jaeger_v11.py"
+          require_file "$EXPERIMENT_DIR/otel_demo/run_count_controlled_v12.py"
+          require_file "$EXPERIMENT_DIR/otel_demo/build_v12_dataset.py"
+          require_file "$EXPERIMENT_DIR/validate_v12_dataset.py"
+          require_file "$EXPERIMENT_DIR/run_word_disjoint_v12.py"
+          require_file "$EXPERIMENT_DIR/run_scaling_v12.py"
+          require_file "$EXPERIMENT_DIR/run_v12_end_to_end.py"
+          require_file "$EXPERIMENT_DIR/adaptive_h_mcfg/baselines.py"
+          require_file "$EXPERIMENT_DIR/adaptive_h_mcfg/binary_learner.py"
+          require_file "$EXPERIMENT_DIR/adaptive_h_mcfg/observers.py"
+          require_file "$EXPERIMENT_DIR/adaptive_h_mcfg/selection.py"
+          require_file "$EXPERIMENT_DIR/adaptive_h_mcfg/v12_baselines.py"
+          require_file "$EXPERIMENT_DIR/adaptive_h_mcfg/v12_protocol.py"
+
+          require_file "$DEMO_DIR/compose.yaml"
+          require_file "$DEMO_DIR/compose.observability.yaml"
+          require_file "$DEMO_DIR/compose.extras.yaml"
+          require_file "$DEMO_DIR/.env"
+
           touch "$DEMO_DIR/.env.override"
           git -C "$DEMO_DIR" rev-parse HEAD | tee "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v5.txt"
 
-      - name: Install and test adaptive_h_mcfg2 experiment
+      - name: Install dependencies and test merged experiment
         shell: bash
-        working-directory: LeanCfgProject/adaptive_h_mcfg2
         run: |
           set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --editable .
           python -m pip install pytest scikit-learn
+
+          # Use editable installation when packaging metadata exists, but do
+          # not require pyproject.toml merely to run the repository sources.
+          if [ -f pyproject.toml ] || [ -f setup.py ] || [ -f setup.cfg ]; then
+            python -m pip install --editable .
+          fi
+
           python -m pytest -q
-          python -m compileall -q adaptive_h_mcfg otel_demo \
-            validate_v12_dataset.py run_word_disjoint_v12.py run_scaling_v12.py run_v12_end_to_end.py
+          python -m compileall -q \
+            adaptive_h_mcfg \
+            otel_demo \
+            validate_v12_dataset.py \
+            run_word_disjoint_v12.py \
+            run_scaling_v12.py \
+            run_v12_end_to_end.py
+
+          python - <<'PY'
+          from adaptive_h_mcfg.baselines import ExactTemplateModel
+          from adaptive_h_mcfg.binary_learner import BoundedCanonicalMCFGLearner
+          from adaptive_h_mcfg.v12_baselines import KTailsAutomatonModel
+          from adaptive_h_mcfg.v12_protocol import parse_int_spec
+          print("merged-import-smoke-test: ok", parse_int_spec("4-10"))
+          PY
 
       - name: Validate current Demo compose configuration
         shell: bash
-        working-directory: _opentelemetry-demo
         env:
           COMPOSE_ENV_FILES: .env,.env.override
         run: |
           set -euxo pipefail
+          cd "$DEMO_DIR"
           mkdir -p "$DIAGNOSTICS_DIR"
           docker compose \
             -f compose.yaml \
@@ -155,11 +230,11 @@ jobs:
 
       - name: Collect count-controlled normal traces
         shell: bash
-        working-directory: LeanCfgProject/adaptive_h_mcfg2
         env:
           COMPOSE_ENV_FILES: .env,.env.override
         run: |
           set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
           rm -rf "$OUTPUT_DIR"
           mkdir -p "$OUTPUT_DIR/normal-runs"
           python otel_demo/run_count_controlled_v12.py "$DEMO_DIR" \
@@ -177,9 +252,9 @@ jobs:
 
       - name: Build, validate, and evaluate without projection leakage
         shell: bash
-        working-directory: LeanCfgProject/adaptive_h_mcfg2
         run: |
           set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
           python run_v12_end_to_end.py "$OUTPUT_DIR/normal-runs" \
             --output "$OUTPUT_DIR" \
             --train-counts 1,2 \
@@ -223,14 +298,21 @@ jobs:
           free -h > "$DIAGNOSTICS_DIR/memory.txt"
           docker system df > "$DIAGNOSTICS_DIR/docker-disk.txt" 2>&1
           docker ps -a > "$DIAGNOSTICS_DIR/docker-containers.txt" 2>&1
+          git status --short > "$DIAGNOSTICS_DIR/repository-status.txt" 2>&1
+          find "$GITHUB_WORKSPACE/LeanCfgProject" -maxdepth 3 -type f -print \
+            | sort > "$DIAGNOSTICS_DIR/lean-project-files.txt" 2>&1
+          if [ -d "$EXPERIMENT_DIR" ]; then
+            find "$EXPERIMENT_DIR" -maxdepth 4 -type f -print \
+              | sort > "$DIAGNOSTICS_DIR/merged-experiment-files.txt" 2>&1
+          fi
           cp "$GITHUB_WORKSPACE/opentelemetry-demo-commit-v5.txt" "$DIAGNOSTICS_DIR/" 2>/dev/null
           if [ -d "$DEMO_DIR" ]; then
             (
               cd "$DEMO_DIR" || exit 0
-              COMPOSE_ENV_FILES=.env,.env.override docker compose \
+              COMPOSE_ENV_FILES=.env,env.override docker compose \
                 -f compose.yaml -f compose.observability.yaml -f compose.extras.yaml \
                 ps -a > "$DIAGNOSTICS_DIR/compose-ps.txt" 2>&1
-              COMPOSE_ENV_FILES=.env,.env.override docker compose \
+              COMPOSE_ENV_FILES=.env,env.override docker compose \
                 -f compose.yaml -f compose.observability.yaml -f compose.extras.yaml \
                 logs --no-color --tail=1500 > "$DIAGNOSTICS_DIR/compose-logs.txt" 2>&1
             )
@@ -243,7 +325,7 @@ jobs:
           set +e
           if [ -d "$DEMO_DIR" ]; then
             cd "$DEMO_DIR" || exit 0
-            COMPOSE_ENV_FILES=.env,.env.override docker compose \
+            COMPOSE_ENV_FILES=.env,env.override docker compose \
               -f compose.yaml -f compose.observability.yaml -f compose.extras.yaml \
               down --remove-orphans --volumes
           fi
@@ -259,4 +341,3 @@ jobs:
             opentelemetry-demo-commit-v5.txt
           if-no-files-found: warn
           retention-days: 14
-          compression-level: 6
