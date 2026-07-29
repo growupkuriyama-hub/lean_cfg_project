@@ -1,7 +1,7 @@
-name: ADP MCFG - OpenTelemetry real-trace experiment v3
+name: ADP MCFG - OpenTelemetry real-trace experiment v4
 
 run-name: >-
-  ADP MCFG v3 • ${{ github.event_name }} • run #${{ github.run_number }}
+  ADP MCFG v4 • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
   workflow_dispatch:
@@ -33,18 +33,18 @@ on:
         type: string
   push:
     paths:
-      - ".github/workflows/adaptive-h-MCFG-v3.yml"
+      - ".github/workflows/adaptive-h-MCFG-v4.yml"
       - "LeanCfgProject/adaptive_h_mcfg/**"
 
 permissions:
   contents: read
 
 concurrency:
-  group: adaptive-h-mcfg-v3-${{ github.ref }}
+  group: adaptive-h-mcfg-v4-${{ github.ref }}
   cancel-in-progress: false
 
 env:
-  WORKFLOW_REVISION: "2026-07-29-c-demo3"
+  WORKFLOW_REVISION: "2026-07-29-d-jaeger-base-path"
   EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
   DEMO_RELATIVE_DIR: _opentelemetry-demo
   OUTPUT_RELATIVE_DIR: mcfg-v11-experiment
@@ -183,6 +183,7 @@ jobs:
             --runs "$RUNS" \
             --warmup-seconds "$WARMUP_SECONDS" \
             --collect-seconds "$COLLECT_SECONDS" \
+            --jaeger-base "http://localhost:8080/jaeger/ui" \
             --compose-file compose.yaml \
             --compose-file compose.observability.yaml \
             --compose-file compose.extras.yaml
@@ -290,7 +291,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: adaptive-h-mcfg-v3-${{ github.run_id }}
+          name: adaptive-h-mcfg-v4-${{ github.run_id }}
           path: |
             mcfg-v11-experiment
             github-actions-diagnostics
