@@ -311,7 +311,7 @@ rule after structural packet encoding. -/
     H.decodeCompiledNonterminalCode_encode dummy rho.right
   ]
 
-  rw [rho.decode_framedStructuralBodyTokens]
+  simp only [rho.decode_framedStructuralBodyTokens]
 
   simp [templateTupleOfExactLength_ofFn]
 
