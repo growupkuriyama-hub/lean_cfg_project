@@ -264,7 +264,7 @@ noncomputable def decodeCompiledBinaryRuleStructuralPacket
               none
 
           | some right =>
-              match hbody :
+              match
                   decodeFramedTemplateWords
                     (correctedConcreteCutGrammarArity H left)
                     (correctedConcreteCutGrammarArity H right)
@@ -275,17 +275,17 @@ noncomputable def decodeCompiledBinaryRuleStructuralPacket
                   none
 
               | some words =>
-                  some
-                    { lhs := lhs
-                      left := left
-                      right := right
-                      body :=
-                        templateTupleOfExactLength words
-                          (decodeFramedTemplateWords_length_of_eq_some
-                            (correctedConcreteCutGrammarArity H left)
-                            (correctedConcreteCutGrammarArity H right)
-                            (correctedConcreteCutGrammarArity H lhs)
-                            packet.bodyTokens words hbody) }
+                  if hlength :
+                      words.length =
+                        correctedConcreteCutGrammarArity H lhs then
+                    some
+                      { lhs := lhs
+                        left := left
+                        right := right
+                        body :=
+                          templateTupleOfExactLength words hlength }
+                  else
+                    none
 
 /-- Whole-rule exact round trip: the checked decoder reconstructs every binary
 rule after structural packet encoding. -/
@@ -301,38 +301,11 @@ rule after structural packet encoding. -/
 
   classical
 
-  unfold encodeCompiledBinaryRuleStructuralPacket
-
-  unfold decodeCompiledBinaryRuleStructuralPacket
-
-  simp only [
-    H.decodeCompiledNonterminalCode_encode dummy rho.lhs,
-    H.decodeCompiledNonterminalCode_encode dummy rho.left,
-    H.decodeCompiledNonterminalCode_encode dummy rho.right
+  simp [
+    decodeCompiledBinaryRuleStructuralPacket,
+    encodeCompiledBinaryRuleStructuralPacket,
+    templateTupleOfExactLength_ofFn
   ]
-
-  cases hbody :
-      decodeFramedTemplateWords
-        (correctedConcreteCutGrammarArity H rho.left)
-        (correctedConcreteCutGrammarArity H rho.right)
-        (correctedConcreteCutGrammarArity H rho.lhs)
-        rho.framedStructuralBodyTokens with
-
-  | none =>
-      have hround := rho.decode_framedStructuralBodyTokens
-      rw [hround] at hbody
-      cases hbody
-
-  | some words =>
-      have hround := rho.decode_framedStructuralBodyTokens
-      rw [hround] at hbody
-
-      have hwords :
-          List.ofFn rho.body = words :=
-        Option.some.inj hbody
-
-      subst words
-      simp [templateTupleOfExactLength_ofFn]
 
 /-- Exact number of framed body tokens stored by the complete structural packet. -/
 @[simp] theorem encodeCompiledBinaryRuleStructuralPacket_bodyTokens_length
