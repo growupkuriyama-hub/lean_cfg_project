@@ -121,7 +121,7 @@ def toBinaryEntryCost
 
 /-- Total binary payload length of all explicit entries in the actual compiled
 presentation. -/
-def binaryDescriptionSize
+noncomputable def binaryDescriptionSize
     (E :
       CorrectedConcreteCompiledGrammarNaturalEncoding H)
     (dummy : α) :
@@ -218,7 +218,7 @@ theorem binaryDescriptionSize_le_structuralSquare_mul
 
 /-- Maximum binary payload length among the entries actually stored in the
 finite compiled presentation. -/
-def maxBinaryEntryCodeLength
+noncomputable def maxBinaryEntryCodeLength
     (E :
       CorrectedConcreteCompiledGrammarNaturalEncoding H)
     (dummy : α) :
@@ -300,6 +300,7 @@ theorem correctedConcreteFiniteHypothesis_binaryDescriptionSize_le_paperBound
 
   simpa [
     correctedConcreteCompiledGrammarBinaryDescriptionBound,
+    correctedConcreteCompiledGrammarDescriptionBound,
     CorrectedConcreteCompiledGrammarNaturalEncoding.toBinaryEntryCost
   ] using
     correctedConcreteFiniteHypothesis_descriptionSize_le_paperBound
