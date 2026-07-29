@@ -305,12 +305,13 @@ rule after structural packet encoding. -/
 
   simp only [encodeCompiledBinaryRuleStructuralPacket]
 
-  rw [
+  simp only [
     H.decodeCompiledNonterminalCode_encode dummy rho.lhs,
     H.decodeCompiledNonterminalCode_encode dummy rho.left,
-    H.decodeCompiledNonterminalCode_encode dummy rho.right,
-    rho.decode_framedStructuralBodyTokens
+    H.decodeCompiledNonterminalCode_encode dummy rho.right
   ]
+
+  rw [rho.decode_framedStructuralBodyTokens]
 
   simp [templateTupleOfExactLength_ofFn]
 
@@ -329,7 +330,7 @@ rule after structural packet encoding. -/
 
 /-- Structural field count of one complete encoded binary rule: three header
 codes plus all framed body tokens. -/
-def compiledBinaryRuleStructuralFieldCount
+noncomputable def compiledBinaryRuleStructuralFieldCount
     (dummy : α)
     (rho : BinaryRule
       (CorrectedConcreteCutGrammarNonterminal H)
