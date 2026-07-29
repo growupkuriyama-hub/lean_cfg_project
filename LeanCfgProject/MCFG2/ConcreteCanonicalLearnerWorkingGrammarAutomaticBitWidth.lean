@@ -80,7 +80,8 @@ theorem binaryNatCodeLength_le_of_pos_of_lt_two_pow
 
   by_cases hn : n = 0
   · subst n
-    simpa [binaryNatCodeLength] using hpositive
+    change 1 <= bitWidth
+    omega
 
   · have hlog :
         n.log2 < bitWidth :=
@@ -101,7 +102,7 @@ theorem listCostMax_le_of_forall_mem
     (cost : β -> Nat)
     (c : Nat) :
     forall xs : List β,
-      (forall x ∈ xs, cost x <= c) ->
+      (forall x, x ∈ xs -> cost x <= c) ->
       listCostMax cost xs <= c
 
   | [], _ => by
@@ -113,7 +114,7 @@ theorem listCostMax_le_of_forall_mem
         hcost x (by simp)
 
       have hxs :
-          forall y ∈ xs, cost y <= c := by
+          forall y, y ∈ xs -> cost y <= c := by
         intro y hy
         exact hcost y (by simp [hy])
 
@@ -192,7 +193,7 @@ namespace CorrectedConcreteCompiledGrammarNaturalEncoding
 
 /-- The canonical positive bit width selected from the codes actually occurring
 in the finite compiled presentation. -/
-def automaticBitWidth
+noncomputable def automaticBitWidth
     (E :
       CorrectedConcreteCompiledGrammarNaturalEncoding H)
     (dummy : α) :
