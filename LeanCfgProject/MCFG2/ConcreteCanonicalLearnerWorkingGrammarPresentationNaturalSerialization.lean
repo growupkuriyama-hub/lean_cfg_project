@@ -359,16 +359,39 @@ entry-level natural-list codec. -/
           rho ∈
             (H.toCutWorkingMCFG dummy).binaryRules := by
 
-        simpa [
+        unfold
           CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries
-        ] using hentry
+          at hentry
+
+        rcases List.mem_append.mp hentry with hprefix | hbinary
+
+        · rcases List.mem_append.mp hprefix with hprefix | hterminal
+
+          · rcases List.mem_append.mp hprefix with hnonterminal | hstart
+
+            · rcases List.mem_map.mp hnonterminal with
+                ⟨A, hA, hEq⟩
+              cases hEq
+
+            · rcases List.mem_map.mp hstart with
+                ⟨startRule, hstartRule, hEq⟩
+              cases hEq
+
+          · rcases List.mem_map.mp hterminal with
+              ⟨terminalRule, hterminalRule, hEq⟩
+            cases hEq
+
+        · rcases List.mem_map.mp hbinary with
+            ⟨binaryRule, hbinaryRule, hEq⟩
+          cases hEq
+          exact hbinaryRule
 
       exact
         H.decodeCompiledGrammarPresentationEntryNaturalList_encode_binaryRule_of_mem
           dummy rho hrho
 
 /-- Exact natural-field count of one structurally encoded top-level entry. -/
-def compiledGrammarPresentationEntryNaturalFieldCount
+noncomputable def compiledGrammarPresentationEntryNaturalFieldCount
     (dummy : α) :
     CorrectedConcreteCompiledGrammarPresentationEntry H →
       Nat
@@ -417,6 +440,8 @@ natural serialization. -/
         Nat.add_comm
       ]
 
+      omega
+
 /-- Expanded exact field count for a binary-rule presentation entry. -/
 @[simp] theorem
     compiledGrammarPresentationEntryNaturalFieldCount_binaryRule
@@ -433,9 +458,10 @@ natural serialization. -/
             ((List.ofFn rho.body).map List.length).sum) := by
 
   simp [
-    compiledGrammarPresentationEntryNaturalFieldCount,
-    Nat.add_assoc
+    compiledGrammarPresentationEntryNaturalFieldCount
   ]
+
+  omega
 
 /-- Compact entry-level codec endpoint for any actually stored presentation
 entry. -/
@@ -500,8 +526,8 @@ noncomputable def encodeCompiledGrammarPresentationEntryStream
           dummy entry
       payload.length ::
         (payload ++
-          H.encodeCompiledGrammarPresentationEntryStream
-            dummy entries)
+          encodeCompiledGrammarPresentationEntryStream
+            H dummy entries)
 
 /-- Parse exactly the prescribed number of length-framed presentation entries,
 retaining the unconsumed natural suffix. -/
@@ -537,8 +563,8 @@ noncomputable def decodeCompiledGrammarPresentationEntryStreamAux
 
           | some entry =>
               match
-                  H.decodeCompiledGrammarPresentationEntryStreamAux
-                    dummy entryCount suffix with
+                  decodeCompiledGrammarPresentationEntryStreamAux
+                    H dummy entryCount suffix with
 
               | none =>
                   none
@@ -622,8 +648,8 @@ theorem
                   dummy entries ++
                 suffix) =
             some (entries, suffix) :=
-        H.decodeCompiledGrammarPresentationEntryStreamAux_encode_append
-          dummy entries suffix hrest
+        decodeCompiledGrammarPresentationEntryStreamAux_encode_append
+          H dummy entries suffix hrest
 
       simp [
         encodeCompiledGrammarPresentationEntryStream,
@@ -693,8 +719,8 @@ field plus the fields of its entry payload. -/
       simp [
         encodeCompiledGrammarPresentationEntryStream,
         H.encodeCompiledGrammarPresentationEntryNaturalList_length,
-        H.encodeCompiledGrammarPresentationEntryStream_length
-          dummy entries,
+        encodeCompiledGrammarPresentationEntryStream_length
+          H dummy entries,
         Nat.add_assoc,
         Nat.add_comm,
         Nat.add_left_comm
