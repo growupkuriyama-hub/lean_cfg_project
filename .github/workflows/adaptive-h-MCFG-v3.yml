@@ -1,0 +1,300 @@
+name: ADP MCFG - OpenTelemetry real-trace experiment v3
+
+run-name: >-
+  ADP MCFG v3 • ${{ github.event_name }} • run #${{ github.run_number }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: Independent normal-trace collection runs
+        required: true
+        default: 5
+        type: number
+      seeds:
+        description: Run-disjoint evaluation seeds
+        required: true
+        default: 5
+        type: number
+      warmup_seconds:
+        description: Warm-up seconds before each collection window
+        required: true
+        default: 45
+        type: number
+      collect_seconds:
+        description: Collection seconds per run
+        required: true
+        default: 90
+        type: number
+      demo_ref:
+        description: OpenTelemetry Demo branch, tag, or commit
+        required: true
+        default: main
+        type: string
+  push:
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-v3.yml"
+      - "LeanCfgProject/adaptive_h_mcfg/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: adaptive-h-mcfg-v3-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_REVISION: "2026-07-29-c-demo3"
+  EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  DEMO_RELATIVE_DIR: _opentelemetry-demo
+  OUTPUT_RELATIVE_DIR: mcfg-v11-experiment
+  DIAGNOSTICS_RELATIVE_DIR: github-actions-diagnostics
+
+jobs:
+  experiment:
+    name: Collect real traces and evaluate adaptive h-MCFG
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Check out lean_cfg_project
+        uses: actions/checkout@v6
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euxo pipefail
+          df -h
+          sudo rm -rf /usr/local/lib/android || true
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/.ghcup || true
+          sudo rm -rf /usr/local/share/boost || true
+          sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get clean
+          docker system prune --all --force || true
+          df -h
+
+      - name: Check out the official OpenTelemetry Demo
+        uses: actions/checkout@v6
+        with:
+          repository: open-telemetry/opentelemetry-demo
+          ref: ${{ github.event.inputs.demo_ref || 'main' }}
+          path: _opentelemetry-demo
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Initialize paths and parameters
+        shell: bash
+        run: |
+          set -euxo pipefail
+          {
+            echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/$EXPERIMENT_RELATIVE_DIR"
+            echo "DEMO_DIR=$GITHUB_WORKSPACE/$DEMO_RELATIVE_DIR"
+            echo "OUTPUT_DIR=$GITHUB_WORKSPACE/$OUTPUT_RELATIVE_DIR"
+            echo "DIAGNOSTICS_DIR=$GITHUB_WORKSPACE/$DIAGNOSTICS_RELATIVE_DIR"
+            echo "RUNS=${{ github.event.inputs.runs || '5' }}"
+            echo "SEEDS=${{ github.event.inputs.seeds || '5' }}"
+            echo "WARMUP_SECONDS=${{ github.event.inputs.warmup_seconds || '45' }}"
+            echo "COLLECT_SECONDS=${{ github.event.inputs.collect_seconds || '90' }}"
+          } >> "$GITHUB_ENV"
+
+          echo "workflow_revision=$WORKFLOW_REVISION"
+          echo "workspace=$GITHUB_WORKSPACE"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify repository layouts
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          test -d "$EXPERIMENT_DIR"
+          test -f "$EXPERIMENT_DIR/pyproject.toml"
+          test -f "$EXPERIMENT_DIR/run_real_multiseed_v11.py"
+          test -f "$EXPERIMENT_DIR/validate_v11_dataset.py"
+          test -f "$EXPERIMENT_DIR/otel_demo/run_normal_v11.py"
+          test -f "$EXPERIMENT_DIR/otel_demo/build_v11_dataset.py"
+
+          # OpenTelemetry Demo 3.0 compose layering:
+          # core minimal + observability backend + extras override.
+          test -f "$DEMO_DIR/compose.yaml"
+          test -f "$DEMO_DIR/compose.observability.yaml"
+          test -f "$DEMO_DIR/compose.extras.yaml"
+          test -f "$DEMO_DIR/.env"
+          touch "$DEMO_DIR/.env.override"
+
+          git -C "$DEMO_DIR" rev-parse HEAD \
+            | tee "$GITHUB_WORKSPACE/opentelemetry-demo-commit.txt"
+
+          echo "--- adaptive_h_mcfg files ---"
+          find "$EXPERIMENT_DIR" -maxdepth 2 -type f | sort | sed -n '1,220p'
+          echo "--- OpenTelemetry compose files ---"
+          ls -lh "$DEMO_DIR"/compose*.yaml
+
+      - name: Install and test adaptive_h_mcfg
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --editable .
+          python -m pip install pytest
+          python -m pytest -q
+
+      - name: Validate current Demo compose configuration
+        shell: bash
+        working-directory: _opentelemetry-demo
+        env:
+          COMPOSE_ENV_FILES: .env,.env.override
+        run: |
+          set -euxo pipefail
+          docker version
+          docker compose version
+          docker compose \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f compose.extras.yaml \
+            config --services \
+            | tee "$DIAGNOSTICS_DIR-services.tmp"
+
+          grep -Ei 'checkout' "$DIAGNOSTICS_DIR-services.tmp"
+          grep -Ei 'load' "$DIAGNOSTICS_DIR-services.tmp"
+          grep -Ei 'jaeger' "$DIAGNOSTICS_DIR-services.tmp"
+          rm -f "$DIAGNOSTICS_DIR-services.tmp"
+
+      - name: Collect unmodified OpenTelemetry Demo traces
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg
+        env:
+          # This reproduces the current official Makefile's two env files.
+          # Paths are resolved from the Demo working directory used by Docker Compose.
+          COMPOSE_ENV_FILES: .env,.env.override
+        run: |
+          set -euxo pipefail
+          rm -rf "$OUTPUT_DIR"
+          mkdir -p "$OUTPUT_DIR/normal-runs"
+
+          python otel_demo/run_normal_v11.py "$DEMO_DIR" \
+            --output "$OUTPUT_DIR/normal-runs" \
+            --runs "$RUNS" \
+            --warmup-seconds "$WARMUP_SECONDS" \
+            --collect-seconds "$COLLECT_SECONDS" \
+            --compose-file compose.yaml \
+            --compose-file compose.observability.yaml \
+            --compose-file compose.extras.yaml
+
+      - name: Build route-preserving mutation dataset
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg
+        run: |
+          set -euxo pipefail
+          python otel_demo/build_v11_dataset.py \
+            "$OUTPUT_DIR/normal-runs" \
+            --output "$OUTPUT_DIR/dataset"
+
+          python validate_v11_dataset.py \
+            "$OUTPUT_DIR/dataset/projections.csv" \
+            --output "$OUTPUT_DIR/dataset/validation_report.json"
+
+      - name: Run run-disjoint multi-seed evaluation
+        shell: bash
+        working-directory: LeanCfgProject/adaptive_h_mcfg
+        run: |
+          set -euxo pipefail
+          python run_real_multiseed_v11.py \
+            "$OUTPUT_DIR/dataset/projections.csv" \
+            --output "$OUTPUT_DIR/results" \
+            --seeds "$SEEDS"
+
+      - name: Print completed result summary
+        if: success()
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo '--- dataset summary ---'
+          cat "$OUTPUT_DIR/dataset/dataset_summary.json"
+          echo
+          echo '--- validation report ---'
+          cat "$OUTPUT_DIR/dataset/validation_report.json"
+          echo
+          echo '--- aggregate metrics ---'
+          cat "$OUTPUT_DIR/results/aggregate_metrics.csv"
+          echo
+          echo '--- model complexity ---'
+          cat "$OUTPUT_DIR/results/model_complexity.csv"
+
+      - name: Save diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          mkdir -p "$DIAGNOSTICS_DIR"
+
+          date --iso-8601=seconds > "$DIAGNOSTICS_DIR/date.txt"
+          printf '%s\n' "$WORKFLOW_REVISION" > "$DIAGNOSTICS_DIR/workflow-revision.txt"
+          printf 'event=%s\nrun_id=%s\nrun_number=%s\nsha=%s\n' \
+            "$GITHUB_EVENT_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_NUMBER" "$GITHUB_SHA" \
+            > "$DIAGNOSTICS_DIR/github-run.txt"
+          printf 'experiment_dir=%s\ndemo_dir=%s\noutput_dir=%s\n' \
+            "$EXPERIMENT_DIR" "$DEMO_DIR" "$OUTPUT_DIR" \
+            > "$DIAGNOSTICS_DIR/paths.txt"
+
+          python --version > "$DIAGNOSTICS_DIR/python.txt" 2>&1
+          docker version > "$DIAGNOSTICS_DIR/docker-version.txt" 2>&1
+          docker compose version > "$DIAGNOSTICS_DIR/compose-version.txt" 2>&1
+          df -h > "$DIAGNOSTICS_DIR/disk.txt"
+          free -h > "$DIAGNOSTICS_DIR/memory.txt"
+          docker system df > "$DIAGNOSTICS_DIR/docker-disk.txt" 2>&1
+          docker ps -a > "$DIAGNOSTICS_DIR/docker-containers.txt" 2>&1
+          docker images > "$DIAGNOSTICS_DIR/docker-images.txt" 2>&1
+
+          cp "$GITHUB_WORKSPACE/opentelemetry-demo-commit.txt" \
+            "$DIAGNOSTICS_DIR/" 2>/dev/null
+
+          if [ -d "$DEMO_DIR" ]; then
+            (
+              cd "$DEMO_DIR" || exit 0
+              COMPOSE_ENV_FILES=.env,.env.override docker compose \
+                -f compose.yaml \
+                -f compose.observability.yaml \
+                -f compose.extras.yaml \
+                ps -a > "$DIAGNOSTICS_DIR/compose-ps.txt" 2>&1
+              COMPOSE_ENV_FILES=.env,.env.override docker compose \
+                -f compose.yaml \
+                -f compose.observability.yaml \
+                -f compose.extras.yaml \
+                logs --no-color --tail=800 \
+                > "$DIAGNOSTICS_DIR/compose-logs.txt" 2>&1
+            )
+          fi
+
+      - name: Ensure Demo containers are stopped
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          if [ -d "$DEMO_DIR" ]; then
+            cd "$DEMO_DIR" || exit 0
+            COMPOSE_ENV_FILES=.env,.env.override docker compose \
+              -f compose.yaml \
+              -f compose.observability.yaml \
+              -f compose.extras.yaml \
+              down --remove-orphans --volumes
+          fi
+
+      - name: Upload traces, results, and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adaptive-h-mcfg-v3-${{ github.run_id }}
+          path: |
+            mcfg-v11-experiment
+            github-actions-diagnostics
+            opentelemetry-demo-commit.txt
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 6
