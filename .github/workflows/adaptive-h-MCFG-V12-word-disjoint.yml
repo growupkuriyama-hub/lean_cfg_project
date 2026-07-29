@@ -1,7 +1,7 @@
-name: ADP MCFG V12.1 - robust projected-word-disjoint OpenTelemetry experiment
+name: ADP MCFG V12.2 - NumPy-safe projected-word-disjoint OpenTelemetry experiment
 
 run-name: >-
-  ADP MCFG V12.1 ROBUST WORD-DISJOINT • ${{ github.event_name }} • run #${{ github.run_number }}
+  ADP MCFG V12.2 NUMPY-SAFE WORD-DISJOINT • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
   push:
@@ -50,7 +50,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  WORKFLOW_REVISION: "2026-07-30-v12.1-oversample-balance-acquisition-dropout"
+  WORKFLOW_REVISION: "2026-07-30-v12.2-numpy-safe-summary-json"
   BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
   PATCH_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
   MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v12_merged
@@ -179,6 +179,62 @@ jobs:
 
           cp "$EXPERIMENT_DIR/otel_demo/build_v12_dataset.py"             "$DIAGNOSTICS_DIR/build_v12_dataset.dropout_tolerant.py"
 
+      - name: Make V12 result JSON NumPy-safe
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$DIAGNOSTICS_DIR"
+          cp "$EXPERIMENT_DIR/run_word_disjoint_v12.py" \
+            "$DIAGNOSTICS_DIR/run_word_disjoint_v12.original.py"
+
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["EXPERIMENT_DIR"]) / "run_word_disjoint_v12.py"
+          text = path.read_text(encoding="utf-8")
+
+          helper = '''
+
+          def json_compatible(value: Any) -> Any:
+              """Convert NumPy/pandas scalar values to standard JSON values."""
+              item = getattr(value, "item", None)
+              if callable(item):
+                  try:
+                      return item()
+                  except (TypeError, ValueError):
+                      pass
+              tolist = getattr(value, "tolist", None)
+              if callable(tolist):
+                  return tolist()
+              if isinstance(value, Path):
+                  return str(value)
+              if isinstance(value, (set, frozenset)):
+                  return sorted(value)
+              raise TypeError(
+                  f"Object of type {value.__class__.__name__} is not JSON serializable"
+              )
+          '''
+
+          marker = "\ndef main() -> None:\n"
+          if "def json_compatible(value: Any)" not in text:
+              if marker not in text:
+                  raise SystemExit("Could not locate main() insertion point")
+              text = text.replace(marker, helper + marker, 1)
+
+          old = 'json.dumps(summary, indent=2), encoding="utf-8"'
+          new = 'json.dumps(summary, indent=2, default=json_compatible), encoding="utf-8"'
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit("Could not locate summary JSON serialization call")
+
+          path.write_text(text, encoding="utf-8")
+          PY
+
+          cp "$EXPERIMENT_DIR/run_word_disjoint_v12.py" \
+            "$DIAGNOSTICS_DIR/run_word_disjoint_v12.numpy_safe.py"
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
         with:
@@ -240,9 +296,18 @@ jobs:
             run_v12_end_to_end.py
 
           python - <<'PY'
+          import json
+          import numpy as np
           from adaptive_h_mcfg.v12_protocol import parse_int_spec
           from adaptive_h_mcfg.v12_baselines import KTailsAutomatonModel
-          print("V12 import smoke test:", parse_int_spec("4-10"), KTailsAutomatonModel)
+          from run_word_disjoint_v12 import json_compatible
+
+          encoded = json.dumps(
+              {"integer": np.int64(7), "floating": np.float64(1.25)},
+              default=json_compatible,
+          )
+          assert json.loads(encoded) == {"integer": 7, "floating": 1.25}
+          print("V12 import and NumPy JSON smoke test:", parse_int_spec("4-10"), KTailsAutomatonModel)
           PY
 
       - name: Validate Demo compose services

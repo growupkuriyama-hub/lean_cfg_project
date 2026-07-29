@@ -313,7 +313,12 @@ theorem leftIdentityTupleTemplate_terminalsIn
 
   intro i atom hatom
 
-  rw [hatom]
+  have hatomEq :
+      atom =
+        TemplateAtom.leftVar (Fin.cast h i) := by
+    simpa [leftIdentityTupleTemplate] using hatom
+
+  subst atom
   trivial
 
 end ElementaryTemplateSupport
@@ -389,13 +394,13 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
             hword | hunitSource
 
           · rcases Finset.mem_image.mp hword with
-              ⟨word, hword, rfl⟩
+              ⟨word, hwordK, rfl⟩
 
             intro i a ha
 
             exact
               mem_sampleAlphabet_of_mem_word
-                K hword
+                K hwordK
                 (by simpa using ha)
 
           · rcases Finset.mem_image.mp hunitSource with
@@ -425,7 +430,9 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
 
         intro i a ha
 
-        change a ∈ B.source i at ha
+        change
+          a ∈ B.rule.witness.parent.1.tuple i
+          at ha
 
         exact
           mem_sampleAlphabet_of_mem_word
@@ -435,14 +442,16 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
               B.rule.witness.parent.1.context
               B.rule.witness.parent.1.tuple
               i
-              (by simpa using ha))
+              ha)
 
     · rcases Finset.mem_image.mp hbinaryLeft with
         ⟨B, hB, rfl⟩
 
       intro i a ha
 
-      change a ∈ B.leftSource i at ha
+      change
+        a ∈ B.rule.witness.left.1.tuple i
+        at ha
 
       exact
         mem_sampleAlphabet_of_mem_word
@@ -452,14 +461,16 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
             B.rule.witness.left.1.context
             B.rule.witness.left.1.tuple
             i
-            (by simpa using ha))
+            ha)
 
   · rcases Finset.mem_image.mp hbinaryRight with
       ⟨B, hB, rfl⟩
 
     intro i a ha
 
-    change a ∈ B.rightSource i at ha
+    change
+      a ∈ B.rule.witness.right.1.tuple i
+      at ha
 
     exact
       mem_sampleAlphabet_of_mem_word
@@ -469,7 +480,7 @@ theorem controlCode_tuple_terminalsIn_sampleAlphabet
           B.rule.witness.right.1.context
           B.rule.witness.right.1.tuple
           i
-          (by simpa using ha))
+          ha)
 
 end CorrectedConcreteFiniteHypothesis
 
