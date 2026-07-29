@@ -311,9 +311,28 @@ rule after structural packet encoding. -/
     H.decodeCompiledNonterminalCode_encode dummy rho.right
   ]
 
-  simp only [rho.decode_framedStructuralBodyTokens]
+  cases hbody :
+      decodeFramedTemplateWords
+        (correctedConcreteCutGrammarArity H rho.left)
+        (correctedConcreteCutGrammarArity H rho.right)
+        (correctedConcreteCutGrammarArity H rho.lhs)
+        rho.framedStructuralBodyTokens with
 
-  simp [templateTupleOfExactLength_ofFn]
+  | none =>
+      have hround := rho.decode_framedStructuralBodyTokens
+      rw [hround] at hbody
+      cases hbody
+
+  | some words =>
+      have hround := rho.decode_framedStructuralBodyTokens
+      rw [hround] at hbody
+
+      have hwords :
+          List.ofFn rho.body = words :=
+        Option.some.inj hbody
+
+      subst words
+      simp [templateTupleOfExactLength_ofFn]
 
 /-- Exact number of framed body tokens stored by the complete structural packet. -/
 @[simp] theorem encodeCompiledBinaryRuleStructuralPacket_bodyTokens_length
