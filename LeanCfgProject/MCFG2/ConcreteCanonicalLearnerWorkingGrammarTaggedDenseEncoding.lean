@@ -184,11 +184,11 @@ presentation item count. -/
 
   rw [← H.toCutWorkingMCFGPresentationItemCount_eq dummy]
 
-  simp [
-    CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries,
-    CorrectedConcreteFiniteHypothesis.toCutWorkingMCFGPresentationItemCount,
-    Nat.add_assoc
-  ]
+  unfold
+    CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries
+    CorrectedConcreteFiniteHypothesis.toCutWorkingMCFGPresentationItemCount
+
+  simp only [List.length_append, List.length_map]
 
 /-- Every stored nonterminal gives a member of the tagged global list. -/
 theorem nonterminal_mem_compiledGrammarPresentationEntries
@@ -243,10 +243,13 @@ theorem binaryRule_mem_compiledGrammarPresentationEntries
     CorrectedConcreteCompiledGrammarPresentationEntry.binaryRule ρ ∈
       H.compiledGrammarPresentationEntries dummy := by
 
-  simp [
-    CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries,
-    hρ
-  ]
+  unfold
+    CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries
+
+  apply List.mem_append.mpr
+  right
+  apply List.mem_map.mpr
+  exact ⟨ρ, hρ, rfl⟩
 
 /-- First-occurrence position of one tagged entry in the complete global
 presentation list. -/
@@ -424,8 +427,7 @@ theorem taggedDenseNaturalEncoding_automaticBitWidth_le_presentationItemLength
         H.compiledGrammarPresentationItemCount := by
 
   apply
-    (H.taggedDenseNaturalEncoding dummy).
-      automaticBitWidth_le_of_codesFitInBits
+    (H.taggedDenseNaturalEncoding dummy).automaticBitWidth_le_of_codesFitInBits
         dummy
         (binaryNatCodeLength
           H.compiledGrammarPresentationItemCount)
@@ -450,8 +452,7 @@ theorem taggedDenseNaturalEncoding_binaryDescriptionSize_le_itemCount_mul_logWid
     (H.taggedDenseNaturalEncoding dummy).binaryDescriptionSize dummy ≤
         H.compiledGrammarPresentationItemCount *
           (H.taggedDenseNaturalEncoding dummy).automaticBitWidth dummy :=
-      (H.taggedDenseNaturalEncoding dummy).
-        binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
+      (H.taggedDenseNaturalEncoding dummy).binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
           dummy
 
     _ ≤
@@ -539,8 +540,7 @@ theorem correctedConcreteFiniteHypothesis_taggedDenseBinaryDescriptionSize_le_pa
         binaryNatCodeLength B := by
 
     apply
-      (H.taggedDenseNaturalEncoding dummy).
-        automaticBitWidth_le_of_codesFitInBits
+      (H.taggedDenseNaturalEncoding dummy).automaticBitWidth_le_of_codesFitInBits
           dummy (binaryNatCodeLength B)
 
     · simp [binaryNatCodeLength]
@@ -551,8 +551,7 @@ theorem correctedConcreteFiniteHypothesis_taggedDenseBinaryDescriptionSize_le_pa
     (H.taggedDenseNaturalEncoding dummy).binaryDescriptionSize dummy ≤
         H.compiledGrammarPresentationItemCount *
           (H.taggedDenseNaturalEncoding dummy).automaticBitWidth dummy :=
-      (H.taggedDenseNaturalEncoding dummy).
-        binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
+      (H.taggedDenseNaturalEncoding dummy).binaryDescriptionSize_le_presentationItemCount_mul_automaticBitWidth
           dummy
 
     _ ≤
