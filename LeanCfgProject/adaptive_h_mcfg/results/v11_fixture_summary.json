@@ -1,0 +1,5958 @@
+{
+  "strict_run_disjoint": true,
+  "anchor_counts": [
+    1,
+    2
+  ],
+  "requested_seeds": 5,
+  "completed_seeds": 5,
+  "run_ids": [
+    "run-00",
+    "run-01",
+    "run-02",
+    "run-03",
+    "run-04",
+    "run-05",
+    "run-06"
+  ],
+  "normal_item_count_distribution": {
+    "1": 14,
+    "2": 14,
+    "3": 14,
+    "4": 8,
+    "5": 6
+  },
+  "mutation_distribution": {
+    "currency-server-phase-inversion": 56,
+    "drop-product-currency-server-occurrence": 42,
+    "drop-product-server-occurrence": 42,
+    "duplicate-product-currency-server-occurrence": 56,
+    "duplicate-product-server-occurrence": 56,
+    "duplicate-shipping-currency-server-occurrence": 56
+  },
+  "selected_observers_by_seed": {
+    "0": [
+      "shipping-phase-count-mod-2"
+    ],
+    "1": [
+      "shipping-phase-count-mod-2"
+    ],
+    "2": [
+      "shipping-phase-count-mod-2"
+    ],
+    "3": [
+      "shipping-phase-count-mod-2"
+    ],
+    "4": [
+      "shipping-phase-count-mod-2"
+    ]
+  },
+  "seed_results": [
+    {
+      "seed": 0,
+      "train_runs": [
+        "run-00",
+        "run-01",
+        "run-02",
+        "run-04"
+      ],
+      "validation_runs": [
+        "run-05"
+      ],
+      "test_runs": [
+        "run-03",
+        "run-06"
+      ],
+      "training_words": [
+        "p#cs#pcs",
+        "pp#ccs#pcpcs"
+      ],
+      "selected_observers": [
+        "shipping-phase-count-mod-2"
+      ],
+      "selection_history": [
+        {
+          "selected": [],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 1,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27688,
+          "occurrence_count": 134,
+          "observed_type_count": 3,
+          "objective": 1.00027988
+        },
+        {
+          "selected": [
+            "shipping-phase-count-mod-2"
+          ],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 0,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27648,
+          "occurrence_count": 134,
+          "observed_type_count": 9,
+          "objective": 0.00028548
+        }
+      ],
+      "metrics": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 18,
+          "rate": 0.7777777777777778
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 4,
+          "count": 8,
+          "rate": 0.5
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 18,
+          "rate": 0.4444444444444444
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 10,
+          "rate": 0.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 18,
+          "rate": 0.4444444444444444
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 10,
+          "rate": 0.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 18,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 10,
+          "rate": 0.4
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 18,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 6,
+          "count": 18,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 18,
+          "rate": 0.5555555555555556
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 18,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 10,
+          "rate": 0.4
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 18,
+          "count": 18,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 18,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 6,
+          "count": 18,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 10,
+          "rate": 0.6
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 18,
+          "rate": 0.5555555555555556
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        }
+      ],
+      "model_meta": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "rule_count": 27648,
+          "unit_rule_count": 22,
+          "observed_type_count": 9
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "rule_count": 27688,
+          "unit_rule_count": 62,
+          "observed_type_count": 3
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "rule_count": 27628,
+          "unit_rule_count": 2,
+          "observed_type_count": 93
+        }
+      ],
+      "test_trace_count": 118
+    },
+    {
+      "seed": 1,
+      "train_runs": [
+        "run-02",
+        "run-03",
+        "run-05",
+        "run-06"
+      ],
+      "validation_runs": [
+        "run-00"
+      ],
+      "test_runs": [
+        "run-01",
+        "run-04"
+      ],
+      "training_words": [
+        "p#cs#pcs",
+        "pp#ccs#pcpcs"
+      ],
+      "selected_observers": [
+        "shipping-phase-count-mod-2"
+      ],
+      "selection_history": [
+        {
+          "selected": [],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 1,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27688,
+          "occurrence_count": 134,
+          "observed_type_count": 3,
+          "objective": 1.00027988
+        },
+        {
+          "selected": [
+            "shipping-phase-count-mod-2"
+          ],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 0,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27648,
+          "occurrence_count": 134,
+          "observed_type_count": 9,
+          "objective": 0.00028548
+        }
+      ],
+      "metrics": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 10,
+          "count": 14,
+          "rate": 0.7142857142857143
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 4,
+          "count": 8,
+          "rate": 0.5
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 14,
+          "rate": 0.5714285714285714
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 6,
+          "rate": 0.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 14,
+          "rate": 0.5714285714285714
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 6,
+          "rate": 0.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 14,
+          "rate": 0.8571428571428571
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 6,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 14,
+          "rate": 0.8571428571428571
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 6,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        }
+      ],
+      "model_meta": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "rule_count": 27648,
+          "unit_rule_count": 22,
+          "observed_type_count": 9
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "rule_count": 27688,
+          "unit_rule_count": 62,
+          "observed_type_count": 3
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "rule_count": 27628,
+          "unit_rule_count": 2,
+          "observed_type_count": 93
+        }
+      ],
+      "test_trace_count": 90
+    },
+    {
+      "seed": 2,
+      "train_runs": [
+        "run-01",
+        "run-02",
+        "run-03",
+        "run-04"
+      ],
+      "validation_runs": [
+        "run-05"
+      ],
+      "test_runs": [
+        "run-00",
+        "run-06"
+      ],
+      "training_words": [
+        "p#cs#pcs",
+        "pp#ccs#pcpcs"
+      ],
+      "selected_observers": [
+        "shipping-phase-count-mod-2"
+      ],
+      "selection_history": [
+        {
+          "selected": [],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 1,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27688,
+          "occurrence_count": 134,
+          "observed_type_count": 3,
+          "objective": 1.00027988
+        },
+        {
+          "selected": [
+            "shipping-phase-count-mod-2"
+          ],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 0,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27648,
+          "occurrence_count": 134,
+          "observed_type_count": 9,
+          "objective": 0.00028548
+        }
+      ],
+      "metrics": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 16,
+          "count": 20,
+          "rate": 0.8
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 4,
+          "count": 8,
+          "rate": 0.5
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 20,
+          "rate": 0.4
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 12,
+          "rate": 0.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 20,
+          "rate": 0.4
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 12,
+          "rate": 0.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 16,
+          "count": 16,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 20,
+          "rate": 0.6
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 12,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 8,
+          "count": 16,
+          "rate": 0.5
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 8,
+          "count": 16,
+          "rate": 0.5
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 8,
+          "count": 20,
+          "rate": 0.4
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 8,
+          "count": 20,
+          "rate": 0.4
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 12,
+          "count": 20,
+          "rate": 0.6
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 20,
+          "rate": 0.6
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 12,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 20,
+          "count": 20,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 8,
+          "count": 16,
+          "rate": 0.5
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 8,
+          "count": 16,
+          "rate": 0.5
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 8,
+          "count": 20,
+          "rate": 0.4
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 8,
+          "count": 20,
+          "rate": 0.4
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 8,
+          "count": 12,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 12,
+          "count": 20,
+          "rate": 0.6
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 12,
+          "count": 12,
+          "rate": 1.0
+        }
+      ],
+      "model_meta": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "rule_count": 27648,
+          "unit_rule_count": 22,
+          "observed_type_count": 9
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "rule_count": 27688,
+          "unit_rule_count": 62,
+          "observed_type_count": 3
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "rule_count": 27628,
+          "unit_rule_count": 2,
+          "observed_type_count": 93
+        }
+      ],
+      "test_trace_count": 132
+    },
+    {
+      "seed": 3,
+      "train_runs": [
+        "run-00",
+        "run-02",
+        "run-03",
+        "run-06"
+      ],
+      "validation_runs": [
+        "run-05"
+      ],
+      "test_runs": [
+        "run-01",
+        "run-04"
+      ],
+      "training_words": [
+        "p#cs#pcs",
+        "pp#ccs#pcpcs"
+      ],
+      "selected_observers": [
+        "shipping-phase-count-mod-2"
+      ],
+      "selection_history": [
+        {
+          "selected": [],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 1,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27688,
+          "occurrence_count": 134,
+          "observed_type_count": 3,
+          "objective": 1.00027988
+        },
+        {
+          "selected": [
+            "shipping-phase-count-mod-2"
+          ],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 0,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27648,
+          "occurrence_count": 134,
+          "observed_type_count": 9,
+          "objective": 0.00028548
+        }
+      ],
+      "metrics": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 10,
+          "count": 14,
+          "rate": 0.7142857142857143
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 4,
+          "count": 8,
+          "rate": 0.5
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 14,
+          "rate": 0.5714285714285714
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 6,
+          "rate": 0.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 14,
+          "rate": 0.5714285714285714
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 6,
+          "rate": 0.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 14,
+          "rate": 0.8571428571428571
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 6,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 14,
+          "rate": 0.8571428571428571
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 6,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        }
+      ],
+      "model_meta": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "rule_count": 27648,
+          "unit_rule_count": 22,
+          "observed_type_count": 9
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "rule_count": 27688,
+          "unit_rule_count": 62,
+          "observed_type_count": 3
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "rule_count": 27628,
+          "unit_rule_count": 2,
+          "observed_type_count": 93
+        }
+      ],
+      "test_trace_count": 90
+    },
+    {
+      "seed": 4,
+      "train_runs": [
+        "run-03",
+        "run-04",
+        "run-05",
+        "run-06"
+      ],
+      "validation_runs": [
+        "run-00"
+      ],
+      "test_runs": [
+        "run-01",
+        "run-02"
+      ],
+      "training_words": [
+        "p#cs#pcs",
+        "pp#ccs#pcpcs"
+      ],
+      "selected_observers": [
+        "shipping-phase-count-mod-2"
+      ],
+      "selection_history": [
+        {
+          "selected": [],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 1,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27688,
+          "occurrence_count": 134,
+          "observed_type_count": 3,
+          "objective": 1.00027988
+        },
+        {
+          "selected": [
+            "shipping-phase-count-mod-2"
+          ],
+          "normal_false_rejects": 0,
+          "mutant_false_accepts": 0,
+          "normal_count": 1,
+          "mutant_count": 1,
+          "rule_count": 27648,
+          "occurrence_count": 134,
+          "observed_type_count": 9,
+          "objective": 0.00028548
+        }
+      ],
+      "metrics": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "adaptive-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 10,
+          "count": 14,
+          "rate": 0.7142857142857143
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 4,
+          "count": 8,
+          "rate": 0.5
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 14,
+          "rate": 0.5714285714285714
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 6,
+          "rate": 0.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-all",
+          "correct": 8,
+          "count": 14,
+          "rate": 0.5714285714285714
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "normal-unseen-size",
+          "correct": 0,
+          "count": 6,
+          "rate": 0.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 10,
+          "count": 10,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 4,
+          "count": 4,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "exact-template",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 14,
+          "rate": 0.8571428571428571
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 6,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "2-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-all",
+          "correct": 12,
+          "count": 14,
+          "rate": 0.8571428571428571
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "normal-unseen-size",
+          "correct": 4,
+          "count": 6,
+          "rate": 0.6666666666666666
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:all",
+          "correct": 14,
+          "count": 14,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:seen-size",
+          "correct": 8,
+          "count": 8,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:currency-server-phase-inversion:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:all",
+          "correct": 2,
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 4,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:drop-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:all",
+          "correct": 2,
+          "count": 14,
+          "rate": 0.14285714285714285
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-product-server-occurrence:unseen-size",
+          "correct": 2,
+          "count": 6,
+          "rate": 0.3333333333333333
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+          "correct": 6,
+          "count": 14,
+          "rate": 0.42857142857142855
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+          "correct": 0,
+          "count": 8,
+          "rate": 0.0
+        },
+        {
+          "model": "3-gram",
+          "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+          "correct": 6,
+          "count": 6,
+          "rate": 1.0
+        }
+      ],
+      "model_meta": [
+        {
+          "model": "adaptive-f3-mcfg",
+          "rule_count": 27648,
+          "unit_rule_count": 22,
+          "observed_type_count": 9
+        },
+        {
+          "model": "trivial-f3-mcfg",
+          "rule_count": 27688,
+          "unit_rule_count": 62,
+          "observed_type_count": 3
+        },
+        {
+          "model": "full-product-f3-mcfg",
+          "rule_count": 27628,
+          "unit_rule_count": 2,
+          "observed_type_count": 93
+        }
+      ],
+      "test_trace_count": 90
+    }
+  ],
+  "aggregate": [
+    {
+      "model": "2-gram",
+      "group": "fault:currency-server-phase-inversion:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:currency-server-phase-inversion:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:currency-server-phase-inversion:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:drop-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.3057142857142857,
+      "sd_rate": 0.13142857142857142,
+      "min_rate": 0.2,
+      "max_rate": 0.5
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:drop-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:drop-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.3057142857142857,
+      "sd_rate": 0.13142857142857142,
+      "min_rate": 0.2,
+      "max_rate": 0.5
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:drop-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:drop-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.23238095238095238,
+      "sd_rate": 0.11165219725525978,
+      "min_rate": 0.14285714285714285,
+      "max_rate": 0.4
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.23238095238095238,
+      "sd_rate": 0.11165219725525978,
+      "min_rate": 0.14285714285714285,
+      "max_rate": 0.4
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.4882539682539682,
+      "sd_rate": 0.07443479817017319,
+      "min_rate": 0.42857142857142855,
+      "max_rate": 0.6
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "2-gram",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "2-gram",
+      "group": "normal-all",
+      "seed_count": 5,
+      "mean_rate": 0.7676190476190475,
+      "sd_rate": 0.11165219725525977,
+      "min_rate": 0.6,
+      "max_rate": 0.8571428571428571
+    },
+    {
+      "model": "2-gram",
+      "group": "normal-seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "2-gram",
+      "group": "normal-unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.5466666666666666,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:currency-server-phase-inversion:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:currency-server-phase-inversion:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:currency-server-phase-inversion:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:drop-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.3057142857142857,
+      "sd_rate": 0.13142857142857142,
+      "min_rate": 0.2,
+      "max_rate": 0.5
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:drop-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:drop-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.3057142857142857,
+      "sd_rate": 0.13142857142857142,
+      "min_rate": 0.2,
+      "max_rate": 0.5
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:drop-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:drop-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.23238095238095238,
+      "sd_rate": 0.11165219725525978,
+      "min_rate": 0.14285714285714285,
+      "max_rate": 0.4
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.23238095238095238,
+      "sd_rate": 0.11165219725525978,
+      "min_rate": 0.14285714285714285,
+      "max_rate": 0.4
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.4533333333333333,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 0.4882539682539682,
+      "sd_rate": 0.07443479817017319,
+      "min_rate": 0.42857142857142855,
+      "max_rate": 0.6
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "3-gram",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "3-gram",
+      "group": "normal-all",
+      "seed_count": 5,
+      "mean_rate": 0.7676190476190475,
+      "sd_rate": 0.11165219725525977,
+      "min_rate": 0.6,
+      "max_rate": 0.8571428571428571
+    },
+    {
+      "model": "3-gram",
+      "group": "normal-seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "3-gram",
+      "group": "normal-unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.5466666666666666,
+      "sd_rate": 0.1484737163421339,
+      "min_rate": 0.3333333333333333,
+      "max_rate": 0.6666666666666666
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "normal-all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "normal-seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "adaptive-f3-mcfg",
+      "group": "normal-unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:currency-server-phase-inversion:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:currency-server-phase-inversion:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:currency-server-phase-inversion:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:drop-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:drop-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:drop-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:drop-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:drop-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "normal-all",
+      "seed_count": 5,
+      "mean_rate": 0.5117460317460317,
+      "sd_rate": 0.07443479817017316,
+      "min_rate": 0.4,
+      "max_rate": 0.5714285714285714
+    },
+    {
+      "model": "exact-template",
+      "group": "normal-seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "exact-template",
+      "group": "normal-unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "normal-all",
+      "seed_count": 5,
+      "mean_rate": 0.5117460317460317,
+      "sd_rate": 0.07443479817017316,
+      "min_rate": 0.4,
+      "max_rate": 0.5714285714285714
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "normal-seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "full-product-f3-mcfg",
+      "group": "normal-unseen-size",
+      "seed_count": 5,
+      "mean_rate": 0.0,
+      "sd_rate": 0.0,
+      "min_rate": 0.0,
+      "max_rate": 0.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:all",
+      "seed_count": 5,
+      "mean_rate": 0.7441269841269842,
+      "sd_rate": 0.037217399085086596,
+      "min_rate": 0.7142857142857143,
+      "max_rate": 0.8
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:seen-size",
+      "seed_count": 5,
+      "mean_rate": 0.5,
+      "sd_rate": 0.0,
+      "min_rate": 0.5,
+      "max_rate": 0.5
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:currency-server-phase-inversion:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:drop-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:drop-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-product-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-product-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "fault:duplicate-shipping-currency-server-occurrence:unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "normal-all",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "normal-seen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    },
+    {
+      "model": "trivial-f3-mcfg",
+      "group": "normal-unseen-size",
+      "seed_count": 5,
+      "mean_rate": 1.0,
+      "sd_rate": 0.0,
+      "min_rate": 1.0,
+      "max_rate": 1.0
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+\section{Run-disjoint OpenTelemetry experiment}
+\label{sec:v11-experiment}
+
+\subsection{System and collection protocol}
+
+We use an unmodified checkout of the OpenTelemetry Demo.  The experiment records
+the repository commit, working-tree status, Docker version, Docker Compose
+version, and the Compose files used for execution.  The application is started
+once and the load generator is restarted before each collection window.  A run
+is one warm-up interval followed by one fixed trace-collection interval.
+Queries are restricted by the corresponding microsecond timestamps, so traces
+from different runs are not mixed.
+
+The collector first queries the Jaeger service endpoint and resolves the
+Checkout service name from the returned service list.  This avoids assuming a
+fixed spelling across Demo releases.  The raw Jaeger response for each run is
+retained without modification.
+
+\subsection{Checkout synchronization projection}
+
+Only traces containing explicit Checkout CLIENT to downstream SERVER parent
+links are retained.  We do not infer missing cross-service links.  For a normal
+checkout containing $n$ product items, the projection is
+\[
+  w_n=p^n\#c^n s\#(pc)^n s.
+\]
+The first component is the Product Catalog SERVER lifeline, the second is the
+Currency SERVER lifeline, and the third is the Checkout CLIENT schedule.
+The final Currency call in caller order is designated as the shipping
+conversion; preceding Currency calls are product-price conversions.
+
+\subsection{Route-preserving offline mutations}
+
+Mutations are constructed from normal traces after collection.  No application
+source code is changed.  Every mutation keeps the caller schedule component
+fixed and alters only downstream SERVER order or multiplicity.  We consider:
+(i) inversion of the final product-conversion and shipping-conversion SERVER
+order; (ii) deletion or duplication of a Product Catalog SERVER occurrence;
+(iii) deletion or duplication of a product-price Currency SERVER occurrence;
+and (iv) duplication of the shipping Currency SERVER occurrence.  A deletion is
+called route preserving only if another occurrence of the same service edge
+remains.
+
+\subsection{Strict run-disjoint evaluation}
+
+For each random seed, complete collection runs are partitioned into training,
+validation, and test sets.  No trace or mutant derived from one run crosses a
+split boundary.  The grammar anchors are the normal projections for cart sizes
+one and two in the training runs.  Observer selection uses the smallest
+available unseen normal cart size and one phase-inversion mutant whose cart size
+is represented in the positive anchors.  The test set is not consulted during
+observer selection.
+
+We report normal acceptance separately for cart sizes represented in the
+positive anchors and for unseen cart sizes.  Mutation recall is similarly split
+into seen-size and unseen-size subsets.  This prevents a model from receiving
+credit for rejecting a mutant merely because it rejects every string of that
+length.
+
+\subsection{Compared models}
+
+The main comparison contains: the selected fan-out-three MCFG, the same learner
+under the trivial observation, the full direct product of all candidate
+observers, an exact-template model, and 2-gram and 3-gram anomaly models.  For
+each MCFG we report the total rule count, unit-rule count, and number of observed
+types.  Seed-level results and aggregate mean, standard deviation, minimum, and
+maximum are retained.
+
+\subsection{Controlled pipeline validation}
+
+Before the official-Demo run, we validate the complete pipeline on seven
+independent Jaeger-format fixture runs.  Across five run-split seeds, the greedy
+selector chooses only the shipping-phase count modulo two observer.  The
+selected grammar accepts all unseen normal cart sizes and rejects all six
+mutation families.  The trivial-observation grammar retains normal
+extrapolation but rejects only half of the seen-size phase inversions, whereas
+the full observer product and exact-template model reject all unseen normal cart
+sizes.  These values validate the implementation and are not reported as
+results on the official OpenTelemetry Demo.

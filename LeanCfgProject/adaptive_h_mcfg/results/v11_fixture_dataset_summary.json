@@ -1,0 +1,38 @@
+{
+  "normal_projection_counts": {
+    "1": 14,
+    "2": 14,
+    "3": 14,
+    "4": 8,
+    "5": 6
+  },
+  "normal_rows_by_run": {
+    "run-00": 10,
+    "run-01": 6,
+    "run-02": 8,
+    "run-03": 8,
+    "run-04": 8,
+    "run-05": 6,
+    "run-06": 10
+  },
+  "normal_rows": 56,
+  "mutant_rows": 308,
+  "mutation_counts": {
+    "currency-server-phase-inversion": 56,
+    "drop-product-currency-server-occurrence": 42,
+    "drop-product-server-occurrence": 42,
+    "duplicate-product-currency-server-occurrence": 56,
+    "duplicate-product-server-occurrence": 56,
+    "duplicate-shipping-currency-server-occurrence": 56
+  },
+  "skipped_noncanonical_traces": 0,
+  "run_ids": [
+    "run-00",
+    "run-01",
+    "run-02",
+    "run-03",
+    "run-04",
+    "run-05",
+    "run-06"
+  ]
+}

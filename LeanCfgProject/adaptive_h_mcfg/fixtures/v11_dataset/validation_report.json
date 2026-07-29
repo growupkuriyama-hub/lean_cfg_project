@@ -1,0 +1,68 @@
+{
+  "valid_csv": true,
+  "run_count": 7,
+  "normal_rows": 56,
+  "anomaly_rows": 308,
+  "runs_with_item_counts_1_and_2": [
+    "run-00",
+    "run-01",
+    "run-02",
+    "run-03",
+    "run-04",
+    "run-05",
+    "run-06"
+  ],
+  "run_item_count_coverage": {
+    "run-00": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 2,
+      "5": 2
+    },
+    "run-01": {
+      "1": 2,
+      "2": 2,
+      "3": 2
+    },
+    "run-02": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 2
+    },
+    "run-03": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "5": 2
+    },
+    "run-04": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 2
+    },
+    "run-05": {
+      "1": 2,
+      "2": 2,
+      "3": 2
+    },
+    "run-06": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 2,
+      "5": 2
+    }
+  },
+  "mutation_counts": {
+    "currency-server-phase-inversion": 56,
+    "drop-product-currency-server-occurrence": 42,
+    "drop-product-server-occurrence": 42,
+    "duplicate-product-currency-server-occurrence": 56,
+    "duplicate-product-server-occurrence": 56,
+    "duplicate-shipping-currency-server-occurrence": 56
+  },
+  "ready_for_default_5_seed_pilot": true
+}

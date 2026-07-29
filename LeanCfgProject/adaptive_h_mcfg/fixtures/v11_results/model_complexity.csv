@@ -1,0 +1,16 @@
+seed,model,rule_count,unit_rule_count,observed_type_count
+0,adaptive-f3-mcfg,27648,22,9
+0,trivial-f3-mcfg,27688,62,3
+0,full-product-f3-mcfg,27628,2,93
+1,adaptive-f3-mcfg,27648,22,9
+1,trivial-f3-mcfg,27688,62,3
+1,full-product-f3-mcfg,27628,2,93
+2,adaptive-f3-mcfg,27648,22,9
+2,trivial-f3-mcfg,27688,62,3
+2,full-product-f3-mcfg,27628,2,93
+3,adaptive-f3-mcfg,27648,22,9
+3,trivial-f3-mcfg,27688,62,3
+3,full-product-f3-mcfg,27628,2,93
+4,adaptive-f3-mcfg,27648,22,9
+4,trivial-f3-mcfg,27688,62,3
+4,full-product-f3-mcfg,27628,2,93

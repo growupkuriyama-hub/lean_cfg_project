@@ -1,0 +1,7 @@
+model,unseen_normal_acceptance_mean,seen_size_phase_recall_mean,all_mutation_recall_mean,seed_count
+2-gram,0.5466666666666666,1.0,0.43933834586466164,5
+3-gram,0.5466666666666666,1.0,0.43933834586466164,5
+adaptive-f3-mcfg,1.0,1.0,1.0,5
+exact-template,0.0,1.0,1.0,5
+full-product-f3-mcfg,0.0,1.0,1.0,5
+trivial-f3-mcfg,1.0,0.5,0.9532781954887217,5
