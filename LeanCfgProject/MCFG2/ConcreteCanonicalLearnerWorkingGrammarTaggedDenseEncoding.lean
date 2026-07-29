@@ -189,6 +189,7 @@ presentation item count. -/
     CorrectedConcreteFiniteHypothesis.toCutWorkingMCFGPresentationItemCount
 
   simp only [List.length_append, List.length_map]
+  rfl
 
 /-- Every stored nonterminal gives a member of the tagged global list. -/
 theorem nonterminal_mem_compiledGrammarPresentationEntries
