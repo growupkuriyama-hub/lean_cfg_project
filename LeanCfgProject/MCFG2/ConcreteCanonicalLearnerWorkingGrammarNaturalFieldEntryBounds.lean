@@ -629,7 +629,7 @@ noncomputable def compiledWorkingGrammarEntryExplicitNaturalFieldBound
     (dummy : α) :
     Nat :=
   max
-    H.compiledWorkingGrammarNaturalFieldCount
+    H.compiledWorkingGrammarNaturalFieldCount dummy
     (max
       H.compiledGrammarPresentationItemCount
       (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
@@ -652,7 +652,7 @@ theorem
 
   · exact
       Nat.le_max_left
-        H.compiledWorkingGrammarNaturalFieldCount
+        H.compiledWorkingGrammarNaturalFieldCount dummy
         (max
           H.compiledGrammarPresentationItemCount
           (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
@@ -666,7 +666,7 @@ theorem
           (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
             dummy)).trans
           (Nat.le_max_right
-            H.compiledWorkingGrammarNaturalFieldCount
+            H.compiledWorkingGrammarNaturalFieldCount dummy
             (max
               H.compiledGrammarPresentationItemCount
               (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
@@ -680,7 +680,7 @@ theorem
               (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
                 dummy)).trans
             (Nat.le_max_right
-              H.compiledWorkingGrammarNaturalFieldCount
+              H.compiledWorkingGrammarNaturalFieldCount dummy
               (max
                 H.compiledGrammarPresentationItemCount
                 (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
