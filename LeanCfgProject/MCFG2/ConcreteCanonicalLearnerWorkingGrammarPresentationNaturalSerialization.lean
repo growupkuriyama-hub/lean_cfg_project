@@ -651,14 +651,62 @@ theorem
         decodeCompiledGrammarPresentationEntryStreamAux_encode_append
           dummy entries suffix hrest
 
-      simp only [
-        encodeCompiledGrammarPresentationEntryStream,
-        List.append_assoc,
-        decodeCompiledGrammarPresentationEntryStreamAux,
-        takeExactly_length_append,
-        hdecodeEntry,
-        hdecodeRest
-      ]
+      have htake :
+          takeExactly
+              (H.encodeCompiledGrammarPresentationEntryNaturalList
+                dummy entry).length
+              ((H.encodeCompiledGrammarPresentationEntryNaturalList
+                    dummy entry ++
+                  H.encodeCompiledGrammarPresentationEntryStream
+                    dummy entries) ++
+                suffix) =
+            some
+              (H.encodeCompiledGrammarPresentationEntryNaturalList
+                  dummy entry,
+                H.encodeCompiledGrammarPresentationEntryStream
+                    dummy entries ++
+                  suffix) := by
+
+        rw [List.append_assoc]
+        exact takeExactly_length_append _ _
+
+      change
+        (match
+            takeExactly
+              (H.encodeCompiledGrammarPresentationEntryNaturalList
+                dummy entry).length
+              ((H.encodeCompiledGrammarPresentationEntryNaturalList
+                    dummy entry ++
+                  H.encodeCompiledGrammarPresentationEntryStream
+                    dummy entries) ++
+                suffix) with
+
+        | none =>
+            none
+
+        | some (payload, remaining) =>
+            match
+                H.decodeCompiledGrammarPresentationEntryNaturalList
+                  dummy payload with
+
+            | none =>
+                none
+
+            | some decodedEntry =>
+                match
+                    H.decodeCompiledGrammarPresentationEntryStreamAux
+                      dummy entries.length remaining with
+
+                | none =>
+                    none
+
+                | some (decodedEntries, finalSuffix) =>
+                    some
+                      (decodedEntry :: decodedEntries,
+                        finalSuffix)) =
+          some (entry :: entries, suffix)
+
+      rw [htake, hdecodeEntry, hdecodeRest]
 
 /-- Exact framed-stream decoding is the identity on every list of stored
 presentation entries. -/
