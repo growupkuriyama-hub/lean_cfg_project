@@ -304,32 +304,12 @@ theorem
 
   | entry :: entries, n, hclass => by
       rcases hclass with
-        ⟨source, hsource, hframe | hentryField⟩
+        ⟨source, hsource, hkind⟩
 
       rcases List.mem_cons.mp hsource with
-        rfl | hsourceTail
+        hsourceHead | hsourceTail
 
-      · unfold
-          encodeCompiledGrammarPresentationEntryStream
-
-        dsimp
-
-        apply List.mem_cons.mpr
-        left
-
-        simpa using hframe
-
-      · have htailClass :
-            H.CompiledGrammarPresentationEntryStreamNaturalFieldClass
-              dummy entries n :=
-          ⟨source, hsourceTail, Or.inl hframe⟩
-
-        have htailMem :
-            n ∈
-              H.encodeCompiledGrammarPresentationEntryStream
-                dummy entries :=
-          H.mem_encodeCompiledGrammarPresentationEntryStream_of_class
-            dummy entries n htailClass
+      · subst source
 
         unfold
           encodeCompiledGrammarPresentationEntryStream
@@ -337,39 +317,33 @@ theorem
         dsimp
 
         apply List.mem_cons.mpr
-        right
 
-        apply List.mem_append.mpr
-        right
+        rcases hkind with hframe | hentryField
 
-        exact htailMem
+        · left
 
-      · unfold
-          encodeCompiledGrammarPresentationEntryStream
+          simpa using hframe
 
-        dsimp
+        · right
 
-        apply List.mem_cons.mpr
-        right
+          apply List.mem_append.mpr
+          left
 
-        apply List.mem_append.mpr
-        left
-
-        exact
-          (H.compiledGrammarPresentationEntryNaturalFieldClass_iff_mem
-            dummy entry n).mp hentryField
+          exact
+            (H.compiledGrammarPresentationEntryNaturalFieldClass_iff_mem
+              dummy entry n).mp hentryField
 
       · have htailClass :
             H.CompiledGrammarPresentationEntryStreamNaturalFieldClass
               dummy entries n :=
-          ⟨source, hsourceTail, Or.inr hentryField⟩
+          ⟨source, hsourceTail, hkind⟩
 
         have htailMem :
             n ∈
               H.encodeCompiledGrammarPresentationEntryStream
                 dummy entries :=
-          H.mem_encodeCompiledGrammarPresentationEntryStream_of_class
-            dummy entries n htailClass
+          mem_encodeCompiledGrammarPresentationEntryStream_of_class
+            H dummy entries n htailClass
 
         unfold
           encodeCompiledGrammarPresentationEntryStream
@@ -432,8 +406,8 @@ theorem
                     dummy entry n).mpr hentry)⟩
 
         · rcases
-            H.class_of_mem_encodeCompiledGrammarPresentationEntryStream
-              dummy entries n htail with
+            class_of_mem_encodeCompiledGrammarPresentationEntryStream
+              H dummy entries n htail with
           ⟨source, hsource, hkind⟩
 
           exact
@@ -458,12 +432,12 @@ theorem
   constructor
 
   · exact
-      H.mem_encodeCompiledGrammarPresentationEntryStream_of_class
-        dummy entries n
+      mem_encodeCompiledGrammarPresentationEntryStream_of_class
+        H dummy entries n
 
   · exact
-      H.class_of_mem_encodeCompiledGrammarPresentationEntryStream
-        dummy entries n
+      class_of_mem_encodeCompiledGrammarPresentationEntryStream
+        H dummy entries n
 
 end CorrectedConcreteFiniteHypothesis
 
@@ -658,7 +632,7 @@ noncomputable def compiledWorkingGrammarClassifiedNaturalFieldBound
     (dummy : α) :
     Nat :=
   max
-    H.compiledWorkingGrammarNaturalFieldCount dummy
+    (H.compiledWorkingGrammarNaturalFieldCount dummy)
     (max
       H.compiledGrammarPresentationItemCount
       (H.compiledWorkingGrammarMaximumEntryNaturalValueBound
@@ -674,7 +648,7 @@ theorem
 
   exact
     Nat.le_max_left
-      H.compiledWorkingGrammarNaturalFieldCount dummy
+      (H.compiledWorkingGrammarNaturalFieldCount dummy)
       (max
         H.compiledGrammarPresentationItemCount
         (H.compiledWorkingGrammarMaximumEntryNaturalValueBound
@@ -695,7 +669,7 @@ theorem
       (H.compiledWorkingGrammarMaximumEntryNaturalValueBound
         dummy)).trans
       (Nat.le_max_right
-        H.compiledWorkingGrammarNaturalFieldCount dummy
+        (H.compiledWorkingGrammarNaturalFieldCount dummy)
         (max
           H.compiledGrammarPresentationItemCount
           (H.compiledWorkingGrammarMaximumEntryNaturalValueBound
@@ -716,7 +690,7 @@ theorem
       (H.compiledWorkingGrammarMaximumEntryNaturalValueBound
         dummy)).trans
       (Nat.le_max_right
-        H.compiledWorkingGrammarNaturalFieldCount dummy
+        (H.compiledWorkingGrammarNaturalFieldCount dummy)
         (max
           H.compiledGrammarPresentationItemCount
           (H.compiledWorkingGrammarMaximumEntryNaturalValueBound

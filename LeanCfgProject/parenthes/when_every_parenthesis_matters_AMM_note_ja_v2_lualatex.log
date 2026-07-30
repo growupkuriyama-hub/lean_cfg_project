@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  30 JUL 2026 21:24
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  30 JUL 2026 21:52
  restricted system commands enabled.
 **when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.tex
 (./when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.tex
@@ -1214,11 +1214,11 @@ Package rerunfilecheck Info: File `when_every_parenthesis_matters_AMM_note_ja_v
 
 Here is how much of LuaTeX's memory you used:
  11570 strings out of 476076
- 195720,662416 words of node,token memory allocated
+ 195717,662416 words of node,token memory allocated
  1474 words of node memory still in use:
    10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 390 attribute, 57 glue_sp
 ec, 47 attribute_list, 1 write, 13 user_defined nodes
-   avail lists: 1:19,2:45015,3:396,4:200,5:148,6:48,7:6268,8:66,9:2619,10:21,11:
+   avail lists: 1:17,2:45015,3:389,4:198,5:148,6:48,7:6073,8:66,9:2526,10:21,11:
 133
  33768 multiletter control sequences out of 65536+600000
  110 fonts using 89603479 bytes
@@ -1252,7 +1252,7 @@ r/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Use
 rs/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm1
 0.pfb>
 Output written on when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.pdf (5
- pages, 267462 bytes).
+ pages, 268327 bytes).
 
 PDF statistics: 192 PDF objects out of 1000 (max. 8388607)
  25 named destinations out of 1000 (max. 1048576)
