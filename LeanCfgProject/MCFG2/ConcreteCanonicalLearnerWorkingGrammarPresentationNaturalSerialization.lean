@@ -706,7 +706,8 @@ theorem
                         finalSuffix)) =
           some (entry :: entries, suffix)
 
-      rw [htake, hdecodeEntry, hdecodeRest]
+      rw [htake]
+      simp only [hdecodeEntry, hdecodeRest]
 
 /-- Exact framed-stream decoding is the identity on every list of stored
 presentation entries. -/
