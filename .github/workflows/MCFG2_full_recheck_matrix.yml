@@ -1,4 +1,4 @@
-name: MCFG2 Remaining Matrix Diagnostics
+name: MCFG2 Remaining Matrix Diagnostics v6
 
 on:
   push:
@@ -12,6 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  MCFG2_DIAGNOSTIC_VERSION: "v6-full-context"
   MCFG2_ROOT: LeanCfgProject/MCFG2
   MCFG2_DIAGNOSTIC_START: LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds
   MCFG2_DIAGNOSTIC_SHARDS: "12"
@@ -167,6 +168,7 @@ jobs:
               f"Prepared {len(remaining)} remaining root modules "
               f"from {marker}, split across {shard_count} shards."
           )
+          print(f"Diagnostic workflow version: {os.environ['MCFG2_DIAGNOSTIC_VERSION']}")
           PY
 
       - name: Upload matrix manifest
@@ -210,7 +212,8 @@ jobs:
 
           shard_dir="ci-artifacts/shard-${SHARD}"
           log_dir="${shard_dir}/logs"
-          mkdir -p "$log_dir"
+          focused_dir="${shard_dir}/focused"
+          mkdir -p "$log_dir" "$focused_dir"
           : > "${shard_dir}/results.tsv"
           : > "${shard_dir}/failures.txt"
 
@@ -279,10 +282,56 @@ jobs:
               printf '%s\n' "$target" >> "${shard_dir}/failures.txt"
               echo "::error title=MCFG2 root failed::$target"
               echo "FAIL (${elapsed}s): $target"
+              focused_file="${focused_dir}/${safe_name}.txt"
+              python3 - "$target" "$log_file" "$focused_file" <<'PY'
+          from __future__ import annotations
+
+          import re
+          import sys
+          from pathlib import Path
+
+          target, log_name, output_name = sys.argv[1:]
+          lines = Path(log_name).read_text(errors="replace").splitlines()
+          diagnostic = re.compile(
+              r"(?:^|[^A-Za-z])error:|unsolved goals?|"
+              r"application type mismatch|type mismatch|"
+              r"unknown (?:identifier|constant|declaration|target)|"
+              r"failed to synthesize|unexpected token|"
+              r"invalid (?:field|constructor|declaration|syntax|pattern|argument name)|"
+              r"maximum recursion depth|timeout",
+              re.IGNORECASE,
+          )
+
+          hits = [index for index, line in enumerate(lines) if diagnostic.search(line)]
+          ranges: list[tuple[int, int]] = []
+          for index in hits[:12]:
+              start = max(0, index - 4)
+              end = min(len(lines), index + 41)
+              if ranges and start <= ranges[-1][1] + 1:
+                  ranges[-1] = (ranges[-1][0], max(ranges[-1][1], end))
+              else:
+                  ranges.append((start, end))
+
+          if not ranges:
+              ranges = [(max(0, len(lines) - 120), len(lines))]
+
+          output = [
+              f"===== TARGET: {target} =====",
+              f"LOG: {log_name}",
+              "",
+          ]
+          for number, (start, end) in enumerate(ranges, 1):
+              output.append(f"--- diagnostic range {number}: lines {start + 1}-{end} ---")
+              output.extend(
+                  f"{line_number + 1}: {lines[line_number]}"
+                  for line_number in range(start, end)
+              )
+              output.append("")
+
+          Path(output_name).write_text("\n".join(output) + "\n", encoding="utf-8")
+          PY
               echo "----- focused diagnostics: $target -----"
-              grep -nE \
-                '(^|[^[:alpha:]])error:|unsolved goals?|application type mismatch|type mismatch|unknown (identifier|constant|declaration|target)|failed to synthesize|unexpected token|invalid (field|constructor|declaration|syntax|pattern)|maximum recursion depth|timeout' \
-                "$log_file" | head -n 80 || tail -n 120 "$log_file"
+              cat "$focused_file"
               echo "----- end diagnostics: $target -----"
             fi
           done < "${shard_dir}/targets.txt"
@@ -375,6 +424,35 @@ jobs:
           failures = [target for status, _, target in rows if status == "FAIL"]
           passes = [target for status, _, target in rows if status == "PASS"]
 
+          focused_files = sorted(root.rglob("focused/*.txt"))
+          focused_sections = [
+              file.read_text(errors="replace").rstrip()
+              for file in focused_files
+          ]
+          all_focused = "\n\n".join(section for section in focused_sections if section)
+          if all_focused:
+              all_focused += "\n"
+          (out / "all-focused-diagnostics.txt").write_text(
+              all_focused,
+              encoding="utf-8",
+          )
+
+          first_error_rows: list[tuple[str, str]] = []
+          for file in focused_files:
+              target = ""
+              headline = ""
+              for line in file.read_text(errors="replace").splitlines():
+                  if line.startswith("===== TARGET: "):
+                      target = line.removeprefix("===== TARGET: ").removesuffix(" =====")
+                  if "error:" in line.lower():
+                      headline = line.split(": ", 1)[-1]
+                      break
+              first_error_rows.append((target or file.stem, headline or "No explicit error headline found"))
+          (out / "first-error-headlines.tsv").write_text(
+              "".join(f"{target}\t{headline}\n" for target, headline in first_error_rows),
+              encoding="utf-8",
+          )
+
           infrastructure_errors: list[str] = []
           if len(result_files) != expected_shards:
               infrastructure_errors.append(
@@ -386,6 +464,10 @@ jobs:
               )
           if len({target for _, _, target in rows}) != len(rows):
               infrastructure_errors.append("Duplicate root-module result detected")
+          if len(focused_files) != len(failures):
+              infrastructure_errors.append(
+                  f"Expected {len(failures)} focused diagnostics, found {len(focused_files)}"
+              )
 
           (out / "combined-results.tsv").write_text(
               "".join(
@@ -406,10 +488,12 @@ jobs:
           summary_lines = [
               "### MCFG2 remaining-root matrix result",
               "",
+              f"- Diagnostic workflow: **{os.environ['MCFG2_DIAGNOSTIC_VERSION']}**",
               f"- Expected roots: **{expected_targets}**",
               f"- Results collected: **{len(rows)}**",
               f"- Passed: **{len(passes)}**",
               f"- Failed: **{len(failures)}**",
+              f"- Focused diagnostic files: **{len(focused_files)}**",
               f"- Shards collected: **{len(result_files)}/{expected_shards}**",
               "",
           ]
@@ -432,6 +516,10 @@ jobs:
           )
 
           print("\n".join(summary_lines))
+          if all_focused:
+              print("--- BEGIN ALL FOCUSED LEAN DIAGNOSTICS ---")
+              print(all_focused, end="")
+              print("--- END ALL FOCUSED LEAN DIAGNOSTICS ---")
 
           if failures or infrastructure_errors:
               raise SystemExit(1)

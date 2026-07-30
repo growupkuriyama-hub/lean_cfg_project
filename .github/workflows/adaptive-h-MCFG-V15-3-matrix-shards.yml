@@ -1,0 +1,438 @@
+name: ADP MCFG V15.3 - isolated matrix-shard audit
+
+run-name: >-
+  ADP MCFG V15.3 MATRIX-SHARD AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-V15-3-matrix-shards.yml"
+      - "LeanCfgProject/adaptive_h_mcfg3/**"
+  workflow_dispatch:
+    inputs:
+      max_test_count:
+        description: Largest completely held-out controlled count
+        required: true
+        default: 50
+        type: number
+      max_values_per_nt:
+        description: Recognition cap per nonterminal
+        required: true
+        default: 25000
+        type: number
+      max_total_values:
+        description: Recognition cap per query
+        required: true
+        default: 2000000
+        type: number
+      worker_timeout_seconds:
+        description: Hard timeout for each single-count worker
+        required: true
+        default: 120
+        type: number
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: adp-mcfg-v15-3-matrix-shards-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_REVISION: "2026-07-30-v15.3-clean-runner-four-count-shards"
+  PYTHONHASHSEED: "0"
+  OPENBLAS_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+  BLIS_NUM_THREADS: "1"
+  VECLIB_MAXIMUM_THREADS: "1"
+  BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  V12_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  V15_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg3
+  MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v15_3_merged
+  MAX_TEST_COUNT: ${{ inputs.max_test_count || 50 }}
+  MAX_VALUES_PER_NT: ${{ inputs.max_values_per_nt || 25000 }}
+  MAX_TOTAL_VALUES: ${{ inputs.max_total_values || 2000000 }}
+  WORKER_TIMEOUT_SECONDS: ${{ inputs.worker_timeout_seconds || 120 }}
+
+jobs:
+  build_snapshots:
+    name: Build fan-out ${{ matrix.fanout }} selection and snapshots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        fanout: [1, 2, 3]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Construct merged experiment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR"
+          PATCH12="$GITHUB_WORKSPACE/$V12_PATCH_RELATIVE_DIR"
+          PATCH15="$GITHUB_WORKSPACE/$V15_PATCH_RELATIVE_DIR"
+          MERGED="$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
+          test -f "$BASE/pyproject.toml"
+          test -f "$PATCH15/run_controlled_independent_v15.py"
+          rm -rf "$MERGED"
+          mkdir -p "$MERGED"
+          cp -a "$BASE/." "$MERGED/"
+          if [ -d "$PATCH12" ]; then cp -a "$PATCH12/." "$MERGED/"; fi
+          cp -a "$PATCH15/." "$MERGED/"
+          echo "EXPERIMENT_DIR=$MERGED" >> "$GITHUB_ENV"
+          echo "FANOUT=${{ matrix.fanout }}" >> "$GITHUB_ENV"
+          echo "BUILD_ROOT=$GITHUB_WORKSPACE/v15-3-build-f${{ matrix.fanout }}" >> "$GITHUB_ENV"
+
+      - name: Install and test
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "$EXPERIMENT_DIR"
+          cd "$EXPERIMENT_DIR"
+          python -m compileall adaptive_h_mcfg *.py
+          pytest -q
+
+      - name: Exhaustive observer selection
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$BUILD_ROOT/package/selection"
+          cd "$EXPERIMENT_DIR"
+          python -u run_controlled_independent_v15.py \
+            --selection-only \
+            --fanouts "$FANOUT" \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --output "$BUILD_ROOT/package/selection"
+
+      - name: Build all three grammar snapshots once
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          SELECTED_JSON=$(python - "$BUILD_ROOT/package/selection/summary.json" "$FANOUT" <<'PY'
+          import json, sys
+          s=json.load(open(sys.argv[1],encoding="utf-8"))
+          print(json.dumps(s["selected_by_fanout"][sys.argv[2]]["greedy_selected"],separators=(",",":")))
+          PY
+          )
+          mkdir -p "$BUILD_ROOT/package/snapshots"
+          python -u build_v15_configuration_snapshot.py \
+            --fanout "$FANOUT" --model-name "adaptive-f${FANOUT}-mcfg" \
+            --observer-json "$SELECTED_JSON" \
+            --output "$BUILD_ROOT/package/snapshots/adaptive"
+          python -u build_v15_configuration_snapshot.py \
+            --fanout "$FANOUT" --model-name "trivial-f${FANOUT}-mcfg" \
+            --observer-json '[]' \
+            --output "$BUILD_ROOT/package/snapshots/trivial"
+          python -u build_v15_configuration_snapshot.py \
+            --fanout "$FANOUT" --model-name "full-product-f${FANOUT}-mcfg" \
+            --observer-json '["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]' \
+            --output "$BUILD_ROOT/package/snapshots/full-product"
+
+      - name: Evaluate learned non-MCFG baselines
+        if: matrix.fanout == 1
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$BUILD_ROOT/package/baselines"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_baselines.py \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --output "$BUILD_ROOT/package/baselines"
+
+      - name: Record build provenance
+        shell: bash
+        run: |
+          set -euxo pipefail
+          printf '%s\n' "$WORKFLOW_REVISION" > "$BUILD_ROOT/package/workflow-revision.txt"
+          printf 'fanout=%s\nsha=%s\nrun_id=%s\n' "$FANOUT" "$GITHUB_SHA" "$GITHUB_RUN_ID" > "$BUILD_ROOT/package/build-provenance.txt"
+          find "$EXPERIMENT_DIR" -maxdepth 3 -type f | sort > "$BUILD_ROOT/package/merged-file-list.txt"
+
+      - name: Upload fan-out build bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-3-build-f${{ matrix.fanout }}-${{ github.run_id }}
+          path: v15-3-build-f${{ matrix.fanout }}/package
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload build diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-3-build-f${{ matrix.fanout }}-diagnostics-${{ github.run_id }}
+          path: v15-3-build-f${{ matrix.fanout }}
+          if-no-files-found: warn
+          retention-days: 14
+
+  evaluate_shards:
+    name: F${{ matrix.fanout }} ${{ matrix.model }} counts ${{ matrix.shard.id }}
+    needs: build_snapshots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 9
+      matrix:
+        fanout: [1, 2, 3]
+        model: [adaptive, trivial, full-product]
+        shard:
+          - { id: "04-07", start: 4,  end: 7 }
+          - { id: "08-11", start: 8,  end: 11 }
+          - { id: "12-15", start: 12, end: 15 }
+          - { id: "16-19", start: 16, end: 19 }
+          - { id: "20-23", start: 20, end: 23 }
+          - { id: "24-27", start: 24, end: 27 }
+          - { id: "28-31", start: 28, end: 31 }
+          - { id: "32-35", start: 32, end: 35 }
+          - { id: "36-39", start: 36, end: 39 }
+          - { id: "40-43", start: 40, end: 43 }
+          - { id: "44-47", start: 44, end: 47 }
+          - { id: "48-50", start: 48, end: 50 }
+
+    steps:
+      - name: Skip shards beyond requested maximum
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if (( ${{ matrix.shard.start }} > MAX_TEST_COUNT )); then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out repository
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Construct merged experiment
+        if: steps.gate.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR"
+          PATCH12="$GITHUB_WORKSPACE/$V12_PATCH_RELATIVE_DIR"
+          PATCH15="$GITHUB_WORKSPACE/$V15_PATCH_RELATIVE_DIR"
+          MERGED="$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
+          rm -rf "$MERGED"; mkdir -p "$MERGED"
+          cp -a "$BASE/." "$MERGED/"
+          if [ -d "$PATCH12" ]; then cp -a "$PATCH12/." "$MERGED/"; fi
+          cp -a "$PATCH15/." "$MERGED/"
+          echo "EXPERIMENT_DIR=$MERGED" >> "$GITHUB_ENV"
+          echo "EVAL_PACKAGE=$GITHUB_WORKSPACE/v15-3-eval-package" >> "$GITHUB_ENV"
+
+      - name: Install evaluator
+        if: steps.gate.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pip install -e "$EXPERIMENT_DIR"
+
+      - name: Download immutable fan-out build bundle
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/download-artifact@v5
+        with:
+          name: adp-mcfg-v15-3-build-f${{ matrix.fanout }}-${{ github.run_id }}
+          path: v15-3-build-input
+
+      - name: Evaluate at most four counts on this clean runner
+        if: steps.gate.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          SNAPSHOT_DIR="$GITHUB_WORKSPACE/v15-3-build-input/snapshots/${{ matrix.model }}"
+          MODEL_NAME=$(python - "$SNAPSHOT_DIR/model_metadata.json" <<'PY'
+          import json,sys
+          print(json.load(open(sys.argv[1],encoding="utf-8"))["model"])
+          PY
+          )
+          OBSERVER_JSON=$(python - "$SNAPSHOT_DIR/model_metadata.json" <<'PY'
+          import json,sys
+          print(json.dumps(json.load(open(sys.argv[1],encoding="utf-8"))["observer_names"],separators=(",",":")))
+          PY
+          )
+          SHARDS_ROOT="$EVAL_PACKAGE/shards/${{ matrix.model }}"
+          mkdir -p "$SHARDS_ROOT"
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" "$SNAPSHOT_DIR" "$SHARDS_ROOT" \
+            "${{ matrix.fanout }}" "$MODEL_NAME" "$OBSERVER_JSON" \
+            "${{ matrix.shard.start }}" "${{ matrix.shard.end }}" \
+            "$MAX_TEST_COUNT" "$MAX_VALUES_PER_NT" "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+          printf 'fanout=%s\nmodel=%s\nshard=%s\n' \
+            '${{ matrix.fanout }}' '${{ matrix.model }}' '${{ matrix.shard.id }}' \
+            > "$EVAL_PACKAGE/shard-provenance-${{ matrix.model }}-${{ matrix.shard.id }}.txt"
+
+      - name: Upload range shard
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-3-eval-f${{ matrix.fanout }}-${{ matrix.model }}-${{ matrix.shard.id }}-${{ github.run_id }}
+          path: v15-3-eval-package
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload shard diagnostics on failure
+        if: failure() && steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-3-eval-f${{ matrix.fanout }}-${{ matrix.model }}-${{ matrix.shard.id }}-diagnostics-${{ github.run_id }}
+          path: v15-3-eval-package
+          if-no-files-found: warn
+          retention-days: 14
+
+  aggregate_fanout:
+    name: Aggregate fan-out ${{ matrix.fanout }}
+    needs: evaluate_shards
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        fanout: [1, 2, 3]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Construct merged experiment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR"
+          PATCH12="$GITHUB_WORKSPACE/$V12_PATCH_RELATIVE_DIR"
+          PATCH15="$GITHUB_WORKSPACE/$V15_PATCH_RELATIVE_DIR"
+          MERGED="$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
+          rm -rf "$MERGED"; mkdir -p "$MERGED"
+          cp -a "$BASE/." "$MERGED/"
+          if [ -d "$PATCH12" ]; then cp -a "$PATCH12/." "$MERGED/"; fi
+          cp -a "$PATCH15/." "$MERGED/"
+          echo "EXPERIMENT_DIR=$MERGED" >> "$GITHUB_ENV"
+          python -m pip install -e "$MERGED"
+
+      - name: Download build bundle
+        uses: actions/download-artifact@v5
+        with:
+          name: adp-mcfg-v15-3-build-f${{ matrix.fanout }}-${{ github.run_id }}
+          path: v15-3-build-input
+
+      - name: Download all range shards for this fan-out
+        uses: actions/download-artifact@v5
+        with:
+          pattern: adp-mcfg-v15-3-eval-f${{ matrix.fanout }}-*-${{ github.run_id }}
+          path: v15-3-eval-input
+          merge-multiple: true
+
+      - name: Aggregate models and assemble fan-out result
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          CONFIG_ROOT="$GITHUB_WORKSPACE/v15-3-configurations-f${{ matrix.fanout }}"
+          mkdir -p "$CONFIG_ROOT"
+          for MODEL in adaptive trivial full-product; do
+            python -u aggregate_v15_snapshot_shards.py \
+              --snapshot-dir "$GITHUB_WORKSPACE/v15-3-build-input/snapshots/$MODEL" \
+              --shards-root "$GITHUB_WORKSPACE/v15-3-eval-input/shards/$MODEL" \
+              --output "$CONFIG_ROOT/$MODEL" \
+              --min-test-count 4 --max-test-count "$MAX_TEST_COUNT" \
+              --max-values-per-nt "$MAX_VALUES_PER_NT" \
+              --max-total-values "$MAX_TOTAL_VALUES"
+          done
+          FINAL="$GITHUB_WORKSPACE/v15-3-fanout-final-${{ matrix.fanout }}"
+          python assemble_v15_fanout.py \
+            --fanout '${{ matrix.fanout }}' \
+            --selection "$GITHUB_WORKSPACE/v15-3-build-input/selection" \
+            --config-root "$CONFIG_ROOT" \
+            --baselines "$GITHUB_WORKSPACE/v15-3-build-input/baselines" \
+            --output "$FINAL"
+          python - "$FINAL/summary.json" <<'PY'
+          import json,sys
+          s=json.load(open(sys.argv[1],encoding="utf-8"))
+          assert s["ready_for_manuscript"] is True,s
+          print(json.dumps({"ready":True,"selected":s["selected_by_fanout"]},indent=2))
+          PY
+          mkdir -p "$GITHUB_WORKSPACE/v15-3-fanout-upload/fanout-${{ matrix.fanout }}"
+          cp -a "$FINAL/." "$GITHUB_WORKSPACE/v15-3-fanout-upload/fanout-${{ matrix.fanout }}/"
+
+      - name: Upload fan-out result
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-3-fanout-${{ matrix.fanout }}-${{ github.run_id }}
+          path: v15-3-fanout-upload
+          if-no-files-found: error
+          retention-days: 30
+
+  consolidate:
+    name: Consolidate V15.3 manuscript artifact
+    needs: aggregate_fanout
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Download fan-out results
+        uses: actions/download-artifact@v5
+        with:
+          pattern: adp-mcfg-v15-3-fanout-*-${{ github.run_id }}
+          path: v15-3-download
+          merge-multiple: true
+
+      - name: Consolidate and validate
+        shell: bash
+        run: |
+          set -euxo pipefail
+          find v15-3-download -maxdepth 3 -type f | sort
+          python LeanCfgProject/adaptive_h_mcfg3/consolidate_v15_fanouts.py \
+            --input-root v15-3-download \
+            --output adp-mcfg-v15-3-controlled-independent
+          python - <<'PY'
+          import json
+          p="adp-mcfg-v15-3-controlled-independent/summary.json"
+          s=json.load(open(p,encoding="utf-8"))
+          assert s["ready_for_manuscript"] is True,s
+          print(json.dumps(s["selected_by_fanout"],indent=2))
+          PY
+
+      - name: Upload consolidated V15.3 result
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-3-controlled-independent-${{ github.run_id }}
+          path: adp-mcfg-v15-3-controlled-independent
+          if-no-files-found: error
+          retention-days: 30
