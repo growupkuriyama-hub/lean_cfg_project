@@ -1,13 +1,13 @@
-name: ADP MCFG V15.1 - count-isolated independent fan-out ablation
+name: ADP MCFG V15.1b - distinct count-isolated fan-out audit
 
 run-name: >-
-  ADP MCFG V15.1 COUNT-ISOLATED FANOUT AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
+  ADP MCFG V15.1b DISTINCT COUNT-ISOLATED AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
   push:
     branches: [master]
     paths:
-      - ".github/workflows/adaptive-h-MCFG-V15-controlled-independent.yml"
+      - ".github/workflows/adaptive-h-MCFG-V15-1-count-isolated.yml"
       - "LeanCfgProject/adaptive_h_mcfg3/**"
   workflow_dispatch:
     inputs:
@@ -36,6 +36,7 @@ permissions:
   contents: read
 
 env:
+  WORKFLOW_REVISION: "2026-07-30-v15.1b-distinct-count-isolated"
   PYTHONHASHSEED: "0"
   BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
   V12_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
@@ -47,7 +48,7 @@ env:
   MAX_TOTAL_VALUES: ${{ inputs.max_total_values || 2000000 }}
 
 concurrency:
-  group: adp-mcfg-v15-1-count-isolated-${{ github.ref }}
+  group: adp-mcfg-v15-1b-count-isolated-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -63,6 +64,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+
+      - name: Confirm V15.1b workflow revision
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "WORKFLOW_REVISION=$WORKFLOW_REVISION"
+          echo "workflow_file=.github/workflows/adaptive-h-MCFG-V15-1-count-isolated.yml"
+          test -f LeanCfgProject/adaptive_h_mcfg3/evaluate_v15_configuration_count_isolated.py
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
@@ -252,7 +261,7 @@ jobs:
       - name: Upload fan-out result
         uses: actions/upload-artifact@v7
         with:
-          name: adp-mcfg-v15-fanout-${{ matrix.fanout }}-${{ github.run_id }}
+          name: adp-mcfg-v15-1b-fanout-${{ matrix.fanout }}-${{ github.run_id }}
           path: v15-parts-f${{ matrix.fanout }}/upload
           if-no-files-found: error
           retention-days: 30
@@ -261,7 +270,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: adp-mcfg-v15-fanout-${{ matrix.fanout }}-diagnostics-${{ github.run_id }}
+          name: adp-mcfg-v15-1b-fanout-${{ matrix.fanout }}-diagnostics-${{ github.run_id }}
           path: |
             v15-parts-f${{ matrix.fanout }}
             v15-merged-files-f${{ matrix.fanout }}.txt
@@ -286,7 +295,7 @@ jobs:
       - name: Download all fan-out artifacts
         uses: actions/download-artifact@v5
         with:
-          pattern: adp-mcfg-v15-fanout-*-${{ github.run_id }}
+          pattern: adp-mcfg-v15-1b-fanout-*-${{ github.run_id }}
           path: v15-download
           merge-multiple: true
 
@@ -297,10 +306,10 @@ jobs:
           find v15-download -maxdepth 3 -type f | sort
           python LeanCfgProject/adaptive_h_mcfg3/consolidate_v15_fanouts.py \
             --input-root v15-download \
-            --output adp-mcfg-v15-controlled-independent
+            --output adp-mcfg-v15-1b-controlled-independent
           python - <<'PY'
           import json
-          summary = json.load(open("adp-mcfg-v15-controlled-independent/summary.json", encoding="utf-8"))
+          summary = json.load(open("adp-mcfg-v15-1b-controlled-independent/summary.json", encoding="utf-8"))
           assert summary["ready_for_manuscript"] is True, summary
           print(json.dumps(summary["selected_by_fanout"], indent=2))
           PY
@@ -308,7 +317,7 @@ jobs:
       - name: Upload consolidated V15 result
         uses: actions/upload-artifact@v7
         with:
-          name: adp-mcfg-v15-controlled-independent-${{ github.run_id }}
-          path: adp-mcfg-v15-controlled-independent
+          name: adp-mcfg-v15-1b-controlled-independent-${{ github.run_id }}
+          path: adp-mcfg-v15-1b-controlled-independent
           if-no-files-found: error
           retention-days: 30
