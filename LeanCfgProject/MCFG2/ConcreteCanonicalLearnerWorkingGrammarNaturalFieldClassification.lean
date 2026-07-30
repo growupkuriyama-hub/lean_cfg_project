@@ -343,7 +343,7 @@ theorem
               H.encodeCompiledGrammarPresentationEntryStream
                 dummy entries :=
           mem_encodeCompiledGrammarPresentationEntryStream_of_class
-            H dummy entries n htailClass
+            dummy entries n htailClass
 
         unfold
           encodeCompiledGrammarPresentationEntryStream
@@ -407,7 +407,7 @@ theorem
 
         · rcases
             class_of_mem_encodeCompiledGrammarPresentationEntryStream
-              H dummy entries n htail with
+              dummy entries n htail with
           ⟨source, hsource, hkind⟩
 
           exact
@@ -433,11 +433,11 @@ theorem
 
   · exact
       mem_encodeCompiledGrammarPresentationEntryStream_of_class
-        H dummy entries n
+        dummy entries n
 
   · exact
       class_of_mem_encodeCompiledGrammarPresentationEntryStream
-        H dummy entries n
+        dummy entries n
 
 end CorrectedConcreteFiniteHypothesis
 
