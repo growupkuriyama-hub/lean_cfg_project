@@ -651,13 +651,13 @@ theorem
         decodeCompiledGrammarPresentationEntryStreamAux_encode_append
           dummy entries suffix hrest
 
-      simp [
+      simp only [
         encodeCompiledGrammarPresentationEntryStream,
+        List.append_assoc,
         decodeCompiledGrammarPresentationEntryStreamAux,
         takeExactly_length_append,
         hdecodeEntry,
-        hdecodeRest,
-        List.append_assoc
+        hdecodeRest
       ]
 
 /-- Exact framed-stream decoding is the identity on every list of stored
