@@ -410,7 +410,7 @@ theorem compiledWorkingGrammarNaturalFieldValueBound_eq
     (dummy : α) :
     H.compiledWorkingGrammarNaturalFieldValueBound dummy =
       max
-        H.compiledWorkingGrammarNaturalFieldCount dummy
+        (H.compiledWorkingGrammarNaturalFieldCount dummy)
         (H.compiledWorkingGrammarMaximumNaturalFieldValue
           dummy) := by
 
