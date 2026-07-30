@@ -1,0 +1,683 @@
+name: ADP MCFG V15.2 - shell snapshot independent audit
+
+run-name: >-
+  ADP MCFG V15.2 SHELL SNAPSHOT AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-V15-2-shell-snapshot.yml"
+      - "LeanCfgProject/adaptive_h_mcfg3/**"
+  workflow_dispatch:
+    inputs:
+      max_test_count:
+        description: Largest completely held-out controlled count
+        required: true
+        default: 50
+        type: number
+      max_values_per_nt:
+        description: Recognition cap per nonterminal
+        required: true
+        default: 25000
+        type: number
+      max_total_values:
+        description: Recognition cap per query
+        required: true
+        default: 2000000
+        type: number
+      worker_timeout_seconds:
+        description: Hard timeout for each single-count snapshot worker
+        required: true
+        default: 300
+        type: number
+
+permissions:
+  contents: read
+
+concurrency:
+  group: adp-mcfg-v15-2-shell-snapshot-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_REVISION: "2026-07-30-v15.2-shell-snapshot-no-rebuild"
+  PYTHONHASHSEED: "0"
+  OPENBLAS_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+  BLIS_NUM_THREADS: "1"
+  VECLIB_MAXIMUM_THREADS: "1"
+  BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  V12_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  V15_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg3
+  MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v15_2_merged
+  MAX_TEST_COUNT: ${{ inputs.max_test_count || 50 }}
+  MAX_VALUES_PER_NT: ${{ inputs.max_values_per_nt || 25000 }}
+  MAX_TOTAL_VALUES: ${{ inputs.max_total_values || 2000000 }}
+  WORKER_TIMEOUT_SECONDS: ${{ inputs.worker_timeout_seconds || 300 }}
+
+jobs:
+  fanout_audit:
+    name: Fan-out ${{ matrix.fanout }} snapshot audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        fanout: [1, 2, 3]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Confirm V15.2 revision
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "WORKFLOW_REVISION=$WORKFLOW_REVISION"
+          echo "workflow=.github/workflows/adaptive-h-MCFG-V15-2-shell-snapshot.yml"
+          test -f LeanCfgProject/adaptive_h_mcfg3/build_v15_configuration_snapshot.py
+          test -f LeanCfgProject/adaptive_h_mcfg3/evaluate_v15_snapshot_worker.py
+          test -f LeanCfgProject/adaptive_h_mcfg3/aggregate_v15_snapshot_shards.py
+          test -x LeanCfgProject/adaptive_h_mcfg3/run_v15_snapshot_count_range.sh
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Construct merged experiment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR"
+          PATCH12="$GITHUB_WORKSPACE/$V12_PATCH_RELATIVE_DIR"
+          PATCH15="$GITHUB_WORKSPACE/$V15_PATCH_RELATIVE_DIR"
+          MERGED="$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
+
+          test -f "$BASE/pyproject.toml"
+          test -f "$PATCH15/run_controlled_independent_v15.py"
+          rm -rf "$MERGED"
+          mkdir -p "$MERGED"
+          cp -a "$BASE/." "$MERGED/"
+          if [ -d "$PATCH12" ]; then
+            cp -a "$PATCH12/." "$MERGED/"
+          fi
+          cp -a "$PATCH15/." "$MERGED/"
+
+          echo "EXPERIMENT_DIR=$MERGED" >> "$GITHUB_ENV"
+          echo "FANOUT=${{ matrix.fanout }}" >> "$GITHUB_ENV"
+          echo "PART_ROOT=$GITHUB_WORKSPACE/v15-2-parts-f${{ matrix.fanout }}" >> "$GITHUB_ENV"
+          find "$MERGED" -maxdepth 3 -type f | sort > "$GITHUB_WORKSPACE/v15-2-merged-files-f${{ matrix.fanout }}.txt"
+
+      - name: Install and test merged experiment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "$EXPERIMENT_DIR"
+          cd "$EXPERIMENT_DIR"
+          python -m compileall adaptive_h_mcfg \
+            run_controlled_independent_v15.py \
+            evaluate_v15_configuration.py \
+            evaluate_v15_baselines.py \
+            build_v15_configuration_snapshot.py \
+            evaluate_v15_snapshot_worker.py \
+            aggregate_v15_snapshot_shards.py \
+            v15_snapshot_common.py \
+            assemble_v15_fanout.py \
+            consolidate_v15_fanouts.py
+          pytest -q
+
+      - name: Exhaustive observer selection
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/selection"
+          cd "$EXPERIMENT_DIR"
+          python -u run_controlled_independent_v15.py \
+            --selection-only \
+            --fanouts "$FANOUT" \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --output "$PART_ROOT/selection"
+
+      - name: Read selected and globally optimal subsets
+        id: selection
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - "$PART_ROOT/selection/summary.json" "$FANOUT" "$GITHUB_OUTPUT" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          summary_path, fanout, output_path = sys.argv[1:]
+          summary = json.loads(Path(summary_path).read_text(encoding="utf-8"))
+          item = summary["selected_by_fanout"][fanout]
+          selected = item["greedy_selected"]
+          raw_global = item["global_budget2_subset"]
+          global_subset = [] if raw_global == "EMPTY" else raw_global.split(" + ")
+          with Path(output_path).open("a", encoding="utf-8") as handle:
+              handle.write("selected_json=" + json.dumps(selected, separators=(",", ":")) + "\n")
+              handle.write("global_json=" + json.dumps(global_subset, separators=(",", ":")) + "\n")
+              handle.write("global_diff=" + str(selected != global_subset).lower() + "\n")
+          PY
+
+      - name: Build Adaptive grammar snapshot
+        shell: bash
+        run: |
+          set -euxo pipefail
+          SNAPSHOT_DIR="$PART_ROOT/snapshots/adaptive"
+          rm -rf "$SNAPSHOT_DIR"
+          mkdir -p "$SNAPSHOT_DIR"
+          cd "$EXPERIMENT_DIR"
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          python -u build_v15_configuration_snapshot.py \
+            --fanout "$FANOUT" \
+            --model-name "adaptive-f${FANOUT}-mcfg" \
+            --observer-json "$OBSERVER_JSON" \
+            --output "$SNAPSHOT_DIR"
+
+      - name: Adaptive counts 4-11
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/adaptive" \
+            "$PART_ROOT/shards/adaptive" \
+            "$FANOUT" \
+            "adaptive-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            4 11 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Adaptive counts 12-19
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/adaptive" \
+            "$PART_ROOT/shards/adaptive" \
+            "$FANOUT" \
+            "adaptive-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            12 19 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Adaptive counts 20-27
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/adaptive" \
+            "$PART_ROOT/shards/adaptive" \
+            "$FANOUT" \
+            "adaptive-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            20 27 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Adaptive counts 28-35
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/adaptive" \
+            "$PART_ROOT/shards/adaptive" \
+            "$FANOUT" \
+            "adaptive-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            28 35 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Adaptive counts 36-43
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/adaptive" \
+            "$PART_ROOT/shards/adaptive" \
+            "$FANOUT" \
+            "adaptive-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            36 43 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Adaptive counts 44-50
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='${{ steps.selection.outputs.selected_json }}'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/adaptive" \
+            "$PART_ROOT/shards/adaptive" \
+            "$FANOUT" \
+            "adaptive-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            44 50 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Aggregate Adaptive results
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/adaptive"
+          cd "$EXPERIMENT_DIR"
+          python -u aggregate_v15_snapshot_shards.py \
+            --snapshot-dir "$PART_ROOT/snapshots/adaptive" \
+            --shards-root "$PART_ROOT/shards/adaptive" \
+            --output "$PART_ROOT/configurations/adaptive" \
+            --min-test-count 4 \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES"
+
+      - name: Build Trivial grammar snapshot
+        shell: bash
+        run: |
+          set -euxo pipefail
+          SNAPSHOT_DIR="$PART_ROOT/snapshots/trivial"
+          rm -rf "$SNAPSHOT_DIR"
+          mkdir -p "$SNAPSHOT_DIR"
+          cd "$EXPERIMENT_DIR"
+          OBSERVER_JSON='[]'
+          python -u build_v15_configuration_snapshot.py \
+            --fanout "$FANOUT" \
+            --model-name "trivial-f${FANOUT}-mcfg" \
+            --observer-json "$OBSERVER_JSON" \
+            --output "$SNAPSHOT_DIR"
+
+      - name: Trivial counts 4-11
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='[]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/trivial" \
+            "$PART_ROOT/shards/trivial" \
+            "$FANOUT" \
+            "trivial-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            4 11 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Trivial counts 12-19
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='[]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/trivial" \
+            "$PART_ROOT/shards/trivial" \
+            "$FANOUT" \
+            "trivial-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            12 19 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Trivial counts 20-27
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='[]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/trivial" \
+            "$PART_ROOT/shards/trivial" \
+            "$FANOUT" \
+            "trivial-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            20 27 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Trivial counts 28-35
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='[]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/trivial" \
+            "$PART_ROOT/shards/trivial" \
+            "$FANOUT" \
+            "trivial-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            28 35 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Trivial counts 36-43
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='[]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/trivial" \
+            "$PART_ROOT/shards/trivial" \
+            "$FANOUT" \
+            "trivial-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            36 43 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Trivial counts 44-50
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='[]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/trivial" \
+            "$PART_ROOT/shards/trivial" \
+            "$FANOUT" \
+            "trivial-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            44 50 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Aggregate Trivial results
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/trivial"
+          cd "$EXPERIMENT_DIR"
+          python -u aggregate_v15_snapshot_shards.py \
+            --snapshot-dir "$PART_ROOT/snapshots/trivial" \
+            --shards-root "$PART_ROOT/shards/trivial" \
+            --output "$PART_ROOT/configurations/trivial" \
+            --min-test-count 4 \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES"
+
+      - name: Build Full Product grammar snapshot
+        shell: bash
+        run: |
+          set -euxo pipefail
+          SNAPSHOT_DIR="$PART_ROOT/snapshots/full-product"
+          rm -rf "$SNAPSHOT_DIR"
+          mkdir -p "$SNAPSHOT_DIR"
+          cd "$EXPERIMENT_DIR"
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          python -u build_v15_configuration_snapshot.py \
+            --fanout "$FANOUT" \
+            --model-name "full-product-f${FANOUT}-mcfg" \
+            --observer-json "$OBSERVER_JSON" \
+            --output "$SNAPSHOT_DIR"
+
+      - name: Full Product counts 4-11
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/full-product" \
+            "$PART_ROOT/shards/full-product" \
+            "$FANOUT" \
+            "full-product-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            4 11 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Full Product counts 12-19
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/full-product" \
+            "$PART_ROOT/shards/full-product" \
+            "$FANOUT" \
+            "full-product-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            12 19 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Full Product counts 20-27
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/full-product" \
+            "$PART_ROOT/shards/full-product" \
+            "$FANOUT" \
+            "full-product-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            20 27 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Full Product counts 28-35
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/full-product" \
+            "$PART_ROOT/shards/full-product" \
+            "$FANOUT" \
+            "full-product-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            28 35 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Full Product counts 36-43
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/full-product" \
+            "$PART_ROOT/shards/full-product" \
+            "$FANOUT" \
+            "full-product-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            36 43 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Full Product counts 44-50
+        shell: bash
+        run: |
+          set -euxo pipefail
+          OBSERVER_JSON='["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]'
+          bash "$EXPERIMENT_DIR/run_v15_snapshot_count_range.sh" \
+            "$EXPERIMENT_DIR" \
+            "$PART_ROOT/snapshots/full-product" \
+            "$PART_ROOT/shards/full-product" \
+            "$FANOUT" \
+            "full-product-f${FANOUT}-mcfg" \
+            "$OBSERVER_JSON" \
+            44 50 \
+            "$MAX_TEST_COUNT" \
+            "$MAX_VALUES_PER_NT" \
+            "$MAX_TOTAL_VALUES" \
+            "$WORKER_TIMEOUT_SECONDS"
+
+      - name: Aggregate Full Product results
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/full-product"
+          cd "$EXPERIMENT_DIR"
+          python -u aggregate_v15_snapshot_shards.py \
+            --snapshot-dir "$PART_ROOT/snapshots/full-product" \
+            --shards-root "$PART_ROOT/shards/full-product" \
+            --output "$PART_ROOT/configurations/full-product" \
+            --min-test-count 4 \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES"
+
+      - name: Evaluate learned non-MCFG baselines
+        if: matrix.fanout == 1
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/baselines"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_baselines.py \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --output "$PART_ROOT/baselines"
+
+      - name: Assemble fan-out artifact
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python assemble_v15_fanout.py \
+            --fanout "$FANOUT" \
+            --selection "$PART_ROOT/selection" \
+            --config-root "$PART_ROOT/configurations" \
+            --baselines "$PART_ROOT/baselines" \
+            --output "$PART_ROOT/final"
+
+          python - "$PART_ROOT/final/summary.json" <<'PY'
+          import json, sys
+          summary = json.load(open(sys.argv[1], encoding="utf-8"))
+          assert summary["ready_for_manuscript"] is True, summary
+          print(json.dumps({
+              "fanout": summary["requested_fanouts"],
+              "selected": summary["selected_by_fanout"],
+              "ready": summary["ready_for_manuscript"],
+          }, indent=2))
+          PY
+
+          mkdir -p "$PART_ROOT/upload/fanout-$FANOUT"
+          cp -a "$PART_ROOT/final/." "$PART_ROOT/upload/fanout-$FANOUT/"
+          cp "$GITHUB_WORKSPACE/v15-2-merged-files-f${FANOUT}.txt" "$PART_ROOT/upload/fanout-$FANOUT/"
+
+      - name: Upload fan-out result
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-2-fanout-${{ matrix.fanout }}-${{ github.run_id }}
+          path: v15-2-parts-f${{ matrix.fanout }}/upload
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-2-fanout-${{ matrix.fanout }}-diagnostics-${{ github.run_id }}
+          path: |
+            v15-2-parts-f${{ matrix.fanout }}
+            v15-2-merged-files-f${{ matrix.fanout }}.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  consolidate:
+    name: Consolidate V15.2 manuscript artifact
+    needs: fanout_audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Download all fan-out artifacts
+        uses: actions/download-artifact@v5
+        with:
+          pattern: adp-mcfg-v15-2-fanout-*-${{ github.run_id }}
+          path: v15-download
+          merge-multiple: true
+
+      - name: Consolidate and validate
+        shell: bash
+        run: |
+          set -euxo pipefail
+          find v15-download -maxdepth 3 -type f | sort
+          python LeanCfgProject/adaptive_h_mcfg3/consolidate_v15_fanouts.py \
+            --input-root v15-download \
+            --output adp-mcfg-v15-2-controlled-independent
+          python - <<'PY'
+          import json
+          summary = json.load(open("adp-mcfg-v15-2-controlled-independent/summary.json", encoding="utf-8"))
+          assert summary["ready_for_manuscript"] is True, summary
+          print(json.dumps(summary["selected_by_fanout"], indent=2))
+          PY
+
+      - name: Upload consolidated V15.2 result
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-2-controlled-independent-${{ github.run_id }}
+          path: adp-mcfg-v15-2-controlled-independent
+          if-no-files-found: error
+          retention-days: 30
