@@ -1,0 +1,675 @@
+name: ADP MCFG V14 - bounded observer language-difference audit
+
+run-name: >-
+  ADP MCFG V14 LANGUAGE DIFFERENCE • source ${{ github.event.inputs.source_run_id || '30488051834' }} • run #${{ github.run_number }}
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-V14-language-difference.yml"
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful V12 workflow run ID containing the source artifact
+        required: true
+        default: "30488051834"
+        type: string
+      source_artifact_name:
+        description: Exact V12 artifact name
+        required: true
+        default: "adp-mcfg-v12-word-disjoint-30488051834"
+        type: string
+      radius:
+        description: Integer offset radius around validation count 4
+        required: true
+        default: 2
+        type: number
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: adp-mcfg-v14-language-difference-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORKFLOW_REVISION: "2026-07-30-v14-bounded-language-difference-audit"
+  BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  PATCH_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v14_merged
+  SOURCE_ARTIFACT_RELATIVE_DIR: _v12_source_artifact
+  OUTPUT_RELATIVE_DIR: adp-mcfg-v14-language-difference
+  TRAIN_COUNTS: "1-3"
+  VALIDATION_COUNT: "4"
+  RADIUS: ${{ github.event.inputs.radius || 2 }}
+  SOURCE_RUN_ID: ${{ github.event.inputs.source_run_id || '30488051834' }}
+  SOURCE_ARTIFACT_NAME: ${{ github.event.inputs.source_artifact_name || 'adp-mcfg-v12-word-disjoint-30488051834' }}
+
+jobs:
+  language_difference_audit:
+    name: Bounded observer-language audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out lean_cfg_project
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Initialize paths
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "BASE_EXPERIMENT_DIR=$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "PATCH_EXPERIMENT_DIR=$GITHUB_WORKSPACE/$PATCH_EXPERIMENT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "EXPERIMENT_DIR=$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "SOURCE_ARTIFACT_DIR=$GITHUB_WORKSPACE/$SOURCE_ARTIFACT_RELATIVE_DIR" >> "$GITHUB_ENV"
+          echo "OUTPUT_DIR=$GITHUB_WORKSPACE/$OUTPUT_RELATIVE_DIR" >> "$GITHUB_ENV"
+
+      - name: Assemble legacy implementation and V12 patch
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -d "$BASE_EXPERIMENT_DIR"
+          test -d "$PATCH_EXPERIMENT_DIR"
+          rm -rf "$EXPERIMENT_DIR"
+          mkdir -p "$EXPERIMENT_DIR"
+          cp -a "$BASE_EXPERIMENT_DIR/." "$EXPERIMENT_DIR/"
+          cp -a "$PATCH_EXPERIMENT_DIR/." "$EXPERIMENT_DIR/"
+          test -f "$EXPERIMENT_DIR/pyproject.toml"
+          test -f "$EXPERIMENT_DIR/adaptive_h_mcfg/binary_learner.py"
+          test -f "$EXPERIMENT_DIR/adaptive_h_mcfg/observers.py"
+          test -f "$EXPERIMENT_DIR/adaptive_h_mcfg/selection.py"
+          test -f "$EXPERIMENT_DIR/adaptive_h_mcfg/v12_protocol.py"
+
+      - name: Install experiment dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install pytest scikit-learn
+          python -m pip install --editable .
+          python -m compileall -q adaptive_h_mcfg
+          python -m pytest -q
+
+      - name: Download successful V12 artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          rm -rf "$SOURCE_ARTIFACT_DIR"
+          mkdir -p "$SOURCE_ARTIFACT_DIR"
+          cd "$SOURCE_ARTIFACT_DIR"
+          gh run download "$SOURCE_RUN_ID" -n "$SOURCE_ARTIFACT_NAME"
+          find . -maxdepth 6 -type f -print | sort | tee "$GITHUB_WORKSPACE/v14-source-file-list.txt"
+          SOURCE_PROJECTIONS="$(find "$SOURCE_ARTIFACT_DIR" -type f -path '*/dataset/projections.csv' -print -quit)"
+          test -n "$SOURCE_PROJECTIONS"
+          test -f "$SOURCE_PROJECTIONS"
+          echo "SOURCE_PROJECTIONS=$SOURCE_PROJECTIONS" >> "$GITHUB_ENV"
+
+      - name: Create bounded language-difference audit
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cat > "$EXPERIMENT_DIR/run_language_difference_audit_v14.py" <<'PY'
+          #!/usr/bin/env python3
+          """Bounded language-difference audit for the ADP-MCFG observer library.
+          
+          This is a diagnostic, not an unbiased anomaly benchmark.  It searches a
+          predeclared radius-r neighborhood around the held-out validation normal word
+          and asks whether any candidate observer strictly refines the trivial-observer
+          hypothesis.
+          """
+          from __future__ import annotations
+          
+          import argparse
+          import csv
+          import itertools
+          import json
+          import os
+          import platform
+          import resource
+          import sys
+          import time
+          from pathlib import Path
+          from typing import Any, Callable, Iterable, Sequence
+          
+          from adaptive_h_mcfg.binary_learner import BoundedCanonicalMCFGLearner
+          from adaptive_h_mcfg.observers import (
+              ModularCountObserver,
+              ProductObserver,
+              TrivialObserver,
+              block_envelope_observer,
+          )
+          from adaptive_h_mcfg.selection import greedy_select
+          from adaptive_h_mcfg.v12_protocol import load_projection_rows, parse_int_spec
+          
+          
+          def candidate_observers():
+              return (
+                  block_envelope_observer(
+                      (("p",), ("c", "s"), ("p", "c", "s")),
+                      name="checkout-phase-envelope",
+                  ),
+                  ModularCountObserver(("s",), 2, "shipping-phase-count-mod-2"),
+                  ModularCountObserver(("p",), 2, "product-count-mod-2"),
+                  ModularCountObserver(("c",), 2, "currency-product-count-mod-2"),
+                  ModularCountObserver(("#",), 2, "separator-parity-decoy"),
+              )
+          
+          
+          def checkout_word(first_count: int, second_count: int, third_count: int) -> str:
+              if min(first_count, second_count, third_count) < 1:
+                  raise ValueError("all phase counts must be positive")
+              return (
+                  "p" * first_count
+                  + "#"
+                  + "c" * second_count
+                  + "s#"
+                  + "pc" * third_count
+                  + "s"
+              )
+          
+          
+          def unique_words(values: Iterable[str]) -> tuple[str, ...]:
+              return tuple(dict.fromkeys(values))
+          
+          
+          def timed(call: Callable[[], Any]) -> tuple[Any, float]:
+              started = time.perf_counter()
+              return call(), time.perf_counter() - started
+          
+          
+          def peak_rss_mib() -> float:
+              raw = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+              return raw / (1024.0 * 1024.0) if sys.platform == "darwin" else raw / 1024.0
+          
+          
+          def json_compatible(value: Any) -> Any:
+              item = getattr(value, "item", None)
+              if callable(item):
+                  try:
+                      return item()
+                  except (TypeError, ValueError):
+                      pass
+              tolist = getattr(value, "tolist", None)
+              if callable(tolist):
+                  return tolist()
+              if isinstance(value, Path):
+                  return str(value)
+              if isinstance(value, (set, frozenset, tuple)):
+                  return list(value)
+              raise TypeError(f"{value.__class__.__name__} is not JSON serializable")
+          
+          
+          def decisions(
+              model: Any,
+              words: Sequence[str],
+              max_values_per_nt: int,
+              max_total_values: int,
+          ) -> dict[str, bool]:
+              if hasattr(model, "accepts_many_guided"):
+                  return dict(
+                      model.accepts_many_guided(
+                          tuple(words),
+                          max_values_per_nt=max_values_per_nt,
+                          max_total_values=max_total_values,
+                      )
+                  )
+              if hasattr(model, "accepts_many"):
+                  return dict(model.accepts_many(tuple(words)))
+              return {word: bool(model.accepts(word)) for word in words}
+          
+          
+          def model_meta(model: Any) -> dict[str, Any]:
+              unit_rules = getattr(model, "unit_rules", {})
+              unit_count = (
+                  sum(len(values) for values in unit_rules.values())
+                  if isinstance(unit_rules, dict)
+                  else ""
+              )
+              return {
+                  "rule_count": getattr(model, "rule_count", ""),
+                  "unit_rule_count": unit_count,
+                  "observed_type_count": getattr(model, "observed_type_count", ""),
+                  "occurrence_count": getattr(model, "occurrence_count", ""),
+              }
+          
+          
+          def write_csv(path: Path, rows: Sequence[dict[str, Any]]) -> None:
+              path.parent.mkdir(parents=True, exist_ok=True)
+              fields = list(rows[0]) if rows else []
+              with path.open("w", newline="", encoding="utf-8") as handle:
+                  writer = csv.DictWriter(handle, fieldnames=fields)
+                  if fields:
+                      writer.writeheader()
+                      writer.writerows(rows)
+          
+          
+          def offset_key(offset: tuple[int, int, int]) -> tuple[int, int, tuple[int, int, int]]:
+              return (sum(abs(x) for x in offset), max(abs(x) for x in offset), offset)
+          
+          
+          def main() -> None:
+              parser = argparse.ArgumentParser()
+              parser.add_argument("projections_csv", type=Path)
+              parser.add_argument("--output", type=Path, required=True)
+              parser.add_argument("--train-counts", default="1-3")
+              parser.add_argument("--validation-count", type=int, default=4)
+              parser.add_argument("--radius", type=int, default=2)
+              parser.add_argument("--selection-budget", type=int, default=2)
+              parser.add_argument("--max-values-per-nt", type=int, default=25000)
+              parser.add_argument("--max-total-values", type=int, default=2000000)
+              args = parser.parse_args()
+              args.output.mkdir(parents=True, exist_ok=True)
+          
+              if args.radius < 1:
+                  raise SystemExit("radius must be positive")
+          
+              rows = load_projection_rows(args.projections_csv)
+              train_counts = parse_int_spec(args.train_counts)
+              normal_by_count: dict[int, set[str]] = {}
+              for row in rows:
+                  if row.label == "normal":
+                      normal_by_count.setdefault(row.item_count, set()).add(row.word)
+          
+              missing = [count for count in (*train_counts, args.validation_count) if count not in normal_by_count]
+              if missing:
+                  raise SystemExit(f"missing normal projected words for counts {missing}")
+              nonunique = {
+                  count: sorted(words)
+                  for count, words in normal_by_count.items()
+                  if count in (*train_counts, args.validation_count) and len(words) != 1
+              }
+              if nonunique:
+                  raise SystemExit(f"expected one normal surface word per count: {nonunique}")
+          
+              training_words = tuple(next(iter(normal_by_count[count])) for count in train_counts)
+              validation_normal = next(iter(normal_by_count[args.validation_count]))
+              expected_validation_normal = checkout_word(
+                  args.validation_count, args.validation_count, args.validation_count
+              )
+              if validation_normal != expected_validation_normal:
+                  raise SystemExit(
+                      "stored validation normal word does not match the declared three-phase checkout schema"
+                  )
+          
+              offsets = [
+                  offset
+                  for offset in itertools.product(range(-args.radius, args.radius + 1), repeat=3)
+                  if offset != (0, 0, 0)
+                  and min(args.validation_count + value for value in offset) >= 1
+              ]
+              offsets.sort(key=offset_key)
+              candidate_words = {
+                  offset: checkout_word(
+                      args.validation_count + offset[0],
+                      args.validation_count + offset[1],
+                      args.validation_count + offset[2],
+                  )
+                  for offset in offsets
+              }
+              if len(set(candidate_words.values())) != len(candidate_words):
+                  raise SystemExit("candidate generator produced duplicate surface words")
+              all_words = (validation_normal, *candidate_words.values())
+          
+              learner = BoundedCanonicalMCFGLearner(fanout=3)
+              basis, basis_seconds = timed(lambda: learner.prepare(training_words))
+          
+              library = candidate_observers()
+              singleton_names = [observer.name for observer in library]
+              models: dict[str, Any] = {}
+              fit_seconds: dict[str, float] = {}
+          
+              models["trivial"], fit_seconds["trivial"] = timed(
+                  lambda: learner.fit_prepared(basis, TrivialObserver())
+              )
+              for observer in library:
+                  models[observer.name], fit_seconds[observer.name] = timed(
+                      lambda observer=observer: learner.fit_prepared(basis, observer)
+                  )
+          
+              pair_members: dict[str, tuple[str, str]] = {}
+              for left_index, right_index in itertools.combinations(range(len(library)), 2):
+                  left = library[left_index]
+                  right = library[right_index]
+                  name = f"pair:{left.name}+{right.name}"
+                  pair_members[name] = (left.name, right.name)
+                  models[name], fit_seconds[name] = timed(
+                      lambda left=left, right=right: learner.fit_prepared(
+                          basis, ProductObserver((left, right))
+                      )
+                  )
+          
+              models["full-product"], fit_seconds["full-product"] = timed(
+                  lambda: learner.fit_prepared(basis, ProductObserver(library))
+              )
+          
+              model_decisions: dict[str, dict[str, bool]] = {}
+              recognition_seconds: dict[str, float] = {}
+              model_rows: list[dict[str, Any]] = []
+              for name, model in models.items():
+                  model_decisions[name], recognition_seconds[name] = timed(
+                      lambda model=model: decisions(
+                          model,
+                          all_words,
+                          args.max_values_per_nt,
+                          args.max_total_values,
+                      )
+                  )
+                  meta = {
+                      "model": name,
+                      "fit_seconds": fit_seconds[name],
+                      "recognition_seconds": recognition_seconds[name],
+                      "validation_normal_accepted": model_decisions[name][validation_normal],
+                      "peak_rss_mib": peak_rss_mib(),
+                  }
+                  meta.update(model_meta(model))
+                  model_rows.append(meta)
+          
+              if not model_decisions["trivial"][validation_normal]:
+                  raise SystemExit("trivial hypothesis rejected the held-out validation normal word")
+          
+              candidate_rows: list[dict[str, Any]] = []
+              for offset in offsets:
+                  word = candidate_words[offset]
+                  row: dict[str, Any] = {
+                      "delta_phase1": offset[0],
+                      "delta_phase2": offset[1],
+                      "delta_phase3": offset[2],
+                      "l1_distance": sum(abs(x) for x in offset),
+                      "word": word,
+                      "trivial_accepts": model_decisions["trivial"][word],
+                  }
+                  for name in models:
+                      if name == "trivial":
+                          continue
+                      row[f"accepts::{name}"] = model_decisions[name][word]
+                  candidate_rows.append(row)
+          
+              difference_summary: dict[str, Any] = {}
+              minimal_rows: list[dict[str, Any]] = []
+              for name in models:
+                  if name == "trivial":
+                      continue
+                  refinement = [
+                      offset
+                      for offset in offsets
+                      if model_decisions["trivial"][candidate_words[offset]]
+                      and not model_decisions[name][candidate_words[offset]]
+                  ]
+                  expansion = [
+                      offset
+                      for offset in offsets
+                      if not model_decisions["trivial"][candidate_words[offset]]
+                      and model_decisions[name][candidate_words[offset]]
+                  ]
+                  refinement.sort(key=offset_key)
+                  expansion.sort(key=offset_key)
+                  difference_summary[name] = {
+                      "trivial_accept_model_reject_count": len(refinement),
+                      "trivial_reject_model_accept_count": len(expansion),
+                      "minimal_refinement_offsets": [list(value) for value in refinement[:20]],
+                      "minimal_expansion_offsets": [list(value) for value in expansion[:20]],
+                  }
+                  for rank, offset in enumerate(refinement[:20], start=1):
+                      minimal_rows.append(
+                          {
+                              "model": name,
+                              "direction": "trivial-accept_model-reject",
+                              "rank": rank,
+                              "delta_phase1": offset[0],
+                              "delta_phase2": offset[1],
+                              "delta_phase3": offset[2],
+                              "l1_distance": sum(abs(x) for x in offset),
+                              "word": candidate_words[offset],
+                          }
+                      )
+                  for rank, offset in enumerate(expansion[:20], start=1):
+                      minimal_rows.append(
+                          {
+                              "model": name,
+                              "direction": "trivial-reject_model-accept",
+                              "rank": rank,
+                              "delta_phase1": offset[0],
+                              "delta_phase2": offset[1],
+                              "delta_phase3": offset[2],
+                              "l1_distance": sum(abs(x) for x in offset),
+                              "word": candidate_words[offset],
+                          }
+                      )
+          
+              pair_only_rows: list[dict[str, Any]] = []
+              for pair_name, (left_name, right_name) in pair_members.items():
+                  for offset in offsets:
+                      word = candidate_words[offset]
+                      if (
+                          model_decisions["trivial"][word]
+                          and model_decisions[left_name][word]
+                          and model_decisions[right_name][word]
+                          and not model_decisions[pair_name][word]
+                      ):
+                          pair_only_rows.append(
+                              {
+                                  "pair_model": pair_name,
+                                  "left_observer": left_name,
+                                  "right_observer": right_name,
+                                  "delta_phase1": offset[0],
+                                  "delta_phase2": offset[1],
+                                  "delta_phase3": offset[2],
+                                  "l1_distance": sum(abs(x) for x in offset),
+                                  "word": word,
+                              }
+                          )
+              pair_only_rows.sort(
+                  key=lambda row: (
+                      row["l1_distance"],
+                      row["pair_model"],
+                      row["delta_phase1"],
+                      row["delta_phase2"],
+                      row["delta_phase3"],
+                  )
+              )
+          
+              # Diagnostic greedy run on a deterministic union of the nearest singleton
+              # separators.  This is deliberately labelled post-hoc and is not reported
+              # as an unbiased benchmark result.
+              separator_offsets: list[tuple[int, int, int]] = []
+              for name in singleton_names:
+                  values = [
+                      offset
+                      for offset in offsets
+                      if model_decisions["trivial"][candidate_words[offset]]
+                      and not model_decisions[name][candidate_words[offset]]
+                  ]
+                  values.sort(key=offset_key)
+                  for offset in values[:3]:
+                      if offset not in separator_offsets:
+                          separator_offsets.append(offset)
+              separator_offsets.sort(key=offset_key)
+              separator_words = tuple(candidate_words[offset] for offset in separator_offsets)
+          
+              greedy_report: dict[str, Any]
+              if separator_words:
+                  selection, selection_seconds = timed(
+                      lambda: greedy_select(
+                          learner,
+                          training_words,
+                          (validation_normal,),
+                          separator_words,
+                          library,
+                          budget=args.selection_budget,
+                          min_improvement=1e-9,
+                          complexity_weight=1e-8,
+                          type_weight=1e-6,
+                          guided=False,
+                      )
+                  )
+                  selected_names = [observer.name for observer in selection.selected_observers]
+                  selected_decisions = decisions(
+                      selection.model,
+                      (validation_normal, *separator_words),
+                      args.max_values_per_nt,
+                      args.max_total_values,
+                  )
+                  greedy_report = {
+                      "status": "ran-on-post-hoc-bounded-separators",
+                      "selected_observers": selected_names,
+                      "selection_seconds": selection_seconds,
+                      "separator_offsets": [list(offset) for offset in separator_offsets],
+                      "separator_word_count": len(separator_words),
+                      "normal_false_rejects": int(not selected_decisions[validation_normal]),
+                      "separator_false_accepts": sum(
+                          selected_decisions[word] for word in separator_words
+                      ),
+                      "history": [entry.__dict__ for entry in selection.history],
+                  }
+              else:
+                  greedy_report = {
+                      "status": "not-run-no-singleton-refinement-found",
+                      "selected_observers": [],
+                      "separator_offsets": [],
+                      "separator_word_count": 0,
+                  }
+          
+              write_csv(args.output / "bounded_candidates.csv", candidate_rows)
+              write_csv(args.output / "model_complexity_and_runtime.csv", model_rows)
+              write_csv(args.output / "minimal_language_differences.csv", minimal_rows)
+              write_csv(args.output / "pair_only_synergy_differences.csv", pair_only_rows)
+          
+              singleton_refinement_total = sum(
+                  difference_summary[name]["trivial_accept_model_reject_count"]
+                  for name in singleton_names
+              )
+              pair_refinement_total = sum(
+                  difference_summary[name]["trivial_accept_model_reject_count"]
+                  for name in pair_members
+              )
+              report = {
+                  "protocol": "ADP-MCFG V14 bounded observer language-difference audit",
+                  "interpretation": (
+                      "Diagnostic bounded language comparison only; candidate faults are generated "
+                      "after fixing the model family and are not an unbiased anomaly benchmark."
+                  ),
+                  "source_projections": str(args.projections_csv),
+                  "train_counts": list(train_counts),
+                  "validation_count": args.validation_count,
+                  "radius": args.radius,
+                  "training_words": list(training_words),
+                  "validation_normal_word": validation_normal,
+                  "candidate_word_count": len(candidate_words),
+                  "candidate_observers": singleton_names,
+                  "pair_model_count": len(pair_members),
+                  "basis_construction_seconds": basis_seconds,
+                  "difference_summary": difference_summary,
+                  "singleton_refinement_total": singleton_refinement_total,
+                  "pair_refinement_total": pair_refinement_total,
+                  "pair_only_synergy_count": len(pair_only_rows),
+                  "greedy_counterexample_audit": greedy_report,
+                  "model_complexity_and_runtime": model_rows,
+                  "environment": {
+                      "platform": platform.platform(),
+                      "python": sys.version,
+                      "cpu_count": os.cpu_count(),
+                      "peak_rss_mib": peak_rss_mib(),
+                  },
+              }
+              (args.output / "summary.json").write_text(
+                  json.dumps(report, indent=2, default=json_compatible), encoding="utf-8"
+              )
+              success = {
+                  "ready": True,
+                  "candidate_word_count": len(candidate_words),
+                  "singleton_refinement_total": singleton_refinement_total,
+                  "pair_refinement_total": pair_refinement_total,
+                  "pair_only_synergy_count": len(pair_only_rows),
+                  "greedy_selected_observers": greedy_report["selected_observers"],
+                  "summary": str(args.output / "summary.json"),
+              }
+              (args.output / "V14_SUCCESS.json").write_text(
+                  json.dumps(success, indent=2, default=json_compatible), encoding="utf-8"
+              )
+              print(json.dumps(success, indent=2, default=json_compatible))
+          
+          
+          if __name__ == "__main__":
+              main()
+          PY
+          python -m py_compile "$EXPERIMENT_DIR/run_language_difference_audit_v14.py"
+
+      - name: Run bounded observer-language audit
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm -rf "$OUTPUT_DIR"
+          mkdir -p "$OUTPUT_DIR"
+          cd "$EXPERIMENT_DIR"
+          python run_language_difference_audit_v14.py "$SOURCE_PROJECTIONS" \
+            --output "$OUTPUT_DIR" \
+            --train-counts "$TRAIN_COUNTS" \
+            --validation-count "$VALIDATION_COUNT" \
+            --radius "$RADIUS" \
+            --selection-budget 2 \
+            --max-values-per-nt 25000 \
+            --max-total-values 2000000
+
+      - name: Enforce V14 outputs and print headline
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -f "$OUTPUT_DIR/V14_SUCCESS.json"
+          test -f "$OUTPUT_DIR/summary.json"
+          test -f "$OUTPUT_DIR/bounded_candidates.csv"
+          test -f "$OUTPUT_DIR/model_complexity_and_runtime.csv"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          root = Path(os.environ["OUTPUT_DIR"])
+          success = json.loads((root / "V14_SUCCESS.json").read_text())
+          assert success["ready"] is True
+          print(json.dumps(success, indent=2))
+          PY
+          echo '===== MINIMAL LANGUAGE DIFFERENCES ====='
+          cat "$OUTPUT_DIR/minimal_language_differences.csv" || true
+          echo '===== PAIR-ONLY SYNERGY DIFFERENCES ====='
+          cat "$OUTPUT_DIR/pair_only_synergy_differences.csv" || true
+
+      - name: Save workflow diagnostics
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          mkdir -p "$OUTPUT_DIR/diagnostics"
+          date --iso-8601=seconds > "$OUTPUT_DIR/diagnostics/date.txt"
+          python --version > "$OUTPUT_DIR/diagnostics/python.txt" 2>&1
+          gh --version > "$OUTPUT_DIR/diagnostics/gh.txt" 2>&1
+          df -h > "$OUTPUT_DIR/diagnostics/disk.txt"
+          free -h > "$OUTPUT_DIR/diagnostics/memory.txt"
+          echo "$WORKFLOW_REVISION" > "$OUTPUT_DIR/diagnostics/workflow-revision.txt"
+          {
+            echo "source_run_id=$SOURCE_RUN_ID"
+            echo "source_artifact_name=$SOURCE_ARTIFACT_NAME"
+          } > "$OUTPUT_DIR/diagnostics/source-artifact.txt"
+          cp "$GITHUB_WORKSPACE/.github/workflows/adaptive-h-MCFG-V14-language-difference.yml" \
+            "$OUTPUT_DIR/diagnostics/" 2>/dev/null
+          cp "$GITHUB_WORKSPACE/v14-source-file-list.txt" "$OUTPUT_DIR/diagnostics/" 2>/dev/null
+          cp "$EXPERIMENT_DIR/run_language_difference_audit_v14.py" "$OUTPUT_DIR/diagnostics/" 2>/dev/null
+
+      - name: Upload V14 language-difference audit
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v14-language-difference-${{ github.run_id }}
+          path: adp-mcfg-v14-language-difference
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
