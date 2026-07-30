@@ -182,7 +182,13 @@ theorem encodeUnaryNatBits_injective
   rw [h] at hm
   rw [hn] at hm
 
-  injection hm
+  have hpairs :
+      (n, ([] : List Bool)) =
+        (m, []) := by
+    exact Option.some.inj hm
+
+  exact
+    (congrArg Prod.fst hpairs).symm
 
 end UnaryNaturalBitCodec
 
@@ -209,9 +215,6 @@ def decodeUnaryNatListPayloadAux :
 
   | 0, bits =>
       some ([], bits)
-
-  | Nat.succ _, [] =>
-      none
 
   | Nat.succ fieldCount, bits =>
       match decodeUnaryNatBits bits with
@@ -329,7 +332,7 @@ def decodeUnaryNatListBits
       decodeUnaryNatListPayloadAux_encode_append
         fields []
 
-  rw [hpayload]
+  simp only [hpayload]
 
 /-- Exact bit length of a complete encoded natural list. -/
 @[simp] theorem encodeUnaryNatListBits_length
@@ -396,7 +399,11 @@ theorem encodeUnaryNatListBits_injective
   rw [h] at hx
   rw [hy] at hx
 
-  injection hx
+  have hxy :
+      ys = xs := by
+    exact Option.some.inj hx
+
+  exact hxy.symm
 
 /-- Compact standalone unary-bit natural-list codec package. -/
 theorem unaryNatListBitCodec_package
@@ -522,6 +529,19 @@ theorem compiledWorkingGrammarUnaryBitCount_eq
   unfold
     compiledWorkingGrammarUnaryBitCount
 
+  change
+    1 +
+          2 *
+            (H.encodeCompiledWorkingGrammarNaturalList
+              dummy).length +
+          (H.encodeCompiledWorkingGrammarNaturalList
+            dummy).sum =
+      1 +
+          2 *
+            H.compiledWorkingGrammarNaturalFieldCount dummy +
+          (H.encodeCompiledWorkingGrammarNaturalList
+            dummy).sum
+
   rw [
     H.encodeCompiledWorkingGrammarNaturalList_length
       dummy
@@ -541,6 +561,9 @@ theorem encodeCompiledWorkingGrammarUnaryBitList_ne_nil
       (encodeUnaryNatBits_ne_nil
         (H.encodeCompiledWorkingGrammarNaturalList
           dummy).length)
+      (encodeUnaryNatListPayload
+        (H.encodeCompiledWorkingGrammarNaturalList
+          dummy))
 
 /-- Compact actual-grammar bit-codec endpoint. -/
 theorem compiledWorkingGrammarUnaryBitCodec_package
