@@ -509,12 +509,8 @@ theorem
     encodeBinaryTreeNatListBits_length_le_of_fieldsFitInBits
       hfit
 
-  rw [
-    H.encodeCompiledWorkingGrammarLogarithmicBitList_length
-      dummy
-  ] at hstream
-
   simpa [
+    compiledWorkingGrammarLogarithmicBitCount,
     H.encodeCompiledWorkingGrammarNaturalList_length
       dummy
   ] using hstream
