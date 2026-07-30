@@ -1,0 +1,303 @@
+name: ADP MCFG V15 - independent controlled split and fan-out ablation
+
+run-name: >-
+  ADP MCFG V15 INDEPENDENT FANOUT AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/adaptive-h-MCFG-V15-controlled-independent.yml"
+      - "LeanCfgProject/adaptive_h_mcfg3/**"
+  workflow_dispatch:
+    inputs:
+      max_test_count:
+        description: Largest completely held-out controlled count
+        required: true
+        default: 50
+        type: number
+      max_values_per_nt:
+        description: Recognition cap per nonterminal
+        required: true
+        default: 25000
+        type: number
+      max_total_values:
+        description: Recognition cap per query
+        required: true
+        default: 2000000
+        type: number
+
+permissions:
+  contents: read
+
+env:
+  PYTHONHASHSEED: "0"
+  BASE_EXPERIMENT_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg
+  V12_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg2
+  V15_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg3
+  MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v15_merged
+  MAX_TEST_COUNT: ${{ inputs.max_test_count || 50 }}
+  MAX_VALUES_PER_NT: ${{ inputs.max_values_per_nt || 25000 }}
+  MAX_TOTAL_VALUES: ${{ inputs.max_total_values || 2000000 }}
+
+concurrency:
+  group: adp-mcfg-v15-independent-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fanout_audit:
+    name: Fan-out ${{ matrix.fanout }} independent audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        fanout: [1, 2, 3]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Construct merged V15 experiment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$GITHUB_WORKSPACE/$BASE_EXPERIMENT_RELATIVE_DIR"
+          PATCH12="$GITHUB_WORKSPACE/$V12_PATCH_RELATIVE_DIR"
+          PATCH15="$GITHUB_WORKSPACE/$V15_PATCH_RELATIVE_DIR"
+          MERGED="$GITHUB_WORKSPACE/$MERGED_EXPERIMENT_RELATIVE_DIR"
+
+          test -f "$BASE/pyproject.toml"
+          test -f "$PATCH15/run_controlled_independent_v15.py"
+          test -f "$PATCH15/evaluate_v15_configuration.py"
+          test -f "$PATCH15/adaptive_h_mcfg/occurrences.py"
+
+          rm -rf "$MERGED"
+          mkdir -p "$MERGED"
+          cp -a "$BASE/." "$MERGED/"
+          if [ -d "$PATCH12" ]; then
+            cp -a "$PATCH12/." "$MERGED/"
+          fi
+          cp -a "$PATCH15/." "$MERGED/"
+
+          echo "EXPERIMENT_DIR=$MERGED" >> "$GITHUB_ENV"
+          echo "FANOUT=${{ matrix.fanout }}" >> "$GITHUB_ENV"
+          echo "PART_ROOT=$GITHUB_WORKSPACE/v15-parts-f${{ matrix.fanout }}" >> "$GITHUB_ENV"
+          find "$MERGED" -maxdepth 3 -type f | sort > "$GITHUB_WORKSPACE/v15-merged-files-f${{ matrix.fanout }}.txt"
+
+      - name: Install and test merged experiment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e "$EXPERIMENT_DIR"
+          cd "$EXPERIMENT_DIR"
+          python -m compileall adaptive_h_mcfg run_controlled_independent_v15.py \
+            evaluate_v15_configuration.py evaluate_v15_baselines.py \
+            assemble_v15_fanout.py consolidate_v15_fanouts.py
+          pytest -q
+
+      - name: Exhaustive observer selection
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/selection"
+          cd "$EXPERIMENT_DIR"
+          python -u run_controlled_independent_v15.py \
+            --selection-only \
+            --fanouts "$FANOUT" \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --output "$PART_ROOT/selection"
+
+      - name: Read selected and globally optimal subsets
+        id: selection
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - "$PART_ROOT/selection/summary.json" "$FANOUT" "$GITHUB_OUTPUT" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          summary_path, fanout, output_path = sys.argv[1:]
+          summary = json.loads(Path(summary_path).read_text(encoding="utf-8"))
+          item = summary["selected_by_fanout"][fanout]
+          selected = item["greedy_selected"]
+          raw_global = item["global_budget2_subset"]
+          global_subset = [] if raw_global == "EMPTY" else raw_global.split(" + ")
+          with Path(output_path).open("a", encoding="utf-8") as handle:
+              handle.write("selected_json=" + json.dumps(selected, separators=(",", ":")) + "\n")
+              handle.write("global_json=" + json.dumps(global_subset, separators=(",", ":")) + "\n")
+              handle.write("global_diff=" + str(selected != global_subset).lower() + "\n")
+          PY
+
+      - name: Evaluate adaptive configuration
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/adaptive"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_configuration.py \
+            --fanout "$FANOUT" \
+            --model-name "adaptive-f${FANOUT}-mcfg" \
+            --observer-json '${{ steps.selection.outputs.selected_json }}' \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --exact-crosscheck \
+            --output "$PART_ROOT/configurations/adaptive"
+
+      - name: Evaluate trivial configuration
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/trivial"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_configuration.py \
+            --fanout "$FANOUT" \
+            --model-name "trivial-f${FANOUT}-mcfg" \
+            --observer-json '[]' \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --output "$PART_ROOT/configurations/trivial"
+
+      - name: Evaluate full-product configuration
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/full-product"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_configuration.py \
+            --fanout "$FANOUT" \
+            --model-name "full-product-f${FANOUT}-mcfg" \
+            --observer-json '["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]' \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --output "$PART_ROOT/configurations/full-product"
+
+      - name: Evaluate global optimum when different from greedy
+        if: steps.selection.outputs.global_diff == 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/configurations/global-optimum"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_configuration.py \
+            --fanout "$FANOUT" \
+            --model-name "global-optimum-f${FANOUT}-mcfg" \
+            --observer-json '${{ steps.selection.outputs.global_json }}' \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --max-values-per-nt "$MAX_VALUES_PER_NT" \
+            --max-total-values "$MAX_TOTAL_VALUES" \
+            --output "$PART_ROOT/configurations/global-optimum"
+
+      - name: Evaluate learned non-MCFG baselines
+        if: matrix.fanout == 1
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p "$PART_ROOT/baselines"
+          cd "$EXPERIMENT_DIR"
+          python -u evaluate_v15_baselines.py \
+            --max-test-count "$MAX_TEST_COUNT" \
+            --output "$PART_ROOT/baselines"
+
+      - name: Assemble fan-out artifact
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd "$EXPERIMENT_DIR"
+          python assemble_v15_fanout.py \
+            --fanout "$FANOUT" \
+            --selection "$PART_ROOT/selection" \
+            --config-root "$PART_ROOT/configurations" \
+            --baselines "$PART_ROOT/baselines" \
+            --output "$PART_ROOT/final"
+
+          python - "$PART_ROOT/final/summary.json" <<'PY'
+          import json, sys
+          summary = json.load(open(sys.argv[1], encoding="utf-8"))
+          assert summary["ready_for_manuscript"] is True, summary
+          print(json.dumps({
+              "fanout": summary["requested_fanouts"],
+              "selected": summary["selected_by_fanout"],
+              "ready": summary["ready_for_manuscript"],
+          }, indent=2))
+          PY
+
+          mkdir -p "$PART_ROOT/upload/fanout-$FANOUT"
+          cp -a "$PART_ROOT/final/." "$PART_ROOT/upload/fanout-$FANOUT/"
+          cp "$GITHUB_WORKSPACE/v15-merged-files-f${FANOUT}.txt" "$PART_ROOT/upload/fanout-$FANOUT/"
+
+      - name: Upload fan-out result
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-fanout-${{ matrix.fanout }}-${{ github.run_id }}
+          path: v15-parts-f${{ matrix.fanout }}/upload
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload fan-out diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-fanout-${{ matrix.fanout }}-diagnostics-${{ github.run_id }}
+          path: |
+            v15-parts-f${{ matrix.fanout }}
+            v15-merged-files-f${{ matrix.fanout }}.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  consolidate:
+    name: Consolidate V15 manuscript artifact
+    needs: fanout_audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Download all fan-out artifacts
+        uses: actions/download-artifact@v5
+        with:
+          pattern: adp-mcfg-v15-fanout-*-${{ github.run_id }}
+          path: v15-download
+          merge-multiple: true
+
+      - name: Consolidate and validate
+        shell: bash
+        run: |
+          set -euxo pipefail
+          find v15-download -maxdepth 3 -type f | sort
+          python LeanCfgProject/adaptive_h_mcfg3/consolidate_v15_fanouts.py \
+            --input-root v15-download \
+            --output adp-mcfg-v15-controlled-independent
+          python - <<'PY'
+          import json
+          summary = json.load(open("adp-mcfg-v15-controlled-independent/summary.json", encoding="utf-8"))
+          assert summary["ready_for_manuscript"] is True, summary
+          print(json.dumps(summary["selected_by_fanout"], indent=2))
+          PY
+
+      - name: Upload consolidated V15 result
+        uses: actions/upload-artifact@v7
+        with:
+          name: adp-mcfg-v15-controlled-independent-${{ github.run_id }}
+          path: adp-mcfg-v15-controlled-independent
+          if-no-files-found: error
+          retention-days: 30
