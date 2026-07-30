@@ -1,7 +1,7 @@
-name: ADP MCFG V15 - independent controlled split and fan-out ablation
+name: ADP MCFG V15.1 - count-isolated independent fan-out ablation
 
 run-name: >-
-  ADP MCFG V15 INDEPENDENT FANOUT AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
+  ADP MCFG V15.1 COUNT-ISOLATED FANOUT AUDIT • ${{ github.event_name }} • run #${{ github.run_number }}
 
 on:
   push:
@@ -15,6 +15,11 @@ on:
         description: Largest completely held-out controlled count
         required: true
         default: 50
+        type: number
+      count_shard_size:
+        description: Number of held-out counts processed in each fresh Python worker
+        required: true
+        default: 1
         type: number
       max_values_per_nt:
         description: Recognition cap per nonterminal
@@ -37,11 +42,12 @@ env:
   V15_PATCH_RELATIVE_DIR: LeanCfgProject/adaptive_h_mcfg3
   MERGED_EXPERIMENT_RELATIVE_DIR: _adaptive_h_mcfg_v15_merged
   MAX_TEST_COUNT: ${{ inputs.max_test_count || 50 }}
+  COUNT_SHARD_SIZE: ${{ inputs.count_shard_size || 1 }}
   MAX_VALUES_PER_NT: ${{ inputs.max_values_per_nt || 25000 }}
   MAX_TOTAL_VALUES: ${{ inputs.max_total_values || 2000000 }}
 
 concurrency:
-  group: adp-mcfg-v15-independent-${{ github.ref }}
+  group: adp-mcfg-v15-1-count-isolated-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -75,6 +81,7 @@ jobs:
           test -f "$BASE/pyproject.toml"
           test -f "$PATCH15/run_controlled_independent_v15.py"
           test -f "$PATCH15/evaluate_v15_configuration.py"
+          test -f "$PATCH15/evaluate_v15_configuration_count_isolated.py"
           test -f "$PATCH15/adaptive_h_mcfg/occurrences.py"
 
           rm -rf "$MERGED"
@@ -98,7 +105,7 @@ jobs:
           python -m pip install -e "$EXPERIMENT_DIR"
           cd "$EXPERIMENT_DIR"
           python -m compileall adaptive_h_mcfg run_controlled_independent_v15.py \
-            evaluate_v15_configuration.py evaluate_v15_baselines.py \
+            evaluate_v15_configuration.py evaluate_v15_configuration_count_isolated.py evaluate_v15_baselines.py \
             assemble_v15_fanout.py consolidate_v15_fanouts.py
           pytest -q
 
@@ -144,11 +151,12 @@ jobs:
           set -euxo pipefail
           mkdir -p "$PART_ROOT/configurations/adaptive"
           cd "$EXPERIMENT_DIR"
-          python -u evaluate_v15_configuration.py \
+          python -u evaluate_v15_configuration_count_isolated.py \
             --fanout "$FANOUT" \
             --model-name "adaptive-f${FANOUT}-mcfg" \
             --observer-json '${{ steps.selection.outputs.selected_json }}' \
             --max-test-count "$MAX_TEST_COUNT" \
+            --count-shard-size "$COUNT_SHARD_SIZE" \
             --max-values-per-nt "$MAX_VALUES_PER_NT" \
             --max-total-values "$MAX_TOTAL_VALUES" \
             --exact-crosscheck \
@@ -160,11 +168,12 @@ jobs:
           set -euxo pipefail
           mkdir -p "$PART_ROOT/configurations/trivial"
           cd "$EXPERIMENT_DIR"
-          python -u evaluate_v15_configuration.py \
+          python -u evaluate_v15_configuration_count_isolated.py \
             --fanout "$FANOUT" \
             --model-name "trivial-f${FANOUT}-mcfg" \
             --observer-json '[]' \
             --max-test-count "$MAX_TEST_COUNT" \
+            --count-shard-size "$COUNT_SHARD_SIZE" \
             --max-values-per-nt "$MAX_VALUES_PER_NT" \
             --max-total-values "$MAX_TOTAL_VALUES" \
             --output "$PART_ROOT/configurations/trivial"
@@ -175,11 +184,12 @@ jobs:
           set -euxo pipefail
           mkdir -p "$PART_ROOT/configurations/full-product"
           cd "$EXPERIMENT_DIR"
-          python -u evaluate_v15_configuration.py \
+          python -u evaluate_v15_configuration_count_isolated.py \
             --fanout "$FANOUT" \
             --model-name "full-product-f${FANOUT}-mcfg" \
             --observer-json '["temporal-boundary-envelope","commit-phase-count-mod-2","effect-count-mod-2","observation-count-mod-2","separator-parity-decoy"]' \
             --max-test-count "$MAX_TEST_COUNT" \
+            --count-shard-size "$COUNT_SHARD_SIZE" \
             --max-values-per-nt "$MAX_VALUES_PER_NT" \
             --max-total-values "$MAX_TOTAL_VALUES" \
             --output "$PART_ROOT/configurations/full-product"
@@ -191,11 +201,12 @@ jobs:
           set -euxo pipefail
           mkdir -p "$PART_ROOT/configurations/global-optimum"
           cd "$EXPERIMENT_DIR"
-          python -u evaluate_v15_configuration.py \
+          python -u evaluate_v15_configuration_count_isolated.py \
             --fanout "$FANOUT" \
             --model-name "global-optimum-f${FANOUT}-mcfg" \
             --observer-json '${{ steps.selection.outputs.global_json }}' \
             --max-test-count "$MAX_TEST_COUNT" \
+            --count-shard-size "$COUNT_SHARD_SIZE" \
             --max-values-per-nt "$MAX_VALUES_PER_NT" \
             --max-total-values "$MAX_TOTAL_VALUES" \
             --output "$PART_ROOT/configurations/global-optimum"
