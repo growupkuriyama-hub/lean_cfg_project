@@ -187,7 +187,10 @@ theorem decodeBinaryTreeNatBits_encode_append :
         some (n, suffix)
 
   | 0, suffix => by
-      rfl
+      simpa [
+        encodeBinaryTreeNatBits,
+        decodeBinaryTreeNatBits
+      ]
 
   | Nat.succ n, suffix => by
       have hrecursive :
@@ -205,9 +208,14 @@ theorem decodeBinaryTreeNatBits_encode_append :
         encodeBinaryTreeNatBits,
         decodeBinaryTreeNatBits,
         List.append_assoc,
-        hrecursive,
-        binaryTreeNatural_reconstruction
+        hrecursive
       ]
+
+      have hdivision :
+          n % 2 + 2 * (n / 2) = n :=
+        Nat.mod_add_div n 2
+
+      omega
 
 termination_by n suffix => n
 decreasing_by
@@ -234,7 +242,10 @@ decreasing_by
         binaryTreeNatBitCost n
 
   | 0 => by
-      rfl
+      simpa [
+        encodeBinaryTreeNatBits,
+        binaryTreeNatBitCost
+      ]
 
   | Nat.succ n => by
       simp [
@@ -245,6 +256,8 @@ decreasing_by
         Nat.add_comm,
         Nat.add_left_comm
       ]
+
+      omega
 
 termination_by n => n
 decreasing_by
@@ -300,7 +313,13 @@ theorem encodeBinaryTreeNatBits_injective
   rw [hcode] at hm
   rw [hn] at hm
 
-  injection hm
+  have hpairs :
+      (n, ([] : List Bool)) =
+        (m, []) := by
+    exact Option.some.inj hm
+
+  exact
+    (congrArg Prod.fst hpairs).symm
 
 /-- Compact standalone natural-code package. -/
 theorem binaryTreeNatBitCodec_package
@@ -344,9 +363,6 @@ def decodeBinaryTreeNatListPayloadAux :
 
   | 0, bits =>
       some ([], bits)
-
-  | Nat.succ _, [] =>
-      none
 
   | Nat.succ fieldCount, bits =>
       match decodeBinaryTreeNatBits bits with
@@ -462,7 +478,7 @@ def decodeBinaryTreeNatListBits
       decodeBinaryTreeNatListPayloadAux_encode_append
         fields []
 
-  rw [hpayload]
+  simp only [hpayload]
 
 /-- Exact bit length of a complete encoded natural list. -/
 @[simp] theorem encodeBinaryTreeNatListBits_length
@@ -499,7 +515,11 @@ theorem encodeBinaryTreeNatListBits_injective
   rw [hcode] at hx
   rw [hy] at hx
 
-  injection hx
+  have hxy :
+      ys = xs := by
+    exact Option.some.inj hx
+
+  exact hxy.symm
 
 end BinaryTreeNaturalListBitCodec
 
@@ -783,12 +803,8 @@ theorem
       (H.encodeCompiledWorkingGrammarNaturalList
         dummy)
 
-  rw [
-    H.encodeCompiledWorkingGrammarLogarithmicBitList_length
-      dummy
-  ] at hbound
-
   simpa [
+    compiledWorkingGrammarLogarithmicBitCount,
     compiledWorkingGrammarMaximumFieldBitCost,
     H.encodeCompiledWorkingGrammarNaturalList_length
       dummy
