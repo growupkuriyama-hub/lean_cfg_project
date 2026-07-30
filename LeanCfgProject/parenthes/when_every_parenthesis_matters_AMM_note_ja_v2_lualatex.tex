@@ -1,0 +1,309 @@
+% Compile with LuaLaTeX:
+% lualatex when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.tex
+% lualatex when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.tex
+\documentclass[11pt]{ltjsarticle}
+
+\usepackage[margin=0.92in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{proposition}[theorem]{命題}
+
+\renewcommand{\proofname}{証明}
+\renewcommand{\abstractname}{概要}
+\renewcommand{\refname}{参考文献}
+\renewcommand{\tablename}{表}
+
+\newcommand{\Q}{\mathbb{Q}}
+
+\title{すべての括弧が必要になるとき}
+\author{栗山貴之}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+変数の順序を $x_1,\ldots,x_n$ に固定し、$+$、$\times$、$/$ を用いて完全括弧付き式を作る。
+最外側以外の任意の一組の括弧を取り除くと、その結果得られる中置式が表す有理関数が変化するとき、
+その式を\emph{剛直}であるという。三行からなる局所規則によって剛直な式を完全に分類でき、
+相異なる剛直な式は相異なる有理関数を表す。剛直な式の個数を $r_n$ とすると、
+\[
+ r_2=3,
+ \qquad
+ r_n=2F_{n+1}\quad(n\ge3),
+\]
+となる。ここで $F_1=F_2=1$ はフィボナッチ数である。
+\end{abstract}
+
+\section{問題}
+
+括弧は、見た目には存在していても、数学的には何の役割も果たしていないことがある。たとえば、
+\[
+ x_1+(x_2/x_3)=x_1+x_2/x_3
+\]
+である。一方、
+\[
+ x_1/(x_2+x_3)\ne x_1/x_2+x_3
+\]
+である。では、内側にあるどの括弧も無意味ではない完全括弧付き式は、いくつあるだろうか。
+
+この順序で並ぶ相異なる不定元 $x_1,\ldots,x_n$ を固定する。
+\emph{完全括弧付き式}とは、葉が左から右へ $x_1,\ldots,x_n$ と並び、内部頂点に
+\[
+ +,\qquad \times,\qquad /
+\]
+のいずれかが付された平面完全二分木である。式は $\Q(x_1,\ldots,x_n)$ の元として比較する。
+式全体を囲む括弧は、取り除いても構文解析も値も変わらないため数えない。これを数えれば剛直な式は存在しない。
+残る $n-2$ 組の括弧は、それぞれ二つの内部頂点を結ぶ一辺に対応する。
+
+一組の括弧を取り除いた後の中置式は、次の規約に従って構文解析する。
+$\times$ と $/$ は同じ優先順位をもち左結合、$+$ はそれらより低い優先順位をもち左結合とする。
+答えはこの規約に依存し、たとえば積と商を右結合とすれば、$(A/B)\times C$ の括弧は一般に必要になる。
+
+他のすべての括弧を残したまま一組だけを取り除いたとき、式が表す有理関数が変化するなら、その括弧を
+\emph{必要}であるという。$n-2$ 個の候補括弧がすべて必要であるとき、その式を\emph{剛直}であるという。
+$x_1,\ldots,x_n$ 上の剛直な式の個数を $r_n$ とする。
+$n=2$ では候補括弧がないので、三つの一演算式は空虚に剛直であり、$r_2=3$ である。
+
+変数が三つの場合、剛直な式は次の六つである。
+\[
+\begin{gathered}
+ (x_1+x_2)\times x_3,\qquad
+ (x_1+x_2)/x_3,\qquad
+ x_1\times(x_2+x_3),\\
+ x_1/(x_2+x_3),\qquad
+ x_1/(x_2\times x_3),\qquad
+ x_1/(x_2/x_3).
+\end{gathered}
+\]
+ここでは最外側の括弧を表示していない。
+
+本稿の対象は、括弧が最小限に付された中置文字列ではなく、完全括弧付き二分木である。
+木を固定することで、指定された括弧の必要性が辺に局所的な性質になる。
+本稿では三つの演算だけを扱う。減算を加えると別の数え上げ問題が生じる。
+
+\section{局所規則}
+
+根の演算が $+$ である内部子を\emph{加法的}であるという。
+次の表は、内部子を囲む括弧が必要であるかどうかを決定する。
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{ccc}
+\toprule
+親 & 左の内部子 & 右の内部子 \\
+\midrule
+$+$      & 決して必要でない & 決して必要でない \\
+$\times$ & 加法的な場合に限り必要 & 加法的な場合に限り必要 \\
+$/$      & 加法的な場合に限り必要 & 常に必要 \\
+\bottomrule
+\end{tabular}
+\caption{内部子を囲む括弧が必要となる条件。}
+\label{tab:local}
+\end{table}
+
+\begin{lemma}[局所規則]\label{lem:local}
+完全括弧付き式の根でない内部頂点を $v$ とし、その親を $p$ とする。
+辺 $pv$ に対応する括弧が必要であるための必要十分条件は、
+表~\ref{tab:local} の対応する欄で「必要」とされていることである。
+\end{lemma}
+
+\begin{proof}
+考察している一組以外の括弧はすべて残す。局所的には式は三つの空でないブロック $A,B,C$ からなる。
+
+まず、任意の空でないブロックを、指定された任意の正の有理数に特殊化でき、しかもそのすべての部分式を
+正にできる。加法節点では子の値を $(q/2,q/2)$ とし、乗法節点または除法節点では $(q,1)$ とすればよい。
+$A,B,C$ は互いに素な変数集合を含むので、それぞれの値を独立に指定できる。
+
+親が $+$ なら、どちらの子を露出させても値は変わらない。加法的な子は結合則によって吸収され、
+乗法または除法を根にもつ子は優先順位によって保護されるからである。
+
+親が $\times$ なら、根が $\times$ または $/$ である子は露出させてもよい。実際、
+\[
+ (A\times B)\times C=A\times B\times C,
+ \qquad
+ (A/B)\times C=A/B\times C
+\]
+であり、右の子についても同様である。一方、加法的な子は露出させられない。たとえば、
+\[
+ (1+1)\times2=4\ne3=1+1\times2
+\]
+であり、右の子についても同様の正の特殊化が使える。
+
+親が $/$ なら、左の子の根が $\times$ または $/$ である場合は、左結合の規約により括弧を取り除ける。
+左の子が加法的なら取り除けず、たとえば
+\[
+ (1+1)/2=1\ne\frac32=1+1/2
+\]
+である。内部右子は根の演算にかかわらず括弧を必要とする。三つの場合は、たとえば
+\[
+ \frac{1}{1+1}\ne \frac11+1,
+ \qquad
+ \frac{1}{1\times2}\ne \frac11\times2,
+ \qquad
+ \frac{1}{1/2}\ne \frac11/2
+\]
+で区別できる。最初の観察により、これらの証人は任意の大きさのブロックの内部で実現できる。
+したがって、表で必要とされる場合には、括弧の削除によって局所部分木が表す有理関数が変化する。
+
+最後に、その変化が木の上方で消えないことを示す。
+$K=\Q(x_1,\ldots,x_n)$ とし、削除前後の局所部分木が表す有理関数を $f,g\in K$ とする。
+上の特殊化から $f\ne g$ である。両側に現れる中間式と兄弟部分木はすべて $K$ の非零元である。
+実際、全変数を $1$ とおけば正の値をもつ。各祖先で兄弟部分木の値を $h$ とすると、現在の値 $u$ は
+\[
+ u\longmapsto u+h,
+ \qquad
+ u\longmapsto hu,
+ \qquad
+ u\longmapsto u/h,
+ \qquad
+ u\longmapsto h/u
+\]
+のいずれかで変換される。ここで $h\ne0$ であり、最後の場合は $u\ne0$ である。
+これらはそれぞれの定義域上で単射なので、局所的な差は根まで伝わる。
+\end{proof}
+
+同じ単射性の議論から、部分木の内部にある候補括弧は、その部分木で必要であるとき、かつそのときに限り、
+式全体でも必要である。以下ではこの\emph{文脈独立性}を用いる。
+
+\section{構造とフィボナッチ数}
+
+\begin{proposition}[構造分類]\label{prop:structure}
+少なくとも二つの葉をもつ完全括弧付き式が剛直であるための必要十分条件は、
+次の三つのうちちょうど一つが成り立つことである。
+\begin{enumerate}
+\item 根が $+$ であり、二つの子がともに葉である。
+\item 根が $\times$ であり、各子が葉または二葉の和である。
+\item 根が $/$ であり、左の子が葉または二葉の和で、右の子が葉または剛直な式である。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+式が剛直であるとする。根が $+$ なら、局所規則により内部子は許されず、二つの子はともに葉である。
+根が $\times$ なら、すべての内部子は加法的でなければならない。
+文脈独立性により、そのような子自身も剛直なので、第一の場合から二葉の和である。
+根が $/$ の場合、左の子には同じ議論が適用されるが、内部右子の根演算には制限がなく、
+その右部分木は文脈独立性により剛直である。
+
+逆に、列挙した三つの形のいずれかをもつ式では、根の直下の括弧は局所規則により必要であり、
+剛直な子の内部にある括弧も文脈独立性により式全体で必要である。したがって式全体が剛直である。
+\end{proof}
+
+\begin{theorem}\label{thm:main}
+$F_1=F_2=1$ とする。このとき、
+\[
+ r_2=3,
+ \qquad
+ r_n=2F_{n+1}\quad(n\ge3)
+\]
+である。したがって、
+\[
+ r_2,r_3,r_4,r_5,r_6,r_7,r_8,\ldots
+   =3,6,10,16,26,42,68,\ldots
+\]
+となる。
+\end{theorem}
+
+\begin{proof}
+すでに $r_2=3$ と $r_3=6$ を得ている。
+葉が四つの場合、根が乗法である式は、左右に二葉の和をもつ一つだけである。
+根が除法である式は、左のブロックが一葉または二葉である場合に応じて
+\[
+ r_3+r_2=6+3=9
+\]
+個あるので、$r_4=10$ である。
+
+$n\ge5$ とする。構造分類により根は $+$ にも $\times$ にもなれないので、$/$ である。
+左の子は葉 $x_1$ で、右に $x_2,\ldots,x_n$ 上の任意の剛直な式を置くか、
+和 $x_1+x_2$ で、右に $x_3,\ldots,x_n$ 上の任意の剛直な式を置く。
+したがって
+\[
+ r_n=r_{n-1}+r_{n-2}\qquad(n\ge5).
+\]
+$r_3=6=2F_4$ および $r_4=10=2F_5$ から主張が従う。
+\end{proof}
+
+この漸化式は、フィボナッチ数に現れるモノマー--ドミノ型の選択を表している。
+また、初期値と漸化式から、通常母関数は
+\[
+ R(z)=\sum_{n\ge2}r_nz^n
+     =\frac{3z^2+3z^3+z^4}{1-z-z^2}
+\]
+である。
+
+\begin{proposition}\label{prop:distinct}
+相異なる剛直な式は、相異なる有理関数を表す。
+\end{proposition}
+
+\begin{proof}
+$x_i$ および $x_i+x_{i+1}$ を\emph{基本ブロック}と呼ぶ。
+構造分類により、任意の葉または剛直な式が表す有理関数は
+\[
+ \prod_{j=1}^k b_j^{\varepsilon_j},
+ \qquad \varepsilon_j\in\{1,-1\}
+\]
+と書ける。ここで $b_j$ は、左から右へ並ぶ互いに素な変数区間上の基本ブロックである。
+乗法は二つの正の基本ブロックを連結し、除法は左の基本ブロックを先頭に置いて、
+右の子の因子に付く符号をすべて反転させる。
+
+各基本ブロックは一意分解整域 $\Q[x_1,\ldots,x_n]$ のモニックな既約一次多項式であり、
+相異なる基本ブロックは互いに同伴でない。したがって、有理関数から符号付き基本因子列が一意に定まる。
+一因子の列は葉または二葉の和を、二つの正因子はその積を与える。
+それ以外では、構造分類により第一因子が左の子で、根は除法である。
+残りの符号をすべて反転すれば右の子を再帰的に復元できる。
+よって有理関数から式が一意に定まる。
+\end{proof}
+
+\section*{位置づけ}
+
+冗長な括弧に関する先行研究は、主として優先順位と結合規則のもとで構文を保存する文法や
+アンパーシングを扱う \cite{Ramsey,Bates,Lotfallah}。一方、関連する算術式の数え上げでは、
+有理関数の同値類が研究されている \cite{StosicDamnjanovicRandelovic,Cohen}。
+本稿では完全括弧付き木を固定し、その各内側括弧が意味論的に必要であることを要求する。
+OEIS の記法では$ r_n=A118658(n+2)$ for $n\ge3$
+であり、定理~\ref{thm:main} はこの数列に括弧による解釈を与える \cite{OEIS}。
+OEIS A155069 は、$+$ と $-$ を用いた最小括弧付き中置文字列を数える別のモデルである。
+
+\begin{thebibliography}{9}
+\scriptsize
+\setlength{\itemsep}{-1pt}
+
+\bibitem{Bates}
+R. M. Bates,
+Distinguishing redundant parentheses by syntax,
+\emph{Internat. J. Comput. Math.} \textbf{82} (2005), 951--967.
+
+\bibitem{Cohen}
+B. Cohen,
+The number of non-isomorphic arithmetic expressions that can be constructed
+using $+,-,\times$, and $/$,
+arXiv:2602.18522 (2026).
+
+\bibitem{Lotfallah}
+W. B. Lotfallah,
+Characterizing unambiguous precedence systems in expressions without
+superfluous parentheses,
+\emph{Internat. J. Comput. Math.} \textbf{86} (2009), 1--20.
+
+\bibitem{Ramsey}
+N. Ramsey,
+Unparsing expressions with prefix and postfix operators,
+\emph{Software: Practice and Experience} \textbf{28} (1998), 1327--1356.
+
+\bibitem{StosicDamnjanovicRandelovic}
+I. Sto\v{s}i\'c, I. Damnjanovi\'c, and \v{Z}. Ran{\dj}elovi\'c,
+Counting the number of inequivalent arithmetic expressions on $n$ variables,
+\emph{Filomat} \textbf{39} (2025), 949--962.
+
+\bibitem{OEIS}
+N. J. A. Sloane and The OEIS Foundation Inc.,
+The On-Line Encyclopedia of Integer Sequences, A118658 and A155069.
+
+\end{thebibliography}
+
+\end{document}

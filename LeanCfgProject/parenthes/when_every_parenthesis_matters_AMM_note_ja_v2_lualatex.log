@@ -1,7 +1,7 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  30 JUL 2026 20:35
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  30 JUL 2026 20:52
  restricted system commands enabled.
-**when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.tex
-(./when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.tex
+**when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.tex
+(./when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 Lua module: luaotfload 2024-12-03 v3.29 Lua based OpenType font support
@@ -968,33 +968,33 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip58
 )
 \c@theorem=\count325
- (./when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.aux)
-\openout1 = when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.aux
+ (./when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.aux)
+\openout1 = when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.aux
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for JY3/mc/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for JT3/mc/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 29.
-LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for JY3/mc/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for JT3/mc/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: luatex
@@ -1030,182 +1030,174 @@ LaTeX Font Info:    ... okay on input line 29.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 29.
-(./when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.out)
-(./when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.out)
+Package hyperref Info: Link coloring OFF on input line 26.
+(./when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.out)
+(./when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.out)
 \@outlinefile=\write3
 
-\openout3 = when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.out
+\openout3 = when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.out
 (load cache: extra_lmroman17-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 15.97903pt on input line 31.
+(Font)              scaled to size 15.97903pt on input line 28.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 15.97903pt on input line 31.
+(Font)              scaled to size 15.97903pt on input line 28.
 (load cache: extra_lmroman12-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 11.09656pt on input line 31.
+(Font)              scaled to size 11.09656pt on input line 28.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 11.09656pt on input line 31.
-LaTeX Font Info:    Calculating math sizes for size <13.14001> on input line 31
+(Font)              scaled to size 11.09656pt on input line 28.
+LaTeX Font Info:    Calculating math sizes for size <13.14001> on input line 28
 .
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 7.76755pt on input line 31.
+(Font)              scaled to size 7.76755pt on input line 28.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 5.54828pt on input line 31.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 31.
+(Font)              scaled to size 5.54828pt on input line 28.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 28.
 
 
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 31.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 28.
 
 
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 8.32242pt on input line 32.
+(Font)              scaled to size 8.32242pt on input line 29.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 8.32242pt on input line 32.
+(Font)              scaled to size 8.32242pt on input line 29.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 8.32242pt on input line 32.
+(Font)              scaled to size 8.32242pt on input line 29.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 8.32242pt on input line 32.
+(Font)              scaled to size 8.32242pt on input line 29.
 (load cache: extra_haranoajigothic-medium.luc)(load cache: extra_lmsans9-regular
 .luc)
-LaTeX Font Info:    Calculating math sizes for size <9.85501> on input line 33.
+LaTeX Font Info:    Calculating math sizes for size <9.85501> on input line 30.
 
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4.5> not available
-(Font)              size <5> substituted on input line 33.
+(Font)              size <5> substituted on input line 30.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <4.5> not available
-(Font)              size <5> substituted on input line 33.
+(Font)              size <5> substituted on input line 30.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <4.5> not available
-(Font)              size <5> substituted on input line 33.
+(Font)              size <5> substituted on input line 30.
 
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 5.82565pt on input line 33.
+(Font)              scaled to size 5.82565pt on input line 30.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 4.16121pt on input line 33.
+(Font)              scaled to size 4.16121pt on input line 30.
 (load cache: extra_lmroman9-italic.luc)
 LaTeX Font Info:    Font shape `JT3/gt/m/it' in size <9> not available
-(Font)              Font shape `JT3/gt/m/n' tried instead on input line 35.
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 32.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 7.60036pt on input line 35.
+(Font)              scaled to size 7.60036pt on input line 32.
 LaTeX Font Info:    Font shape `JY3/gt/m/it' in size <9> not available
-(Font)              Font shape `JY3/gt/m/n' tried instead on input line 35.
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 32.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 7.60036pt on input line 35.
+(Font)              scaled to size 7.60036pt on input line 32.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 13.31584pt on input line 45.
+(Font)              scaled to size 13.31584pt on input line 42.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 13.31584pt on input line 45.
+(Font)              scaled to size 13.31584pt on input line 42.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 13.31584pt on input line 45.
+(Font)              scaled to size 13.31584pt on input line 42.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 13.31584pt on input line 45.
+(Font)              scaled to size 13.31584pt on input line 42.
 (load cache: extra_lmsans12-regular.luc)
-LaTeX Font Info:    Calculating math sizes for size <10.95001> on input line 48
+LaTeX Font Info:    Calculating math sizes for size <10.95001> on input line 45
 .
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 6.47295pt on input line 48.
+(Font)              scaled to size 6.47295pt on input line 45.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 4.62357pt on input line 48.
+(Font)              scaled to size 4.62357pt on input line 45.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 9.24713pt on input line 58.
+(Font)              scaled to size 9.24713pt on input line 55.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 9.24713pt on input line 58.
+(Font)              scaled to size 9.24713pt on input line 55.
 (load cache: extra_lmroman10-italic.luc)
 LaTeX Font Info:    Font shape `JT3/gt/m/it' in size <10> not available
-(Font)              Font shape `JT3/gt/m/n' tried instead on input line 58.
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 55.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 8.44485pt on input line 58.
+(Font)              scaled to size 8.44485pt on input line 55.
 LaTeX Font Info:    Font shape `JY3/gt/m/it' in size <10> not available
-(Font)              Font shape `JY3/gt/m/n' tried instead on input line 58.
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 55.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 8.44485pt on input line 58.
+(Font)              scaled to size 8.44485pt on input line 55.
 [1
 
 {C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 LaTeX Font Info:    Font shape `JT3/mc/m/it' in size <10> not available
-(Font)              Font shape `JT3/mc/m/n' tried instead on input line 126.
+(Font)              Font shape `JT3/mc/m/n' tried instead on input line 110.
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 8.44485pt on input line 126.
+(Font)              scaled to size 8.44485pt on input line 110.
 LaTeX Font Info:    Font shape `JY3/mc/m/it' in size <10> not available
-(Font)              Font shape `JY3/mc/m/n' tried instead on input line 126.
+(Font)              Font shape `JY3/mc/m/n' tried instead on input line 110.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 8.44485pt on input line 126.
+(Font)              scaled to size 8.44485pt on input line 110.
 (load cache: extra_lmroman10-bold.luc)
 LaTeX Font Info:    Font shape `JT3/mc/b/n' in size <10> not available
-(Font)              Font shape `JT3/gt/m/n' tried instead on input line 126.
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 110.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 8.44485pt on input line 126.
+(Font)              scaled to size 8.44485pt on input line 110.
 LaTeX Font Info:    Font shape `JY3/mc/b/n' in size <10> not available
-(Font)              Font shape `JY3/gt/m/n' tried instead on input line 126.
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 110.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 8.44485pt on input line 126.
+(Font)              scaled to size 8.44485pt on input line 110.
  [2]
-[3] [4] [5]
+[3](load cache: extra_lmroman7-regular.luc)
+LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
+(Font)              scaled to size 6.47299pt on input line 273.
+LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
+(Font)              scaled to size 6.47299pt on input line 273.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 7.3977pt on input line 393.
+(Font)              scaled to size 6.47299pt on input line 279.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 7.3977pt on input line 393.
-(load cache: extra_lmroman8-italic.luc)
-LaTeX Font Info:    Font shape `JT3/gt/m/it' in size <8> not available
-(Font)              Font shape `JT3/gt/m/n' tried instead on input line 393.
+(Font)              scaled to size 6.47299pt on input line 279.
+(load cache: extra_lmroman7-italic.luc)
+LaTeX Font Info:    Font shape `JT3/gt/m/it' in size <7> not available
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 279.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 6.75587pt on input line 393.
-LaTeX Font Info:    Font shape `JY3/gt/m/it' in size <8> not available
-(Font)              Font shape `JY3/gt/m/n' tried instead on input line 393.
+(Font)              scaled to size 5.91139pt on input line 279.
+LaTeX Font Info:    Font shape `JY3/gt/m/it' in size <7> not available
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 279.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 6.75587pt on input line 393.
-(load cache: extra_lmroman8-bold.luc)
-LaTeX Font Info:    Font shape `JT3/mc/b/n' in size <8> not available
-(Font)              Font shape `JT3/gt/m/n' tried instead on input line 393.
+(Font)              scaled to size 5.91139pt on input line 279.
+(load cache: extra_lmroman7-bold.luc)
+LaTeX Font Info:    Font shape `JT3/mc/b/n' in size <7> not available
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 279.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 6.75587pt on input line 393.
-LaTeX Font Info:    Font shape `JY3/mc/b/n' in size <8> not available
-(Font)              Font shape `JY3/gt/m/n' tried instead on input line 393.
+(Font)              scaled to size 5.91139pt on input line 279.
+LaTeX Font Info:    Font shape `JY3/mc/b/n' in size <7> not available
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 279.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 6.75587pt on input line 393.
-LaTeX Font Info:    Calculating math sizes for size <8.76001> on input line 398
+(Font)              scaled to size 5.91139pt on input line 279.
+LaTeX Font Info:    Calculating math sizes for size <7.66501> on input line 284
 .
 
 
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <5.59996> not available
-(Font)              size <6> substituted on input line 398.
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <3.5> not available
+(Font)              size <5> substituted on input line 284.
 
 
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 398.
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <3.5> not available
+(Font)              size <5> substituted on input line 284.
 
 
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <5.59996> not available
-(Font)              size <6> substituted on input line 398.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <4> not available
-(Font)              size <5> substituted on input line 398.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <5.59996> not available
-(Font)              size <6> substituted on input line 398.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 398.
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <3.5> not available
+(Font)              size <5> substituted on input line 284.
 
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 5.17834pt on input line 398.
+(Font)              scaled to size 4.53107pt on input line 284.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 3.69885pt on input line 398.
-[6] (./when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.aux)
+(Font)              scaled to size 3.2365pt on input line 284.
+[4] (./when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -1213,28 +1205,28 @@ L3 programming layer <2026-01-19>
 
 
 LaTeX Font Warning: Size substitutions with differences
-(Font)              up to 1.0pt have occurred.
+(Font)              up to 1.5pt have occurred.
 
-Package rerunfilecheck Info: File `when_every_parenthesis_matters_AMM_note_v3_j
-a_lualatex.out' has not changed.
-(rerunfilecheck)             Checksum: ED742F3C3EE90657DC6E15402AC40163;404.
+Package rerunfilecheck Info: File `when_every_parenthesis_matters_AMM_note_ja_v
+2_lualatex.out' has not changed.
+(rerunfilecheck)             Checksum: 65F1296E5B16670E10D85349802F3F68;257.
 )
 
 Here is how much of LuaTeX's memory you used:
- 11582 strings out of 476076
- 244657,662416 words of node,token memory allocated
- 1666 words of node memory still in use:
-   10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 478 attribute, 57 glue_sp
-ec, 55 attribute_list, 1 write, 13 user_defined nodes
-   avail lists: 1:17,2:49763,3:425,4:185,5:200,6:45,7:7038,8:67,9:3031,10:28,11:
+ 11569 strings out of 476076
+ 195717,662416 words of node,token memory allocated
+ 1450 words of node memory still in use:
+   10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 379 attribute, 57 glue_sp
+ec, 46 attribute_list, 1 write, 13 user_defined nodes
+   avail lists: 1:16,2:43235,3:394,4:203,5:144,6:48,7:6469,8:66,9:2736,10:21,11:
 154
- 33776 multiletter control sequences out of 65536+600000
- 108 fonts using 85688743 bytes
- 119i,9n,112p,2078b,490s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman8-
+ 33768 multiletter control sequences out of 65536+600000
+ 110 fonts using 89603479 bytes
+ 119i,9n,112p,2078b,469s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman7-
 bold.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/
-lmroman8-italic.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype
-/public/lm/lmroman8-regular.otf><c:/users/owner/appdata/local/programs/miktex/fo
+lmroman7-italic.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype
+/public/lm/lmroman7-regular.otf><c:/users/owner/appdata/local/programs/miktex/fo
 nts/opentype/public/lm/lmroman10-italic.otf><c:/users/owner/appdata/local/progra
 ms/miktex/fonts/opentype/public/lm/lmroman10-bold.otf><c:/users/owner/appdata/lo
 cal/programs/miktex/fonts/opentype/public/lm/lmroman9-regular.otf><c:/users/owne
@@ -1249,23 +1241,20 @@ Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C
 .pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
 m/cmmi6.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmmi7.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/amsfonts/cm/cmmi8.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/ty
-pe1/public/amsfonts/cm/cmmi9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Owner/AppData/Local/Programs/M
-iKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Owner/AppData/Local/Prog
-rams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Owner/AppData/Loca
-l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Owner/AppDat
-a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/Owner/
-AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/User
-s/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><
-C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy
-8.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/
-cm/cmsy9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
-sfonts/symbols/msbm10.pfb>
-Output written on when_every_parenthesis_matters_AMM_note_v3_ja_lualatex.pdf (6
- pages, 331091 bytes).
+lic/amsfonts/cm/cmmi9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Owner/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Owner/AppData/Local/Progr
+ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/Owner/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Owner/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Owne
+r/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Use
+rs/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm1
+0.pfb>
+Output written on when_every_parenthesis_matters_AMM_note_ja_v2_lualatex.pdf (4
+ pages, 266318 bytes).
 
-PDF statistics: 227 PDF objects out of 1000 (max. 8388607)
- 29 named destinations out of 1000 (max. 1048576)
- 33 words of extra memory for PDF output out of 10000 (max. 100000000)
+PDF statistics: 188 PDF objects out of 1000 (max. 8388607)
+ 24 named destinations out of 1000 (max. 1048576)
+ 25 words of extra memory for PDF output out of 10000 (max. 100000000)
 

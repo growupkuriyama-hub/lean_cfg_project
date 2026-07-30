@@ -414,20 +414,18 @@ theorem compiledWorkingGrammarNaturalFieldValueBound_eq
         (H.compiledWorkingGrammarMaximumNaturalFieldValue
           dummy) := by
 
-  change
+  unfold
+    compiledWorkingGrammarNaturalFieldValueBound
+    compiledWorkingGrammarMaximumNaturalFieldValue
     naturalFieldValueBound
-        (H.encodeCompiledWorkingGrammarNaturalList dummy) =
-      max
-        (H.compiledWorkingGrammarNaturalFieldCount dummy)
-        (maximumNaturalFieldValue
-          (H.encodeCompiledWorkingGrammarNaturalList dummy))
 
-  unfold naturalFieldValueBound
-
-  rw [
-    H.encodeCompiledWorkingGrammarNaturalList_length
-      dummy
-  ]
+  exact
+    congrArg
+      (fun count =>
+        max count
+          (maximumNaturalFieldValue
+            (H.encodeCompiledWorkingGrammarNaturalList dummy)))
+      (H.encodeCompiledWorkingGrammarNaturalList_length dummy)
 
 /-- The complete grammar natural-field count is bounded by the single field
 value bound. -/
@@ -438,17 +436,12 @@ theorem
       H.compiledWorkingGrammarNaturalFieldValueBound
         dummy := by
 
-  change
-    H.compiledWorkingGrammarNaturalFieldCount dummy <=
-      naturalFieldValueBound
-        (H.encodeCompiledWorkingGrammarNaturalList dummy)
+  unfold compiledWorkingGrammarNaturalFieldValueBound
 
   calc
     H.compiledWorkingGrammarNaturalFieldCount dummy =
-        (H.encodeCompiledWorkingGrammarNaturalList dummy).length := by
-      exact
-        (H.encodeCompiledWorkingGrammarNaturalList_length
-          dummy).symm
+        (H.encodeCompiledWorkingGrammarNaturalList dummy).length :=
+      (H.encodeCompiledWorkingGrammarNaturalList_length dummy).symm
 
     _ <=
         naturalFieldValueBound
@@ -523,35 +516,45 @@ theorem
 
   classical
 
-  have hbound :=
-    encodeBinaryTreeNatListBits_length_le_binaryNatCodeLength_valueBound
-      (H.encodeCompiledWorkingGrammarNaturalList dummy)
+  let fields :=
+    H.encodeCompiledWorkingGrammarNaturalList dummy
+
+  have hlength :
+      fields.length =
+        H.compiledWorkingGrammarNaturalFieldCount dummy := by
+
+    simpa only [fields] using
+      H.encodeCompiledWorkingGrammarNaturalList_length dummy
+
+  have hvalueBound :
+      naturalFieldValueBound fields =
+        H.compiledWorkingGrammarNaturalFieldValueBound dummy := by
+
+    rfl
 
   have hbitCount :
       H.compiledWorkingGrammarLogarithmicBitCount dummy =
-        (encodeBinaryTreeNatListBits
-          (H.encodeCompiledWorkingGrammarNaturalList dummy)).length := by
+        (encodeBinaryTreeNatListBits fields).length := by
 
     unfold compiledWorkingGrammarLogarithmicBitCount
 
-    exact
+    simpa only [fields] using
       (encodeBinaryTreeNatListBits_length
         (H.encodeCompiledWorkingGrammarNaturalList dummy)).symm
 
   calc
     H.compiledWorkingGrammarLogarithmicBitCount dummy =
-        (encodeBinaryTreeNatListBits
-          (H.encodeCompiledWorkingGrammarNaturalList dummy)).length :=
+        (encodeBinaryTreeNatListBits fields).length :=
       hbitCount
 
     _ <=
-        ((H.encodeCompiledWorkingGrammarNaturalList dummy).length + 1) *
+        (fields.length + 1) *
           (2 *
               binaryNatCodeLength
-                (naturalFieldValueBound
-                  (H.encodeCompiledWorkingGrammarNaturalList dummy)) +
+                (naturalFieldValueBound fields) +
             1) :=
-      hbound
+      encodeBinaryTreeNatListBits_length_le_binaryNatCodeLength_valueBound
+        fields
 
     _ =
         (H.compiledWorkingGrammarNaturalFieldCount dummy + 1) *
@@ -560,10 +563,7 @@ theorem
                 (H.compiledWorkingGrammarNaturalFieldValueBound dummy) +
             1) := by
 
-      rw [
-        H.encodeCompiledWorkingGrammarNaturalList_length
-          dummy
-      ]
+      rw [hlength, hvalueBound]
 
 /-- The maximum recursive field cost is bounded by the same one-value standard
 binary width. -/
