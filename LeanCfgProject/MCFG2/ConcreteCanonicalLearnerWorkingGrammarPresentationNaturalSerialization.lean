@@ -527,7 +527,7 @@ noncomputable def encodeCompiledGrammarPresentationEntryStream
       payload.length ::
         (payload ++
           encodeCompiledGrammarPresentationEntryStream
-            (H := H) dummy entries)
+            dummy entries)
 
 /-- Parse exactly the prescribed number of length-framed presentation entries,
 retaining the unconsumed natural suffix. -/
@@ -564,7 +564,7 @@ noncomputable def decodeCompiledGrammarPresentationEntryStreamAux
           | some entry =>
               match
                   decodeCompiledGrammarPresentationEntryStreamAux
-                    (H := H) dummy entryCount suffix with
+                    dummy entryCount suffix with
 
               | none =>
                   none
@@ -649,7 +649,7 @@ theorem
                 suffix) =
             some (entries, suffix) :=
         decodeCompiledGrammarPresentationEntryStreamAux_encode_append
-          (H := H) dummy entries suffix hrest
+          dummy entries suffix hrest
 
       simp [
         encodeCompiledGrammarPresentationEntryStream,
@@ -720,7 +720,7 @@ field plus the fields of its entry payload. -/
         encodeCompiledGrammarPresentationEntryStream,
         H.encodeCompiledGrammarPresentationEntryNaturalList_length,
         encodeCompiledGrammarPresentationEntryStream_length
-          (H := H) dummy entries,
+          dummy entries,
         Nat.add_assoc,
         Nat.add_comm,
         Nat.add_left_comm
