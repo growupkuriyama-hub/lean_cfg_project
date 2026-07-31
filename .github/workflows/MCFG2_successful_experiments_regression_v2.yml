@@ -1,4 +1,4 @@
-name: MCFG2 Successful Experiments Regression v1
+name: MCFG2 Successful Experiments Regression v2
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
       - "lakefile.lean"
       - "lake-manifest.json"
       - "lean-toolchain"
-      - ".github/workflows/MCFG2_successful_experiments_regression_v1.yml"
+      - ".github/workflows/MCFG2_successful_experiments_regression_v2.yml"
 
 permissions:
   contents: read
@@ -18,16 +18,16 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MCFG2_SUCCESS_VERSION: "v1-223-confirmed-through-run-30625237827"
+  MCFG2_SUCCESS_VERSION: "v2-210-directly-confirmed-through-run-30628272441"
   MCFG2_ROOT: LeanCfgProject/MCFG2
-  MCFG2_SUCCESS_COUNT: "223"
+  MCFG2_SUCCESS_COUNT: "210"
   MCFG2_TOTAL_SNAPSHOT_COUNT: "303"
-  MCFG2_UNVERIFIED_COUNT: "80"
+  MCFG2_UNVERIFIED_COUNT: "93"
   MCFG2_SUCCESS_SHARDS: "12"
 
 jobs:
   prepare:
-    name: Prepare 223 confirmed-success MCFG2 roots
+    name: Prepare 210 directly confirmed-success MCFG2 roots
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -172,31 +172,18 @@ jobs:
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarAutomaticBitWidth
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarAutomaticNaturalFieldBitWidth
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryEncoding
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleFamilyBodyBounds
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalSerialization
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleSerialization
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTerminalClosure
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTokenPayloadBounds
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCanonicalDecodedSearch
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCanonicalSearchSelector
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionComplexity
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionProfile
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRank
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputLearner
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputMindChanges
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCheckedBitRepresentation
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarConstruction
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCutSaturation
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarDenseEncoding
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarDescriptionSize
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarEquivalence
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFinalDescriptionPackage
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFiniteCodeUniverse
-          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFiniteDecodedSearch
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarIdentification
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitSerialization
@@ -380,7 +367,7 @@ jobs:
       - name: Upload successful-root manifest
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-success-v1-manifest
+          name: mcfg2-success-v2-manifest
           path: ci-artifacts/manifest
           if-no-files-found: error
           retention-days: 30
@@ -411,7 +398,7 @@ jobs:
       - name: Download successful-root manifest
         uses: actions/download-artifact@v7
         with:
-          name: mcfg2-success-v1-manifest
+          name: mcfg2-success-v2-manifest
           path: ci-input/manifest
 
       - name: Rebuild every assigned successful root separately
@@ -566,14 +553,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-success-v1-shard-${{ matrix.shard }}
+          name: mcfg2-success-v2-shard-${{ matrix.shard }}
           path: ci-artifacts/shard-${{ matrix.shard }}
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
 
   summarize:
-    name: Summarize all 223 confirmed-success roots
+    name: Summarize all 210 directly confirmed-success roots
     needs:
       - prepare
       - regression
@@ -717,7 +704,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-success-v1-combined-${{ github.run_number }}
+          name: mcfg2-success-v2-combined-${{ github.run_number }}
           path: ci-artifacts/combined
           if-no-files-found: error
           retention-days: 30
