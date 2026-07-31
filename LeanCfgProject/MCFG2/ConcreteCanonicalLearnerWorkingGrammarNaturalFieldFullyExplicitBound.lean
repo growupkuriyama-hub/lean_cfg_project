@@ -158,7 +158,8 @@ theorem
             (H.toCutWorkingMCFG dummy).binaryRules := by
 
         simpa [
-          CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries
+          CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries,
+          CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
         ] using hentry
 
       unfold
