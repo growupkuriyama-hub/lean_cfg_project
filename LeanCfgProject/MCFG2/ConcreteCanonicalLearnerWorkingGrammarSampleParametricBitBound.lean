@@ -340,17 +340,38 @@ theorem
             H.compiledWorkingGrammarSampleFanoutPresentationEntryNaturalValueBound
               dummy) := by
 
-    apply
-      list_sum_le_length_mul_of_forall_mem_le
+    have hbounded :
+        ∀ framedCount ∈
+            (H.compiledGrammarPresentationEntries dummy).map
+              (fun entry =>
+                1 +
+                  H.compiledGrammarPresentationEntryNaturalFieldCount
+                    dummy entry),
+          framedCount <=
+            1 +
+              H.compiledWorkingGrammarSampleFanoutPresentationEntryNaturalValueBound
+                dummy := by
 
-    intro framedCount hframedCount
+      intro framedCount hframedCount
 
-    rcases List.mem_map.mp hframedCount with
-      ⟨entry, hentry, rfl⟩
+      rcases List.mem_map.mp hframedCount with
+        ⟨entry, hentry, rfl⟩
 
-    exact
-      H.compiledGrammarPresentationEntryFramedNaturalFieldCount_le_sampleFanout
-        dummy entry hentry
+      exact
+        H.compiledGrammarPresentationEntryFramedNaturalFieldCount_le_sampleFanout
+          dummy entry hentry
+
+    simpa only [List.length_map] using
+      (list_sum_le_length_mul_of_forall_mem_le
+        ((H.compiledGrammarPresentationEntries dummy).map
+          (fun entry =>
+            1 +
+              H.compiledGrammarPresentationEntryNaturalFieldCount
+                dummy entry))
+        (1 +
+          H.compiledWorkingGrammarSampleFanoutPresentationEntryNaturalValueBound
+            dummy)
+        hbounded)
 
   rw [
     H.compiledGrammarPresentationEntries_length dummy
@@ -722,8 +743,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarSampleFanoutBinaryRuleNaturalValueBound
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarSampleFanoutBinaryRuleNaturalValueBound
           dummy <=
       correctedConcreteCompiledGrammarSampleParametricBinaryNaturalValueBound
           (sampleLengthBudget K) f := by
@@ -787,8 +807,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarSampleFanoutPresentationEntryNaturalValueBound
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarSampleFanoutPresentationEntryNaturalValueBound
           dummy <=
       correctedConcreteCompiledGrammarSampleParametricEntryNaturalValueBound
           (sampleLengthBudget K) f := by
@@ -856,8 +875,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarSampleFanoutNaturalFieldCountBound
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarSampleFanoutNaturalFieldCountBound
           dummy <=
       correctedConcreteCompiledGrammarSampleParametricNaturalFieldCountBound
           (sampleLengthBudget K) f := by
@@ -909,8 +927,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarSampleFanoutNaturalFieldBound
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarSampleFanoutNaturalFieldBound
           dummy <=
       correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
           (sampleLengthBudget K) f := by
@@ -973,8 +990,8 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldCount dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldCount
+         dummy <=
       correctedConcreteCompiledGrammarSampleParametricNaturalFieldCountBound
           (sampleLengthBudget K) f := by
 
@@ -995,19 +1012,33 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldValueBound dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldValueBound
+         dummy <=
       correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
           (sampleLengthBudget K) f := by
 
   let H :=
     correctedConcreteFiniteHypothesis K obs f
 
+  have hstruct :
+      H.compiledWorkingGrammarNaturalFieldValueBound dummy <=
+        H.compiledWorkingGrammarSampleFanoutNaturalFieldBound dummy :=
+    H.compiledWorkingGrammarNaturalFieldValueBound_le_sampleFanout
+      dummy
+
+  have hparam :
+      H.compiledWorkingGrammarSampleFanoutNaturalFieldBound dummy <=
+        correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
+          (sampleLengthBudget K) f := by
+
+    dsimp [H]
+
+    exact
+      correctedConcreteFiniteHypothesis_sampleFanoutNaturalFieldBound_le_sampleParametric
+        K obs f dummy
+
   exact
-    (H.compiledWorkingGrammarNaturalFieldValueBound_le_sampleFanout
-        dummy).trans
-      (correctedConcreteFiniteHypothesis_sampleFanoutNaturalFieldBound_le_sampleParametric
-        K obs f dummy)
+    hstruct.trans hparam
 
 /-- The complete natural stream of the canonical hypothesis fits the standard
 binary width of the closed sample-parametric field bound. -/
@@ -1017,8 +1048,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-      compiledWorkingGrammarNaturalFieldsFitInBits
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldsFitInBits
         dummy
         (binaryNatCodeLength
           (correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
@@ -1027,10 +1057,19 @@ theorem
   let H :=
     correctedConcreteFiniteHypothesis K obs f
 
+  change
+    BinaryTreeNaturalFieldStreamFitsInBits
+      (H.encodeCompiledWorkingGrammarNaturalList dummy)
+      (binaryNatCodeLength
+        (correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
+          (sampleLengthBudget K) f))
+
+  unfold BinaryTreeNaturalFieldStreamFitsInBits
+
   refine
     ⟨binaryNatCodeLength_pos
         (correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
-              (sampleLengthBudget K) f),
+          (sampleLengthBudget K) f),
       ?_,
       ?_⟩
 
@@ -1073,8 +1112,8 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarLogarithmicBitCount dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
+         dummy <=
       correctedConcreteCompiledGrammarSampleParametricLogarithmicBitBound
           (sampleLengthBudget K) f := by
 
@@ -1126,22 +1165,21 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    ((correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldCount dummy <=
+    ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldCount
+         dummy <=
       correctedConcreteCompiledGrammarSampleParametricNaturalFieldCountBound
           (sampleLengthBudget K) f) ∧
-      ((correctedConcreteFiniteHypothesis K obs f).
-          compiledWorkingGrammarNaturalFieldValueBound dummy <=
+      ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldValueBound
+           dummy <=
         correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
               (sampleLengthBudget K) f) ∧
-      (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldsFitInBits
+      (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldsFitInBits
           dummy
           (binaryNatCodeLength
             (correctedConcreteCompiledGrammarSampleParametricNaturalFieldBound
                       (sampleLengthBudget K) f)) ∧
-      ((correctedConcreteFiniteHypothesis K obs f).
-          compiledWorkingGrammarLogarithmicBitCount dummy <=
+      ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
+           dummy <=
         correctedConcreteCompiledGrammarSampleParametricLogarithmicBitBound
               (sampleLengthBudget K) f) := by
 
