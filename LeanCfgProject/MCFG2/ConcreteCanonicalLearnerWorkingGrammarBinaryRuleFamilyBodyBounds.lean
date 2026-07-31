@@ -170,23 +170,29 @@ theorem templateTuple_componentLengthSum_le
     ((List.ofFn body).map List.length).sum <=
       e * bound := by
 
-  apply
-    list_sum_le_length_mul_of_forall_mem_le
-      ((List.ofFn body).map List.length)
-      bound
+  have hsum :
+      ((List.ofFn body).map List.length).sum <=
+        ((List.ofFn body).map List.length).length * bound := by
 
-  intro length hlength
+    apply
+      list_sum_le_length_mul_of_forall_mem_le
+        ((List.ofFn body).map List.length)
+        bound
 
-  rcases List.mem_map.mp hlength with
-    ⟨word, hword, rfl⟩
+    intro length hlength
 
-  change word ∈ List.ofFn body at hword
-  rw [List.mem_ofFn] at hword
+    rcases List.mem_map.mp hlength with
+      ⟨word, hword, rfl⟩
 
-  rcases hword with
-    ⟨i, rfl⟩
+    change word ∈ List.ofFn body at hword
+    rw [List.mem_ofFn] at hword
 
-  exact hcomponent i
+    rcases hword with
+      ⟨i, rfl⟩
+
+    exact hcomponent i
+
+  simpa using hsum
 
 /-- A componentwise tuple-word length bound gives the corresponding total tuple
 length bound. -/
@@ -200,13 +206,29 @@ theorem tuple_componentLengthSum_le
     ((List.ofFn x).map List.length).sum <=
       d * bound := by
 
-  exact
-    templateTuple_componentLengthSum_le
-      (dB := 0)
-      (dC := 0)
-      x
-      bound
-      hcomponent
+  have hsum :
+      ((List.ofFn x).map List.length).sum <=
+        ((List.ofFn x).map List.length).length * bound := by
+
+    apply
+      list_sum_le_length_mul_of_forall_mem_le
+        ((List.ofFn x).map List.length)
+        bound
+
+    intro length hlength
+
+    rcases List.mem_map.mp hlength with
+      ⟨word, hword, rfl⟩
+
+    change word ∈ List.ofFn x at hword
+    rw [List.mem_ofFn] at hword
+
+    rcases hword with
+      ⟨i, rfl⟩
+
+    exact hcomponent i
+
+  simpa using hsum
 
 end TemplateTupleComponentSumBounds
 
@@ -239,120 +261,120 @@ theorem controlCode_component_length_le_sampleLengthBudget
   unfold controlCodes at hX
 
   rcases Finset.mem_union.mp hX with
-    hword | hrest
+    hprefix | hbinaryRight
 
-  · rcases Finset.mem_image.mp hword with
-      ⟨word, hword, rfl⟩
+  · rcases Finset.mem_union.mp hprefix with
+      hprefix | hbinaryLeft
 
-    intro i
+    · rcases Finset.mem_union.mp hprefix with
+        hprefix | hbinarySource
 
-    simpa [
-      FiniteObjectTupleCode.ofWord
-    ] using
-      sample_word_length_le_budget
-        K hword
+      · rcases Finset.mem_union.mp hprefix with
+          hprefix | hunitTarget
 
-  · rcases Finset.mem_union.mp hrest with
-      hunitSource | hrest
+        · rcases Finset.mem_union.mp hprefix with
+            hword | hunitSource
 
-    · rcases Finset.mem_image.mp hunitSource with
-        ⟨U, hU, rfl⟩
+          · rcases Finset.mem_image.mp hword with
+              ⟨word, hword, rfl⟩
 
-      intro i
+            intro i
 
-      change
-        (U.source i).length <=
-          sampleLengthBudget K
+            simpa [
+              FiniteObjectTupleCode.ofWord
+            ] using
+              sample_word_length_le_budget
+                K hword
 
-      exact
-        (namedFill_component_length_le
-            U.rule.evidence.context
-            U.source
-            i).trans
-          (sample_word_length_le_budget
-            K
-            U.rule.evidence.left_mem)
+          · rcases Finset.mem_image.mp hunitSource with
+              ⟨U, hU, rfl⟩
 
-    · rcases Finset.mem_union.mp hrest with
-        hunitTarget | hrest
+            intro i
 
-      · rcases Finset.mem_image.mp hunitTarget with
-          ⟨U, hU, rfl⟩
+            change
+              (U.source i).length <=
+                sampleLengthBudget K
 
-        intro i
+            exact
+              (namedFill_component_length_le
+                  U.rule.evidence.context
+                  U.source
+                  i).trans
+                (sample_word_length_le_budget
+                  K
+                  U.rule.evidence.left_mem)
 
-        change
-          (U.target i).length <=
-            sampleLengthBudget K
-
-        exact
-          (namedFill_component_length_le
-              U.rule.evidence.context
-              U.target
-              i).trans
-            (sample_word_length_le_budget
-              K
-              U.rule.evidence.right_mem)
-
-      · rcases Finset.mem_union.mp hrest with
-          hbinarySource | hrest
-
-        · rcases Finset.mem_image.mp hbinarySource with
-            ⟨B, hB, rfl⟩
+        · rcases Finset.mem_image.mp hunitTarget with
+            ⟨U, hU, rfl⟩
 
           intro i
 
           change
-            (B.source i).length <=
+            (U.target i).length <=
               sampleLengthBudget K
 
           exact
             (namedFill_component_length_le
-                B.rule.witness.parent.1.context
-                B.rule.witness.parent.1.tuple
+                U.rule.evidence.context
+                U.target
                 i).trans
               (sample_word_length_le_budget
                 K
-                B.rule.witness.parent.word_mem)
+                U.rule.evidence.right_mem)
 
-        · rcases Finset.mem_union.mp hrest with
-            hbinaryLeft | hbinaryRight
+      · rcases Finset.mem_image.mp hbinarySource with
+          ⟨B, hB, rfl⟩
 
-          · rcases Finset.mem_image.mp hbinaryLeft with
-              ⟨B, hB, rfl⟩
+        intro i
 
-            intro i
+        change
+          (B.source i).length <=
+            sampleLengthBudget K
 
-            change
-              (B.leftSource i).length <=
-                sampleLengthBudget K
+        exact
+          (namedFill_component_length_le
+              B.rule.witness.parent.1.context
+              B.rule.witness.parent.1.tuple
+              i).trans
+            (sample_word_length_le_budget
+              K
+              B.rule.witness.parent.word_mem)
 
-            exact
-              (namedFill_component_length_le
-                  B.rule.witness.left.1.context
-                  B.rule.witness.left.1.tuple
-                  i).trans
-                (sample_word_length_le_budget
-                  K
-                  B.rule.witness.left.word_mem)
+    · rcases Finset.mem_image.mp hbinaryLeft with
+        ⟨B, hB, rfl⟩
 
-          · rcases Finset.mem_image.mp hbinaryRight with
-              ⟨B, hB, rfl⟩
+      intro i
 
-            intro i
+      change
+        (B.leftSource i).length <=
+          sampleLengthBudget K
 
-            change
-              (B.rightSource i).length <=
-                sampleLengthBudget K
+      exact
+        (namedFill_component_length_le
+            B.rule.witness.left.1.context
+            B.rule.witness.left.1.tuple
+            i).trans
+          (sample_word_length_le_budget
+            K
+            B.rule.witness.left.word_mem)
 
-            exact
-              (namedFill_component_length_le
-                  B.rule.witness.right.1.context
-                  B.rule.witness.right.1.tuple
-                  i).trans
-                (sample_word_length_le_budget
-                  K
-                  B.rule.witness.right.word_mem)
+  · rcases Finset.mem_image.mp hbinaryRight with
+      ⟨B, hB, rfl⟩
+
+    intro i
+
+    change
+      (B.rightSource i).length <=
+        sampleLengthBudget K
+
+    exact
+      (namedFill_component_length_le
+          B.rule.witness.right.1.context
+          B.rule.witness.right.1.tuple
+          i).trans
+        (sample_word_length_le_budget
+          K
+          B.rule.witness.right.word_mem)
 
 /-- The total component length of every finite control tuple is at most its
 arity times the total sample length. -/
@@ -414,9 +436,8 @@ variable
 bound. -/
 theorem cutConstantRule_bodyTokenCount_le_sampleFanoutBound
     (dummy : α)
-    (X : H.controlCodes.attach) :
-    (correctedConcreteCutConstantRule H X).
-        framedStructuralBodyTokens.length <=
+    (X : H.controlCodes) :
+    (correctedConcreteCutConstantRule H X).framedStructuralBodyTokens.length <=
       compiledWorkingGrammarBinaryRuleBodyTokenCountSampleFanoutBound
         K f := by
 
@@ -589,9 +610,8 @@ theorem correctedBinaryRule_body_component_length_le_sampleFanout
 sample/fan-out body-token bound. -/
 theorem cutLiftedBinaryRule_bodyTokenCount_le_sampleFanoutBound
     (dummy : α)
-    (B : H.binaryRuleCodes.attach) :
-    (correctedConcreteCutLiftedBinaryRule H B).
-        framedStructuralBodyTokens.length <=
+    (B : H.binaryRuleCodes) :
+    (correctedConcreteCutLiftedBinaryRule H B).framedStructuralBodyTokens.length <=
       compiledWorkingGrammarBinaryRuleBodyTokenCountSampleFanoutBound
         K f := by
 
@@ -689,7 +709,7 @@ variable
 /-- Every output component of a saturation left-identity template has length
 one. -/
 theorem cutSaturationRule_body_component_length_eq_one
-    (p : H.cutPairs.attach) :
+    (p : H.cutPairs) :
     ∀
       o : Fin
         (correctedConcreteCutGrammarArity H
@@ -708,9 +728,8 @@ theorem cutSaturationRule_body_component_length_eq_one
 body tokens. -/
 theorem cutSaturationRule_bodyTokenCount_le_two_mul_fanout
     (dummy : α)
-    (p : H.cutPairs.attach) :
-    (correctedConcreteCutSaturationRule H p).
-        framedStructuralBodyTokens.length <=
+    (p : H.cutPairs) :
+    (correctedConcreteCutSaturationRule H p).framedStructuralBodyTokens.length <=
       2 * max 1 f := by
 
   let rho :=
@@ -781,15 +800,13 @@ theorem cutSaturationRule_bodyTokenCount_le_two_mul_fanout
 bound. -/
 theorem cutSaturationRule_bodyTokenCount_le_sampleFanoutBound
     (dummy : α)
-    (p : H.cutPairs.attach) :
-    (correctedConcreteCutSaturationRule H p).
-        framedStructuralBodyTokens.length <=
+    (p : H.cutPairs) :
+    (correctedConcreteCutSaturationRule H p).framedStructuralBodyTokens.length <=
       compiledWorkingGrammarBinaryRuleBodyTokenCountSampleFanoutBound
         K f := by
 
   have htwo :
-      (correctedConcreteCutSaturationRule H p).
-          framedStructuralBodyTokens.length <=
+      (correctedConcreteCutSaturationRule H p).framedStructuralBodyTokens.length <=
         2 * max 1 f :=
     H.cutSaturationRule_bodyTokenCount_le_two_mul_fanout
       dummy p
@@ -845,17 +862,17 @@ theorem cutWorkingGrammar_binaryRule_bodyTokenCount_le_sampleFanoutBound
     at hrho
 
   rcases List.mem_append.mp hrho with
-    hconstant | hrest
+    hprefix | hsaturated
 
-  · rcases List.mem_map.mp hconstant with
-      ⟨X, hX, rfl⟩
+  · rcases List.mem_append.mp hprefix with
+      hconstant | hlifted
 
-    exact
-      H.cutConstantRule_bodyTokenCount_le_sampleFanoutBound
-        dummy X
+    · rcases List.mem_map.mp hconstant with
+        ⟨X, hX, rfl⟩
 
-  · rcases List.mem_append.mp hrest with
-      hlifted | hsaturated
+      exact
+        H.cutConstantRule_bodyTokenCount_le_sampleFanoutBound
+          dummy X
 
     · rcases List.mem_map.mp hlifted with
         ⟨B, hB, rfl⟩
@@ -864,12 +881,12 @@ theorem cutWorkingGrammar_binaryRule_bodyTokenCount_le_sampleFanoutBound
         H.cutLiftedBinaryRule_bodyTokenCount_le_sampleFanoutBound
           dummy B
 
-    · rcases List.mem_map.mp hsaturated with
-        ⟨p, hp, rfl⟩
+  · rcases List.mem_map.mp hsaturated with
+      ⟨p, hp, rfl⟩
 
-      exact
-        H.cutSaturationRule_bodyTokenCount_le_sampleFanoutBound
-          dummy p
+    exact
+      H.cutSaturationRule_bodyTokenCount_le_sampleFanoutBound
+        dummy p
 
 /-- The maximum stored binary-rule body-token count is bounded by the explicit
 sample/fan-out expression. -/
@@ -896,11 +913,6 @@ theorem
       dummy rho
   ]
 
-  rw [
-    ← BinaryRule.framedStructuralBodyTokens_length
-      rho
-  ]
-
   exact
     H.cutWorkingGrammar_binaryRule_bodyTokenCount_le_sampleFanoutBound
       dummy rho hrho
@@ -923,19 +935,16 @@ theorem
 theorem
     compiledWorkingGrammarBinaryRuleFamilyBodyBounds_package
     (dummy : α) :
-    (∀ X : H.controlCodes.attach,
-      (correctedConcreteCutConstantRule H X).
-          framedStructuralBodyTokens.length <=
+    (∀ X : H.controlCodes,
+      (correctedConcreteCutConstantRule H X).framedStructuralBodyTokens.length <=
         compiledWorkingGrammarBinaryRuleBodyTokenCountSampleFanoutBound
           K f) ∧
-      (∀ B : H.binaryRuleCodes.attach,
-        (correctedConcreteCutLiftedBinaryRule H B).
-            framedStructuralBodyTokens.length <=
+      (∀ B : H.binaryRuleCodes,
+        (correctedConcreteCutLiftedBinaryRule H B).framedStructuralBodyTokens.length <=
           compiledWorkingGrammarBinaryRuleBodyTokenCountSampleFanoutBound
             K f) ∧
-      (∀ p : H.cutPairs.attach,
-        (correctedConcreteCutSaturationRule H p).
-            framedStructuralBodyTokens.length <=
+      (∀ p : H.cutPairs,
+        (correctedConcreteCutSaturationRule H p).framedStructuralBodyTokens.length <=
           compiledWorkingGrammarBinaryRuleBodyTokenCountSampleFanoutBound
             K f) ∧
       (∀ rho ∈ (H.toCutWorkingMCFG dummy).binaryRules,

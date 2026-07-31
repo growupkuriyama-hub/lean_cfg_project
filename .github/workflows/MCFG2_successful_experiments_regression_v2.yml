@@ -2,13 +2,6 @@ name: MCFG2 Successful Experiments Regression v2
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "LeanCfgProject/MCFG2/**"
-      - "lakefile.lean"
-      - "lake-manifest.json"
-      - "lean-toolchain"
-      - ".github/workflows/MCFG2_successful_experiments_regression_v2.yml"
 
 permissions:
   contents: read
