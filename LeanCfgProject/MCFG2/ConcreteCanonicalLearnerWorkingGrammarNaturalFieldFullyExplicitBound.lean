@@ -157,10 +157,32 @@ theorem
           rho ∈
             (H.toCutWorkingMCFG dummy).binaryRules := by
 
-        simpa [
-          CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries,
-          CorrectedConcreteFiniteHypothesis.toCutWorkingMCFG
-        ] using hentry
+        unfold
+          CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries
+          at hentry
+
+        rcases List.mem_append.mp hentry with hprefix | hbinary
+
+        · rcases List.mem_append.mp hprefix with hprefix | hterminal
+
+          · rcases List.mem_append.mp hprefix with hnonterminal | hstart
+
+            · rcases List.mem_map.mp hnonterminal with
+                ⟨A, hA, hEq⟩
+              cases hEq
+
+            · rcases List.mem_map.mp hstart with
+                ⟨startRule, hstartRule, hEq⟩
+              cases hEq
+
+          · rcases List.mem_map.mp hterminal with
+              ⟨terminalRule, hterminalRule, hEq⟩
+            cases hEq
+
+        · rcases List.mem_map.mp hbinary with
+            ⟨binaryRule, hbinaryRule, hEq⟩
+          cases hEq
+          exact hbinaryRule
 
       unfold
         compiledGrammarPresentationEntryExplicitNaturalValueBound
