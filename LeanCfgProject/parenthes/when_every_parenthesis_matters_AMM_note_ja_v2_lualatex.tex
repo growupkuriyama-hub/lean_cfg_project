@@ -142,18 +142,7 @@ $A,B,C$ の値は独立に指定できる。
 \noindent
 \textbf{親の演算が $+$ の場合。}
 
-まず、$v$ が左の子であるとする。局所部分は
-\[
-(A\circ B)+C
-\]
-である。
-
-$\circ=+$ なら、加法の結合則により
-\[
-(A+B)+C=A+B+C
-\]
-である。
-
+まず、$v$ が左の子であるとする。$\circ=+$ なら、加法の結合則により$(A+B)+C=A+B+C$である。
 $\circ=\times$ または $\circ=/$ なら、$\times$ と $/$ は $+$ より優先順位が高いので、
 \[
 (A\times B)+C=A\times B+C,
@@ -162,16 +151,7 @@ $\circ=\times$ または $\circ=/$ なら、$\times$ と $/$ は $+$ より優�
 \]
 と構文解析される。
 
-次に、$v$ が右の子であるとする。局所部分は
-\[
-A+(B\circ C)
-\]
-である。
-
-$\circ=+$ なら、
-\[
-A+(B+C)=A+B+C
-\]
+次に、$v$ が右の子であるとする。$\circ=+$ なら、$A+(B+C)=A+B+C$
 である。また、$\circ=\times$ または $\circ=/$ なら、
 \[
 A+(B\times C)=A+B\times C,
@@ -187,19 +167,8 @@ A+(B/C)=A+B/C
 \noindent
 \textbf{親の演算が $\times$ の場合。}
 
-まず、$v$ が左の子であるとする。局所部分は
-\[
-(A\circ B)\times C
-\]
-である。
-
-$\circ=\times$ なら、乗法の結合則により
-\[
-(A\times B)\times C=A\times B\times C
-\]
-である。
-
-$\circ=/$ なら、$\times$ と $/$ は同じ優先順位をもち、左結合であるから、
+まず、$v$ が左の子であるとする。$\circ=\times$ なら、乗法の結合則により$(A\times B)\times C=A\times B\times C$
+である。$\circ=/$ なら、$\times$ と $/$ は同じ優先順位をもち、左結合であるから、
 \[
 (A/B)\times C=A/B\times C
 \]
@@ -219,19 +188,8 @@ A+B\times C
 \]
 である。
 
-次に、$v$ が右の子であるとする。局所部分は
-\[
-A\times(B\circ C)
-\]
-である。
-
-$\circ=\times$ なら、
-\[
-A\times(B\times C)=A\times B\times C
-\]
-である。
-
-$\circ=/$ なら、
+次に、$v$ が右の子であるとする。$\circ=\times$ なら、$A\times(B\times C)=A\times B\times C$
+である。$\circ=/$ なら、
 \[
 A\times(B/C)=A\times B/C
 \]
@@ -263,24 +221,10 @@ A\times B+C
 \noindent
 \textbf{親の演算が $/$ の場合。}
 
-まず、$v$ が左の子であるとする。局所部分は
-\[
-(A\circ B)/C
-\]
+まず、$v$ が左の子であるとする。$\circ=\times$ なら、$(A\times B)/C=A\times B/C$
 である。
-
-$\circ=\times$ なら、
-\[
-(A\times B)/C=A\times B/C
-\]
+$\circ=/$ なら、左結合の規約により$(A/B)/C=A/B/C$
 である。
-
-$\circ=/$ なら、左結合の規約により
-\[
-(A/B)/C=A/B/C
-\]
-である。
-
 一方、$\circ=+$ なら、括弧を取り除くと
 \[
 (A+B)/C
@@ -299,11 +243,7 @@ A+B/C
 $v$ を囲む括弧が必要であるための必要十分条件は、
 $v$ の演算が $+$ であることである。
 
-最後に、$v$ が右の子であるとする。局所部分は
-\[
-A/(B\circ C)
-\]
-である。この場合は、$\circ$ がどの演算であっても括弧が必要になる。
+最後に、$v$ が右の子であるとする。この場合は、$\circ$ がどの演算であっても括弧が必要になる。
 
 $\circ=+$ の場合、$A=B=C=1$ とすれば
 \[
