@@ -476,8 +476,7 @@ noncomputable def CompiledBinaryRuleNaturalFieldClass
       (correctedConcreteCutGrammarArity H))
     (n : Nat) :
     Prop :=
-  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-    NaturalFieldClass n
+  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).NaturalFieldClass n
 
 /-- Complete binary-rule field classification is exact. -/
 @[simp] theorem compiledBinaryRuleNaturalFieldClass_iff_mem
@@ -510,20 +509,15 @@ theorem compiledBinaryRuleNaturalField_classification
     (hn :
       n ∈ H.encodeCompiledBinaryRuleNaturalList dummy rho) :
     n =
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          lhsCode ∨
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).lhsCode ∨
       n =
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          leftCode ∨
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).leftCode ∨
       n =
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          rightCode ∨
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).rightCode ∨
       n =
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens.length ∨
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length ∨
       FramedTemplateBodyNaturalStreamFieldClass
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens
         n := by
 
   exact
@@ -558,8 +552,7 @@ noncomputable def compiledBinaryRuleMaximumBodyTokenNaturalValueBound
       (correctedConcreteCutGrammarArity H)) :
     Nat :=
   maximumFramedTemplateBodyNaturalTokenValueBound
-    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-      bodyTokens
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens
 
 /-- Explicit structural natural-value bound for one complete compiled binary
 rule. -/
@@ -576,8 +569,7 @@ noncomputable def compiledBinaryRuleExplicitNaturalValueBound
       (max
         H.compiledGrammarPresentationItemCount
         (max
-          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-            bodyTokens.length
+          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
           (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
             dummy rho))))
 
@@ -600,8 +592,7 @@ theorem compiledBinaryRuleNaturalFieldCount_le_explicitBound
         (max
           H.compiledGrammarPresentationItemCount
           (max
-            (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-              bodyTokens.length
+            (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
             (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
               dummy rho))))
 
@@ -687,8 +678,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
         ((Nat.le_max_left
             H.compiledGrammarPresentationItemCount
             (max
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                bodyTokens.length
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
               (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                 dummy rho))).trans
           ((Nat.le_max_right
@@ -696,8 +686,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
               (max
                 H.compiledGrammarPresentationItemCount
                 (max
-                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                    bodyTokens.length
+                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                   (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                     dummy rho)))).trans
             (Nat.le_max_right
@@ -706,10 +695,9 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
                 (max
                   H.compiledGrammarPresentationItemCount
                   (max
-                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                      bodyTokens.length
+                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                     (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
-                      dummy rho))))))
+                      dummy rho)))))))
 
   · subst n
 
@@ -719,8 +707,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
         ((Nat.le_max_left
             H.compiledGrammarPresentationItemCount
             (max
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                bodyTokens.length
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
               (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                 dummy rho))).trans
           ((Nat.le_max_right
@@ -728,8 +715,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
               (max
                 H.compiledGrammarPresentationItemCount
                 (max
-                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                    bodyTokens.length
+                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                   (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                     dummy rho)))).trans
             (Nat.le_max_right
@@ -738,10 +724,9 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
                 (max
                   H.compiledGrammarPresentationItemCount
                   (max
-                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                      bodyTokens.length
+                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                     (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
-                      dummy rho))))))
+                      dummy rho)))))))
 
   · subst n
 
@@ -751,8 +736,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
         ((Nat.le_max_left
             H.compiledGrammarPresentationItemCount
             (max
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                bodyTokens.length
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
               (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                 dummy rho))).trans
           ((Nat.le_max_right
@@ -760,8 +744,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
               (max
                 H.compiledGrammarPresentationItemCount
                 (max
-                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                    bodyTokens.length
+                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                   (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                     dummy rho)))).trans
             (Nat.le_max_right
@@ -770,24 +753,21 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
                 (max
                   H.compiledGrammarPresentationItemCount
                   (max
-                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                      bodyTokens.length
+                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                     (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
-                      dummy rho))))))
+                      dummy rho)))))))
 
   · subst n
 
     exact
       (Nat.le_max_left
-          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-            bodyTokens.length
+          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
           (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
             dummy rho)).trans
         ((Nat.le_max_right
             H.compiledGrammarPresentationItemCount
             (max
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                bodyTokens.length
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
               (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                 dummy rho))).trans
           ((Nat.le_max_right
@@ -795,8 +775,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
               (max
                 H.compiledGrammarPresentationItemCount
                 (max
-                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                    bodyTokens.length
+                  (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                   (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                     dummy rho)))).trans
             (Nat.le_max_right
@@ -805,10 +784,9 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
                 (max
                   H.compiledGrammarPresentationItemCount
                   (max
-                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                      bodyTokens.length
+                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                     (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
-                      dummy rho))))))
+                      dummy rho)))))))
 
   · have hbodyBound :
         n <=
@@ -817,25 +795,21 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
 
       exact
         framedTemplateBodyNaturalStreamField_le_maximum_of_mem
-          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-            bodyTokens
+          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens
           ((framedTemplateBodyNaturalStreamFieldClass_iff_mem
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                bodyTokens
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens
               n).mp hbody)
 
     exact
       hbodyBound.trans
         ((Nat.le_max_right
-            (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-              bodyTokens.length
+            (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
             (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
               dummy rho)).trans
           ((Nat.le_max_right
               H.compiledGrammarPresentationItemCount
               (max
-                (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                  bodyTokens.length
+                (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                 (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                   dummy rho))).trans
             ((Nat.le_max_right
@@ -843,8 +817,7 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
                 (max
                   H.compiledGrammarPresentationItemCount
                   (max
-                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                      bodyTokens.length
+                    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                     (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
                       dummy rho)))).trans
               (Nat.le_max_right
@@ -853,10 +826,9 @@ theorem compiledBinaryRuleNaturalField_le_explicitBound_of_mem
                   (max
                     H.compiledGrammarPresentationItemCount
                     (max
-                      (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                        bodyTokens.length
+                      (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
                       (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound
-                        dummy rho))))))
+                        dummy rho))))))))
 
 /-- The previous opaque binary-rule `naturalFieldValueBound` is below the
 explicit structural bound. -/
@@ -893,8 +865,7 @@ theorem compiledBinaryRuleNaturalValueBound_le_explicitBound
       (CorrectedConcreteCutGrammarNonterminal H)
       α
       (correctedConcreteCutGrammarArity H)) :
-    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-        bodyTokens.length =
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length =
       correctedConcreteCutGrammarArity H rho.lhs +
         ((List.ofFn rho.body).map List.length).sum := by
 
@@ -920,8 +891,7 @@ theorem compiledBinaryRuleNaturalFieldClassification_package
       (H.compiledBinaryRuleNaturalValueBound dummy rho <=
         H.compiledBinaryRuleExplicitNaturalValueBound
           dummy rho) ∧
-      ((H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens.length =
+      ((H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length =
         correctedConcreteCutGrammarArity H rho.lhs +
           ((List.ofFn rho.body).map List.length).sum) := by
 
