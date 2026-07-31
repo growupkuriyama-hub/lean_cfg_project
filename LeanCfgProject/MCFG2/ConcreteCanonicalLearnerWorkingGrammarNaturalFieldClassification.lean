@@ -433,11 +433,11 @@ theorem
 
   · exact
       mem_encodeCompiledGrammarPresentationEntryStream_of_class
-        dummy entries n
+        H dummy entries n
 
   · exact
       class_of_mem_encodeCompiledGrammarPresentationEntryStream
-        dummy entries n
+        H dummy entries n
 
 end CorrectedConcreteFiniteHypothesis
 
