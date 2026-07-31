@@ -357,11 +357,12 @@ theorem
       · subst n
 
         exact
-          Nat.le_max_left
-            3
-            (max
-              H.compiledGrammarPresentationItemCount
-              (compiledTerminalAlphabet K dummy).card)
+          (show 2 <= 3 by omega).trans
+            (Nat.le_max_left
+              3
+              (max
+                H.compiledGrammarPresentationItemCount
+                (compiledTerminalAlphabet K dummy).card))
 
       · subst n
 
@@ -629,7 +630,7 @@ noncomputable def compiledWorkingGrammarEntryExplicitNaturalFieldBound
     (dummy : α) :
     Nat :=
   max
-    H.compiledWorkingGrammarNaturalFieldCount dummy
+    (H.compiledWorkingGrammarNaturalFieldCount dummy)
     (max
       H.compiledGrammarPresentationItemCount
       (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
@@ -652,7 +653,7 @@ theorem
 
   · exact
       Nat.le_max_left
-        H.compiledWorkingGrammarNaturalFieldCount dummy
+        (H.compiledWorkingGrammarNaturalFieldCount dummy)
         (max
           H.compiledGrammarPresentationItemCount
           (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
@@ -666,7 +667,7 @@ theorem
           (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
             dummy)).trans
           (Nat.le_max_right
-            H.compiledWorkingGrammarNaturalFieldCount dummy
+            (H.compiledWorkingGrammarNaturalFieldCount dummy)
             (max
               H.compiledGrammarPresentationItemCount
               (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
@@ -680,7 +681,7 @@ theorem
               (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
                 dummy)).trans
             (Nat.le_max_right
-              H.compiledWorkingGrammarNaturalFieldCount dummy
+              (H.compiledWorkingGrammarNaturalFieldCount dummy)
               (max
                 H.compiledGrammarPresentationItemCount
                 (H.compiledWorkingGrammarMaximumEntryExplicitNaturalValueBound
