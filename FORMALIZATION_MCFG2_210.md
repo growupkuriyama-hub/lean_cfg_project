@@ -2,8 +2,8 @@
 
 Current clean-restart verification ledger for the MCFG fixed finite-observation paper, with the former cumulative experiment retained only as an archival reference.
 
-Last updated: 2026-07-26  
-Current clean-restart checkpoint: workflow run `MCFG2 Target Error #20`, commit `6f304b6`, pushed by `growupkuriyama-hub`.
+Last updated: 2026-07-31  
+Current clean-restart checkpoint: workflow run `MCFG2 Successful Experiments Regression v2 #1`, commit `cf05b87`, pushed by `growupkuriyama-hub`.
 
 ---
 
@@ -23,63 +23,66 @@ The previous zip contained many useful experimental files from an earlier paper 
 4. separate what is fully Lean-verified from what is currently an explicit skeleton/bridge assumption;
 5. reuse old files only as design references or for small ideas, not as opaque trusted infrastructure.
 
-The authoritative status of the clean restart is currently narrower.  The active workflow builds only `LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness`.  That target passed at workflow run `MCFG2 Target Error #20`, commit `6f304b6`.  In the supplied MCFG2 snapshot there are `304` Lean files.  The target's MCFG2-local transitive import closure contains `150` files, while `154` files lie outside that closure.  Thus the current restart covers `150/304` files (49.3%) by dependency-closure count; it does not yet constitute an all-files MCFG2 verification.
+The authoritative clean-restart status is now the fixed successful-root regression.  The workflow `MCFG2 Successful Experiments Regression v2` contains an exact manifest of `210` MCFG2 modules and checks each listed module as a root target.  At the start of every shard it removes the compiled MCFG2 products, and before each target it removes that target's own build products, so every listed root is forced to elaborate again.  Workflow run `MCFG2 Successful Experiments Regression v2 #1` passed at commit `cf05b87`.
+
+The current MCFG2 snapshot contains `303` Lean modules.  Therefore `210/303` modules (69.3%) are directly CI-confirmed by the present regression workflow, while `93` modules remain outside the confirmed-success manifest.  This is stronger evidence than the former single-target dependency-closure checkpoint, but it is still not an all-files MCFG2 verification.
 
 
 ## 0.1 Authoritative clean-restart status
 
-The present source of truth is the supplied workflow `MCFG2_target(1).yml`.
+The present source of truth is:
 
-It executes exactly:
-
-```bash
-target="LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness"
-lake build "$target"
+```text
+.github/workflows/MCFG2_successful_experiments_regression_v2.yml
 ```
 
-It does **not** enumerate every `.lean` file in `LeanCfgProject/MCFG2`, and it
-does not create an aggregate module importing the whole folder.
+Its essential checking procedure is:
+
+```text
+fixed successful-root manifest: 210 modules
+shards: 12
+remove all compiled LeanCfgProject/MCFG2 products at shard start
+remove the current root's own build products before each test
+run `lake build <module>` separately for every listed root
+collect all 210 results before the final regression decision
+```
 
 Current measured scope:
 
 | Item | Current value |
 |---|---:|
-| Lean files in the supplied `MCFG2` snapshot | 304 |
-| Files in the MCFG2-local dependency closure of the target | 150 |
-| Files outside that dependency closure | 154 |
-| Dependency-closure coverage | 150/304 = 49.3% |
-| Current target result | PASS |
-| Workflow run | `MCFG2 Target Error #20` |
-| Commit | `6f304b6` |
+| Lean modules in the current `MCFG2` snapshot | 303 |
+| Directly confirmed-success root modules | 210 |
+| Modules outside the confirmed-success manifest | 93 |
+| Direct-root coverage | 210/303 = 69.3% |
+| Regression result | PASS (210/210) |
+| Workflow run | `MCFG2 Successful Experiments Regression v2 #1` |
+| Commit | `cf05b87` |
+| Pusher | `growupkuriyama-hub` |
 
 Interpretation:
 
 ```text
-BinaryWitnessEnumerationCompleteness target route: confirmed PASS
-all MCFG2 files: not yet checked by the present YML
-files outside the target import closure: still pending in the clean restart
+fixed 210-root regression manifest: confirmed PASS
+all 210 listed roots: forced to elaborate as root targets
+all MCFG2 modules: not yet confirmed
+93 modules outside the manifest: still pending
 ```
 
-The workflow also restores Lake caches and does not run `lake clean`.
-Accordingly, the final successful run is an incremental target build, not a
-forced from-scratch recompilation of all 150 files in one job.
-The target and the dependency state accepted by Lake are confirmed; an
-all-files clean rebuild remains a separate experiment.
+The workflow does not merely rely on an old `.olean` for a listed root.  It removes the MCFG2 build products at shard start and removes each tested root's products immediately before `lake build`.  Dependencies compiled earlier within the same shard may be reused, so this is a sharded root-regression experiment rather than one monolithic serial `lake clean` build of all 303 modules.
+
 
 ## 0.2 Status of the former CI #583--#774 record
 
-The long CI history preserved below is **archival material** from the former
-experiment.  It is useful for theorem names, intended dependency structure, and
-research planning, but it is not accepted as proof that the current `MCFG2`
-folder has been reverified.
+The long CI history preserved below is **archival material** from the former experiment.  It remains useful for theorem names, intended dependency structure, and research planning, but it is not automatically accepted as current clean-restart evidence.
 
 In particular:
 
 ```text
 the former “282 CI-confirmed files” count is not the current restart count;
-old checkmarks must not be merged with the present MCFG2 verification ledger;
-only the 150-file target dependency closure is currently covered;
-the remaining 154 MCFG2 files must still be tested by a new all-files workflow.
+old checkmarks must not be merged automatically with the present verification ledger;
+the authoritative current manifest contains exactly 210 directly passing roots;
+the remaining 93 MCFG2 modules must still be checked and repaired separately.
 ```
 
 ---
@@ -540,9 +543,9 @@ Historical claimed chain size: 282 files
 ```
 
 That 282-file figure is **not** the current clean-restart verification count.
-The authoritative current count is `150` MCFG2 files inside the
-dependency closure of the passing target, with `154` MCFG2 files
-still outside the tested closure.
+The authoritative current count is `210` directly confirmed root modules in the
+passing `MCFG2 Successful Experiments Regression v2` manifest, with `93` MCFG2
+modules still outside the confirmed-success set.
 
 The current state is best described as:
 
@@ -10955,57 +10958,64 @@ Keep each new file small and CI-confirmed.
 ### 10.1 Latest confirmed result
 
 ```text
-Workflow run: MCFG2 Target Error #20
-Commit: 6f304b6
-Command: lake build LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness
-Result: PASS
+Workflow run: MCFG2 Successful Experiments Regression v2 #1
+Commit: cf05b87
+Pusher: growupkuriyama-hub
+Manifest: 210 fixed MCFG2 root modules
+Execution: 12 shards; each listed module rebuilt as an individual root target
+Result: PASS (210/210)
 ```
 
-This confirms the `BinaryWitnessEnumerationCompleteness` route and the
-dependency state required by that target.  It does not test every file in the
-folder.
+This is the present authoritative checkpoint.  Unlike the former
+`BinaryWitnessEnumerationCompleteness`-only checkpoint, the current workflow
+uses a fixed list of 210 root modules.  It clears compiled MCFG2 products at the
+start of each shard and clears each root's own products before testing it.
 
 ### 10.2 Current restart accounting
 
 ```text
-MCFG2 Lean files in supplied snapshot: 304
-covered by current target closure:     150
-outside current target closure:        154
-current closure coverage:              49.3%
+MCFG2 Lean modules in current snapshot: 303
+directly confirmed-success roots:       210
+outside confirmed-success manifest:      93
+direct-root coverage:                    69.3%
 ```
 
-A file counted as “covered” here is present in the MCFG2-local transitive import
-closure of the passing target.  This is not the same as having run every file
-as an independent root target, and the cache-enabled workflow is not a forced
-clean rebuild.
+A module counted as “directly confirmed” was present in the fixed v2 manifest
+and returned PASS when built as a root target in the successful regression run.
+This count is not inferred merely from an import closure and is not copied from
+the historical CI ledger.
+
+The 93 pending modules are not all known to be false or broken.  They are simply
+not members of the authoritative passing manifest.  That pending set contains:
+
+```text
+13 roots exposed by the first 223-root audit as not yet confirmed
+80 downstream roots that remained outside that provisional success set
+```
 
 ### 10.3 Next experiment required
 
-The next workflow must enumerate all `.lean` files under
-`LeanCfgProject/MCFG2` and build every corresponding module, or build one
-generated aggregate module importing all 304 files.  Until that job
-passes, the clean restart is incomplete.
+The next verification phase should work only on the 93 pending modules while
+keeping the 210-root regression workflow enabled as a non-regression guard.
+The recommended order is:
 
-The intended next command at the conceptual level is:
-
-```bash
-find LeanCfgProject/MCFG2 -maxdepth 1 -type f -name '*.lean' -print0 |
-  sort -z |
-  while IFS= read -r -d '' file; do
-    module="${file%.lean}"
-    module="${module//\//.}"
-    lake build "$module" || exit 1
-  done
+```text
+1. diagnose the 13 roots separated by MCFG2_thirteen_unconfirmed_diagnostics_v1.yml;
+2. continue the remaining-root diagnostic workflow for the other 80 roots;
+3. after each newly passing root is independently confirmed, add it deliberately
+   to the successful-root manifest and update the counts;
+4. finish with a 303/303 all-root regression run.
 ```
 
-For stronger evidence, the all-files workflow should avoid relying on a
-cross-commit project build cache or should explicitly remove the project's
-compiled MCFG2 artifacts before testing.
+The clean restart is complete only when every one of the 303 MCFG2 modules has
+passed as a root target in the current source tree.  A generated aggregate
+import may be added as a secondary check, but it should not replace the
+per-root result ledger.
 
-### 10.4 Files covered by the current target closure (150)
+### 10.4 Directly confirmed-success modules (210)
 
 <details>
-<summary>Show the 150 covered files</summary>
+<summary>Show the 210 directly confirmed files</summary>
 
 - `Basic.lean`
 - `BinaryRuleSplicingEvidence.lean`
@@ -11056,8 +11066,16 @@ compiled MCFG2 artifacts before testing.
 - `CharacteristicSampleGrammarRuleBuilder.lean`
 - `CharacteristicSampleGrammarRulePositivity.lean`
 - `CharacteristicSampleNamedContextSplicingConstruction.lean`
+- `CharacteristicSampleNamedContextSplicingContextEquations.lean`
+- `CharacteristicSampleNamedContextSplicingContextFamilies.lean`
 - `CharacteristicSampleNamedContextSplicingExactOnceConstruction.lean`
 - `CharacteristicSampleNamedContextSplicingExactOnceIntegration.lean`
+- `CharacteristicSampleNamedContextSplicingLeftRightConstructors.lean`
+- `CharacteristicSampleNamedContextSplicingLocalTargets.lean`
+- `CharacteristicSampleNamedContextSplicingParentChoices.lean`
+- `CharacteristicSampleNamedContextSplicingPieces.lean`
+- `CharacteristicSampleNamedContextSplicingTemplateChoices.lean`
+- `CharacteristicSampleNamedContextSplicingTemplateTargets.lean`
 - `CharacteristicSamplePackage.lean`
 - `CharacteristicSamplePaperAssumptionDiagram.lean`
 - `CharacteristicSamplePaperConstructiveRouteCorollaries.lean`
@@ -11108,6 +11126,55 @@ compiled MCFG2 artifacts before testing.
 - `CharacteristicSampleWitnessSetMonotone.lean`
 - `CompletenessSkeleton.lean`
 - `ConcreteCanonicalLearner.lean`
+- `ConcreteCanonicalLearnerClassTheorem.lean`
+- `ConcreteCanonicalLearnerFiniteEnumerationBounds.lean`
+- `ConcreteCanonicalLearnerFiniteHypothesis.lean`
+- `ConcreteCanonicalLearnerFiniteHypothesisSize.lean`
+- `ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean`
+- `ConcreteCanonicalLearnerFiniteObjectIdentification.lean`
+- `ConcreteCanonicalLearnerFiniteObjectMonotone.lean`
+- `ConcreteCanonicalLearnerIdentification.lean`
+- `ConcreteCanonicalLearnerLengthOnlyBounds.lean`
+- `ConcreteCanonicalLearnerPolynomialExponentBounds.lean`
+- `ConcreteCanonicalLearnerSinglePowerBounds.lean`
+- `ConcreteCanonicalLearnerStabilization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarAutomaticBitWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarAutomaticNaturalFieldBitWidth.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTerminalClosure.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTokenPayloadBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarConstruction.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarDenseEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarDescriptionSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarIdentification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldClassification.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldFullyExplicitBound.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldMaximum.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarObstruction.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPresentationNaturalSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarSize.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseDecoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTemplateSerialization.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTemplateTupleFraming.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarTerminalAlphabetEncoding.lean`
+- `ConcreteCanonicalLearnerWorkingGrammarUnaryBitSerialization.lean`
 - `ConcreteLearnerEvidence.lean`
 - `ConcreteObservationDeterministicClosure.lean`
 - `ConcreteOutputTypeRefinementPresentation.lean`
@@ -11115,6 +11182,7 @@ compiled MCFG2 artifacts before testing.
 - `ConcreteTrimmedSuccessfulPresentation.lean`
 - `ConcreteTypedCharacteristicSample.lean`
 - `DistributionalEquivalence.lean`
+- `ExactConcreteCanonicalLearnerEquivalence.lean`
 - `ExactOnce.lean`
 - `ExactReconstructionSkeleton.lean`
 - `FillingIdentity.lean`
@@ -11148,6 +11216,8 @@ compiled MCFG2 artifacts before testing.
 - `SplicingMainDataMonotone.lean`
 - `SplicingMainTheorem.lean`
 - `StartAnchorCanonical.lean`
+- `StartRootedConcreteCanonicalLearnerClassTheorem.lean`
+- `StartRootedConcreteCanonicalLearnerIdentification.lean`
 - `StartRuleSoundness.lean`
 - `StartSeparatedOutputTypeRefinementCompleteness.lean`
 - `TrimmedPresentationFinalTheorem.lean`
@@ -11160,42 +11230,12 @@ compiled MCFG2 artifacts before testing.
 
 </details>
 
-### 10.5 Files still outside the current target closure (154)
+### 10.5 Modules still outside the confirmed-success manifest (93)
 
 <details>
-<summary>Show the 154 pending files</summary>
+<summary>Show the 93 pending files</summary>
 
-- `CharacteristicSampleNamedContextSplicingContextEquations.lean`
-- `CharacteristicSampleNamedContextSplicingContextFamilies.lean`
-- `CharacteristicSampleNamedContextSplicingLeftRightConstructors.lean`
-- `CharacteristicSampleNamedContextSplicingLocalTargets.lean`
-- `CharacteristicSampleNamedContextSplicingParentChoices.lean`
-- `CharacteristicSampleNamedContextSplicingPieces.lean`
-- `CharacteristicSampleNamedContextSplicingTemplateChoices.lean`
-- `CharacteristicSampleNamedContextSplicingTemplateTargets.lean`
-- `CharacteristicSampleSemanticConstructionTargets(1).lean`
-- `ConcreteCanonicalLearnerClassTheorem.lean`
-- `ConcreteCanonicalLearnerFiniteEnumerationBounds.lean`
-- `ConcreteCanonicalLearnerFiniteHypothesis.lean`
-- `ConcreteCanonicalLearnerFiniteHypothesisSize.lean`
-- `ConcreteCanonicalLearnerFiniteObjectDirectedSystem.lean`
-- `ConcreteCanonicalLearnerFiniteObjectIdentification.lean`
-- `ConcreteCanonicalLearnerFiniteObjectMonotone.lean`
-- `ConcreteCanonicalLearnerIdentification.lean`
-- `ConcreteCanonicalLearnerLengthOnlyBounds.lean`
-- `ConcreteCanonicalLearnerPolynomialExponentBounds.lean`
-- `ConcreteCanonicalLearnerSinglePowerBounds.lean`
-- `ConcreteCanonicalLearnerStabilization.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarAutomaticBitWidth.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarAutomaticNaturalFieldBitWidth.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBinaryEncoding.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleFamilyBodyBounds.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalSerialization.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleSerialization.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTerminalClosure.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTokenPayloadBounds.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarCanonicalDecodedSearch.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarCanonicalSearchSelector.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionComplexity.lean`
@@ -11204,25 +11244,10 @@ compiled MCFG2 artifacts before testing.
 - `ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputLearner.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputMindChanges.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarCheckedBitRepresentation.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarConstruction.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarCutSaturation.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarDenseEncoding.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarDescriptionSize.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarEquivalence.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarFinalDescriptionPackage.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarFiniteCodeUniverse.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarFiniteDecodedSearch.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarIdentification.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitSerialization.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarMindChanges.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarNaturalEncoding.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldClassification.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldFullyExplicitBound.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarNaturalFieldMaximum.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarObservationAblation.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration.lean`
@@ -11299,34 +11324,20 @@ compiled MCFG2 artifacts before testing.
 - `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarObstruction.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarPaperBitEnvelope.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarPaperPowerBitBound.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarPresentationNaturalSerialization.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarPresentationSize.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarRepresentation.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarRepresentationRank.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarSampleParametricBitBound.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarSize.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarStructuralConditions.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseDecoding.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarTaggedDenseEncoding.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarTemplateSerialization.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarTemplateTupleFraming.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarTerminalAlphabetEncoding.lean`
-- `ConcreteCanonicalLearnerWorkingGrammarUnaryBitSerialization.lean`
 - `ConcreteCanonicalLearnerWorkingGrammarUniformNaturalFieldBound.lean`
-- `ExactConcreteCanonicalLearnerEquivalence.lean`
-- `StartRootedConcreteCanonicalLearnerClassTheorem.lean`
-- `StartRootedConcreteCanonicalLearnerIdentification.lean`
 
 </details>
 
 ### 10.6 Current conclusion
 
 ```text
-Former cumulative experiment: archived; not trusted as current restart evidence
-Current BinaryWitnessEnumerationCompleteness route: PASS
-Current MCFG2 all-files experiment: NOT YET DONE
-Clean-restart completion criterion: all 304 MCFG2 modules pass the new all-files workflow
+Former cumulative experiment: archived; not trusted automatically as current evidence
+Current fixed 210-root regression: PASS at commit cf05b87
+Current directly confirmed coverage: 210/303 = 69.3%
+Current pending set: 93 modules
+Current MCFG2 all-root experiment: NOT YET COMPLETE
+Clean-restart completion criterion: all 303 MCFG2 modules pass the current per-root workflow
 ```

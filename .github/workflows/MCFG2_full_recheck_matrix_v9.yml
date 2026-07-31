@@ -1,0 +1,1100 @@
+name: MCFG2 Unverified Matrix Diagnostics v9
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcfg2-matrix-diagnostics-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MCFG2_DIAGNOSTIC_VERSION: "v9-93-unverified-deduplicated-frontier"
+  MCFG2_ROOT: LeanCfgProject/MCFG2
+  MCFG2_DIAGNOSTIC_SHARDS: "12"
+  MCFG2_TOTAL_SNAPSHOT_COUNT: "303"
+  MCFG2_CONFIRMED_SUCCESS_COUNT: "210"
+  MCFG2_UNVERIFIED_COUNT: "93"
+  MCFG2_CONFIRMED_SUCCESS_SHA256: "f35e51c9a5c81c207b37a7201c7e0231ae699cf658ed60aef0084b2e17cfa438"
+  MCFG2_UNVERIFIED_SHA256: "dcf7b58b27417d567a450a3d735ab42b5625b99ff1dcee1b3b6cf7de85224b86"
+
+jobs:
+  prepare:
+    name: Prepare exact 93-module MCFG2 matrix v9
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.manifest.outputs.matrix }}
+      source_files: ${{ steps.manifest.outputs.source_files }}
+      root_targets: ${{ steps.manifest.outputs.root_targets }}
+      unverified_targets: ${{ steps.manifest.outputs.unverified_targets }}
+      shard_count: ${{ steps.manifest.outputs.shard_count }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Validate sources and define diagnostic shards
+        id: manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p ci-artifacts/manifest
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          root = Path(os.environ["MCFG2_ROOT"])
+          requested_shards = int(os.environ["MCFG2_DIAGNOSTIC_SHARDS"])
+          expected_total = int(os.environ["MCFG2_TOTAL_SNAPSHOT_COUNT"])
+          expected_success = int(os.environ["MCFG2_CONFIRMED_SUCCESS_COUNT"])
+          expected_unverified = int(os.environ["MCFG2_UNVERIFIED_COUNT"])
+          artifact_dir = Path("ci-artifacts/manifest")
+
+          unverified_snapshot = """          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleFamilyBodyBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCanonicalDecodedSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCanonicalSearchSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionComplexity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionProfile
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputLearner
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputMindChanges
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCheckedBitRepresentation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFinalDescriptionPackage
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFiniteCodeUniverse
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFiniteDecodedSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationAblation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationAdditiveWeights
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationBudgetFiltration
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationEquivalenceChain
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationFiniteOptimization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationOptimizationSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationParetoSelection
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationProduct
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationRefinementFailure
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelection
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionBoundedDecisionSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificate
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCanonicalMinimumCertificateSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionComplexity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDecisionProblem
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionDenseCertificateEncoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalPolynomialWitness
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCanonicalSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertificateSpecification
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCertifiedSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactInstance
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactVerifier
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedCompactVerifierRuntime
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionOptimization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedDecisionThreshold
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedExecutableVerifier
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedExecutableVerifierComplexity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstance
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedInstanceSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialVerifier
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedPolynomialWitness
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSemanticOracleBoundary
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedCertificateVerifier
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedDecisionProblem
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedMachineModelAdapter
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleCanonicalWitness
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleClass
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleMembership
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleMinimumBudgetSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedNPStyleThreshold
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedPolynomialDecisionProblem
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedPolynomialWitness
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedStandardMachineRealization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedVerifier
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedSerializedVerifierComplexity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedThresholdSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedTotalSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionEncodedVerifierComplexity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumBudgetSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionMinimumCertificateSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileExtremes
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetBijection
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetFirstGapBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapAlternative
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapDecision
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapFree
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGapSelectionFamily
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetGaps
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetOrder
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsetSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileOffsets
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfileWidth
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankProfiles
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationWeightedSelection
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPaperBitEnvelope
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPaperPowerBitBound
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarSampleParametricBitBound
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarUniformNaturalFieldBound
+          """
+          unverified = [line.strip() for line in unverified_snapshot.splitlines() if line.strip()]
+
+          if not root.is_dir():
+              raise SystemExit(f"Directory not found: {root}")
+
+          files = sorted(root.rglob("*.lean"))
+          if not files:
+              raise SystemExit(f"No Lean files found under {root}")
+
+          component = re.compile(r"^[A-Za-z_][A-Za-z0-9_']*$")
+          numbered_copy = re.compile(r"^(?P<base>.+)\((?P<number>[0-9]+)\)\.lean$")
+
+          targets: list[str] = []
+          valid_files: list[str] = []
+          duplicate_aliases: list[dict[str, str]] = []
+          invalid_files: list[str] = []
+
+          for file in files:
+              module_parts = file.with_suffix("").parts
+              if all(component.fullmatch(part) for part in module_parts):
+                  targets.append(".".join(module_parts))
+                  valid_files.append(file.as_posix())
+                  continue
+
+              match = numbered_copy.fullmatch(file.name)
+              if match is None:
+                  invalid_files.append(
+                      f"{file}: invalid Lean module filename and not a numbered copy"
+                  )
+                  continue
+
+              canonical = file.with_name(match.group("base") + ".lean")
+              if not canonical.is_file():
+                  invalid_files.append(
+                      f"{file}: numbered copy has no canonical sibling {canonical}"
+                  )
+                  continue
+
+              if file.read_bytes() != canonical.read_bytes():
+                  invalid_files.append(
+                      f"{file}: differs from canonical sibling {canonical}"
+                  )
+                  continue
+
+              duplicate_aliases.append(
+                  {"duplicate": file.as_posix(), "canonical": canonical.as_posix()}
+              )
+
+          if invalid_files:
+              print("Invalid MCFG2 source files:")
+              for item in invalid_files:
+                  print(f"  - {item}")
+              raise SystemExit(2)
+
+          accounted = len(targets) + len(duplicate_aliases)
+          if accounted != len(files):
+              raise SystemExit(
+                  f"Manifest mismatch: accounted for {accounted} of {len(files)} files"
+              )
+
+          if len(targets) != expected_total:
+              raise SystemExit(
+                  f"Expected {expected_total} canonical MCFG2 roots, found {len(targets)}"
+              )
+          if len(unverified) != expected_unverified or len(set(unverified)) != len(unverified):
+              raise SystemExit(
+                  f"Unverified snapshot must contain {expected_unverified} unique roots"
+              )
+
+          target_set = set(targets)
+          missing = sorted(set(unverified) - target_set)
+          if missing:
+              print("Unverified snapshot entries missing from repository:")
+              for target in missing:
+                  print(f"  - {target}")
+              raise SystemExit(3)
+
+          confirmed = sorted(target_set - set(unverified))
+          if len(confirmed) != expected_success:
+              raise SystemExit(
+                  f"Expected {expected_success} confirmed-success roots, found {len(confirmed)}"
+              )
+
+          def digest(lines: list[str]) -> str:
+              payload = "".join(f"{line}\n" for line in sorted(lines)).encode("utf-8")
+              return hashlib.sha256(payload).hexdigest()
+
+          unverified_hash = digest(unverified)
+          success_hash = digest(confirmed)
+          if unverified_hash != os.environ["MCFG2_UNVERIFIED_SHA256"]:
+              raise SystemExit(
+                  f"Unverified target-set hash mismatch: {unverified_hash}"
+              )
+          if success_hash != os.environ["MCFG2_CONFIRMED_SUCCESS_SHA256"]:
+              raise SystemExit(
+                  f"Confirmed-success complement hash mismatch: {success_hash}"
+              )
+
+          unverified = sorted(unverified)
+          shard_count = min(max(1, requested_shards), len(unverified))
+          matrix = list(range(shard_count))
+
+          (artifact_dir / "mcfg2-all-targets.txt").write_text(
+              "".join(f"{target}\n" for target in sorted(targets)), encoding="utf-8"
+          )
+          (artifact_dir / "mcfg2-unverified-targets.txt").write_text(
+              "".join(f"{target}\n" for target in unverified), encoding="utf-8"
+          )
+          (artifact_dir / "mcfg2-confirmed-success-targets.txt").write_text(
+              "".join(f"{target}\n" for target in confirmed), encoding="utf-8"
+          )
+          (artifact_dir / "mcfg2-valid-files.txt").write_text(
+              "".join(f"{file}\n" for file in valid_files), encoding="utf-8"
+          )
+          (artifact_dir / "mcfg2-duplicate-aliases.json").write_text(
+              json.dumps(duplicate_aliases, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+
+          summary = {
+              "source_files": len(files),
+              "root_targets": len(targets),
+              "confirmed_success_targets": len(confirmed),
+              "unverified_targets": len(unverified),
+              "confirmed_success_sha256": success_hash,
+              "unverified_sha256": unverified_hash,
+              "shard_count": shard_count,
+              "matrix": matrix,
+          }
+          (artifact_dir / "mcfg2-matrix-summary.json").write_text(
+              json.dumps(summary, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+
+          output_path = Path(os.environ["GITHUB_OUTPUT"])
+          with output_path.open("a", encoding="utf-8") as output:
+              output.write(f"matrix={json.dumps(matrix, separators=(',', ':'))}\n")
+              output.write(f"source_files={len(files)}\n")
+              output.write(f"root_targets={len(targets)}\n")
+              output.write(f"unverified_targets={len(unverified)}\n")
+              output.write(f"shard_count={shard_count}\n")
+
+          print(
+              f"Prepared exact {len(unverified)}-root unverified matrix "
+              f"with {len(confirmed)} confirmed-success roots excluded."
+          )
+          print(f"Diagnostic workflow version: {os.environ['MCFG2_DIAGNOSTIC_VERSION']}")
+          PY
+
+      - name: Upload matrix manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-v9-matrix-manifest
+          path: ci-artifacts/manifest
+          if-no-files-found: error
+          retention-days: 14
+
+  diagnose:
+    name: Diagnose unverified MCFG2 v9 shard ${{ matrix.shard }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        shard: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Download exact unverified target manifest
+        uses: actions/download-artifact@v7
+        with:
+          name: mcfg2-v9-matrix-manifest
+          path: ci-input/manifest
+
+      - name: Build every assigned root module separately
+        shell: bash
+        env:
+          SHARD: ${{ matrix.shard }}
+          SHARD_COUNT: ${{ needs.prepare.outputs.shard_count }}
+        run: |
+          set -euo pipefail
+
+          echo "MCFG2 diagnostic version: ${MCFG2_DIAGNOSTIC_VERSION}"
+          echo "Commit: ${GITHUB_SHA}"
+
+          # Force a genuine rebuild of the MCFG2 dependency cone once per
+          # shard. This prevents a restored project cache from masking a
+          # changed foundational source file.
+          rm -rf .lake/build/lib/lean/LeanCfgProject/MCFG2
+          rm -rf .lake/build/ir/LeanCfgProject/MCFG2
+
+          shard_dir="ci-artifacts/shard-${SHARD}"
+          log_dir="${shard_dir}/logs"
+          focused_dir="${shard_dir}/focused"
+          mkdir -p "$log_dir" "$focused_dir"
+          : > "${shard_dir}/results.tsv"
+          : > "${shard_dir}/failures.txt"
+
+          python3 - "$SHARD" "$SHARD_COUNT" <<'PY' > "${shard_dir}/targets.txt"
+          from pathlib import Path
+          import sys
+
+          shard = int(sys.argv[1])
+          shard_count = int(sys.argv[2])
+          manifest = Path("ci-input/manifest/mcfg2-unverified-targets.txt")
+          targets = [
+              line.strip()
+              for line in manifest.read_text(encoding="utf-8").splitlines()
+              if line.strip()
+          ]
+
+          for index, target in enumerate(targets):
+              if index % shard_count == shard:
+                  print(target)
+          PY
+
+          target_count=$(wc -l < "${shard_dir}/targets.txt")
+          echo "Shard ${SHARD}/${SHARD_COUNT}: ${target_count} root modules"
+
+          while IFS= read -r target; do
+            [[ -n "$target" ]] || continue
+
+            module_path="${target//./\/}"
+            safe_name="${target//./_}"
+            log_file="${log_dir}/${safe_name}.log"
+
+            # Force this root source itself to rebuild, while retaining cached
+            # dependency products. This isolates direct errors in every source
+            # instead of letting the first broken dependency hide later files.
+            rm -f \
+              ".lake/build/lib/lean/${module_path}.olean" \
+              ".lake/build/lib/lean/${module_path}.ilean" \
+              ".lake/build/lib/lean/${module_path}.olean.hash" \
+              ".lake/build/lib/lean/${module_path}.trace" \
+              ".lake/build/ir/${module_path}.c" \
+              ".lake/build/ir/${module_path}.o" \
+              ".lake/build/ir/${module_path}.setup.json"
+
+            started=$(date +%s)
+            set +e
+            lake build "$target" >"$log_file" 2>&1
+            status=$?
+            set -e
+            elapsed=$(( $(date +%s) - started ))
+
+            if (( status == 0 )); then
+              printf 'PASS\t%s\t%s\n' "$elapsed" "$target" \
+                >> "${shard_dir}/results.tsv"
+              echo "PASS (${elapsed}s): $target"
+            else
+              printf 'FAIL\t%s\t%s\n' "$elapsed" "$target" \
+                >> "${shard_dir}/results.tsv"
+              printf '%s\n' "$target" >> "${shard_dir}/failures.txt"
+              echo "::error title=MCFG2 root failed::$target"
+              echo "FAIL (${elapsed}s): $target"
+              focused_file="${focused_dir}/${safe_name}.txt"
+              python3 - "$target" "$log_file" "$focused_file" <<'PY'
+          from __future__ import annotations
+
+          import re
+          import sys
+          from pathlib import Path
+
+          target, log_name, output_name = sys.argv[1:]
+          lines = Path(log_name).read_text(errors="replace").splitlines()
+          diagnostic = re.compile(
+              r"(?:^|[^A-Za-z])error:|unsolved goals?|"
+              r"application type mismatch|type mismatch|"
+              r"unknown (?:identifier|constant|declaration|target)|"
+              r"failed to synthesize|unexpected token|"
+              r"invalid (?:field|constructor|declaration|syntax|pattern|argument name)|"
+              r"maximum recursion depth|timeout",
+              re.IGNORECASE,
+          )
+
+          hits = [index for index, line in enumerate(lines) if diagnostic.search(line)]
+          ranges: list[tuple[int, int]] = []
+          for index in hits:
+              start = max(0, index - 4)
+              end = min(len(lines), index + 41)
+              if ranges and start <= ranges[-1][1] + 1:
+                  ranges[-1] = (ranges[-1][0], max(ranges[-1][1], end))
+              else:
+                  ranges.append((start, end))
+
+          if not ranges:
+              ranges = [(max(0, len(lines) - 120), len(lines))]
+
+          output = [
+              f"===== TARGET: {target} =====",
+              f"LOG: {log_name}",
+              "",
+          ]
+          for number, (start, end) in enumerate(ranges, 1):
+              output.append(f"--- diagnostic range {number}: lines {start + 1}-{end} ---")
+              output.extend(
+                  f"{line_number + 1}: {lines[line_number]}"
+                  for line_number in range(start, end)
+              )
+              output.append("")
+
+          Path(output_name).write_text("\n".join(output) + "\n", encoding="utf-8")
+          PY
+              echo "----- focused diagnostics: $target -----"
+              sed -n '1,260p' "$focused_file"
+              if (( $(wc -l < "$focused_file") > 260 )); then
+                echo "[focused diagnostics truncated in console; complete file is in the artifact]"
+              fi
+              echo "----- end diagnostics: $target -----"
+            fi
+          done < "${shard_dir}/targets.txt"
+
+          pass_count=$(awk -F '\t' '$1 == "PASS" {n++} END {print n+0}' \
+            "${shard_dir}/results.tsv")
+          fail_count=$(awk -F '\t' '$1 == "FAIL" {n++} END {print n+0}' \
+            "${shard_dir}/results.tsv")
+
+          cat > "${shard_dir}/summary.txt" <<EOF
+          shard=${SHARD}
+          shard_count=${SHARD_COUNT}
+          assigned_targets=${target_count}
+          passed=${pass_count}
+          failed=${fail_count}
+          commit=${GITHUB_SHA}
+          EOF
+
+          {
+            echo "### MCFG2 diagnostic shard ${SHARD}"
+            echo
+            echo "- Diagnostic workflow: **${MCFG2_DIAGNOSTIC_VERSION}**"
+            echo "- Assigned roots: **${target_count}**"
+            echo "- Passed: **${pass_count}**"
+            echo "- Failed: **${fail_count}**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Deliberately return success here. All shards must finish; the
+          # summarize job is the single place that fails the workflow.
+          exit 0
+
+      - name: Upload shard diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-v9-diagnostic-shard-${{ matrix.shard }}
+          path: ci-artifacts/shard-${{ matrix.shard }}
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
+
+
+  summarize:
+    name: Deduplicate and directly recheck unverified frontier v9
+    needs:
+      - prepare
+      - diagnose
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Download all diagnostic artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: downloaded-artifacts
+
+      - name: Aggregate root results and locate error frontier
+        id: aggregate
+        shell: bash
+        env:
+          EXPECTED_SHARDS: ${{ needs.prepare.outputs.shard_count }}
+          EXPECTED_TARGETS: ${{ needs.prepare.outputs.unverified_targets }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p ci-artifacts/combined/root-analysis
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import re
+          from collections import Counter, defaultdict
+          from pathlib import Path
+
+          artifacts = Path("downloaded-artifacts")
+          out = Path("ci-artifacts/combined")
+          analysis = out / "root-analysis"
+          expected_shards = int(os.environ["EXPECTED_SHARDS"])
+          expected_targets = int(os.environ["EXPECTED_TARGETS"])
+
+          ansi = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+          location_patterns = [
+              re.compile(
+                  r"^error:\s+(?P<file>LeanCfgProject/MCFG2/[^:]+\.lean):"
+                  r"(?P<line>\d+):(?P<col>\d+):\s*(?P<head>.*)$"
+              ),
+              re.compile(
+                  r"^(?P<file>LeanCfgProject/MCFG2/[^:]+\.lean):"
+                  r"(?P<line>\d+):(?P<col>\d+):\s*error:\s*(?P<head>.*)$"
+              ),
+          ]
+          generic_error = re.compile(r"^(?:error:|.*:\s+error:)", re.IGNORECASE)
+          diagnostic_boundary = re.compile(
+              r"^(?:error:|warning:|info:|trace:|✖|✔|Build completed|"
+              r"LeanCfgProject/.*\.lean:\d+:\d+:\s*(?:error|warning):)",
+              re.IGNORECASE,
+          )
+
+          def clean(line: str) -> str:
+              return ansi.sub("", line).rstrip("\r")
+
+          def location(line: str):
+              for pattern in location_patterns:
+                  match = pattern.match(line)
+                  if match:
+                      return (
+                          match.group("file"),
+                          int(match.group("line")),
+                          int(match.group("col")),
+                          match.group("head").strip(),
+                      )
+              return None
+
+          def error_blocks(lines: list[str]):
+              blocks = []
+              index = 0
+              while index < len(lines):
+                  line = lines[index]
+                  loc = location(line)
+                  if loc is None and not generic_error.match(line):
+                      index += 1
+                      continue
+                  start = index
+                  index += 1
+                  while index < len(lines):
+                      if location(lines[index]) is not None:
+                          break
+                      if diagnostic_boundary.match(lines[index]) and generic_error.match(lines[index]):
+                          break
+                      index += 1
+                  block = lines[start:index]
+                  blocks.append((loc, block))
+              return blocks
+
+          result_files = sorted(artifacts.rglob("results.tsv"))
+          rows: list[tuple[str, int, str]] = []
+          for file in result_files:
+              for raw in file.read_text(errors="replace").splitlines():
+                  if not raw.strip():
+                      continue
+                  status, seconds, target = raw.split("\t", 2)
+                  rows.append((status, int(seconds), target))
+          rows.sort(key=lambda row: row[2])
+          failures = [target for status, _, target in rows if status == "FAIL"]
+          passes = [target for status, _, target in rows if status == "PASS"]
+
+          raw_logs = sorted(artifacts.rglob("logs/*.log"))
+          target_by_safe_name = {target.replace(".", "_"): target for _, _, target in rows}
+          unique: dict[tuple, dict] = {}
+          source_files: set[str] = set()
+          root_first: list[tuple[str, str]] = []
+
+          for log in raw_logs:
+              target = target_by_safe_name.get(log.stem, log.stem)
+              lines = [clean(line) for line in log.read_text(errors="replace").splitlines()]
+              blocks = error_blocks(lines)
+              first = "No explicit Lean error location found"
+              for loc, block in blocks:
+                  if loc is None:
+                      key = ("<generic>", 0, 0, block[0] if block else "error")
+                  else:
+                      file, line, col, head = loc
+                      source_files.add(file)
+                      key = (file, line, col, head)
+                      if first == "No explicit Lean error location found":
+                          first = f"{file}:{line}:{col}: {head}"
+                  item = unique.setdefault(
+                      key,
+                      {
+                          "location": loc,
+                          "block": block,
+                          "roots": set(),
+                          "occurrences": 0,
+                      },
+                  )
+                  item["roots"].add(target)
+                  item["occurrences"] += 1
+              if blocks:
+                  root_first.append((target, first))
+
+          frontier = sorted(
+              source for source in source_files
+              if source.startswith(os.environ.get("MCFG2_ROOT", "LeanCfgProject/MCFG2") + "/")
+          )
+          (analysis / "frontier-source-files.txt").write_text(
+              "".join(f"{source}\n" for source in frontier), encoding="utf-8"
+          )
+          (analysis / "root-first-errors.tsv").write_text(
+              "".join(f"{target}\t{headline}\n" for target, headline in sorted(root_first)),
+              encoding="utf-8",
+          )
+          (analysis / "root-unique-errors.json").write_text(
+              json.dumps(
+                  [
+                      {
+                          "file": key[0],
+                          "line": key[1],
+                          "column": key[2],
+                          "headline": key[3],
+                          "occurrences": item["occurrences"],
+                          "roots": sorted(item["roots"]),
+                          "block": item["block"],
+                      }
+                      for key, item in sorted(unique.items())
+                  ],
+                  indent=2,
+                  ensure_ascii=False,
+              ) + "\n",
+              encoding="utf-8",
+          )
+
+          infrastructure_errors: list[str] = []
+          if len(result_files) != expected_shards:
+              infrastructure_errors.append(
+                  f"Expected {expected_shards} shard result files, found {len(result_files)}"
+              )
+          if len(rows) != expected_targets:
+              infrastructure_errors.append(
+                  f"Expected {expected_targets} root results, found {len(rows)}"
+              )
+          if len({target for _, _, target in rows}) != len(rows):
+              infrastructure_errors.append("Duplicate root-module result detected")
+
+          (out / "combined-results.tsv").write_text(
+              "".join(f"{status}\t{seconds}\t{target}\n" for status, seconds, target in rows),
+              encoding="utf-8",
+          )
+          (out / "failed-targets.txt").write_text(
+              "".join(f"{target}\n" for target in failures), encoding="utf-8"
+          )
+          (out / "infrastructure-errors.txt").write_text(
+              "".join(f"{error}\n" for error in infrastructure_errors), encoding="utf-8"
+          )
+          (out / "root-analysis-summary.json").write_text(
+              json.dumps(
+                  {
+                      "expected_targets": expected_targets,
+                      "results": len(rows),
+                      "passed": len(passes),
+                      "failed": len(failures),
+                      "raw_logs": len(raw_logs),
+                      "unique_observable_errors_from_roots": len(unique),
+                      "frontier_source_files": len(frontier),
+                      "infrastructure_errors": infrastructure_errors,
+                  },
+                  indent=2,
+              ) + "\n",
+              encoding="utf-8",
+          )
+
+          output = Path(os.environ["GITHUB_OUTPUT"])
+          with output.open("a", encoding="utf-8") as stream:
+              stream.write(f"failed_count={len(failures)}\n")
+              stream.write(f"frontier_count={len(frontier)}\n")
+              stream.write(f"infrastructure_error_count={len(infrastructure_errors)}\n")
+
+          print(f"Root results: {len(passes)} passed, {len(failures)} failed")
+          print(f"Unique observable Lean errors in all raw root logs: {len(unique)}")
+          print(f"Distinct frontier source files: {len(frontier)}")
+          for source in frontier:
+              print(f"  - {source}")
+          PY
+
+      - name: Directly recheck each frontier source with high error limit
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          frontier_file="ci-artifacts/combined/root-analysis/frontier-source-files.txt"
+          output_dir="ci-artifacts/combined/frontier-direct"
+          mkdir -p "$output_dir"
+          : > "$output_dir/results.tsv"
+
+          if [[ ! -s "$frontier_file" ]]; then
+            echo "No located Lean source frontier was found."
+            exit 0
+          fi
+
+          while IFS= read -r source; do
+            [[ -n "$source" ]] || continue
+            module="${source%.lean}"
+            module="${module//\//.}"
+            safe="${module//./_}"
+            lake_log="$output_dir/${safe}.lake-build.log"
+            direct_log="$output_dir/${safe}.direct-lean.log"
+
+            echo "Direct frontier recheck: $source"
+
+            # First ensure all imports before the frontier source are built.
+            set +e
+            lake build "$module" >"$lake_log" 2>&1
+            lake_status=$?
+            lake env lean -DmaxErrors=10000 "$source" >"$direct_log" 2>&1
+            direct_status=$?
+            set -e
+
+            printf '%s\t%s\t%s\t%s\n' \
+              "$direct_status" "$lake_status" "$source" "$module" \
+              >> "$output_dir/results.tsv"
+
+            echo "  lake build status: $lake_status"
+            echo "  direct lean status: $direct_status"
+            echo "----- direct Lean diagnostics (first 320 lines) -----"
+            sed -n '1,320p' "$direct_log"
+            if (( $(wc -l < "$direct_log") > 320 )); then
+              echo "[console output truncated; complete direct log is in the artifact]"
+            fi
+            echo "----- end direct Lean diagnostics -----"
+          done < "$frontier_file"
+
+      - name: Produce exhaustive deduplicated report
+        if: always()
+        shell: bash
+        env:
+          EXPECTED_TARGETS: ${{ needs.prepare.outputs.unverified_targets }}
+        run: |
+          set -euo pipefail
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import re
+          from collections import defaultdict
+          from pathlib import Path
+
+          out = Path("ci-artifacts/combined")
+          direct_dir = out / "frontier-direct"
+          root_data_file = out / "root-analysis" / "root-unique-errors.json"
+          root_data = json.loads(root_data_file.read_text(encoding="utf-8")) if root_data_file.exists() else []
+
+          ansi = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+          patterns = [
+              re.compile(
+                  r"^error:\s+(?P<file>LeanCfgProject/MCFG2/[^:]+\.lean):"
+                  r"(?P<line>\d+):(?P<col>\d+):\s*(?P<head>.*)$"
+              ),
+              re.compile(
+                  r"^(?P<file>LeanCfgProject/MCFG2/[^:]+\.lean):"
+                  r"(?P<line>\d+):(?P<col>\d+):\s*error:\s*(?P<head>.*)$"
+              ),
+          ]
+          any_diag = re.compile(
+              r"^(?:error:|warning:|info:|trace:|LeanCfgProject/.*\.lean:\d+:\d+:)",
+              re.IGNORECASE,
+          )
+
+          def clean(line: str) -> str:
+              return ansi.sub("", line).rstrip("\r")
+
+          def locate(line: str):
+              for pattern in patterns:
+                  match = pattern.match(line)
+                  if match:
+                      return (
+                          match.group("file"),
+                          int(match.group("line")),
+                          int(match.group("col")),
+                          match.group("head").strip(),
+                      )
+              return None
+
+          def blocks(lines: list[str]):
+              result = []
+              i = 0
+              while i < len(lines):
+                  loc = locate(lines[i])
+                  if loc is None:
+                      i += 1
+                      continue
+                  start = i
+                  i += 1
+                  while i < len(lines) and locate(lines[i]) is None:
+                      if any_diag.match(lines[i]) and lines[i].lower().startswith("error:"):
+                          break
+                      i += 1
+                  result.append((loc, lines[start:i]))
+              return result
+
+          combined: dict[tuple, dict] = {}
+          for item in root_data:
+              key = (item["file"], item["line"], item["column"], item["headline"])
+              combined[key] = {
+                  "block": item.get("block", []),
+                  "root_occurrences": item.get("occurrences", 0),
+                  "roots": item.get("roots", []),
+                  "direct_sources": set(),
+              }
+
+          for log in sorted(direct_dir.glob("*.direct-lean.log")):
+              lines = [clean(line) for line in log.read_text(errors="replace").splitlines()]
+              for loc, block in blocks(lines):
+                  key = loc
+                  item = combined.setdefault(
+                      key,
+                      {
+                          "block": block,
+                          "root_occurrences": 0,
+                          "roots": [],
+                          "direct_sources": set(),
+                      },
+                  )
+                  item["block"] = block
+                  item["direct_sources"].add(log.name)
+
+          source_groups: dict[str, list[tuple]] = defaultdict(list)
+          for key in sorted(combined):
+              source_groups[key[0]].append(key)
+
+          index_lines = [
+              "source\tline\tcolumn\theadline\troot_occurrences\taffected_roots\tdirectly_rechecked"
+          ]
+          full_lines = []
+          for number, key in enumerate(sorted(combined), 1):
+              source, line, col, headline = key
+              item = combined[key]
+              index_lines.append(
+                  f"{source}\t{line}\t{col}\t{headline}\t"
+                  f"{item['root_occurrences']}\t{len(item['roots'])}\t"
+                  f"{1 if item['direct_sources'] else 0}"
+              )
+              full_lines.extend(
+                  [
+                      f"===== UNIQUE ERROR {number} =====",
+                      f"LOCATION: {source}:{line}:{col}",
+                      f"HEADLINE: {headline}",
+                      f"ROOT OCCURRENCES: {item['root_occurrences']}",
+                      f"AFFECTED ROOTS: {len(item['roots'])}",
+                      f"DIRECT FRONTIER RECHECK: {'yes' if item['direct_sources'] else 'no'}",
+                      "",
+                      *item["block"],
+                      "",
+                  ]
+              )
+
+          (out / "unique-errors.tsv").write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+          (out / "unique-errors-full.txt").write_text("\n".join(full_lines), encoding="utf-8")
+
+          by_source = ["# Observable Lean errors by source file", ""]
+          for source, keys in sorted(source_groups.items()):
+              by_source.append(f"## {source}")
+              by_source.append("")
+              for key in keys:
+                  _, line, col, headline = key
+                  item = combined[key]
+                  by_source.append(
+                      f"- `{line}:{col}` — {headline} "
+                      f"(seen in {len(item['roots'])} roots; direct={bool(item['direct_sources'])})"
+                  )
+              by_source.append("")
+          (out / "errors-by-source.md").write_text("\n".join(by_source) + "\n", encoding="utf-8")
+
+          root_summary = json.loads((out / "root-analysis-summary.json").read_text(encoding="utf-8"))
+          failed = root_summary["failed"]
+          passed = root_summary["passed"]
+          infrastructure = root_summary["infrastructure_errors"]
+
+          limitations = """# Meaning of “all errors”\n\nThis report contains every Lean error block currently observable in all raw root-build logs, deduplicated by source location and headline. Each located frontier source is also compiled directly with `-DmaxErrors=10000`, and its complete raw output is retained.\n\nLean cannot elaborate a downstream module when one of its imports fails. Therefore errors hidden behind a broken import are not logically observable until the upstream source is repaired. The report is exhaustive for the current compilation frontier, not a prediction of errors that may appear after that frontier moves.\n"""
+          (out / "OBSERVABLE_COMPLETENESS.md").write_text(limitations, encoding="utf-8")
+
+          summary = [
+              "### MCFG2 unverified exhaustive diagnostics v9",
+              "",
+              f"- Diagnostic workflow: **{os.environ['MCFG2_DIAGNOSTIC_VERSION']}**",
+              f"- Expected unverified roots: **{os.environ['EXPECTED_TARGETS']}**",
+              f"- Passed roots: **{passed}**",
+              f"- Failed roots: **{failed}**",
+              f"- Unique observable Lean errors: **{len(combined)}**",
+              f"- Source files containing observable errors: **{len(source_groups)}**",
+              f"- Infrastructure errors: **{len(infrastructure)}**",
+              "",
+              "#### Unique error index",
+              "",
+          ]
+          for key in sorted(combined)[:120]:
+              source, line, col, headline = key
+              item = combined[key]
+              summary.append(
+                  f"- `{source}:{line}:{col}` — {headline} "
+                  f"(affects {len(item['roots'])} roots)"
+              )
+          if len(combined) > 120:
+              summary.append(
+                  f"- … {len(combined) - 120} additional unique errors are in the artifact."
+              )
+          summary.extend(
+              [
+                  "",
+                  "Complete files: `unique-errors-full.txt`, `unique-errors.tsv`, "
+                  "`errors-by-source.md`, all shard raw logs, and direct frontier logs.",
+                  "",
+                  "Errors behind a failed import cannot be observed until the import frontier is repaired.",
+              ]
+          )
+          if infrastructure:
+              summary.extend(["", "#### Infrastructure errors", ""])
+              summary.extend(f"- {error}" for error in infrastructure)
+
+          (out / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
+          print("\n".join(summary))
+          PY
+
+          cat ci-artifacts/combined/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload exhaustive combined report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-v9-exhaustive-diagnostics-${{ github.run_number }}
+          path: ci-artifacts/combined
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Enforce diagnostic gate
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          failed=$(awk -F '\t' '$1 == "FAIL" {n++} END {print n+0}' \
+            ci-artifacts/combined/combined-results.tsv)
+          infrastructure=$(wc -l < ci-artifacts/combined/infrastructure-errors.txt)
+
+          if (( failed > 0 || infrastructure > 0 )); then
+            echo "::error::MCFG2 diagnostics found ${failed} failed roots and ${infrastructure} infrastructure errors."
+            exit 1
+          fi
+
+  full-recheck:
+    name: Full clean MCFG2 recheck after 93-module matrix passes
+    needs:
+      - prepare
+      - summarize
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Remove all cached MCFG2 build products
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .lake/build/lib/lean/LeanCfgProject/MCFG2
+          rm -rf .lake/build/ir/LeanCfgProject/MCFG2
+
+      - name: Rebuild all MCFG2 roots together
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p ci-artifacts/full-recheck
+
+          python3 <<'PY' > ci-artifacts/full-recheck/targets.txt
+          from pathlib import Path
+          import os
+          import re
+
+          root = Path(os.environ["MCFG2_ROOT"])
+          component = re.compile(r"^[A-Za-z_][A-Za-z0-9_']*$")
+          for file in sorted(root.rglob("*.lean")):
+              parts = file.with_suffix("").parts
+              if all(component.fullmatch(part) for part in parts):
+                  print(".".join(parts))
+          PY
+
+          mapfile -t targets < ci-artifacts/full-recheck/targets.txt
+          log_file="ci-artifacts/full-recheck/full-build.log"
+          echo "Full clean rebuild of ${#targets[@]} MCFG2 roots"
+
+          set +e
+          lake build "${targets[@]}" >"$log_file" 2>&1
+          status=$?
+          set -e
+
+          if (( status == 0 )); then
+            echo "MCFG2 FULL RECHECK: PASS"
+            {
+              echo "### Full clean MCFG2 recheck: PASS"
+              echo
+              echo "All **${#targets[@]}** root modules built together."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo "::error::MCFG2 FULL RECHECK: FAIL"
+          sed -n '1,600p' "$log_file"
+          exit "$status"
+
+      - name: Upload full-recheck log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-v9-full-recheck-${{ github.run_number }}
+          path: ci-artifacts/full-recheck
+          if-no-files-found: error
+          retention-days: 30
