@@ -104,8 +104,7 @@ noncomputable def compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
   maximumNaturalFieldValue
     ((H.toCutWorkingMCFG dummy).binaryRules.map
       (fun rho =>
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens.length))
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length))
 
 /-- Every stored binary rule's framed-body-token count is below the common
 stored-rule maximum. -/
@@ -118,8 +117,7 @@ theorem
       (correctedConcreteCutGrammarArity H))
     (hrho :
       rho ∈ (H.toCutWorkingMCFG dummy).binaryRules) :
-    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-        bodyTokens.length <=
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length <=
       H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
         dummy := by
 
@@ -238,23 +236,22 @@ theorem
       (Nat.mul_le_mul_left 2 hbody)
       4
 
-  exact
-    hlength.trans
-      (Nat.le_max_left
-        (4 +
+  have houter :
+      4 +
           2 *
             H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-              dummy)
-        (max 4
-          (max
-            H.compiledGrammarPresentationItemCount
-            (max 3
-              (max
-                (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                  dummy)
-                (max
-                  (compiledTerminalAlphabet K dummy).card
-                  (max 1 f))))))
+              dummy <=
+        H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+          dummy := by
+
+    unfold
+      compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+
+    exact
+      Nat.le_max_left _ _
+
+  exact
+    hlength.trans houter
 
 /-- The common body-token payload bound of every stored binary rule is below the
 uniform binary-rule bound. -/
@@ -277,168 +274,133 @@ theorem
 
   apply max_le
 
-  · exact
-      (H.compiledBinaryRule_bodyTokenCount_le_storedMaximum
-          dummy rho hrho).trans
-        ((Nat.le_max_left
+  · calc
+      (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length <=
+          H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+            dummy :=
+        H.compiledBinaryRule_bodyTokenCount_le_storedMaximum
+          dummy rho hrho
+
+      _ <=
+          max
             (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
               dummy)
             (max
               (compiledTerminalAlphabet K dummy).card
-              (max 1 f))).trans
-          ((Nat.le_max_right
-              3
+              (max 1 f)) :=
+        Nat.le_max_left _ _
+
+      _ <=
+          max 3
+            (max
+              (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                dummy)
+              (max
+                (compiledTerminalAlphabet K dummy).card
+                (max 1 f))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max H.compiledGrammarPresentationItemCount
+            (max 3
               (max
                 (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
                   dummy)
                 (max
                   (compiledTerminalAlphabet K dummy).card
-                  (max 1 f)))).trans
-            ((Nat.le_max_right
-                H.compiledGrammarPresentationItemCount
+                  (max 1 f)))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max 4
+            (max H.compiledGrammarPresentationItemCount
+              (max 3
+                (max
+                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                    dummy)
+                  (max
+                    (compiledTerminalAlphabet K dummy).card
+                    (max 1 f))))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max
+            (4 +
+              2 *
+                H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+            (max 4
+              (max H.compiledGrammarPresentationItemCount
                 (max 3
                   (max
                     (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
                       dummy)
                     (max
                       (compiledTerminalAlphabet K dummy).card
-                      (max 1 f))))).trans
-              ((Nat.le_max_right
-                  4
-                  (max
-                    H.compiledGrammarPresentationItemCount
-                    (max 3
-                      (max
-                        (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                          dummy)
-                        (max
-                          (compiledTerminalAlphabet K dummy).card
-                          (max 1 f)))))).trans
-                (Nat.le_max_right
-                  (4 +
-                    2 *
-                      H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                        dummy)
-                  (max 4
-                    (max
-                      H.compiledGrammarPresentationItemCount
-                      (max 3
-                        (max
-                          (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                            dummy)
-                          (max
-                            (compiledTerminalAlphabet K dummy).card
-                            (max 1 f)))))))))
+                      (max 1 f)))))) :=
+        Nat.le_max_right _ _
 
-  · apply max_le
-
-    · exact
-        (Nat.le_max_left
+  · calc
+      max
+          (compiledTerminalAlphabet K dummy).card
+          (max 1 f) <=
+        max
+          (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+            dummy)
+          (max
             (compiledTerminalAlphabet K dummy).card
-            (max 1 f)).trans
-          ((Nat.le_max_right
+            (max 1 f)) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max 3
+            (max
               (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
                 dummy)
               (max
                 (compiledTerminalAlphabet K dummy).card
-                (max 1 f))).trans
-            ((Nat.le_max_right
-                3
+                (max 1 f))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max H.compiledGrammarPresentationItemCount
+            (max 3
+              (max
+                (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+                (max
+                  (compiledTerminalAlphabet K dummy).card
+                  (max 1 f)))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max 4
+            (max H.compiledGrammarPresentationItemCount
+              (max 3
                 (max
                   (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
                     dummy)
                   (max
                     (compiledTerminalAlphabet K dummy).card
-                    (max 1 f)))).trans
-              ((Nat.le_max_right
-                  H.compiledGrammarPresentationItemCount
-                  (max 3
-                    (max
-                      (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                        dummy)
-                      (max
-                        (compiledTerminalAlphabet K dummy).card
-                        (max 1 f))))).trans
-                ((Nat.le_max_right
-                    4
-                    (max
-                      H.compiledGrammarPresentationItemCount
-                      (max 3
-                        (max
-                          (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                            dummy)
-                          (max
-                            (compiledTerminalAlphabet K dummy).card
-                            (max 1 f)))))).trans
-                  (Nat.le_max_right
-                    (4 +
-                      2 *
-                        H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                          dummy)
-                    (max 4
-                      (max
-                        H.compiledGrammarPresentationItemCount
-                        (max 3
-                          (max
-                            (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                              dummy)
-                            (max
-                              (compiledTerminalAlphabet K dummy).card
-                              (max 1 f)))))))))
+                    (max 1 f))))) :=
+        Nat.le_max_right _ _
 
-    · exact
-        (Nat.le_max_right
-            (compiledTerminalAlphabet K dummy).card
-            (max 1 f)).trans
-          ((Nat.le_max_right
-              (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                dummy)
-              (max
-                (compiledTerminalAlphabet K dummy).card
-                (max 1 f))).trans
-            ((Nat.le_max_right
-                3
-                (max
-                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                    dummy)
+      _ <=
+          max
+            (4 +
+              2 *
+                H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+            (max 4
+              (max H.compiledGrammarPresentationItemCount
+                (max 3
                   (max
-                    (compiledTerminalAlphabet K dummy).card
-                    (max 1 f)))).trans
-              ((Nat.le_max_right
-                  H.compiledGrammarPresentationItemCount
-                  (max 3
+                    (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                      dummy)
                     (max
-                      (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                        dummy)
-                      (max
-                        (compiledTerminalAlphabet K dummy).card
-                        (max 1 f))))).trans
-                ((Nat.le_max_right
-                    4
-                    (max
-                      H.compiledGrammarPresentationItemCount
-                      (max 3
-                        (max
-                          (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                            dummy)
-                          (max
-                            (compiledTerminalAlphabet K dummy).card
-                            (max 1 f)))))).trans
-                  (Nat.le_max_right
-                    (4 +
-                      2 *
-                        H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                          dummy)
-                    (max 4
-                      (max
-                        H.compiledGrammarPresentationItemCount
-                        (max 3
-                          (max
-                            (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                              dummy)
-                            (max
-                              (compiledTerminalAlphabet K dummy).card
-                              (max 1 f)))))))))
+                      (compiledTerminalAlphabet K dummy).card
+                      (max 1 f)))))) :=
+        Nat.le_max_right _ _
 
 /-- Every stored binary rule's fully explicit local bound is below the one
 uniform binary-rule bound. -/
@@ -455,6 +417,152 @@ theorem
       H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
         dummy := by
 
+  have hFour :
+      4 <=
+        H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+          dummy := by
+
+    unfold
+      compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+
+    calc
+      4 <=
+          max 4
+            (max H.compiledGrammarPresentationItemCount
+              (max 3
+                (max
+                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                    dummy)
+                  (max
+                    (compiledTerminalAlphabet K dummy).card
+                    (max 1 f))))) :=
+        Nat.le_max_left _ _
+
+      _ <=
+          max
+            (4 +
+              2 *
+                H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+            (max 4
+              (max H.compiledGrammarPresentationItemCount
+                (max 3
+                  (max
+                    (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                      dummy)
+                    (max
+                      (compiledTerminalAlphabet K dummy).card
+                      (max 1 f)))))) :=
+        Nat.le_max_right _ _
+
+  have hPresentation :
+      H.compiledGrammarPresentationItemCount <=
+        H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+          dummy := by
+
+    unfold
+      compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+
+    calc
+      H.compiledGrammarPresentationItemCount <=
+          max H.compiledGrammarPresentationItemCount
+            (max 3
+              (max
+                (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+                (max
+                  (compiledTerminalAlphabet K dummy).card
+                  (max 1 f)))) :=
+        Nat.le_max_left _ _
+
+      _ <=
+          max 4
+            (max H.compiledGrammarPresentationItemCount
+              (max 3
+                (max
+                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                    dummy)
+                  (max
+                    (compiledTerminalAlphabet K dummy).card
+                    (max 1 f))))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max
+            (4 +
+              2 *
+                H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+            (max 4
+              (max H.compiledGrammarPresentationItemCount
+                (max 3
+                  (max
+                    (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                      dummy)
+                    (max
+                      (compiledTerminalAlphabet K dummy).card
+                      (max 1 f)))))) :=
+        Nat.le_max_right _ _
+
+  have hThree :
+      3 <=
+        H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+          dummy := by
+
+    unfold
+      compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+
+    calc
+      3 <=
+          max 3
+            (max
+              (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                dummy)
+              (max
+                (compiledTerminalAlphabet K dummy).card
+                (max 1 f))) :=
+        Nat.le_max_left _ _
+
+      _ <=
+          max H.compiledGrammarPresentationItemCount
+            (max 3
+              (max
+                (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+                (max
+                  (compiledTerminalAlphabet K dummy).card
+                  (max 1 f)))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max 4
+            (max H.compiledGrammarPresentationItemCount
+              (max 3
+                (max
+                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                    dummy)
+                  (max
+                    (compiledTerminalAlphabet K dummy).card
+                    (max 1 f))))) :=
+        Nat.le_max_right _ _
+
+      _ <=
+          max
+            (4 +
+              2 *
+                H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                  dummy)
+            (max 4
+              (max H.compiledGrammarPresentationItemCount
+                (max 3
+                  (max
+                    (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                      dummy)
+                    (max
+                      (compiledTerminalAlphabet K dummy).card
+                      (max 1 f)))))) :=
+        Nat.le_max_right _ _
+
   unfold
     compiledBinaryRuleFullyExplicitNaturalValueBound
 
@@ -466,115 +574,15 @@ theorem
 
   · apply max_le
 
-    · exact
-        (Nat.le_max_left
-            4
-            (max
-              H.compiledGrammarPresentationItemCount
-              (max 3
-                (max
-                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                    dummy)
-                  (max
-                    (compiledTerminalAlphabet K dummy).card
-                    (max 1 f)))))).trans
-          (Nat.le_max_right
-            (4 +
-              2 *
-                H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                  dummy)
-            (max 4
-              (max
-                H.compiledGrammarPresentationItemCount
-                (max 3
-                  (max
-                    (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                      dummy)
-                    (max
-                      (compiledTerminalAlphabet K dummy).card
-                      (max 1 f)))))))
+    · exact hFour
 
     · apply max_le
 
-      · exact
-          (Nat.le_max_left
-              H.compiledGrammarPresentationItemCount
-              (max 3
-                (max
-                  (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                    dummy)
-                  (max
-                    (compiledTerminalAlphabet K dummy).card
-                    (max 1 f))))).trans
-            ((Nat.le_max_right
-                4
-                (max
-                  H.compiledGrammarPresentationItemCount
-                  (max 3
-                    (max
-                      (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                        dummy)
-                      (max
-                        (compiledTerminalAlphabet K dummy).card
-                        (max 1 f)))))).trans
-              (Nat.le_max_right
-                (4 +
-                  2 *
-                    H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                      dummy)
-                (max 4
-                  (max
-                    H.compiledGrammarPresentationItemCount
-                    (max 3
-                      (max
-                        (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                          dummy)
-                        (max
-                          (compiledTerminalAlphabet K dummy).card
-                          (max 1 f)))))))
+      · exact hPresentation
 
       · apply max_le
 
-        · exact
-            (Nat.le_max_left
-                3
-                (H.compiledBinaryRuleBodyTokenPayloadBound
-                  dummy rho)).trans
-              ((Nat.le_max_right
-                  H.compiledGrammarPresentationItemCount
-                  (max 3
-                    (max
-                      (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                        dummy)
-                      (max
-                        (compiledTerminalAlphabet K dummy).card
-                        (max 1 f))))).trans
-                ((Nat.le_max_right
-                    4
-                    (max
-                      H.compiledGrammarPresentationItemCount
-                      (max 3
-                        (max
-                          (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                            dummy)
-                          (max
-                            (compiledTerminalAlphabet K dummy).card
-                            (max 1 f)))))).trans
-                  (Nat.le_max_right
-                    (4 +
-                      2 *
-                        H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                          dummy)
-                    (max 4
-                      (max
-                        H.compiledGrammarPresentationItemCount
-                        (max 3
-                          (max
-                            (H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                              dummy)
-                            (max
-                              (compiledTerminalAlphabet K dummy).card
-                              (max 1 f)))))))))
+        · exact hThree
 
         · exact
             H.compiledBinaryRuleBodyTokenPayloadBound_le_uniformBound_of_mem
@@ -822,9 +830,32 @@ theorem
       have hrho :
           rho ∈ (H.toCutWorkingMCFG dummy).binaryRules := by
 
-        simpa [
+        unfold
           CorrectedConcreteFiniteHypothesis.compiledGrammarPresentationEntries
-        ] using hentry
+          at hentry
+
+        rcases List.mem_append.mp hentry with hprefix | hbinary
+
+        · rcases List.mem_append.mp hprefix with hprefix | hterminal
+
+          · rcases List.mem_append.mp hprefix with hnonterminal | hstart
+
+            · rcases List.mem_map.mp hnonterminal with
+                ⟨A, hA, hEq⟩
+              cases hEq
+
+            · rcases List.mem_map.mp hstart with
+                ⟨startRule, hstartRule, hEq⟩
+              cases hEq
+
+          · rcases List.mem_map.mp hterminal with
+              ⟨terminalRule, hterminalRule, hEq⟩
+            cases hEq
+
+        · rcases List.mem_map.mp hbinary with
+            ⟨binaryRule, hbinaryRule, hEq⟩
+          cases hEq
+          exact hbinaryRule
 
       unfold
         compiledGrammarPresentationEntryFullyExplicitNaturalValueBound
@@ -860,86 +891,84 @@ theorem
 
         exact
           hcount.trans
-            (Nat.le_max_left
-              (6 +
-                2 *
-                  H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                    dummy)
-              (max 3
-                (max
-                  H.compiledGrammarPresentationItemCount
-                  (max
-                    (compiledTerminalAlphabet K dummy).card
-                    (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                      dummy)))))
+            (Nat.le_max_left _ _)
 
       · apply max_le
 
-        · exact
-            (Nat.le_max_left
-                3
-                (H.compiledBinaryRuleFullyExplicitNaturalValueBound
-                  dummy rho)).trans
-              ((Nat.le_max_right
-                  (H.compiledGrammarPresentationItemCount)
+        · calc
+            3 <=
+                max 3
                   (max
-                    (compiledTerminalAlphabet K dummy).card
-                    (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                      dummy))).trans
-                ((Nat.le_max_right
-                    3
+                    H.compiledGrammarPresentationItemCount
+                    (max
+                      (compiledTerminalAlphabet K dummy).card
+                      (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+                        dummy))) :=
+              Nat.le_max_left _ _
+
+            _ <=
+                max
+                  (6 +
+                    2 *
+                      H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                        dummy)
+                  (max 3
                     (max
                       H.compiledGrammarPresentationItemCount
                       (max
                         (compiledTerminalAlphabet K dummy).card
                         (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                          dummy)))).trans
-                  (Nat.le_max_right
-                    (6 +
-                      2 *
-                        H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                          dummy)
-                    (max 3
-                      (max
-                        H.compiledGrammarPresentationItemCount
-                        (max
-                          (compiledTerminalAlphabet K dummy).card
-                          (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                            dummy)))))))
+                          dummy)))) :=
+              Nat.le_max_right _ _
 
-        · exact
-            (H.compiledBinaryRuleFullyExplicitNaturalValueBound_le_uniform_of_mem
-                dummy rho hrho).trans
-              ((Nat.le_max_right
+        · calc
+            H.compiledBinaryRuleFullyExplicitNaturalValueBound
+                dummy rho <=
+              H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+                dummy :=
+              H.compiledBinaryRuleFullyExplicitNaturalValueBound_le_uniform_of_mem
+                dummy rho hrho
+
+            _ <=
+                max
                   (compiledTerminalAlphabet K dummy).card
                   (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                    dummy)).trans
-                ((Nat.le_max_right
+                    dummy) :=
+              Nat.le_max_right _ _
+
+            _ <=
+                max
+                  H.compiledGrammarPresentationItemCount
+                  (max
+                    (compiledTerminalAlphabet K dummy).card
+                    (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+                      dummy)) :=
+              Nat.le_max_right _ _
+
+            _ <=
+                max 3
+                  (max
                     H.compiledGrammarPresentationItemCount
                     (max
                       (compiledTerminalAlphabet K dummy).card
                       (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                        dummy))).trans
-                  ((Nat.le_max_right
-                      3
+                        dummy))) :=
+              Nat.le_max_right _ _
+
+            _ <=
+                max
+                  (6 +
+                    2 *
+                      H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
+                        dummy)
+                  (max 3
+                    (max
+                      H.compiledGrammarPresentationItemCount
                       (max
-                        H.compiledGrammarPresentationItemCount
-                        (max
-                          (compiledTerminalAlphabet K dummy).card
-                          (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                            dummy)))).trans
-                    (Nat.le_max_right
-                      (6 +
-                        2 *
-                          H.compiledWorkingGrammarMaximumBinaryRuleBodyTokenCount
-                            dummy)
-                      (max 3
-                        (max
-                          H.compiledGrammarPresentationItemCount
-                          (max
-                            (compiledTerminalAlphabet K dummy).card
-                            (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
-                              dummy)))))))
+                        (compiledTerminalAlphabet K dummy).card
+                        (H.compiledWorkingGrammarUniformBinaryRuleNaturalValueBound
+                          dummy)))) :=
+              Nat.le_max_right _ _
 
 /-- The maximum fully explicit entry-local bound is below the one uniform
 presentation-entry bound. -/
