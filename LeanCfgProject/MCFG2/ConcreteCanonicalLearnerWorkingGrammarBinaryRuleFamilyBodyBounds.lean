@@ -282,9 +282,10 @@ theorem controlCode_component_length_le_sampleLengthBudget
 
             intro i
 
-            simpa [
-              FiniteObjectTupleCode.ofWord
-            ] using
+            change
+              word.length <= sampleLengthBudget K
+
+            exact
               sample_word_length_le_budget
                 K hwordK
 
