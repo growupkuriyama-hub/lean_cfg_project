@@ -313,7 +313,6 @@ theorem
   unfold
     correctedConcreteCompiledGrammarSampleParametricBinaryNaturalValueBound
     correctedConcreteCompiledGrammarPaperBinaryNaturalValueEnvelope
-    correctedConcreteCompiledGrammarPaperBodyBound
 
   dsimp
 
@@ -405,7 +404,6 @@ theorem
   unfold
     correctedConcreteCompiledGrammarSampleParametricEntryNaturalValueBound
     correctedConcreteCompiledGrammarPaperEntryNaturalValueEnvelope
-    correctedConcreteCompiledGrammarPaperBodyBound
 
   dsimp
 
@@ -672,8 +670,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldCount dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldCount dummy <=
       correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
         (sampleLengthBudget K) f := by
 
@@ -691,8 +688,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldValueBound dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldValueBound dummy <=
       correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
         (sampleLengthBudget K) f := by
 
@@ -710,8 +706,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-      compiledWorkingGrammarNaturalFieldsFitInBits
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldsFitInBits
         dummy
         (binaryNatCodeLength
           (correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
@@ -719,6 +714,15 @@ theorem
 
   let H :=
     correctedConcreteFiniteHypothesis K obs f
+
+  change
+    BinaryTreeNaturalFieldStreamFitsInBits
+      (H.encodeCompiledWorkingGrammarNaturalList dummy)
+      (binaryNatCodeLength
+        (correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
+          (sampleLengthBudget K) f))
+
+  unfold BinaryTreeNaturalFieldStreamFitsInBits
 
   refine
     ⟨binaryNatCodeLength_pos
@@ -757,8 +761,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarLogarithmicBitCount dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount dummy <=
       correctedConcreteCompiledGrammarPaperLogarithmicBitEnvelope
         (sampleLengthBudget K) f := by
 
@@ -821,22 +824,18 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    ((correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldCount dummy <=
+    ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldCount dummy <=
       correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
         (sampleLengthBudget K) f) ∧
-      ((correctedConcreteFiniteHypothesis K obs f).
-          compiledWorkingGrammarNaturalFieldValueBound dummy <=
+      ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldValueBound dummy <=
         correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
           (sampleLengthBudget K) f) ∧
-      (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarNaturalFieldsFitInBits
+      (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarNaturalFieldsFitInBits
           dummy
           (binaryNatCodeLength
             (correctedConcreteCompiledGrammarPaperNaturalFieldEnvelope
               (sampleLengthBudget K) f)) ∧
-      ((correctedConcreteFiniteHypothesis K obs f).
-          compiledWorkingGrammarLogarithmicBitCount dummy <=
+      ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount dummy <=
         correctedConcreteCompiledGrammarPaperLogarithmicBitEnvelope
           (sampleLengthBudget K) f) := by
 
