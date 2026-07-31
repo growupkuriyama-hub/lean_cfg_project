@@ -121,8 +121,9 @@ theorem componentLength_mem_componentLengths_of_mem_encodeFramedTemplateWords
 
       · exact
           Or.inr
-            (componentLength_mem_componentLengths_of_mem_encodeFramedTemplateWords
-              words n htail)
+            (List.mem_map.mp
+              (componentLength_mem_componentLengths_of_mem_encodeFramedTemplateWords
+                words n htail))
 
 /-- An atom token occurring in a framed component list comes from the structural
 encoding of one of the original component words. -/
@@ -395,8 +396,7 @@ noncomputable def compiledBinaryRuleBodyTokenPayloadBound
       (correctedConcreteCutGrammarArity H)) :
     Nat :=
   max
-    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-      bodyTokens.length
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
     (max
       (compiledTerminalAlphabet K dummy).card
       (max 1 f))
@@ -409,8 +409,7 @@ theorem encodeCompiledBinaryRuleNaturalPacket_bodyTokens_eq
       (CorrectedConcreteCutGrammarNonterminal H)
       α
       (correctedConcreteCutGrammarArity H)) :
-    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-        bodyTokens =
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens =
       encodeFramedTemplateBodyNatural
         K dummy rho.framedStructuralBodyTokens := by
 
@@ -469,8 +468,7 @@ theorem encoded_componentLength_payload_le
 
   have hlength :
       length <=
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens.length := by
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length := by
 
     rw [
       H.encodeCompiledBinaryRuleNaturalPacket_bodyTokens_length
@@ -484,8 +482,7 @@ theorem encoded_componentLength_payload_le
   exact
     hlength.trans
       (Nat.le_max_left
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens.length
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
         (max
           (compiledTerminalAlphabet K dummy).card
           (max 1 f)))
@@ -537,8 +534,7 @@ theorem encoded_terminalCode_payload_le_of_mem
           (compiledTerminalAlphabet K dummy).card
           (max 1 f)).trans
         (Nat.le_max_right
-          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-            bodyTokens.length
+          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
           (max
             (compiledTerminalAlphabet K dummy).card
             (max 1 f))))
@@ -579,8 +575,7 @@ theorem encoded_leftVar_payload_le
           (compiledTerminalAlphabet K dummy).card
           (max 1 f)).trans
         (Nat.le_max_right
-          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-            bodyTokens.length
+          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
           (max
             (compiledTerminalAlphabet K dummy).card
             (max 1 f))))
@@ -621,8 +616,7 @@ theorem encoded_rightVar_payload_le
           (compiledTerminalAlphabet K dummy).card
           (max 1 f)).trans
         (Nat.le_max_right
-          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-            bodyTokens.length
+          (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
           (max
             (compiledTerminalAlphabet K dummy).card
             (max 1 f))))
@@ -640,8 +634,7 @@ theorem compiledBinaryRuleBodyToken_payload_le_of_mem
     (token : FramedTemplateBodyNaturalToken)
     (htoken :
       token ∈
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens) :
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens) :
     framedTemplateBodyNaturalTokenPayload token <=
       H.compiledBinaryRuleBodyTokenPayloadBound
         dummy rho := by
@@ -694,8 +687,7 @@ theorem compiledBinaryRuleBodyToken_valueBound_le_of_mem
     (token : FramedTemplateBodyNaturalToken)
     (htoken :
       token ∈
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens) :
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens) :
     framedTemplateBodyNaturalTokenValueBound token <=
       max 3
         (H.compiledBinaryRuleBodyTokenPayloadBound
@@ -868,13 +860,11 @@ theorem
       · apply max_le
 
         · have hcount :
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                  bodyTokens.length <=
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length <=
                 H.compiledBinaryRuleBodyTokenPayloadBound
                   dummy rho :=
             Nat.le_max_left
-              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-                bodyTokens.length
+              (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length
               (max
                 (compiledTerminalAlphabet K dummy).card
                 (max 1 f))
@@ -904,7 +894,7 @@ theorem
                           H.compiledGrammarPresentationItemCount
                           (max 3
                             (H.compiledBinaryRuleBodyTokenPayloadBound
-                              dummy rho)))))))
+                              dummy rho))))))))
 
         · exact
             (H.compiledBinaryRuleMaximumBodyTokenNaturalValueBound_le_payloadBound
@@ -928,7 +918,7 @@ theorem
                         H.compiledGrammarPresentationItemCount
                         (max 3
                           (H.compiledBinaryRuleBodyTokenPayloadBound
-                            dummy rho))))))
+                            dummy rho)))))))
 
 /-- The original binary-rule natural-value bound is below the fully explicit
 stored-rule bound. -/
@@ -1019,8 +1009,7 @@ theorem compiledBinaryRuleTokenPayloadBounds_package
     (hrho :
       rho ∈ (H.toCutWorkingMCFG dummy).binaryRules) :
     (∀ token ∈
-        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).
-          bodyTokens,
+        (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens,
       framedTemplateBodyNaturalTokenPayload token <=
         H.compiledBinaryRuleBodyTokenPayloadBound
           dummy rho) ∧
