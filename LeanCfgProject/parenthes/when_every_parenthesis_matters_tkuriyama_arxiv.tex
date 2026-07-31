@@ -1,0 +1,330 @@
+% Compile with LuaLaTeX:
+% lualatex when_every_parenthesis_matters_AMM_note_v4_en.tex
+% lualatex when_every_parenthesis_matters_AMM_note_v4_en.tex
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.92in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\newcommand{\Q}{\mathbb{Q}}
+
+\title{When Every Parenthesis Matters}
+\author{Takayuki Kuriyama}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Fix the variable order $x_1,\ldots,x_n$ and form fully parenthesized
+expressions using $+$, $\times$, and $/$. An inner pair of parentheses is
+called necessary if deleting that pair alone, and then applying the usual
+precedence and left-associativity conventions, changes the represented
+rational function. We classify the expressions in which every inner pair is
+necessary. A three-row local rule yields a recursive structure and the
+Fibonacci enumeration
+\[
+ r_2=3,\qquad r_n=2F_{n+1}\quad(n\ge3).
+\]
+\end{abstract}
+
+\section{The question}
+
+Parentheses can be visibly present and mathematically idle. For example,
+\[
+ x_1+(x_2/x_3)=x_1+x_2/x_3,
+\]
+whereas
+\[
+ x_1/(x_2+x_3)\ne x_1/x_2+x_3.
+\]
+How many fully parenthesized expressions have no idle inner pair at all?
+
+Fix distinct indeterminates $x_1,\ldots,x_n$ in this order. A
+\emph{fully parenthesized expression} is a plane binary tree whose leaves,
+from left to right, are $x_1,\ldots,x_n$, in which every internal vertex has
+exactly two children and is labeled by
+\[
+ +,\qquad \times,\qquad /.
+\]
+We compare expressions as elements of $\Q(x_1,\ldots,x_n)$. For example, the
+fully parenthesized expression in our sense corresponding to
+$x_1+x_2\times x_3$ is $\bigl(x_1+(x_2\times x_3)\bigr)$. The outermost pair
+is not a candidate pair, since deleting it changes neither the parsing nor the
+represented rational function. Thus the $n-2$ candidate pairs are precisely
+those corresponding to edges joining two internal vertices.
+
+Whenever a candidate pair is deleted, the resulting infix expression is
+parsed in the usual way: $\times$ and $/$ bind more strongly than $+$, and
+operations at the same precedence level associate to the left.
+
+A pair is \emph{necessary} if deleting that pair alone, while retaining all
+other pairs, changes the rational function represented by the expression. An
+expression is \emph{rigid} if all its $n-2$ candidate pairs are necessary.
+
+For $n=3$, the six rigid fully parenthesized expressions are
+\[
+\begin{gathered}
+ \bigl((x_1+x_2)\times x_3\bigr),\qquad
+ \bigl((x_1+x_2)/x_3\bigr),\qquad
+ \bigl(x_1\times(x_2+x_3)\bigr),\\
+ \bigl(x_1/(x_2+x_3)\bigr),\qquad
+ \bigl(x_1/(x_2\times x_3)\bigr),\qquad
+ \bigl(x_1/(x_2/x_3)\bigr).
+\end{gathered}
+\]
+Thus $r_3=6$.
+
+For $n=2$, the three fully parenthesized expressions are
+$(x_1+x_2)$, $(x_1\times x_2)$, and $(x_1/x_2)$. None has a candidate pair,
+so all three are rigid vacuously and $r_2=3$.
+
+Our objects are fully parenthesized binary trees, not minimally parenthesized
+infix strings. Fixing the tree makes the necessity of a prescribed pair an
+edge-local property. We restrict attention to the three operations above;
+adding subtraction leads to a different enumeration problem.
+
+\section{The local rule}
+
+Call an internal child \emph{additive} if the operation at its root is $+$.
+The following table determines whether the pair surrounding an internal child
+is necessary.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{ccc}
+\toprule
+parent & left internal child & right internal child \\
+\midrule
+$+$      & never necessary & never necessary \\
+$\times$ & necessary exactly when additive & necessary exactly when additive \\
+$/$      & necessary exactly when additive & always necessary \\
+\bottomrule
+\end{tabular}
+\caption{When the parentheses around an internal child are necessary.}
+\label{tab:local}
+\end{table}
+
+\begin{lemma}[Local rule]\label{lem:local}
+Let $v$ be a nonroot internal vertex of a fully parenthesized expression, and
+let $p$ be its parent. Whether the pair surrounding $v$ is necessary depends
+only on whether $v$ is the left or right child of $p$ and on the operation
+labels at $p$ and $v$, as specified in Table~\ref{tab:local}.
+\end{lemma}
+
+\begin{proof}
+In the local expressions below, we suppress the outermost pair of
+parentheses.
+
+Let $A$ and $B$ be the two children of $v$, and let $C$ be the sibling
+subtree of $v$. Thus the relevant local expression is either
+\[
+ (A\circ B)\star C
+ \qquad\text{or}\qquad
+ A\star(B\circ C),
+\]
+where $\circ$ labels $v$ and $\star$ labels its parent.
+
+First consider the entries declared unnecessary in
+Table~\ref{tab:local}. Under the stated precedence and
+left-associativity conventions, deleting the displayed pair gives the same
+rational function in each of the following cases:
+\[
+\begin{aligned}
+ (A\circ B)+C&=A\circ B+C,
+ &A+(B\circ C)&=A+B\circ C
+ &&(\circ\in\{+,\times,/\}),\\
+ (A\times B)\times C&=A\times B\times C,
+ &(A/B)\times C&=A/B\times C,\\
+ A\times(B\times C)&=A\times B\times C,
+ &A\times(B/C)&=A\times B/C,\\
+ (A\times B)/C&=A\times B/C,
+ &(A/B)/C&=A/B/C.
+\end{aligned}
+\]
+
+For the remaining entries, the following positive specializations show that
+deleting the pair changes the value. The triple in the first column records
+the parent operation, the side of the internal child, and the operation at
+that child.
+\[
+\begin{array}{c|c|c}
+\text{case} & \text{before deletion} & \text{after deletion}\\
+\hline
+(\times,L,+) &(1+1)\times2=4&1+1\times2=3\\
+(\times,R,+) &2\times(1+1)=4&2\times1+1=3\\
+(/,L,+) &(1+1)/2=1&1+1/2=3/2\\
+(/,R,+) &1/(1+1)=1/2&1/1+1=2\\
+(/,R,\times) &1/(1\times2)=1/2&1/1\times2=2\\
+(/,R,/) &1/(1/2)=2&1/1/2=1/2
+\end{array}
+\]
+
+These numerical witnesses apply to subexpressions of arbitrary size. Indeed,
+for any nonempty subexpression and any prescribed positive rational value
+$q$, its variables can be assigned positive rational values so that the
+subexpression evaluates to $q$: at a $+$-node use child values $q/2,q/2$,
+and at a $\times$- or $/$-node use $q,1$. Since $A,B,C$ have disjoint
+variable sets, their values can be prescribed independently.
+
+It remains only to check that a local change cannot disappear higher in the
+tree. Put $K=\Q(x_1,\ldots,x_n)$. Every subexpression represents a nonzero
+element of $K$, since assigning $1$ to every variable gives it a positive
+value. At each step toward the root, the current rational function $u$ is
+transformed, for some nonzero sibling function $h$, by one of
+\[
+ u\longmapsto u+h,\qquad
+ u\longmapsto hu,\qquad
+ u\longmapsto u/h,\qquad
+ u\longmapsto h/u.
+\]
+Each map is injective on its domain. Hence two distinct local functions remain
+distinct all the way to the root. This proves the table.
+\end{proof}
+
+\begin{proposition}[Context independence]\label{prop:context}
+Let $T$ be a subtree of a fully parenthesized expression $E$, and let $\pi$ be
+a candidate pair inside $T$. Then $\pi$ is necessary in $T$ if and only if it
+is necessary in $E$.
+\end{proposition}
+
+\begin{proof}
+If deleting $\pi$ does not change the rational function represented by $T$,
+it does not change the rational function represented by $E$. Conversely, if
+deleting $\pi$ changes the function represented by $T$, the injectivity
+argument in the proof of Lemma~\ref{lem:local} shows that the difference
+persists from the parent of $T$ to the root. Hence the function represented by
+$E$ also changes.
+\end{proof}
+
+\section{Structure and the Fibonacci numbers}
+
+\begin{proposition}[Structural classification]\label{prop:structure}
+A fully parenthesized expression with at least two leaves is rigid if and only
+if exactly one of the following holds.
+\begin{enumerate}
+\item Its root is $+$ and both children are leaves.
+\item Its root is $\times$ and each child is either a leaf or a two-leaf sum.
+\item Its root is $/$, its left child is either a leaf or a two-leaf sum, and
+      its right child is either a leaf or a rigid expression.
+\end{enumerate}
+
+Here a \emph{leaf} means a vertex labeled by a variable $x_i$, with no
+operation symbol, in the full binary tree representing the expression.
+\end{proposition}
+
+\begin{proof}
+Suppose that the expression is rigid. If its root is $+$, the local rule
+prohibits every internal child, so both children are leaves. If its root is
+$\times$, every internal child must be additive. By
+Proposition~\ref{prop:context}, such a child is itself rigid, and the first
+case then shows that it is a two-leaf sum. If the root is $/$, the same
+argument applies to the left child. The local rule places no restriction on
+the root operation of an internal right child, but that right subtree is rigid
+by Proposition~\ref{prop:context}.
+
+Conversely, consider an expression of one of the three listed forms. Every
+pair immediately below the root is necessary by the local rule. Every pair
+inside a rigid child is necessary in the whole expression by
+Proposition~\ref{prop:context}. Hence the whole expression is rigid.
+\end{proof}
+
+\begin{theorem}\label{thm:main}
+Let $F_1=F_2=1$. Then
+\[
+ r_2=3,
+ \qquad
+ r_n=2F_{n+1}\quad(n\ge3).
+\]
+Thus
+\[
+ r_2,r_3,r_4,r_5,r_6,r_7,r_8,\ldots
+   =3,6,10,16,26,42,68,\ldots .
+\]
+\end{theorem}
+
+\begin{proof}
+We have already established $r_2=3$ and $r_3=6$.
+
+For four leaves, there is one multiplication-rooted expression, with a
+two-leaf sum on each side. Division contributes
+\[
+ r_3+r_2=6+3=9
+\]
+expressions, according as the left block has one or two leaves. Hence
+$r_4=10$.
+
+Now let $n\ge5$. A $+$-rooted rigid expression has only two leaves, and a
+$\times$-rooted rigid expression has at most four leaves. Hence the root must
+be $/$. Its left child is either the leaf $x_1$ or the two-leaf sum
+$x_1+x_2$, while its right child is an arbitrary rigid expression on the
+remaining variables. Therefore
+\[
+ r_n=r_{n-1}+r_{n-2}\qquad(n\ge5).
+\]
+Since $r_3=6=2F_4$ and $r_4=10=2F_5$, the stated formula follows.
+\end{proof}
+
+\section*{Perspective}
+
+Representative work on redundant parentheses concerns syntactic grammars and
+unparsing under precedence and associativity
+\cite{Ramsey,Bates,Lotfallah}. Related enumerative work studies equivalence
+classes of arithmetic expressions
+\cite{StosicDamnjanovicRandelovic,Cohen}. The present problem is different:
+the underlying fully parenthesized tree is fixed, and every prescribed inner
+pair must be semantically necessary.
+
+In OEIS notation,
+\[
+ r_n=A118658(n+2)\qquad(n\ge3).
+\]
+Thus Theorem~\ref{thm:main} gives a parenthesis interpretation of this
+sequence \cite{OEIS}. OEIS A155069 concerns a different model, counting
+minimally parenthesized infix strings formed with $+$ and $-$.
+
+\begin{thebibliography}{9}
+\footnotesize
+\setlength{\itemsep}{0pt}
+
+\bibitem{Bates}
+R. M. Bates,
+Distinguishing redundant parentheses by syntax,
+\emph{Internat. J. Comput. Math.} \textbf{82} (2005), 951--967.
+
+\bibitem{Cohen}
+B. Cohen,
+The number of non-isomorphic arithmetic expressions that can be constructed
+using $+,-,\times$, and $/$,
+arXiv:2602.18522 (2026).
+
+\bibitem{Lotfallah}
+W. B. Lotfallah,
+Characterizing unambiguous precedence systems in expressions without
+superfluous parentheses,
+\emph{Internat. J. Comput. Math.} \textbf{86} (2009), 1--20.
+
+\bibitem{Ramsey}
+N. Ramsey,
+Unparsing expressions with prefix and postfix operators,
+\emph{Software: Practice and Experience} \textbf{28} (1998), 1327--1356.
+
+\bibitem{StosicDamnjanovicRandelovic}
+I. Sto\v{s}i\'c, I. Damnjanovi\'c, and \v{Z}. Ran{\dj}elovi\'c,
+Counting the number of inequivalent arithmetic expressions on $n$ variables,
+\emph{Filomat} \textbf{39} (2025), 949--962.
+
+\bibitem{OEIS}
+N. J. A. Sloane and The OEIS Foundation Inc.,
+The On-Line Encyclopedia of Integer Sequences, A118658 and A155069.
+
+\end{thebibliography}
+
+\end{document}
