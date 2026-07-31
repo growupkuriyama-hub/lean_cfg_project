@@ -869,9 +869,16 @@ theorem compiledBinaryRuleNaturalValueBound_le_explicitBound
       correctedConcreteCutGrammarArity H rho.lhs +
         ((List.ofFn rho.body).map List.length).sum := by
 
-  exact
-    H.encodeCompiledBinaryRuleNaturalPacket_bodyTokens_length
-      dummy rho
+  calc
+    (H.encodeCompiledBinaryRuleNaturalPacket dummy rho).bodyTokens.length =
+        rho.framedStructuralBodyTokens.length :=
+      H.encodeCompiledBinaryRuleNaturalPacket_bodyTokens_length
+        dummy rho
+
+    _ =
+        correctedConcreteCutGrammarArity H rho.lhs +
+          ((List.ofFn rho.body).map List.length).sum :=
+      rho.framedStructuralBodyTokens_length
 
 /-- Compact complete binary-rule field-classification and explicit-bound
 package. -/
