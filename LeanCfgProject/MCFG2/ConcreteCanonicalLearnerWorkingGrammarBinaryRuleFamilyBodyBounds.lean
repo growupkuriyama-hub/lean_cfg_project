@@ -276,7 +276,9 @@ theorem controlCode_component_length_le_sampleLengthBudget
             hword | hunitSource
 
           · rcases Finset.mem_image.mp hword with
-              ⟨word, hword, rfl⟩
+              ⟨word, hwordK, hwordEq⟩
+
+            subst X
 
             intro i
 
@@ -284,7 +286,7 @@ theorem controlCode_component_length_le_sampleLengthBudget
               FiniteObjectTupleCode.ofWord
             ] using
               sample_word_length_le_budget
-                K hword
+                K hwordK
 
           · rcases Finset.mem_image.mp hunitSource with
               ⟨U, hU, rfl⟩
@@ -791,7 +793,7 @@ theorem cutSaturationRule_bodyTokenCount_le_two_mul_fanout
         ((List.ofFn rho.body).map List.length).sum <=
       2 * max 1 f
 
-  simpa [fanout] using
+  simpa [fanout, two_mul] using
     Nat.add_le_add
       harity
       hsumArity
