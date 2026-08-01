@@ -515,8 +515,6 @@ theorem
         scale,
         correctedLearnerPaperScale
       ]
-
-      omega
     _ <=
         16 * (scale * scale) :=
       hcoarse
@@ -697,6 +695,8 @@ theorem
 
   unfold
     correctedConcreteCompiledGrammarPaperDescriptionScale
+
+  simp only [ruleBound] at hpresentation hbody hsmall hruleCube ⊢
 
   omega
 
@@ -1007,6 +1007,7 @@ theorem
     hbit.trans
       (habsorb.trans
         (by
+          simp only [ruleBound]
           ring))
 
 /-- The thirteenth rule-count power is exactly the final paper-base power with
@@ -1072,8 +1073,8 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarLogarithmicBitCount dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
+        dummy <=
       correctedConcreteCompiledGrammarPaperPowerBitBound
         (sampleLengthBudget K) f := by
 
@@ -1090,8 +1091,8 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarLogarithmicBitCount dummy <=
+    (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
+        dummy <=
       (4 * (sampleLengthBudget K + f + 1)) ^
         ((64 *
             (sampleLengthBudget K + f + 1) *
@@ -1109,8 +1110,8 @@ theorem
     (obs : α → M)
     (f : Nat)
     (dummy : α) :
-    ((correctedConcreteFiniteHypothesis K obs f).
-        compiledWorkingGrammarLogarithmicBitCount dummy <=
+    ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
+        dummy <=
       correctedConcreteCompiledGrammarPaperLogarithmicBitEnvelope
         (sampleLengthBudget K) f) ∧
       (correctedConcreteCompiledGrammarPaperLogarithmicBitEnvelope
@@ -1121,8 +1122,8 @@ theorem
           (sampleLengthBudget K) f ^ 13 =
         correctedConcreteCompiledGrammarPaperPowerBitBound
           (sampleLengthBudget K) f) ∧
-      ((correctedConcreteFiniteHypothesis K obs f).
-          compiledWorkingGrammarLogarithmicBitCount dummy <=
+      ((correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
+        dummy <=
         correctedConcreteCompiledGrammarPaperPowerBitBound
           (sampleLengthBudget K) f) := by
 
