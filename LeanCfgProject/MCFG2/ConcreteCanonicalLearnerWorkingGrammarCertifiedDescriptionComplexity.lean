@@ -96,6 +96,8 @@ namespace MCFG
 
 universe u v w
 
+attribute [local instance] Classical.propDecidable
+
 
 section GenericCertifiedBitDescriptionComplexity
 
@@ -555,6 +557,8 @@ variable [Monoid M]
 variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
+
+include hα
 
 /-- Every semantic start-rooted target has some finite exact certified bit
 description. -/
