@@ -598,8 +598,7 @@ noncomputable def
     List
       (CorrectedConcreteCompiledGrammarPresentationEntry
         (correctedConcreteFiniteHypothesis K obs f)) :=
-  (correctedConcreteFiniteHypothesis K obs f).
-    compiledGrammarPresentationEntries
+  (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
       (Classical.choice hα)
 
 /-- Select from the finite canonical search by the actual checked learner code. -/
