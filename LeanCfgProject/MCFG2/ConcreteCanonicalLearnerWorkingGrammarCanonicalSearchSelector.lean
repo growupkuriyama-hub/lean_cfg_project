@@ -366,6 +366,8 @@ theorem selectCanonicalValueByCode_eq_some_of_mem_of_value_unique
         targetCode pairs =
       some value := by
 
+  unfold selectCanonicalValueByCode
+
   rw [
     selectCanonicalPairByCode_eq_some_of_mem_of_value_unique
       targetCode pairs value hmem hunique

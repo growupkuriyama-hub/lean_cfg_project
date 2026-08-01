@@ -108,7 +108,7 @@ structure CorrectedConcreteCertifiedWorkingGrammarHypothesis where
 
   /-- Type of decoded complete presentations carried by this output. -/
   Presentation :
-    Type (max u v)
+    Type u
 
   /-- Selected complete presentation. -/
   presentation :
