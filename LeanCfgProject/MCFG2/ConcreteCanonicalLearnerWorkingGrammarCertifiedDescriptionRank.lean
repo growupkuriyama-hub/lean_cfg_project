@@ -128,6 +128,8 @@ namespace MCFG
 
 universe u v w
 
+attribute [local instance] Classical.propDecidable
+
 
 section GenericCertifiedDescriptionRank
 
@@ -469,6 +471,8 @@ variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
 
+include hα
+
 /-- Every semantic start-rooted target belongs to some finite simultaneous
 certified-description rank profile. -/
 theorem startRootedTarget_hasCertifiedRankProfile
@@ -780,6 +784,8 @@ variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
 
+include hα
+
 /-- Semantic targets whose minimum simultaneous certified-description rank is
 at most `rank`. -/
 def StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
@@ -801,9 +807,9 @@ theorem
     {rank rank' : Nat}
     (hrank :
       rank <= rank') :
-    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f rank ⊆
-      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f rank' := by
 
   intro L hL
@@ -821,7 +827,7 @@ class at level `rank`. -/
 theorem
     startRootedTargetCertifiedDescriptionRankAtMostClass_eq_target_inter_rankProfile
     (rank : Nat) :
-    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f rank =
       {L : Set (Word α) |
         L ∈
@@ -864,7 +870,7 @@ class. -/
 theorem
     startRootedTargetCertifiedDescriptionRankAtMostClass_subset_targetClass
     (rank : Nat) :
-    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f rank ⊆
       StartRootedCorrectedConcreteTargetClass.{u, w, v}
          α M obs f := by
@@ -881,7 +887,7 @@ certified profile class. -/
 theorem
     startRootedTargetCertifiedDescriptionRankAtMostClass_subset_rankProfileClass
     (rank : Nat) :
-    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f rank ⊆
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
@@ -908,7 +914,7 @@ theorem
         StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f) :
     L ∈
-      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f
         (startRootedTargetCertifiedDescriptionRank
            hα obs f hL) := by
@@ -926,7 +932,7 @@ theorem
       {L : Set (Word α) |
         ∃ rank : Nat,
           L ∈
-            StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+            StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
                hα obs f rank} := by
 
   ext L
@@ -1041,7 +1047,7 @@ theorem
                hα obs f hL)
             f) ∧
       (∀ rank : Nat,
-        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
              hα obs f rank =
           {L : Set (Word α) |
             L ∈
