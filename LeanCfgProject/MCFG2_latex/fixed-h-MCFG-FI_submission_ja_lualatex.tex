@@ -987,19 +987,92 @@ MCFL における文字数による分離と較正については \cite{LehnerLi
 
 \begin{definition}[テンプレート評価]
 \label{def:output-map}
-\leavevmode\par\noindent
 \(\mu(B)=d_B\)、\(\mu(C)=d_C\) である二分規則
-\(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) をとる。
-\(\mathbf q\in M^{d_B}\)、\(\mathbf r\in M^{d_C}\) に対し、テンプレート語
-\(\beta\) の評価 \(\ev_\rho(\beta;\mathbf q,\mathbf r)\in M\) を、各終端記号
-\(a\) を \(h(a)\) に、各 \(x^i\) を \(q_i\) に、各 \(y^j\) を \(r_j\) に
-置き換え、出現順に積をとることによって定義する。さらに
 \[
-\begin{aligned}
-\out_\rho(\mathbf q,\mathbf r)
-:={}&\bigl(\ev_\rho(\alpha_1;\mathbf q,\mathbf r),\ldots,\\
-&\ev_\rho(\alpha_e;\mathbf q,\mathbf r)\bigr)\in M^e
-\end{aligned}
+  \rho\colon
+  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+をとる。ここで \(e=\mu(A)\) であり、各 \(\alpha_\ell\) は
+\[
+  \Gamma_\rho
+  :=
+  \Sigma
+  \uplus
+  \{x^1,\ldots,x^{d_B}\}
+  \uplus
+  \{y^1,\ldots,y^{d_C}\}
+\]
+上の語、すなわち
+\[
+  \alpha_\ell\in\Gamma_\rho^*
+  \qquad (1\le \ell\le e)
+\]
+である。この \(\Gamma_\rho^*\) の元を、規則 \(\rho\) の
+\emph{テンプレート語}と呼ぶ。
+
+\(\mathbf q=(q_1,\ldots,q_{d_B})\in M^{d_B}\) および
+\(\mathbf r=(r_1,\ldots,r_{d_C})\in M^{d_C}\) に対して、
+写像
+\[
+  \eta_{\mathbf q,\mathbf r}\colon\Gamma_\rho\to M
+\]
+を
+\[
+  \eta_{\mathbf q,\mathbf r}(a):=h(a)
+  \qquad (a\in\Sigma),
+\]
+\[
+  \eta_{\mathbf q,\mathbf r}(x^i):=q_i
+  \qquad (1\le i\le d_B),
+\]
+\[
+  \eta_{\mathbf q,\mathbf r}(y^j):=r_j
+  \qquad (1\le j\le d_C)
+\]
+によって定める。
+
+この写像を語へ一意に準同型拡張して得られるモノイド準同型を
+\[
+  \widehat{\eta}_{\mathbf q,\mathbf r}
+  \colon
+  \Gamma_\rho^*\to M
+\]
+とする。すなわち、
+\[
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\eps)=1_M
+\]
+であり、テンプレート語
+\[
+  \beta=z_1\cdots z_t
+  \qquad (z_1,\ldots,z_t\in\Gamma_\rho)
+\]
+に対して
+\[
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\beta)
+  =
+  \eta_{\mathbf q,\mathbf r}(z_1)
+  \cdots
+  \eta_{\mathbf q,\mathbf r}(z_t)
+\]
+である。
+
+規則 \(\rho\) におけるテンプレート語 \(\beta\) の評価を
+\[
+  \ev_\rho(\beta;\mathbf q,\mathbf r)
+  :=
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\beta)
+  \in M
+\]
+と定義する。さらに、
+\[
+  \out_\rho(\mathbf q,\mathbf r)
+  :=
+  \bigl(
+    \ev_\rho(\alpha_1;\mathbf q,\mathbf r),
+    \ldots,
+    \ev_\rho(\alpha_e;\mathbf q,\mathbf r)
+  \bigr)
+  \in M^e
 \]
 と定義する。
 \end{definition}

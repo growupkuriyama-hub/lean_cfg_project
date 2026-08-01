@@ -130,8 +130,8 @@ structure CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
     (L : Set (Word α)) where
 
   bounded :
-    BoundedCutCompiledWorkingGrammarRepresentation
-      (w := w) α f n L
+    BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+      α f n L
 
   Presentation :
     Type z
@@ -160,8 +160,8 @@ def CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
     Set (Set (Word α)) :=
   {L |
     Nonempty
-      (CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L)}
+      (CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L)}
 
 namespace CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
 
@@ -173,25 +173,25 @@ variable {L : Set (Word α)}
 bounded grammar representation. -/
 def forgetBits
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
-    BoundedCutCompiledWorkingGrammarRepresentation
-      (w := w) α f n L :=
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
+    BoundedCutCompiledWorkingGrammarRepresentation.{u, w}
+      α f n L :=
   R.bounded
 
 /-- The represented grammar has exactly the target language. -/
 theorem grammar_language_eq
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     R.bounded.grammar.StringLanguage = L :=
   R.bounded.language_eq
 
 /-- The stored bit list is accepted by its stored decoder. -/
 theorem checked_decode
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     R.decode R.bits = some R.presentation :=
   R.decode_bits
 
@@ -200,11 +200,11 @@ the same checked bit presentation. -/
 def raiseBudget
     {m : Nat}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L)
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L)
     (hnm : n <= m) :
-    CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-      (w := w) (z := z) α f m L where
+    CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+      α f m L where
 
   bounded :=
     R.bounded.mono hnm
@@ -233,11 +233,11 @@ def raiseBudget
 presentation-item hierarchy. -/
 theorem target_mem_boundedClass
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     L ∈
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f n := by
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f n := by
 
   exact
     ⟨R.bounded⟩
@@ -256,10 +256,10 @@ theorem
     checkedBitBoundedCutCompiledWorkingGrammarLanguageClass_mono
     {f n m : Nat}
     (hnm : n <= m) :
-    CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) (z := z) α f n ⊆
-      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) (z := z) α f m := by
+    CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, w, z}
+        α f n ⊆
+      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, w, z}
+        α f m := by
 
   intro L hL
 
@@ -274,10 +274,10 @@ bounded class at the same sample-length level. -/
 theorem
     checkedBitBoundedCutCompiledWorkingGrammarLanguageClass_subset_bounded
     (f n : Nat) :
-    CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) (z := z) α f n ⊆
-      BoundedCutCompiledWorkingGrammarLanguageClass
-        (w := w) α f n := by
+    CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, w, z}
+        α f n ⊆
+      BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+        α f n := by
 
   intro L hL
 
@@ -296,20 +296,20 @@ theorem
     (hL :
       ∃ n : Nat,
         L ∈
-          CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-            (w := w) (z := z) α f n) :
+          CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, w, z}
+            α f n) :
     ∃ n : Nat,
       L ∈
-        BoundedCutCompiledWorkingGrammarLanguageClass
-          (w := w) α f n := by
+        BoundedCutCompiledWorkingGrammarLanguageClass.{u, w}
+          α f n := by
 
   rcases hL with
     ⟨n, hn⟩
 
   exact
     ⟨n,
-      checkedBitBoundedCutCompiledWorkingGrammarLanguageClass_subset_bounded
-        (w := w) (z := z) f n hn⟩
+      checkedBitBoundedCutCompiledWorkingGrammarLanguageClass_subset_bounded.{u, w, z}
+        f n hn⟩
 
 end CheckedBitBoundedClassHierarchy
 
@@ -336,9 +336,7 @@ noncomputable def
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
-      (z := max u v)
+    CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, max u v, max u v}
       α f
       (sampleLengthBudget K)
       (CorrectedConcreteCanonicalLearnerLanguage
@@ -423,8 +421,7 @@ tagged presentation of the actual cut compilation. -/
     (K : Finset (Word α)) :
     (correctedConcreteWorkingGrammarLearner_checkedBitBoundedRepresentation
         hα obs f K).presentation =
-      (correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα) := by
 
   rfl
@@ -439,9 +436,7 @@ theorem
     (K : Finset (Word α)) :
     CorrectedConcreteCanonicalLearnerLanguage
         K obs f ∈
-      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
-        (z := max u v)
+      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
         α f
         (sampleLengthBudget K) := by
 
@@ -459,9 +454,7 @@ theorem
     (K : Finset (Word α)) :
     (correctedConcreteWorkingGrammarLearner
         hα obs f K).grammar.StringLanguage ∈
-      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
-        (z := max u v)
+      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
         α f
         (sampleLengthBudget K) := by
 
@@ -497,9 +490,7 @@ theorem
           (sampleLengthBudget K) f) ∧
       ((correctedConcreteWorkingGrammarLearner
           hα obs f K).grammar.StringLanguage ∈
-        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
           α f
           (sampleLengthBudget K)) := by
 
@@ -540,9 +531,7 @@ structure CorrectedConcreteCheckedBitBoundedWorkingGrammarTargetWitness
     (sample : Set (Word α)) ⊆ L
 
   representation :
-    CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-      (w := max u v)
-      (z := max u v)
+    CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, max u v, max u v}
       α f
       (sampleLengthBudget sample)
       L
@@ -561,9 +550,7 @@ theorem target_mem_checkedBitBoundedClass
       CorrectedConcreteCheckedBitBoundedWorkingGrammarTargetWitness
         hα obs f L) :
     L ∈
-      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
-        (z := max u v)
+      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
         α f
         (sampleLengthBudget W.sample) := by
 
@@ -674,9 +661,7 @@ theorem
           hα obs f)
         S L) :
     L ∈
-      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-        (w := max u v)
-        (z := max u v)
+      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
         α f
         (sampleLengthBudget S) := by
 
@@ -729,9 +714,7 @@ theorem
          α M obs f) :
     ∃ n : Nat,
       L ∈
-        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
           α f n := by
 
   rcases
@@ -751,9 +734,7 @@ theorem
       {L : Set (Word α) |
         ∃ n : Nat,
           L ∈
-            CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-              (w := max u v)
-              (z := max u v)
+            CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
               α f n} := by
 
   intro L hL
@@ -772,9 +753,7 @@ theorem
     ∃ S : Finset (Word α),
       (S : Set (Word α)) ⊆ L ∧
       L ∈
-        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
           α f
           (sampleLengthBudget S) := by
 
@@ -808,29 +787,21 @@ theorem
     correctedConcreteWorkingGrammarLearner_checkedBitBoundedRepresentationHierarchy_package :
     (∀ n m : Nat,
       n <= m →
-      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
-          (z := max u v)
+      CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
           α f n ⊆
-        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
           α f m) ∧
       (StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f ⊆
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
-              CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-                (w := max u v)
-                (z := max u v)
+              CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
                 α f n}) ∧
       (∀ K : Finset (Word α),
         CorrectedConcreteCanonicalLearnerLanguage
             K obs f ∈
-          CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-            (w := max u v)
-            (z := max u v)
+          CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
             α f
             (sampleLengthBudget K)) ∧
       (∀ L : Set (Word α),
@@ -839,17 +810,13 @@ theorem
         ∃ S : Finset (Word α),
           (S : Set (Word α)) ⊆ L ∧
           L ∈
-            CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-              (w := max u v)
-              (z := max u v)
+            CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
               α f
               (sampleLengthBudget S)) := by
 
   exact
     ⟨fun n m hnm =>
-        checkedBitBoundedCutCompiledWorkingGrammarLanguageClass_mono
-          (w := max u v)
-          (z := max u v)
+        checkedBitBoundedCutCompiledWorkingGrammarLanguageClass_mono.{u, max u v, max u v}
           hnm,
       startRootedTargetClass_subset_exists_checkedBitBoundedCutCompiledClass
          hα obs f,
@@ -875,16 +842,12 @@ theorem
         {L : Set (Word α) |
           ∃ n : Nat,
             L ∈
-              CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-                (w := max u v)
-                (z := max u v)
+              CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
                 α f n}) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearner
             hα obs f K).grammar.StringLanguage ∈
-          CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass
-            (w := max u v)
-            (z := max u v)
+          CheckedBitBoundedCutCompiledWorkingGrammarLanguageClass.{u, max u v, max u v}
             α f
             (sampleLengthBudget K)) ∧
       (∀ K : Finset (Word α),
