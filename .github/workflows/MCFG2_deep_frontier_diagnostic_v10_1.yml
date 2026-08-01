@@ -1,4 +1,4 @@
-name: MCFG2 Static Audit and Deep Frontier Diagnostics v10
+name: MCFG2 Static Audit and Deep Frontier Diagnostics v10.1
 
 on:
   workflow_dispatch:
@@ -30,11 +30,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: mcfg2-deep-frontier-v10-${{ github.ref }}
+  group: mcfg2-deep-frontier-v10-1-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  MCFG2_DIAGNOSTIC_VERSION: "v10-static-clusters-sorry-deep-frontier"
+  MCFG2_DIAGNOSTIC_VERSION: "v10.1-strict-errors-outer-proof-deep-frontier"
   MCFG2_ROOT: LeanCfgProject/MCFG2
   MCFG2_DIAGNOSTIC_SHARDS: "12"
   MCFG2_TOTAL_SNAPSHOT_COUNT: "303"
@@ -329,7 +329,7 @@ jobs:
       - name: Upload matrix manifest
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-v10-matrix-manifest
+          name: mcfg2-v10-1-matrix-manifest
           path: ci-artifacts/manifest
           if-no-files-found: error
           retention-days: 14
@@ -594,7 +594,7 @@ jobs:
       - name: Upload static audit and safe autofix patch
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-v10-static-audit
+          name: mcfg2-v10-1-static-audit
           path: ci-artifacts/static-audit
           if-no-files-found: error
           retention-days: 30
@@ -628,13 +628,13 @@ jobs:
       - name: Download fixed target manifest
         uses: actions/download-artifact@v7
         with:
-          name: mcfg2-v10-matrix-manifest
+          name: mcfg2-v10-1-matrix-manifest
           path: ci-input/manifest
 
       - name: Download static audit patch
         uses: actions/download-artifact@v7
         with:
-          name: mcfg2-v10-static-audit
+          name: mcfg2-v10-1-static-audit
           path: ci-input/static-audit
 
       - name: Run layered scratch-tree diagnostics
@@ -673,11 +673,18 @@ jobs:
           LOGS.mkdir(parents=True, exist_ok=True)
 
           ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
-          LOCATION = re.compile(
-              r"(?P<file>LeanCfgProject/MCFG2/[A-Za-z0-9_./'\-]+\.lean):"
-              r"(?P<line>\d+):(?P<col>\d+):\s*"
-              r"(?:(?P<severity>error|warning)(?:\([^)]*\))?:\s*)?(?P<message>.*)"
-          )
+          ERROR_PATTERNS = [
+              re.compile(
+                  r"^error:\s+"
+                  r"(?P<file>LeanCfgProject/MCFG2/[A-Za-z0-9_./'\-]+\.lean):"
+                  r"(?P<line>\d+):(?P<col>\d+):\s*(?P<message>.*)$"
+              ),
+              re.compile(
+                  r"^(?P<file>LeanCfgProject/MCFG2/[A-Za-z0-9_./'\-]+\.lean):"
+                  r"(?P<line>\d+):(?P<col>\d+):\s*"
+                  r"error(?:\([^)]*\))?:\s*(?P<message>.*)$"
+              ),
+          ]
           DECL_START = re.compile(
               r"^(?:(?:private|protected|noncomputable|local)\s+)*"
               r"(?P<kind>theorem|lemma|example)\b(?P<rest>.*)$",
@@ -723,7 +730,14 @@ jobs:
                   return "split-field-projection"
               if "unknown identifier `hα`" in message or "unknown identifier 'hα'" in lower:
                   return "missing-include-halpha"
-              if "unsolved goal" in lower:
+              if (
+                  "unsolved goal" in lower
+                  or "tactic `" in lower
+                  or "tactic '" in lower
+                  or "rewrite failed" in lower
+                  or "no goals to be solved" in lower
+                  or "made no progress" in lower
+              ):
                   return "proof-obligation"
               if "type mismatch" in lower:
                   return "type-mismatch"
@@ -770,21 +784,36 @@ jobs:
           def parse_errors(root: str, output: str) -> list[Error]:
               clean = ANSI.sub("", output)
               parsed: list[Error] = []
+              seen: set[tuple[str, int, int, str]] = set()
               for raw in clean.splitlines():
-                  match = LOCATION.search(raw)
-                  if not match:
+                  stripped = raw.strip()
+                  match = None
+                  for pattern in ERROR_PATTERNS:
+                      match = pattern.fullmatch(stripped)
+                      if match is not None:
+                          break
+                  if match is None:
                       continue
                   message = match.group("message").strip()
-                  if not message or match.group("severity") == "warning":
+                  if not message:
                       continue
+                  key = (
+                      match.group("file"),
+                      int(match.group("line")),
+                      int(match.group("col")),
+                      message,
+                  )
+                  if key in seen:
+                      continue
+                  seen.add(key)
                   parsed.append(
                       Error(
                           root=root,
-                          file=match.group("file"),
-                          line=int(match.group("line")),
-                          col=int(match.group("col")),
-                          message=message,
-                          cause=classify(message),
+                          file=key[0],
+                          line=key[1],
+                          col=key[2],
+                          message=key[3],
+                          cause=classify(key[3]),
                       )
                   )
               return parsed
@@ -800,7 +829,9 @@ jobs:
                   proof_matches = list(re.finditer(r":=\s*by\b", segment))
                   if not proof_matches:
                       continue
-                  proof = proof_matches[-1]
+                  # The first `:= by` is the declaration's outer proof.
+                  # The last one may be a nested `have ... := by` proof.
+                  proof = proof_matches[0]
                   proof_start = start.start() + proof.start()
                   decl_line = text.count("\n", 0, start.start()) + 1
                   proof_line = text.count("\n", 0, proof_start) + 1
@@ -822,8 +853,19 @@ jobs:
               return spans
 
 
+          BYPASSABLE_CAUSES = {
+              "proof-obligation",
+              "type-mismatch",
+              "typeclass-synthesis",
+              "unknown-name",
+              "resource-limit",
+          }
+
+
           def find_bypass(error: Error, cache: dict[str, list[ProofSpan]]) -> ProofSpan | None:
-              if error.cause == "parser":
+              # Do not hide syntax, universe, projection, section-dependency,
+              # or declaration-interface failures.
+              if error.cause not in BYPASSABLE_CAUSES:
                   return None
               path = Path(error.file)
               if not path.is_file() or not path.is_relative_to(ROOT):
@@ -1028,7 +1070,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-v10-deep-shard-${{ matrix.shard }}
+          name: mcfg2-v10-1-deep-shard-${{ matrix.shard }}
           path: ci-artifacts/deep-shard-${{ matrix.shard }}
           if-no-files-found: error
           retention-days: 30
@@ -1048,7 +1090,7 @@ jobs:
       - name: Download all deep shard artifacts
         uses: actions/download-artifact@v7
         with:
-          pattern: mcfg2-v10-deep-shard-*
+          pattern: mcfg2-v10-1-deep-shard-*
           path: downloaded-artifacts
           merge-multiple: false
 
@@ -1077,7 +1119,7 @@ jobs:
           remaining: set[str] = set()
           shards_seen: set[str] = set()
 
-          for shard_dir in sorted(artifacts.glob("mcfg2-v10-deep-shard-*")):
+          for shard_dir in sorted(artifacts.glob("mcfg2-v10-1-deep-shard-*")):
               shard = shard_dir.name.rsplit("-", 1)[-1]
               shards_seen.add(shard)
               for path in sorted(shard_dir.glob("layer-*/errors.tsv")):
@@ -1134,7 +1176,10 @@ jobs:
               files_by_cause[row["cause"]].add(row["file"])
 
           report = [
-              "# MCFG2 deep-frontier diagnostic v10",
+              "# MCFG2 deep-frontier diagnostic v10.1",
+              "",
+              "> Workflow success means that the diagnostic pipeline completed. "
+              "It does not mean that all Lean roots passed.",
               "",
               f"- Shards received: **{len(shards_seen)}/{expected}**",
               f"- Parsed source diagnostics across layers: **{len(error_rows)}**",
@@ -1198,7 +1243,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-v10-deep-diagnostics-${{ github.run_number }}
+          name: mcfg2-v10-1-deep-diagnostics-${{ github.run_number }}
           path: ci-artifacts/deep-combined
           if-no-files-found: error
           retention-days: 30
@@ -1233,13 +1278,13 @@ jobs:
       - name: Download target manifest
         uses: actions/download-artifact@v7
         with:
-          name: mcfg2-v10-matrix-manifest
+          name: mcfg2-v10-1-matrix-manifest
           path: ci-input/manifest
 
       - name: Download static patch
         uses: actions/download-artifact@v7
         with:
-          name: mcfg2-v10-static-audit
+          name: mcfg2-v10-1-static-audit
           path: ci-input/static-audit
 
       - name: Recheck assigned confirmed-success roots
@@ -1323,7 +1368,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-v10-regression-shard-${{ matrix.shard }}
+          name: mcfg2-v10-1-regression-shard-${{ matrix.shard }}
           path: ci-artifacts/regression-shard-${{ matrix.shard }}
           if-no-files-found: error
           retention-days: 14
@@ -1342,7 +1387,7 @@ jobs:
       - name: Download regression shards
         uses: actions/download-artifact@v7
         with:
-          pattern: mcfg2-v10-regression-shard-*
+          pattern: mcfg2-v10-1-regression-shard-*
           path: downloaded-regression
           merge-multiple: false
 
@@ -1361,7 +1406,7 @@ jobs:
           observed=$(wc -l < ci-artifacts/regression-combined/results.tsv)
           passed=$(awk -F '\t' '$1 == "PASS" {n++} END {print n+0}' ci-artifacts/regression-combined/results.tsv)
           failed=$(awk -F '\t' '$1 == "FAIL" {n++} END {print n+0}' ci-artifacts/regression-combined/results.tsv)
-          shards=$(find downloaded-regression -maxdepth 1 -type d -name 'mcfg2-v10-regression-shard-*' | wc -l)
+          shards=$(find downloaded-regression -maxdepth 1 -type d -name 'mcfg2-v10-1-regression-shard-*' | wc -l)
 
           cat > ci-artifacts/regression-combined/summary.md <<EOF
           # Safe-patch regression summary
@@ -1381,7 +1426,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-v10-regression-summary-${{ github.run_number }}
+          name: mcfg2-v10-1-regression-summary-${{ github.run_number }}
           path: ci-artifacts/regression-combined
           if-no-files-found: error
           retention-days: 30
