@@ -1007,8 +1007,7 @@ theorem
     hbit.trans
       (habsorb.trans
         (by
-          simp only [ruleBound]
-          ring))
+          simpa [ruleBound, pow_succ, Nat.mul_comm]))
 
 /-- The thirteenth rule-count power is exactly the final paper-base power with
 exponent multiplied by thirteen. -/
