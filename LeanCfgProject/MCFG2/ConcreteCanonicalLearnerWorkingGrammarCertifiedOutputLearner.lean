@@ -512,7 +512,10 @@ grammar. -/
       correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
         hα obs f K := by
 
-  rfl
+  simp only [
+    correctedConcreteCertifiedWorkingGrammarLearner,
+    correctedConcreteCertifiedWorkingGrammarHypothesis
+  ]
 
 /-- The certified output stores the original exact code-indexed selector
 result. -/
@@ -526,7 +529,10 @@ result. -/
       correctedConcreteWorkingGrammarLearnerCanonicalPairSelectorResult
         hα obs f K := by
 
-  rfl
+  simp only [
+    correctedConcreteCertifiedWorkingGrammarLearner,
+    correctedConcreteCertifiedWorkingGrammarHypothesis
+  ]
 
 /-- Certified and original learner languages agree definitionally at every
 sample. -/
