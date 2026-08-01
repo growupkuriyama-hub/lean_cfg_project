@@ -365,7 +365,7 @@ noncomputable def correctedConcreteCertifiedWorkingGrammarHypothesis
             hα obs f K
 
       pair_mem_search := by
-        simpa [
+        simpa only [
           search,
           bits,
           presentation

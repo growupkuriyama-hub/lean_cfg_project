@@ -373,8 +373,6 @@ theorem selectCanonicalValueByCode_eq_some_of_mem_of_value_unique
       targetCode pairs value hmem hunique
   ]
 
-  rfl
-
 /-- Every successfully selected value has a corresponding pair in the source
 list with the requested code. -/
 theorem selectCanonicalValueByCode_sound
