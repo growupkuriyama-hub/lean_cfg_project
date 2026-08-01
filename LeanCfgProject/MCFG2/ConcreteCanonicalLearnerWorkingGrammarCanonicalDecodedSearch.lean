@@ -365,11 +365,11 @@ theorem canonicalDecodePairs_complete
         hhead | htail
 
       · subst bits
+        subst code
 
         simp [
           canonicalDecodePairs,
-          hdecode,
-          hcanonical
+          hdecode
         ]
 
       · cases hcode :
@@ -401,15 +401,14 @@ theorem canonicalDecodePairs_complete
                   encode decode
                   htail hdecode hcanonical
 
-              exact
-                List.mem_cons_of_mem
+              simpa only [
+                canonicalDecodePairs,
+                hcode,
+                hcodeCanonical
+              ] using
+                (List.mem_cons_of_mem
                   (code, decoded)
-                  (by
-                    simpa [
-                      canonicalDecodePairs,
-                      hcode,
-                      hcodeCanonical
-                    ] using hrecursive)
+                  hrecursive)
 
             · have hrecursive :
                   (bits, value) ∈
@@ -483,10 +482,11 @@ theorem canonicalDecodePairs_length_le
               canonicalDecodePairs_length_le
                 encode decode codes
 
-            simp [
+            simp only [
               canonicalDecodePairs,
               hdecode,
-              hcanonical
+              hcanonical,
+              List.length_cons
             ]
 
             exact
@@ -670,9 +670,9 @@ theorem canonicalDecodePairs_value_unique
       encode decode codes bits value₂).mp
       h₂).2.1
 
-  rw [hdecode₂] at hdecode₁
-
-  injection hdecode₁
+  exact
+    Option.some.inj
+      (hdecode₁.symm.trans hdecode₂)
 
 end GenericCanonicalDecoderSearch
 
@@ -775,13 +775,12 @@ theorem
       (correctedConcreteCompiledGrammarCheckedBitCodeUniverse
         n f).length := by
 
-  rw [
-    canonicalDecodedValues_length
-  ]
-
-  exact
-    checkedBitCanonicalDecodedCodeSearch_length_le_codeUniverse
-      encode decode n f
+  simpa [
+    checkedBitCanonicalDecodedValueSearch,
+    checkedBitCanonicalDecodedCodeSearch
+  ] using
+    (checkedBitCanonicalDecodedCodeSearch_length_le_codeUniverse
+      encode decode n f)
 
 /-- Canonical pair-search length satisfies the explicit universal estimate. -/
 theorem
@@ -910,8 +909,7 @@ noncomputable def
         (CorrectedConcreteCompiledGrammarPresentationEntry
           (correctedConcreteFiniteHypothesis K obs f))) :
     List Bool :=
-  (correctedConcreteFiniteHypothesis K obs f).
-    encodeCompiledGrammarPresentationLogarithmicBitList
+  (correctedConcreteFiniteHypothesis K obs f).encodeCompiledGrammarPresentationLogarithmicBitList
       (Classical.choice hα)
       presentation
 
@@ -925,15 +923,13 @@ actual checked learner bit list. -/
     (K : Finset (Word α)) :
     correctedConcreteWorkingGrammarLearnerLogarithmicBitReencode
         hα obs f K
-        ((correctedConcreteFiniteHypothesis K obs f).
-          compiledGrammarPresentationEntries
+        ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
             (Classical.choice hα)) =
       correctedConcreteWorkingGrammarLearnerLogarithmicBitList
         hα obs f K := by
 
   exact
-    (correctedConcreteFiniteHypothesis K obs f).
-      encodeCompiledGrammarPresentationLogarithmicBitList_actual
+    (correctedConcreteFiniteHypothesis K obs f).encodeCompiledGrammarPresentationLogarithmicBitList_actual
         (Classical.choice hα)
 
 /-- The actual complete learner presentation is a checked decoder/re-encoder
@@ -948,12 +944,10 @@ theorem
         hα obs f K
         (correctedConcreteWorkingGrammarLearnerLogarithmicBitReencode
           hα obs f K
-          ((correctedConcreteFiniteHypothesis K obs f).
-            compiledGrammarPresentationEntries
+          ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
               (Classical.choice hα))) =
       some
-        ((correctedConcreteFiniteHypothesis K obs f).
-          compiledGrammarPresentationEntries
+        ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
             (Classical.choice hα)) := by
 
   rw [
@@ -1087,8 +1081,7 @@ theorem
     (K : Finset (Word α)) :
     (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
         hα obs f K,
-      (correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα)) ∈
       correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
         hα obs f K := by
@@ -1098,8 +1091,7 @@ theorem
       hα obs f K
       (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
         hα obs f K)
-      ((correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα))).mpr
       ⟨correctedConcreteWorkingGrammarLearnerLogarithmicBitList_mem_codeUniverse
           hα obs f K,
@@ -1115,8 +1107,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+    (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα) ∈
       correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationValues
         hα obs f K := by
@@ -1124,8 +1115,7 @@ theorem
   exact
     (mem_correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationValues_iff
       hα obs f K
-      ((correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα))).mpr
       ⟨correctedConcreteWorkingGrammarLearnerLogarithmicBitList
           hα obs f K,
@@ -1344,8 +1334,7 @@ theorem
           1)) ∧
       ((correctedConcreteWorkingGrammarLearnerLogarithmicBitList
           hα obs f K,
-        (correctedConcreteFiniteHypothesis K obs f).
-          compiledGrammarPresentationEntries
+        (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
             (Classical.choice hα)) ∈
         correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
           hα obs f K) ∧
@@ -1428,8 +1417,7 @@ theorem
                 hα obs f
                 (T.prefixSample n),
               (correctedConcreteFiniteHypothesis
-                  (T.prefixSample n) obs f).
-                compiledGrammarPresentationEntries
+                  (T.prefixSample n) obs f).compiledGrammarPresentationEntries
                   (Classical.choice hα)) ∈
               correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
                 hα obs f
@@ -1484,8 +1472,7 @@ theorem
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
             hα obs f K,
-          (correctedConcreteFiniteHypothesis K obs f).
-            compiledGrammarPresentationEntries
+          (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
               (Classical.choice hα)) ∈
           correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
             hα obs f K) ∧
@@ -1517,8 +1504,7 @@ theorem
                   hα obs f
                   (T.prefixSample n),
                 (correctedConcreteFiniteHypothesis
-                    (T.prefixSample n) obs f).
-                  compiledGrammarPresentationEntries
+                    (T.prefixSample n) obs f).compiledGrammarPresentationEntries
                     (Classical.choice hα)) ∈
                 correctedConcreteWorkingGrammarLearnerCanonicalDecodedPresentationSearch
                   hα obs f
