@@ -404,7 +404,7 @@ theorem canonicalDecodePairs_complete
               simpa only [
                 canonicalDecodePairs,
                 hcode,
-                hcodeCanonical
+                if_pos hcodeCanonical
               ] using
                 (List.mem_cons_of_mem
                   (code, decoded)
