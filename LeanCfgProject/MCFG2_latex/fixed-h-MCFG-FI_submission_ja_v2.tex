@@ -512,7 +512,7 @@ MCFL における文字数による分離と較正については \cite{LehnerLi
   \qquad
   E[\tuple y]=a_1^{n'}\cdots a_m^{n'}
 \]
-ここで \(n,n'\ge1\) である。ここで \(n,n'\ge1\) である。
+ここで \(n,n'\ge1\) である。
 各 \(1\le j\le m\) について、外側コンテクスト \(E\) 自身が供給する
 文字 \(a_j\) の個数を \(k_j\) とおく。
 \(E\) はどちらの場合にも同じコンテクストなので、\(k_j\) は
@@ -652,8 +652,8 @@ MCFL における文字数による分離と較正については \cite{LehnerLi
   \left\{
     w\in R
     \;\middle|\;
+    \forall (p,q)\in\Lambda,\ 
     \ell_p(w)=\ell_q(w)
-    \text{ for every }(p,q)\in\Lambda
   \right\}
 \]
 と定める。
@@ -916,9 +916,23 @@ MCFL における文字数による分離と較正については \cite{LehnerLi
 
 \begin{proof}
 表示は命題~\ref{prop:parallel-running-example} で与えられる。
+\[
+  P=a^+\#b^+\#c^+\#d^+
+\]
+を、可視ブロック文字
+\[
+  (a_1,a_2,a_3,a_4)=(a,b,c,d),
+\]
+区切りアルファベット \(\Delta=\{\#\}\)、および区切り語
+\[
+  (s_0,s_1,s_2,s_3,s_4)=(\eps,\#,\#,\#,\eps)
+\]
+をもつ固定順序ブロック包絡とみなす。
 意味論的仮定は、補題~\ref{lem:block-equality-envelopes} において
-\(R=P\) および
-\(\Lambda=\{|a|=|b|,\ |b|=|c|,\ |c|=|d|\}\) とすれば従う。
+\[
+  \Lambda=\{(1,2),(2,3),(3,4)\}
+\]
+とおけば従う。
 \end{proof}
 
 \begin{example}[交差直列二本スパイン言語]
@@ -965,8 +979,23 @@ MCFL における文字数による分離と較正については \cite{LehnerLi
 
 \begin{proof}
 表示は命題~\ref{prop:cross-serial-running-example} で与えられる。
+\[
+  Q=a^+b^+c^+d^+
+\]
+を、可視ブロック文字
+\[
+  (a_1,a_2,a_3,a_4)=(a,b,c,d),
+\]
+空の区切りアルファベット、および
+\[
+  s_0=s_1=s_2=s_3=s_4=\eps
+\]
+をもつ固定順序ブロック包絡とみなす。
 意味論的仮定は、補題~\ref{lem:block-equality-envelopes} において
-\(R=Q\) および \(\Lambda=\{|a|=|c|,\ |b|=|d|\}\) とすれば従う。
+\[
+  \Lambda=\{(1,3),(2,4)\}
+\]
+とおけば従う。
 \end{proof}
 
 \section{正準学習器}

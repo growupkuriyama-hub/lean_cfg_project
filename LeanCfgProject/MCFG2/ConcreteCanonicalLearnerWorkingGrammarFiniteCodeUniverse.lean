@@ -300,10 +300,10 @@ theorem length_le_of_mem_boolListsUpTo :
       omega
 
   | N + 1, bits, hbits => by
+      rw [boolListsUpTo] at hbits
+
       rcases
-          List.mem_append.mp
-            (by
-              simpa [boolListsUpTo] using hbits) with
+          List.mem_append.mp hbits with
         hprevious | hexact
 
       · have hle :
@@ -361,6 +361,8 @@ theorem boolListsUpTo_length_le_two_pow_succ :
         _ <=
             2 ^ (N + 1) +
               2 ^ (N + 1) := by
+          rw [boolListsOfLength_length]
+
           exact
             Nat.add_le_add_right
               ih
@@ -482,8 +484,8 @@ theorem
     {f n : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     R.bits ∈
       correctedConcreteCompiledGrammarCheckedBitCodeUniverse
         n f := by
@@ -500,8 +502,8 @@ theorem
     {f n : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     ∃ bits,
       bits ∈
           correctedConcreteCompiledGrammarCheckedBitCodeUniverse
@@ -521,8 +523,8 @@ theorem
     {f n m : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L)
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L)
     (hnm : n <= m) :
     R.bits ∈
       correctedConcreteCompiledGrammarCheckedBitCodeUniverse
@@ -584,8 +586,7 @@ theorem
         correctedConcreteWorkingGrammarLearnerLogarithmicBitDecode
             hα obs f K bits =
           some
-            ((correctedConcreteFiniteHypothesis K obs f).
-              compiledGrammarPresentationEntries
+            ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
                 (Classical.choice hα)) := by
 
   exact
@@ -639,8 +640,7 @@ theorem
           (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
             hα obs f K) =
         some
-          ((correctedConcreteFiniteHypothesis K obs f).
-            compiledGrammarPresentationEntries
+          ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
               (Classical.choice hα))) := by
 
   exact
@@ -704,9 +704,7 @@ theorem
         S L) :
     ∃
       (R :
-        CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, u, u}
           α f
           (sampleLengthBudget S)
           L)
@@ -743,6 +741,8 @@ variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
 
+include hα
+
 /-- Every semantic start-rooted target has a finite positive sample and an
 accepted checked code in the finite universe at that sample's total length. -/
 theorem
@@ -754,9 +754,7 @@ theorem
     ∃
       (S : Finset (Word α))
       (R :
-        CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, u, u}
           α f
           (sampleLengthBudget S)
           L)
@@ -814,9 +812,7 @@ theorem
         ∃
           (S : Finset (Word α))
           (R :
-            CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-              (w := max u v)
-              (z := max u v)
+            CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, u, u}
               α f
               (sampleLengthBudget S)
               L)

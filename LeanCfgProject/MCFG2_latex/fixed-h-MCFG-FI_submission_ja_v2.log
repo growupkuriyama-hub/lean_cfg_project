@@ -1,7 +1,7 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  1 AUG 2026 14:51
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  1 AUG 2026 15:50
  restricted system commands enabled.
-**fixed-h-MCFG-FI_submission_ja_lualatex.tex
-(./fixed-h-MCFG-FI_submission_ja_lualatex.tex
+**fixed-h-MCFG-FI_submission_ja_v2.tex
+(./fixed-h-MCFG-FI_submission_ja_v2.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 Lua module: luaotfload 2024-12-03 v3.29 Lua based OpenType font support
@@ -1415,9 +1415,10 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 10.
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/luatex/luatexja/patches/lltjp
 -array.sty
 Package: lltjp-array 2024-07-21 Patch to array for LuaTeX-ja
-) (./fixed-h-MCFG-FI_submission_ja_lualatex.aux)
-\openout1 = fixed-h-MCFG-FI_submission_ja_lualatex.aux
+)
+No file fixed-h-MCFG-FI_submission_ja_v2.aux.
 
+\openout1 = fixed-h-MCFG-FI_submission_ja_v2.aux
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
@@ -1442,7 +1443,6 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
-
 *geometry* driver: auto-detecting
 *geometry* detected driver: luatex
 *geometry* verbose mode - [ preamble ] result:
@@ -1614,11 +1614,9 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 Package color Info: Driver file: luatex.def on input line 149.
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/graphics/mathcolor.ltx))
 Package hyperref Info: Link coloring ON on input line 53.
- (./fixed-h-MCFG-FI_submission_ja_lualatex.out)
-(./fixed-h-MCFG-FI_submission_ja_lualatex.out)
 \@outlinefile=\write3
 
-\openout3 = fixed-h-MCFG-FI_submission_ja_lualatex.out
+\openout3 = fixed-h-MCFG-FI_submission_ja_v2.out
 (load cache: extra_lmroman17-regular.luc)
 LaTeX Font Info:    Font shape `JT3/HaranoAjiMincho-Regular.otf(0)/m/n' will be
 
@@ -1644,8 +1642,7 @@ LaTeX Font Info:    Font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/n' will be
 (Font)              scaled to size 5.54828pt on input line 62.
 LaTeX Font Info:    Trying loading font information for U+msa on input line 62.
 
-
-(C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
+ (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 (C:/Users/Owner/AppData/Local/Programs/MiKTeX/tex/latex/microtype/mt-msa.cfg
@@ -1716,9 +1713,53 @@ LaTeX Font Info:    Font shape `JT3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
 (Font)              scaled to size 13.31584pt on input line 90.
 LaTeX Font Info:    Font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
 (Font)              scaled to size 13.31584pt on input line 90.
-(load cache: extra_lmsans12-regular.luc) [1
+(load cache: extra_lmsans12-regular.luc)
+
+LaTeX Warning: Citation `Gold1967' on page 1 undefined on input line 94.
+
+
+LaTeX Warning: Citation `ClarkEyraud2007' on page 1 undefined on input line 97.
+
+
+
+LaTeX Warning: Citation `Yoshinaka2008' on page 1 undefined on input line 99.
+
+
+LaTeX Warning: Citation `Yoshinaka2009' on page 1 undefined on input line 99.
+
+
+LaTeX Warning: Citation `Yoshinaka2011' on page 1 undefined on input line 99.
+
+
+LaTeX Warning: Citation `ClarkYoshinaka2014' on page 1 undefined on input line 
+101.
+
+
+LaTeX Warning: Citation `ClarkYoshinaka2016' on page 1 undefined on input line 
+101.
+
+
+LaTeX Warning: Citation `Kanazawa1998' on page 1 undefined on input line 102.
+
+
+LaTeX Warning: Citation `Shieber1985' on page 1 undefined on input line 104.
+
+
+LaTeX Warning: Citation `VijayShankerWeirJoshi1987' on page 1 undefined on inpu
+t line 104.
+
+
+LaTeX Warning: Citation `Weir1988' on page 1 undefined on input line 104.
+
+
+LaTeX Warning: Citation `Kallmeyer2010' on page 1 undefined on input line 104.
+
+[1
 
 {C:/Users/Owner/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+
+LaTeX Warning: Citation `kuriyamaCFG' on page 2 undefined on input line 108.
+
 LaTeX Font Info:    Calculating math sizes for size <10.95001> on input line 10
 9.
 (load cache: extra_lmroman7-regular.luc)
@@ -1732,20 +1773,94 @@ LaTeX Font Info:    Font shape `JT3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
 (Font)              scaled to size 9.24713pt on input line 118.
 LaTeX Font Info:    Font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
 (Font)              scaled to size 9.24713pt on input line 118.
-(load cache: extra_lmsans10-regular.luc) [2](load cache: extra_lmroman10-italic.
-luc)
+(load cache: extra_lmsans10-regular.luc) [2]
+
+LaTeX Warning: Reference `sec:main-results' on page 3 undefined on input line 1
+55.
+
+
+LaTeX Warning: Reference `sec:prelim' on page 3 undefined on input line 155.
+
+
+LaTeX Warning: Reference `sec:running-examples' on page 3 undefined on input li
+ne 156.
+
+
+LaTeX Warning: Reference `sec:learner' on page 3 undefined on input line 157.
+
+
+LaTeX Warning: Reference `sec:exact' on page 3 undefined on input line 157.
+
+
+LaTeX Warning: Reference `sec:poly-time' on page 3 undefined on input line 158.
+
+
+
+LaTeX Warning: Reference `sec:fixed-observation' on page 3 undefined on input l
+ine 159.
+
+
+LaTeX Warning: Reference `sec:comparison' on page 3 undefined on input line 160
+.
+
+
+LaTeX Warning: Reference `app:semantic-promise' on page 3 undefined on input li
+ne 161.
+
+
+LaTeX Warning: Reference `sec:learner' on page 3 undefined on input line 167.
+
+
+LaTeX Warning: Reference `sec:fixed-observation' on page 3 undefined on input l
+ine 167.
+
+
+LaTeX Warning: Reference `def:working-mcfg' on page 3 undefined on input line 1
+68.
+
+(load cache: extra_lmroman10-italic.luc)
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 171.
+
+LaTeX Warning: Reference `thm:exact-reconstruction' on page 3 undefined on inpu
+t line 180.
+
+
+LaTeX Warning: Reference `cor:gold' on page 3 undefined on input line 180.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 182.
+
+LaTeX Warning: Reference `thm:poly' on page 3 undefined on input line 189.
+
+
+LaTeX Warning: Reference `prop:cs-exposure-bound' on page 3 undefined on input 
+line 190.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 192.
+
+LaTeX Warning: Reference `thm:bounded-union-identifiable' on page 3 undefined o
+n input line 200.
+
+
+LaTeX Warning: Reference `thm:no-advice-nonidentifiability' on page 3 undefined
+ on input line 201.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 203.
+
+LaTeX Warning: Reference `thm:member-kernel-exclusion' on page 3 undefined on i
+nput line 209.
+
+
+LaTeX Warning: Reference `prop:copy-language-outside-every-finite-observation' 
+on page 3 undefined on input line 210.
+
 LaTeX Font Info:    Font shape `JT3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
 (Font)              scaled to size 11.09656pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
@@ -1753,7 +1868,6 @@ LaTeX Font Info:    Font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 217.
-
 [3]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
@@ -1764,13 +1878,28 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 243.
+
+
+LaTeX Warning: Citation `delaHiguera1997' on page 4 undefined on input line 245
+.
+
+
+LaTeX Warning: Citation `delaHiguera2010' on page 4 undefined on input line 245
+.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 254.
+
+LaTeX Warning: Citation `Gold1967' on page 4 undefined on input line 264.
+
+
+LaTeX Warning: Citation `Angluin1987' on page 4 undefined on input line 267.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 271.
- [4]
+[4]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 280.
@@ -1786,16 +1915,28 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 312.
+
+
+LaTeX Warning: Citation `Pin1986' on page 5 undefined on input line 324.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 333.
- [5]
+[5]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 366.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 369.
+
+
+LaTeX Warning: Reference `def:working-mcfg' on page 6 undefined on input line 3
+71.
+
+
+LaTeX Warning: Citation `SekiEtAl1991' on page 6 undefined on input line 372.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 388.
@@ -1812,37 +1953,59 @@ LaTeX Font Info:    Font shape `JT3/HaranoAjiMincho-Regular.otf(0)/m/n' will be
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 414.
- [6]
+[6]
+
+LaTeX Warning: Reference `def:tuple-substitutable' on page 7 undefined on input
+ line 426.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 428.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 437.
+
+LaTeX Warning: Citation `LehnerLindorfer2020' on page 7 undefined on input line
+ 461.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 481.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 491.
- [7]
+[7]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 497.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 507.
- [8]
+
+
+LaTeX Warning: Reference `lem:zone-morphism-basic' on page 8 undefined on input
+ line 570.
+
+
+LaTeX Warning: Reference `lem:zone-morphism-basic' on page 8 undefined on input
+ line 581.
+
+[8]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 586.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 633.
+
+
+LaTeX Warning: Reference `def:fixed-ordered-block-envelope' on page 9 undefined
+ on input line 636.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 666.
- [9]
+[9]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 833.
@@ -1853,12 +2016,25 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 850.
+
+
+LaTeX Warning: Reference `def:working-mcfg' on page 11 undefined on input line 
+864.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 867.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 873.
+
+LaTeX Warning: Reference `prop:l3-running-example' on page 11 undefined on inpu
+t line 873.
+
+
+LaTeX Warning: Reference `prop:equality-block-substitutable' on page 11 undefin
+ed on input line 874.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 878.
@@ -1874,352 +2050,548 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 918.
+
+LaTeX Warning: Reference `prop:parallel-running-example' on page 11 undefined o
+n input line 918.
+
+[11]
+
+LaTeX Warning: Reference `lem:block-equality-envelopes' on page 12 undefined on
+ input line 931.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 924.
- [11]
+(Font)              No change on input line 938.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 934.
+(Font)              No change on input line 948.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 940.
+(Font)              No change on input line 954.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 961.
+(Font)              No change on input line 975.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 967.
+(Font)              No change on input line 981.
+
+LaTeX Warning: Reference `prop:cross-serial-running-example' on page 12 undefin
+ed on input line 981.
+
+
+LaTeX Warning: Reference `lem:block-equality-envelopes' on page 12 undefined on
+ input line 994.
+
+[12]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 988.
+(Font)              No change on input line 1017.
 (load cache: extra_lmromandemi10-regular.luc)
 LaTeX Font Info:    Font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
-(Font)              scaled to size 6.47295pt on input line 1013.
+(Font)              scaled to size 6.47295pt on input line 1042.
 LaTeX Font Info:    Font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/n' will be
-(Font)              scaled to size 4.62357pt on input line 1013.
- [12]
+(Font)              scaled to size 4.62357pt on input line 1042.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1080.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1096.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1112.
+(Font)              No change on input line 1109.
  [13]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1127.
+(Font)              No change on input line 1125.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1137.
+(Font)              No change on input line 1141.
+
+
+LaTeX Warning: Reference `def:output-refinement' on page 14 undefined on input 
+line 1146.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1146.
+(Font)              No change on input line 1156.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1159.
+(Font)              No change on input line 1166.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1175.
+
+LaTeX Warning: Reference `lem:exposing-contexts' on page 14 undefined on input 
+line 1180.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1181.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1189.
- [14]
+(Font)              No change on input line 1188.
+[14]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1204.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1215.
+(Font)              No change on input line 1210.
+
+
+LaTeX Warning: Reference `def:exposing-context' on page 15 undefined on input l
+ine 1211.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1225.
+(Font)              No change on input line 1218.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1242.
+(Font)              No change on input line 1233.
+
+LaTeX Warning: Reference `lem:rule-simulation' on page 15 undefined on input li
+ne 1239.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1251.
- [15]
+(Font)              No change on input line 1244.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1273.
+(Font)              No change on input line 1254.
+[15]
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 1271.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1280.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1288.
+(Font)              No change on input line 1302.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1296.
+(Font)              No change on input line 1309.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1317.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1324.
+(Font)              No change on input line 1325.
  [16]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1346.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1366.
+(Font)              No change on input line 1353.
+
+
+LaTeX Warning: Reference `thm:poly' on page 17 undefined on input line 1372.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1374.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1386.
+(Font)              No change on input line 1375.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1395.
- [17]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1411.
+(Font)              No change on input line 1403.
+
+LaTeX Warning: Reference `def:learner' on page 17 undefined on input line 1403.
+
+
+[17]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1420.
+(Font)              No change on input line 1415.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1429.
+(Font)              No change on input line 1424.
+
+
+LaTeX Warning: Reference `def:learner' on page 18 undefined on input line 1424.
+
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1434.
+(Font)              No change on input line 1440.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1452.
+(Font)              No change on input line 1449.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1457.
+(Font)              No change on input line 1458.
+
+LaTeX Warning: Reference `def:tuple-substitutable' on page 18 undefined on inpu
+t line 1459.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1467.
+(Font)              No change on input line 1463.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1480.
+(Font)              No change on input line 1481.
+[18]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1489.
- [18]
+(Font)              No change on input line 1486.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1512.
+(Font)              No change on input line 1496.
+
+
+LaTeX Warning: Reference `lem:filling-identity' on page 19 undefined on input l
+ine 1496.
+
+
+LaTeX Warning: Reference `lem:shared-context' on page 19 undefined on input lin
+e 1506.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1528.
+(Font)              No change on input line 1509.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1564.
+(Font)              No change on input line 1518.
+
+LaTeX Warning: Reference `lem:shared-context' on page 19 undefined on input lin
+e 1522.
+
+
+LaTeX Warning: Reference `lem:witnessed-composition' on page 19 undefined on in
+put line 1529.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1571.
+(Font)              No change on input line 1541.
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 1557.
+
+LaTeX Warning: Reference `prop:output-invariants' on page 19 undefined on input
+ line 1559.
+
+
+LaTeX Warning: Reference `def:learner' on page 19 undefined on input line 1570.
+
 
 [19]
+
+LaTeX Warning: Reference `rem:binary-witness-locality' on page 20 undefined on 
+input line 1580.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1585.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1596.
+(Font)              No change on input line 1593.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1600.
+
+LaTeX Warning: Reference `lem:rule-simulation' on page 20 undefined on input li
+ne 1603.
+
+
+LaTeX Warning: Reference `lem:rule-simulation' on page 20 undefined on input li
+ne 1604.
+
+
+LaTeX Warning: Reference `prop:output-invariants' on page 20 undefined on input
+ line 1607.
+
+
+LaTeX Warning: Reference `lem:rule-simulation' on page 20 undefined on input li
+ne 1609.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1606.
+(Font)              No change on input line 1614.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1615.
+(Font)              No change on input line 1625.
+
+LaTeX Warning: Reference `prop:learner-soundness' on page 20 undefined on input
+ line 1625.
+
+
+LaTeX Warning: Reference `prop:completeness' on page 20 undefined on input line
+ 1626.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1620.
+(Font)              No change on input line 1629.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1633.
+(Font)              No change on input line 1635.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1644.
- [20]
+
+LaTeX Warning: Reference `thm:exact-reconstruction' on page 20 undefined on inp
+ut line 1645.
+
+
+LaTeX Warning: Reference `lem:sufficient-to-gold' on page 20 undefined on input
+ line 1646.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1674.
+(Font)              No change on input line 1649.
+[20]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1687.
+(Font)              No change on input line 1662.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1708.
+(Font)              No change on input line 1673.
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 1703.
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 1716.
  [21]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1734.
+(Font)              No change on input line 1737.
+
+
+LaTeX Warning: Reference `def:cs' on page 22 undefined on input line 1737.
+
+
+LaTeX Warning: Reference `cor:gold' on page 22 undefined on input line 1758.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1745.
+(Font)              No change on input line 1763.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1756.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1778.
+(Font)              No change on input line 1774.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1785.
- [22]
+[22]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1809.
+(Font)              No change on input line 1807.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1819.
+(Font)              No change on input line 1814.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1835.
+(Font)              No change on input line 1838.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1843.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1849.
-LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
-undefined
-(Font)              No change on input line 1856.
+(Font)              No change on input line 1848.
  [23]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1868.
+(Font)              No change on input line 1864.
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 1872.
+
+
+LaTeX Warning: Reference `lem:finite-approximants-substitutable' on page 24 und
+efined on input line 1872.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1878.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1886.
+(Font)              No change on input line 1885.
+
+LaTeX Warning: Reference `lem:limit-ab-substitutable' on page 24 undefined on i
+nput line 1885.
+
+
+LaTeX Warning: Reference `lem:finite-approximants-substitutable' on page 24 und
+efined on input line 1886.
+
+
+LaTeX Warning: Reference `lem:ascending-chain-obstruction' on page 24 undefined
+ on input line 1889.
+
+
+LaTeX Warning: Reference `cor:gold' on page 24 undefined on input line 1892.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1891.
+(Font)              No change on input line 1897.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1903.
+(Font)              No change on input line 1907.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1930.
- [24]
+(Font)              No change on input line 1915.
+
+LaTeX Warning: Reference `def:tuple-substitutable' on page 24 undefined on inpu
+t line 1915.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1938.
+(Font)              No change on input line 1920.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1963.
+(Font)              No change on input line 1932.
+[24]
+
+LaTeX Warning: Reference `prop:h-refinement-monotonicity' on page 25 undefined 
+on input line 1952.
+
+
+LaTeX Warning: Reference `cor:gold' on page 25 undefined on input line 1954.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1974.
+(Font)              No change on input line 1959.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 1986.
+(Font)              No change on input line 1967.
+
+LaTeX Warning: Reference `thm:bounded-union-identifiable' on page 25 undefined 
+on input line 1969.
+
+
+LaTeX Warning: Reference `thm:no-advice-nonidentifiability' on page 25 undefine
+d on input line 1969.
+
+
+LaTeX Warning: Reference `lem:finite-approximants-substitutable' on page 25 und
+efined on input line 1971.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2007.
- [25]
+(Font)              No change on input line 1992.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2028.
+(Font)              No change on input line 2003.
+[25]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2043.
+(Font)              No change on input line 2015.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2097.
- [26]
+(Font)              No change on input line 2036.
+
+
+LaTeX Warning: Reference `thm:member-kernel-exclusion' on page 26 undefined on 
+input line 2036.
+
+
+LaTeX Warning: Reference `thm:member-kernel-exclusion' on page 26 undefined on 
+input line 2054.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2156.
- [27]
+(Font)              No change on input line 2057.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2166.
+(Font)              No change on input line 2072.
+[26]
+
+LaTeX Warning: Reference `thm:member-kernel-exclusion' on page 27 undefined on 
+input line 2122.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2227.
- [28]
+(Font)              No change on input line 2126.
+[27]
+
+LaTeX Warning: Reference `sec:running-examples' on page 28 undefined on input l
+ine 2175.
+
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2238.
- [29]
+(Font)              No change on input line 2185.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
-(Font)              No change on input line 2321.
+(Font)              No change on input line 2195.
+
+LaTeX Warning: Reference `prop:l3-running-example' on page 28 undefined on inpu
+t line 2202.
+
+[28]
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 2256.
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 2267.
+
+
+LaTeX Warning: Citation `DomaratzkiOkhotinShallit2007' on page 29 undefined on 
+input line 2268.
+
+
+LaTeX Warning: Citation `Hopcroft1969' on page 29 undefined on input line 2287.
+
+
+[29]
+LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
+undefined
+(Font)              No change on input line 2350.
+
+
+LaTeX Warning: Reference `rem:semantic-class' on page 30 undefined on input lin
+e 2352.
+
+[30]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2337.
+(Font)              No change on input line 2366.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2342.
+(Font)              No change on input line 2371.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2348.
+(Font)              No change on input line 2377.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2353.
+(Font)              No change on input line 2382.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2359.
- [30]
+(Font)              No change on input line 2388.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2365.
+(Font)              No change on input line 2394.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2369.
+(Font)              No change on input line 2398.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2375.
+(Font)              No change on input line 2404.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2381.
+(Font)              No change on input line 2410.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2387.
+(Font)              No change on input line 2416.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2392.
+(Font)              No change on input line 2421.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2397.
+(Font)              No change on input line 2426.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2413.
+(Font)              No change on input line 2442.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2417.
+(Font)              No change on input line 2446.
+ [31]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2423.
+(Font)              No change on input line 2452.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2428.
+(Font)              No change on input line 2457.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2433.
+(Font)              No change on input line 2462.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2440.
+(Font)              No change on input line 2469.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2447.
+(Font)              No change on input line 2476.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
-(Font)              No change on input line 2454.
- [31] [32]
-(./fixed-h-MCFG-FI_submission_ja_lualatex.aux)
+(Font)              No change on input line 2483.
+ [32] (./fixed-h-MCFG-FI_submission_ja_v2.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -2230,30 +2602,40 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package rerunfilecheck Info: File `fixed-h-MCFG-FI_submission_ja_lualatex.out' 
-has not changed.
-(rerunfilecheck)             Checksum: 05B8FE13A2F33FD2F66BCEF755D7DDBA;2439.
+
+Package rerunfilecheck Warning: File `fixed-h-MCFG-FI_submission_ja_v2.out' has
+ changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `fixed-h-MCFG-FI_submission_ja_v2.ou
+t':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  05B8FE13A2F33FD2F66BCEF755D7DDBA;2439.
 )
 
 Here is how much of LuaTeX's memory you used:
- 18595 strings out of 476076
- 305802,953878 words of node,token memory allocated
- 4626 words of node memory still in use:
+ 18555 strings out of 476076
+ 305795,953878 words of node,token memory allocated
+ 4818 words of node memory still in use:
    11 hlist, 2 vlist, 7 rule, 1 local_par, 5 glue, 4 kern, 2 penalty, 3 glyph, 1
-789 attribute, 61 glue_spec, 175 attribute_list, 1 write, 14 user_defined nodes
-   avail lists: 1:54,2:58378,3:498,4:343,5:327,6:52,7:7828,8:47,9:3584,10:41,11:
-488
- 40443 multiletter control sequences out of 65536+600000
+877 attribute, 61 glue_spec, 183 attribute_list, 1 write, 14 user_defined nodes
+   avail lists: 1:63,2:57849,3:484,4:310,5:342,6:50,7:7812,8:47,9:3557,10:41,11:
+362
+ 40418 multiletter control sequences out of 65536+600000
  115 fonts using 109147359 bytes
- 119i,11n,122p,2097b,752s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 119i,11n,122p,2091b,752s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmroman5-
 regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/
 lm/lmromandemi10-regular.otf><c:/users/owner/appdata/local/programs/miktex/fonts
 /opentype/public/lm/lmroman10-italic.otf><c:/users/owner/appdata/local/programs/
-miktex/fonts/opentype/public/lm/lmroman10-bold.otf><c:/users/owner/appdata/local
-/programs/miktex/fonts/opentype/public/lm/lmroman7-regular.otf><c:/users/owner/a
+miktex/fonts/opentype/public/lm/lmroman7-regular.otf><c:/users/owner/appdata/loc
+al/programs/miktex/fonts/opentype/public/lm/lmroman10-bold.otf><c:/users/owner/a
 ppdata/local/programs/miktex/fonts/opentype/public/lm/lmroman10-regular.otf><c:/
 users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/lmsans12-regu
 lar.otf><c:/users/owner/appdata/local/programs/miktex/fonts/opentype/public/lm/l
@@ -2281,10 +2663,10 @@ ublic/amsfonts/cm/cmsy7.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/
 type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX
 /fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/Owner/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on fixed-h-MCFG-FI_submission_ja_lualatex.pdf (32 pages, 624140 b
-ytes).
+Output written on fixed-h-MCFG-FI_submission_ja_v2.pdf (32 pages, 597329 bytes).
 
-PDF statistics: 658 PDF objects out of 1000 (max. 8388607)
+
+PDF statistics: 467 PDF objects out of 1000 (max. 8388607)
  205 named destinations out of 1000 (max. 1048576)
- 177 words of extra memory for PDF output out of 10000 (max. 100000000)
+ 1 words of extra memory for PDF output out of 10000 (max. 100000000)
 
