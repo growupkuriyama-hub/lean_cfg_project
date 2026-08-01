@@ -583,36 +583,252 @@ MCFL における文字数による分離と較正については \cite{LehnerLi
 二つのタプル分布は等しい。
 \end{proof}
 
-\begin{lemma}[ブロック等式包絡]
-\label{lem:block-equality-envelopes}
-\(R\) を、\(a^+\#b^+\#c^+\#d^+\) や \(a^+b^+c^+d^+\) のように、
-固定された順序付き可視ブロック列上の正則ブロック包絡とし、\(h_R\) をその標準 DFA の
-遷移準同型とする。可視ブロック長変数の間の等式からなる任意の有限集合 \(\Lambda\) に対して、
-言語
+\begin{definition}[固定順序ブロック包絡]
+\label{def:fixed-ordered-block-envelope}
+\(k\ge 1\) とする。
+互いに異なる文字
 \[
-  L_\Lambda=\{w\in R\mid
-  \text{\(w\) の可視ブロック長が \(\Lambda\) のすべての方程式を満たす}\}
+  A=\{a_1,\ldots,a_k\}
 \]
-は、任意のアリティ \(r\ge1\) について \((r,h_R)\)-タプル代入可能である。
+と、\(A\) と交わらない有限アルファベット \(\Delta\) をとる。
+さらに、固定された区切り語
+\[
+  s_0,s_1,\ldots,s_k\in\Delta^*
+\]
+をとり、
+\[
+  \Sigma=A\uplus\Delta
+\]
+とおく。
+
+このとき、
+\[
+  R
+  =
+  s_0a_1^+s_1a_2^+s_2\cdots s_{k-1}a_k^+s_k
+  \subseteq\Sigma^*
+\]
+を、\emph{固定順序ブロック包絡}と呼ぶ。
+
+各 \(w\in R\) は一意に
+\[
+  w
+  =
+  s_0a_1^{n_1}s_1a_2^{n_2}s_2
+  \cdots
+  s_{k-1}a_k^{n_k}s_k,
+  \qquad
+  n_1,\ldots,n_k\ge1,
+\]
+と表される。そのブロック長ベクトルを
+\[
+  \ell_R(w)
+  :=
+  (n_1,\ldots,n_k)
+  \in\mathbb{N}_{>0}^k
+\]
+と定め、\(j\) 番目の成分を \(\ell_j(w):=n_j\) と書く。
+\end{definition}
+
+\begin{lemma}[固定順序ブロック包絡における長さ等式の保存]
+\label{lem:block-equality-envelopes}
+\(R\subseteq\Sigma^*\) を、定義
+\ref{def:fixed-ordered-block-envelope}
+の固定順序ブロック包絡とする。
+また、\(\mathcal A_R\) を \(R\) を認識する完全 DFA とし、
+\[
+  h_R:\Sigma^*\longrightarrow M_R
+\]
+をその遷移モノイドへの準同型とする。
+
+ブロック添字の有限集合
+\[
+  \Lambda\subseteq\{1,\ldots,k\}^2
+\]
+に対して、
+\[
+  L_\Lambda
+  :=
+  \left\{
+    w\in R
+    \;\middle|\;
+    \ell_p(w)=\ell_q(w)
+    \text{ for every }(p,q)\in\Lambda
+  \right\}
+\]
+と定める。
+
+このとき、任意の \(f\ge1\) に対して、
+\(L_\Lambda\) は \((f,h_R)\)-タプル代入可能である。
 \end{lemma}
 
 \begin{proof}
-成分ごとに同じ \(h_R\)-型をもつタプル \(\tuple x\) と \(\tuple y\) が、
-受理コンテクスト \(E\) を共有し、両方の充填結果が \(L_\Lambda\) に属すると仮定する。
-各可視ブロック文字 \(\sigma\) について、\(E\) の外側終端記号による寄与は二つの充填で同じである。
-したがって、\(\Lambda\) 中の各等式 \(|\sigma|=|\tau|\) から
+任意の \(1\le d\le f\) を固定する。
+タプル
 \[
-  \sum_i |y_i|_\sigma-\sum_i |x_i|_\sigma
-  =
-  \sum_i |y_i|_\tau-\sum_i |x_i|_\tau .                  \tag{2}
+  \tuple x=(x_1,\ldots,x_d),
+  \qquad
+  \tuple y=(y_1,\ldots,y_d)
+  \in(\Sigma^*)^d
 \]
-を得る。次に、\(F\) を \(\tuple x\) の任意の受理コンテクストとする。
-成分ごとの \(h_R\)-型が等しいので
-\(h_R(F[\tuple x])=h_R(F[\tuple y])\) であり、したがって \(F[\tuple y]\in R\) である。
-\(\Lambda\) の各方程式に (2) を適用すると、\(\tuple x\) を \(\tuple y\) に置き換えた後も、
-必要なブロック長等式はすべて保たれる。ゆえに \(F[\tuple y]\in L_\Lambda\) である。
-対称性により、タプル分布の等しさが従う。
+が
+\[
+  h_R(x_i)=h_R(y_i)
+  \qquad(1\le i\le d)
+  \tag{3}
+\]
+を満たすと仮定する。
+
+さらに、\(\tuple x\) と \(\tuple y\) が
+\(L_\Lambda\) に関する文コンテクストを一つ共有するとする。
+すなわち、あるアリティ \(d\) の文コンテクスト \(E\) が存在して、
+\[
+  E[\tuple x]\in L_\Lambda,
+  \qquad
+  E[\tuple y]\in L_\Lambda
+  \tag{4}
+\]
+であると仮定する。
+
+各 \(1\le j\le k\) とタプル
+\(\tuple z=(z_1,\ldots,z_d)\) に対して、
+\[
+  N_j(\tuple z)
+  :=
+  \sum_{i=1}^d |z_i|_{a_j}
+\]
+とおく。
+これは、タプル \(\tuple z\) の全成分が供給する
+文字 \(a_j\) の総数である。
+
+また、文コンテクスト \(E\) の穴以外の固定部分に含まれる
+文字 \(a_j\) の個数を \(C_j(E)\) と書く。
+すると、任意の \(\tuple z\) に対して
+\[
+  |E[\tuple z]|_{a_j}
+  =
+  C_j(E)+N_j(\tuple z)
+  \tag{5}
+\]
+である。
+
+ここで \((p,q)\in\Lambda\) を任意にとる。
+仮定 (4) より、\(E[\tuple x]\) と \(E[\tuple y]\) はともに
+\(L_\Lambda\) に属するので、
+\[
+  C_p(E)+N_p(\tuple x)
+  =
+  C_q(E)+N_q(\tuple x)
+\]
+および
+\[
+  C_p(E)+N_p(\tuple y)
+  =
+  C_q(E)+N_q(\tuple y)
+\]
+が成り立つ。
+後者から前者を引くと、
+\[
+  N_p(\tuple y)-N_p(\tuple x)
+  =
+  N_q(\tuple y)-N_q(\tuple x)
+  \qquad
+  ((p,q)\in\Lambda)
+  \tag{6}
+\]
+を得る。
+
+次に、
+\[
+  F\in\D_{L_\Lambda}^{(d)}(\tuple x)
+\]
+を任意にとる。すなわち、
+\[
+  F[\tuple x]\in L_\Lambda
+  \tag{7}
+\]
+である。
+
+条件 (3) と \(h_R\) の準同型性から、
+文コンテクスト \(F\) の固定部分を変えずに
+各 \(x_i\) を \(y_i\) に置き換えても、語全体の
+\(h_R\)-値は変化しない。したがって、
+\[
+  h_R(F[\tuple x])
+  =
+  h_R(F[\tuple y]).
+  \tag{8}
+\]
+\(F[\tuple x]\in L_\Lambda\subseteq R\) であり、
+\(h_R\) は \(R\) を認識する DFA の遷移準同型なので、
+(8) から
+\[
+  F[\tuple y]\in R
+  \tag{9}
+\]
+が従う。
+
+文コンテクスト \(F\) の固定部分に含まれる
+文字 \(a_j\) の個数を \(C_j(F)\) と書く。
+任意の \((p,q)\in\Lambda\) に対して、(7) より
+\[
+  C_p(F)+N_p(\tuple x)
+  =
+  C_q(F)+N_q(\tuple x).
+  \tag{10}
+\]
+一方、(6) より
+\[
+  N_p(\tuple y)-N_p(\tuple x)
+  =
+  N_q(\tuple y)-N_q(\tuple x).
+\]
+これと (10) を合わせると、
+\[
+\begin{aligned}
+  C_p(F)+N_p(\tuple y)
+  &=
+  C_p(F)+N_p(\tuple x)
+    +\bigl(N_p(\tuple y)-N_p(\tuple x)\bigr)
+  \\
+  &=
+  C_q(F)+N_q(\tuple x)
+    +\bigl(N_q(\tuple y)-N_q(\tuple x)\bigr)
+  \\
+  &=
+  C_q(F)+N_q(\tuple y).
+\end{aligned}
+\]
+したがって、
+\[
+  \ell_p(F[\tuple y])
+  =
+  \ell_q(F[\tuple y])
+  \qquad
+  ((p,q)\in\Lambda).
+\]
+これと (9) から
+\[
+  F[\tuple y]\in L_\Lambda
+\]
+を得る。よって
+\[
+  \D_{L_\Lambda}^{(d)}(\tuple x)
+  \subseteq
+  \D_{L_\Lambda}^{(d)}(\tuple y).
+\]
+
+\(\tuple x\) と \(\tuple y\) を交換した同じ議論により、逆の包含も
+成り立つ。したがって、
+\[
+  \D_{L_\Lambda}^{(d)}(\tuple x)
+  =
+  \D_{L_\Lambda}^{(d)}(\tuple y).
+\]
+\(d\le f\) は任意であったから、
+\(L_\Lambda\) は \((f,h_R)\)-タプル代入可能である。
 \end{proof}
+
 
 \begin{example}[三ブロック一致言語]
 \label{ex:l3-language}

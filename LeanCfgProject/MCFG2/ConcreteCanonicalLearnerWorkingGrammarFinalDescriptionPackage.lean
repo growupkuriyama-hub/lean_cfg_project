@@ -111,8 +111,7 @@ noncomputable def
     (f : Nat)
     (K : Finset (Word α)) :
     List Bool :=
-  (correctedConcreteFiniteHypothesis K obs f).
-    encodeCompiledWorkingGrammarLogarithmicBitList
+  (correctedConcreteFiniteHypothesis K obs f).encodeCompiledWorkingGrammarLogarithmicBitList
       (Classical.choice hα)
 
 /-- Exact length of the learner output's checked logarithmic bit list. -/
@@ -123,8 +122,7 @@ noncomputable def
     (f : Nat)
     (K : Finset (Word α)) :
     Nat :=
-  (correctedConcreteFiniteHypothesis K obs f).
-    compiledWorkingGrammarLogarithmicBitCount
+  (correctedConcreteFiniteHypothesis K obs f).compiledWorkingGrammarLogarithmicBitCount
       (Classical.choice hα)
 
 /-- Checked decoder for the learner output's logarithmic bit list. -/
@@ -139,8 +137,7 @@ noncomputable def
       (List
         (CorrectedConcreteCompiledGrammarPresentationEntry
           (correctedConcreteFiniteHypothesis K obs f))) :=
-  (correctedConcreteFiniteHypothesis K obs f).
-    decodeCompiledWorkingGrammarLogarithmicBitList
+  (correctedConcreteFiniteHypothesis K obs f).decodeCompiledWorkingGrammarLogarithmicBitList
       (Classical.choice hα)
       bits
 
@@ -157,13 +154,11 @@ compiled presentation. -/
         (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
           hα obs f K) =
       some
-        ((correctedConcreteFiniteHypothesis K obs f).
-          compiledGrammarPresentationEntries
+        ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
             (Classical.choice hα)) := by
 
   exact
-    (correctedConcreteFiniteHypothesis K obs f).
-      decodeCompiledWorkingGrammarLogarithmicBitList_encode
+    (correctedConcreteFiniteHypothesis K obs f).decodeCompiledWorkingGrammarLogarithmicBitList_encode
         (Classical.choice hα)
 
 /-- The attached bit-list length is the exact learner-output logarithmic bit
@@ -180,8 +175,7 @@ count. -/
         hα obs f K := by
 
   exact
-    (correctedConcreteFiniteHypothesis K obs f).
-      encodeCompiledWorkingGrammarLogarithmicBitList_length
+    (correctedConcreteFiniteHypothesis K obs f).encodeCompiledWorkingGrammarLogarithmicBitList_length
         (Classical.choice hα)
 
 /-- The exact learner-output logarithmic bit count satisfies the final
@@ -198,10 +192,10 @@ theorem
         (sampleLengthBudget K)
         f := by
 
-  exact
-    correctedConcreteFiniteHypothesis_logarithmicBitCount_le_paperPower
+  simpa [correctedConcreteWorkingGrammarLearnerLogarithmicBitCount] using
+    (correctedConcreteFiniteHypothesis_logarithmicBitCount_le_paperPower
       K obs f
-      (Classical.choice hα)
+      (Classical.choice hα))
 
 /-- Fully expanded single-power bound for the exact learner-output logarithmic
 bit count. -/
@@ -326,8 +320,7 @@ theorem
           (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
             hα obs f K) =
         some
-          ((correctedConcreteFiniteHypothesis K obs f).
-            compiledGrammarPresentationEntries
+          ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
               (Classical.choice hα))) ∧
       ((correctedConcreteWorkingGrammarLearnerLogarithmicBitList
           hα obs f K).length =
@@ -416,8 +409,7 @@ theorem
             (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
               hα obs f K) =
           some
-            ((correctedConcreteFiniteHypothesis K obs f).
-              compiledGrammarPresentationEntries
+            ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
                 (Classical.choice hα))) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
@@ -498,8 +490,7 @@ theorem
                   (T.prefixSample n)) =
               some
                 ((correctedConcreteFiniteHypothesis
-                    (T.prefixSample n) obs f).
-                  compiledGrammarPresentationEntries
+                    (T.prefixSample n) obs f).compiledGrammarPresentationEntries
                     (Classical.choice hα)) ∧
             ((correctedConcreteWorkingGrammarLearnerLogarithmicBitList
                 hα obs f
@@ -553,8 +544,7 @@ theorem
             (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
               hα obs f K) =
           some
-            ((correctedConcreteFiniteHypothesis K obs f).
-              compiledGrammarPresentationEntries
+            ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
                 (Classical.choice hα))) ∧
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
