@@ -310,6 +310,8 @@ theorem
     ten_le_correctedGrammarPaperDescriptionScale
       sampleLength f
 
+  unfold correctedConcreteCompiledGrammarPaperBodyBound at hbody
+
   unfold
     correctedConcreteCompiledGrammarSampleParametricBinaryNaturalValueBound
     correctedConcreteCompiledGrammarPaperBinaryNaturalValueEnvelope
@@ -400,6 +402,8 @@ theorem
           sampleLength f :=
     ten_le_correctedGrammarPaperDescriptionScale
       sampleLength f
+
+  unfold correctedConcreteCompiledGrammarPaperBodyBound at hbody
 
   unfold
     correctedConcreteCompiledGrammarSampleParametricEntryNaturalValueBound
