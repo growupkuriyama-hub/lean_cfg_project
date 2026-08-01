@@ -248,14 +248,13 @@ theorem successfulDecodePairs_complete
               successfulDecodePairs_complete
                 decode htail hdecode
 
-            exact
-              List.mem_cons_of_mem
+            simpa only [
+              successfulDecodePairs,
+              hcode
+            ] using
+              (List.mem_cons_of_mem
                 (code, decoded)
-                (by
-                  simpa [
-                    successfulDecodePairs,
-                    hcode
-                  ] using hrecursive)
+                hrecursive)
 
 /-- Exact successful-pair characterization. -/
 @[simp] theorem mem_successfulDecodePairs_iff
@@ -307,9 +306,10 @@ theorem successfulDecodePairs_length_le
             successfulDecodePairs_length_le
               decode codes
 
-          simp [
+          simp only [
             successfulDecodePairs,
-            hdecode
+            hdecode,
+            List.length_cons
           ]
 
           exact
@@ -465,13 +465,12 @@ theorem checkedBitDecodedValueSearch_length_le_codeUniverse
       (correctedConcreteCompiledGrammarCheckedBitCodeUniverse
         n f).length := by
 
-  rw [
-    successfulDecodedValues_length
-  ]
-
-  exact
-    checkedBitDecodedCodeSearch_length_le_codeUniverse
-      decode n f
+  simpa [
+    checkedBitDecodedValueSearch,
+    checkedBitDecodedCodeSearch
+  ] using
+    (checkedBitDecodedCodeSearch_length_le_codeUniverse
+      decode n f)
 
 /-- Successful-pair search size is bounded by the explicit power-set estimate. -/
 theorem checkedBitDecodedCodeSearch_length_le_two_pow
@@ -576,8 +575,8 @@ theorem
     {f n : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     (R.bits, R.presentation) ∈
       checkedBitDecodedCodeSearch
         R.decode n f := by
@@ -596,8 +595,8 @@ theorem
     {f n : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     R.presentation ∈
       checkedBitDecodedValueSearch
         R.decode n f := by
@@ -616,8 +615,8 @@ theorem
     {f n : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L)
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L)
     {bits : List Bool}
     {value : R.Presentation}
     (hpair :
@@ -647,8 +646,8 @@ theorem
     {f n : Nat}
     {L : Set (Word α)}
     (R :
-      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-        (w := w) (z := z) α f n L) :
+      CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, w, z}
+        α f n L) :
     (checkedBitDecodedCodeSearch
         R.decode n f).length <=
       2 ^
@@ -774,8 +773,7 @@ theorem
     (K : Finset (Word α)) :
     (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
         hα obs f K,
-      (correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα)) ∈
       correctedConcreteWorkingGrammarLearnerDecodedPresentationSearch
         hα obs f K := by
@@ -785,8 +783,7 @@ theorem
       hα obs f K
       (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
         hα obs f K)
-      ((correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα))).mpr
       ⟨correctedConcreteWorkingGrammarLearnerLogarithmicBitList_mem_codeUniverse
           hα obs f K,
@@ -801,8 +798,7 @@ theorem
     (obs : α → M)
     (f : Nat)
     (K : Finset (Word α)) :
-    (correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+    (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα) ∈
       correctedConcreteWorkingGrammarLearnerDecodedPresentationValues
         hα obs f K := by
@@ -810,8 +806,7 @@ theorem
   exact
     (mem_correctedConcreteWorkingGrammarLearnerDecodedPresentationValues_iff
       hα obs f K
-      ((correctedConcreteFiniteHypothesis K obs f).
-        compiledGrammarPresentationEntries
+      ((correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
           (Classical.choice hα))).mpr
       ⟨correctedConcreteWorkingGrammarLearnerLogarithmicBitList
           hα obs f K,
@@ -921,8 +916,7 @@ theorem
           1)) ∧
       ((correctedConcreteWorkingGrammarLearnerLogarithmicBitList
           hα obs f K,
-        (correctedConcreteFiniteHypothesis K obs f).
-          compiledGrammarPresentationEntries
+        (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
             (Classical.choice hα)) ∈
         correctedConcreteWorkingGrammarLearnerDecodedPresentationSearch
           hα obs f K) ∧
@@ -999,9 +993,7 @@ theorem
     ∃
       (S : Finset (Word α))
       (R :
-        CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-          (w := max u v)
-          (z := max u v)
+        CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, u, u}
           α f
           (sampleLengthBudget S)
           L),
@@ -1069,8 +1061,7 @@ theorem
       (∀ K : Finset (Word α),
         (correctedConcreteWorkingGrammarLearnerLogarithmicBitList
             hα obs f K,
-          (correctedConcreteFiniteHypothesis K obs f).
-            compiledGrammarPresentationEntries
+          (correctedConcreteFiniteHypothesis K obs f).compiledGrammarPresentationEntries
               (Classical.choice hα)) ∈
           correctedConcreteWorkingGrammarLearnerDecodedPresentationSearch
             hα obs f K) ∧
@@ -1080,9 +1071,7 @@ theorem
         ∃
           (S : Finset (Word α))
           (R :
-            CheckedBitBoundedCutCompiledWorkingGrammarRepresentation
-              (w := max u v)
-              (z := max u v)
+            CheckedBitBoundedCutCompiledWorkingGrammarRepresentation.{u, u, u}
               α f
               (sampleLengthBudget S)
               L),
@@ -1100,7 +1089,7 @@ theorem
                 (correctedConcreteCompiledGrammarPaperPowerBitBound
                     (sampleLengthBudget S)
                     f +
-                  1) := by
+                  1)) := by
 
   exact
     ⟨correctedConcreteWorkingGrammarLearner_identifies_startRootedTargetClass
