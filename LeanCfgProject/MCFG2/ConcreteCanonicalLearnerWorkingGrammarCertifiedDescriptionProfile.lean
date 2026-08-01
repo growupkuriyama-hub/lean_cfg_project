@@ -735,9 +735,9 @@ theorem
     {rank rank' : Nat}
     (hrank :
       rank <= rank') :
-    StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass
+    StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass.{u, v, w}
          hα obs f rank ⊆
-      StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass
+      StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass.{u, v, w}
          hα obs f rank' := by
 
   intro L hL
@@ -754,7 +754,7 @@ simultaneous description profile class at level `rank`. -/
 theorem
     startRootedCharacteristicRankAtMostClass_subset_certifiedRankProfileClass
     (rank : Nat) :
-    StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass
+    StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass.{u, v, w}
          hα obs f rank ⊆
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
@@ -779,7 +779,7 @@ theorem
       {L : Set (Word α) |
         ∃ rank : Nat,
           L ∈
-            StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass
+            StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass.{u, v, w}
                hα obs f rank} := by
 
   intro L hL
@@ -789,6 +789,8 @@ theorem
          hα obs f hL,
       hL,
       Nat.le_refl _⟩
+
+include hα
 
 /-- Every semantic start-rooted target lies in some simultaneous certified rank
 profile class. -/
@@ -913,7 +915,7 @@ theorem
             (startRootedTargetCharacteristicRank
                hα obs f hL)) ∧
       (∀ rank : Nat,
-        StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass
+        StartRootedCorrectedConcreteTargetCharacteristicRankAtMostClass.{u, v, w}
              hα obs f rank ⊆
           CorrectedConcreteCertifiedRankProfileClass
             (α := α)
