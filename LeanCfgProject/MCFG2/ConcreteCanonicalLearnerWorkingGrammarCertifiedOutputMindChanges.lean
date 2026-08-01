@@ -334,6 +334,8 @@ variable [DecidableEq α]
 variable [DecidableEq M]
 variable [Monoid M]
 
+attribute [local instance] Classical.propDecidable
+
 /-- Number of certified semantic output-language changes before stage `N`. -/
 noncomputable def correctedConcreteCertifiedWorkingGrammarMindChangeCount
     {L : Set (Word α)}
@@ -827,10 +829,14 @@ theorem
         exact hword)
       hpositive
 
-  simpa [
-    startRootedTargetMinimalCharacteristicCertifiedOutput,
-    S
-  ] using hcorrect
+  change
+    correctedConcreteWorkingGrammarHypLanguage
+        obs f
+        (correctedConcreteWorkingGrammarLearner
+          hα obs f S) =
+      L
+
+  exact hcorrect
 
 /-- The selected minimum-characteristic certified code length is bounded at the
 numerical characteristic rank itself. -/
