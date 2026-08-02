@@ -189,7 +189,7 @@ representing ambient subsets. -/
 theorem
     observationSelection_exactCardinality_isCardinalityMinimum
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
@@ -279,7 +279,7 @@ theorem
 theorem
     observationSelection_exactCardinality_irredundant
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
@@ -367,7 +367,7 @@ theorem
 theorem
     observationSelection_minimum_coordinateDeletion_fails
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
@@ -607,13 +607,13 @@ variable {language : Set (Word α)}
 theorem
     observationSelection_not_atCardinality_iff_lt_minimum
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
     (budget : Nat) :
     ¬
-        CorrectedConcreteObservationSelectionAtCardinality
+        CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           U language budget ↔
@@ -656,7 +656,7 @@ strict lower bound on the minimum selection cardinality. -/
 theorem
     observationSelection_minimum_gt_of_all_small_selections_fail
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
@@ -692,7 +692,7 @@ corresponding cardinality budget. -/
 theorem
     observationSelection_minimum_gt_iff_all_small_selections_fail
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
@@ -715,7 +715,7 @@ theorem
   · intro hLower S hSU hcard hTarget
 
     have hAtBudget :
-        CorrectedConcreteObservationSelectionAtCardinality
+        CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           U language budget :=
@@ -740,7 +740,7 @@ theorem
 product represents the target. -/
 theorem observationSelectionCardinality_eq_zero_iff_emptyProductTarget
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language) :
@@ -775,7 +775,7 @@ theorem observationSelectionCardinality_eq_zero_iff_emptyProductTarget
   · intro hEmptyTarget
 
     have hAtZero :
-        CorrectedConcreteObservationSelectionAtCardinality
+        CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           U language 0 := by
@@ -802,7 +802,7 @@ theorem observationSelectionCardinality_eq_zero_iff_emptyProductTarget
 coordinate. -/
 theorem observationSelectionCardinality_pos_of_not_emptyProductTarget
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
@@ -834,13 +834,13 @@ theorem observationSelectionCardinality_pos_of_not_emptyProductTarget
 /-- Compact cardinality obstruction package. -/
 theorem observationSelectionCardinality_obstruction_package
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language) :
     (∀ budget : Nat,
       (¬
-        CorrectedConcreteObservationSelectionAtCardinality
+        CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           U language budget ↔
