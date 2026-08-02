@@ -770,7 +770,8 @@ theorem observationSelectionCardinality_eq_zero_iff_emptyProductTarget
       Finset.card_eq_zero.mp
         hCardZero
 
-    simpa [hSEmpty] using hTarget
+    subst S
+    exact hTarget
 
   · intro hEmptyTarget
 

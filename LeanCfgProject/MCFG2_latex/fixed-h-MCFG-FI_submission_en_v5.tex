@@ -1,0 +1,3175 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{url}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{observation}[theorem]{Observation}
+\theoremstyle{remark}
+\newtheorem*{remark*}{Remark}
+
+\newcommand{\CS}{\mathrm{CS}}
+\newcommand{\Cmcf}[2]{\mathcal{C}^{\mathrm{mcf}}_{#1,#2}}
+\newcommand{\Ccfg}[1]{\mathcal{C}^{\mathrm{cfg}}_{#1}}
+\newcommand{\Yclass}[1]{\mathcal{Y}_{#1}}
+\newcommand{\Yord}[1]{\mathcal{Y}^{\mathrm{ord}}_{#1}}
+\newcommand{\Yyos}[2]{\mathcal{Y}^{\mathrm{Yos}}_{#1,#2}}
+\newcommand{\Dord}{\mathcal{D}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\out}{\mathrm{out}}
+\newcommand{\ev}{\mathrm{ev}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\st}{\mathrm{st}}
+\newcommand{\tuple}[1]{\vec{#1}}
+\newcommand{\blank}{\square}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\poly}{\mathrm{poly}}
+\newcommand{\yield}{\mathrm{yield}}
+\newcommand{\type}{\mathrm{type}}
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Lex}{\mathrm{Lex}}
+
+\providecommand{\keywords}[1]{\par\smallskip\noindent\textbf{Keywords. }#1\par}
+
+
+
+\title{Positive-Data Learning of Bounded-Fan-Out Linear MCFGs with Fixed Finite-Monoid Advice}
+\author{Takayuki Kuriyama\\Independent Researcher, Tokyo, Japan}
+\date{}
+
+
+\begin{document}
+\setlength{\abovedisplayskip}{6pt plus 2pt minus 3pt}
+\setlength{\belowdisplayskip}{6pt plus 2pt minus 3pt}
+\setlength{\abovedisplayshortskip}{3pt plus 1pt minus 2pt}
+\setlength{\belowdisplayshortskip}{3pt plus 1pt minus 2pt}
+\maketitle
+
+
+
+\begin{abstract}
+We study positive-data learning of a semantic subclass of bounded-fan-out
+linear multiple context-free languages under fixed finite-state side
+information.  The side information is an explicit finite monoid homomorphism
+\(h:\Sigma^*\to M\), supplied before learning starts and not inferred from the
+positive text.
+
+For reduced working binary linear nondeleting MCFG presentations, we define
+\((f,h)\)-tuple substitutability using named sentence contexts and
+componentwise \(h\)-types.  For every fixed fan-out bound \(f\) and fixed
+explicit morphism \(h\), we construct a canonical set-driven learner.  The
+proof uses an output-type refinement of a witnessing presentation together
+with concrete shared sentence contexts exposed by a finite
+presentation-relative characteristic sample.  The refinement records
+componentwise output types, while the sample supplies the information needed
+to recover component placement and to guard substitution.  If the target admits
+the required working presentation and satisfies the semantic
+\((f,h)\)-substitutability promise, then every positive sample containing the
+characteristic sample yields a hypothesis generating exactly the target
+language.  Consequently, each fixed observation fiber is identifiable in the
+limit from positive data.  For fixed \((f,h)\), the hypothesis associated with
+a finite sample \(K\) is constructible in time \(\|K\|_+^{O(f)}\), including
+output size.
+
+We also determine a boundary for the observation advice.  All observations
+whose monoids have a fixed size bound can be compiled into one finite product
+morphism and remain identifiable, whereas the unbounded union over all finite
+observations is not identifiable from positive data.  Finally, an infinite
+member-kernel criterion excludes languages, including the copy language, from
+every finite-observation fiber.  Thus fixed finite-monoid advice isolates a
+proper learnable region inside the multiple context-free languages rather than
+a reconstruction of the full class.
+\end{abstract}
+
+\keywords{grammatical inference, multiple context-free grammars, positive data,
+identification in the limit, finite monoids, tuple substitutability}
+
+
+
+\section{Introduction}
+\label{sec:introduction}
+
+Gold's theorem shows that broad language classes cannot be identified from
+positive data alone \cite{Gold1967}.  A successful way to recover positive-data
+learnability is to impose distributional restrictions: observed substrings, or
+more generally observed tuples, may be safely substituted when their accepting
+contexts agree in a sufficiently controlled way.  This viewpoint underlies the
+substitutable context-free languages of Clark and Eyraud \cite{ClarkEyraud2007}
+and the multidimensional substitutability results of Yoshinaka for mildly
+context-sensitive languages \cite{Yoshinaka2008,Yoshinaka2009,Yoshinaka2011}, as
+well as later work on distributional learning of parallel and multiple
+context-free grammars \cite{ClarkYoshinaka2014,ClarkYoshinaka2016}.  Related
+positive-data learnability phenomena also appear in restricted categorial
+grammars \cite{Kanazawa1998}.  For the mildly context-sensitive grammar
+background motivating MCFGs and related formalisms, see
+\cite{Shieber1985,VijayShankerWeirJoshi1987,Weir1988,Kallmeyer2010}.
+
+This paper studies a typed version of that idea for bounded-fan-out working
+multiple context-free grammars (MCFGs).  It can be read as a mildly
+context-sensitive analogue of fixed finite-monoid typed distributional learning
+for context-free languages \cite{kuriyamaCFG}.  The type information is supplied
+by a fixed explicit finite monoid homomorphism \(h:\Sigma^*\to M\).  The
+homomorphism is not inferred from the text.  It is observation advice: a finite
+interface that may record, for instance, a regular envelope or a coarse
+finite-state annotation.  We use ``advice'' only in the learning-theoretic sense
+of fixed side information supplied before the text; no nonuniform
+complexity-theoretic advice class is involved.  The learner is therefore
+advice-relative.  It learns the target language from positive examples, but the
+observation interface itself is fixed in advance.  All results are stated for languages admitting reduced
+working binary linear nondeleting MCFG presentations of bounded fan-out.  No
+normal-form theorem for arbitrary MCFGs is used or claimed.
+
+\paragraph{What is learned, and what is not.}
+The learner receives positive examples of the target language and the fixed
+finite morphism \(h\).  It does not receive a target grammar, a derivation
+oracle, negative examples, membership queries, or the semantic promise as
+decidable input.  The theorem says that if the unknown target belongs to the
+fixed fiber \(\Cmcf{f}{h}\), then a finite positive sample is sufficient for the
+canonical set-driven learner to stabilize to the exact target language.  It does
+not say that \(h\) can be discovered from positive data, nor that arbitrary
+MCFGs are identifiable from positive data.
+
+The target condition is called \((f,h)\)-tuple substitutability.  Since MCFG
+nonterminals derive tuples rather than single strings, the relevant contexts are
+named sentence contexts with several holes.  Two tuples of arity at most \(f\)
+may be identified only when they have the same componentwise \(h\)-type and
+share at least one accepting sentence context; the semantic promise then says
+that all accepting contexts coincide.  This is a semantic promise on the target
+language, not a decidable syntactic promise on an input grammar.
+
+The main contributions are as follows.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item We define the fixed observation fibers \(\Cmcf{f}{h}\) for languages
+admitting reduced working binary linear nondeleting MCFG presentations and
+satisfying semantic \((f,h)\)-tuple substitutability.
+
+\item For each fixed \(f\) and fixed explicit finite morphism \(h\), we construct
+a canonical positive-data learner and prove exact language reconstruction from
+a finite presentation-relative characteristic sample.  The learner stores only
+observed tuple values; component placement is recovered from concrete witnessed
+segmentations, and substitution is guarded by actually shared sentence
+contexts.
+
+\item We separate construction time from data size.  The hypothesis associated
+with a given finite sample is constructible in \(\|K\|_+^{O(f)}\) time,
+including output size.  Polynomial-size characteristic samples follow for
+subclasses with a polynomial exposure bound, but no such bound is asserted for
+the full target class.
+
+\item We prove that finite observation is genuine advice: the union of all
+observations with a fixed monoid-size bound compiles into one product morphism,
+whereas the unbounded union over all finite morphisms is not identifiable from
+positive data.
+
+\item We give a presentation-independent member-kernel exclusion criterion and
+apply it to a context-free slope union and to the copy language.  Thus the
+fixed-observation fibers form a proper advice-relative fragment of the MCFLs
+rather than a reformulation of the full hierarchy.
+\end{enumerate}
+
+Section~\ref{sec:main-results} states the theorem package.
+Section~\ref{sec:prelim} gives the learning and grammar-theoretic definitions,
+and Section~\ref{sec:running-examples} records standard synchronization
+examples.  Sections~\ref{sec:learner} and \ref{sec:exact} define the learner
+and prove exact identification.  Section~\ref{sec:poly-time} separates the
+fixed-parameter hypothesis-construction bound from the exposure condition
+needed for polynomial data.  Section~\ref{sec:fixed-observation} proves the
+bounded/unbounded observation-advice boundary and the member-kernel exclusions.
+Section~\ref{sec:comparison} compares the result with untyped distributional
+conditions.  Appendix~\ref{app:semantic-promise} records the non-effectivity of
+the semantic promise.
+
+
+\section{Main Results}
+\label{sec:main-results}
+
+This section states the theorem package before the technical development.  The
+proofs are given in Sections~\ref{sec:learner}--\ref{sec:fixed-observation}.
+Throughout, the working-presentation assumptions are exactly those of
+Definition~\ref{def:working-mcfg}; no normalization theorem for arbitrary MCFGs
+is being invoked.
+
+\begin{theorem}[Exact reconstruction, preview]
+\label{thm:main-exact-preview}
+Fix a fan-out bound \(f\) and an explicit finite homomorphism
+\(h:\Sigma^*\to M\).  Let \(G\) be a reduced working binary linear
+nondeleting MCFG of fan-out at most \(f\), and assume that
+\(L=L(G)\) is \((f,h)\)-tuple-substitutable.  Then a finite
+presentation-relative characteristic sample \(S_G\subseteq L\) exists such
+that, for every finite \(K\) with \(S_G\subseteq K\subseteq L\), the canonical
+learner returns a grammar whose language is exactly \(L\).
+\end{theorem}
+
+This statement is proved as Theorem~\ref{thm:exact-reconstruction};
+Corollary~\ref{cor:gold} gives identification in the limit.
+
+\begin{theorem}[Hypothesis construction, preview]
+\label{thm:main-poly-preview}
+For fixed \(f\) and fixed explicit \(h\), the canonical hypothesis associated
+with a finite sample \(K\) is constructible in time
+\(\|K\|_+^{O(f)}\), including its output size.  This is a construction bound
+from the sample at hand; it is not by itself a polynomial-data theorem for the
+full target class.
+\end{theorem}
+
+The construction bound is proved in Theorem~\ref{thm:poly}, and the precise
+polynomial-data boundary is recorded in
+Proposition~\ref{prop:cs-exposure-bound}.
+
+\begin{theorem}[Observation-advice boundary, preview]
+\label{thm:main-advice-preview}
+For every fixed alphabet \(\Sigma\), fan-out bound \(f\), and monoid-size bound
+\(k\), the union of all fibers defined by morphisms into monoids of size at
+most \(k\) is identifiable from positive data.  In contrast, the union over
+all finite observation morphisms, with no size bound, is not identifiable from
+positive data.
+\end{theorem}
+
+The two parts are Theorems~\ref{thm:bounded-union-identifiable} and
+\ref{thm:no-advice-nonidentifiability}.
+
+\begin{theorem}[Finite-observation exclusion, preview]
+\label{thm:main-exclusion-preview}
+If the arity-one accepting sentence-context distributions of members of a
+language have infinite index, then the language belongs to no fixed
+finite-observation fiber.  In particular, the copy language is outside every
+such fiber.
+\end{theorem}
+
+This is Theorem~\ref{thm:member-kernel-exclusion} together with
+Proposition~\ref{prop:copy-language-outside-every-finite-observation}.
+
+\section{Preliminaries and the Target Class}
+\label{sec:prelim}
+
+\subsection{Positive-data learning}
+
+\begin{definition}[Text and identification]
+A \emph{text} for \(L\subseteq\Sigma^*\) is an infinite sequence
+\((w_1,w_2,\ldots)\) of elements of \(L\) in which every element of \(L\)
+appears at least once.  A learner is a computable function mapping each finite
+prefix to a hypothesis grammar.  A learner identifies a class \(\mathcal C\) in
+the limit from positive data if for every \(L\in\mathcal C\) and every text for
+\(L\), there exists \(n_0\) such that all hypotheses produced after stage
+\(n_0\) have language \(L\).
+\end{definition}
+
+The learner below is order-independent, so a finite text prefix is identified
+with its finite set \(K\subseteq L\).
+
+\begin{definition}[Characteristic sample]
+For a learner \(\mathcal A\) and a target language \(L\), a finite set
+\(S\subseteq L\) is a \emph{characteristic sample} if
+\(L(\mathcal A(K))=L\) for every finite \(K\) with \(S\subseteq K\subseteq L\).
+\end{definition}
+
+\begin{definition}[Positive sample size]
+For finite \(K\subseteq\Sigma^*\), define \(\|K\|_+:=\sum_{w\in K}\max(1,|w|)\).
+\end{definition}
+
+The factor \(\max(1,|w|)\) only prevents degenerate zero-size samples when an
+empty word is allowed.  In the working nondeleting setting below, generated
+nonempty examples are the main case.
+
+\begin{definition}[Polynomial time and data]
+\label{def:poly-time-data}
+Following the characteristic-sample viewpoint of de~la~Higuera
+\cite{delaHiguera1997,delaHiguera2010}, a presentation class is said here to be
+identified in polynomial time and data, for fixed external parameters, if there
+are polynomials \(p\) and \(q\) such that every target with a witnessing
+presentation \(G\) has a characteristic sample of positive size at most
+\(p(|G|)\), and the learner's hypothesis on every finite sample \(K\) is
+constructible in time at most \(q(\|K\|_+)\), including output size.  The
+polynomial-data part is presentation-relative: the bound is measured against a
+chosen witnessing presentation, not against a canonical minimal description of
+the language.
+\end{definition}
+
+\begin{remark}[Slicewise, not uniform, polynomiality]
+\label{rem:slicewise-poly}
+Throughout, ``polynomial time'' and ``polynomial data'' are understood
+slicewise in the external parameters: for each fixed \(f\) and fixed \(h\), the relevant bound is a polynomial
+whose degree may depend on those parameters.  Concretely, the construction time
+is \(\|K\|_+^{O(f)}\).  This is the fixed-parameter reading of the
+de~la~Higuera polynomial criterion under fixed external parameters, not a claim
+of a single polynomial uniform in \(f\).  No uniform-in-\(f\) bound is asserted or
+used.
+\end{remark}
+
+Gold identification \cite{Gold1967} is the limiting correctness notion used in
+this paper; characteristic samples are the finite sufficient sets that make the
+set-driven learner stabilize.  The terminology ``polynomial time and data'' is
+therefore not an additional learning model, but the de~la~Higuera-style
+polynomial strengthening of positive-data identification.  Angluin's exact
+learning model \cite{Angluin1987} is cited only as a related landmark in
+algorithmic learning; the learner in this paper receives no queries and no
+counterexamples.
+
+\begin{lemma}[Finite sufficient samples imply identification]
+\label{lem:sufficient-to-gold}
+Let \(\mathcal A\) be a computable order-independent learner.  Suppose that,
+for each \(L\in\mathcal C\), there is a finite \(S_L\subseteq L\) such that
+\(S_L\subseteq K\subseteq L\) implies \(L(\mathcal A(K))=L\).  Then
+\(\mathcal A\) identifies \(\mathcal C\) in the limit from positive data.
+\end{lemma}
+
+\begin{proof}
+In every text for \(L\), the finitely many words of \(S_L\) have all appeared
+after some stage \(n_0\).  Every later prefix sample is contained in \(L\) and
+contains \(S_L\), so the hypothesis language is \(L\) from that stage on.
+\end{proof}
+
+\subsection{Finite monoid typing}
+
+\begin{definition}[Explicit finite homomorphism]
+A monoid homomorphism \(h\colon\Sigma^*\to M\) into a finite monoid \(M\) is
+\emph{explicit} if the multiplication table of \(M\) and the values \(h(a)\) for
+\(a\in\Sigma\) are given.  For a tuple \(\tuple w=(w_1,\ldots,w_d)\), write
+\(h^{(d)}(\tuple w):=(h(w_1),\ldots,h(w_d))\in M^d\).
+\end{definition}
+
+\begin{definition}[Refinement of finite observation morphisms]
+\label{def:h-refinement}
+Let \(h\colon\Sigma^*\to M\) and \(h'\colon\Sigma^*\to M'\) be explicit finite
+homomorphisms.  We say that \(h'\) \emph{refines} \(h\), and write
+\(h\preceq h'\), if there is a monoid homomorphism
+\(\pi\colon M'\to M\) such that \(h=\pi\circ h'\).
+\end{definition}
+
+\begin{proposition}[Monotonicity under refinement of the observation morphism]
+\label{prop:h-refinement-monotonicity}
+If \(h\preceq h'\) and \(L\) is \((f,h)\)-tuple-substitutable, then \(L\) is
+\((f,h')\)-tuple-substitutable.  Consequently, for every pair of explicit finite
+homomorphisms with \(h\preceq h'\),
+\[
+  \Cmcf{f}{h}\subseteq \Cmcf{f}{h'} .
+\]
+\end{proposition}
+
+\begin{proof}
+Let \(\pi\colon M'\to M\) satisfy \(h=\pi\circ h'\).  Suppose that
+\(h'^{(d)}(\tuple x)=h'^{(d)}(\tuple y)\) and that \(\tuple x,\tuple y\) share an
+accepting arity-\(d\) sentence context.  Applying \(\pi\) componentwise gives
+\(h^{(d)}(\tuple x)=h^{(d)}(\tuple y)\).  The \((f,h)\)-tuple-substitutability of
+\(L\) therefore gives \(\D_L^{(d)}(\tuple x)=\D_L^{(d)}(\tuple y)\).  This is
+exactly the \((f,h')\)-condition.  The inclusion of classes follows because the
+same witnessing working presentation may be used.
+\end{proof}
+
+Finite monoids are used here only as fixed external typing devices; see
+Pin~\cite{Pin1986} for background.  Typical examples include transition
+monoids of regular control languages, syntactic morphisms of regular
+approximations, and finite-state annotations supplied by an external parser or
+formalism.  The learner below assumes such an explicit morphism as part of its
+fixed parameters.  In particular, when \(h\) is the transition morphism of a
+regular envelope, the learner is being given that regular envelope in finite
+form.  This is useful but nontrivial advice; the theorems below are relative to
+that advice and do not solve the problem of discovering it from positive data.
+
+\subsection{Working MCFG presentations}
+
+\begin{definition}[Working binary linear nondeleting MCFG]
+\label{def:working-mcfg}
+A \emph{working binary linear nondeleting multiple context-free grammar} is a
+tuple \(G=(V,\Sigma,P,S,\mu)\), where \(V\) is a finite nonterminal set,
+\(\Sigma\) is a finite terminal alphabet, \(S\in V\) is the start symbol, and
+\(\mu\colon V\to\mathbb N_{>0}\) is the fan-out map with \(\mu(S)=1\).  Rules
+have one of the following forms.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item A start rule \(S\to A\), where \(A\ne S\) and \(\mu(A)=1\).
+\item A terminal rule \(A\to(a)\), where \(A\ne S\), \(a\in\Sigma\), and
+\(\mu(A)=1\).
+\item A binary rule \(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\), where
+\(A\ne S\), \(e=\mu(A)\), \(\mu(B)=d_B\), \(\mu(C)=d_C\), each \(\alpha_i\) is
+a word over \(\Sigma\cup\{x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\}\), and each
+variable \(x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\) occurs exactly once in the
+whole tuple \((\alpha_1,\ldots,\alpha_e)\).
+\end{enumerate}
+The presentation is \emph{start-separated}: the only rules with left-hand side
+\(S\) are start rules, and \(S\) never occurs as a child on the right-hand side
+of a binary rule.
+\end{definition}
+
+Consider a binary rule
+\(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\), where
+\(e=\mu(A)\), \(d_B=\mu(B)\), and \(d_C=\mu(C)\).
+Define the variable sets associated with this rule by
+\(X_B:=\{x^1,\ldots,x^{d_B}\}\) and
+\(Y_C:=\{y^1,\ldots,y^{d_C}\}\), and put
+\(\Gamma_\rho:=\Sigma\uplus X_B\uplus Y_C\).
+Each word \(\alpha_\ell\in\Gamma_\rho^*\), for
+\(1\le \ell\le e\), is called a \emph{template component} of \(\rho\), and
+\(\boldsymbol{\alpha}_\rho:=(\alpha_1,\ldots,\alpha_e)
+\in(\Gamma_\rho^*)^e\) is called the \emph{template tuple} of \(\rho\).
+
+For tuples
+\(\tuple u=(u_1,\ldots,u_{d_B})\in(\Sigma^*)^{d_B}\) and
+\(\tuple v=(v_1,\ldots,v_{d_C})\in(\Sigma^*)^{d_C}\), define
+\(\sigma_{\tuple u,\tuple v}\colon\Gamma_\rho\to\Sigma^*\) by
+\(\sigma_{\tuple u,\tuple v}(a):=a\) for \(a\in\Sigma\),
+\(\sigma_{\tuple u,\tuple v}(x^i):=u_i\) for \(1\le i\le d_B\), and
+\(\sigma_{\tuple u,\tuple v}(y^j):=v_j\) for \(1\le j\le d_C\).
+Let \(\widehat{\sigma}_{\tuple u,\tuple v}\colon
+\Gamma_\rho^*\to\Sigma^*\) be the unique extension of this map to a monoid
+morphism.  The result of
+applying \(\rho\) to \(\tuple u\) and \(\tuple v\) is defined by
+\[
+  \rho(\tuple u,\tuple v)
+  :=
+  \bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_1),
+    \ldots,
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_e)
+  \bigr)
+  \in(\Sigma^*)^e.
+\]
+This is the simultaneous-substitution semantics of a binary rule.
+
+For each nonterminal \(A\in V\), its tuple language
+\(L_A(G)\subseteq(\Sigma^*)^{\mu(A)}\) is the component of the least family
+\((L_A(G))_{A\in V}\), ordered by
+componentwise inclusion, satisfying the following closure conditions.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item If \(A\to(a)\) is a terminal rule, then \((a)\in L_A(G)\).
+
+\item If \(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) is a
+      binary rule, \(\tuple u\in L_B(G)\), and
+      \(\tuple v\in L_C(G)\), then
+      \(\rho(\tuple u,\tuple v)\in L_A(G)\).
+
+\item If \(S\to A\) is a start rule and \(\tuple w\in L_A(G)\), then
+      \(\tuple w\in L_S(G)\).
+\end{enumerate}
+The string language generated by \(G\) is
+\(L(G):=\{w\in\Sigma^*\mid (w)\in L_S(G)\}\).
+Since \(\mu(S)=1\), we identify \(L_S(G)\) with \(L(G)\) when no confusion
+can arise.
+
+A nonterminal \(A\) is \emph{productive} if \(L_A(G)\ne\emptyset\).
+The nonterminal-dependency graph of \(G\) has an edge \(S\to A\) for every
+start rule \(S\to A\), and edges \(A\to B\) and \(A\to C\) for every binary
+rule \(A\to(\alpha_1,\ldots,\alpha_e)(B,C)\).
+A nonterminal \(A\) is \emph{reachable} if there is a directed path from
+\(S\) to \(A\) in this graph.  The grammar \(G\) is \emph{reduced} if every
+nonterminal is both reachable and productive.
+
+\begin{remark}[Scope and non-claims of the working form]
+\label{rem:working-form-scope}
+Definition~\ref{def:working-mcfg} fixes the presentation model used by the
+learner and by the characteristic-sample proof.  Every such presentation is a
+standard MCFG presentation in the sense of Seki et al.~\cite{SekiEtAl1991}, but
+we do not claim here that every standard MCFG can be effectively transformed
+into this exact working form while preserving all parameters relevant to the
+learning theorem.
+
+The start-separated convention is harmless and can be enforced by introducing a
+fresh start symbol.  By contrast, the binary, linear, and nondeleting
+requirements are genuine presentation assumptions of this paper.  The theorem
+therefore applies to languages admitting a reduced presentation in this working
+form and satisfying the semantic \((f,h)\)-tuple-substitutability promise.
+
+This restriction is intentional.  It keeps the observed binary witnesses in the
+finite sample aligned with the binary rules reconstructed by the learner.  More
+general ranks, deleting rules, and explicit \(\eps\)-generation would require
+additional bookkeeping and are not part of the present claim.
+\end{remark}
+
+\subsection{Sentence contexts and tuple distributions}
+
+\begin{definition}[Sentence context]
+\label{def:sentence-context}
+A \emph{sentence context of arity \(d\)} is a word of the form
+\[
+  E=u_0\blank_{\sigma(1)}u_1\cdots\blank_{\sigma(d)}u_d,
+\]
+where \(\sigma\) is a permutation of \(\{1,\ldots,d\}\), each
+\(u_i\in\Sigma^*\), and each named hole
+\(\blank_i\) occurs exactly once.  For \(\tuple w=(w_1,\ldots,w_d)\), write
+\(E[\tuple w]\) for the string obtained by substituting \(w_i\) for
+\(\blank_i\).
+\end{definition}
+
+Template components in later MCFG rules may be empty.  When empty tuple
+components are observed inside a sample word, we represent them by cut positions
+with a fixed local tie order; this is only bookkeeping for enumerating concrete
+occurrences.
+
+\begin{definition}[Tuple distribution]
+\label{def:tuple-distribution}
+Let \(d\ge1\).  For \(L\subseteq\Sigma^*\) and
+\(\tuple x\in(\Sigma^*)^d\), define
+\[
+  \D_L^{(d)}(\tuple x)
+  :=
+  \left\{
+    E
+    \;\middle|\;
+    E\text{ is an arity-}d\text{ sentence context and }
+    E[\tuple x]\in L
+  \right\}.
+\]
+When the arity is clear, write \(\D_L(\tuple x)\).
+\end{definition}
+
+\begin{definition}[\((f,h)\)-tuple substitutability]
+\label{def:tuple-substitutable}
+Let \(f\ge1\) and let \(h\colon\Sigma^*\to M\) be an explicit finite monoid
+homomorphism.  A language \(L\subseteq\Sigma^*\) is
+\emph{\((f,h)\)-tuple-substitutable} if, for every \(1\le d\le f\) and all
+\(\tuple x,\tuple y\in(\Sigma^*)^d\), the implication
+\(h^{(d)}(\tuple x)=h^{(d)}(\tuple y)\) and
+\(\D_L^{(d)}(\tuple x)\cap\D_L^{(d)}(\tuple y)\ne\emptyset\) imply
+\(\D_L^{(d)}(\tuple x)=\D_L^{(d)}(\tuple y)\).
+\end{definition}
+
+For \(d=1\), sentence contexts are ordinary two-sided contexts
+\(u\blank_1v\), so Definition~\ref{def:tuple-substitutable} specializes to the
+usual fixed-\(h\) two-sided substitutability condition.
+
+\begin{definition}[The target class]
+\label{def:class-cmcf}
+Fix \(f\ge1\) and an explicit finite monoid homomorphism \(h\).  The class
+\(\Cmcf{f}{h}\) consists of all languages \(L\subseteq\Sigma^*\) such that
+\(L=L(G)\) for some reduced working binary linear nondeleting MCFG \(G\) with
+all fan-outs at most \(f\), and \(L\) is \((f,h)\)-tuple-substitutable.
+\end{definition}
+
+\begin{remark}[Semantic nature of the target class]
+\label{rem:semantic-class}
+For a language \(L\) to belong to \(\Cmcf{f}{h}\), the following two
+conditions must hold.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item There is a reduced working MCFG \(G\) of fan-out at most \(f\) such that
+      \(L=L(G)\).
+\item The language \(L(G)\) is \((f,h)\)-tuple-substitutable.
+\end{enumerate}
+Condition~(i) concerns a concrete grammar presentation.  By contrast,
+condition~(ii) concerns the sentence-context distributions of the entire
+language generated by that presentation, rather than the syntactic form of its
+rules.  In this sense, \(\Cmcf{f}{h}\) is a \emph{semantic target class}.
+
+We do not claim that, given a working MCFG \(G\), one can always decide whether
+\(L(G)\) is \((f,h)\)-tuple-substitutable.  Failure of tuple substitutability is,
+however, semi-decidable, because it has a finite witness.
+
+More precisely, failure is witnessed by some \(1\le d\le f\), tuples
+\(\tuple x,\tuple y\in(\Sigma^*)^d\), and arity-\(d\) sentence contexts
+\(E,F\) such that
+\[
+\begin{gathered}
+  h^{(d)}(\tuple x)=h^{(d)}(\tuple y),\\
+  E[\tuple x],E[\tuple y],F[\tuple x]\in L(G),
+  \qquad F[\tuple y]\notin L(G).
+\end{gathered}
+\]
+The context \(E\) shows that \(\tuple x\) and \(\tuple y\) share at least one
+accepting sentence context.  The context \(F\), on the other hand, shows that
+\(F\in\D_{L(G)}^{(d)}(\tuple x)\setminus
+\D_{L(G)}^{(d)}(\tuple y)\).  Consequently,
+\(\D_{L(G)}^{(d)}(\tuple x)\ne
+\D_{L(G)}^{(d)}(\tuple y)\), which violates Definition~\ref{def:tuple-substitutable}.
+
+Finite tuples and finite sentence contexts can be effectively enumerated, for
+example in increasing length-lexicographic order.  Since MCFG membership is
+decidable, each candidate can be checked in finite time, including the required
+nonmembership test.  Therefore, if a failure witness exists, an exhaustive
+search eventually finds one.  If no failure witness exists, the search need not
+terminate; this is a semi-decision procedure, not a decision procedure.
+
+This semantic non-effectivity does not obstruct the identification-in-the-limit
+result.  The learner receives neither the target grammar \(G\) nor a proof that
+the target is \((f,h)\)-tuple-substitutable.  The theorem instead states that,
+whenever the unknown target language actually belongs to \(\Cmcf{f}{h}\), there
+exists a finite characteristic sample for that target, and after the learner has
+seen any positive sample containing it, the hypothesis language equals the
+target language.
+
+If the target language is not \((f,h)\)-tuple-substitutable, the exact
+reconstruction and identification theorems do not apply.  Thus the language \(L(\widehat G_0(K))\) constructed from a finite positive
+sample \(K\) is not guaranteed to equal the
+unknown target language.  Nevertheless, the learner is defined on every finite
+positive sample, independently of whether the semantic promise holds, and its
+hypothesis always generates every observed example,
+\(K\subseteq L(\widehat G_0(K))\).  Hence the learner never discards an observed positive example.  The possible
+failure concerns unobserved strings: the set
+\(L(\widehat G_0(K))\setminus K\) may contain strings that are not in the target language.  Thus
+\((f,h)\)-tuple substitutability is not needed to reproduce the observed
+sample; it is what guarantees the soundness of extrapolation from the finite
+sample to previously unseen strings.
+\end{remark}
+
+
+\section{Examples}
+\label{sec:running-examples}
+
+Before the abstract reconstruction proof, we record concrete grammars showing
+what the fixed observation morphism is meant to capture in familiar block
+synchronization languages.  The fixed regular envelope supplies only the coarse
+zone pattern; the equality constraints are recovered distributionally from
+positive examples.  We also verify the semantic promise for these examples, so
+that the examples really belong to the relevant fixed-observation fibers.  For
+related letter-count separations and calibrations in MCFLs, see
+\cite{LehnerLindorfer2020}.
+
+For a finite ordered alphabet \(\Sigma_m=\{a_1,\ldots,a_m\}\), put
+\[
+  R_m=a_1^*a_2^*\cdots a_m^* .
+\]
+Let \(D_m\) be the standard deterministic automaton for \(R_m\) with states
+\(1,\ldots,m,\bot\), initial state \(1\), accepting states \(1,\ldots,m\), and
+transitions
+\[
+  i\cdot a_j=
+  \begin{cases}
+    j, & i\le j,\\
+    \bot, & i>j,
+  \end{cases}
+  \qquad
+  \bot\cdot a_j=\bot .
+\]
+Let \(h_m:\Sigma_m^*\to M_m\) be its transition morphism.
+
+\begin{lemma}[Zone morphism]
+\label{lem:zone-morphism-basic}
+For all words \(u,v\in\Sigma_m^*\), if \(h_m(u)=h_m(v)\), then
+\(u\in R_m\) iff \(v\in R_m\).  Moreover, if \(m\ge2\) and
+\(u\in \{a_1^n\cdots a_m^n\mid n\ge1\}\), then
+\(h_m(u)\ne h_m(\eps)\).
+\end{lemma}
+
+\begin{proof}
+The transition value \(h_m(w)\) determines the image of the initial state and
+therefore determines membership in the regular language \(R_m\).  If \(m\ge2\) and
+\(u=a_1^n\cdots a_m^n\) with \(n\ge1\), then the transition induced by \(u\)
+sends the initial state \(1\) to \(m\), whereas the empty word induces the
+identity transition and sends \(1\) to \(1\).  Hence the two transition values
+are distinct.
+\end{proof}
+
+\begin{proposition}[Equality blocks are fixed-zone substitutable]
+\label{prop:equality-block-substitutable}
+For every \(m\ge2\), the language
+\[
+  E_m^+=\{a_1^n\cdots a_m^n\mid n\ge1\}
+\]
+is \((r,h_m)\)-tuple-substitutable for every arity \(r\ge1\).
+\end{proposition}
+
+\begin{proof}
+Fix an arity \(d\ge1\).  Let
+\(\tuple x,\tuple y\in(\Sigma_m^*)^d\) have the same componentwise
+\(h_m\)-type, and suppose that they share an accepting sentence context \(E\):
+\[
+  E[\tuple x]=a_1^n\cdots a_m^n,
+  \qquad
+  E[\tuple y]=a_1^{n'}\cdots a_m^{n'}
+\]
+for some \(n,n'\ge1\).
+
+For each \(1\le j\le m\), let \(k_j\) be the number of occurrences of \(a_j\)
+in the fixed terminal part of \(E\), outside its named holes.  Since the same
+sentence context \(E\) is used in both fillings, the value \(k_j\) is
+independent of whether \(\tuple x\) or \(\tuple y\) is inserted.  Counting the
+occurrences of \(a_j\) in the two displayed words gives
+\[
+  k_j+\sum_{i=1}^{d}|x_i|_{a_j}=n
+\]
+and
+\[
+  k_j+\sum_{i=1}^{d}|y_i|_{a_j}=n'.
+\]
+Subtracting the first equality from the second cancels the contribution of the
+outside context and yields
+\[
+  \sum_{i=1}^{d}|y_i|_{a_j}
+  -
+  \sum_{i=1}^{d}|x_i|_{a_j}
+  =n'-n
+  \qquad (1\le j\le m).
+  \tag{1}
+\]
+
+Now let \(F\) be any accepting sentence context for \(\tuple x\), say
+\[
+  F[\tuple x]=a_1^N\cdots a_m^N
+\]
+with \(N\ge1\).  By hypothesis,
+\[
+  h_m(x_i)=h_m(y_i)
+  \qquad (1\le i\le d).
+\]
+The fixed terminal parts of \(F\) are unchanged, and the corresponding tuple
+components are inserted into the same named holes.  Since \(h_m\) is a monoid
+morphism, the value of a filled sentence context is the ordered product of the
+values of its fixed terminal factors and inserted components.  Hence
+\[
+  h_m\bigl(F[\tuple x]\bigr)
+  =
+  h_m\bigl(F[\tuple y]\bigr).
+\]
+Because \(F[\tuple x]\in R_m\), Lemma~\ref{lem:zone-morphism-basic} implies
+\[
+  F[\tuple y]\in R_m.
+\]
+
+Equation~(1) shows that the number of occurrences of every letter \(a_j\) in
+\(F[\tuple y]\) is \(N+(n'-n)\).  This common value cannot be zero.  Otherwise
+\(F[\tuple y]=\eps\), and therefore
+\[
+  h_m(F[\tuple x])=h_m(F[\tuple y])=h_m(\eps),
+\]
+contradicting Lemma~\ref{lem:zone-morphism-basic}.  Thus
+\(F[\tuple y]\in E_m^+\).  The reverse inclusion follows by exchanging
+\(\tuple x\) and \(\tuple y\), so their tuple distributions are equal.
+\end{proof}
+
+The preceding argument can be generalized.  In particular, the framework below
+covers languages such as
+\[
+  \{a^n\#_2b^m\#_3c^n\#_4d^m\mid n,m\ge1\}.
+\]
+
+\begin{definition}[Fixed ordered block envelope]
+\label{def:fixed-ordered-block-envelope}
+Let \(k\ge1\).  Take pairwise distinct letters
+\[
+  A=\{a_1,\ldots,a_k\}
+\]
+and a finite alphabet \(\Delta\) disjoint from \(A\).  Fix separator words
+\[
+  s_0,s_1,\ldots,s_k\in\Delta^*
+\]
+and put
+\[
+  \Sigma=A\uplus\Delta.
+\]
+The language
+\[
+  R
+  =
+  s_0a_1^+s_1a_2^+s_2\cdots s_{k-1}a_k^+s_k
+  \subseteq\Sigma^*
+\]
+is called a \emph{fixed ordered block envelope}.
+
+Every \(w\in R\) has a unique representation
+\[
+  w
+  =
+  s_0a_1^{n_1}s_1a_2^{n_2}s_2
+  \cdots
+  s_{k-1}a_k^{n_k}s_k,
+  \qquad
+  n_1,\ldots,n_k\ge1.
+\]
+Define its block-length vector by
+\[
+  \ell_R(w)
+  :=
+  (n_1,\ldots,n_k)
+  \in\mathbb N_{>0}^k,
+\]
+and write \(\ell_j(w):=n_j\) for its \(j\)-th component.
+\end{definition}
+
+\begin{lemma}[Preservation of length equalities in fixed ordered block envelopes]
+\label{lem:block-equality-envelopes}
+Let \(R\subseteq\Sigma^*\) be a fixed ordered block envelope as in
+Definition~\ref{def:fixed-ordered-block-envelope}.  Let \(\mathcal A_R\) be a
+complete DFA recognizing \(R\), and let
+\[
+  h_R:\Sigma^*\longrightarrow M_R
+\]
+be its transition-monoid morphism.
+
+For a finite set of pairs of block indices
+\[
+  \Lambda\subseteq\{1,\ldots,k\}^2,
+\]
+define
+\[
+  L_\Lambda
+  :=
+  \left\{
+    w\in R
+    \;\middle|\;
+    \forall (p,q)\in\Lambda,\ 
+    \ell_p(w)=\ell_q(w)
+  \right\}.
+\]
+Then \(L_\Lambda\) is \((f,h_R)\)-tuple-substitutable for every \(f\ge1\).
+\end{lemma}
+
+\begin{proof}
+Fix \(1\le d\le f\).  Let
+\[
+  \tuple x=(x_1,\ldots,x_d),
+  \qquad
+  \tuple y=(y_1,\ldots,y_d)
+  \in(\Sigma^*)^d
+\]
+satisfy
+\[
+  h_R(x_i)=h_R(y_i)
+  \qquad (1\le i\le d).
+  \tag{2}
+\]
+Suppose further that \(\tuple x\) and \(\tuple y\) share an accepting
+arity-\(d\) sentence context for \(L_\Lambda\).  Thus there is an arity-\(d\)
+sentence context \(E\) such that
+\[
+  E[\tuple x]\in L_\Lambda,
+  \qquad
+  E[\tuple y]\in L_\Lambda.
+  \tag{3}
+\]
+
+For \(1\le j\le k\) and
+\(\tuple z=(z_1,\ldots,z_d)\), put
+\[
+  N_j(\tuple z)
+  :=
+  \sum_{i=1}^d |z_i|_{a_j}.
+\]
+This is the total number of occurrences of the visible block letter \(a_j\)
+contributed by the components of \(\tuple z\).  Let \(C_j(E)\) be the number of
+occurrences of \(a_j\) in the fixed terminal part of \(E\), outside its holes.
+Then
+\[
+  |E[\tuple z]|_{a_j}
+  =
+  C_j(E)+N_j(\tuple z)
+  \tag{4}
+\]
+for every \(\tuple z\).
+
+Fix \((p,q)\in\Lambda\).  Since both fillings in~(3) belong to
+\(L_\Lambda\), their \(p\)-th and \(q\)-th block lengths are equal.  Because
+the separator alphabet is disjoint from the visible block letters, these
+lengths are exactly the corresponding letter counts.  Hence
+\[
+  C_p(E)+N_p(\tuple x)
+  =
+  C_q(E)+N_q(\tuple x)
+\]
+and
+\[
+  C_p(E)+N_p(\tuple y)
+  =
+  C_q(E)+N_q(\tuple y).
+\]
+Subtracting gives
+\[
+  N_p(\tuple y)-N_p(\tuple x)
+  =
+  N_q(\tuple y)-N_q(\tuple x)
+  \qquad ((p,q)\in\Lambda).
+  \tag{5}
+\]
+
+Now take any
+\[
+  F\in\D_{L_\Lambda}^{(d)}(\tuple x),
+\]
+so that
+\[
+  F[\tuple x]\in L_\Lambda.
+  \tag{6}
+\]
+By~(2) and the homomorphism property of \(h_R\), replacing each \(x_i\) by
+\(y_i\) in the same named hole does not change the transition-monoid value of
+the filled sentence context:
+\[
+  h_R(F[\tuple x])
+  =
+  h_R(F[\tuple y]).
+  \tag{7}
+\]
+Since \(F[\tuple x]\in L_\Lambda\subseteq R\) and \(h_R\) is the transition
+morphism of a DFA recognizing \(R\), equation~(7) implies
+\[
+  F[\tuple y]\in R.
+  \tag{8}
+\]
+
+Let \(C_j(F)\) be the number of occurrences of \(a_j\) in the fixed terminal
+part of \(F\).  For every \((p,q)\in\Lambda\), equation~(6) gives
+\[
+  C_p(F)+N_p(\tuple x)
+  =
+  C_q(F)+N_q(\tuple x).
+  \tag{9}
+\]
+Combining~(5) and~(9), we obtain
+\[
+\begin{aligned}
+  C_p(F)+N_p(\tuple y)
+  &=
+  C_p(F)+N_p(\tuple x)
+    +\bigl(N_p(\tuple y)-N_p(\tuple x)\bigr)
+  \\
+  &=
+  C_q(F)+N_q(\tuple x)
+    +\bigl(N_q(\tuple y)-N_q(\tuple x)\bigr)
+  \\
+  &=
+  C_q(F)+N_q(\tuple y).
+\end{aligned}
+\]
+Therefore
+\[
+  \ell_p(F[\tuple y])
+  =
+  \ell_q(F[\tuple y])
+  \qquad ((p,q)\in\Lambda).
+\]
+Together with~(8), this shows that
+\[
+  F[\tuple y]\in L_\Lambda.
+\]
+Hence
+\[
+  \D_{L_\Lambda}^{(d)}(\tuple x)
+  \subseteq
+  \D_{L_\Lambda}^{(d)}(\tuple y).
+\]
+The reverse inclusion follows by the same argument with \(\tuple x\) and
+\(\tuple y\) exchanged.  Thus
+\[
+  \D_{L_\Lambda}^{(d)}(\tuple x)
+  =
+  \D_{L_\Lambda}^{(d)}(\tuple y).
+\]
+Since \(d\le f\) was arbitrary, \(L_\Lambda\) is
+\((f,h_R)\)-tuple-substitutable.
+\end{proof}
+
+\begin{example}[The three-block agreement language]
+\label{ex:l3-language}
+Let
+\[
+  L_3=\{a^n b^n c^n\mid n\ge1\},
+  \qquad R_3=a^*b^*c^* .
+\]
+Let \(h_{R_3}\) be the transition morphism of the standard DFA recognizing
+\(R_3\).  The morphism records the coarse block zone of a component, but not the
+equality of the three block lengths.
+\end{example}
+
+\begin{proposition}[A working presentation for \(L_3\)]
+\label{prop:l3-running-example}
+The language \(L_3\) has a reduced working binary linear nondeleting MCFG
+presentation of fan-out two.
+\end{proposition}
+
+\begin{proof}
+Let \(V=\{S,T,A,A_a,A_b,A_c\}\), let \(\mu(A)=2\), and let all other
+nonterminals have fan-out \(1\).  Use the rules
+\[
+  S\to T,\qquad A_a\to(a),\qquad A_b\to(b),\qquad A_c\to(c),
+\]
+\[
+  A\to(x^1,y^1)(A_a,A_b),\qquad
+  A\to(a x^1,b x^2 y^1)(A,A_c),
+\]
+\[
+  T\to(x^1x^2y^1)(A,A_c).
+\]
+A direct induction gives
+\(L_A=\{(a^n,b^n c^{n-1})\mid n\ge1\}\), and the top rule yields exactly
+\(a^n b^n c^n\).  The grammar is in the working form of
+Definition~\ref{def:working-mcfg}.
+\end{proof}
+
+\begin{corollary}[The three-block example belongs to the fixed-observation class]
+\label{cor:l3-in-fixed-observation-class}
+For every \(f\ge2\), \(L_3\in\Cmcf{f}{h_{R_3}}\).
+\end{corollary}
+
+\begin{proof}
+The presentation is Proposition~\ref{prop:l3-running-example}.  The semantic
+promise follows from Proposition~\ref{prop:equality-block-substitutable}
+with \((a_1,a_2,a_3)=(a,b,c)\).
+\end{proof}
+
+\begin{example}[The four-block parallel agreement language]
+\label{ex:parallel-language}
+Let
+\[
+  L_{\parallel}=\{a^n\#b^n\#c^n\#d^n\mid n\ge1\},
+  \qquad P=a^+\#b^+\#c^+\#d^+ .
+\]
+Let \(h_P\) be the transition morphism of the standard DFA recognizing \(P\).
+Again, the finite observation supplies the regular envelope; the equality of
+block lengths is distributional information recovered from positive examples.
+\end{example}
+
+\begin{proposition}[A working presentation for \(L_{\parallel}\)]
+\label{prop:parallel-running-example}
+The language \(L_{\parallel}\) has a reduced working binary linear nondeleting
+MCFG presentation of fan-out two.
+\end{proposition}
+
+\begin{proof}
+Let \(H\) derive \((\#)\), let \(A_a,A_b,A_d\) derive \((a),(b),(d)\),
+respectively, and let \(A\) have fan-out two.  Use
+\[
+  A\to(x^1\#y^1,\,c\#d)(A_a,A_b)
+\]
+and
+\[
+  A\to(a x^1 b,\,c x^2 y^1)(A,A_d).
+\]
+Then \(A\) derives exactly \((a^n\#b^n,c^n\#d^n)\) for \(n\ge1\).  A top rule
+\[
+  T\to(x^1y^1x^2)(A,H),
+\]
+together with \(S\to T\), yields exactly \(L_{\parallel}\).
+\end{proof}
+
+\begin{corollary}[The parallel example belongs to the fixed-observation class]
+\label{cor:parallel-in-fixed-observation-class}
+For every \(f\ge2\), \(L_{\parallel}\in\Cmcf{f}{h_P}\).
+\end{corollary}
+
+\begin{proof}
+The presentation is Proposition~\ref{prop:parallel-running-example}.  View
+\[
+  P=a^+\#b^+\#c^+\#d^+
+\]
+as the fixed ordered block envelope with visible block letters
+\((a_1,a_2,a_3,a_4)=(a,b,c,d)\), separator alphabet
+\(\Delta=\{\#\}\), and separator words
+\[
+  (s_0,s_1,s_2,s_3,s_4)=(\eps,\#,\#,\#,\eps).
+\]
+The semantic promise follows from
+Lemma~\ref{lem:block-equality-envelopes} with
+\[
+  \Lambda=\{(1,2),(2,3),(3,4)\}.
+\]
+\end{proof}
+
+\begin{example}[The cross-serial two-spine language]
+\label{ex:cross-serial-language}
+Let
+\[
+  L_{\times}=\{a^n b^m c^n d^m\mid n,m\ge1\},
+  \qquad Q=a^+b^+c^+d^+ .
+\]
+Let \(h_Q\) be the transition morphism of the standard DFA recognizing \(Q\).
+This example has two independent agreement spines.
+\end{example}
+
+\begin{proposition}[A working presentation for \(L_{\times}\)]
+\label{prop:cross-serial-running-example}
+The language \(L_{\times}\) has a reduced working binary linear nondeleting MCFG
+presentation of fan-out two.
+\end{proposition}
+
+\begin{proof}
+Use two fan-out-two nonterminals \(A\) and \(B\).  Let terminal nonterminals
+\(A_a,A_b,A_c,A_d\) derive \((a),(b),(c),(d)\), respectively.  The nonterminal
+\(A\) derives \((a^n,c^n)\) by
+\[
+  A\to(x^1,y^1)(A_a,A_c),
+  \qquad
+  A\to(a x^1,x^2 y^1)(A,A_c),
+\]
+and \(B\) derives \((b^m,d^m)\) by
+\[
+  B\to(x^1,y^1)(A_b,A_d),
+  \qquad
+  B\to(b x^1,x^2 y^1)(B,A_d).
+\]
+The top rule
+\[
+  T\to(x^1y^1x^2y^2)(A,B),
+\]
+with \(S\to T\), generates exactly \(L_{\times}\).
+\end{proof}
+
+\begin{corollary}[The cross-serial example belongs to the fixed-observation class]
+\label{cor:cross-serial-in-fixed-observation-class}
+For every \(f\ge2\), \(L_{\times}\in\Cmcf{f}{h_Q}\).
+\end{corollary}
+
+\begin{proof}
+The presentation is Proposition~\ref{prop:cross-serial-running-example}.  View
+\[
+  Q=a^+b^+c^+d^+
+\]
+as the fixed ordered block envelope with visible block letters
+\((a_1,a_2,a_3,a_4)=(a,b,c,d)\), empty separator alphabet, and
+\[
+  s_0=s_1=s_2=s_3=s_4=\eps.
+\]
+The semantic promise follows from
+Lemma~\ref{lem:block-equality-envelopes} with
+\[
+  \Lambda=\{(1,3),(2,4)\}.
+\]
+\end{proof}
+
+
+\section{The Canonical Learner}
+\label{sec:learner}
+
+The learner uses only the fixed parameters \(f\) and \(h\) and the current finite
+positive sample.  A witnessing target presentation is used only in the proof to
+show that a finite characteristic sample exists.  The refinement below stores
+only componentwise output \(h\)-types; the concrete exposing contexts needed for
+reconstruction are supplied by the characteristic sample.
+
+\subsection{Output-Type Refinement}
+\label{sec:refinement}
+
+The reconstruction proof uses a finite refinement of a witnessing grammar.  The
+refinement records only the output \(h\)-type of each derived tuple.  It does not
+record the order in which tuple components are placed in a surrounding sentence
+or the \(h\)-values of boundary intervals.  These data are recovered from the
+concrete witnessed segmentations and exposing contexts contained in the finite
+characteristic sample.  This is sufficient because the learner's unit rule is
+guarded by actual shared sample contexts.
+
+\begin{definition}[Template evaluation]
+\label{def:output-map}
+Let
+\[
+  \rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+be a binary rule with \(\mu(B)=d_B\), \(\mu(C)=d_C\), and
+\(e=\mu(A)\).  Put
+\[
+  \Gamma_\rho
+  :=
+  \Sigma
+  \uplus
+  \{x^1,\ldots,x^{d_B}\}
+  \uplus
+  \{y^1,\ldots,y^{d_C}\}.
+\]
+Each \(\alpha_\ell\) belongs to \(\Gamma_\rho^*\), and the elements of
+\(\Gamma_\rho^*\) are called the \emph{template words} of the rule \(\rho\).
+
+For
+\[
+  \mathbf q=(q_1,\ldots,q_{d_B})\in M^{d_B},
+  \qquad
+  \mathbf r=(r_1,\ldots,r_{d_C})\in M^{d_C},
+\]
+define
+\[
+  \eta_{\mathbf q,\mathbf r}\colon\Gamma_\rho\to M
+\]
+on letters by
+\[
+  \eta_{\mathbf q,\mathbf r}(a):=h(a)
+  \qquad (a\in\Sigma),
+\]
+\[
+  \eta_{\mathbf q,\mathbf r}(x^i):=q_i
+  \qquad (1\le i\le d_B),
+\]
+and
+\[
+  \eta_{\mathbf q,\mathbf r}(y^j):=r_j
+  \qquad (1\le j\le d_C).
+\]
+Let
+\[
+  \widehat{\eta}_{\mathbf q,\mathbf r}
+  \colon
+  \Gamma_\rho^*\to M
+\]
+be its unique extension to a monoid morphism.  Equivalently,
+\[
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\eps)=1_M,
+\]
+and, for a template word
+\[
+  \beta=z_1\cdots z_t
+  \qquad (z_1,\ldots,z_t\in\Gamma_\rho),
+\]
+\[
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\beta)
+  =
+  \eta_{\mathbf q,\mathbf r}(z_1)
+  \cdots
+  \eta_{\mathbf q,\mathbf r}(z_t).
+\]
+
+Define the evaluation of a template word \(\beta\) in the rule \(\rho\) by
+\[
+  \ev_\rho(\beta;\mathbf q,\mathbf r)
+  :=
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\beta)
+  \in M.
+\]
+Finally, define
+\[
+  \out_\rho(\mathbf q,\mathbf r)
+  :=
+  \bigl(
+    \ev_\rho(\alpha_1;\mathbf q,\mathbf r),
+    \ldots,
+    \ev_\rho(\alpha_e;\mathbf q,\mathbf r)
+  \bigr)
+  \in M^e.
+\]
+\end{definition}
+
+\begin{definition}[Output-type refinement]
+\label{def:output-refinement}
+Given \(G\) and \(h\), the full output-type refinement \(G^h\) has a fresh
+start symbol \(\widetilde S\) and nonterminals \(A_{\mathbf p}\), where
+\(A\in V\setminus\{S\}\), \(\mathbf p\in M^{\mu(A)}\).  Its rules are as follows.
+For each start rule \(S\to A\) and each \(p\in M\), add
+\(\widetilde S\to A_{(p)}\).  For each terminal rule \(A\to(a)\), add
+\(A_{(h(a))}\to(a)\).  For each binary rule
+\(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) and all
+\(\mathbf q\in M^{\mu(B)}\), \(\mathbf r\in M^{\mu(C)}\), add
+\(A_{\out_\rho(\mathbf q,\mathbf r)}\to\rho(B_{\mathbf q},C_{\mathbf r})\).
+The trimmed output-type refinement \(\widetilde G_0\) is the subgrammar
+obtained by keeping only typed nonterminals and typed rules that occur in some
+successful derivation from \(\widetilde S\).
+\end{definition}
+
+\begin{proposition}[Output-type invariants]
+\label{prop:output-invariants}
+For the complete output-type refinement \(G^h\) and its trimmed subgrammar
+\(\widetilde G_0\), the following statements hold.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item For every \(A\in V\setminus\{S\}\),
+      \(\mathbf p\in M^{\mu(A)}\), and
+      \(\tuple u\in(\Sigma^*)^{\mu(A)}\), if
+      \(A_{\mathbf p}\Rightarrow_{G^h}^*\tuple u\), then
+      \(h^{(\mu(A))}(\tuple u)=\mathbf p\).  Moreover, erasing all type
+      indices from this \(G^h\)-derivation tree yields a valid
+      \(G\)-derivation tree witnessing \(A\Rightarrow_G^*\tuple u\).
+
+\item Every fixed \(G\)-derivation tree rooted at a nonterminal
+      \(A\in V\setminus\{S\}\) lifts uniquely to a \(G^h\)-derivation tree by
+      labeling each node with the componentwise \(h\)-type of the tuple derived
+      at that node.  Here uniqueness means that, once the underlying
+      \(G\)-derivation tree, including its rule labels and tree structure, is
+      fixed, the type index at every node is uniquely determined.
+
+\item \(L(G^h)=L(G)\), and, moreover,
+      \(L(\widetilde G_0)=L(G^h)=L(G)\).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+We first relate template evaluation to actual string substitution in a binary
+rule.  Let
+\(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) be a binary rule, put
+\(d_B=\mu(B)\) and \(d_C=\mu(C)\), and let
+\(\tuple u=(u_1,\ldots,u_{d_B})\in(\Sigma^*)^{d_B}\) and
+\(\tuple v=(v_1,\ldots,v_{d_C})\in(\Sigma^*)^{d_C}\).  Set
+\(\mathbf q:=h^{(d_B)}(\tuple u)\) and
+\(\mathbf r:=h^{(d_C)}(\tuple v)\).
+For every template word \(\beta\in\Gamma_\rho^*\),
+\[
+  h\bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\beta)
+  \bigr)
+  =
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\beta)
+  =
+  \ev_\rho(\beta;\mathbf q,\mathbf r).
+  \tag{1}
+\]
+Indeed, the maps
+\(h\circ\widehat{\sigma}_{\tuple u,\tuple v}\) and
+\(\widehat{\eta}_{\mathbf q,\mathbf r}\colon\Gamma_\rho^*\to M\) are both
+monoid morphisms.  They agree on every generator: for \(a\in\Sigma\),
+\(h(\widehat{\sigma}_{\tuple u,\tuple v}(a))=h(a)
+=\eta_{\mathbf q,\mathbf r}(a)\); for \(1\le i\le d_B\),
+\(h(\widehat{\sigma}_{\tuple u,\tuple v}(x^i))=h(u_i)=q_i
+=\eta_{\mathbf q,\mathbf r}(x^i)\); and, for \(1\le j\le d_C\),
+\(h(\widehat{\sigma}_{\tuple u,\tuple v}(y^j))=h(v_j)=r_j
+=\eta_{\mathbf q,\mathbf r}(y^j)\).
+Equation~\textup{(1)} therefore follows from uniqueness of the morphism out of
+the free monoid \(\Gamma_\rho^*\).
+
+\medskip
+\noindent
+\textbf{Proof of (i).}
+We argue by induction on the height of a \(G^h\)-derivation tree rooted at
+\(A_{\mathbf p}\).
+
+\smallskip
+\noindent
+\emph{Base case.}
+If the tree has height one, its root rule is the terminal rule
+\(A_{(h(a))}\to(a)\).  Hence \(\tuple u=(a)\),
+\(\mathbf p=(h(a))\), and, since \(\mu(A)=1\),
+\(h^{(\mu(A))}(\tuple u)=(h(a))=\mathbf p\).
+Erasing the type index yields the original terminal rule \(A\to(a)\).
+
+\smallskip
+\noindent
+\emph{Induction step.}
+Suppose that the root rule is
+\[
+  A_{\mathbf p}
+  \to
+  \rho(B_{\mathbf q},C_{\mathbf r}).
+  \tag{2}
+\]
+The underlying rule of \(G\) is
+\(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\), and, by
+Definition~\ref{def:output-refinement},
+\[
+  \mathbf p=\out_\rho(\mathbf q,\mathbf r).
+  \tag{3}
+\]
+Let the two child subtrees derive
+\(B_{\mathbf q}\Rightarrow_{G^h}^*\tuple u\) and
+\(C_{\mathbf r}\Rightarrow_{G^h}^*\tuple v\).
+By the induction hypothesis,
+\[
+  h^{(\mu(B))}(\tuple u)=\mathbf q,
+  \qquad
+  h^{(\mu(C))}(\tuple v)=\mathbf r.
+  \tag{4}
+\]
+Moreover, erasing type indices from the child subtrees yields valid
+\(G\)-derivations \(B\Rightarrow_G^*\tuple u\) and
+\(C\Rightarrow_G^*\tuple v\).
+Let
+\[
+  \tuple w
+  :=
+  \rho(\tuple u,\tuple v)
+  =
+  \bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_1),
+    \ldots,
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_e)
+  \bigr)
+\]
+be the tuple derived at the root.  By equations~\textup{(1)}, \textup{(3)},
+and~\textup{(4)}, for every \(1\le\ell\le e\),
+\[
+\begin{aligned}
+  h(w_\ell)
+  &=
+  h\bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_\ell)
+  \bigr)
+  \\
+  &=
+  \ev_\rho(\alpha_\ell;\mathbf q,\mathbf r).
+\end{aligned}
+\]
+Consequently,
+\[
+\begin{aligned}
+  h^{(e)}(\tuple w)
+  &=
+  \bigl(
+    \ev_\rho(\alpha_1;\mathbf q,\mathbf r),
+    \ldots,
+    \ev_\rho(\alpha_e;\mathbf q,\mathbf r)
+  \bigr)
+  \\
+  &=
+  \out_\rho(\mathbf q,\mathbf r)
+  \\
+  &=
+  \mathbf p.
+\end{aligned}
+\]
+Erasing type indices from rule~\textup{(2)} gives the underlying rule \(\rho\)
+of \(G\).  Placing this rule above the two erased child derivations yields a
+valid \(G\)-derivation \(A\Rightarrow_G^*\tuple w\).
+This proves~(i).
+
+\medskip
+\noindent
+\textbf{Proof of (ii).}
+Fix a \(G\)-derivation tree \(T\) rooted at
+\(A\in V\setminus\{S\}\).  For each node \(\nu\), let \(A_\nu\) be its
+nonterminal label and let
+\(\tuple w_\nu\in(\Sigma^*)^{\mu(A_\nu)}\) be the tuple derived by the
+subtree rooted at \(\nu\).  Define
+\(\mathbf p_\nu:=h^{(\mu(A_\nu))}(\tuple w_\nu)\), and replace the node label
+\(A_\nu\) by \((A_\nu)_{\mathbf p_\nu}\).
+We show by induction on subtree height that this labeling produces a valid
+\(G^h\)-derivation tree.
+
+If \(\nu\) is a leaf using the terminal rule \(A_\nu\to(a)\), then
+\(\tuple w_\nu=(a)\) and \(\mathbf p_\nu=(h(a))\), so \(G^h\) contains the
+rule \((A_\nu)_{\mathbf p_\nu}\to(a)\).
+
+Now suppose that an internal node \(\nu\) uses
+\(\rho\colon A_\nu\to(\alpha_1,\ldots,\alpha_e)(B,C)\).
+Let \(\tuple u\) and \(\tuple v\) be the tuples derived by its two child
+subtrees, and put \(\mathbf q:=h^{(\mu(B))}(\tuple u)\) and
+\(\mathbf r:=h^{(\mu(C))}(\tuple v)\).  Equation~\textup{(1)} gives
+\(\mathbf p_\nu=\out_\rho(\mathbf q,\mathbf r)\).  Hence
+Definition~\ref{def:output-refinement} provides the typed rule
+\((A_\nu)_{\mathbf p_\nu}\to\rho(B_{\mathbf q},C_{\mathbf r})\).
+Together with the induction hypotheses for the child subtrees, this proves
+that the labeled tree is a valid \(G^h\)-derivation tree.
+
+For uniqueness, fix the tree structure of \(T\), the rule used at each node,
+and hence the tuple \(\tuple w_\nu\) derived at every node.  In any
+\(G^h\)-lifting of \(T\), part~(i) forces the type index at \(\nu\) to be
+\(h^{(\mu(A_\nu))}(\tuple w_\nu)=\mathbf p_\nu\).
+Thus every node index, and therefore the entire lifting of \(T\), is unique.
+
+\medskip
+\noindent
+\textbf{Proof of (iii).}
+We first prove \(L(G^h)\subseteq L(G)\).
+Let \(w\in L(G^h)\).  Then there are
+\(A\in V\setminus\{S\}\) and \(p\in M\) such that a successful derivation
+uses the root rule \(\widetilde S\to A_{(p)}\) and has a child subtree
+witnessing \(A_{(p)}\Rightarrow_{G^h}^*(w)\).  By part~(i), erasing the type
+indices from this subtree yields \(A\Rightarrow_G^*(w)\).  The typed start
+rule was introduced from an original start rule \(S\to A\), so
+\(S\Rightarrow_G^*(w)\).
+Hence \(w\in L(G)\).
+
+Conversely, let \(w\in L(G)\).  By start separation, a successful
+\(G\)-derivation of \(w\) has a root start rule \(S\to A\) and, below it, a
+derivation tree \(A\Rightarrow_G^*(w)\) whose root is not the start
+symbol.  By part~(ii), this subtree lifts uniquely to
+\(A_{(h(w))}\Rightarrow_{G^h}^*(w)\).  The grammar \(G^h\) contains the typed
+start rule \(\widetilde S\to A_{(h(w))}\), so \(w\in L(G^h)\).  Therefore
+\(L(G^h)=L(G)\).
+
+Finally, \(\widetilde G_0\) is a subgrammar of \(G^h\), and hence
+\(L(\widetilde G_0)\subseteq L(G^h)\).
+For the reverse inclusion, let \(w\in L(G^h)\) and fix a successful
+\(G^h\)-derivation tree \(T\) for \(w\).  By definition,
+\(\widetilde G_0\) retains every typed nonterminal and typed rule that appears
+in some successful derivation.  Every nonterminal and rule occurring in \(T\)
+appears in the successful derivation \(T\) itself and is therefore retained.
+Thus the same tree \(T\) is a successful \(\widetilde G_0\)-derivation, so
+\(w\in L(\widetilde G_0)\).  It follows that
+\(L(G^h)\subseteq L(\widetilde G_0)\).  Therefore
+\(L(\widetilde G_0)=L(G^h)=L(G)\).
+\end{proof}
+
+For a surviving typed nonterminal \(X=A_{\mathbf p}\) in
+\(\widetilde G_0\), put \(d:=\mu(A)\) and define its tuple language by
+\[
+  L_X
+  :=
+  \left\{
+    \tuple u\in(\Sigma^*)^d
+    \;\middle|\;
+    X\Rightarrow_{\widetilde G_0}^*\tuple u
+  \right\}.
+\]
+Fix once and for all a total effective order on tuples and on concrete sentence
+contexts that refines length-lexicographic order.  Since \(X\) survives the
+trimming, \(L_X\ne\emptyset\); let \(\omega(X)\) be the least tuple in \(L_X\).
+
+\begin{lemma}[Concrete exposing contexts]
+\label{lem:exposing-contexts}
+Let \(X=A_{\mathbf p}\) be a typed nonterminal surviving in the trimmed
+output-type refinement \(\widetilde G_0\), and put \(d:=\mu(A)\).
+Then there exists a concrete arity-\(d\) sentence context \(E_X\) such that
+\(E_X[\tuple u]\in L(G)\) for every \(\tuple u\in L_X\).  Moreover, if
+\(\widetilde S\to X\) is a typed start rule of \(\widetilde G_0\), then
+\(d=1\) and one may choose \(E_X=\blank_1\).
+\end{lemma}
+
+\begin{proof}
+Because \(X\) survives the trimming, there is a successful derivation tree of
+\(\widetilde G_0\) containing an occurrence of \(X\).  Fix such a successful
+derivation tree \(T\), and fix a node \(\nu\) of \(T\) labeled by \(X\).  Let
+\(T_\nu\) be the subtree rooted at \(\nu\).  This subtree derives some tuple
+\(\tuple w=(w_1,\ldots,w_d)\in L_X\).
+We keep fixed the portion of the derivation above \(\nu\) and all sibling
+subtrees along the path from \(\nu\) to the root, and replace only the output of
+\(T_\nu\) by formal named holes.
+
+\medskip
+\noindent
+\textbf{Construction of the outside sentence context.}
+Take fresh symbols \(\blank_1,\ldots,\blank_d\) not belonging to \(\Sigma\).
+Delete the subtree \(T_\nu\) and place the formal tuple
+\((\blank_1,\ldots,\blank_d)\) at node \(\nu\).  At every ancestor of \(\nu\), retain the rule used in \(T\),
+and for every sibling subtree retain the concrete terminal tuple derived by
+that subtree in \(T\).  Propagating the formal tuple from \(\nu\) to the root
+by the simultaneous-substitution semantics of the intervening binary rules
+produces, because the start symbol has fan-out one, a single word
+\[
+  E_{T,\nu}
+  \in
+  \bigl(
+    \Sigma\cup\{\blank_1,\ldots,\blank_d\}
+  \bigr)^*.
+\]
+
+Each hole \(\blank_i\) occurs exactly once in \(E_{T,\nu}\).  At node \(\nu\),
+each hole occurs exactly once in the formal tuple
+\((\blank_1,\ldots,\blank_d)\).  Every binary rule of the working MCFG is
+linear and nondeleting: each variable corresponding to a child component
+occurs exactly once in the entire parent template tuple.  Therefore, if every
+hole occurs exactly once in the tuple at one level, then after substitution
+into the parent rule every hole still occurs exactly once in the resulting
+parent tuple.  Induction along the path from \(\nu\) to the root proves the
+claim.
+
+Consequently, there are a permutation \(\pi\) of \(\{1,\ldots,d\}\) and
+words \(z_0,\ldots,z_d\in\Sigma^*\) such that
+\[
+  E_{T,\nu}
+  =
+  z_0\blank_{\pi(1)}z_1
+  \cdots
+  \blank_{\pi(d)}z_d.
+\]
+Thus \(E_{T,\nu}\) is an arity-\(d\) sentence context in the sense of
+Definition~\ref{def:sentence-context}.  Set \(E_X:=E_{T,\nu}\).
+
+\medskip
+\noindent
+\textbf{Substitution of an arbitrary \(X\)-derivation.}
+Let \(\tuple u=(u_1,\ldots,u_d)\in L_X\).  By definition of \(L_X\), there
+is a \(\widetilde G_0\)-derivation tree \(U\) witnessing
+\(X\Rightarrow_{\widetilde G_0}^*\tuple u\).
+Replace the subtree \(T_\nu\) of \(T\) by \(U\).  Since both subtrees have the
+same root nonterminal \(X\), the resulting tree
+\(T[\nu\leftarrow U]\) is again a valid successful \(\widetilde G_0\)-derivation tree.
+
+The holes of \(E_X\) record where the components derived at \(\nu\) occur in
+the final yield.  Hence
+\[
+  \yield\bigl(T[\nu\leftarrow U]\bigr)
+  =
+  E_X[\tuple u].
+\]
+Formally, this equality follows by induction on the length of the path from
+\(\nu\) to the root: at each ancestor, the tuple obtained after replacing
+\(\blank_i\) by \(u_i\) is exactly the tuple obtained by applying the same
+binary rule to the replaced child derivation and the fixed sibling derivation.
+At the root this gives the displayed equality.
+
+Therefore \(E_X[\tuple u]\in L(\widetilde G_0)\).  By
+Proposition~\ref{prop:output-invariants}, \(L(\widetilde G_0)=L(G)\), and
+hence \(E_X[\tuple u]\in L(G)\).
+Since \(\tuple u\in L_X\) was arbitrary, the required property holds for every
+\(\tuple u\in L_X\).
+
+Finally, suppose that \(\widetilde S\to X\) is a typed start rule of
+\(\widetilde G_0\).  Such a rule comes from an
+original start rule \(S\to A\), and the working-form definition gives
+\(\mu(A)=1\).  Thus \(d=1\).  Choose a successful derivation tree whose root rule is
+\(\widetilde S\to X\), and delete its unique child subtree rooted at \(X\).
+No terminal material remains outside that subtree, and its sole component is
+the entire generated string.  Therefore one may choose \(E_X=\blank_1\).
+\end{proof}
+
+\begin{definition}[Exposing context]
+\label{def:exposing-context}
+For each surviving \(X\), choose one successful derivation of
+\(\widetilde G_0\) in which \(X\) occurs, and let \(\chi(X)\) be the concrete
+sentence context obtained by deleting the subtree rooted at that occurrence and
+keeping the named holes of the exposed tuple.  By
+Lemma~\ref{lem:exposing-contexts}, this context satisfies
+\(\chi(X)[\tuple u]\in L(G)\) for every \(\tuple u\in L_X\).  For a start child
+\(X\), the convention chooses \(\chi(X)=\blank_1\).
+\end{definition}
+
+\subsection{The characteristic sample}
+\label{subsec:learner-grammar}
+
+\begin{definition}[Presentation-relative characteristic sample of a witnessing refinement]
+\label{def:cs}
+Let \(\widetilde G_0\) be the trimmed output-type refinement.  For each
+surviving typed nonterminal \(X\), include the word \(\chi(X)[\omega(X)]\).  For
+each terminal rule \(X\to(a)\) of \(\widetilde G_0\), include
+\(\chi(X)[(a)]\).  For each binary rule \(R\colon X\to\rho(Y,Z)\) of
+\(\widetilde G_0\), include \(\chi(X)[\rho(\omega(Y),\omega(Z))]\).  The union
+of these finitely many words is denoted \(\CS(\widetilde G_0)\).
+\end{definition}
+
+The presentation-relative sample \(\CS(\widetilde G_0)\) is relative to the chosen
+witnessing presentation \(G\) and its trimmed output-type refinement.  The learner is not
+given this presentation or the sample.  The role of \(\CS(\widetilde G_0)\) is
+only to prove the existence of a finite sufficient positive set in the sense of
+Gold identification.
+
+\begin{lemma}[The characteristic sample is positive and finite]
+\label{lem:cs-positive}
+\(\CS(\widetilde G_0)\) is a finite subset of \(L(G)\).
+\end{lemma}
+
+\begin{proof}
+There are finitely many surviving typed nonterminals and typed rules.  By
+Definition~\ref{def:exposing-context}, \(\chi(X)\) accepts every tuple in
+\(L_X\).  The anchor \(\omega(X)\), the terminal tuple \((a)\) for a terminal
+rule \(X\to(a)\), and the tuple \(\rho(\omega(Y),\omega(Z))\) for a binary rule
+\(X\to\rho(Y,Z)\) all belong to \(L_X\).  Thus each displayed word lies in
+\(L(G)\).
+\end{proof}
+
+\begin{proposition}[Concrete-context sufficiency]
+\label{prop:concrete-context-sufficiency}
+Let \(G\) be a witnessing working presentation and let \(\widetilde G_0\) be
+its trimmed output-type refinement.  For each surviving typed nonterminal
+\(X\), choose an anchor tuple \(\omega(X)\) and a concrete exposing context
+\(\chi(X)\) that accepts every tuple derived from \(X\).  Then the data
+consisting of
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item the componentwise output \(h\)-type of each surviving typed symbol,
+\item one exposed anchor for each surviving typed symbol, and
+\item one exposed filled instance of each surviving typed rule
+\end{enumerate}
+are sufficient for the canonical learner to simulate every rule of
+\(\widetilde G_0\).  No additional sentence-level interface label is required
+on the learner's nonterminals.
+\end{proposition}
+
+\begin{proof}
+The output type guarantees that a typed parent anchor and the corresponding
+filled rule tuple have the same componentwise \(h\)-value.  Their two exposed
+sample words use the same concrete context \(\chi(X)\), so the learner may
+connect the two observed tuple values by a guarded unit rule.  A filled binary
+rule word records the actual variable intervals of its two child anchors inside
+the parent tuple; the anchors themselves may be observed through their own
+exposing words.  The resulting binary witness reconstructs the underlying
+linear template.  Terminal and start rules are handled by the corresponding
+exposed terminal and anchor words.  The formal rule-by-rule simulation is
+Lemma~\ref{lem:rule-simulation}.
+\end{proof}
+
+\subsection{Observed tuples and concrete witnesses}
+
+\begin{definition}[Tuple occurrence in a sample word]
+\label{def:tuple-occurrence}
+Let \(K\subseteq\Sigma^*\), let \(w=a_1a_2\cdots a_n\in K\), and let
+\(d\ge1\).  We regard \(0,1,\ldots,n\) as the cut positions of \(w\).  For
+\(0\le p\le q\le n\), put
+\(w[p:q]:=a_{p+1}a_{p+2}\cdots a_q\), with \(w[p:p]:=\eps\).
+
+An \emph{arity-\(d\) tuple occurrence} in \(w\) is data
+\[
+  \mathfrak o=\bigl(\sigma,(\ell_i,r_i)_{i=1}^d\bigr),
+\]
+where \(\sigma\) is a permutation of \(\{1,\ldots,d\}\), each
+\(\ell_i,r_i\) is a cut position of \(w\), and
+\[
+  0\le \ell_{\sigma(1)}\le r_{\sigma(1)}\le
+  \ell_{\sigma(2)}\le r_{\sigma(2)}\le\cdots\le
+  \ell_{\sigma(d)}\le r_{\sigma(d)}\le n.
+\]
+The associated tuple is
+\(\tuple x_{\mathfrak o}=(x_1,\ldots,x_d)\in(\Sigma^*)^d\), where
+\(x_i:=w[\ell_i:r_i]\).
+
+Define \(u_0,\ldots,u_d\in\Sigma^*\) by
+\[
+  u_0:=w[0:\ell_{\sigma(1)}],\qquad
+  u_j:=w[r_{\sigma(j)}:\ell_{\sigma(j+1)}]\ (1\le j<d),\qquad
+  u_d:=w[r_{\sigma(d)}:n].
+\]
+Then
+\[
+  E_{\mathfrak o}:=
+  u_0\blank_{\sigma(1)}u_1\blank_{\sigma(2)}\cdots
+  u_{d-1}\blank_{\sigma(d)}u_d
+\]
+is an arity-\(d\) sentence context and
+\(E_{\mathfrak o}[\tuple x_{\mathfrak o}]=w\).  We therefore identify
+\(\mathfrak o\) with the pair
+\((E_{\mathfrak o},\tuple x_{\mathfrak o})\).  Equivalently, an arity-\(d\)
+tuple occurrence in \(w\) is a pair \((E,\tuple x)\) such that \(E\) is an
+arity-\(d\) sentence context, \(\tuple x\in(\Sigma^*)^d\), and
+\(E[\tuple x]=w\).
+
+For each \(i\), if \(\ell_i<r_i\), the \(i\)-th slot is the positive-length
+half-open interval \([\ell_i,r_i)\); if \(\ell_i=r_i\), it is an empty slot at
+the cut position \(\ell_i\).  If distinct empty slots \(i,j\) share a cut
+position \(c\), that is,
+\(\ell_i=r_i=\ell_j=r_j=c\), then their local order is induced by \(\sigma\):
+slot \(i\) precedes slot \(j\) exactly when
+\(\sigma^{-1}(i)<\sigma^{-1}(j)\).
+\end{definition}
+
+\begin{example}[Empty slots and local tie order]
+\label{ex:empty-slots}
+Let \(w=ab\) and consider the tuple \(\tuple x=(a,\eps,b)\).  The context
+\(E=\blank_1\blank_2\blank_3\) satisfies \(E[\tuple x]=ab\).  As an occurrence
+inside \(w\), this is represented by the interval \([0,1]\) for
+\(\blank_1\), the zero-length interval \([1,1]\) for \(\blank_2\), and the
+interval \([1,2]\) for \(\blank_3\).  If two empty slots occur at the same cut,
+the local tie order distinguishes them.  For instance, with
+\(\tuple y=(a,\eps,\eps,b)\), both
+\(\blank_1\blank_2\blank_3\blank_4\) and
+\(\blank_1\blank_3\blank_2\blank_4\) fill to the same word \(ab\), but they are
+different concrete occurrences.  The tie order at the cut between \(a\) and
+\(b\) records whether \(\blank_2<\blank_3\) or \(\blank_3<\blank_2\).  This is
+only bookkeeping, but it lets binary witnesses reconstruct a unique linear
+template even when empty components occur.
+\end{example}
+
+\begin{definition}[Observed tuple]
+\label{def:observed-tuple}
+A tuple \(\tuple x\in(\Sigma^*)^d\) with \(1\le d\le f\) is \emph{observed in
+\(K\)} if \((E,\tuple x)\) is a tuple occurrence in some word of \(K\).  The
+learner uses one nonterminal \([\tuple x]\) for each observed tuple, together
+with a fresh start symbol \(\widehat S\).
+\end{definition}
+
+\begin{definition}[Binary witness]
+\label{def:binary-witness}
+Let \(K\subseteq\Sigma^*\) be finite and let \(e,d_B,d_C\ge1\).  Put
+\[
+  X_B:=\{x^1,\ldots,x^{d_B}\},\qquad
+  Y_C:=\{y^1,\ldots,y^{d_C}\},\qquad
+  \Gamma:=\Sigma\uplus X_B\uplus Y_C.
+\]
+A \emph{binary witness} in \(K\), of output arity \(e\), left-child arity
+\(d_B\), and right-child arity \(d_C\), is data
+\[
+  \mathfrak b=\bigl(
+    \mathfrak o_P,\mathfrak o_B,\mathfrak o_C,(m_i)_{i=1}^e,
+    (u_{i,r})_{\substack{1\le i\le e\\0\le r\le m_i}},
+    (\xi_{i,r})_{\substack{1\le i\le e\\1\le r\le m_i}}
+  \bigr)
+\]
+satisfying the following conditions.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item There is an arity-\(e\) tuple occurrence
+      \(\mathfrak o_P=(E_P,\tuple z)\) in some \(w_P\in K\), where
+      \(\tuple z=(z_1,\ldots,z_e)\in(\Sigma^*)^e\) and
+      \(E_P[\tuple z]=w_P\).  It is called the \emph{parent occurrence}.
+
+\item There are tuple occurrences
+      \(\mathfrak o_B=(E_B,\tuple x)\) and
+      \(\mathfrak o_C=(E_C,\tuple y)\) in words \(w_B,w_C\in K\), where
+      \(\tuple x=(x_1,\ldots,x_{d_B})\in(\Sigma^*)^{d_B}\),
+      \(\tuple y=(y_1,\ldots,y_{d_C})\in(\Sigma^*)^{d_C}\), and
+      \(E_B[\tuple x]=w_B\), \(E_C[\tuple y]=w_C\).  The words
+      \(w_P,w_B,w_C\) may be equal or distinct; in particular, the child
+      observations need not occur in the parent sample word.
+
+\item For each \(1\le i\le e\), an integer \(m_i\ge0\), terminal words
+      \(u_{i,0},\ldots,u_{i,m_i}\in\Sigma^*\), and labels
+      \(\xi_{i,1},\ldots,\xi_{i,m_i}\in X_B\uplus Y_C\) are specified.
+      The map \((i,r)\mapsto\xi_{i,r}\) is a bijection from its index set
+      onto \(X_B\uplus Y_C\).  Thus every variable occurs exactly once across
+      the complete parent tuple.
+
+\item Define \(\tau_{\tuple x,\tuple y}:X_B\uplus Y_C\to\Sigma^*\) by
+      \(\tau_{\tuple x,\tuple y}(x^j):=x_j\) and
+      \(\tau_{\tuple x,\tuple y}(y^k):=y_k\).  For every \(1\le i\le e\),
+      \[
+        z_i=u_{i,0}\tau_{\tuple x,\tuple y}(\xi_{i,1})u_{i,1}\cdots
+        \tau_{\tuple x,\tuple y}(\xi_{i,m_i})u_{i,m_i}.
+        \tag{*}
+      \]
+      Thus \textup{(*)} decomposes \(z_i\) into terminal gaps and variable
+      intervals whose values are child-tuple components.
+
+\item For \(1\le r\le m_i\), define the endpoints of the interval labelled
+      \(\xi_{i,r}\) in \(z_i\) by
+      \[
+      \begin{aligned}
+        \ell_{i,r}
+        &:={}|u_{i,0}|+\sum_{q=1}^{r-1}
+        \bigl(|\tau_{\tuple x,\tuple y}(\xi_{i,q})|+|u_{i,q}|\bigr),\\
+        r_{i,r}
+        &:={\ell_{i,r}}+|\tau_{\tuple x,\tuple y}(\xi_{i,r})|.
+      \end{aligned}
+      \]
+      Then \(z_i[\ell_{i,r}:r_{i,r}]
+      =\tau_{\tuple x,\tuple y}(\xi_{i,r})\), and
+      \[
+        0\le\ell_{i,1}\le r_{i,1}\le\cdots\le
+        \ell_{i,m_i}\le r_{i,m_i}\le|z_i|.
+      \]
+
+\item If \(\tau_{\tuple x,\tuple y}(\xi_{i,r})=\eps\), the corresponding
+      variable interval is the zero-length interval
+      \([\ell_{i,r},\ell_{i,r})\).  If several such intervals occur at the
+      same cut position \(c\), their local order is the order in the list
+      \(\xi_{i,1},\ldots,\xi_{i,m_i}\): if
+      \(\ell_{i,r}=r_{i,r}=\ell_{i,s}=r_{i,s}=c\) and \(r<s\), then the
+      interval labelled \(\xi_{i,r}\) precedes that labelled \(\xi_{i,s}\).
+\end{enumerate}
+
+For \(1\le i\le e\), define
+\(\alpha_i:=u_{i,0}\xi_{i,1}u_{i,1}\cdots
+\xi_{i,m_i}u_{i,m_i}\in\Gamma^*\), and put
+\(\boldsymbol\alpha_{\mathfrak b}:=(\alpha_1,\ldots,\alpha_e)\).
+Condition~(iii) makes this a binary linear nondeleting template tuple.
+Let \(\widehat\tau_{\tuple x,\tuple y}:\Gamma^*\to\Sigma^*\) be the unique
+monoid-morphism extension of \(\tau_{\tuple x,\tuple y}\), acting identically
+on \(\Sigma\).  Condition~(iv) says
+\(\widehat\tau_{\tuple x,\tuple y}(\alpha_i)=z_i\) for every \(i\).  Hence the
+associated template \(\rho_{\mathfrak b}\), defined by
+\[
+  \rho_{\mathfrak b}(\tuple x,\tuple y):=
+  \bigl(\widehat\tau_{\tuple x,\tuple y}(\alpha_1),\ldots,
+        \widehat\tau_{\tuple x,\tuple y}(\alpha_e)\bigr),
+\]
+satisfies \(\tuple z=\rho_{\mathfrak b}(\tuple x,\tuple y)\).
+\end{definition}
+
+\begin{remark}[Locality of a binary witness]
+\label{rem:binary-witness-locality}
+The parent occurrence supplies the positions at which the already observed
+child tuple values are used.  It is not required to supply separate exposing
+sentence contexts for the children inside the same sample word.  In the
+completeness proof, the child anchors are observed through their own exposing
+contexts, while the filled parent rule word supplies their concrete intervals
+inside the parent tuple.
+\end{remark}
+
+\begin{lemma}[Uniqueness of the induced binary template]
+\label{lem:unique-induced-template}
+Let \(e,d_B,d_C\ge1\), put
+\(X_B:=\{x^1,\ldots,x^{d_B}\}\),
+\(Y_C:=\{y^1,\ldots,y^{d_C}\}\), and
+\(\Gamma:=\Sigma\uplus X_B\uplus Y_C\).  Fix a parent tuple
+\(\tuple z=(z_1,\ldots,z_e)\in(\Sigma^*)^e\) and child tuples
+\(\tuple x=(x_1,\ldots,x_{d_B})\),
+\(\tuple y=(y_1,\ldots,y_{d_C})\).
+
+For every \(1\le i\le e\), suppose that an ordered segmentation is specified by
+\[
+  z_i=u_{i,0}\tau_{\tuple x,\tuple y}(\xi_{i,1})u_{i,1}\cdots
+      \tau_{\tuple x,\tuple y}(\xi_{i,m_i})u_{i,m_i},
+  \tag{1}
+\]
+where \(m_i\ge0\), \(u_{i,0},\ldots,u_{i,m_i}\in\Sigma^*\), and
+\(\xi_{i,1},\ldots,\xi_{i,m_i}\in X_B\uplus Y_C\).  Here
+\(\tau_{\tuple x,\tuple y}(x^j):=x_j\) and
+\(\tau_{\tuple x,\tuple y}(y^k):=y_k\).  Assume that
+\[
+  \{\xi_{i,r}\mid 1\le i\le e,\ 1\le r\le m_i\}=X_B\uplus Y_C,
+  \tag{2}
+\]
+and that \((i,r)\mapsto\xi_{i,r}\) is injective.  For zero-length intervals
+sharing a cut position, also fix the local order given by the corresponding
+label list.
+
+Then there is a unique binary linear nondeleting template tuple
+\(\boldsymbol\alpha=(\alpha_1,\ldots,\alpha_e)\in(\Gamma^*)^e\) consistent
+with these ordered segmentations, namely
+\[
+  \alpha_i=u_{i,0}\xi_{i,1}u_{i,1}\cdots
+  \xi_{i,m_i}u_{i,m_i}\qquad(1\le i\le e).
+  \tag{3}
+\]
+If \(\widehat\tau_{\tuple x,\tuple y}:\Gamma^*\to\Sigma^*\) is the unique
+monoid-morphism extension of \(\tau_{\tuple x,\tuple y}\), acting identically
+on \(\Sigma\), then
+\(\widehat\tau_{\tuple x,\tuple y}(\alpha_i)=z_i\) for every \(i\).
+Consequently, the binary template \(\rho\) determined by
+\(\boldsymbol\alpha\) satisfies
+\(\rho(\tuple x,\tuple y)=\tuple z\).
+\end{lemma}
+
+\begin{proof}
+Define \(\alpha_i\) by~\textup{(3)} and put
+\(\boldsymbol\alpha:=(\alpha_1,\ldots,\alpha_e)\).  By~\textup{(2)} and the
+injectivity of \((i,r)\mapsto\xi_{i,r}\), every variable occurs exactly once
+in \(\boldsymbol\alpha\); hence the tuple is linear and nondeleting.  A
+variable whose child component is empty still occurs as a symbol in the
+template.  When several zero-length intervals share a cut position, their
+specified local order fixes their order in the template word, so~\textup{(3)}
+is unambiguous.
+
+Because \(\widehat\tau_{\tuple x,\tuple y}\) fixes terminal letters and maps
+each variable to its corresponding child component,~\textup{(1)} gives
+\[
+  \widehat\tau_{\tuple x,\tuple y}(\alpha_i)
+  =u_{i,0}\tau_{\tuple x,\tuple y}(\xi_{i,1})u_{i,1}\cdots
+   \tau_{\tuple x,\tuple y}(\xi_{i,m_i})u_{i,m_i}
+  =z_i.
+\]
+Thus \(\rho(\tuple x,\tuple y)=\tuple z\).
+
+For uniqueness, let
+\(\boldsymbol\beta=(\beta_1,\ldots,\beta_e)\) be another binary linear
+nondeleting template tuple consistent with the same ordered segmentations.
+Consistency requires the terminal parts of \(\beta_i\), read left to right, to
+be \(u_{i,0},\ldots,u_{i,m_i}\), and the intervening variables, in their
+specified order, to be \(\xi_{i,1},\ldots,\xi_{i,m_i}\).  Therefore
+\(\beta_i=u_{i,0}\xi_{i,1}u_{i,1}\cdots
+\xi_{i,m_i}u_{i,m_i}=\alpha_i\) for every \(i\).  Hence
+\(\boldsymbol\beta=\boldsymbol\alpha\).
+\end{proof}
+
+\begin{definition}[Canonical learner]
+\label{def:learner}
+The canonical learner grammar \(\widehat G_0(K)\) has start symbol
+\(\widehat S\), nonterminals \([\tuple x]\) for observed tuples of arity at most
+\(f\), and the following rules.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item For each \(w\in K\), add the start rule \(\widehat S\to[(w)]\).
+\item For each observed unary tuple \((a)\) with \(a\in\Sigma\), add
+\([(a)]\to(a)\).
+\item For each binary witness with parent occurrence \((E,\tuple z)\), child
+tuples \(\tuple x,\tuple y\), and induced template \(\rho\), add
+\([\tuple z]\to\rho([\tuple x],[\tuple y])\).
+\item For observed tuples \(\tuple x,\tuple y\) of the same arity \(d\), add the
+unit rule \([\tuple x]\to[\tuple y]\) if \(h^{(d)}(\tuple x)=h^{(d)}(\tuple y)\)
+and there exists a concrete arity-\(d\) context \(E\) such that
+\(E[\tuple x]\in K\) and \(E[\tuple y]\in K\).
+\end{enumerate}
+The grammar is extended by unit rules.  They can be eliminated by the standard
+unit-closure construction if a unit-free presentation is desired.
+\end{definition}
+
+\begin{remark}[Meaning of ``canonical'']
+\label{rem:canonical-meaning}
+Here ``canonical'' means deterministic and set-driven relative to fixed
+effective orders on tuple values, occurrences, segmentations, and output
+rules.  It does not mean that the returned grammar is a canonical minimal
+presentation of the target language.
+\end{remark}
+
+\begin{remark}[Pseudocode for the canonical learner]
+\label{rem:learner-pseudocode}
+For clarity, the construction can be written as the following set-driven
+procedure.
+\begin{enumerate}[label=\textnormal{Step \arabic*.},leftmargin=*]
+\item Enumerate all tuple occurrences \((E,\tuple x)\) of arity at most \(f\) in
+the current finite sample \(K\), and create one nonterminal \([\tuple x]\) for
+each observed tuple value.
+\item Add start rules \(\widehat S\to[(w)]\) for all \(w\in K\), and add terminal
+rules \([(a)]\to(a)\) for every observed unary letter tuple.
+\item Enumerate all concrete binary witnesses inside sample words and add the
+corresponding binary linear nondeleting rules.
+\item For every pair of observed tuples \(\tuple x,\tuple y\) of the same arity,
+add the unit rule \([\tuple x]\to[\tuple y]\) exactly when they have the same
+componentwise \(h\)-type and are seen in one common concrete sentence context in
+\(K\).
+\item Output the resulting grammar, optionally after eliminating unit rules by
+standard unit-closure.
+\end{enumerate}
+All loops range over explicitly enumerable cuts and intervals in the finite
+sample.  Hence the procedure is effective, and its fixed-parameter polynomial
+bound is proved in Theorem~\ref{thm:poly}.
+\end{remark}
+
+\begin{example}[A small trace of the fixed-\(h\) unit rule]
+\label{ex:learner-trace}
+Let \(P=a^+\#b^+\#c^+\#d^+\), let \(h_P\) be its transition morphism, and take
+\[
+  K=\{a\#b\#c\#d,\ aa\#bb\#cc\#dd\}.
+\]
+The tuple \(\tuple x=(a\#b,c\#d)\) occurs in the first sample word with context
+\(E=\blank_1\#\blank_2\).  The tuple
+\(\tuple y=(aa\#bb,cc\#dd)\) occurs in the second sample word with the same
+context.  In the standard DFA for \(P\), the words \(a\#b\) and \(aa\#bb\)
+induce the same transition, and the words \(c\#d\) and \(cc\#dd\) induce the
+same transition.  Hence
+\(h_P^{(2)}(\tuple x)=h_P^{(2)}(\tuple y)\), and the learner adds the unit rules
+\([\tuple x]\to[\tuple y]\) and \([\tuple y]\to[\tuple x]\).  This is the
+finite-type guarded version of the shared-context substitution step; without the
+\(h_P\)-type check, analogous untyped shared-context triggers are too coarse
+for such synchronization examples.
+\end{example}
+
+The learner receives only \(K\), \(f\), and \(h\).  It does not receive the
+target grammar, the refinement, or the characteristic sample.
+
+
+\begin{observation}[Set-driven consistency]
+\label{obs:set-driven-consistent}
+The learner $K\mapsto\widehat G_0(K)$ is set-driven.  Moreover, for the
+$\eps$-free samples considered in this paper, it is consistent:
+$K\subseteq L(\widehat G_0(K))$.
+\end{observation}
+
+\begin{proof}
+Set-drivenness is immediate from Definition~\ref{def:learner}: all observed
+tuples, witnesses, and unit rules are computed from the finite set $K$, not
+from the order in which the words were presented.  For consistency, take
+$w=a_1\cdots a_n\in K$ with $n\ge1$.  The learner has the start rule
+$\widehat S\to[(w)]$.  Each letter $a_i$ occurs as an observed unary tuple, so
+the terminal rule $[(a_i)]\to(a_i)$ is present.  For every nontrivial split
+$uv$ of a substring of $w$, the parent tuple $(uv)$, the child tuples $(u)$ and
+$(v)$, and the template $x^1y^1$ form a binary witness.  A binary induction on
+the length of substrings therefore gives $[(w)]\Rightarrow^*(w)$.  Hence
+$w\in L(\widehat G_0(K))$, and this holds for all $w\in K$.
+\end{proof}
+
+\begin{observation}[Monotonicity in the positive sample]
+\label{obs:learner-monotone}
+If \(K\subseteq K'\), then every nonterminal and every rule of
+\(\widehat G_0(K)\) also occurs in \(\widehat G_0(K')\), up to the evident
+inclusion of observed tuple values.  Hence
+\(L(\widehat G_0(K))\subseteq L(\widehat G_0(K'))\).
+\end{observation}
+
+\begin{proof}
+All four classes of rules in Definition~\ref{def:learner} are generated from
+positive evidence present in the finite sample: sample words, observed unary
+letter tuples, concrete binary witnesses, and shared-context evidence for unit
+rules.  Passing from \(K\) to a larger sample \(K'\) can add such evidence but
+cannot remove it.  The language inclusion follows because the grammar only gains
+nonterminals and rules.
+\end{proof}
+
+
+\section{Soundness and Exact Reconstruction}
+\label{sec:exact}
+
+This section proves that the learner is both conservative with respect to the
+semantic promise and complete once the sample contains the presentation-relative
+characteristic sample.
+
+\subsection{Soundness}
+\label{sec:soundness}
+
+\begin{definition}[Fixed-\(h\) distributional equivalence]
+\label{def:distributional-equivalence}
+For \(\tuple u,\tuple x\in(\Sigma^*)^d\), write
+\(\tuple u\equiv_L^d\tuple x\) if
+\(h^{(d)}(\tuple u)=h^{(d)}(\tuple x)\) and
+\(\D_L^{(d)}(\tuple u)=\D_L^{(d)}(\tuple x)\).  The superscript is omitted when
+clear.
+\end{definition}
+
+\begin{lemma}[Shared-context substitutability]
+\label{lem:shared-context}
+Let \(L\) be \((f,h)\)-tuple-substitutable.  If \(d\le f\),
+\(h^{(d)}(\tuple x)=h^{(d)}(\tuple y)\), and there is a concrete arity-\(d\)
+context \(E\) with \(E[\tuple x],E[\tuple y]\in L\), then
+\(\tuple x\equiv_L^d\tuple y\).
+\end{lemma}
+
+\begin{proof}
+The context \(E\) lies in both tuple distributions.  Definition~\ref{def:tuple-substitutable}
+therefore gives equality of the distributions, and the \(h\)-type equality is
+part of the hypothesis.
+\end{proof}
+
+\begin{lemma}[Filling identity]
+\label{lem:filling-identity}
+Let \(\rho\colon\bullet\to(\alpha_1,\ldots,\alpha_e)(\bullet,\bullet)\) be a
+binary linear nondeleting template.  If \(E\) is an arity-\(e\) sentence context
+around the parent tuple and \(\tuple y\) is fixed, then replacing the
+\(x\)-variables in \(E[\rho(\tuple x,\tuple y)]\) by holes defines a concrete
+arity-\(d_B\) context \(E_B^{\rho,E,\tuple y}\) satisfying
+\(E_B^{\rho,E,\tuple y}[\tuple x]=E[\rho(\tuple x,\tuple y)]\).  The analogous
+context \(E_C^{\rho,E,\tuple x}\) satisfies
+\(E_C^{\rho,E,\tuple x}[\tuple y]=E[\rho(\tuple x,\tuple y)]\).
+\end{lemma}
+
+\begin{proof}
+Each child variable occurs exactly once in the template.  Holding the sibling
+tuple fixed and the parent context fixed, the positions formerly occupied by
+the chosen child variables become named holes, with the inherited left-to-right
+order.  Substituting the child tuple back into these holes recovers the original
+filled sentence.
+\end{proof}
+
+\begin{lemma}[Witnessed composition preserves equivalence]
+\label{lem:witnessed-composition}
+Let \(L\) be \((f,h)\)-tuple-substitutable.  Suppose that
+\(E[\rho(\tuple x,\tuple y)]\in L\) for a concrete parent context \(E\), and
+that \(\tuple u\equiv_L\tuple x\) and \(\tuple v\equiv_L\tuple y\).  Then
+\(\rho(\tuple u,\tuple v)\equiv_L\rho(\tuple x,\tuple y)\).
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:filling-identity}, the induced \(B\)-side context satisfies
+\(E_B^{\rho,E,\tuple y}[\tuple x]=E[\rho(\tuple x,\tuple y)]\in L\).  Since
+\(\tuple u\equiv_L\tuple x\), this context also accepts \(\tuple u\), so
+\(E[\rho(\tuple u,\tuple y)]\in L\).  Now use the induced \(C\)-side context
+with sibling \(\tuple u\).  Since \(\tuple v\equiv_L\tuple y\), we get
+\(E[\rho(\tuple u,\tuple v)]\in L\).  The componentwise \(h\)-types of the two
+parent tuples are equal because \(h^{(d_B)}(\tuple u)=h^{(d_B)}(\tuple x)\),
+\(h^{(d_C)}(\tuple v)=h^{(d_C)}(\tuple y)\), and template evaluation is
+homomorphic.  Thus the same concrete parent context \(E\) accepts both parent
+tuples, and Lemma~\ref{lem:shared-context} gives the conclusion.
+\end{proof}
+
+\begin{proposition}[Learner soundness]
+\label{prop:learner-soundness}
+Let \(L\) be \((f,h)\)-tuple-substitutable and let \(K\subseteq L\).  If
+\([\tuple x]\Rightarrow^*\tuple u\) in \(\widehat G_0(K)\), then
+\(\tuple u\equiv_L\tuple x\).  Consequently, \(L(\widehat G_0(K))\subseteq L\).
+\end{proposition}
+
+\begin{proof}
+Induct on the derivation from \([\tuple x]\).  A terminal rule is immediate.  A
+unit rule \([\tuple x]\to[\tuple y]\) was added only when \(h^{(d)}(\tuple x)=
+h^{(d)}(\tuple y)\) and a concrete context \(E\) satisfies
+\(E[\tuple x],E[\tuple y]\in K\subseteq L\).  Lemma~\ref{lem:shared-context}
+gives \(\tuple x\equiv_L\tuple y\), and the induction hypothesis for
+\([\tuple y]\) finishes the case.  For a binary rule
+\([\tuple x]\to\rho([\tuple y],[\tuple z])\), the witness supplies a concrete
+parent occurrence \((E,\tuple x)\) in \(K\), so \(E[\rho(\tuple y,\tuple z)]
+=E[\tuple x]\in L\).  If the children derive \(\tuple u\) and \(\tuple v\), the
+induction hypotheses give \(\tuple u\equiv_L\tuple y\) and
+\(\tuple v\equiv_L\tuple z\).  Lemma~\ref{lem:witnessed-composition} yields
+\(\rho(\tuple u,\tuple v)\equiv_L\tuple x\).
+
+For the start symbol, any derivation begins with \(\widehat S\to[(w_0)]\) for
+some \(w_0\in K\).  If it derives \(w\), then \((w)\equiv_L(w_0)\).  Since the
+empty unary context \(\blank_1\) accepts \((w_0)\), it also accepts \((w)\), so
+\(w\in L\).
+\end{proof}
+
+\subsection{Completeness and Exact Reconstruction}
+\label{sec:completeness}
+
+\begin{lemma}[Simulation of typed rules]
+\label{lem:rule-simulation}
+Assume \(\CS(\widetilde G_0)\subseteq K\subseteq L(G)\).  For each surviving
+nonterminal \(X\), put \(\eta(X):=[\omega(X)]\).  Then every rule of
+\(\widetilde G_0\) is simulated by \(\widehat G_0(K)\) under \(\eta\):
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item If \(X\to(a)\), then \(\eta(X)\Rightarrow^*(a)\).
+\item If \(X\to\rho(Y,Z)\), then
+\(\eta(X)\Rightarrow^*\rho(\eta(Y),\eta(Z))\).
+\item If \(\widetilde S\to X\), then \(\widehat S\to\eta(X)\) is a learner
+start rule.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+For (i), the characteristic sample contains \(\chi(X)[\omega(X)]\) and
+\(\chi(X)[(a)]\).  These two sample words use the same concrete context
+\(\chi(X)\).  Also, by Proposition~\ref{prop:output-invariants},
+\(h^{(1)}(\omega(X))=h(a)\).  Hence the learner has the unit rule
+\([\omega(X)]\to[(a)]\), and it has the terminal rule \([(a)]\to(a)\).
+
+For (ii), let
+\[
+  \tuple z_R:=\rho(\omega(Y),\omega(Z)).
+\]
+The characteristic sample contains both
+\(\chi(X)[\omega(X)]\) and \(\chi(X)[\tuple z_R]\).  Hence
+\(\omega(X)\) and \(\tuple z_R\) occur in the same concrete sentence context
+\(\chi(X)\).  They have the same componentwise \(h\)-type because both belong
+to the output-typed language \(L_X\).  Clause (iv) of
+Definition~\ref{def:learner} therefore adds the unit rule
+\[
+  [\omega(X)]\to[\tuple z_R].
+\]
+
+The word \(\chi(X)[\tuple z_R]\) also supplies the parent occurrence used for
+a binary witness.  By the definition of \(\tuple z_R\), every component of
+\(\omega(Y)\) and \(\omega(Z)\) appears at the variable interval prescribed by
+\(\rho\), with zero-length components represented by the fixed tie-order
+convention.  The tuple values \(\omega(Y)\) and \(\omega(Z)\) are observed in
+\(K\) because the characteristic sample separately contains
+\(\chi(Y)[\omega(Y)]\) and \(\chi(Z)[\omega(Z)]\).  By
+Remark~\ref{rem:binary-witness-locality}, these exposing occurrences need not
+lie in the parent sample word.  Consequently the learner adds
+\[
+  [\tuple z_R]\to\rho([\omega(Y)],[\omega(Z)]).
+\]
+Combining the unit rule and the binary rule gives the required simulation.
+
+For (iii), if \(\widetilde S\to X\) is a trimmed start rule, then by the
+start-child convention \(\chi(X)=\blank_1\), so \(\omega(X)\in\CS(\widetilde
+G_0)\subseteq K\).  Hence \(\widehat S\to[(\omega(X))]\) is a learner start
+rule.
+\end{proof}
+
+\begin{proposition}[Completeness]
+\label{prop:completeness}
+If \(\CS(\widetilde G_0)\subseteq K\subseteq L(G)\), then
+\(L(G)\subseteq L(\widehat G_0(K))\).
+\end{proposition}
+
+\begin{proof}
+We prove by induction on derivation height that, for every surviving typed
+nonterminal \(X\), every tuple derived from \(X\) in \(\widetilde G_0\) is
+derivable from \(\eta(X)=[\omega(X)]\) in the learner grammar.  For a terminal
+rule this is Lemma~\ref{lem:rule-simulation}(i).  In the binary case
+\(X\to\rho(Y,Z)\), apply the induction hypotheses to the two child derivations
+and prepend the finite simulation segment supplied by
+Lemma~\ref{lem:rule-simulation}(ii).  This derives the same parent tuple from
+\(\eta(X)\).
+
+By Proposition~\ref{prop:output-invariants}, every successful \(G\)-derivation
+lifts to a successful derivation in \(\widetilde G_0\).  Its typed start rule is
+simulated by Lemma~\ref{lem:rule-simulation}(iii), and the induction just proved
+simulates the remaining tree.  Hence every word of \(L(G)\) is generated by
+\(\widehat G_0(K)\).
+\end{proof}
+
+\begin{theorem}[Exact reconstruction]
+\label{thm:exact-reconstruction}
+Fix \(f\) and an explicit finite homomorphism \(h\).  Let \(G\) be a reduced
+working binary linear nondeleting MCFG of fan-out at most \(f\), and let
+\(L=L(G)\) be \((f,h)\)-tuple-substitutable.  If \(\widetilde G_0\) is the
+trimmed output-type refinement of \(G\), then every finite sample \(K\) with
+\(\CS(\widetilde G_0)\subseteq K\subseteq L\) satisfies
+\(L(\widehat G_0(K))=L\).
+\end{theorem}
+
+\begin{proof}
+Soundness is Proposition~\ref{prop:learner-soundness}.  Completeness is
+Proposition~\ref{prop:completeness}.
+\end{proof}
+
+\begin{remark}[Language-level exactness]
+\label{rem:language-level-exactness}
+The reconstruction is exact at the language level.  The learner need not
+recover the witnessing nonterminal names, its derivation trees, or an
+isomorphic copy of the target presentation.
+\end{remark}
+
+\begin{corollary}[Identification in the limit]
+\label{cor:gold}
+For fixed \(f\) and fixed explicit \(h\), the class \(\Cmcf{f}{h}\) is
+identifiable in the limit from positive data by the canonical learner
+\(K\mapsto\widehat G_0(K)\).  Recall that \(\Cmcf{f}{h}\) is defined through
+the existence of a reduced working binary linear nondeleting MCFG presentation,
+not through arbitrary MCFG presentations.
+\end{corollary}
+
+\begin{proof}
+For each target \(L\in\Cmcf{f}{h}\), choose a witnessing grammar \(G\) and its
+finite characteristic sample \(\CS(\widetilde G_0)\).  Apply
+Lemma~\ref{lem:sufficient-to-gold} to Theorem~\ref{thm:exact-reconstruction}.
+\end{proof}
+
+\begin{remark}[Possible extension to bounded rule rank]
+\label{rem:bounded-rule-rank}
+The binary-rule convention is used throughout the formal development.  The
+same concrete-witness strategy appears to extend to every fixed rule-rank
+bound \(r\): one would segment a parent tuple into the components of at most
+\(r\) observed child tuples and replace the children one at a time in the
+soundness argument.  A complete formulation would require corresponding
+\(r\)-ary witness definitions, enumeration bounds, and simulation lemmas.  We
+leave that extension to future work and make no rank-\(r\) theorem here.
+\end{remark}
+
+
+
+\section{Hypothesis Construction and Exposure Size}
+\label{sec:poly-time}
+
+\begin{theorem}[Fixed-parameter polynomial construction]
+\label{thm:poly}
+For fixed \(f\) and fixed explicit \(h\), the grammar \(\widehat G_0(K)\) is
+constructible in time \(\|K\|_+^{O(f)}\), with constants depending on the
+explicit monoid.  In particular, for each fixed \(f\) and \(h\), this is a
+polynomial in \(\|K\|_+\), including output size; the degree of that polynomial
+grows with \(f\), so the bound is fixed-parameter rather than uniform in
+\(f\).
+\end{theorem}
+
+\begin{proof}
+Let \(n=\|K\|_+\).  For fixed \(d\le f\), an arity-\(d\) tuple occurrence in a
+word of length at most \(n\) is determined by \(O(d)\) cuts or interval endpoints,
+together with an ordering datum depending only on \(d\).  Hence there are
+\(n^{O(d)}\) arity-\(d\) occurrences, and summing over \(d\le f\) and over the
+words in \(K\) gives at most \(n^{O(f)}\) observed tuples.
+
+Terminal and start rules are immediate.  Unit rules are found by comparing
+pairs of observed tuples of the same arity, checking equality of componentwise
+\(h\)-types, and enumerating observed concrete occurrences to decide whether a
+shared concrete context fills both tuples to sample words.  All of these
+operations are bounded by \(n^{O(f)}\) because \(M\) and \(f\) are fixed.
+
+For binary witness rules, enumerate a parent occurrence, two observed child
+tuple values of arities at most \(f\), and placements of their components in a
+segmentation of the parent components into terminal gaps and at most \(2f\)
+variable intervals.  Since \(f\) is fixed, the
+number of endpoint choices, cut choices, and tie-order choices is
+\(n^{O(f)}\).  Each candidate segmentation is checked by direct string
+comparison and then output as one rule.  Hence the number of generated rules
+and the time needed to generate them are \(n^{O(f)}\), including output size.
+
+Unit rules are part of the learner grammar.  If a unit-free working grammar is
+required, compute the unit closure over the polynomial-size nonterminal set and
+replace unit paths by the corresponding terminal and binary rules.  This causes
+only polynomial blow-up for fixed \(f\) and \(h\).
+\end{proof}
+
+\subsection{Exposure size and the polynomial-data boundary}
+\label{subsec:exposure-boundary}
+
+\begin{definition}[Exposure size]
+\label{def:exposure-size}
+Let \(G\) be a witnessing target presentation and let \(\widetilde G_0\) be its
+trimmed output-type refinement.  Define \(B_{\mathrm{exp}}(G,h)\) as the
+maximum positive size of the characteristic-sample words
+\[
+  \chi(X)[\omega(X)],\qquad
+  \chi(X)[(a)],\qquad
+  \chi(X)[\rho(\omega(Y),\omega(Z))]
+\]
+used for surviving typed nonterminals, terminal rules, and binary rules of
+\(\widetilde G_0\).
+\end{definition}
+
+\begin{proposition}[Characteristic-sample size under an exposure bound]
+\label{prop:cs-exposure-bound}
+Let \(N_{\mathrm{NT}}\) be the number of surviving typed nonterminals of
+\(\widetilde G_0\), and let \(N_{\mathrm{rule}}\) be the number of surviving
+non-start typed rules.  Then
+\[
+  |\CS(\widetilde G_0)|
+  \le N_{\mathrm{NT}}+N_{\mathrm{rule}}
+\]
+and
+\[
+  \|\CS(\widetilde G_0)\|_+
+  \le
+  (N_{\mathrm{NT}}+N_{\mathrm{rule}})
+  B_{\mathrm{exp}}(G,h).
+\]
+Consequently, every subclass for which \(N_{\mathrm{NT}}\),
+\(N_{\mathrm{rule}}\), and \(B_{\mathrm{exp}}(G,h)\) are polynomially bounded
+in the chosen witnessing-presentation size has polynomial-size characteristic
+samples.
+\end{proposition}
+
+\begin{proof}
+Definition~\ref{def:cs} contributes at most one anchor word for every surviving
+typed nonterminal and at most one filled word for every surviving non-start
+typed rule; duplicate words can only reduce the cardinality.  Every contributed
+word has positive size at most \(B_{\mathrm{exp}}(G,h)\), which gives the two
+bounds.
+\end{proof}
+
+The full output-type refinement has at most
+\[
+  \sum_{A\in V\setminus\{S\}} |M|^{\mu(A)}
+\]
+typed nonterminals, and a binary rule \(A\to\rho(B,C)\) gives at most
+\(|M|^{\mu(B)+\mu(C)}\) typed rules.  Thus, for fixed \(f\) and fixed \(h\),
+the combinatorial size of the refinement is bounded by a constant multiple of
+the witnessing-grammar size.  The uncontrolled quantity in the full class is
+the length of the exposing derivations and hence the exposure bound.
+
+This proposition does not establish a polynomial exposure bound for the whole
+class \(\Cmcf{f}{h}\).  The unconditional result of this paper is finite exact
+reconstruction together with polynomial-time construction of the hypothesis
+from a given finite sample.  A polynomial time-and-data theorem is obtained
+only for subclasses with an additional polynomial exposure bound.
+
+
+\section{The Fixed Observation Parameter}
+\label{sec:fixed-observation}
+
+The fixed morphism \(h\) is part of the learning problem in
+Corollary~\ref{cor:gold}; the learner is not asked to discover a suitable
+finite congruence from positive data.  This section shows that the assumption is
+not merely a presentation convenience.  A fixed monoid-size bound can be
+compiled into one product observation, whereas the unbounded union over all
+finite observations is not identifiable already in fan-out one.
+
+\begin{definition}[No-advice union class]
+\label{def:no-advice-union}
+For a fixed alphabet and a fixed fan-out bound \(f\), define
+\[
+  \Cmcf{f}{\bullet}:=\bigcup_h \Cmcf{f}{h},
+\]
+where the union ranges over all explicit finite monoid homomorphisms
+\(h\colon\Sigma^*\to M\).  A learner for this class receives positive data only;
+it is not given which morphism witnesses membership of the target.
+\end{definition}
+
+\begin{lemma}[Ascending-chain obstruction]
+\label{lem:ascending-chain-obstruction}
+Let a language class \(\mathcal C\) contain languages
+\[
+  L_1\subsetneq L_2\subsetneq\cdots
+\]
+and their union \(L_\infty=\bigcup_{k\ge1}L_k\).  Then \(\mathcal C\) is not
+identifiable in the limit from positive data.
+\end{lemma}
+
+\begin{proof}
+Assume that a learner \(\mathcal A\) identifies every language in
+\(\mathcal C\).  We construct a text for \(L_\infty\) on which
+\(\mathcal A\) outputs infinitely many different hypothesis languages.
+Fix an enumeration \(v_1,v_2,\ldots\) of \(L_\infty\).  Suppose a finite prefix
+\(\sigma_s\) has been constructed and its content is contained in some
+\(L_{k_s}\).  Continue \(\sigma_s\) with elements of a text for \(L_{k_s}\).
+The resulting infinite continuation is a text for \(L_{k_s}\), so at some
+finite extension the learner must output a hypothesis whose language is
+\(L_{k_s}\).  Then append an element of
+\(L_{k_s+1}\setminus L_{k_s}\), and append \(v_s\) if it has not yet appeared.
+The new finite content is contained in some later \(L_{k_{s+1}}\), and the
+construction can be repeated.
+
+Every \(v_s\) eventually appears, so the resulting sequence is a text for
+\(L_\infty\).  At the selected stages, however, the learner outputs the
+strictly increasing approximant languages \(L_{k_s}\), and therefore cannot
+converge semantically on this text.  This contradicts identification of
+\(L_\infty\).
+\end{proof}
+
+Let
+\[
+  L_*:=\{a^n b^n\mid n\ge1\},
+  \qquad
+  L_k:=\{a^n b^n\mid 1\le n\le k\}.
+\]
+All these languages have fan-out-one working binary linear nondeleting MCFG
+presentations.  We first put the limit language into one fixed observation
+fiber, for every arity bound.
+
+\begin{lemma}[The limit language is substitutable for a coarse envelope morphism]
+\label{lem:limit-ab-substitutable}
+Let \(h_*\) be the transition morphism of the standard DFA for \(a^*b^*\).  Then
+\(L_*\) is \((f,h_*)\)-tuple-substitutable for every \(f\ge1\).
+\end{lemma}
+
+\begin{proof}
+We prove the condition for every arity \(d\).  Suppose tuples
+\(\tuple x,\tuple y\in(\Sigma^*)^d\) have the same componentwise \(h_*\)-type
+and share an accepting sentence context \(E\).  Thus
+\(E[\tuple x]=a^n b^n\) and \(E[\tuple y]=a^m b^m\) for some \(m,n\ge1\).
+Let \(A_x,B_x\) be the total numbers of \(a\)- and \(b\)-letters occurring in
+the components of \(\tuple x\), and define \(A_y,B_y\) similarly.  The outside
+terminal contribution of \(E\) is the same in the two fillings, so comparison
+of the two accepted words gives
+\[
+  A_y-A_x=m-n=B_y-B_x .
+\]
+
+Now let \(F\) be any accepting sentence context for \(\tuple x\), say
+\(F[\tuple x]=a^N b^N\).  Replacing the components one at a time by components
+with the same \(h_*\)-value preserves the transition morphism of the whole
+filled sentence.  Hence \(F[\tuple y]\in a^*b^*\).  Its total number of
+\(a\)-letters is \(N+(A_y-A_x)\), and its total number of \(b\)-letters is
+\(N+(B_y-B_x)\), which are equal by the displayed identity.  This common value
+cannot be zero: if \(F[\tuple y]=\eps\), then all terminal parts of \(F\) and
+all components of \(\tuple y\) are empty; since no nonempty word acts as the
+identity transformation of the standard \(a^*b^*\) zone automaton, equality of
+componentwise \(h_*\)-types forces all components of \(\tuple x\) to be empty,
+contrary to \(F[\tuple x]\in L_*\).  Therefore \(F[\tuple y]\in L_*\).  The
+reverse inclusion is symmetric, so the tuple distributions are equal.
+\end{proof}
+
+\begin{lemma}[Finite approximants can be made substitutable]
+\label{lem:finite-approximants-substitutable}
+For every \(k\ge1\) and every \(f\ge1\), there exists an explicit finite monoid
+morphism \(h_k\) such that \(L_k\) is \((f,h_k)\)-tuple-substitutable.  Moreover,
+if a morphism \(h\) makes \(L_k\) \((1,h)\)-tuple-substitutable, then the values
+\(h(a^i b^i)\), \(1\le i\le k\), are pairwise distinct.  In particular
+\(|\operatorname{im}(h)|\ge k\).
+\end{lemma}
+
+\begin{proof}
+For existence, take \(h_k\) to be the syntactic morphism of the regular language
+\(L_k\).  If \(h_k(x_i)=h_k(y_i)\) for each component of two arity-\(d\) tuples
+\(\tuple x,\tuple y\), then replacing the components one at a time preserves
+membership in \(L_k\) in every surrounding sentence context, because each
+replacement is by syntactically equivalent strings with respect to \(L_k\).
+Hence \(\D_{L_k}^{(d)}(\tuple x)=\D_{L_k}^{(d)}(\tuple y)\) for every \(d\), and
+the \((f,h_k)\)-substitutability implication is immediate.
+
+For the lower bound, fix \(1\le i<j\le k\).  The words
+\(x_i=a^i b^i\) and \(x_j=a^j b^j\) share the accepting context
+\((\eps,\eps)\), since both belong to \(L_k\).  Their distributions differ:
+\((a^{k-i},b^{k-i})\) accepts \(x_i\), producing \(a^k b^k\in L_k\), but it
+sends \(x_j\) to \(a^{k-i+j}b^{k-i+j}\notin L_k\).  Therefore, if
+\(h(x_i)=h(x_j)\), the \((1,h)\)-substitutability implication would fail.  All
+\(h(a^i b^i)\), \(1\le i\le k\), must be distinct.
+\end{proof}
+
+\begin{proposition}[The separating chain cannot lie in one fixed fiber]
+\label{prop:separating-chain-not-one-fiber}
+For any fixed finite morphism \(h\), only finitely many of the languages
+\(L_k\) can be \((1,h)\)-tuple-substitutable.  More precisely, if
+\(L_k\) is \((1,h)\)-tuple-substitutable, then \(k\le |\operatorname{im}(h)|\).
+\end{proposition}
+
+\begin{proof}
+This is the lower bound in Lemma~\ref{lem:finite-approximants-substitutable}.
+For fixed \(h\), the image \(\operatorname{im}(h)\) is finite, so only those
+\(k\le |\operatorname{im}(h)|\) can occur.  Thus the superfinite chain used
+below necessarily moves through increasingly refined observation fibers; it is
+not a contradiction to the fixed-\(h\) learnability theorem.
+\end{proof}
+
+\begin{theorem}[No-advice non-identifiability]
+\label{thm:no-advice-nonidentifiability}
+For every fixed \(f\ge1\), the no-advice class \(\Cmcf{f}{\bullet}\) is not
+identifiable in the limit from positive data.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:limit-ab-substitutable},
+\(L_*\in\Cmcf{f}{h_*}\), and by
+Lemma~\ref{lem:finite-approximants-substitutable}, every
+\(L_k\in\Cmcf{f}{h_k}\) for some explicit finite morphism \(h_k\).  Thus the
+no-advice union contains \(L_1\subsetneq L_2\subsetneq\cdots\) and their union
+\(L_*\).  Lemma~\ref{lem:ascending-chain-obstruction} applies.
+\end{proof}
+
+The theorem should be read together with Corollary~\ref{cor:gold}.  A
+fixed finite observation morphism selects one learnable fiber.  If the fiber is
+not supplied and the target may use any finite morphism, the union class
+contains a superfinite chain and positive data alone cannot determine the
+correct finite observation interface.
+
+\begin{definition}[Bounded-size observation union]
+\label{def:bounded-observation-union}
+Fix the finite alphabet \(\Sigma\), a fan-out bound \(f\ge1\), and \(k\ge1\).
+Define
+\[
+  \Cmcf{f}{\le k}:=\bigcup_h \Cmcf{f}{h},
+\]
+where the union ranges over all explicit finite monoid homomorphisms
+\(h:\Sigma^*\to M\) with \(|M|\le k\).
+\end{definition}
+
+\begin{lemma}[Isomorphism invariance of the observation]
+\label{lem:iso-invariance}
+If \(\varphi:M\to M'\) is an injective monoid homomorphism, then a language is
+\((f,h)\)-tuple-substitutable iff it is \((f,\varphi\circ h)\)-tuple-substitutable.
+Consequently \(\Cmcf{f}{h}=\Cmcf{f}{\varphi\circ h}\).
+\end{lemma}
+
+\begin{proof}
+Definition~\ref{def:tuple-substitutable} uses \(h\) only through equalities of
+componentwise values.  Since \(\varphi\) is injective,
+\(h(u)=h(v)\) iff \(\varphi(h(u))=\varphi(h(v))\).  The grammar-theoretic part of
+membership is unchanged.
+\end{proof}
+
+\begin{theorem}[Bounded observation size restores identifiability]
+\label{thm:bounded-union-identifiable}
+For every fixed finite alphabet \(\Sigma\), fan-out bound \(f\ge1\), and
+\(k\ge1\), there is an explicit finite monoid homomorphism
+\(H=H_{\Sigma,k}:\Sigma^*\to M_H\) such that
+\[
+  \Cmcf{f}{\le k}\subseteq\Cmcf{f}{H}.
+\]
+Consequently the canonical learner with parameters \((f,H)\) identifies
+\(\Cmcf{f}{\le k}\) in the limit from positive data.
+\end{theorem}
+
+\begin{proof}
+Up to isomorphism there are only finitely many monoids of cardinality at most
+\(k\); fix explicit representatives \(M_1,\ldots,M_t\).  Since \(\Sigma^*\) is
+free, a homomorphism \(\Sigma^*\to M_j\) is uniquely determined by an arbitrary
+map \(\Sigma\to M_j\), so there are at most \(t k^{|\Sigma|}\) homomorphisms into
+the representatives.  Enumerate them as
+\(h_i:\Sigma^*\to M_{j_i}\), \(1\le i\le r\), and define
+\[
+  M_H:=M_{j_1}\times\cdots\times M_{j_r},
+  \qquad
+  H:=(h_1,\ldots,h_r):\Sigma^*\to M_H,
+\]
+with componentwise multiplication.  The multiplication table of \(M_H\) and the
+letter values \(H(a)\), \(a\in\Sigma\), are computable from the factor tables, so
+\(H\) is explicit.
+
+Let \(h:\Sigma^*\to M\) be any explicit homomorphism with \(|M|\le k\).  Choose
+an isomorphism \(\varphi:M\to M_j\) onto a representative.  Then
+\(\varphi\circ h\) appears in the enumeration, say \(\varphi\circ h=h_i\).  The
+homomorphism
+\[
+  \pi:=\varphi^{-1}\circ\mathrm{pr}_i:M_H\to M
+\]
+satisfies \(\pi\circ H=h\).  Hence \(h\preceq H\), and
+Proposition~\ref{prop:h-refinement-monotonicity} gives
+\(\Cmcf{f}{h}\subseteq\Cmcf{f}{H}\).  Taking the union over all \(|M|\le k\)
+yields \(\Cmcf{f}{\le k}\subseteq\Cmcf{f}{H}\).  By
+Corollary~\ref{cor:gold}, the canonical learner for the fixed morphism \(H\)
+identifies \(\Cmcf{f}{H}\).  Identification in the limit is a universal
+statement over targets and texts, so the same learner identifies the subclass
+\(\Cmcf{f}{\le k}\).
+\end{proof}
+
+\begin{remark}[Existence rather than practical size]
+\label{rem:universal-product-size}
+The universal product morphism \(H_{\Sigma,k}\) may be extremely large.  The
+theorem is an identifiability result for each fixed \((\Sigma,f,k)\), not a
+claim that this product is a practical representation or that its size is
+polynomial in \(k\).  Its role is to show that the failure of the no-advice
+union begins only when the observation size is unbounded.
+\end{remark}
+
+\begin{remark}[Bounded versus unbounded observation advice]
+\label{rem:bounded-vs-unbounded-union}
+Theorem~\ref{thm:bounded-union-identifiable} does not contradict
+Theorem~\ref{thm:no-advice-nonidentifiability}.  It locates the failure at the
+unboundedness of the observation monoid.  By
+Lemma~\ref{lem:finite-approximants-substitutable}, the finite approximant
+\(L_k=\{a^n b^n\mid 1\le n\le k\}\) is \((1,h)\)-tuple-substitutable only if
+\(|\operatorname{im}(h)|\ge k\).  Thus the superfinite chain used in the
+no-advice theorem cannot lie in any fixed bounded-size slice.  Since
+\(\Cmcf{f}{\bullet}=\bigcup_{k\ge1}\Cmcf{f}{\le k}\), positive-data
+identifiability holds on every bounded slice but is not preserved under the
+increasing union.  This is an identifiability statement, not an efficiency
+claim uniform in \(k\) or \(\Sigma\): for fixed \((\Sigma,k)\), the product
+morphism \(H_{\Sigma,k}\) is fixed, but its size may be enormous.
+\end{remark}
+
+\subsection{Infinite member kernels}
+\label{subsec:member-kernel-exclusion}
+
+For a language \(L\subseteq\Sigma^*\), define its arity-one member kernel by
+\[
+  \mathrm{MK}_1(L):=\{\D_L^{(1)}(w)\mid w\in L\}.
+\]
+This is not a finite-kernel condition for all residual distributions; it only
+records distributions of strings that are themselves members of \(L\).
+
+\begin{theorem}[Exclusion by infinite member kernel]
+\label{thm:member-kernel-exclusion}
+Let \(L\subseteq\Sigma^*\).  If \(\mathrm{MK}_1(L)\) is infinite, then
+\[
+  L\notin \bigcup_h \Cmcf{f}{h}
+\]
+for every \(f\ge1\), where the union ranges over all explicit finite monoid
+homomorphisms \(h:\Sigma^*\to M\).
+\end{theorem}
+
+\begin{proof}
+Suppose, toward contradiction, that \(L\in\Cmcf{f}{h}\) for some explicit finite
+monoid morphism \(h:\Sigma^*\to M\).  Let \(w,w'\in L\) satisfy \(h(w)=h(w')\).
+The identity sentence context \(\blank_1\) is accepting for both \(w\) and
+\(w'\).  Since \(f\ge1\) and \(L\) is \((f,h)\)-tuple-substitutable, the
+arity-one implication gives
+\[
+  \D_L^{(1)}(w)=\D_L^{(1)}(w').
+\]
+Thus the distribution \(\D_L^{(1)}(w)\), for member strings \(w\in L\), is
+determined by the finite value \(h(w)\in M\).  Hence at most \(|M|\) different
+member distributions can occur, contradicting the infinitude of
+\(\mathrm{MK}_1(L)\).
+\end{proof}
+
+\begin{corollary}[The slope union is outside every finite observation]
+\label{cor:slope-union-outside-every-finite-observation}
+For every \(f\ge1\),
+\[
+  L_{\mathrm{slope}}
+  =
+  \{a^n b^n\mid n\ge1\}
+  \cup
+  \{a^n b^{2n}\mid n\ge1\}
+\]
+satisfies
+\[
+  L_{\mathrm{slope}}\notin \bigcup_h \Cmcf{f}{h}.
+\]
+\end{corollary}
+
+The slope union is context-free (it is the union of two context-free
+languages), so this obstruction is not caused by high fan-out or by copying
+power.
+
+\begin{proof}
+By Theorem~\ref{thm:member-kernel-exclusion}, it suffices to show that the
+arity-one member kernel is infinite.  For \(n\ge1\), put
+\[
+  w_n=a^n b^n\in L_{\mathrm{slope}},
+  \qquad
+  C_n=\blank_1 b^n .
+\]
+Then \(C_n[w_n]=a^n b^{2n}\in L_{\mathrm{slope}}\).  If \(m\ne n\), then
+\(C_n[w_m]=a^m b^{m+n}\).  This word is not in \(\{a^r b^r\mid r\ge1\}\), since
+that would require \(m+n=m\).  It is not in \(\{a^r b^{2r}\mid r\ge1\}\) either,
+since that would require \(m+n=2m\), hence \(n=m\), contrary to assumption.
+Therefore
+\[
+  C_n\in\D_{L_{\mathrm{slope}}}^{(1)}(w_n)
+  \quad\text{but}\quad
+  C_n\notin\D_{L_{\mathrm{slope}}}^{(1)}(w_m)
+  \qquad(m\ne n).
+\]
+The member distributions are pairwise distinct, so
+Theorem~\ref{thm:member-kernel-exclusion} applies.
+\end{proof}
+
+\begin{proposition}[The copy language is outside every finite observation]
+\label{prop:copy-language-outside-every-finite-observation}
+Let
+\[
+  L_{\mathrm{copy}}=
+  \{ww\mid w\in\{a,b\}^+\}.
+\]
+Then
+\[
+  L_{\mathrm{copy}}\notin\bigcup_h \Cmcf{f}{h}
+\]
+for every \(f\ge1\).  This holds even though \(L_{\mathrm{copy}}\) is a standard
+fan-out-two linear multiple context-free language.
+\end{proposition}
+
+\begin{proof}
+The fan-out-two upper bound is the usual MCFG copy construction; for example,
+with rank-one linear rules one may use
+\(A\to(a x^1,a x^2)(A)\), \(A\to(b x^1,b x^2)(A)\),
+\(A\to(a,a)\), and \(A\to(b,b)\), followed by a top concatenation rule.  This
+upper bound is only background here; the exclusion below is independent of any
+presentation.
+
+We prove that the arity-one member kernel is infinite.  For \(n\ge1\), put
+\[
+  x_n=a^n b,
+  \qquad
+  z_n=x_nx_n\in L_{\mathrm{copy}},
+  \qquad
+  C_n=\blank_1 z_n .
+\]
+Then \(C_n[z_n]=z_nz_n\in L_{\mathrm{copy}}\).  We claim that if \(m\ne n\), then
+\[
+  C_n[z_m]=z_mz_n=x_mx_mx_nx_n
+\]
+is not a square.  Write
+\[
+  x_mx_mx_nx_n=a^m b\,a^m b\,a^n b\,a^n b,
+\]
+and let \(H=m+n+2\), half of its total length.  In any square, letters at
+positions separated by \(H\) agree.  The four occurrences of \(b\) are at
+positions
+\[
+  m+1,
+  \quad 2m+2,
+  \quad 2m+n+3,
+  \quad 2m+2n+4 .
+\]
+If \(m<n\), the second position \(2m+2\) lies in the first half, while
+\[
+  (2m+2)+H=3m+n+4
+\]
+lies strictly between the third and fourth occurrences of \(b\), where the
+letter is \(a\).  This contradicts the square condition.  If \(m>n\), then the
+second position lies in the second half, and shifting it back by \(H\) gives
+\[
+  (2m+2)-H=m-n,
+\]
+which lies before the first occurrence of \(b\), again at an \(a\).  This also
+contradicts the square condition.
+
+Thus
+\[
+  C_n\in\D_{L_{\mathrm{copy}}}^{(1)}(z_n)
+  \quad\text{but}\quad
+  C_n\notin\D_{L_{\mathrm{copy}}}^{(1)}(z_m)
+  \qquad(m\ne n).
+\]
+The member distributions \(\D_{L_{\mathrm{copy}}}^{(1)}(z_n)\) are pairwise
+distinct.  Theorem~\ref{thm:member-kernel-exclusion} excludes
+\(L_{\mathrm{copy}}\) from every finite-observation class.
+\end{proof}
+
+\begin{remark}
+The slope-union example shows that the obstruction is not merely a poor choice
+of regular envelope: no finite observation morphism can make that union safe.
+The copy-language example shows a different boundary: even a standard fan-out-two
+MCFL can fail every finite-observation promise.
+\end{remark}
+
+
+
+\section{Comparison with Distributional Learning}
+\label{sec:comparison}
+
+The fixed-observation condition is best viewed as a typed version of
+distributional substitutability.  It weakens the untyped trigger by requiring a
+componentwise finite-monoid type match before shared contexts force equality of
+distributions.
+
+\paragraph{Three differences from multidimensional substitutability.}
+The present condition is close in spirit to Yoshinaka's multidimensional
+substitutability, but it is not intended as a direct replacement of that
+condition.  There are three relevant differences.
+
+First, the substitution trigger is typed.  In the untyped setting, a shared
+accepting multidimensional context already forces equality of distributions.
+Here a shared accepting named sentence context forces equality only after the
+componentwise finite observation \(h^{(d)}\) agrees.  Thus the finite morphism
+acts as a regular or finite-state guard on distributional substitution.
+
+Second, the contexts used here are sentence-level named-hole contexts rather
+than grammar-internal multidimensional contexts.  They record how a tuple is
+exposed in complete strings, with named components allowed to appear in any
+sentence order.  This is deliberately weaker than storing a full derivational
+interface: the learner observes concrete occurrences in positive strings and
+uses the characteristic sample to supply the missing exposing contexts.
+
+Third, the result is advice-relative.  The finite morphism \(h\) is fixed before
+learning starts and is not inferred from the text.  Consequently, the theorem
+identifies a fixed observation fiber \(\Cmcf{f}{h}\), not the full class of
+MCFLs and not the union over all possible finite observations.
+
+\begin{center}
+\begin{tabular}{|p{0.28\textwidth}|p{0.30\textwidth}|p{0.30\textwidth}|}
+\hline
+ & Multidimensional substitutability & Fixed-observation tuple substitutability \\
+\hline
+Trigger & Shared multidimensional context & Shared named sentence context plus equal \(h\)-type \\
+\hline
+Type information & None, or implicit in the context system & Explicit finite monoid observation fixed in advance \\
+\hline
+Learning target & A distributionally restricted MCFL class & A fixed advice-relative fiber \(\Cmcf{f}{h}\) \\
+\hline
+Main limitation & Context condition controls substitution directly & The observation \(h\) is not learned from positive data \\
+\hline
+\end{tabular}
+\end{center}
+
+The examples in Section~\ref{sec:running-examples} illustrate why the finite
+guard is useful.  In block-synchronization languages, a shared sentence context
+alone is too coarse: tuples may occur in the same outside position while
+crossing different regular zones.  The transition morphism of the regular
+envelope prevents such unsafe substitutions, while the equality constraints are
+still learned distributionally from positive data.
+
+Let \(\Yclass{f}^{\mathrm{nam}}\) denote the class of fan-out-at-most-\(f\) MCFLs
+satisfying the untyped named-sentence substitutability condition: for every
+\(1\le d\le f\), whenever two arity-\(d\) tuples share an accepting named
+sentence context, their accepting named sentence-context distributions are equal.
+
+\begin{proposition}[Untyped named substitutability implies every fixed observation]
+\label{prop:untyped-named-implies-fixed-h}
+For every explicit finite morphism \(h\) and every \(f\ge1\),
+\[
+  \Yclass{f}^{\mathrm{nam}}\subseteq \Cmcf{f}{h}.
+\]
+\end{proposition}
+
+\begin{proof}
+The fixed-\(h\) implication has the same conclusion as the untyped named
+condition and only adds the extra antecedent
+\(h^{(d)}(\tuple x)=h^{(d)}(\tuple y)\).  Thus every untyped named-substitutable
+language is automatically \((f,h)\)-tuple-substitutable.  The same fan-out
+presentation witnesses the grammar-theoretic part of membership.
+\end{proof}
+
+The inclusion can be strict.  Let \(L_3=\{a^n b^n c^n\mid n\ge1\}\), and let
+\(h_R\) be the transition morphism of the standard DFA for \(R=a^*b^*c^*\).
+The language \(L_3\) has a fan-out-two working presentation by
+Proposition~\ref{prop:l3-running-example}.  It is also \((f,h_R)\)-tuple-
+substitutable for every \(f\ge2\).  Indeed, a shared accepting context fixes a
+common shift in the three letter counts, while equality of \(h_R\)-types keeps
+every later filling inside the block zone \(a^*b^*c^*\); hence every later
+accepting context for one tuple is accepting for the other, and conversely.
+
+On the other hand, \(L_3\) is not untyped named-substitutable.  The arity-two
+tuples
+\[
+  \tuple x=(a,c),
+  \qquad
+  \tuple y=(a^2b,c^2)
+\]
+share the accepting context \(E=\blank_1 b\blank_2\), since
+\(E[\tuple x]=abc\) and \(E[\tuple y]=a^2b^2c^2\).  But for
+\(F=\blank_1 abb\blank_2 c\), one has
+\(F[\tuple x]=a^2b^2c^2\in L_3\), whereas
+\(F[\tuple y]=aababbccc\notin L_3\).  Thus the typed fixed-observation condition
+strictly extends the corresponding untyped named condition.
+
+The comparison with Yoshinaka's ordered multidimensional contexts is not a
+literal inclusion statement, because ordered holes and named sentence holes test
+different context geometries.  The present formalism deliberately uses named
+holes, since MCFG components may be exposed in a surrounding sentence in a
+permuted order.  The fixed morphism then supplies a finite type discipline on
+those exposed components rather than an untyped global equality of all shared
+context distributions.
+
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+For every fixed fan-out bound \(f\) and fixed explicit finite monoid observation
+\(h\), the class \(\Cmcf{f}{h}\) is identifiable in the limit from positive
+data by a canonical tuple-enumerating learner.  The construction stores
+componentwise output types and observed tuple values; component placement is
+recovered from concrete witnessed segmentations, and substitution is guarded
+by an actually shared sentence context.  The reconstruction is exact at the
+language level, while the observation morphism and the semantic
+substitutability promise remain external assumptions.
+
+The observation parameter has a sharp qualitative boundary.  A fixed fiber is
+learnable; the union of all fibers with a fixed monoid-size bound is still
+learnable through one finite product morphism; but the unbounded union over all
+finite observations is not identifiable from positive data.  Independently,
+the infinite member-kernel criterion excludes languages whose member
+context-distributions cannot be compressed into finitely many observation
+values.
+
+The resulting region is nontrivial but proper.  It contains standard
+three-block, parallel, and cross-serial synchronization examples, while the
+context-free slope union and the fan-out-two copy language lie outside every
+finite-observation fiber.  Fixed finite-monoid advice therefore isolates a
+genuine learnable region inside the multiple context-free languages rather
+than a disguised presentation of the full class.
+
+
+\appendix
+\section{Semantic Non-Effectivity of the Promise}
+\label{app:semantic-promise}
+
+The identification theorem is conditional on the semantic
+\((f,h)\)-tuple-substitutability promise.  This appendix records why the promise
+is not treated as an effectively checkable syntactic side condition.
+
+\begin{theorem}[Undecidability for arbitrary fixed finite observations]
+\label{thm:promise-undecidable}
+Let \(\Sigma\) be a fixed finite alphabet with \(|\Sigma|\ge2\), and let
+\(h:\Sigma^*\to M\) be any fixed explicit homomorphism into a finite monoid.
+Then it is undecidable, given a context-free grammar over \(\Sigma\), whether
+its language is \((1,h)\)-tuple-substitutable.  The same holds for
+\((f,h)\)-tuple-substitutability for every fixed \(f\ge1\).  Moreover, the set
+of positive instances is co-r.e.-complete (equivalently,
+\(\Pi^0_1\)-complete under standard effective encodings).
+\end{theorem}
+
+\begin{proof}
+Universality for context-free grammars is \(\Pi^0_1\)-complete under
+standard effective encodings \cite{DomaratzkiOkhotinShallit2007}.  We first
+record that the same classification holds over the fixed alphabet \(\Sigma\).
+Given a CFG \(G\) over an arbitrary finite alphabet \(\Gamma\), choose distinct
+letters \(a,b\in\Sigma\) and an injective fixed-length coding
+\(c:\Gamma\to\{a,b\}^m\), extended homomorphically to \(\Gamma^*\).  The
+language \(C:=c(\Gamma)^*\) is regular, and one can effectively construct a CFG
+over \(\Sigma\) for
+\[
+  U_G:=(\Sigma^*\setminus C)\cup c(L(G)).
+\]
+Since \(c\) is injective,
+\[
+  U_G=\Sigma^*
+  \quad\Longleftrightarrow\quad
+  L(G)=\Gamma^*.
+\]
+Thus universality is \(\Pi^0_1\)-hard over every fixed alphabet of cardinality
+at least two.  It belongs to \(\Pi^0_1\), since nonuniversality is recursively
+enumerable by enumerating words and deciding CFG membership.  Hence fixed-
+alphabet universality is \(\Pi^0_1\)-complete.  The nonunary restriction is
+essential: Hopcroft's characterization of equality with a fixed regular
+language implies that CFG universality is decidable over a unary alphabet and
+undecidable over every fixed nonunary alphabet \cite{Hopcroft1969}.
+
+We now reduce fixed-alphabet CFG universality to the semantic promise.  Let
+\(G_0\) be a CFG over \(\Sigma\).  Since \(M\) is finite, choose an integer
+\(N\) with \(|\Sigma|^N>|M|\).  Among the words of
+length \(N\) there are distinct words \(X,Y\in\Sigma^N\) with
+\(h(X)=h(Y)\).  The equal length and distinctness imply
+\(X\Sigma^*\cap Y\Sigma^*=\emptyset\).
+
+Fix a nonempty word \(\beta\in\Sigma^+\).  Given a grammar \(G_0\) over
+\(\Sigma\), define
+\[
+  L'(G_0):=(\Sigma^*\setminus \beta\Sigma^*)\cup \beta L(G_0).
+\]
+Then \(L'(G_0)=\Sigma^*\) if \(L(G_0)=\Sigma^*\), while if
+\(z\notin L(G_0)\) then \(\beta z\notin L'(G_0)\).  Also
+\(\eps\in L'(G_0)\).
+
+Let \(H_0=h(\Sigma^*)\) be the image submonoid and set
+\[
+  S:=h(Y)H_0,
+  \qquad K_{\mathrm{pos}}:=h^{-1}(S).
+\]
+Finally put
+\[
+  K(G_0):=\bigl(K_{\mathrm{pos}}\setminus Y\Sigma^*\bigr)\cup YL'(G_0).
+\]
+The language \(K(G_0)\) is effectively context-free: \(K_{\mathrm{pos}}\) and
+\(Y\Sigma^*\) are regular, and \(YL'(G_0)\) is context-free.
+
+If \(L(G_0)=\Sigma^*\), then \(L'(G_0)=\Sigma^*\).  Since
+\(Y\Sigma^*\subseteq K_{\mathrm{pos}}\), we obtain
+\[
+  K(G_0)=K_{\mathrm{pos}}=h^{-1}(S).
+\]
+Thus membership in \(K(G_0)\) is determined by the \(h\)-value of the whole
+word.  If two tuples have the same componentwise \(h\)-type, then every sentence
+context gives the two fillings the same total \(h\)-value.  Hence their
+accepting contexts for \(K(G_0)\) are equal, and \(K(G_0)\) is
+\((f,h)\)-tuple-substitutable for every \(f\ge1\).
+
+Conversely, suppose \(L(G_0)\ne\Sigma^*\), and choose \(z\notin L(G_0)\).  Put
+\[
+  u:=X,
+  \qquad v:=Y,
+  \qquad E=\blank_1,
+  \qquad F=\blank_1\beta z .
+\]
+Then \(h(u)=h(v)\).  Also \(E[u]=X\in K_{\mathrm{pos}}\setminus Y\Sigma^*\),
+because \(X\Sigma^*\cap Y\Sigma^*=\emptyset\), and
+\(E[v]=Y\in YL'(G_0)\), because \(\eps\in L'(G_0)\).  Moreover
+\(F[u]=X\beta z\) lies in \(K_{\mathrm{pos}}\), since
+\(h(X\beta z)=h(Y\beta z)\in h(Y)H_0=S\), and it does not lie in
+\(Y\Sigma^*\).  Hence \(F[u]\in K(G_0)\).  On the other hand,
+\(F[v]=Y\beta z\) lies in the removed cylinder \(Y\Sigma^*\), and it is not
+restored by \(YL'(G_0)\), because \(\beta z\notin L'(G_0)\).  Thus
+\(F[v]\notin K(G_0)\).
+
+So \(u\) and \(v\) have the same \(h\)-type and share the accepting context
+\(E\), but the context \(F\) separates their distributions.  Therefore the
+output language is not \((1,h)\)-tuple-substitutable.  This gives a many-one
+reduction from CFG universality to the semantic promise.  The same arity-one
+witness refutes \((f,h)\)-tuple-substitutability for every \(f\ge1\).
+
+Finally, failure of \((f,h)\)-tuple-substitutability is semi-decidable by
+enumerating finite tuples and contexts and checking the finitely many grammar
+membership conditions.  Hence the positive instances are co-r.e.; together
+with the universality reduction, they are co-r.e.-complete, equivalently
+\(\Pi^0_1\)-complete under standard effective encodings.
+\end{proof}
+
+\begin{remark}[Why the promise is semantic]
+\label{rem:promise-undecidable}
+The preceding theorem sharpens Remark~\ref{rem:semantic-class}.  The learner is
+total and consistent on every finite positive sample, but its exactness claim is
+necessarily conditional: even at fan-out one, and even for a fixed observation
+morphism that is injective on letters, the semantic substitutability promise
+cannot be verified from a grammar presentation by any decision procedure.  What
+is semi-decidable is only failure, via the finite witnesses displayed in the
+proof above.  The theorem is stated for the semantic CFG input problem.  The strictly
+\(\eps\)-free working-presentation variant can be handled cleanly in the
+marker-letter setting by the same one-marker construction, but the arbitrary-
+\(h\) construction above is used here only as a semantic promise result.
+\end{remark}
+
+\begin{thebibliography}{99}
+
+\bibitem{Angluin1980}
+D.~Angluin.
+\newblock Inductive inference of formal languages from positive data.
+\newblock {\em Information and Control}, 45(2):117--135, 1980.
+
+\bibitem{Angluin1987}
+D.~Angluin.
+\newblock Learning regular sets from queries and counterexamples.
+\newblock {\em Information and Computation}, 75(2):87--106, 1987.
+
+\bibitem{ClarkEyraud2007}
+A.~Clark and R.~Eyraud.
+\newblock Polynomial identification in the limit of substitutable context-free
+languages.
+\newblock {\em Journal of Machine Learning Research}, 8:1725--1745, 2007.
+
+\bibitem{ClarkYoshinaka2014}
+A.~Clark and R.~Yoshinaka.
+\newblock Distributional learning of parallel multiple context-free grammars.
+\newblock {\em Machine Learning}, 96(1--2):5--31, 2014.
+
+\bibitem{ClarkYoshinaka2016}
+A.~Clark and R.~Yoshinaka.
+\newblock Distributional learning of context-free and multiple context-free
+grammars.
+\newblock In {\em Topics in Grammatical Inference}, pp.~143--172. Springer,
+2016.
+
+\bibitem{delaHiguera1997}
+C.~de~la~Higuera.
+\newblock Characteristic sets for polynomial grammatical inference.
+\newblock {\em Machine Learning}, 27(2):125--138, 1997.
+
+\bibitem{delaHiguera2010}
+C.~de~la~Higuera.
+\newblock {\em Grammatical Inference: Learning Automata and Grammars}.
+\newblock Cambridge University Press, 2010.
+
+\bibitem{DomaratzkiOkhotinShallit2007}
+M.~Domaratzki, A.~Okhotin, and J.~Shallit.
+\newblock Enumeration of context-free languages and related structures.
+\newblock {\em Journal of Automata, Languages and Combinatorics},
+12(1--2):79--95, 2007.
+
+\bibitem{Gold1967}
+E.~M.~Gold.
+\newblock Language identification in the limit.
+\newblock {\em Information and Control}, 10(5):447--474, 1967.
+
+\bibitem{Hopcroft1969}
+J.~E.~Hopcroft.
+\newblock On the equivalence and containment problems for context-free
+languages.
+\newblock {\em Mathematical Systems Theory}, 3(2):119--124, 1969.
+\newblock doi:10.1007/BF01746517.
+
+\bibitem{Kallmeyer2010}
+L.~Kallmeyer.
+\newblock {\em Parsing Beyond Context-Free Grammars}.
+\newblock Springer, Heidelberg, 2010.
+
+\bibitem{Kanazawa1998}
+M.~Kanazawa.
+\newblock {\em Learnable Classes of Categorial Grammars}.
+\newblock CSLI Publications, Stanford, 1998.
+
+\bibitem{kuriyamaCFG}
+T.~Kuriyama.
+\newblock Distributional learning of context-free languages under fixed finite-monoid typing.
+\newblock arXiv:1409.6247v4 [cs.FL], 2026.
+
+
+\bibitem{LehnerLindorfer2020}
+F.~Lehner and C.~Lindorfer.
+\newblock Comparing consecutive letter counts in multiple context-free languages.
+\newblock arXiv:2002.08236 [cs.FL], 2020.
+
+\bibitem{Shieber1985}
+S.~M.~Shieber.
+\newblock Evidence against the context-freeness of natural language.
+\newblock \emph{Linguistics and Philosophy}, 8(3):333--343, 1985.
+
+\bibitem{Pin1986}
+J.-E. Pin.
+\newblock {\em Varieties of Formal Languages}.
+\newblock North Oxford Academic, London, and Plenum, New York, 1986.
+
+\bibitem{SekiEtAl1991}
+H.~Seki, T.~Matsumura, M.~Fujii, and T.~Kasami.
+\newblock On multiple context-free grammars.
+\newblock {\em Theoretical Computer Science}, 88(2):191--229, 1991.
+
+\bibitem{VijayShankerWeirJoshi1987}
+K.~Vijay-Shanker, D.~J. Weir, and A.~K. Joshi.
+\newblock Characterizing structural descriptions produced by various grammatical formalisms.
+\newblock In {\em Proceedings of the 25th Annual Meeting of the Association for
+Computational Linguistics}, pp.~104--111, 1987.
+
+\bibitem{Weir1988}
+D.~J. Weir.
+\newblock {\em Characterizing Mildly Context-Sensitive Grammar Formalisms}.
+\newblock Ph.D. thesis, University of Pennsylvania, 1988.
+
+\bibitem{Yoshinaka2008}
+R.~Yoshinaka.
+\newblock Identification in the limit of \(k,\ell\)-substitutable context-free
+languages.
+\newblock In {\em Grammatical Inference: Algorithms and Applications}, LNCS
+5278, pp.~266--279. Springer, 2008.
+
+\bibitem{Yoshinaka2009}
+R.~Yoshinaka.
+\newblock Learning mildly context-sensitive languages with multidimensional
+substitutability from positive data.
+\newblock In {\em Algorithmic Learning Theory}, LNCS 5809, pp.~278--292.
+Springer, 2009.
+
+\bibitem{Yoshinaka2011}
+R.~Yoshinaka.
+\newblock Efficient learning of multiple context-free languages with
+multidimensional substitutability from positive data.
+\newblock {\em Theoretical Computer Science}, 412(19):1821--1831, 2011.
+
+\end{thebibliography}
+
+\end{document}
