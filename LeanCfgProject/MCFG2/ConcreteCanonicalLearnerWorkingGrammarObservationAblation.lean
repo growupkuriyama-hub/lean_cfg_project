@@ -133,8 +133,8 @@ variable (f : Nat)
 observation-gain language. -/
 def CorrectedConcreteObservationRefinementRedundant :
     Prop :=
-  StartRootedCorrectedConcreteObservationGainClass
-      (z := z) α M M' obs obs' f =
+  StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+      α M M' obs obs' f =
     ∅
 
 /-- A refinement step is semantically essential when it creates at least one
@@ -143,8 +143,8 @@ def CorrectedConcreteObservationRefinementEssential :
     Prop :=
   ∃ language : Set (Word α),
     language ∈
-      StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M M' obs obs' f
+      StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M M' obs obs' f
 
 end ObservationAblationDefinitions
 
@@ -162,11 +162,11 @@ variable {f : Nat}
 
 /-- Redundancy is exactly the negation of essentiality. -/
 theorem observationRefinementRedundant_iff_not_essential :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M M' obs obs' f ↔
+    CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+        α M M' obs obs' f ↔
       ¬
-        CorrectedConcreteObservationRefinementEssential
-          (z := z) α M M' obs obs' f := by
+        CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M M' obs obs' f := by
 
   constructor
 
@@ -200,11 +200,11 @@ theorem observationRefinementRedundant_iff_not_essential :
 
 /-- Essentiality is exactly the negation of redundancy. -/
 theorem observationRefinementEssential_iff_not_redundant :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f ↔
+    CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f ↔
       ¬
-        CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M M' obs obs' f := by
+        CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M M' obs obs' f := by
 
   constructor
 
@@ -212,7 +212,7 @@ theorem observationRefinementEssential_iff_not_redundant :
 
     exact
       (observationRefinementRedundant_iff_not_essential
-        (z := z)
+        
         (α := α)
         (M := M)
         (M' := M')
@@ -229,7 +229,7 @@ theorem observationRefinementEssential_iff_not_redundant :
     exact
       hNotRedundant
         ((observationRefinementRedundant_iff_not_essential
-          (z := z)
+          
           (α := α)
           (M := M)
           (M' := M')
@@ -241,15 +241,15 @@ theorem observationRefinementEssential_iff_not_redundant :
 /-- A refinement step cannot be both redundant and essential. -/
 theorem observationRefinementRedundant_not_essential
     (hRedundant :
-      CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M M' obs obs' f) :
+      CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+        α M M' obs obs' f) :
     ¬
-      CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f := by
+      CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f := by
 
   exact
     (observationRefinementRedundant_iff_not_essential
-      (z := z)
+      
       (α := α)
       (M := M)
       (M' := M')
@@ -262,16 +262,16 @@ theorem observationRefinementRedundant_not_essential
 theorem exists_observationGain_of_not_redundant
     (hNotRedundant :
       ¬
-        CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M M' obs obs' f) :
+        CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M M' obs obs' f) :
     ∃ language : Set (Word α),
       language ∈
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f := by
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f := by
 
   exact
     (observationRefinementEssential_iff_not_redundant
-      (z := z)
+      
       (α := α)
       (M := M)
       (M' := M')
@@ -295,29 +295,31 @@ variable {obs' : α → M'}
 variable (f : Nat)
 variable (r : Refines obs obs')
 
+include r
+
 /-- A refinement is redundant exactly when coarse and fine semantic target
 classes are equal. -/
 theorem observationRefinementRedundant_iff_targetClass_eq :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M M' obs obs' f ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f := by
+    CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+        α M M' obs obs' f ↔
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f := by
 
   constructor
 
   · intro hRedundant
 
     have hDecomposition :
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f =
-          StartRootedCorrectedConcreteTargetClass
-              (v := z) α M obs f ∪
-            StartRootedCorrectedConcreteObservationGainClass
-              (z := z) α M M' obs obs' f :=
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, v}
+              α M obs f ∪
+            StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+              α M M' obs obs' f :=
       finerTargetClass_eq_coarser_union_observationGainClass
-        (z := z)
+        
         r
 
     rw [
@@ -352,24 +354,24 @@ theorem observationRefinementRedundant_iff_targetClass_eq :
 
 /-- A refinement is redundant exactly when its failure class is unchanged. -/
 theorem observationRefinementRedundant_iff_failureClass_eq :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M M' obs obs' f ↔
-      StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M obs f =
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f := by
+    CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+        α M M' obs obs' f ↔
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M obs f =
+        StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f := by
 
   constructor
 
   · intro hRedundant
 
     have hTargetClasses :
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f :=
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f :=
       (observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f r).mp
         hRedundant
 
@@ -382,14 +384,14 @@ theorem observationRefinementRedundant_iff_failureClass_eq :
 
     apply
       (observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f r).mpr
 
     apply Set.Subset.antisymm
 
     · exact
         startRootedCorrectedConcreteTargetClass_subset_of_refines
-          (z := z)
+          
           r
 
     · intro language hFine
@@ -398,8 +400,8 @@ theorem observationRefinementRedundant_iff_failureClass_eq :
 
       have hCoarseFailure :
           language ∈
-            StartRootedCorrectedConcreteObservationFailureClass
-              (z := z) α M obs f :=
+            StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+              α M obs f :=
         hNotCoarse
 
       rw [hFailureClasses] at hCoarseFailure
@@ -409,12 +411,12 @@ theorem observationRefinementRedundant_iff_failureClass_eq :
 
 /-- A refinement is essential exactly when its semantic target class changes. -/
 theorem observationRefinementEssential_iff_targetClass_ne :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ≠
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f := by
+    CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f ↔
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ≠
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f := by
 
   constructor
 
@@ -433,7 +435,7 @@ theorem observationRefinementEssential_iff_targetClass_ne :
 
     apply
       (observationRefinementEssential_iff_not_redundant
-        (z := z)
+        
         (α := α)
         (M := M)
         (M' := M')
@@ -446,34 +448,34 @@ theorem observationRefinementEssential_iff_targetClass_ne :
     exact
       hClasses
         ((observationRefinementRedundant_iff_targetClass_eq
-          (z := z)
+          
           f r).mp
           hRedundant)
 
 /-- A refinement is essential exactly when its failure class changes. -/
 theorem observationRefinementEssential_iff_failureClass_ne :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f ↔
-      StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M obs f ≠
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f := by
+    CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f ↔
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M obs f ≠
+        StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f := by
 
   constructor
 
   · intro hEssential hFailureClasses
 
     have hRedundant :
-        CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M M' obs obs' f :=
+        CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M M' obs obs' f :=
       (observationRefinementRedundant_iff_failureClass_eq
-        (z := z)
+        
         f r).mpr
         hFailureClasses
 
     exact
       (observationRefinementRedundant_not_essential
-        (z := z)
+        
         hRedundant)
         hEssential
 
@@ -481,7 +483,7 @@ theorem observationRefinementEssential_iff_failureClass_ne :
 
     apply
       (observationRefinementEssential_iff_not_redundant
-        (z := z)
+        
         (α := α)
         (M := M)
         (M' := M')
@@ -494,23 +496,23 @@ theorem observationRefinementEssential_iff_failureClass_ne :
     exact
       hFailureClasses
         ((observationRefinementRedundant_iff_failureClass_eq
-          (z := z)
+          
           f r).mp
           hRedundant)
 
 /-- Essentiality is equivalent to strict target-class growth, expressed without
 depending on a particular strict-subset notation. -/
 theorem observationRefinementEssential_iff_strict_targetClass_growth :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f ↔
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ⊆
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ≠
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f) := by
+    CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f ↔
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ⊆
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ≠
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f) := by
 
   constructor
 
@@ -518,10 +520,10 @@ theorem observationRefinementEssential_iff_strict_targetClass_growth :
 
     exact
       ⟨startRootedCorrectedConcreteTargetClass_subset_of_refines
-          (z := z)
+          
           r,
         (observationRefinementEssential_iff_targetClass_ne
-          (z := z)
+          
           f r).mp
           hEssential⟩
 
@@ -529,40 +531,40 @@ theorem observationRefinementEssential_iff_strict_targetClass_growth :
 
     exact
       (observationRefinementEssential_iff_targetClass_ne
-        (z := z)
+        
         f r).mpr
         hStrict.2
 
 /-- Essentiality is equivalent to strict failure-class shrinkage. -/
 theorem observationRefinementEssential_iff_strict_failureClass_shrinkage :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f ↔
-      (StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f ⊆
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M obs f) ∧
-      (StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f ≠
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M obs f) := by
+    CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f ↔
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f ⊆
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M obs f) ∧
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f ≠
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M obs f) := by
 
   constructor
 
   · intro hEssential
 
     have hNeCoarseFine :
-        StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M obs f ≠
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M' obs' f :=
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+            α M obs f ≠
+          StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+            α M' obs' f :=
       (observationRefinementEssential_iff_failureClass_ne
-        (z := z)
+        
         f r).mp
         hEssential
 
     exact
       ⟨observationFailureClass_subset_of_refines
-          (z := z)
+          
           r,
         by
           intro hFineCoarse
@@ -575,7 +577,7 @@ theorem observationRefinementEssential_iff_strict_failureClass_shrinkage :
 
     apply
       (observationRefinementEssential_iff_failureClass_ne
-        (z := z)
+        
         f r).mpr
 
     intro hCoarseFine
@@ -586,43 +588,43 @@ theorem observationRefinementEssential_iff_strict_failureClass_shrinkage :
 
 /-- Complete semantic interface-ablation criterion. -/
 theorem observationRefinement_ablationCriterion_package :
-    (CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M M' obs obs' f ↔
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f) ∧
-      (CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M M' obs obs' f ↔
-        StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M obs f =
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M' obs' f) ∧
-      (CorrectedConcreteObservationRefinementEssential
-          (z := z) α M M' obs obs' f ↔
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f ≠
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f) ∧
-      (CorrectedConcreteObservationRefinementEssential
-          (z := z) α M M' obs obs' f ↔
-        StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M obs f ≠
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M' obs' f) := by
+    (CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M M' obs obs' f ↔
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f) ∧
+      (CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M M' obs obs' f ↔
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+            α M obs f =
+          StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+            α M' obs' f) ∧
+      (CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M M' obs obs' f ↔
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f ≠
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f) ∧
+      (CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M M' obs obs' f ↔
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+            α M obs f ≠
+          StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+            α M' obs' f) := by
 
   exact
     ⟨observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f r,
       observationRefinementRedundant_iff_failureClass_eq
-        (z := z)
+        
         f r,
       observationRefinementEssential_iff_targetClass_ne
-        (z := z)
+        
         f r,
       observationRefinementEssential_iff_failureClass_ne
-        (z := z)
+        
         f r⟩
 
 end RefinementAblationCriteria
@@ -646,22 +648,24 @@ variable (obs' : α → M')
 variable (f : Nat)
 variable (r : Refines obs obs')
 
+include r
+
 /-- An essential refinement supplies one genuinely new fine-observation target
 that is identified by the refined certified learner and has an exact
 minimum-rank certified description. -/
 theorem essentialObservationRefinement_exists_newCertifiedTarget
     (hEssential :
-      CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f) :
+      CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f) :
     ∃
       (language : Set (Word α))
       (hFine :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f),
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f),
       language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f ∧
+          StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f ∧
         IdentifiesLanguageFromPositiveData
           (correctedConcreteCertifiedWorkingGrammarHypLanguage
             obs' f)
@@ -674,7 +678,7 @@ theorem essentialObservationRefinement_exists_newCertifiedTarget
             (M := M')
             obs' f
             (startRootedTargetCertifiedDescriptionRank
-              (v := z) hα obs' f hFine) ∧
+               hα obs' f hFine) ∧
         ∃
           C :
             CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -684,12 +688,12 @@ theorem essentialObservationRefinement_exists_newCertifiedTarget
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z) hα obs' f hFine)
+                   hα obs' f hFine)
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z) hα obs' f hFine)
+                   hα obs' f hFine)
                 f := by
 
   rcases hEssential with
@@ -700,76 +704,76 @@ theorem essentialObservationRefinement_exists_newCertifiedTarget
       hGain.1,
       hGain.2,
       correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := z)
+        
         hα obs' f
         language hGain.1,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
+        
         hα obs' f hGain.1,
       startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+        
         hα obs' f hGain.1⟩
 
 /-- Under a redundant refinement, both certified learners identify one and the
 same semantic target class and no strict gain language exists. -/
 theorem redundantObservationRefinement_certifiedLearning_package
     (hRedundant :
-      CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M M' obs obs' f) :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f) ∧
+      CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+        α M M' obs obs' f) :
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs' f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs' f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) ∧
-      (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f =
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) ∧
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f =
         ∅) := by
 
   exact
     ⟨(observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f r).mp
         hRedundant,
       correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := z)
+        
         hα obs f,
       refinedCertifiedLearner_identifies_coarserTargetClass
-        (z := z)
+        
         hα obs obs' f r,
       hRedundant⟩
 
 /-- Certified-learning dichotomy for one refinement step. -/
 theorem observationRefinement_certifiedAblationDichotomy :
-    (CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M M' obs obs' f →
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f) ∧
-      (CorrectedConcreteObservationRefinementEssential
-        (z := z) α M M' obs obs' f →
+    (CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+        α M M' obs obs' f →
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f) ∧
+      (CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+        α M M' obs obs' f →
       ∃
         (language : Set (Word α))
         (hFine :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z) α M' obs' f),
+            StartRootedCorrectedConcreteTargetClass.{u, z, w}
+              α M' obs' f),
         language ∉
-            StartRootedCorrectedConcreteTargetClass
-              (v := z) α M obs f ∧
+            StartRootedCorrectedConcreteTargetClass.{u, z, v}
+              α M obs f ∧
           IdentifiesLanguageFromPositiveData
             (correctedConcreteCertifiedWorkingGrammarHypLanguage
               obs' f)
@@ -783,7 +787,7 @@ theorem observationRefinement_certifiedAblationDichotomy :
 
     exact
       (observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f r).mp
         hRedundant
 
@@ -791,7 +795,7 @@ theorem observationRefinement_certifiedAblationDichotomy :
 
     rcases
         essentialObservationRefinement_exists_newCertifiedTarget
-          (z := z)
+          
           hα obs obs' f r hEssential with
       ⟨language,
         hFine,
@@ -828,15 +832,18 @@ variable (f : Nat)
 variable (r₀₁ : Refines obs₀ obs₁)
 variable (r₁₂ : Refines obs₁ obs₂)
 
+include r₀₁
+include r₁₂
+
 /-- The direct refinement is essential exactly when at least one incremental
 refinement step is essential. -/
 theorem observationRefinementChain_directEssential_iff_incremental :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z) α M₀ M₂ obs₀ obs₂ f ↔
-      CorrectedConcreteObservationRefinementEssential
-          (z := z) α M₀ M₁ obs₀ obs₁ f ∨
-        CorrectedConcreteObservationRefinementEssential
-          (z := z) α M₁ M₂ obs₁ obs₂ f := by
+    CorrectedConcreteObservationRefinementEssential.{u, v, x, z}
+        α M₀ M₂ obs₀ obs₂ f ↔
+      CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f ∨
+        CorrectedConcreteObservationRefinementEssential.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f := by
 
   constructor
 
@@ -847,14 +854,14 @@ theorem observationRefinementChain_directEssential_iff_incremental :
 
     have hIncremental :
         language ∈
-          StartRootedCorrectedConcreteObservationGainClass
-              (z := z) α M₀ M₁ obs₀ obs₁ f ∪
-            StartRootedCorrectedConcreteObservationGainClass
-              (z := z) α M₁ M₂ obs₁ obs₂ f := by
+          StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+              α M₀ M₁ obs₀ obs₁ f ∪
+            StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+              α M₁ M₂ obs₁ obs₂ f := by
 
       rw [
         ← observationGainClass_compose_eq_union
-          (z := z)
+          
           f r₀₁ r₁₂
       ]
 
@@ -885,7 +892,7 @@ theorem observationRefinementChain_directEssential_iff_incremental :
 
       rw [
         observationGainClass_compose_eq_union
-          (z := z)
+          
           f r₀₁ r₁₂
       ]
 
@@ -901,7 +908,7 @@ theorem observationRefinementChain_directEssential_iff_incremental :
 
       rw [
         observationGainClass_compose_eq_union
-          (z := z)
+          
           f r₀₁ r₁₂
       ]
 
@@ -911,12 +918,12 @@ theorem observationRefinementChain_directEssential_iff_incremental :
 /-- The direct refinement is redundant exactly when both incremental steps are
 redundant. -/
 theorem observationRefinementChain_directRedundant_iff_incremental :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z) α M₀ M₂ obs₀ obs₂ f ↔
-      CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M₀ M₁ obs₀ obs₁ f ∧
-        CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M₁ M₂ obs₁ obs₂ f := by
+    CorrectedConcreteObservationRefinementRedundant.{u, v, x, z}
+        α M₀ M₂ obs₀ obs₂ f ↔
+      CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f ∧
+        CorrectedConcreteObservationRefinementRedundant.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f := by
 
   constructor
 
@@ -924,10 +931,10 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
 
     have hNoDirect :
         ¬
-          CorrectedConcreteObservationRefinementEssential
-            (z := z) α M₀ M₂ obs₀ obs₂ f :=
+          CorrectedConcreteObservationRefinementEssential.{u, v, x, z}
+            α M₀ M₂ obs₀ obs₂ f :=
       (observationRefinementRedundant_iff_not_essential
-        (z := z)
+        
         (α := α)
         (M := M₀)
         (M' := M₂)
@@ -938,35 +945,35 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
 
     have hNoFirst :
         ¬
-          CorrectedConcreteObservationRefinementEssential
-            (z := z) α M₀ M₁ obs₀ obs₁ f := by
+          CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f := by
 
       intro hFirst
 
       exact
         hNoDirect
           ((observationRefinementChain_directEssential_iff_incremental
-            (z := z)
+            
             f r₀₁ r₁₂).mpr
             (Or.inl hFirst))
 
     have hNoSecond :
         ¬
-          CorrectedConcreteObservationRefinementEssential
-            (z := z) α M₁ M₂ obs₁ obs₂ f := by
+          CorrectedConcreteObservationRefinementEssential.{u, w, x, z}
+            α M₁ M₂ obs₁ obs₂ f := by
 
       intro hSecond
 
       exact
         hNoDirect
           ((observationRefinementChain_directEssential_iff_incremental
-            (z := z)
+            
             f r₀₁ r₁₂).mpr
             (Or.inr hSecond))
 
     exact
       ⟨(observationRefinementRedundant_iff_not_essential
-          (z := z)
+          
           (α := α)
           (M := M₀)
           (M' := M₁)
@@ -975,7 +982,7 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
           (f := f)).mpr
           hNoFirst,
         (observationRefinementRedundant_iff_not_essential
-          (z := z)
+          
           (α := α)
           (M := M₁)
           (M' := M₂)
@@ -988,7 +995,7 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
 
     apply
       (observationRefinementRedundant_iff_not_essential
-        (z := z)
+        
         (α := α)
         (M := M₀)
         (M' := M₂)
@@ -1000,14 +1007,14 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
 
     rcases
         (observationRefinementChain_directEssential_iff_incremental
-          (z := z)
+          
           f r₀₁ r₁₂).mp
           hDirect with
       hFirst | hSecond
 
     · exact
         ((observationRefinementRedundant_iff_not_essential
-          (z := z)
+          
           (α := α)
           (M := M₀)
           (M' := M₁)
@@ -1019,7 +1026,7 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
 
     · exact
         ((observationRefinementRedundant_iff_not_essential
-          (z := z)
+          
           (α := α)
           (M := M₁)
           (M' := M₂)
@@ -1032,110 +1039,110 @@ theorem observationRefinementChain_directRedundant_iff_incremental :
 /-- Equality of the coarsest and finest target classes is equivalent to equality
 at both incremental steps. -/
 theorem observationRefinementChain_endpointTargetClass_eq_iff_incremental :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₂ obs₂ f) ↔
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₂ obs₂ f) := by
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, x}
+        α M₂ obs₂ f) ↔
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, x}
+          α M₂ obs₂ f) := by
 
   constructor
 
   · intro hEndpoints
 
     have hDirectRedundant :
-        CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M₀ M₂ obs₀ obs₂ f :=
+        CorrectedConcreteObservationRefinementRedundant.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f :=
       (observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f
         (r₀₁.compose r₁₂)).mpr
         hEndpoints
 
     have hIncremental :
-        CorrectedConcreteObservationRefinementRedundant
-              (z := z) α M₀ M₁ obs₀ obs₁ f ∧
-          CorrectedConcreteObservationRefinementRedundant
-              (z := z) α M₁ M₂ obs₁ obs₂ f :=
+        CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+              α M₀ M₁ obs₀ obs₁ f ∧
+          CorrectedConcreteObservationRefinementRedundant.{u, w, x, z}
+              α M₁ M₂ obs₁ obs₂ f :=
       (observationRefinementChain_directRedundant_iff_incremental
-        (z := z)
+        
         f r₀₁ r₁₂).mp
         hDirectRedundant
 
     exact
       ⟨(observationRefinementRedundant_iff_targetClass_eq
-          (z := z)
+          
           f r₀₁).mp
           hIncremental.1,
         (observationRefinementRedundant_iff_targetClass_eq
-          (z := z)
+          
           f r₁₂).mp
           hIncremental.2⟩
 
   · intro hIncrementalClasses
 
     have hIncrementalRedundant :
-        CorrectedConcreteObservationRefinementRedundant
-              (z := z) α M₀ M₁ obs₀ obs₁ f ∧
-          CorrectedConcreteObservationRefinementRedundant
-              (z := z) α M₁ M₂ obs₁ obs₂ f :=
+        CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+              α M₀ M₁ obs₀ obs₁ f ∧
+          CorrectedConcreteObservationRefinementRedundant.{u, w, x, z}
+              α M₁ M₂ obs₁ obs₂ f :=
       ⟨(observationRefinementRedundant_iff_targetClass_eq
-          (z := z)
+          
           f r₀₁).mpr
           hIncrementalClasses.1,
         (observationRefinementRedundant_iff_targetClass_eq
-          (z := z)
+          
           f r₁₂).mpr
           hIncrementalClasses.2⟩
 
     exact
       (observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f
         (r₀₁.compose r₁₂)).mp
         ((observationRefinementChain_directRedundant_iff_incremental
-          (z := z)
+          
           f r₀₁ r₁₂).mpr
           hIncrementalRedundant)
 
 /-- A direct endpoint change occurs exactly when at least one incremental step
 changes its target class. -/
 theorem observationRefinementChain_endpointTargetClass_ne_iff_incremental :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ≠
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₂ obs₂ f) ↔
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ≠
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) ∨
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ≠
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₂ obs₂ f) := by
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ≠
+      StartRootedCorrectedConcreteTargetClass.{u, z, x}
+        α M₂ obs₂ f) ↔
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ≠
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) ∨
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ≠
+        StartRootedCorrectedConcreteTargetClass.{u, z, x}
+          α M₂ obs₂ f) := by
 
   constructor
 
   · intro hEndpoints
 
     have hDirectEssential :
-        CorrectedConcreteObservationRefinementEssential
-          (z := z) α M₀ M₂ obs₀ obs₂ f :=
+        CorrectedConcreteObservationRefinementEssential.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f :=
       (observationRefinementEssential_iff_targetClass_ne
-        (z := z)
+        
         f
         (r₀₁.compose r₁₂)).mpr
         hEndpoints
 
     rcases
         (observationRefinementChain_directEssential_iff_incremental
-          (z := z)
+          
           f r₀₁ r₁₂).mp
           hDirectEssential with
       hFirst | hSecond
@@ -1143,14 +1150,14 @@ theorem observationRefinementChain_endpointTargetClass_ne_iff_incremental :
     · exact
         Or.inl
           ((observationRefinementEssential_iff_targetClass_ne
-            (z := z)
+            
             f r₀₁).mp
             hFirst)
 
     · exact
         Or.inr
           ((observationRefinementEssential_iff_targetClass_ne
-            (z := z)
+            
             f r₁₂).mp
             hSecond)
 
@@ -1158,13 +1165,13 @@ theorem observationRefinementChain_endpointTargetClass_ne_iff_incremental :
 
     apply
       (observationRefinementEssential_iff_targetClass_ne
-        (z := z)
+        
         f
         (r₀₁.compose r₁₂)).mp
 
     apply
       (observationRefinementChain_directEssential_iff_incremental
-        (z := z)
+        
         f r₀₁ r₁₂).mpr
 
     rcases hIncremental with
@@ -1173,61 +1180,61 @@ theorem observationRefinementChain_endpointTargetClass_ne_iff_incremental :
     · exact
         Or.inl
           ((observationRefinementEssential_iff_targetClass_ne
-            (z := z)
+            
             f r₀₁).mpr
             hFirst)
 
     · exact
         Or.inr
           ((observationRefinementEssential_iff_targetClass_ne
-            (z := z)
+            
             f r₁₂).mpr
             hSecond)
 
 /-- Compact three-stage interface-ablation package. -/
 theorem observationRefinementChain_ablation_package :
-    (CorrectedConcreteObservationRefinementEssential
-          (z := z) α M₀ M₂ obs₀ obs₂ f ↔
-        CorrectedConcreteObservationRefinementEssential
-            (z := z) α M₀ M₁ obs₀ obs₁ f ∨
-          CorrectedConcreteObservationRefinementEssential
-            (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
-      (CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M₀ M₂ obs₀ obs₂ f ↔
-        CorrectedConcreteObservationRefinementRedundant
-            (z := z) α M₀ M₁ obs₀ obs₁ f ∧
-          CorrectedConcreteObservationRefinementRedundant
-            (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
-      ((StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₂ obs₂ f) ↔
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f) ∧
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₂ obs₂ f)) ∧
-      Set.Disjoint
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f) := by
+    (CorrectedConcreteObservationRefinementEssential.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f ↔
+        CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f ∨
+          CorrectedConcreteObservationRefinementEssential.{u, w, x, z}
+            α M₁ M₂ obs₁ obs₂ f) ∧
+      (CorrectedConcreteObservationRefinementRedundant.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f ↔
+        CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f ∧
+          CorrectedConcreteObservationRefinementRedundant.{u, w, x, z}
+            α M₁ M₂ obs₁ obs₂ f) ∧
+      ((StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, x}
+          α M₂ obs₂ f) ↔
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, x}
+            α M₂ obs₂ f)) ∧
+      Disjoint
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f)
+        (StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f) := by
 
   exact
     ⟨observationRefinementChain_directEssential_iff_incremental
-        (z := z)
+        
         f r₀₁ r₁₂,
       observationRefinementChain_directRedundant_iff_incremental
-        (z := z)
+        
         f r₀₁ r₁₂,
       observationRefinementChain_endpointTargetClass_eq_iff_incremental
-        (z := z)
+        
         f r₀₁ r₁₂,
       observationGainClasses_incremental_disjoint
-        (z := z)
+        
         f r₀₁ r₁₂⟩
 
 end RefinementChainAblation
@@ -1251,46 +1258,48 @@ variable (obs' : α → M')
 variable (f : Nat)
 variable (r : Refines obs obs')
 
+include r
+
 /-- Final semantic and certified-learning interface-ablation theorem. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationAblation_package :
-    (CorrectedConcreteObservationRefinementRedundant
-          (z := z) α M M' obs obs' f ↔
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f) ∧
-      (CorrectedConcreteObservationRefinementEssential
-          (z := z) α M M' obs obs' f ↔
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f ⊆
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f) ∧
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f ≠
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M' obs' f)) ∧
-      (CorrectedConcreteObservationRefinementEssential
-          (z := z) α M M' obs obs' f ↔
-        (StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M' obs' f ⊆
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M obs f) ∧
-        (StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M' obs' f ≠
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M obs f)) ∧
-      (CorrectedConcreteObservationRefinementEssential
-          (z := z) α M M' obs obs' f →
+    (CorrectedConcreteObservationRefinementRedundant.{u, v, w, z}
+          α M M' obs obs' f ↔
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f) ∧
+      (CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M M' obs obs' f ↔
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f ⊆
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f ≠
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M' obs' f)) ∧
+      (CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M M' obs obs' f ↔
+        (StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+            α M' obs' f ⊆
+          StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+            α M obs f) ∧
+        (StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+            α M' obs' f ≠
+          StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+            α M obs f)) ∧
+      (CorrectedConcreteObservationRefinementEssential.{u, v, w, z}
+          α M M' obs obs' f →
         ∃
           (language : Set (Word α))
           (hFine :
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z) α M' obs' f),
+              StartRootedCorrectedConcreteTargetClass.{u, z, w}
+                α M' obs' f),
           language ∉
-              StartRootedCorrectedConcreteTargetClass
-                (v := z) α M obs f ∧
+              StartRootedCorrectedConcreteTargetClass.{u, z, v}
+                α M obs f ∧
             IdentifiesLanguageFromPositiveData
               (correctedConcreteCertifiedWorkingGrammarHypLanguage
                 obs' f)
@@ -1306,23 +1315,23 @@ theorem
                 C.bits.length <=
                   correctedConcreteCertifiedRankBitBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z) hα obs' f hFine)
+                       hα obs' f hFine)
                     f ∧
                 C.canonicalSearch.length <=
                   correctedConcreteCertifiedRankSearchBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z) hα obs' f hFine)
+                       hα obs' f hFine)
                     f) := by
 
   refine
     ⟨observationRefinementRedundant_iff_targetClass_eq
-        (z := z)
+        
         f r,
       observationRefinementEssential_iff_strict_targetClass_growth
-        (z := z)
+        
         f r,
       observationRefinementEssential_iff_strict_failureClass_shrinkage
-        (z := z)
+        
         f r,
       ?_⟩
 
@@ -1330,7 +1339,7 @@ theorem
 
   rcases
       essentialObservationRefinement_exists_newCertifiedTarget
-        (z := z)
+        
         hα obs obs' f r hEssential with
     ⟨language,
       hFine,
