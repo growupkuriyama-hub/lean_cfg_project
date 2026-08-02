@@ -1,0 +1,725 @@
+name: MCFG2 Successful Experiments Regression v3
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcfg2-successful-experiments-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MCFG2_SUCCESS_VERSION: "v3-232-directly-confirmed-through-observation-selection"
+  MCFG2_ROOT: LeanCfgProject/MCFG2
+  MCFG2_SUCCESS_COUNT: "232"
+  MCFG2_TOTAL_SNAPSHOT_COUNT: "303"
+  MCFG2_UNVERIFIED_COUNT: "71"
+  MCFG2_SUCCESS_SHARDS: "12"
+
+jobs:
+  prepare:
+    name: Prepare 232 directly confirmed-success MCFG2 roots
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.manifest.outputs.matrix }}
+      shard_count: ${{ steps.manifest.outputs.shard_count }}
+      success_count: ${{ steps.manifest.outputs.success_count }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Validate the fixed successful-root snapshot
+        id: manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p ci-artifacts/manifest
+
+          cat > ci-artifacts/manifest/successful-targets.txt <<'EOF_TARGETS'
+          LeanCfgProject.MCFG2.Basic
+          LeanCfgProject.MCFG2.BinaryRuleSplicingEvidence
+          LeanCfgProject.MCFG2.BinaryWitnessEnumerationCompleteness
+          LeanCfgProject.MCFG2.BinaryWitnesses
+          LeanCfgProject.MCFG2.BlueprintFiniteSample
+          LeanCfgProject.MCFG2.CharacteristicDataMonotone
+          LeanCfgProject.MCFG2.CharacteristicSampleAnchorCommonContext
+          LeanCfgProject.MCFG2.CharacteristicSampleAnchorCommonContextFinal
+          LeanCfgProject.MCFG2.CharacteristicSampleAnchorCommonTransportConstruction
+          LeanCfgProject.MCFG2.CharacteristicSampleAnchorDistributionTransport
+          LeanCfgProject.MCFG2.CharacteristicSampleBaseConstructionLayers
+          LeanCfgProject.MCFG2.CharacteristicSampleBoundedGlobalPaperTheorem
+          LeanCfgProject.MCFG2.CharacteristicSampleBuilderSkeleton
+          LeanCfgProject.MCFG2.CharacteristicSampleCommonToExposingTargetDiagram
+          LeanCfgProject.MCFG2.CharacteristicSampleComponentEnumeration
+          LeanCfgProject.MCFG2.CharacteristicSampleComponentPackage
+          LeanCfgProject.MCFG2.CharacteristicSampleConstructiveLearnabilityFacade
+          LeanCfgProject.MCFG2.CharacteristicSampleConstructiveLearningTheorem
+          LeanCfgProject.MCFG2.CharacteristicSampleContextTransport
+          LeanCfgProject.MCFG2.CharacteristicSampleCoreConstructionExistential
+          LeanCfgProject.MCFG2.CharacteristicSampleCoreConstructionLayers
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceCanonicalRuleClosureRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceDerivationalExposureRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceExposingTransportRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceFiniteDerivationalExposureRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceFiniteNonterminalDerivationalExposureRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceMinimalPaperRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceSuccessfulDerivationSpineRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceSuccessfulOccurrenceRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceSuccessfulPresentationRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExactOnceSuccessfulRuleRealizationRoute
+          LeanCfgProject.MCFG2.CharacteristicSampleExistentialPaperTheorem
+          LeanCfgProject.MCFG2.CharacteristicSampleExposingAsCommonContext
+          LeanCfgProject.MCFG2.CharacteristicSampleExposingCoreFinal
+          LeanCfgProject.MCFG2.CharacteristicSampleExposingTransport
+          LeanCfgProject.MCFG2.CharacteristicSampleExposingTransportConstruction
+          LeanCfgProject.MCFG2.CharacteristicSampleFinalConstructionFacade
+          LeanCfgProject.MCFG2.CharacteristicSampleFiniteBuilder
+          LeanCfgProject.MCFG2.CharacteristicSampleFiniteUnionBuilder
+          LeanCfgProject.MCFG2.CharacteristicSampleFiniteUnionPackage
+          LeanCfgProject.MCFG2.CharacteristicSampleFlatConstructionChoice
+          LeanCfgProject.MCFG2.CharacteristicSampleFlatConstructionData
+          LeanCfgProject.MCFG2.CharacteristicSampleFlatConstructionDisjunction
+          LeanCfgProject.MCFG2.CharacteristicSampleFromTrimmedPresentation
+          LeanCfgProject.MCFG2.CharacteristicSampleGlobalAssumptionLayers
+          LeanCfgProject.MCFG2.CharacteristicSampleGlobalPaperWitnessTheorem
+          LeanCfgProject.MCFG2.CharacteristicSampleGrammarRuleBuilder
+          LeanCfgProject.MCFG2.CharacteristicSampleGrammarRulePositivity
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingConstruction
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingContextEquations
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingContextFamilies
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingExactOnceConstruction
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingExactOnceIntegration
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingLeftRightConstructors
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingLocalTargets
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingParentChoices
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingPieces
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingTemplateChoices
+          LeanCfgProject.MCFG2.CharacteristicSampleNamedContextSplicingTemplateTargets
+          LeanCfgProject.MCFG2.CharacteristicSamplePackage
+          LeanCfgProject.MCFG2.CharacteristicSamplePaperAssumptionDiagram
+          LeanCfgProject.MCFG2.CharacteristicSamplePaperConstructiveRouteCorollaries
+          LeanCfgProject.MCFG2.CharacteristicSamplePaperConstructiveStatement
+          LeanCfgProject.MCFG2.CharacteristicSamplePaperMainTheorem
+          LeanCfgProject.MCFG2.CharacteristicSamplePaperMainVariants
+          LeanCfgProject.MCFG2.CharacteristicSamplePaperWitnessTheorem
+          LeanCfgProject.MCFG2.CharacteristicSamplePreferredAllPieces
+          LeanCfgProject.MCFG2.CharacteristicSamplePreferredAnchorCommonConstruction
+          LeanCfgProject.MCFG2.CharacteristicSamplePreferredAnchorCommonTargetPieces
+          LeanCfgProject.MCFG2.CharacteristicSamplePreferredAnchorCommonTargets
+          LeanCfgProject.MCFG2.CharacteristicSamplePreferredGlobalPieces
+          LeanCfgProject.MCFG2.CharacteristicSamplePreferredSplitCorePieces
+          LeanCfgProject.MCFG2.CharacteristicSampleRuleCoverage
+          LeanCfgProject.MCFG2.CharacteristicSampleRuleEnumeration
+          LeanCfgProject.MCFG2.CharacteristicSampleRuleTransportFinal
+          LeanCfgProject.MCFG2.CharacteristicSampleRuleWitnessTransport
+          LeanCfgProject.MCFG2.CharacteristicSampleSameContextCore
+          LeanCfgProject.MCFG2.CharacteristicSampleSameContextTransportConstruction
+          LeanCfgProject.MCFG2.CharacteristicSampleSameContextTransportTargetLevels
+          LeanCfgProject.MCFG2.CharacteristicSampleSameContextTransportTargets
+          LeanCfgProject.MCFG2.CharacteristicSampleSemanticConstructionTargetLevels
+          LeanCfgProject.MCFG2.CharacteristicSampleSemanticConstructionTargets
+          LeanCfgProject.MCFG2.CharacteristicSampleSemanticMainTheorems
+          LeanCfgProject.MCFG2.CharacteristicSampleSemanticTransportTargetDiagram
+          LeanCfgProject.MCFG2.CharacteristicSampleSemanticTransportTargetLevels
+          LeanCfgProject.MCFG2.CharacteristicSampleSemanticTransportTargets
+          LeanCfgProject.MCFG2.CharacteristicSampleSkeleton
+          LeanCfgProject.MCFG2.CharacteristicSampleSplitCoreGlobalLayer
+          LeanCfgProject.MCFG2.CharacteristicSampleStartWordEvidence
+          LeanCfgProject.MCFG2.CharacteristicSampleStartWordFromSample
+          LeanCfgProject.MCFG2.CharacteristicSampleTargetAssumptionLayers
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportConstructionBase
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportConstructionChoice
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportConstructionDiagram
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportConstructionExistential
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportInterfaceDiagram
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligations
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromAnchorData
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromBuilders
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromComponents
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromCoreData
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromExistingSamples
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromRuleData
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromRules
+          LeanCfgProject.MCFG2.CharacteristicSampleTransportObligationsFromSample
+          LeanCfgProject.MCFG2.CharacteristicSampleWitnessSet
+          LeanCfgProject.MCFG2.CharacteristicSampleWitnessSetMonotone
+          LeanCfgProject.MCFG2.CompletenessSkeleton
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearner
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerClassTheorem
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerFiniteEnumerationBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerFiniteHypothesis
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerFiniteHypothesisSize
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerFiniteObjectDirectedSystem
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerFiniteObjectIdentification
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerFiniteObjectMonotone
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerIdentification
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerLengthOnlyBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerPolynomialExponentBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerSinglePowerBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerStabilization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarAutomaticBitWidth
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarAutomaticNaturalFieldBitWidth
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryEncoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleFamilyBodyBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalFieldClassification
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleNaturalSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTerminalClosure
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBinaryRuleTokenPayloadBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarBoundedRepresentation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCanonicalDecodedSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCanonicalSearchSelector
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionComplexity
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionProfile
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedDescriptionRankObstructions
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputLearner
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCertifiedOutputMindChanges
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCharacteristicRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCheckedBitRepresentation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarConstruction
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarCutSaturation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarDenseEncoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarDescriptionSize
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarEquivalence
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFinalDescriptionPackage
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFiniteCodeUniverse
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarFiniteDecodedSearch
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarIdentification
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarLogarithmicBitSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarMindChanges
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarNaturalEncoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarNaturalFieldClassification
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarNaturalFieldEntryBounds
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarNaturalFieldFullyExplicitBound
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarNaturalFieldMaximum
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationAblation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationEquivalenceChain
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationProduct
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationRefinementFailure
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelection
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObstruction
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPaperBitEnvelope
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPaperPowerBitBound
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPresentationNaturalSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPresentationSize
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarRepresentation
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarRepresentationRank
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarSampleParametricBitBound
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarSize
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarStructuralConditions
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarTaggedDenseDecoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarTaggedDenseEncoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarTemplateSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarTemplateTupleFraming
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarTerminalAlphabetEncoding
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarUnaryBitSerialization
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarUniformNaturalFieldBound
+          LeanCfgProject.MCFG2.ConcreteLearnerEvidence
+          LeanCfgProject.MCFG2.ConcreteObservationDeterministicClosure
+          LeanCfgProject.MCFG2.ConcreteOutputTypeRefinementPresentation
+          LeanCfgProject.MCFG2.ConcreteReducedRepresentativeSelection
+          LeanCfgProject.MCFG2.ConcreteTrimmedSuccessfulPresentation
+          LeanCfgProject.MCFG2.ConcreteTypedCharacteristicSample
+          LeanCfgProject.MCFG2.DistributionalEquivalence
+          LeanCfgProject.MCFG2.ExactConcreteCanonicalLearnerEquivalence
+          LeanCfgProject.MCFG2.ExactOnce
+          LeanCfgProject.MCFG2.ExactReconstructionSkeleton
+          LeanCfgProject.MCFG2.FillingIdentity
+          LeanCfgProject.MCFG2.FillingIdentityConstructionSkeleton
+          LeanCfgProject.MCFG2.FinalReachableTheorem
+          LeanCfgProject.MCFG2.FiniteTextCoverage
+          LeanCfgProject.MCFG2.GoldIdentificationSkeleton
+          LeanCfgProject.MCFG2.LearnerDerivationSoundness
+          LeanCfgProject.MCFG2.LearnerSoundnessCore
+          LeanCfgProject.MCFG2.MainReachableTheorem
+          LeanCfgProject.MCFG2.NamedContextSplicingConstructor
+          LeanCfgProject.MCFG2.NamedContextSplicingSkeleton
+          LeanCfgProject.MCFG2.NamedFillEnumerationBounds
+          LeanCfgProject.MCFG2.OutputTypeLift
+          LeanCfgProject.MCFG2.OutputTypePresentationCompleteness
+          LeanCfgProject.MCFG2.OutputTypePresentationLanguage
+          LeanCfgProject.MCFG2.OutputTypePresentationMonotone
+          LeanCfgProject.MCFG2.OutputTypePresentationWorkingGrammar
+          LeanCfgProject.MCFG2.OutputTypePresentationWorkingGrammarEquivalence
+          LeanCfgProject.MCFG2.OutputTypeRefinement
+          LeanCfgProject.MCFG2.OutputTypeRefinementPresentation
+          LeanCfgProject.MCFG2.OutputTypeTrimmedPresentationSkeleton
+          LeanCfgProject.MCFG2.OutputTypeTrimmedPresentationSuccessfulOccurrenceConstruction
+          LeanCfgProject.MCFG2.PrefixExactReconstruction
+          LeanCfgProject.MCFG2.ReachableGoldTheorem
+          LeanCfgProject.MCFG2.ReachableStartBridge
+          LeanCfgProject.MCFG2.SplicingBlueprint
+          LeanCfgProject.MCFG2.SplicingBlueprintMainData
+          LeanCfgProject.MCFG2.SplicingBlueprintMainDataMonotone
+          LeanCfgProject.MCFG2.SplicingCharacteristicPackage
+          LeanCfgProject.MCFG2.SplicingMainDataMonotone
+          LeanCfgProject.MCFG2.SplicingMainTheorem
+          LeanCfgProject.MCFG2.StartAnchorCanonical
+          LeanCfgProject.MCFG2.StartRootedConcreteCanonicalLearnerClassTheorem
+          LeanCfgProject.MCFG2.StartRootedConcreteCanonicalLearnerIdentification
+          LeanCfgProject.MCFG2.StartRuleSoundness
+          LeanCfgProject.MCFG2.StartSeparatedOutputTypeRefinementCompleteness
+          LeanCfgProject.MCFG2.TrimmedPresentationFinalTheorem
+          LeanCfgProject.MCFG2.TrimmedPresentationPreCore
+          LeanCfgProject.MCFG2.TrimmedPresentationSample
+          LeanCfgProject.MCFG2.TrimmedPresentationSampleMonotone
+          LeanCfgProject.MCFG2.TupleOccurrenceEnumerationCompleteness
+          LeanCfgProject.MCFG2.TupleOccurrences
+          LeanCfgProject.MCFG2.WitnessedComposition
+          EOF_TARGETS
+
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          root = Path(os.environ["MCFG2_ROOT"])
+          manifest = Path("ci-artifacts/manifest/successful-targets.txt")
+          expected_success = int(os.environ["MCFG2_SUCCESS_COUNT"])
+          expected_total = int(os.environ["MCFG2_TOTAL_SNAPSHOT_COUNT"])
+          expected_unverified = int(os.environ["MCFG2_UNVERIFIED_COUNT"])
+          requested_shards = int(os.environ["MCFG2_SUCCESS_SHARDS"])
+
+          if not root.is_dir():
+              raise SystemExit(f"Directory not found: {root}")
+
+          successful = [
+              line.strip()
+              for line in manifest.read_text(encoding="utf-8").splitlines()
+              if line.strip()
+          ]
+          if len(successful) != expected_success:
+              raise SystemExit(
+                  f"Successful-root manifest has {len(successful)} entries; "
+                  f"expected {expected_success}"
+              )
+          if len(set(successful)) != len(successful):
+              raise SystemExit("Duplicate module in successful-root manifest")
+
+          component = re.compile(r"^[A-Za-z_][A-Za-z0-9_']*$")
+          source_targets: list[str] = []
+          invalid_files: list[str] = []
+          for file in sorted(root.rglob("*.lean")):
+              parts = file.with_suffix("").parts
+              if all(component.fullmatch(part) for part in parts):
+                  source_targets.append(".".join(parts))
+              else:
+                  invalid_files.append(file.as_posix())
+
+          if invalid_files:
+              raise SystemExit(
+                  "Invalid Lean module filenames:\n" +
+                  "\n".join(f"  - {item}" for item in invalid_files)
+              )
+          if len(source_targets) != expected_total:
+              raise SystemExit(
+                  f"Current MCFG2 tree has {len(source_targets)} valid modules; "
+                  f"this fixed snapshot expects {expected_total}. "
+                  "Update the success manifest intentionally before proceeding."
+              )
+
+          current = set(source_targets)
+          listed = set(successful)
+          missing = sorted(listed - current)
+          if missing:
+              raise SystemExit(
+                  "Confirmed-success modules missing from repository:\n" +
+                  "\n".join(f"  - {item}" for item in missing)
+              )
+
+          unverified = sorted(current - listed)
+          if len(unverified) != expected_unverified:
+              raise SystemExit(
+                  f"Unverified complement has {len(unverified)} modules; "
+                  f"expected {expected_unverified}"
+              )
+
+          Path("ci-artifacts/manifest/unverified-targets.txt").write_text(
+              "".join(f"{target}\n" for target in unverified),
+              encoding="utf-8",
+          )
+          Path("ci-artifacts/manifest/all-current-targets.txt").write_text(
+              "".join(f"{target}\n" for target in source_targets),
+              encoding="utf-8",
+          )
+
+          shard_count = min(max(1, requested_shards), len(successful))
+          matrix = list(range(shard_count))
+          summary = {
+              "version": os.environ["MCFG2_SUCCESS_VERSION"],
+              "commit": os.environ["GITHUB_SHA"],
+              "confirmed_success_targets": len(successful),
+              "unverified_targets": len(unverified),
+              "total_snapshot_targets": len(source_targets),
+              "shard_count": shard_count,
+          }
+          Path("ci-artifacts/manifest/summary.json").write_text(
+              json.dumps(summary, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as out:
+              out.write(f"matrix={json.dumps(matrix, separators=(',', ':'))}\n")
+              out.write(f"shard_count={shard_count}\n")
+              out.write(f"success_count={len(successful)}\n")
+
+          print(
+              f"Validated {len(successful)} confirmed-success roots and "
+              f"excluded {len(unverified)} unverified roots."
+          )
+          PY
+
+      - name: Upload successful-root manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-success-v3-manifest
+          path: ci-artifacts/manifest
+          if-no-files-found: error
+          retention-days: 30
+
+  regression:
+    name: Successful roots shard ${{ matrix.shard }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        shard: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+
+      - name: Download successful-root manifest
+        uses: actions/download-artifact@v7
+        with:
+          name: mcfg2-success-v3-manifest
+          path: ci-input/manifest
+
+      - name: Rebuild every assigned successful root separately
+        shell: bash
+        env:
+          SHARD: ${{ matrix.shard }}
+          SHARD_COUNT: ${{ needs.prepare.outputs.shard_count }}
+        run: |
+          set -euo pipefail
+
+          echo "Regression version: ${MCFG2_SUCCESS_VERSION}"
+          echo "Commit: ${GITHUB_SHA}"
+
+          # Do not trust restored project products. Dependencies built earlier
+          # in this shard may be reused, but every listed root is forced to
+          # elaborate again before its result is recorded.
+          rm -rf .lake/build/lib/lean/LeanCfgProject/MCFG2
+          rm -rf .lake/build/ir/LeanCfgProject/MCFG2
+
+          shard_dir="ci-artifacts/shard-${SHARD}"
+          log_dir="${shard_dir}/logs"
+          focused_dir="${shard_dir}/focused"
+          mkdir -p "$log_dir" "$focused_dir"
+          : > "${shard_dir}/results.tsv"
+          : > "${shard_dir}/failures.txt"
+
+          python3 - "$SHARD" "$SHARD_COUNT" <<'PY' > "${shard_dir}/targets.txt"
+          from pathlib import Path
+          import sys
+
+          shard = int(sys.argv[1])
+          shard_count = int(sys.argv[2])
+          targets = [
+              line.strip()
+              for line in Path("ci-input/manifest/successful-targets.txt")
+                  .read_text(encoding="utf-8").splitlines()
+              if line.strip()
+          ]
+          for index, target in enumerate(targets):
+              if index % shard_count == shard:
+                  print(target)
+          PY
+
+          target_count=$(wc -l < "${shard_dir}/targets.txt")
+          echo "Shard ${SHARD}/${SHARD_COUNT}: ${target_count} confirmed-success roots"
+
+          while IFS= read -r target; do
+            [[ -n "$target" ]] || continue
+
+            module_path="${target//./\/}"
+            safe_name="${target//./_}"
+            log_file="${log_dir}/${safe_name}.log"
+
+            rm -f \
+              ".lake/build/lib/lean/${module_path}.olean" \
+              ".lake/build/lib/lean/${module_path}.ilean" \
+              ".lake/build/lib/lean/${module_path}.olean.hash" \
+              ".lake/build/lib/lean/${module_path}.trace" \
+              ".lake/build/ir/${module_path}.c" \
+              ".lake/build/ir/${module_path}.o" \
+              ".lake/build/ir/${module_path}.setup.json"
+
+            started=$(date +%s)
+            set +e
+            lake build "$target" >"$log_file" 2>&1
+            status=$?
+            set -e
+            elapsed=$(( $(date +%s) - started ))
+
+            if (( status == 0 )); then
+              printf 'PASS\t%s\t%s\n' "$elapsed" "$target" \
+                >> "${shard_dir}/results.tsv"
+              echo "PASS (${elapsed}s): $target"
+            else
+              printf 'FAIL\t%s\t%s\n' "$elapsed" "$target" \
+                >> "${shard_dir}/results.tsv"
+              printf '%s\n' "$target" >> "${shard_dir}/failures.txt"
+              echo "::error title=Confirmed MCFG2 regression::$target"
+              echo "FAIL (${elapsed}s): $target"
+
+              focused_file="${focused_dir}/${safe_name}.txt"
+              python3 - "$target" "$log_file" "$focused_file" <<'PY'
+          from __future__ import annotations
+
+          import re
+          import sys
+          from pathlib import Path
+
+          target, log_name, output_name = sys.argv[1:]
+          lines = Path(log_name).read_text(errors="replace").splitlines()
+          diagnostic = re.compile(
+              r"(?:^|[^A-Za-z])error:|unsolved goals?|"
+              r"application type mismatch|type mismatch|"
+              r"unknown (?:identifier|constant|declaration|target)|"
+              r"failed to synthesize|unexpected token|"
+              r"invalid (?:field|constructor|declaration|syntax|pattern|argument name)|"
+              r"maximum recursion depth|timeout",
+              re.IGNORECASE,
+          )
+          hits = [i for i, line in enumerate(lines) if diagnostic.search(line)]
+          ranges: list[tuple[int, int]] = []
+          for index in hits[:20]:
+              start = max(0, index - 5)
+              end = min(len(lines), index + 60)
+              if ranges and start <= ranges[-1][1] + 1:
+                  ranges[-1] = (ranges[-1][0], max(ranges[-1][1], end))
+              else:
+                  ranges.append((start, end))
+          if not ranges:
+              ranges = [(max(0, len(lines) - 180), len(lines))]
+
+          output = [f"===== TARGET: {target} =====", f"LOG: {log_name}", ""]
+          for number, (start, end) in enumerate(ranges, 1):
+              output.append(f"--- range {number}: lines {start + 1}-{end} ---")
+              output.extend(
+                  f"{line_number + 1}: {lines[line_number]}"
+                  for line_number in range(start, end)
+              )
+              output.append("")
+          Path(output_name).write_text("\n".join(output) + "\n", encoding="utf-8")
+          PY
+              cat "$focused_file"
+            fi
+          done < "${shard_dir}/targets.txt"
+
+          pass_count=$(awk -F '\t' '$1 == "PASS" {n++} END {print n+0}' \
+            "${shard_dir}/results.tsv")
+          fail_count=$(awk -F '\t' '$1 == "FAIL" {n++} END {print n+0}' \
+            "${shard_dir}/results.tsv")
+
+          cat > "${shard_dir}/summary.txt" <<EOF_SUMMARY
+          shard=${SHARD}
+          shard_count=${SHARD_COUNT}
+          assigned_targets=${target_count}
+          passed=${pass_count}
+          failed=${fail_count}
+          commit=${GITHUB_SHA}
+          EOF_SUMMARY
+
+          {
+            echo "### Confirmed-success shard ${SHARD}"
+            echo
+            echo "- Assigned roots: **${target_count}**"
+            echo "- Passed: **${pass_count}**"
+            echo "- Regressions: **${fail_count}**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Let all shards finish. The aggregate job is the sole failure gate.
+          exit 0
+
+      - name: Upload shard report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-success-v3-shard-${{ matrix.shard }}
+          path: ci-artifacts/shard-${{ matrix.shard }}
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+  summarize:
+    name: Summarize all 232 directly confirmed-success roots
+    needs:
+      - prepare
+      - regression
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Download all reports
+        uses: actions/download-artifact@v7
+        with:
+          path: downloaded-artifacts
+
+      - name: Verify complete exact coverage and regressions
+        shell: bash
+        env:
+          EXPECTED_SHARDS: ${{ needs.prepare.outputs.shard_count }}
+          EXPECTED_TARGETS: ${{ needs.prepare.outputs.success_count }}
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifacts/combined
+
+          set +e
+          python3 <<'PY'
+          from __future__ import annotations
+
+          import os
+          from pathlib import Path
+
+          root = Path("downloaded-artifacts")
+          out = Path("ci-artifacts/combined")
+          expected_shards = int(os.environ["EXPECTED_SHARDS"])
+          expected_targets = int(os.environ["EXPECTED_TARGETS"])
+
+          manifests = list(root.rglob("successful-targets.txt"))
+          if len(manifests) != 1:
+              raise SystemExit(
+                  f"Expected one successful-target manifest, found {len(manifests)}"
+              )
+          expected = [
+              line.strip()
+              for line in manifests[0].read_text(encoding="utf-8").splitlines()
+              if line.strip()
+          ]
+
+          result_files = sorted(root.rglob("results.tsv"))
+          rows: list[tuple[str, int, str]] = []
+          for file in result_files:
+              for raw in file.read_text(errors="replace").splitlines():
+                  if not raw.strip():
+                      continue
+                  status, seconds, target = raw.split("\t", 2)
+                  rows.append((status, int(seconds), target))
+          rows.sort(key=lambda row: row[2])
+
+          observed_targets = [target for _, _, target in rows]
+          failures = [(seconds, target) for status, seconds, target in rows if status == "FAIL"]
+          passes = [(seconds, target) for status, seconds, target in rows if status == "PASS"]
+          focused_files = sorted(root.rglob("focused/*.txt"))
+
+          infrastructure_errors: list[str] = []
+          if len(result_files) != expected_shards:
+              infrastructure_errors.append(
+                  f"Expected {expected_shards} shard result files, found {len(result_files)}"
+              )
+          if len(rows) != expected_targets:
+              infrastructure_errors.append(
+                  f"Expected {expected_targets} results, found {len(rows)}"
+              )
+          if len(set(observed_targets)) != len(observed_targets):
+              infrastructure_errors.append("Duplicate target result detected")
+          if set(observed_targets) != set(expected):
+              missing = sorted(set(expected) - set(observed_targets))
+              extra = sorted(set(observed_targets) - set(expected))
+              infrastructure_errors.append(
+                  f"Exact target-set mismatch: missing={len(missing)}, extra={len(extra)}"
+              )
+              (out / "missing-targets.txt").write_text(
+                  "".join(f"{x}\n" for x in missing), encoding="utf-8"
+              )
+              (out / "unexpected-targets.txt").write_text(
+                  "".join(f"{x}\n" for x in extra), encoding="utf-8"
+              )
+          if len(focused_files) != len(failures):
+              infrastructure_errors.append(
+                  f"Expected {len(failures)} focused diagnostics, found {len(focused_files)}"
+              )
+
+          (out / "combined-results.tsv").write_text(
+              "".join(f"{status}\t{seconds}\t{target}\n" for status, seconds, target in rows),
+              encoding="utf-8",
+          )
+          (out / "passed-targets.txt").write_text(
+              "".join(f"{target}\n" for _, target in passes), encoding="utf-8"
+          )
+          (out / "regressed-targets.txt").write_text(
+              "".join(f"{target}\n" for _, target in failures), encoding="utf-8"
+          )
+          (out / "infrastructure-errors.txt").write_text(
+              "".join(f"{error}\n" for error in infrastructure_errors), encoding="utf-8"
+          )
+          (out / "all-focused-diagnostics.txt").write_text(
+              "\n\n".join(f.read_text(errors="replace").rstrip() for f in focused_files) +
+              ("\n" if focused_files else ""),
+              encoding="utf-8",
+          )
+
+          summary = [
+              "### MCFG2 confirmed-success regression result",
+              "",
+              f"- Snapshot: **{os.environ['MCFG2_SUCCESS_VERSION']}**",
+              f"- Expected confirmed-success roots: **{expected_targets}**",
+              f"- Results collected: **{len(rows)}**",
+              f"- Passed: **{len(passes)}**",
+              f"- Regressed: **{len(failures)}**",
+              f"- Shards collected: **{len(result_files)}/{expected_shards}**",
+              "",
+          ]
+          if failures:
+              summary += ["#### Regressed roots", ""]
+              summary += [f"- `{target}` ({seconds}s)" for seconds, target in failures]
+              summary.append("")
+          if infrastructure_errors:
+              summary += ["#### Infrastructure errors", ""]
+              summary += [f"- {error}" for error in infrastructure_errors]
+              summary.append("")
+
+          (out / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
+          print("\n".join(summary))
+
+          if failures or infrastructure_errors:
+              raise SystemExit(1)
+          PY
+          aggregate_status=$?
+          set -e
+
+          cat ci-artifacts/combined/summary.md >> "$GITHUB_STEP_SUMMARY"
+          exit "$aggregate_status"
+
+      - name: Upload combined regression report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcfg2-success-v3-combined-${{ github.run_number }}
+          path: ci-artifacts/combined
+          if-no-files-found: error
+          retention-days: 30
