@@ -230,14 +230,12 @@ variable (f : Nat)
 theorem selectedObservationProductTargetClass_mono
     {S T : Finset ι}
     (hST : S ⊆ T) :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
         f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥T → M)
         (selectedObservationProduct obsFamily T)
@@ -245,7 +243,7 @@ theorem selectedObservationProductTargetClass_mono
 
   exact
     startRootedCorrectedConcreteTargetClass_subset_of_refines
-      (z := z)
+      
       (Refines.selectedObservationProductOfSubset
         obsFamily hST)
 
@@ -254,14 +252,12 @@ class. -/
 theorem selectedObservationProductFailureClass_antitone
     {S T : Finset ι}
     (hST : S ⊆ T) :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (↥T → M)
         (selectedObservationProduct obsFamily T)
         f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+      StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -269,7 +265,7 @@ theorem selectedObservationProductFailureClass_antitone
 
   exact
     observationFailureClass_subset_of_refines
-      (z := z)
+      
       (Refines.selectedObservationProductOfSubset
         obsFamily hST)
 
@@ -279,13 +275,11 @@ theorem selectedObservationFactorTarget_subset_productTarget
     (S : Finset ι)
     {index : ι}
     (hindex : index ∈ S) :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, w}
         α M
         (obsFamily index)
         f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -293,7 +287,7 @@ theorem selectedObservationFactorTarget_subset_productTarget
 
   exact
     startRootedCorrectedConcreteTargetClass_subset_of_refines
-      (z := z)
+      
       (Refines.factorToSelectedObservationProduct
         obsFamily S hindex)
 
@@ -313,8 +307,7 @@ variable (f : Nat)
 def StartRootedCorrectedConcreteSelectedObservationExtensionGainClass
     (S T : Finset ι) :
     Set (Set (Word α)) :=
-  StartRootedCorrectedConcreteObservationGainClass
-    (z := z)
+  StartRootedCorrectedConcreteObservationGainClass.{u, max v w, max v w, z}
     α
     (↥S → M)
     (↥T → M)
@@ -328,25 +321,23 @@ theorem
     selectedObservationProductTargetClass_eq_smaller_union_extensionGain
     {S T : Finset ι}
     (hST : S ⊆ T) :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥T → M)
         (selectedObservationProduct obsFamily T)
         f =
-      StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f ∪
-        StartRootedCorrectedConcreteSelectedObservationExtensionGainClass
-          (z := z)
+        StartRootedCorrectedConcreteSelectedObservationExtensionGainClass.{u, v, w, z}
+          
           obsFamily f S T := by
 
   exact
     finerTargetClass_eq_coarser_union_observationGainClass
-      (z := z)
+      
       (Refines.selectedObservationProductOfSubset
         obsFamily hST)
 
@@ -356,22 +347,19 @@ theorem
     selectedObservationExtension_redundant_iff_targetClass_eq
     {S T : Finset ι}
     (hST : S ⊆ T) :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z)
+    CorrectedConcreteObservationRefinementRedundant.{u, max v w, max v w, z}
         α
         (↥S → M)
         (↥T → M)
         (selectedObservationProduct obsFamily S)
         (selectedObservationProduct obsFamily T)
         f ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥T → M)
           (selectedObservationProduct obsFamily T)
@@ -379,7 +367,7 @@ theorem
 
   exact
     observationRefinementRedundant_iff_targetClass_eq
-      (z := z)
+      
       f
       (Refines.selectedObservationProductOfSubset
         obsFamily hST)
@@ -389,22 +377,19 @@ theorem
     selectedObservationExtension_essential_iff_targetClass_ne
     {S T : Finset ι}
     (hST : S ⊆ T) :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z)
+    CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
         α
         (↥S → M)
         (↥T → M)
         (selectedObservationProduct obsFamily S)
         (selectedObservationProduct obsFamily T)
         f ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f ≠
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥T → M)
           (selectedObservationProduct obsFamily T)
@@ -412,7 +397,7 @@ theorem
 
   exact
     observationRefinementEssential_iff_targetClass_ne
-      (z := z)
+      
       f
       (Refines.selectedObservationProductOfSubset
         obsFamily hST)
@@ -436,8 +421,7 @@ def StartRootedCorrectedConcreteSelectedObservationFactorUnionClass
   {language |
     ∃ selectedIndex : ↥S,
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
           α M
           (obsFamily selectedIndex.1)
           f}
@@ -449,16 +433,14 @@ def StartRootedCorrectedConcreteSelectedObservationSynergyClass
     Set (Set (Word α)) :=
   {language |
     language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f ∧
       ∀ selectedIndex : ↥S,
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
             α M
             (obsFamily selectedIndex.1)
             f}
@@ -469,11 +451,10 @@ variable {α ι M obsFamily f}
 product target class. -/
 theorem selectedObservationFactorUnion_subset_productTarget
     (S : Finset ι) :
-    StartRootedCorrectedConcreteSelectedObservationFactorUnionClass
-        (z := z)
+    StartRootedCorrectedConcreteSelectedObservationFactorUnionClass.{u, v, w, z}
+        
         α ι M obsFamily f S ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -486,7 +467,7 @@ theorem selectedObservationFactorUnion_subset_productTarget
 
   exact
     selectedObservationFactorTarget_subset_productTarget
-      (z := z)
+      
       obsFamily f
       S
       selectedIndex.2
@@ -496,12 +477,12 @@ theorem selectedObservationFactorUnion_subset_productTarget
 class. -/
 theorem selectedObservationSynergy_disjoint_factorUnion
     (S : Finset ι) :
-    Set.Disjoint
-      (StartRootedCorrectedConcreteSelectedObservationSynergyClass
-        (z := z)
+    Disjoint
+      (StartRootedCorrectedConcreteSelectedObservationSynergyClass.{u, v, w, z}
+        
         α ι M obsFamily f S)
-      (StartRootedCorrectedConcreteSelectedObservationFactorUnionClass
-        (z := z)
+      (StartRootedCorrectedConcreteSelectedObservationFactorUnionClass.{u, v, w, z}
+        
         α ι M obsFamily f S) := by
 
   rw [Set.disjoint_left]
@@ -519,17 +500,16 @@ factor targets and genuinely joint synergy targets. -/
 theorem
     selectedObservationProductTargetClass_eq_factorUnion_union_synergy
     (S : Finset ι) :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
         f =
-      StartRootedCorrectedConcreteSelectedObservationFactorUnionClass
-          (z := z)
+      StartRootedCorrectedConcreteSelectedObservationFactorUnionClass.{u, v, w, z}
+          
           α ι M obsFamily f S ∪
-        StartRootedCorrectedConcreteSelectedObservationSynergyClass
-          (z := z)
+        StartRootedCorrectedConcreteSelectedObservationSynergyClass.{u, v, w, z}
+          
           α ι M obsFamily f S := by
 
   classical
@@ -543,8 +523,7 @@ theorem
     by_cases hFactor :
         ∃ selectedIndex : ↥S,
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, w}
               α M
               (obsFamily selectedIndex.1)
               f
@@ -568,7 +547,7 @@ theorem
 
     · exact
         selectedObservationFactorUnion_subset_productTarget
-          (z := z)
+          
           S hFactor
 
     · exact
@@ -579,18 +558,17 @@ target class is already the factor-union class. -/
 theorem
     selectedObservationSynergy_eq_empty_iff_productTarget_eq_factorUnion
     (S : Finset ι) :
-    StartRootedCorrectedConcreteSelectedObservationSynergyClass
-          (z := z)
+    StartRootedCorrectedConcreteSelectedObservationSynergyClass.{u, v, w, z}
+          
           α ι M obsFamily f S =
         ∅ ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f =
-        StartRootedCorrectedConcreteSelectedObservationFactorUnionClass
-          (z := z)
+        StartRootedCorrectedConcreteSelectedObservationFactorUnionClass.{u, v, w, z}
+          
           α ι M obsFamily f S := by
 
   constructor
@@ -599,7 +577,7 @@ theorem
 
     rw [
       selectedObservationProductTargetClass_eq_factorUnion_union_synergy
-        (z := z)
+        
         S,
       hEmpty,
       Set.union_empty
@@ -615,8 +593,7 @@ theorem
 
       have hProduct :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥S → M)
               (selectedObservationProduct obsFamily S)
@@ -659,8 +636,7 @@ def CorrectedConcreteObservationSelectionAtCardinality
     S ⊆ U ∧
       S.card <= cardinalityBudget ∧
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
@@ -673,7 +649,7 @@ def HasCorrectedConcreteObservationSelection
     (language : Set (Word α)) :
     Prop :=
   ∃ cardinalityBudget : Nat,
-    CorrectedConcreteObservationSelectionAtCardinality
+    CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       U language cardinalityBudget
@@ -686,11 +662,11 @@ theorem correctedConcreteObservationSelectionAtCardinality_mono
     {budget budget' : Nat}
     (hbudget : budget <= budget')
     (hselection :
-      CorrectedConcreteObservationSelectionAtCardinality
+      CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language budget) :
-    CorrectedConcreteObservationSelectionAtCardinality
+    CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       U language budget' := by
@@ -711,13 +687,12 @@ theorem hasCorrectedConcreteObservationSelection_of_fullProductTarget
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    HasCorrectedConcreteObservationSelection
+    HasCorrectedConcreteObservationSelection.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       U language := by
@@ -737,7 +712,7 @@ noncomputable def correctedConcreteObservationSelectionCardinality
     {U : Finset ι}
     {language : Set (Word α)}
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language) :
@@ -752,11 +727,11 @@ variable {language : Set (Word α)}
 /-- The minimum selection-cardinality budget is attained. -/
 theorem cardinality_spec
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language) :
-    CorrectedConcreteObservationSelectionAtCardinality
+    CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       U language
@@ -769,13 +744,13 @@ theorem cardinality_spec
 /-- Minimality of the observation-selection cardinality. -/
 theorem cardinality_le_of_selection
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
     {budget : Nat}
     (hbudget :
-      CorrectedConcreteObservationSelectionAtCardinality
+      CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language budget) :
@@ -789,12 +764,12 @@ theorem cardinality_le_of_selection
 /-- Exact threshold theorem for observation-selection cardinality. -/
 theorem selectionAtCardinality_iff_minimum_le
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language)
     (budget : Nat) :
-    CorrectedConcreteObservationSelectionAtCardinality
+    CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language budget ↔
@@ -818,7 +793,7 @@ theorem selectionAtCardinality_iff_minimum_le
 exactly the minimum value. -/
 theorem exists_selection_exact_cardinality
     (hSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language) :
@@ -828,8 +803,7 @@ theorem exists_selection_exact_cardinality
           correctedConcreteObservationSelectionCardinality
             hSelection ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -880,8 +854,7 @@ noncomputable def ambientTargetObservationSelectionCardinality
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -899,14 +872,13 @@ theorem ambientTargetObservationSelectionCardinality_le
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
     ambientTargetObservationSelectionCardinality
-        (z := z)
+        
         obsFamily f U hTarget <=
       U.card := by
 
@@ -932,8 +904,7 @@ theorem ambientTarget_exists_minimumObservationSelection
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -942,11 +913,10 @@ theorem ambientTarget_exists_minimumObservationSelection
       S ⊆ U ∧
         S.card =
           ambientTargetObservationSelectionCardinality
-            (z := z)
+            
             obsFamily f U hTarget ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -988,8 +958,7 @@ theorem selectedProductCertifiedLearner_identifies_targetClass
         hα
         (selectedObservationProduct obsFamily S)
         f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -997,7 +966,7 @@ theorem selectedProductCertifiedLearner_identifies_targetClass
 
   exact
     correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-      (v := z)
+      
       hα
       (selectedObservationProduct obsFamily S)
       f
@@ -1015,8 +984,7 @@ theorem largerSelectionCertifiedLearner_identifies_smallerTargetClass
         hα
         (selectedObservationProduct obsFamily T)
         f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -1024,7 +992,7 @@ theorem largerSelectionCertifiedLearner_identifies_smallerTargetClass
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα
       (selectedObservationProduct obsFamily S)
       (selectedObservationProduct obsFamily T)
@@ -1045,13 +1013,13 @@ theorem largerSelectionCertifiedLearner_identifies_extensionGainClass
         hα
         (selectedObservationProduct obsFamily T)
         f)
-      (StartRootedCorrectedConcreteSelectedObservationExtensionGainClass
-        (z := z)
+      (StartRootedCorrectedConcreteSelectedObservationExtensionGainClass.{u, v, w, z}
+        
         obsFamily f S T) := by
 
   exact
     refinedCertifiedLearner_identifies_observationGainClass
-      (z := z)
+      
       hα
       (selectedObservationProduct obsFamily S)
       (selectedObservationProduct obsFamily T)
@@ -1066,8 +1034,7 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -1077,15 +1044,14 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
       (hSU : S ⊆ U)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       S.card =
           ambientTargetObservationSelectionCardinality
-            (z := z)
+            
             obsFamily f U hTarget ∧
         IdentifiesLanguageFromPositiveData
           (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1103,7 +1069,7 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
             (selectedObservationProduct obsFamily S)
             f
             (startRootedTargetCertifiedDescriptionRank
-              (v := z)
+              
               hα
               (selectedObservationProduct obsFamily S)
               f
@@ -1120,7 +1086,7 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                  
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1129,7 +1095,7 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                  
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1138,7 +1104,7 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
 
   rcases
       ambientTarget_exists_minimumObservationSelection
-        (z := z)
+        
         obsFamily f U hTarget with
     ⟨S, hSU, hcard, hSelected⟩
 
@@ -1148,17 +1114,17 @@ theorem ambientTarget_exists_minimumCertifiedObservationSelection
       hSelected,
       hcard,
       selectedProductCertifiedLearner_identifies_targetClass
-        (z := z)
+        
         hα obsFamily f S
         language hSelected,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
+        
         hα
         (selectedObservationProduct obsFamily S)
         f
         hSelected,
       startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+        
         hα
         (selectedObservationProduct obsFamily S)
         f
@@ -1188,65 +1154,58 @@ theorem
     correctedConcreteCertifiedWorkingGrammar_observationSelection_package :
     (∀ S T : Finset ι,
       S ⊆ T →
-      StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f ⊆
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥T → M)
           (selectedObservationProduct obsFamily T)
           f) ∧
       (∀ S T : Finset ι,
         S ⊆ T →
-        StartRootedCorrectedConcreteObservationFailureClass
-            (z := z)
+        StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
             α
             (↥T → M)
             (selectedObservationProduct obsFamily T)
             f ⊆
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z)
+          StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f) ∧
       (∀ S : Finset ι,
-        StartRootedCorrectedConcreteTargetClass
-            (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f =
-          StartRootedCorrectedConcreteSelectedObservationFactorUnionClass
-              (z := z)
+          StartRootedCorrectedConcreteSelectedObservationFactorUnionClass.{u, v, w, z}
+              
               α ι M obsFamily f S ∪
-            StartRootedCorrectedConcreteSelectedObservationSynergyClass
-              (z := z)
+            StartRootedCorrectedConcreteSelectedObservationSynergyClass.{u, v, w, z}
+              
               α ι M obsFamily f S) ∧
       (∀
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
         ambientTargetObservationSelectionCardinality
-            (z := z)
+            
             obsFamily f U hTarget <=
           U.card) ∧
       (∀
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1256,15 +1215,14 @@ theorem
           (hSU : S ⊆ U)
           (hSelected :
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥S → M)
                 (selectedObservationProduct obsFamily S)
                 f),
           S.card =
               ambientTargetObservationSelectionCardinality
-                (z := z)
+                
                 obsFamily f U hTarget ∧
             IdentifiesLanguageFromPositiveData
               (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1287,7 +1245,7 @@ theorem
                 C.bits.length <=
                   correctedConcreteCertifiedRankBitBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                      
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1296,7 +1254,7 @@ theorem
                 C.canonicalSearch.length <=
                   correctedConcreteCertifiedRankSearchBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                      
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1306,24 +1264,24 @@ theorem
   exact
     ⟨fun S T hST =>
         selectedObservationProductTargetClass_mono
-          (z := z)
+          
           obsFamily f hST,
       fun S T hST =>
         selectedObservationProductFailureClass_antitone
-          (z := z)
+          
           obsFamily f hST,
       fun S =>
         selectedObservationProductTargetClass_eq_factorUnion_union_synergy
-          (z := z)
+          
           S,
       fun language hTarget =>
         ambientTargetObservationSelectionCardinality_le
-          (z := z)
+          
           obsFamily f U hTarget,
       fun language hTarget => by
         rcases
             ambientTarget_exists_minimumCertifiedObservationSelection
-              (z := z)
+              
               hα obsFamily f U hTarget with
           ⟨S,
             hSU,
