@@ -140,10 +140,10 @@ to a finer observation while retaining the same actual grammar. -/
 def StartRootedCorrectedConcreteTargetWitness.refineObservation
     (r : Refines obs obs')
     (W :
-      StartRootedCorrectedConcreteTargetWitness
-        (v := z) α M obs f L) :
-    StartRootedCorrectedConcreteTargetWitness
-      (v := z) α M' obs' f L where
+      StartRootedCorrectedConcreteTargetWitness.{u, z, v}
+        α M obs f L) :
+    StartRootedCorrectedConcreteTargetWitness.{u, z, w}
+      α M' obs' f L where
 
   nonterminal :=
     W.nonterminal
@@ -175,8 +175,8 @@ def StartRootedCorrectedConcreteTargetWitness.refineObservation
     StartRootedCorrectedConcreteTargetWitness.refineObservation_grammar
     (r : Refines obs obs')
     (W :
-      StartRootedCorrectedConcreteTargetWitness
-        (v := z) α M obs f L) :
+      StartRootedCorrectedConcreteTargetWitness.{u, z, v}
+        α M obs f L) :
     (W.refineObservation r).grammar =
       W.grammar := by
 
@@ -187,8 +187,8 @@ def StartRootedCorrectedConcreteTargetWitness.refineObservation
     StartRootedCorrectedConcreteTargetWitness.refineObservation_language_eq
     (r : Refines obs obs')
     (W :
-      StartRootedCorrectedConcreteTargetWitness
-        (v := z) α M obs f L) :
+      StartRootedCorrectedConcreteTargetWitness.{u, z, v}
+        α M obs f L) :
     (W.refineObservation r).grammar.StringLanguage =
       L := by
 
@@ -200,10 +200,10 @@ under the finer observation. -/
 theorem
     startRootedCorrectedConcreteTargetClass_subset_of_refines
     (r : Refines obs obs') :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f := by
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f := by
 
   intro language hlanguage
 
@@ -219,11 +219,11 @@ theorem
     (r : Refines obs obs')
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) :
     L ∈
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f := by
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f := by
 
   exact
     startRootedCorrectedConcreteTargetClass_subset_of_refines
@@ -249,8 +249,8 @@ def StartRootedCorrectedConcreteObservationFailureClass :
     Set (Set (Word α)) :=
   {L |
     L ∉
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f}
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f}
 
 /-- Languages gained by replacing `obs` with `obs'`: represented under `obs'`
 but not under `obs`. -/
@@ -258,11 +258,11 @@ def StartRootedCorrectedConcreteObservationGainClass :
     Set (Set (Word α)) :=
   {L |
     L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f ∧
       L ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f}
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f}
 
 /-- Languages lost by replacing `obs` with `obs'`: represented under `obs` but
 not under `obs'`.  Under an actual refinement this class is empty. -/
@@ -270,11 +270,11 @@ def StartRootedCorrectedConcreteObservationLossClass :
     Set (Set (Word α)) :=
   {L |
     L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ∧
       L ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f}
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f}
 
 variable {α M M' obs obs' f}
 
@@ -286,43 +286,43 @@ theorem
     {L : Set (Word α)}
     (hfailure :
       L ∈
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f) :
+        StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f) :
     L ∈
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M obs f := by
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M obs f := by
 
   intro hcoarse
 
   exact
     hfailure
       (startRootedCorrectedConcreteTarget_mem_of_refines
-        (z := z) r hcoarse)
+         r hcoarse)
 
 /-- Observation-failure classes are contravariantly monotone under
 refinement. -/
 theorem
     observationFailureClass_subset_of_refines
     (r : Refines obs obs') :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M' obs' f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M obs f := by
+    StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+        α M' obs' f ⊆
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M obs f := by
 
   intro L hL
 
   exact
     observationFailure_of_finer_implies_failure_of_coarser
-      (z := z) r hL
+       r hL
 
 /-- Strict observation gains are always represented under the finer
 observation. -/
 theorem
     observationGainClass_subset_finerTargetClass :
-    StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M M' obs obs' f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f := by
+    StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M M' obs obs' f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f := by
 
   intro L hL
 
@@ -331,11 +331,11 @@ theorem
 /-- Strict observation gains are disjoint from the coarser target class. -/
 theorem
     observationGainClass_disjoint_coarserTargetClass :
-    Set.Disjoint
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M M' obs obs' f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f) := by
+    Disjoint
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M M' obs obs' f)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f) := by
 
   rw [Set.disjoint_left]
 
@@ -348,8 +348,8 @@ theorem
 theorem
     observationLossClass_eq_empty_of_refines
     (r : Refines obs obs') :
-    StartRootedCorrectedConcreteObservationLossClass
-        (z := z) α M M' obs obs' f =
+    StartRootedCorrectedConcreteObservationLossClass.{u, v, w, z}
+        α M M' obs obs' f =
       ∅ := by
 
   ext L
@@ -365,7 +365,7 @@ theorem
       False.elim
         (hnotFine
           (startRootedCorrectedConcreteTarget_mem_of_refines
-            (z := z) r hcoarse))
+             r hcoarse))
 
   · intro hEmpty
 
@@ -376,12 +376,12 @@ coarser target class and the strict observation-gain class. -/
 theorem
     finerTargetClass_eq_coarser_union_observationGainClass
     (r : Refines obs obs') :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f =
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f := by
+    StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f := by
 
   ext L
 
@@ -391,8 +391,8 @@ theorem
 
     by_cases hCoarse :
         L ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f
+          StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f
 
     · exact
         Or.inl hCoarse
@@ -409,7 +409,7 @@ theorem
 
     · exact
         startRootedCorrectedConcreteTarget_mem_of_refines
-          (z := z) r hCoarse
+           r hCoarse
 
     · exact
         hGain.1
@@ -419,34 +419,33 @@ with no overlap between the two parts. -/
 theorem
     finerTargetClass_observationGain_decomposition_package
     (r : Refines obs obs') :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f ∧
-      Set.Disjoint
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) ∧
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f =
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f ∪
-          StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M M' obs obs' f ∧
-      StartRootedCorrectedConcreteObservationLossClass
-          (z := z) α M M' obs obs' f =
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f ∧
+      Disjoint
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f)
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) ∧
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f ∪
+          StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+            α M M' obs obs' f ∧
+      StartRootedCorrectedConcreteObservationLossClass.{u, v, w, z}
+          α M M' obs obs' f =
         ∅ := by
 
   exact
     ⟨startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z) r,
-      observationGainClass_disjoint_coarserTargetClass
-        (z := z),
+         r,
+      observationGainClass_disjoint_coarserTargetClass,
       finerTargetClass_eq_coarser_union_observationGainClass
-        (z := z) r,
+         r,
       observationLossClass_eq_empty_of_refines
-        (z := z) r⟩
+         r⟩
 
 end ObservationFailureAndGainClasses
 
@@ -478,17 +477,17 @@ theorem
         obs' f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs' f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f) := by
 
   intro L hCoarse
 
   exact
     correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-      (v := z) hα obs' f
+       hα obs' f
       L
       (startRootedCorrectedConcreteTarget_mem_of_refines
-        (z := z) r hCoarse)
+         r hCoarse)
 
 /-- The certified learner built from the finer observation identifies every
 strict observation-gain language. -/
@@ -499,14 +498,14 @@ theorem
         obs' f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs' f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M M' obs obs' f) := by
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M M' obs obs' f) := by
 
   intro L hGain
 
   exact
     correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-      (v := z) hα obs' f
+       hα obs' f
       L hGain.1
 
 /-- Every coarser target is identified by both the coarse and the refined
@@ -516,8 +515,8 @@ theorem
     {L : Set (Word α)}
     (hL :
       L ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) :
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) :
     IdentifiesLanguageFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs f)
@@ -533,11 +532,11 @@ theorem
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := z) hα obs f L hL,
+         hα obs f L hL,
       correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := z) hα obs' f L
+         hα obs' f L
         (startRootedCorrectedConcreteTarget_mem_of_refines
-          (z := z) r hL)⟩
+           r hL)⟩
 
 /-- A strict-gain language has a refined-observation minimum certified
 description rank, while remaining outside the coarser semantic target class. -/
@@ -545,22 +544,22 @@ theorem observationGain_target_refinedDescriptionRank_package
     {L : Set (Word α)}
     (hGain :
       L ∈
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f) :
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f) :
     L ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ∧
       L ∈
         CorrectedConcreteCertifiedRankProfileClass
           (α := α)
           (M := M')
           obs' f
           (startRootedTargetCertifiedDescriptionRank
-            (v := z) hα obs' f hGain.1) ∧
+             hα obs' f hGain.1) ∧
       startRootedTargetCertifiedDescriptionRank
-          (v := z) hα obs' f hGain.1 <=
+           hα obs' f hGain.1 <=
         startRootedTargetCharacteristicRank
-          (v := z) hα obs' f hGain.1 ∧
+           hα obs' f hGain.1 ∧
       ∃
         C :
           CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -569,29 +568,29 @@ theorem observationGain_target_refinedDescriptionRank_package
           C.bits.length <=
             correctedConcreteCertifiedRankBitBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := z) hα obs' f hGain.1)
+                 hα obs' f hGain.1)
               f ∧
           C.canonicalSearch.length <=
             correctedConcreteCertifiedRankSearchBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := z) hα obs' f hGain.1)
+                 hα obs' f hGain.1)
               f := by
 
   exact
     ⟨hGain.2,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z) hα obs' f hGain.1,
+         hα obs' f hGain.1,
       startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := z) hα obs' f hGain.1,
+         hα obs' f hGain.1,
       startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z) hα obs' f hGain.1⟩
+         hα obs' f hGain.1⟩
 
 /-- Every strict observation-gain language belongs to some finite certified
 rank profile for the refined observation. -/
 theorem
     observationGainClass_subset_exists_refinedCertifiedRankProfile :
-    StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M M' obs obs' f ⊆
+    StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M M' obs obs' f ⊆
       {L : Set (Word α) |
         ∃ rank : Nat,
           L ∈
@@ -604,9 +603,9 @@ theorem
 
   exact
     ⟨startRootedTargetCertifiedDescriptionRank
-        (v := z) hα obs' f hGain.1,
+         hα obs' f hGain.1,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z) hα obs' f hGain.1⟩
+         hα obs' f hGain.1⟩
 
 end CertifiedLearnerObservationRefinement
 
@@ -633,39 +632,39 @@ variable (r : Refines obs obs')
 package. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationRefinementFailure_package :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f) ∧
-      (StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f ⊆
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M obs f) ∧
-      (StartRootedCorrectedConcreteObservationLossClass
-          (z := z) α M M' obs obs' f =
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f) ∧
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f ⊆
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M obs f) ∧
+      (StartRootedCorrectedConcreteObservationLossClass.{u, v, w, z}
+          α M M' obs obs' f =
         ∅) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f =
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M obs f ∪
-          StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M M' obs obs' f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M obs f ∪
+          StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+            α M M' obs obs' f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs' f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs' f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs' f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs' f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f) ∧
-      (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f ⊆
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f) ∧
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f ⊆
         {L : Set (Word α) |
           ∃ rank : Nat,
             L ∈
@@ -676,19 +675,19 @@ theorem
 
   exact
     ⟨startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z) r,
+         r,
       observationFailureClass_subset_of_refines
-        (z := z) r,
+         r,
       observationLossClass_eq_empty_of_refines
-        (z := z) r,
+         r,
       finerTargetClass_eq_coarser_union_observationGainClass
-        (z := z) r,
+         r,
       refinedCertifiedLearner_identifies_coarserTargetClass
-        (z := z) hα obs obs' f r,
+         hα obs obs' f r,
       refinedCertifiedLearner_identifies_observationGainClass
-        (z := z) hα obs obs' f r,
+         hα obs obs' f r,
       observationGainClass_subset_exists_refinedCertifiedRankProfile
-        (z := z) hα obs obs' f r⟩
+         hα obs obs' f r⟩
 
 end ObservationRefinementFailurePackages
 
