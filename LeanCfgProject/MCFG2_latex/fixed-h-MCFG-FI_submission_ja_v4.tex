@@ -339,99 +339,40 @@ Pin~\cite{Pin1986} を参照されたい。典型例としては、正則制御�
 規則は次のいずれかの形をもつ。
 \begin{enumerate}[label=(\roman*),leftmargin=*]
 \item 開始規則 \(S\to A\)。ただし \(A\ne S\) かつ \(\mu(A)=1\) である。
-\item 終端規則 \(A\to(a)\)。ただし \(A\ne S\)、\(a\in\Sigma\)、
-\(\mu(A)=1\) である。
-\item 二分規則
-\[
-  \rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C).
-\]
-ただし \(A\ne S\)、\(e=\mu(A)\)、\(\mu(B)=d_B\)、\(\mu(C)=d_C\) であり、
-各 \(\alpha_i\) は
-\[
-  \Sigma\cup\{x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\}
-\]
-上の語である。また各変数
-\(x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\) は、タプル全体
-\((\alpha_1,\ldots,\alpha_e)\) にちょうど一度ずつ現れる。
+\item 終端規則 \(A\to(a)\)。ただし \(A\ne S\)、\(a\in\Sigma\)、\(\mu(A)=1\) である。
+\item 二分規則 \(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\)。ただし
+      \(A\ne S\)、\(e=\mu(A)\)、\(\mu(B)=d_B\)、\(\mu(C)=d_C\) であり、
+      各 \(\alpha_i\) は
+      \(\Sigma\cup\{x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\}\)
+      上の語である。また各変数
+      \(x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\) は、タプル全体
+      \((\alpha_1,\ldots,\alpha_e)\) にちょうど一度ずつ現れる。
 \end{enumerate}
 この表示は\emph{開始記号分離型}である。すなわち、左辺が \(S\) である規則は開始規則だけであり、
 二分規則の右辺の子として \(S\) が現れることはない。
 \end{definition}
 
-二分規則
-\[
-  \rho\colon
-  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
-\]
-をとる。ただし、
-\[
-  e=\mu(A),\qquad
-  d_B=\mu(B),\qquad
-  d_C=\mu(C)
-\]
-とする。
-
+二分規則 \(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) をとり、
+\(e=\mu(A)\)、\(d_B=\mu(B)\)、\(d_C=\mu(C)\) とする。
 この規則に付随する変数集合を
-\[
-  X_B:=\{x^1,\ldots,x^{d_B}\},
-  \qquad
-  Y_C:=\{y^1,\ldots,y^{d_C}\}
-\]
-とし、
-\[
-  \Gamma_\rho
-  :=
-  \Sigma\uplus X_B\uplus Y_C
-\]
-とおく。各
-\[
-  \alpha_\ell\in\Gamma_\rho^*
-  \qquad (1\le \ell\le e)
-\]
-を規則 \(\rho\) の\emph{テンプレート成分}と呼び、そのタプル
-\[
-  \boldsymbol{\alpha}_\rho
-  :=
-  (\alpha_1,\ldots,\alpha_e)
-  \in(\Gamma_\rho^*)^e
-\]
+\(X_B:=\{x^1,\ldots,x^{d_B}\}\) および
+\(Y_C:=\{y^1,\ldots,y^{d_C}\}\) とし、
+\(\Gamma_\rho:=\Sigma\uplus X_B\uplus Y_C\) とおく。
+各 \(\alpha_\ell\in\Gamma_\rho^*\)（\(1\le \ell\le e\)）を規則 \(\rho\) の
+\emph{テンプレート成分}と呼び、
+\(\boldsymbol{\alpha}_\rho:=(\alpha_1,\ldots,\alpha_e)\in(\Gamma_\rho^*)^e\)
 を規則 \(\rho\) の\emph{テンプレートタプル}と呼ぶ。
 
 タプル
-\[
-  \tuple u=(u_1,\ldots,u_{d_B})
-  \in(\Sigma^*)^{d_B},
-  \qquad
-  \tuple v=(v_1,\ldots,v_{d_C})
-  \in(\Sigma^*)^{d_C}
-\]
-に対して、写像
-\[
-  \sigma_{\tuple u,\tuple v}\colon
-  \Gamma_\rho\to\Sigma^*
-\]
-を
-\[
-  \sigma_{\tuple u,\tuple v}(a):=a
-  \qquad (a\in\Sigma),
-\]
-\[
-  \sigma_{\tuple u,\tuple v}(x^i):=u_i
-  \qquad (1\le i\le d_B),
-\]
-\[
-  \sigma_{\tuple u,\tuple v}(y^j):=v_j
-  \qquad (1\le j\le d_C)
-\]
-によって定める。
-
+\(\tuple u=(u_1,\ldots,u_{d_B})\in(\Sigma^*)^{d_B}\) および
+\(\tuple v=(v_1,\ldots,v_{d_C})\in(\Sigma^*)^{d_C}\) に対して、写像
+\(\sigma_{\tuple u,\tuple v}\colon\Gamma_\rho\to\Sigma^*\) を、
+\(\sigma_{\tuple u,\tuple v}(a):=a\)（\(a\in\Sigma\)）、
+\(\sigma_{\tuple u,\tuple v}(x^i):=u_i\)（\(1\le i\le d_B\)）、および
+\(\sigma_{\tuple u,\tuple v}(y^j):=v_j\)（\(1\le j\le d_C\)）によって定める。
 この写像を語へ一意に準同型拡張して得られる写像を
-\[
-  \widehat{\sigma}_{\tuple u,\tuple v}\colon
-  \Gamma_\rho^*\to\Sigma^*
-\]
-とする。規則 \(\rho\) を
-\(\tuple u,\tuple v\) に適用した結果を
+\(\widehat{\sigma}_{\tuple u,\tuple v}\colon\Gamma_\rho^*\to\Sigma^*\) とする。
+規則 \(\rho\) を \(\tuple u,\tuple v\) に適用した結果を
 \[
   \rho(\tuple u,\tuple v)
   :=
@@ -445,65 +386,28 @@ Pin~\cite{Pin1986} を参照されたい。典型例としては、正則制御�
 と定義する。これが二分規則の同時代入による意味論である。
 
 各非終端記号 \(A\in V\) のタプル言語
-\[
-  L_A(G)\subseteq(\Sigma^*)^{\mu(A)}
-\]
-は、次の条件を満たす最小の族として定義する。
+\(L_A(G)\subseteq(\Sigma^*)^{\mu(A)}\) は、成分ごとの包含で順序付けた族
+\((L_A(G))_{A\in V}\) のうち、次の閉包条件を満たす最小のものとして定義する。
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item 終端規則 \(A\to(a)\) が存在するならば、
-      \[
-        (a)\in L_A(G).
-      \]
+\item 終端規則 \(A\to(a)\) が存在するならば、\((a)\in L_A(G)\) である。
 
-\item 二分規則
-      \[
-        \rho\colon
-        A\to(\alpha_1,\ldots,\alpha_e)(B,C)
-      \]
-      が存在し、
-      \[
-        \tuple u\in L_B(G),
-        \qquad
-        \tuple v\in L_C(G)
-      \]
-      ならば、
-      \[
-        \rho(\tuple u,\tuple v)\in L_A(G).
-      \]
+\item 二分規則 \(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) が存在し、
+      \(\tuple u\in L_B(G)\) かつ \(\tuple v\in L_C(G)\) ならば、
+      \(\rho(\tuple u,\tuple v)\in L_A(G)\) である。
 
-\item 開始規則 \(S\to A\) が存在し、
-      \[
-        \tuple w\in L_A(G)
-      \]
-      ならば、
-      \[
-        \tuple w\in L_S(G).
-      \]
+\item 開始規則 \(S\to A\) が存在し、\(\tuple w\in L_A(G)\) ならば、
+      \(\tuple w\in L_S(G)\) である。
 \end{enumerate}
 文法 \(G\) が生成する文字列言語を
-\[
-  L(G):=
-  \{w\in\Sigma^*\mid (w)\in L_S(G)\}
-\]
-と定義する。開始記号のファンアウトは \(\mu(S)=1\) なので、
-必要に応じて \(L_S(G)\) と \(L(G)\) を同一視する。
+\(L(G):=\{w\in\Sigma^*\mid (w)\in L_S(G)\}\) と定義する。
+開始記号のファンアウトは \(\mu(S)=1\) なので、必要に応じて \(L_S(G)\) と \(L(G)\) を同一視する。
 
-非終端記号 \(A\) が\emph{生成的}であるとは、
-\[
-  L_A(G)\ne\emptyset
-\]
-であることをいう。また、非終端記号依存グラフにおいて、
-開始記号 \(S\) から \(A\) への有向路が存在するとき、
-\(A\) は \(S\) から\emph{到達可能}であるという。
-ここで、開始規則 \(S\to A\) に対して辺 \(S\to A\) を置き、
-二分規則
-\[
-  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
-\]
-に対して辺 \(A\to B\) および \(A\to C\) を置く。
-
-すべての非終端記号が \(S\) から到達可能であり、かつ生成的であるとき、
-文法 \(G\) は\emph{簡約されている}という。
+非終端記号 \(A\) が\emph{生成的}であるとは、\(L_A(G)\ne\emptyset\) であることをいう。
+非終端記号依存グラフでは、開始規則 \(S\to A\) ごとに辺 \(S\to A\) を置き、
+二分規則 \(A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) ごとに辺
+\(A\to B\) および \(A\to C\) を置く。このグラフで開始記号 \(S\) から \(A\) への
+有向路が存在するとき、\(A\) は \(S\) から\emph{到達可能}であるという。
+すべての非終端記号が到達可能かつ生成的であるとき、文法 \(G\) は\emph{簡約されている}という。
 
 \begin{remark}[作業形の適用範囲と、主張しないこと]
 \label{rem:working-form-scope}
@@ -542,7 +446,7 @@ Pin~\cite{Pin1986} を参照されたい。典型例としては、正則制御�
 
 \begin{definition}[タプル分布]
 \label{def:tuple-distribution}
-$d\geq1$とする。\(L\subseteq\Sigma^*\) および \(\tuple x\in(\Sigma^*)^d\) に対して、
+\(d\geq1\)とする。\(L\subseteq\Sigma^*\) および \(\tuple x\in(\Sigma^*)^d\) に対して、
 \[
 \D_L^{(d)}(\tuple x):=
 \{E\mid E\text{ はアリティ }d\text{ の文コンテクストであり }E[\tuple x]\in L\}
@@ -576,93 +480,59 @@ $d\geq1$とする。\(L\subseteq\Sigma^*\) および \(\tuple x\in(\Sigma^*)^d\)
 
 \begin{remark}[対象クラスの意味論的性質]
 \label{rem:semantic-class}
-言語 \(L\) がクラス \(\Cmcf{f}{h}\) に属するためには、次の二条件が
-満たされなければならない。
+言語 \(L\) がクラス \(\Cmcf{f}{h}\) に属するためには、次の二条件が満たされなければならない。
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \(L\) が、ファンアウト高々 \(f\) の簡約された作業形 MCFG
-      \(G\) によって \(L=L(G)\) と表示されること。
+\item \(L\) が、ファンアウト高々 \(f\) の簡約された作業形 MCFG \(G\) によって
+      \(L=L(G)\) と表示されること。
 \item 言語 \(L(G)\) が \((f,h)\)-タプル代入可能であること。
 \end{enumerate}
-
-条件 (i) は具体的な文法表示に関する条件である。
-これに対して条件 (ii) は、文法の規則の形ではなく、
-生成される言語全体の文コンテクスト分布に関する条件である。
+条件~(i) は具体的な文法表示に関する条件である。これに対して条件~(ii) は、文法規則の形ではなく、
+その表示が生成する言語全体の文コンテクスト分布に関する条件である。
 この意味で、\(\Cmcf{f}{h}\) は\emph{意味論的対象クラス}である。
 
-本論文では、与えられた作業形 MCFG \(G\) から、
-\(L(G)\) が \((f,h)\)-タプル代入可能であるかどうかを
-常に決定できるとは主張しない。
-ただし、代入可能性が\emph{失敗すること}は半決定可能である。
-実際、失敗は有限個の語と文コンテクストによって証明できる。
-
-具体的には、ある \(1\le d\le f\)、タプル$  \tuple x,\tuple y\in(\Sigma^*)^d$
-およびアリティ \(d\) の文コンテクスト \(E,F\) が存在して、
+本論文では、与えられた作業形 MCFG \(G\) から、\(L(G)\) が
+\((f,h)\)-タプル代入可能であるかどうかを常に決定できるとは主張しない。
+ただし、代入可能性が\emph{失敗すること}は有限の証拠をもつため半決定可能である。
+具体的には、ある \(1\le d\le f\)、タプル
+\(\tuple x,\tuple y\in(\Sigma^*)^d\)、およびアリティ \(d\) の文コンテクスト
+\(E,F\) が存在して、
 \[
-  h^{(d)}(\tuple x)=h^{(d)}(\tuple y),
-\]
-\[
-  E[\tuple x]\in L(G),
-  \qquad
-  E[\tuple y]\in L(G),
-\]
-\[
-  F[\tuple x]\in L(G),
-  \qquad
-  F[\tuple y]\notin L(G)
+\begin{gathered}
+  h^{(d)}(\tuple x)=h^{(d)}(\tuple y),\\
+  E[\tuple x],E[\tuple y],F[\tuple x]\in L(G),
+  \qquad F[\tuple y]\notin L(G)
+\end{gathered}
 \]
 となれば、\((f,h)\)-タプル代入可能性は失敗している。
+コンテクスト \(E\) は、\(\tuple x\) と \(\tuple y\) が少なくとも一つの受理文コンテクストを
+共有することを示す。一方、\(F\in\D_{L(G)}^{(d)}(\tuple x)\setminus
+\D_{L(G)}^{(d)}(\tuple y)\) であるから、
+\(\D_{L(G)}^{(d)}(\tuple x)\ne\D_{L(G)}^{(d)}(\tuple y)\) となり、
+定義~\ref{def:tuple-substitutable} の条件に反する。
 
-ここで、コンテクスト \(E\) は、\(\tuple x\) と \(\tuple y\) が
-少なくとも一つの受理文コンテクストを共有することを示す。
-一方、コンテクスト \(F\) は、
-\[
-  F\in
-  \D_{L(G)}^{(d)}(\tuple x)
-  \setminus
-  \D_{L(G)}^{(d)}(\tuple y)
-\]
-であることを示す。したがって、
-\[
-  \D_{L(G)}^{(d)}(\tuple x)
-  \ne
-  \D_{L(G)}^{(d)}(\tuple y),
-\]
-となり、定義~\ref{def:tuple-substitutable} の条件に反する。
-
-有限のタプルと文コンテクストは、長さの短いものから順に
-実効的に列挙できる。また、MCFG の所属問題は形式文法により多項式時間で決定可能なので、
-各候補について上の所属・非所属条件を有限時間で検査できる。
-したがって、失敗証拠が存在する場合には、探索によっていつか
-それを発見できる。ただし、失敗証拠が存在しない場合に探索が
-停止するとは限らないため、これは決定手続ではなく半決定手続である。
+有限のタプルと有限の文コンテクストは、たとえば長さ辞書式順序で実効的に列挙できる。
+また、固定された MCFG に対する所属問題は決定可能なので、各候補について上の所属・非所属条件を
+有限時間で検査できる。したがって、失敗証拠が存在する場合には探索によっていつか発見できる。
+ただし、失敗証拠が存在しない場合に探索が停止するとは限らないため、これは決定手続ではなく
+半決定手続である。
 
 この意味論的な非実効性は、本論文の極限同定定理には支障を与えない。
-学習器には、対象文法 \(G\) も、対象が
-\((f,h)\)-タプル代入可能であるという証明も入力されない。
-定理が主張するのは、未知の対象言語が実際に
-\(\Cmcf{f}{h}\) に属しているならば、その対象に応じた有限特徴標本が
-存在し、その特徴標本を含む十分な正例データを受け取った後には、
+学習器には、対象文法 \(G\) も、対象が \((f,h)\)-タプル代入可能であるという証明も入力されない。
+定理が主張するのは、未知の対象言語が実際に \(\Cmcf{f}{h}\) に属しているならば、
+その対象に応じた有限特徴標本が存在し、その特徴標本を含む十分な正例データを受け取った後には、
 固定された学習器の仮説言語が対象言語と一致する、ということである。
 
-対象言語が \((f,h)\)-タプル代入可能でない場合には、
-本論文の厳密再構成定理および極限同定定理は適用できない。
-したがって、学習器が有限正例標本 \(K\) から構成する仮説言語$  L(\widehat G_0(K))$
-が、未知の対象言語と一致するとは保証されない。
-
-ただし、学習器自体は、意味論的仮定が成り立つかどうかに
-かかわらず、任意の有限正例標本 \(K\) に対して定義されている。
-さらに、構成された仮説文法 \(\widehat G_0(K)\) は、
-標本中のすべての語を生成する。したがって、$  K\subseteq L(\widehat G_0(K))$
-が常に成り立つ。
-
-つまり、学習器が観測済みの正例を仮説言語から取りこぼすことはない。
-問題になりうるのは、標本 \(K\) にまだ現れていない語である。
-具体的には、$  L(\widehat G_0(K))\setminus K$
-に属する語の中に、実際の対象言語には属さない語が含まれる可能性がある。
-
-したがって、\((f,h)\)-タプル代入可能性が保証するのは、
-観測済みの正例を再現できることではなく、有限標本から未観測の語へ
-仮説を拡張するときに、余分な語を生成しないという健全性である。
+対象言語が \((f,h)\)-タプル代入可能でない場合には、本論文の厳密再構成定理および極限同定定理は
+適用できない。したがって、有限正例標本 \(K\) から構成される仮説言語
+\(L(\widehat G_0(K))\) が、未知の対象言語と一致するとは保証されない。
+それでも、学習器自体は意味論的仮定の成否にかかわらず任意の有限正例標本に対して定義されており、
+その仮説は常に観測済みの全例を生成する、すなわち
+\(K\subseteq L(\widehat G_0(K))\) が成り立つ。
+したがって、学習器が観測済みの正例を仮説言語から取りこぼすことはない。
+問題になりうるのは未観測の語であり、集合
+\(L(\widehat G_0(K))\setminus K\) に、実際の対象言語には属さない語が含まれる可能性がある。
+ゆえに、\((f,h)\)-タプル代入可能性は観測標本の再現に必要なのではなく、有限標本から
+未観測語へ外挿するときの健全性を保証するために必要である。
 \end{remark}
 
 
@@ -756,7 +626,7 @@ k_j+\sum_{i=1}^{d}|y_i|_{a_j}&=n'
   \qquad (1\le i\le d)
 \]
 が成り立つ。
-$h_m$はモノイド準同型なので、
+\(h_m\)はモノイド準同型なので、
 \[
   h_m\bigl(F[\tuple x]\bigr)
   =
@@ -779,13 +649,15 @@ $h_m$はモノイド準同型なので、
 二つのタプル分布は等しい。
 \end{proof}
 
+この議論を一般化させることができる。以下ではたとえば \(\{a^n\#_2b^m\#_3c^n\#_4d^m\mid n\ge1,\, m\ge1\}\) のような言語を一般化して取り扱う。
+
 \begin{definition}[固定順序ブロック包絡]
 \label{def:fixed-ordered-block-envelope}
 \(k\ge 1\) とする。
-互いに異なる文字$  A=\{a_1,\ldots,a_k\}$
+互いに異なる文字 \(A=\{a_1,\ldots,a_k\}\)
 と、\(A\) と交わらない有限アルファベット \(\Delta\) をとる。
-さらに、固定された区切り語$  s_0,s_1,\ldots,s_k\in\Delta^*$
-をとり、$  \Sigma=A\uplus\Delta$
+さらに、固定された区切り語 \(s_0,s_1,\ldots,s_k\in\Delta^*\)
+をとり、\(\Sigma=A\uplus\Delta\)
 とおく。
 
 このとき、
@@ -817,16 +689,14 @@ $h_m$はモノイド準同型なので、
 と定め、\(j\) 番目の成分を \(\ell_j(w):=n_j\) と書く。
 \end{definition}
 
-以下ではたとえば$  \{a^n\#_2b^m\#_3c^n\#_4d^m\mid n\ge1,\, m\ge1\}$のような言語を一般化して取り扱う。
-
 \begin{lemma}[固定順序ブロック包絡における長さ等式の保存]
 \label{lem:block-equality-envelopes}
 \(R\subseteq\Sigma^*\) を、定義
 \ref{def:fixed-ordered-block-envelope}
 の固定順序ブロック包絡とする。
-また、\(\mathcal A_R\) を \(R\) を認識する完全 DFA とし、$  h_R:\Sigma^*\longrightarrow M_R$
+また、\(\mathcal A_R\) を \(R\) を認識する完全 DFA とし、\(h_R:\Sigma^*\longrightarrow M_R\)
 をその遷移モノイドへの準同型とする。
-ブロック添字の有限集合$  \Lambda\subseteq\{1,\ldots,k\}^2$
+ブロック添字の有限集合 \(\Lambda\subseteq\{1,\ldots,k\}^2\)
 に対して、
 \[
   L_\Lambda
@@ -1267,7 +1137,7 @@ $h_m$はモノイド準同型なので、
 \]
 である。
 
-規則 \(\rho\) におけるテンプレート語 $\alpha_j$の評価を
+規則 \(\rho\) におけるテンプレート語 \(\alpha_j\) の評価を
 \[
   \ev_\rho(\alpha_j;\mathbf q,\mathbf r)
   :=
@@ -1309,17 +1179,11 @@ $h_m$はモノイド準同型なので、
 完全出力型精密化 \(G^h\) と、そのトリムされた部分文法
 \(\widetilde G_0\) について、次が成り立つ。
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item 任意の \(A\in V\setminus\{S\}\)、
-      \(\mathbf p\in M^{\mu(A)}\)、および
+\item 任意の \(A\in V\setminus\{S\}\)、\(\mathbf p\in M^{\mu(A)}\)、および
       \(\tuple u\in(\Sigma^*)^{\mu(A)}\) に対して、
-      \[
-        A_{\mathbf p}\Rightarrow_{G^h}^*\tuple u
-      \]
-      ならば、
-      \[
-        h^{(\mu(A))}(\tuple u)=\mathbf p.
-      \]
-      さらに、この \(G^h\)-導出木からすべての型添字を消去すると、
+      \(A_{\mathbf p}\Rightarrow_{G^h}^*\tuple u\) ならば、
+      \(h^{(\mu(A))}(\tuple u)=\mathbf p\) である。さらに、この
+      \(G^h\)-導出木からすべての型添字を消去すると、
       \(A\Rightarrow_G^*\tuple u\) を示す正しい \(G\)-導出木が得られる。
 
 \item \(A\in V\setminus\{S\}\) を根にもつ任意の固定された
@@ -1329,15 +1193,8 @@ $h_m$はモノイド準同型なので、
       ここで一意性とは、もとの \(G\)-導出木の規則と木構造を固定したとき、
       各節点に付される型添字が一意に定まることをいう。
 
-\item
-      \[
-        L(G^h)=L(G)
-      \]
-      である。さらに、
-      \[
-        L(\widetilde G_0)=L(G^h)=L(G)
-      \]
-      である。
+\item \(L(G^h)=L(G)\) である。さらに、
+      \(L(\widetilde G_0)=L(G^h)=L(G)\) である。
 \end{enumerate}
 \end{proposition}
 
@@ -1345,32 +1202,12 @@ $h_m$はモノイド準同型なので、
 まず、二分規則に対するテンプレート評価と実際の文字列代入との
 関係を確認する。
 
-二分規則
-\[
-  \rho\colon
-  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
-\]
-をとり、
-\[
-  d_B=\mu(B),
-  \qquad
-  d_C=\mu(C)
-\]
-とする。また、
-\[
-  \tuple u=(u_1,\ldots,u_{d_B})
-  \in(\Sigma^*)^{d_B},
-  \qquad
-  \tuple v=(v_1,\ldots,v_{d_C})
-  \in(\Sigma^*)^{d_C}
-\]
-とし、
-\[
-  \mathbf q:=h^{(d_B)}(\tuple u),
-  \qquad
-  \mathbf r:=h^{(d_C)}(\tuple v)
-\]
-とおく。
+二分規則 \(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) をとり、
+\(d_B=\mu(B)\)、\(d_C=\mu(C)\) とする。また、
+\(\tuple u=(u_1,\ldots,u_{d_B})\in(\Sigma^*)^{d_B}\) および
+\(\tuple v=(v_1,\ldots,v_{d_C})\in(\Sigma^*)^{d_C}\) をとり、
+\(\mathbf q:=h^{(d_B)}(\tuple u)\)、
+\(\mathbf r:=h^{(d_C)}(\tuple v)\) とおく。
 
 規則 \(\rho\) の任意のテンプレート語
 \(\beta\in\Gamma_\rho^*\) に対して、
@@ -1387,43 +1224,16 @@ $h_m$はモノイド準同型なので、
 が成り立つ。
 
 実際、二つの写像
-\[
-  h\circ\widehat{\sigma}_{\tuple u,\tuple v},
-  \qquad
-  \widehat{\eta}_{\mathbf q,\mathbf r}
-  \colon
-  \Gamma_\rho^*\to M
-\]
-はいずれもモノイド準同型である。さらに、任意の生成元について、
-終端記号 \(a\in\Sigma\) ならば
-\[
-  h\bigl(\widehat{\sigma}_{\tuple u,\tuple v}(a)\bigr)
-  =
-  h(a)
-  =
-  \eta_{\mathbf q,\mathbf r}(a),
-\]
-変数 \(x^i\) ならば
-\[
-  h\bigl(\widehat{\sigma}_{\tuple u,\tuple v}(x^i)\bigr)
-  =
-  h(u_i)
-  =
-  q_i
-  =
-  \eta_{\mathbf q,\mathbf r}(x^i),
-\]
-変数 \(y^j\) ならば
-\[
-  h\bigl(\widehat{\sigma}_{\tuple u,\tuple v}(y^j)\bigr)
-  =
-  h(v_j)
-  =
-  r_j
-  =
-  \eta_{\mathbf q,\mathbf r}(y^j)
-\]
-である。したがって、自由モノイド上の準同型の一意性により
+\(h\circ\widehat{\sigma}_{\tuple u,\tuple v}\) および
+\(\widehat{\eta}_{\mathbf q,\mathbf r}\colon\Gamma_\rho^*\to M\) は、
+いずれもモノイド準同型である。さらに、任意の生成元上で一致する。すなわち、
+\(a\in\Sigma\) に対して
+\(h(\widehat{\sigma}_{\tuple u,\tuple v}(a))=h(a)=\eta_{\mathbf q,\mathbf r}(a)\)、
+\(1\le i\le d_B\) に対して
+\(h(\widehat{\sigma}_{\tuple u,\tuple v}(x^i))=h(u_i)=q_i
+=\eta_{\mathbf q,\mathbf r}(x^i)\)、また \(1\le j\le d_C\) に対して
+\(h(\widehat{\sigma}_{\tuple u,\tuple v}(y^j))=h(v_j)=r_j
+=\eta_{\mathbf q,\mathbf r}(y^j)\) である。したがって、自由モノイド上の準同型の一意性により
 式~\textup{(1)} が従う。
 
 \medskip
@@ -1435,23 +1245,9 @@ $h_m$はモノイド準同型なので、
 \noindent
 \emph{基底の場合。}
 導出木の高さが \(1\) ならば、その根で用いられる規則は終端規則
-\[
-  A_{(h(a))}\to(a)
-\]
-である。したがって、
-\[
-  \tuple u=(a),
-  \qquad
-  \mathbf p=(h(a)),
-\]
-なので
-\[
-  h^{(\mu(A))}(\tuple u)
-  =
-  (h(a))
-  =
-  \mathbf p.
-\]
+\(A_{(h(a))}\to(a)\) である。したがって、\(\tuple u=(a)\)、
+\(\mathbf p=(h(a))\) であり、\(\mu(A)=1\) なので
+\(h^{(\mu(A))}(\tuple u)=(h(a))=\mathbf p\) である。
 この規則から型添字を消去すると、もとの終端規則
 \[
   A\to(a)
@@ -1469,11 +1265,8 @@ $h_m$はモノイド準同型なので、
   \tag{2}
 \]
 であるとする。ここで、もとの \(G\) の規則は
-\[
-  \rho\colon
-  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
-\]
-であり、\(G^h\) の定義から
+\(\rho\colon A\to(\alpha_1,\ldots,\alpha_e)(B,C)\) であり、
+\(G^h\) の定義から
 \[
   \mathbf p=\out_\rho(\mathbf q,\mathbf r)
   \tag{3}
@@ -1481,12 +1274,8 @@ $h_m$はモノイド準同型なので、
 である。
 
 二つの子部分木がそれぞれ
-\[
-  B_{\mathbf q}\Rightarrow_{G^h}^*\tuple u,
-  \qquad
-  C_{\mathbf r}\Rightarrow_{G^h}^*\tuple v
-\]
-を導くとする。帰納法の仮定により、
+\(B_{\mathbf q}\Rightarrow_{G^h}^*\tuple u\) および
+\(C_{\mathbf r}\Rightarrow_{G^h}^*\tuple v\) を導くとする。帰納法の仮定により、
 \[
   h^{(\mu(B))}(\tuple u)=\mathbf q,
   \qquad
@@ -1494,12 +1283,8 @@ $h_m$はモノイド準同型なので、
   \tag{4}
 \]
 また、二つの子部分木から型添字を消去すると、
-\[
-  B\Rightarrow_G^*\tuple u,
-  \qquad
-  C\Rightarrow_G^*\tuple v
-\]
-という正しい \(G\)-導出木が得られる。
+\(B\Rightarrow_G^*\tuple u\) および
+\(C\Rightarrow_G^*\tuple v\) という正しい \(G\)-導出木が得られる。
 
 根で導出されるタプルを
 \[
@@ -1552,126 +1337,57 @@ $h_m$はモノイド準同型なので、
   A\to(\alpha_1,\ldots,\alpha_e)(B,C)
 \]
 が得られる。これを、帰納法の仮定によって得られた二つの
-\(G\)-導出木の上に置けば、
-\[
-  A\Rightarrow_G^*\tuple w
-\]
-という正しい \(G\)-導出木が得られる。
+\(G\)-導出木の上に置けば、\(A\Rightarrow_G^*\tuple w\) という
+正しい \(G\)-導出木が得られる。
 以上で (i) が示された。
 
 \medskip
 \noindent
 \textbf{(ii) の証明。}
 \(A\in V\setminus\{S\}\) を根にもつ固定された \(G\)-導出木
-\(T\) をとる。各節点 \(\nu\) について、その節点の非終端記号を
-\(A_\nu\)、その節点以下で導出されるタプルを
-\[
-  \tuple w_\nu
-  \in(\Sigma^*)^{\mu(A_\nu)}
-\]
-と書き、
-\[
-  \mathbf p_\nu
-  :=
-  h^{(\mu(A_\nu))}(\tuple w_\nu)
-  \]
-と定める。節点 \(\nu\) のラベル \(A_\nu\) を
-\[
-  (A_\nu)_{\mathbf p_\nu}
-\]
-に置き換える。
+\(T\) をとる。各節点 \(\nu\) について、その節点の非終端記号を \(A_\nu\)、
+その節点以下で導出されるタプルを
+\(\tuple w_\nu\in(\Sigma^*)^{\mu(A_\nu)}\) と書く。
+\(\mathbf p_\nu:=h^{(\mu(A_\nu))}(\tuple w_\nu)\) と定め、
+節点 \(\nu\) のラベル \(A_\nu\) を \((A_\nu)_{\mathbf p_\nu}\) に置き換える。
 
 この型付けが \(G^h\)-導出木を与えることを、木の高さに関する
 帰納法で示す。
 
-葉 \(\nu\) で終端規則
-\[
-  A_\nu\to(a)
-\]
-が用いられている場合、
-\[
-  \tuple w_\nu=(a),
-  \qquad
-  \mathbf p_\nu=(h(a))
-\]
-である。したがって \(G^h\) には規則
-\[
-  (A_\nu)_{\mathbf p_\nu}\to(a)
-\]
-が存在する。
+葉 \(\nu\) で終端規則 \(A_\nu\to(a)\) が用いられている場合、
+\(\tuple w_\nu=(a)\)、\(\mathbf p_\nu=(h(a))\) である。
+したがって \(G^h\) には規則 \((A_\nu)_{\mathbf p_\nu}\to(a)\) が存在する。
 
 次に、内部節点 \(\nu\) で
-\[
-  \rho\colon
-  A_\nu\to
-  (\alpha_1,\ldots,\alpha_e)(B,C)
-\]
-が用いられているとする。二つの子節点で導出されるタプルを
-それぞれ \(\tuple u,\tuple v\) とし、その型を
-\[
-  \mathbf q:=h^{(\mu(B))}(\tuple u),
-  \qquad
-  \mathbf r:=h^{(\mu(C))}(\tuple v)
-\]
-とする。式~\textup{(1)} により、親節点で導出されるタプルの型は
-\[
-  \mathbf p_\nu
-  =
-  \out_\rho(\mathbf q,\mathbf r)
-\]
-である。したがって、\(G^h\) の定義により
-\[
-  (A_\nu)_{\mathbf p_\nu}
-  \to
-  \rho(B_{\mathbf q},C_{\mathbf r})
-\]
+\(\rho\colon A_\nu\to(\alpha_1,\ldots,\alpha_e)(B,C)\) が
+用いられているとする。二つの子節点で導出されるタプルをそれぞれ \(\tuple u,\tuple v\) とし、
+その型を \(\mathbf q:=h^{(\mu(B))}(\tuple u)\)、
+\(\mathbf r:=h^{(\mu(C))}(\tuple v)\) とする。
+式~\textup{(1)} により、親節点で導出されるタプルの型は
+\(\mathbf p_\nu=\out_\rho(\mathbf q,\mathbf r)\) である。
+したがって、\(G^h\) の定義により
+\((A_\nu)_{\mathbf p_\nu}\to\rho(B_{\mathbf q},C_{\mathbf r})\)
 という規則が存在する。帰納法の仮定と合わせれば、型を付した木全体が
 正しい \(G^h\)-導出木になる。
 
 一意性を示す。もとの \(G\)-導出木 \(T\) の木構造、各節点で用いる規則、
 および各節点で導出されるタプルを固定する。
 その任意の \(G^h\)-持ち上げにおいて、(i) により、節点 \(\nu\) の
-型添字は必ず
-\[
-  h^{(\mu(A_\nu))}(\tuple w_\nu)
-  =
-  \mathbf p_\nu
-\]
-でなければならない。したがって各節点の型添字は一意であり、
+型添字は必ず \(h^{(\mu(A_\nu))}(\tuple w_\nu)=\mathbf p_\nu\) でなければならない。したがって各節点の型添字は一意であり、
 固定された \(G\)-導出木 \(T\) の \(G^h\)-持ち上げも一意である。
 
 \medskip
 \noindent
 \textbf{(iii) の証明。}
-まず
-\[
-  L(G^h)\subseteq L(G)
-\]
-を示す。
+まず \(L(G^h)\subseteq L(G)\) を示す。
 
-\(w\in L(G^h)\) とする。このとき、ある \(A\in V\setminus\{S\}\) と
-\(p\in M\) が存在して、
-\[
-  \widetilde S\to A_{(p)}
-\]
-を根の規則とし、
-\[
-  A_{(p)}\Rightarrow_{G^h}^*(w)
-\]
-となる成功導出木が存在する。(i) により、その部分木から型添字を
-消去すると
-\[
-  A\Rightarrow_G^*(w)
-\]
-が得られる。また、\(\widetilde S\to A_{(p)}\) は、もとの開始規則
-\[
-  S\to A
-\]
-から導入された規則である。したがって、
-\[
-  S\Rightarrow_G^*(w),
-\]
-すなわち \(w\in L(G)\) である。
+\(w\in L(G^h)\) とする。このとき、ある \(A\in V\setminus\{S\}\) と \(p\in M\) が存在して、
+根で規則 \(\widetilde S\to A_{(p)}\) を用い、その子部分木が
+\(A_{(p)}\Rightarrow_{G^h}^*(w)\) を示す成功導出木が存在する。
+(i) により、その部分木から型添字を消去すると
+\(A\Rightarrow_G^*(w)\) が得られる。また、この型付き開始規則は
+もとの開始規則 \(S\to A\) から導入されたので、
+\(S\Rightarrow_G^*(w)\)、すなわち \(w\in L(G)\) である。
 
 逆に、
 \[
@@ -1679,74 +1395,31 @@ $h_m$はモノイド準同型なので、
 \]
 を示す。
 
-\(w\in L(G)\) とする。開始記号分離の仮定により、その成功導出木の
-根では、ある開始規則
-\[
-  S\to A
-\]
-が用いられ、その下には
-\[
-  A\Rightarrow_G^*(w)
-\]
-という、根が開始記号でない導出木がある。
+\(w\in L(G)\) とする。開始記号分離の仮定により、その成功導出木の根では、ある開始規則
+\(S\to A\) が用いられ、その下には
+\(A\Rightarrow_G^*(w)\) という、根が開始記号でない導出木がある。
 (ii) により、この部分木は
-\[
-  A_{(h(w))}\Rightarrow_{G^h}^*(w)
-\]
-という \(G^h\)-導出木へ一意に持ち上がる。
-また、\(G^h\) には開始規則
-\[
-  \widetilde S\to A_{(h(w))}
-\]
-が存在する。したがって、
-\[
-  \widetilde S\Rightarrow_{G^h}^*(w),
-\]
-すなわち \(w\in L(G^h)\) である。以上より、
-\[
-  L(G^h)=L(G).
-\]
+\(A_{(h(w))}\Rightarrow_{G^h}^*(w)\) という \(G^h\)-導出木へ一意に持ち上がる。
+また、\(G^h\) には開始規則 \(\widetilde S\to A_{(h(w))}\) が存在するので、
+\(w\in L(G^h)\) である。以上より、\(L(G^h)=L(G)\) を得る。
 
 最後に、トリミングが言語を保存することを示す。
 \(\widetilde G_0\) は \(G^h\) の部分文法なので、
-\[
-  L(\widetilde G_0)\subseteq L(G^h)
-\]
-は明らかである。
+\(L(\widetilde G_0)\subseteq L(G^h)\) は明らかである。
 
 逆に、\(w\in L(G^h)\) とし、\(w\) に対する任意の成功導出木 \(T\) を
 一つ固定する。\(\widetilde G_0\) の定義により、ある成功導出に現れる
 すべての型付き非終端記号と型付き規則は保持される。
 \(T\) に現れる各非終端記号と各規則は、成功導出 \(T\) 自身に
 現れているので、すべて \(\widetilde G_0\) に含まれる。
-したがって、同じ木 \(T\) は \(\widetilde G_0\) における成功導出木でも
-あり、
-\[
-  w\in L(\widetilde G_0)
-\]
-である。よって、
-\[
-  L(G^h)\subseteq L(\widetilde G_0).
-\]
-以上から、
-\[
-  L(\widetilde G_0)=L(G^h)=L(G)
-\]
-を得る。
+したがって、同じ木 \(T\) は \(\widetilde G_0\) における成功導出木でもあり、
+\(w\in L(\widetilde G_0)\) である。よって
+\(L(G^h)\subseteq L(\widetilde G_0)\) であり、以上から
+\(L(\widetilde G_0)=L(G^h)=L(G)\) を得る。
 \end{proof}
-\(\widetilde G_0\) に残る型付き非終端記号 \(X=A_{\mathbf p}\) に対し、その
-タプル言語を \(L_X\) と書く。タプルおよび具体的な文コンテクストの上に、長さ辞書式順序
-を精密化する全有効順序を一つ固定する。\(L_X\) における最小のタプルを
-\(\omega(X)\) とする。
 
-\begin{lemma}[具体的な露出文脈]
-\label{lem:exposing-contexts}
-\(X=A_{\mathbf p}\) を、トリムされた出力型精密化
-\(\widetilde G_0\) に残る型付き非終端記号とし、
-\[
-  d:=\mu(A)
-\]
-とおく。また、
+\(\widetilde G_0\) に残る型付き非終端記号 \(X=A_{\mathbf p}\) に対し、
+\(d:=\mu(A)\) とおき、そのタプル言語を
 \[
   L_X
   :=
@@ -1756,25 +1429,18 @@ $h_m$はモノイド準同型なので、
     X\Rightarrow_{\widetilde G_0}^*\tuple u
   \right\}
 \]
-とする。
+と定義する。タプルおよび具体的な文コンテクストの上に、長さ辞書式順序を精密化する
+全有効順序を一つ固定する。\(X\) はトリミング後に残っているので
+\(L_X\ne\emptyset\) であり、\(L_X\) における最小のタプルを \(\omega(X)\) とする。
 
-このとき、アリティ \(d\) の文コンテクスト \(E_X\) が存在し、
-任意の \(\tuple u\in L_X\) に対して
-\[
-  E_X[\tuple u]\in L(G)
-\]
-が成り立つ。
-
-さらに、型付き開始規則
-\[
-  \widetilde S\to X
-\]
-が \(\widetilde G_0\) の規則である場合には、
-\(d=1\) であり、
-\[
-  E_X=\blank_1
-\]
-と選ぶことができる。
+\begin{lemma}[具体的な露出文脈]
+\label{lem:exposing-contexts}
+\(X=A_{\mathbf p}\) を、トリムされた出力型精密化 \(\widetilde G_0\) に残る
+型付き非終端記号とし、\(d:=\mu(A)\) とおく。このとき、アリティ \(d\) の
+文コンテクスト \(E_X\) が存在し、すべての \(\tuple u\in L_X\) に対して
+\(E_X[\tuple u]\in L(G)\) が成り立つ。さらに、
+\(\widetilde S\to X\) が \(\widetilde G_0\) の型付き開始規則である場合には、
+\(d=1\) であり、\(E_X=\blank_1\) と選ぶことができる。
 \end{lemma}
 
 \begin{proof}
@@ -1785,11 +1451,7 @@ $h_m$はモノイド準同型なので、
 \(X\) でラベル付けされた節点を一つ固定して \(\nu\) とする。
 
 節点 \(\nu\) を根とする部分木を \(T_\nu\) と書く。
-この部分木は、あるタプル
-\[
-  \tuple w=(w_1,\ldots,w_d)\in L_X
-\]
-を導出する。
+この部分木は、あるタプル \(\tuple w=(w_1,\ldots,w_d)\in L_X\) を導出する。
 
 以下では、節点 \(\nu\) より上にある導出と、
 \(\nu\) の兄弟部分木にある導出を固定したまま、
@@ -1798,16 +1460,9 @@ $h_m$はモノイド準同型なので、
 \medskip
 \noindent
 \textbf{外側文コンテクストの構成。}
-\(\Sigma\) に属さない新しい記号
-\[
-  \blank_1,\ldots,\blank_d
-\]
-をとる。成功導出木 \(T\) において、部分木 \(T_\nu\) を削除し、
-節点 \(\nu\) の形式的な出力として
-\[
-  (\blank_1,\ldots,\blank_d)
-\]
-を置く。
+\(\Sigma\) に属さない新しい記号 \(\blank_1,\ldots,\blank_d\) をとる。
+成功導出木 \(T\) において、部分木 \(T_\nu\) を削除し、節点 \(\nu\) の
+形式的な出力として \((\blank_1,\ldots,\blank_d)\) を置く。
 
 節点 \(\nu\) より上の各規則については、もとの導出木 \(T\) で
 用いられていた規則をそのまま用い、兄弟部分木については、
@@ -1843,15 +1498,8 @@ $h_m$はモノイド準同型なので、
 根で得られる語 \(E_{T,\nu}\) にも、各
 \(\blank_i\) がちょうど一度現れる。
 
-よって、ある置換
-\[
-  \sigma\colon\{1,\ldots,d\}\to\{1,\ldots,d\}
-\]
-と、ある語
-\[
-  z_0,\ldots,z_d\in\Sigma^*
-\]
-が存在して、
+よって、\(\{1,\ldots,d\}\) のある置換 \(\sigma\) と、ある語
+\(z_0,\ldots,z_d\in\Sigma^*\) が存在して、
 \[
   E_{T,\nu}
   =
@@ -1863,32 +1511,19 @@ $h_m$はモノイド準同型なので、
 定義~\ref{def:sentence-context} の意味でアリティ \(d\) の
 文コンテクストである。
 
-以下、
-\[
-  E_X:=E_{T,\nu}
-\]
-とおく。
+以下、\(E_X:=E_{T,\nu}\) とおく。
 
 \medskip
 \noindent
 \textbf{任意の \(X\)-導出の代入。}
-任意に
-\[
-  \tuple u=(u_1,\ldots,u_d)\in L_X
-\]
-をとる。\(L_X\) の定義により、
-\[
-  X\Rightarrow_{\widetilde G_0}^*\tuple u
-\]
-を示す \(\widetilde G_0\)-導出木 \(U\) が存在する。
+任意に \(\tuple u=(u_1,\ldots,u_d)\in L_X\) をとる。
+\(L_X\) の定義により、\(X\Rightarrow_{\widetilde G_0}^*\tuple u\) を示す
+\(\widetilde G_0\)-導出木 \(U\) が存在する。
 
 もとの成功導出木 \(T\) において、節点 \(\nu\) を根とする部分木
 \(T_\nu\) を、導出木 \(U\) に置き換える。両方の部分木の根は
 同じ型付き非終端記号 \(X\) であるため、この置換によって得られる木
-\[
-  T[\nu\leftarrow U]
-\]
-は、依然として \(\widetilde G_0\) の正しい成功導出木である。
+\(T[\nu\leftarrow U]\) は、依然として \(\widetilde G_0\) の正しい成功導出木である。
 
 外側文コンテクスト \(E_X\) は、節点 \(\nu\) の第 \(i\) 成分が
 最終的な語のどの位置へ運ばれるかを、穴 \(\blank_i\) によって
@@ -1911,54 +1546,23 @@ $h_m$はモノイド準同型なので、
 \]
 となる。
 
-したがって、
-\[
-  E_X[\tuple u]\in L(\widetilde G_0).
-\]
-命題~\ref{prop:output-invariants} により
-\[
-  L(\widetilde G_0)=L(G)
-\]
-であるから、
-\[
-  E_X[\tuple u]\in L(G)
-\]
-を得る。
-
-\(\tuple u\in L_X\) は任意であったので、
-\[
-  E_X[\tuple u]\in L(G)
-  \qquad
-  \text{for every }\tuple u\in L_X
-\]
-が成り立つ。
+したがって、\(E_X[\tuple u]\in L(\widetilde G_0)\) である。
+命題~\ref{prop:output-invariants} により \(L(\widetilde G_0)=L(G)\) なので、
+\(E_X[\tuple u]\in L(G)\) を得る。\(\tuple u\in L_X\) は任意であったから、
+必要な性質はすべての \(\tuple u\in L_X\) について成り立つ。
 
 \medskip
 \noindent
 \textbf{開始規則の子である場合。}
-最後に、
-\[
-  \widetilde S\to X
-\]
-が \(\widetilde G_0\) の規則であると仮定する。
-型付き開始規則は、もとの開始規則
-\[
-  S\to A
-\]
-から作られており、作業形の定義から
-\[
-  \mu(A)=1
-\]
-である。したがって \(d=1\) である。
+最後に、\(\widetilde S\to X\) が \(\widetilde G_0\) の規則であると仮定する。
+型付き開始規則は、もとの開始規則 \(S\to A\) から作られており、
+作業形の定義から \(\mu(A)=1\) である。したがって \(d=1\) である。
 
 また、この型付き開始規則がトリミング後にも残っているので、
 この規則を根で用いる成功導出木を選ぶことができる。
 その唯一の子である \(X\) の部分木を削除すると、外側には終端記号が
 何も残らず、唯一の成分がそのまま最終語となる。よって、この場合には
-\[
-  E_X=\blank_1
-\]
-と選ぶことができる。
+\(E_X=\blank_1\) と選ぶことができる。
 \end{proof}
 
 \begin{definition}[露出文脈]

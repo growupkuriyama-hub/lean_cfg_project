@@ -323,10 +323,9 @@ variable (f : Nat)
 
 /-- Every left-factor target remains a target under the paired observation. -/
 theorem leftTargetClass_subset_pairedTargetClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
@@ -334,16 +333,15 @@ theorem leftTargetClass_subset_pairedTargetClass :
 
   exact
     startRootedCorrectedConcreteTargetClass_subset_of_refines
-      (z := z)
+      
       (Refines.leftToPairedObservation
         obs₀ obs₁)
 
 /-- Every right-factor target remains a target under the paired observation. -/
 theorem rightTargetClass_subset_pairedTargetClass :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
@@ -351,19 +349,18 @@ theorem rightTargetClass_subset_pairedTargetClass :
 
   exact
     startRootedCorrectedConcreteTargetClass_subset_of_refines
-      (z := z)
+      
       (Refines.rightToPairedObservation
         obs₀ obs₁)
 
 /-- The union of both factor target classes embeds into the paired target
 class. -/
 theorem factorTargetClassUnion_subset_pairedTargetClass :
-    StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
@@ -376,74 +373,71 @@ theorem factorTargetClassUnion_subset_pairedTargetClass :
 
   · exact
       leftTargetClass_subset_pairedTargetClass
-        (z := z)
+        
         obs₀ obs₁ f hLeft
 
   · exact
       rightTargetClass_subset_pairedTargetClass
-        (z := z)
+        
         obs₀ obs₁ f hRight
 
 /-- Failure under the paired observation implies failure under the left
 factor. -/
 theorem pairedFailureClass_subset_leftFailureClass :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₀ obs₀ f := by
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M₀ obs₀ f := by
 
   exact
     observationFailureClass_subset_of_refines
-      (z := z)
+      
       (Refines.leftToPairedObservation
         obs₀ obs₁)
 
 /-- Failure under the paired observation implies failure under the right
 factor. -/
 theorem pairedFailureClass_subset_rightFailureClass :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₁ obs₁ f := by
+      StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+        α M₁ obs₁ f := by
 
   exact
     observationFailureClass_subset_of_refines
-      (z := z)
+      
       (Refines.rightToPairedObservation
         obs₀ obs₁)
 
 /-- Paired-observation failure implies simultaneous failure of both factors. -/
 theorem pairedFailureClass_subset_factorFailureIntersection :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f ⊆
       {language : Set (Word α) |
         language ∈
-            StartRootedCorrectedConcreteObservationFailureClass
-              (z := z) α M₀ obs₀ f ∧
+            StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+              α M₀ obs₀ f ∧
           language ∈
-            StartRootedCorrectedConcreteObservationFailureClass
-              (z := z) α M₁ obs₁ f} := by
+            StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+              α M₁ obs₁ f} := by
 
   intro language hFailure
 
   exact
     ⟨pairedFailureClass_subset_leftFailureClass
-        (z := z)
+        
         obs₀ obs₁ f hFailure,
       pairedFailureClass_subset_rightFailureClass
-        (z := z)
+        
         obs₀ obs₁ f hFailure⟩
 
 end PairedObservationTargetAndFailureClasses
@@ -462,14 +456,12 @@ variable (f : Nat)
 
 /-- Product target classes are invariant under swapping coordinates. -/
 theorem pairedObservation_targetClass_swap_eq :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max w v}
         α
         (M₁ × M₀)
         (pairedObservation obs₁ obs₀)
@@ -477,21 +469,19 @@ theorem pairedObservation_targetClass_swap_eq :
 
   exact
     observationEquivalent_targetClass_eq
-      (z := z)
+      
       f
       (pairedObservation_swapEquivalent
         obs₀ obs₁)
 
 /-- Product failure classes are invariant under swapping coordinates. -/
 theorem pairedObservation_failureClass_swap_eq :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f =
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+      StartRootedCorrectedConcreteObservationFailureClass.{u, max w v, z}
         α
         (M₁ × M₀)
         (pairedObservation obs₁ obs₀)
@@ -499,7 +489,7 @@ theorem pairedObservation_failureClass_swap_eq :
 
   exact
     observationEquivalent_failureClass_eq
-      (z := z)
+      
       f
       (pairedObservation_swapEquivalent
         obs₀ obs₁)
@@ -523,16 +513,14 @@ variable (f : Nat)
 
 /-- Nested product target classes are invariant under reassociation. -/
 theorem pairedObservation_targetClass_associative_eq :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max (max v w) x}
         α
         ((M₀ × M₁) × M₂)
         (pairedObservation
           (pairedObservation obs₀ obs₁)
           obs₂)
         f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v (max w x)}
         α
         (M₀ × (M₁ × M₂))
         (pairedObservation
@@ -542,23 +530,21 @@ theorem pairedObservation_targetClass_associative_eq :
 
   exact
     observationEquivalent_targetClass_eq
-      (z := z)
+      
       f
       (pairedObservation_associativeEquivalent
         obs₀ obs₁ obs₂)
 
 /-- Nested product failure classes are invariant under reassociation. -/
 theorem pairedObservation_failureClass_associative_eq :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    StartRootedCorrectedConcreteObservationFailureClass.{u, max (max v w) x, z}
         α
         ((M₀ × M₁) × M₂)
         (pairedObservation
           (pairedObservation obs₀ obs₁)
           obs₂)
         f =
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+      StartRootedCorrectedConcreteObservationFailureClass.{u, max v (max w x), z}
         α
         (M₀ × (M₁ × M₂))
         (pairedObservation
@@ -568,7 +554,7 @@ theorem pairedObservation_failureClass_associative_eq :
 
   exact
     observationEquivalent_failureClass_eq
-      (z := z)
+      
       f
       (pairedObservation_associativeEquivalent
         obs₀ obs₁ obs₂)
@@ -593,27 +579,25 @@ def StartRootedCorrectedConcretePairedObservationSynergyClass :
     Set (Set (Word α)) :=
   {language |
     language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f ∧
       language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∧
+          StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∧
       language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f}
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f}
 
 variable {α M₀ M₁ obs₀ obs₁ f}
 
 /-- Every synergy language is a paired-observation target. -/
 theorem pairedObservationSynergyClass_subset_pairedTargetClass :
-    StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
@@ -625,11 +609,11 @@ theorem pairedObservationSynergyClass_subset_pairedTargetClass :
 
 /-- The synergy class is disjoint from the left factor target class. -/
 theorem pairedObservationSynergyClass_disjoint_leftTargetClass :
-    Set.Disjoint
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f) := by
+    Disjoint
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f) := by
 
   rw [Set.disjoint_left]
 
@@ -640,11 +624,11 @@ theorem pairedObservationSynergyClass_disjoint_leftTargetClass :
 
 /-- The synergy class is disjoint from the right factor target class. -/
 theorem pairedObservationSynergyClass_disjoint_rightTargetClass :
-    Set.Disjoint
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f) := by
+    Disjoint
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f) := by
 
   rw [Set.disjoint_left]
 
@@ -656,13 +640,13 @@ theorem pairedObservationSynergyClass_disjoint_rightTargetClass :
 /-- The synergy class is disjoint from the union of both factor target
 classes. -/
 theorem pairedObservationSynergyClass_disjoint_factorTargetUnion :
-    Set.Disjoint
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f)
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) := by
+    Disjoint
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) := by
 
   rw [Set.disjoint_left]
 
@@ -680,12 +664,11 @@ theorem pairedObservationSynergyClass_disjoint_factorTargetUnion :
 /-- Synergy is exactly the intersection of the two coordinate strict-gain
 classes. -/
 theorem pairedObservationSynergyClass_eq_gainIntersection :
-    StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f =
+    StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f =
       {language : Set (Word α) |
         language ∈
-            StartRootedCorrectedConcreteObservationGainClass
-              (z := z)
+            StartRootedCorrectedConcreteObservationGainClass.{u, v, max v w, z}
               α
               M₀
               (M₀ × M₁)
@@ -693,8 +676,7 @@ theorem pairedObservationSynergyClass_eq_gainIntersection :
               (pairedObservation obs₀ obs₁)
               f ∧
           language ∈
-            StartRootedCorrectedConcreteObservationGainClass
-              (z := z)
+            StartRootedCorrectedConcreteObservationGainClass.{u, w, max v w, z}
               α
               M₁
               (M₀ × M₁)
@@ -724,18 +706,17 @@ theorem pairedObservationSynergyClass_eq_gainIntersection :
 /-- The paired target class is the union of factor targets and genuinely joint
 synergy targets. -/
 theorem pairedTargetClass_eq_factorUnion_union_synergy :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f =
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) ∪
-        StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) ∪
+        StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f := by
 
   ext language
 
@@ -745,8 +726,8 @@ theorem pairedTargetClass_eq_factorUnion_union_synergy :
 
     by_cases hLeft :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f
+          StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f
 
     · exact
         Or.inl
@@ -754,8 +735,8 @@ theorem pairedTargetClass_eq_factorUnion_union_synergy :
 
     · by_cases hRight :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z) α M₁ obs₁ f
+            StartRootedCorrectedConcreteTargetClass.{u, z, w}
+              α M₁ obs₁ f
 
       · exact
           Or.inl
@@ -774,7 +755,7 @@ theorem pairedTargetClass_eq_factorUnion_union_synergy :
 
     · exact
         factorTargetClassUnion_subset_pairedTargetClass
-          (z := z)
+          
           obs₀ obs₁ f hFactor
 
     · exact
@@ -784,19 +765,18 @@ theorem pairedTargetClass_eq_factorUnion_union_synergy :
 already the union of the two factor target classes. -/
 theorem
     pairedObservationSynergyClass_eq_empty_iff_targetClass_eq_factorUnion :
-    StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f =
+    StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f =
         ∅ ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f =
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∪
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f := by
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∪
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f := by
 
   constructor
 
@@ -804,7 +784,7 @@ theorem
 
     rw [
       pairedTargetClass_eq_factorUnion_union_synergy
-        (z := z),
+        ,
       hEmpty,
       Set.union_empty
     ]
@@ -819,8 +799,7 @@ theorem
 
       have hPaired :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (M₀ × M₁)
               (pairedObservation obs₀ obs₁)
@@ -849,18 +828,16 @@ theorem pairedObservationSynergy_nonempty_implies_both_refinementsEssential
     (hSynergy :
       ∃ language : Set (Word α),
         language ∈
-          StartRootedCorrectedConcretePairedObservationSynergyClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f) :
-    CorrectedConcreteObservationRefinementEssential
-        (z := z)
+          StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f) :
+    CorrectedConcreteObservationRefinementEssential.{u, v, max v w, z}
         α
         M₀
         (M₀ × M₁)
         obs₀
         (pairedObservation obs₀ obs₁)
         f ∧
-      CorrectedConcreteObservationRefinementEssential
-        (z := z)
+      CorrectedConcreteObservationRefinementEssential.{u, w, max v w, z}
         α
         M₁
         (M₀ × M₁)
@@ -883,8 +860,7 @@ theorem pairedObservationSynergy_nonempty_implies_both_refinementsEssential
 classes and the product target class are all equal. -/
 theorem pairedObservation_both_redundant_targetClasses_eq
     (hLeft :
-      CorrectedConcreteObservationRefinementRedundant
-        (z := z)
+      CorrectedConcreteObservationRefinementRedundant.{u, v, max v w, z}
         α
         M₀
         (M₀ × M₁)
@@ -892,54 +868,50 @@ theorem pairedObservation_both_redundant_targetClasses_eq
         (pairedObservation obs₀ obs₁)
         f)
     (hRight :
-      CorrectedConcreteObservationRefinementRedundant
-        (z := z)
+      CorrectedConcreteObservationRefinementRedundant.{u, w, max v w, z}
         α
         M₁
         (M₀ × M₁)
         obs₁
         (pairedObservation obs₀ obs₁)
         f) :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f ∧
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f ∧
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f := by
 
   have hLeftEq :
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f :=
     (observationRefinementRedundant_iff_targetClass_eq
-      (z := z)
+      
       f
       (Refines.leftToPairedObservation
         obs₀ obs₁)).mp
       hLeft
 
   have hRightEq :
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f :=
     (observationRefinementRedundant_iff_targetClass_eq
-      (z := z)
+      
       f
       (Refines.rightToPairedObservation
         obs₀ obs₁)).mp
@@ -951,41 +923,38 @@ theorem pairedObservation_both_redundant_targetClasses_eq
 
 /-- Compact semantic product decomposition package. -/
 theorem pairedObservation_semanticDecomposition_package :
-    (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f =
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∪
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f) ∪
-          StartRootedCorrectedConcretePairedObservationSynergyClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f) ∧
-      Set.Disjoint
-        (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f)
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∪
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f) ∧
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f =
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∪
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f) ∪
+          StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f) ∧
+      Disjoint
+        (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f)
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∪
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f) ∧
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f =
         {language : Set (Word α) |
           language ∈
-              StartRootedCorrectedConcreteObservationGainClass
-                (z := z)
+              StartRootedCorrectedConcreteObservationGainClass.{u, v, max v w, z}
                 α
                 M₀
                 (M₀ × M₁)
@@ -993,8 +962,7 @@ theorem pairedObservation_semanticDecomposition_package :
                 (pairedObservation obs₀ obs₁)
                 f ∧
             language ∈
-              StartRootedCorrectedConcreteObservationGainClass
-                (z := z)
+              StartRootedCorrectedConcreteObservationGainClass.{u, w, max v w, z}
                 α
                 M₁
                 (M₀ × M₁)
@@ -1004,14 +972,14 @@ theorem pairedObservation_semanticDecomposition_package :
 
   exact
     ⟨factorTargetClassUnion_subset_pairedTargetClass
-        (z := z)
+        
         obs₀ obs₁ f,
       pairedTargetClass_eq_factorUnion_union_synergy
-        (z := z),
+        ,
       pairedObservationSynergyClass_disjoint_factorTargetUnion
-        (z := z),
+        ,
       pairedObservationSynergyClass_eq_gainIntersection
-        (z := z)⟩
+        ⟩
 
 end PairedObservationSynergyClass
 
@@ -1033,6 +1001,8 @@ variable (obs₀ : α → M₀)
 variable (obs₁ : α → M₁)
 variable (f : Nat)
 
+include hα
+
 /-- The paired-observation certified learner identifies the complete paired
 target class. -/
 theorem pairedCertifiedLearner_identifies_pairedTargetClass :
@@ -1044,8 +1014,7 @@ theorem pairedCertifiedLearner_identifies_pairedTargetClass :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
@@ -1053,7 +1022,7 @@ theorem pairedCertifiedLearner_identifies_pairedTargetClass :
 
   exact
     correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-      (v := z)
+      
       hα
       (pairedObservation obs₀ obs₁)
       f
@@ -1069,12 +1038,12 @@ theorem pairedCertifiedLearner_identifies_leftTargetClass :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f) := by
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα
       obs₀
       (pairedObservation obs₀ obs₁)
@@ -1093,12 +1062,12 @@ theorem pairedCertifiedLearner_identifies_rightTargetClass :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f) := by
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα
       obs₁
       (pairedObservation obs₀ obs₁)
@@ -1117,10 +1086,10 @@ theorem pairedCertifiedLearner_identifies_factorTargetUnion :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) := by
 
   intro language hLanguage
 
@@ -1129,13 +1098,13 @@ theorem pairedCertifiedLearner_identifies_factorTargetUnion :
 
   · exact
       pairedCertifiedLearner_identifies_leftTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ f
         language hLeft
 
   · exact
       pairedCertifiedLearner_identifies_rightTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ f
         language hRight
 
@@ -1150,8 +1119,7 @@ theorem pairedCertifiedLearner_identifies_leftGainClass :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z)
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, max v w, z}
         α
         M₀
         (M₀ × M₁)
@@ -1161,7 +1129,7 @@ theorem pairedCertifiedLearner_identifies_leftGainClass :
 
   exact
     refinedCertifiedLearner_identifies_observationGainClass
-      (z := z)
+      
       hα
       obs₀
       (pairedObservation obs₀ obs₁)
@@ -1180,8 +1148,7 @@ theorem pairedCertifiedLearner_identifies_rightGainClass :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z)
+      (StartRootedCorrectedConcreteObservationGainClass.{u, w, max v w, z}
         α
         M₁
         (M₀ × M₁)
@@ -1191,7 +1158,7 @@ theorem pairedCertifiedLearner_identifies_rightGainClass :
 
   exact
     refinedCertifiedLearner_identifies_observationGainClass
-      (z := z)
+      
       hα
       obs₁
       (pairedObservation obs₀ obs₁)
@@ -1210,14 +1177,14 @@ theorem pairedCertifiedLearner_identifies_synergyClass :
         hα
         (pairedObservation obs₀ obs₁)
         f)
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f) := by
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f) := by
 
   intro language hSynergy
 
   exact
     pairedCertifiedLearner_identifies_pairedTargetClass
-      (z := z)
+      
       hα obs₀ obs₁ f
       language hSynergy.1
 
@@ -1227,14 +1194,14 @@ theorem pairedObservationSynergy_target_descriptionRank_package
     {language : Set (Word α)}
     (hSynergy :
       language ∈
-        StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f) :
+        StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f) :
     language ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∧
       language ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ∧
       IdentifiesLanguageFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           (pairedObservation obs₀ obs₁)
@@ -1251,19 +1218,19 @@ theorem pairedObservationSynergy_target_descriptionRank_package
           (pairedObservation obs₀ obs₁)
           f
           (startRootedTargetCertifiedDescriptionRank
-            (v := z)
+            
             hα
             (pairedObservation obs₀ obs₁)
             f
             hSynergy.1) ∧
       startRootedTargetCertifiedDescriptionRank
-          (v := z)
+          
           hα
           (pairedObservation obs₀ obs₁)
           f
           hSynergy.1 <=
         startRootedTargetCharacteristicRank
-          (v := z)
+          
           hα
           (pairedObservation obs₀ obs₁)
           f
@@ -1280,7 +1247,7 @@ theorem pairedObservationSynergy_target_descriptionRank_package
           C.bits.length <=
             correctedConcreteCertifiedRankBitBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := z)
+                
                 hα
                 (pairedObservation obs₀ obs₁)
                 f
@@ -1289,7 +1256,7 @@ theorem pairedObservationSynergy_target_descriptionRank_package
           C.canonicalSearch.length <=
             correctedConcreteCertifiedRankSearchBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := z)
+                
                 hα
                 (pairedObservation obs₀ obs₁)
                 f
@@ -1300,23 +1267,23 @@ theorem pairedObservationSynergy_target_descriptionRank_package
     ⟨hSynergy.2.1,
       hSynergy.2.2,
       pairedCertifiedLearner_identifies_synergyClass
-        (z := z)
+        
         hα obs₀ obs₁ f
         language hSynergy,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
+        
         hα
         (pairedObservation obs₀ obs₁)
         f
         hSynergy.1,
       startRootedTargetCertifiedDescriptionRank_le_characteristicRank
-        (v := z)
+        
         hα
         (pairedObservation obs₀ obs₁)
         f
         hSynergy.1,
       startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+        
         hα
         (pairedObservation obs₀ obs₁)
         f
@@ -1326,8 +1293,8 @@ theorem pairedObservationSynergy_target_descriptionRank_package
 paired observation. -/
 theorem
     pairedObservationSynergyClass_subset_exists_certifiedRankProfile :
-    StartRootedCorrectedConcretePairedObservationSynergyClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f ⊆
+    StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f ⊆
       {language : Set (Word α) |
         ∃ rank : Nat,
           language ∈
@@ -1342,13 +1309,13 @@ theorem
 
   exact
     ⟨startRootedTargetCertifiedDescriptionRank
-        (v := z)
+        
         hα
         (pairedObservation obs₀ obs₁)
         f
         hSynergy.1,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
+        
         hα
         (pairedObservation obs₀ obs₁)
         f
@@ -1364,8 +1331,7 @@ theorem pairedCertifiedLearner_identification_package :
           hα
           (pairedObservation obs₀ obs₁)
           f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
@@ -1378,8 +1344,8 @@ theorem pairedCertifiedLearner_identification_package :
           hα
           (pairedObservation obs₀ obs₁)
           f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           (pairedObservation obs₀ obs₁)
@@ -1388,8 +1354,8 @@ theorem pairedCertifiedLearner_identification_package :
           hα
           (pairedObservation obs₀ obs₁)
           f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           (pairedObservation obs₀ obs₁)
@@ -1398,10 +1364,10 @@ theorem pairedCertifiedLearner_identification_package :
           hα
           (pairedObservation obs₀ obs₁)
           f)
-        (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f) ∧
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f ⊆
+        (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f) ∧
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f ⊆
         {language : Set (Word α) |
           ∃ rank : Nat,
             language ∈
@@ -1414,19 +1380,19 @@ theorem pairedCertifiedLearner_identification_package :
 
   exact
     ⟨pairedCertifiedLearner_identifies_pairedTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ f,
       pairedCertifiedLearner_identifies_leftTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ f,
       pairedCertifiedLearner_identifies_rightTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ f,
       pairedCertifiedLearner_identifies_synergyClass
-        (z := z)
+        
         hα obs₀ obs₁ f,
       pairedObservationSynergyClass_subset_exists_certifiedRankProfile
-        (z := z)
+        
         hα obs₀ obs₁ f⟩
 
 end PairedObservationCertifiedLearner
@@ -1446,18 +1412,16 @@ variable (f : Nat)
 /-- Redundancy of the left coordinate refinement is exactly equality between
 the left target class and the paired target class. -/
 theorem leftToPaired_redundant_iff_targetClass_eq :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z)
+    CorrectedConcreteObservationRefinementRedundant.{u, v, max v w, z}
         α
         M₀
         (M₀ × M₁)
         obs₀
         (pairedObservation obs₀ obs₁)
         f ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
@@ -1465,7 +1429,7 @@ theorem leftToPaired_redundant_iff_targetClass_eq :
 
   exact
     observationRefinementRedundant_iff_targetClass_eq
-      (z := z)
+      
       f
       (Refines.leftToPairedObservation
         obs₀ obs₁)
@@ -1473,18 +1437,16 @@ theorem leftToPaired_redundant_iff_targetClass_eq :
 /-- Redundancy of the right coordinate refinement is exactly equality between
 the right target class and the paired target class. -/
 theorem rightToPaired_redundant_iff_targetClass_eq :
-    CorrectedConcreteObservationRefinementRedundant
-        (z := z)
+    CorrectedConcreteObservationRefinementRedundant.{u, w, max v w, z}
         α
         M₁
         (M₀ × M₁)
         obs₁
         (pairedObservation obs₀ obs₁)
         f ↔
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f =
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f =
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
@@ -1492,7 +1454,7 @@ theorem rightToPaired_redundant_iff_targetClass_eq :
 
   exact
     observationRefinementRedundant_iff_targetClass_eq
-      (z := z)
+      
       f
       (Refines.rightToPairedObservation
         obs₀ obs₁)
@@ -1503,36 +1465,32 @@ theorem pairedObservationSynergy_nonempty_implies_strict_growth_over_both
     (hSynergy :
       ∃ language : Set (Word α),
         language ∈
-          StartRootedCorrectedConcretePairedObservationSynergyClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f) :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+          StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f) :
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ≠
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ≠
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f ≠
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f ≠
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
@@ -1540,12 +1498,12 @@ theorem pairedObservationSynergy_nonempty_implies_strict_growth_over_both
 
   have hEssential :=
     pairedObservationSynergy_nonempty_implies_both_refinementsEssential
-      (z := z)
+      
       hSynergy
 
   rcases
       (observationRefinementEssential_iff_strict_targetClass_growth
-        (z := z)
+        
         f
         (Refines.leftToPairedObservation
           obs₀ obs₁)).mp
@@ -1554,7 +1512,7 @@ theorem pairedObservationSynergy_nonempty_implies_strict_growth_over_both
 
   rcases
       (observationRefinementEssential_iff_strict_targetClass_growth
-        (z := z)
+        
         f
         (Refines.rightToPairedObservation
           obs₀ obs₁)).mp
@@ -1569,65 +1527,58 @@ theorem pairedObservationSynergy_nonempty_implies_strict_growth_over_both
 
 /-- Compact product-interface ablation package. -/
 theorem pairedObservation_ablation_package :
-    (CorrectedConcreteObservationRefinementRedundant
-          (z := z)
+    (CorrectedConcreteObservationRefinementRedundant.{u, v, max v w, z}
           α
           M₀
           (M₀ × M₁)
           obs₀
           (pairedObservation obs₀ obs₁)
           f ↔
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (M₀ × M₁)
             (pairedObservation obs₀ obs₁)
             f) ∧
-      (CorrectedConcreteObservationRefinementRedundant
-          (z := z)
+      (CorrectedConcreteObservationRefinementRedundant.{u, w, max v w, z}
           α
           M₁
           (M₀ × M₁)
           obs₁
           (pairedObservation obs₀ obs₁)
           f ↔
-        StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f =
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f =
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (M₀ × M₁)
             (pairedObservation obs₀ obs₁)
             f) ∧
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f =
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f =
           ∅ ↔
-        StartRootedCorrectedConcreteTargetClass
-            (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (M₀ × M₁)
             (pairedObservation obs₀ obs₁)
             f =
-          StartRootedCorrectedConcreteTargetClass
-              (v := z) α M₀ obs₀ f ∪
-            StartRootedCorrectedConcreteTargetClass
-              (v := z) α M₁ obs₁ f) ∧
+          StartRootedCorrectedConcreteTargetClass.{u, z, v}
+              α M₀ obs₀ f ∪
+            StartRootedCorrectedConcreteTargetClass.{u, z, w}
+              α M₁ obs₁ f) ∧
       ((∃ language : Set (Word α),
           language ∈
-            StartRootedCorrectedConcretePairedObservationSynergyClass
-              (z := z) α M₀ M₁ obs₀ obs₁ f) →
-        CorrectedConcreteObservationRefinementEssential
-            (z := z)
+            StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+              α M₀ M₁ obs₀ obs₁ f) →
+        CorrectedConcreteObservationRefinementEssential.{u, v, max v w, z}
             α
             M₀
             (M₀ × M₁)
             obs₀
             (pairedObservation obs₀ obs₁)
             f ∧
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, w, max v w, z}
             α
             M₁
             (M₀ × M₁)
@@ -1637,15 +1588,15 @@ theorem pairedObservation_ablation_package :
 
   exact
     ⟨leftToPaired_redundant_iff_targetClass_eq
-        (z := z)
+        
         obs₀ obs₁ f,
       rightToPaired_redundant_iff_targetClass_eq
-        (z := z)
+        
         obs₀ obs₁ f,
       pairedObservationSynergyClass_eq_empty_iff_targetClass_eq_factorUnion
-        (z := z),
+        ,
       pairedObservationSynergy_nonempty_implies_both_refinementsEssential
-        (z := z)⟩
+        ⟩
 
 end PairedObservationAblationConsequences
 
@@ -1671,48 +1622,45 @@ variable (f : Nat)
 observation product. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationProduct_package :
-    (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (M₀ × M₁)
         (pairedObservation obs₀ obs₁)
         f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f =
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∪
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f) ∪
-          StartRootedCorrectedConcretePairedObservationSynergyClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f) ∧
-      Set.Disjoint
-        (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f)
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∪
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f) ∧
-      (StartRootedCorrectedConcreteObservationFailureClass
-          (z := z)
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∪
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f) ∪
+          StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f) ∧
+      Disjoint
+        (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f)
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∪
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f) ∧
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
           f ⊆
         {language : Set (Word α) |
           language ∈
-              StartRootedCorrectedConcreteObservationFailureClass
-                (z := z) α M₀ obs₀ f ∧
+              StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+                α M₀ obs₀ f ∧
             language ∈
-              StartRootedCorrectedConcreteObservationFailureClass
-                (z := z) α M₁ obs₁ f}) ∧
+              StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+                α M₁ obs₁ f}) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           (pairedObservation obs₀ obs₁)
@@ -1721,8 +1669,7 @@ theorem
           hα
           (pairedObservation obs₀ obs₁)
           f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (M₀ × M₁)
           (pairedObservation obs₀ obs₁)
@@ -1735,10 +1682,10 @@ theorem
           hα
           (pairedObservation obs₀ obs₁)
           f)
-        (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f) ∧
-      (StartRootedCorrectedConcretePairedObservationSynergyClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f ⊆
+        (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f) ∧
+      (StartRootedCorrectedConcretePairedObservationSynergyClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f ⊆
         {language : Set (Word α) |
           ∃ rank : Nat,
             language ∈
@@ -1751,23 +1698,23 @@ theorem
 
   exact
     ⟨factorTargetClassUnion_subset_pairedTargetClass
-        (z := z)
+        
         obs₀ obs₁ f,
       pairedTargetClass_eq_factorUnion_union_synergy
-        (z := z),
+        ,
       pairedObservationSynergyClass_disjoint_factorTargetUnion
-        (z := z),
+        ,
       pairedFailureClass_subset_factorFailureIntersection
-        (z := z)
+        
         obs₀ obs₁ f,
       pairedCertifiedLearner_identifies_pairedTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ f,
       pairedCertifiedLearner_identifies_synergyClass
-        (z := z)
+        
         hα obs₀ obs₁ f,
       pairedObservationSynergyClass_subset_exists_certifiedRankProfile
-        (z := z)
+        
         hα obs₀ obs₁ f⟩
 
 end ObservationProductFinalPackage
