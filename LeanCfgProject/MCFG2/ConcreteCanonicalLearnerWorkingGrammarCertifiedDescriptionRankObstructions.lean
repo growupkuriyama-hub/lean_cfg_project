@@ -557,12 +557,11 @@ theorem
 
   · intro heq rank hrank
 
-    apply
-      startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
-         hα obs f hL rank
-        |>.mpr
-
-    simpa [heq] using hrank
+    exact
+      (startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
+         hα obs f hL rank).mpr
+        (by
+          simpa [heq] using hrank)
 
   · intro hlower
 
@@ -675,6 +674,8 @@ variable (hα : Nonempty α)
 variable (obs : α → M)
 variable (f : Nat)
 
+include hα
+
 /-- Semantic targets of one exact minimum simultaneous certified-description
 rank. -/
 def StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
@@ -697,7 +698,7 @@ theorem
     (rank : Nat)
     (L : Set (Word α)) :
     L ∈
-        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
            hα obs f rank ↔
       ∃
         hL :
@@ -737,12 +738,11 @@ theorem
 
     · intro lower hlower
 
-      apply
-        startRootedTarget_not_mem_rankProfile_of_lt_descriptionRank
-           hα obs f hL lower
-          |>.mpr
-
-      simpa [hRank] using hlower
+      exact
+        (startRootedTarget_not_mem_rankProfile_iff_lt_descriptionRank
+           hα obs f hL lower).mpr
+          (by
+            simpa [hRank] using hlower)
 
   · intro hCriterion
 
@@ -787,7 +787,7 @@ stratum. -/
 theorem
     startRootedTargetCertifiedDescriptionRankExactClass_subset_atMostClass
     (rank : Nat) :
-    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
          hα obs f rank ⊆
       StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
          hα obs f rank := by
@@ -807,7 +807,7 @@ class. -/
 theorem
     startRootedTargetCertifiedDescriptionRankExactClass_subset_rankProfileClass
     (rank : Nat) :
-    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+    StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
          hα obs f rank ⊆
       CorrectedConcreteCertifiedRankProfileClass
         (α := α)
@@ -831,11 +831,11 @@ theorem startRootedTargetCertifiedDescriptionRankExactClass_rank_unique
     {L : Set (Word α)}
     (hRank :
       L ∈
-        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
            hα obs f rank)
     (hRank' :
       L ∈
-        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
            hα obs f rank') :
     rank = rank' := by
 
@@ -857,10 +857,10 @@ theorem
     {rank rank' : Nat}
     (hne :
       rank ≠ rank') :
-    Set.Disjoint
-      (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+    Disjoint
+      (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
          hα obs f rank)
-      (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+      (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
          hα obs f rank') := by
 
   rw [Set.disjoint_left]
@@ -882,7 +882,7 @@ theorem
         StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f) :
     L ∈
-      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
          hα obs f
         (startRootedTargetCertifiedDescriptionRank
            hα obs f hL) := by
@@ -900,7 +900,7 @@ theorem
       {L : Set (Word α) |
         ∃ rank : Nat,
           L ∈
-            StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+            StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
                hα obs f rank} := by
 
   ext L
@@ -995,7 +995,7 @@ theorem startRootedTargetCertifiedDescriptionRankObstruction_package
                 (M := M)
                 obs f rank) ∧
       (L ∈
-        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+        StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
            hα obs f
           (startRootedTargetCertifiedDescriptionRank
              hα obs f hL)) := by
@@ -1108,17 +1108,17 @@ theorem
                   obs f rank) ∧
       (∀ rank rank' : Nat,
         rank ≠ rank' →
-        Set.Disjoint
-          (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+        Disjoint
+          (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
              hα obs f rank)
-          (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+          (StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
              hα obs f rank')) ∧
       (StartRootedCorrectedConcreteTargetClass.{u, w, v}
            α M obs f =
         {L : Set (Word α) |
           ∃ rank : Nat,
             L ∈
-              StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass
+              StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
                  hα obs f rank}) := by
 
   exact
