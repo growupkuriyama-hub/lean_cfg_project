@@ -625,6 +625,8 @@ variable [Monoid M]
 variable {obsFamily : ι → α → M}
 variable {f : Nat}
 
+attribute [local instance] Classical.propDecidable
+
 /-- A target language is realizable from an ambient candidate set `U` using at
 most `cardinalityBudget` selected observation coordinates. -/
 def CorrectedConcreteObservationSelectionAtCardinality
