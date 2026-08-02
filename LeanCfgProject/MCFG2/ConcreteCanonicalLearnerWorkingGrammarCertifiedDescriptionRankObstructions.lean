@@ -789,7 +789,7 @@ theorem
     (rank : Nat) :
     StartRootedCorrectedConcreteTargetCertifiedDescriptionRankExactClass.{u, v, w}
          hα obs f rank ⊆
-      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass
+      StartRootedCorrectedConcreteTargetCertifiedDescriptionRankAtMostClass.{u, v, w}
          hα obs f rank := by
 
   intro L hL

@@ -358,13 +358,152 @@ Pin~\cite{Pin1986} を参照されたい。典型例としては、正則制御�
 二分規則の右辺の子として \(S\) が現れることはない。
 \end{definition}
 
-二分規則の意味論は同時代入である。
-\(\tuple u\in(\Sigma^*)^{d_B}\) および \(\tuple v\in(\Sigma^*)^{d_C}\) のとき、
-\(\rho(\tuple u,\tuple v)\) は、テンプレートタプル中の各 \(x^i\) を \(u_i\) に、
-各 \(y^j\) を \(v_j\) に置き換えて得られる。
-非終端記号 \(A\) のタプル言語を \(L_A(G)\) と書き、\(L(G):=L_S(G)\) とする。
-すべての非終端記号が \(S\) から到達可能で、かつ生成的であるとき、文法は\emph{簡約されている}
-という。
+二分規則
+\[
+  \rho\colon
+  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+をとる。ただし、
+\[
+  e=\mu(A),\qquad
+  d_B=\mu(B),\qquad
+  d_C=\mu(C)
+\]
+とする。
+
+この規則に付随する変数集合を
+\[
+  X_B:=\{x^1,\ldots,x^{d_B}\},
+  \qquad
+  Y_C:=\{y^1,\ldots,y^{d_C}\}
+\]
+とし、
+\[
+  \Gamma_\rho
+  :=
+  \Sigma\uplus X_B\uplus Y_C
+\]
+とおく。各
+\[
+  \alpha_\ell\in\Gamma_\rho^*
+  \qquad (1\le \ell\le e)
+\]
+を規則 \(\rho\) の\emph{テンプレート成分}と呼び、そのタプル
+\[
+  \boldsymbol{\alpha}_\rho
+  :=
+  (\alpha_1,\ldots,\alpha_e)
+  \in(\Gamma_\rho^*)^e
+\]
+を規則 \(\rho\) の\emph{テンプレートタプル}と呼ぶ。
+
+タプル
+\[
+  \tuple u=(u_1,\ldots,u_{d_B})
+  \in(\Sigma^*)^{d_B},
+  \qquad
+  \tuple v=(v_1,\ldots,v_{d_C})
+  \in(\Sigma^*)^{d_C}
+\]
+に対して、写像
+\[
+  \sigma_{\tuple u,\tuple v}\colon
+  \Gamma_\rho\to\Sigma^*
+\]
+を
+\[
+  \sigma_{\tuple u,\tuple v}(a):=a
+  \qquad (a\in\Sigma),
+\]
+\[
+  \sigma_{\tuple u,\tuple v}(x^i):=u_i
+  \qquad (1\le i\le d_B),
+\]
+\[
+  \sigma_{\tuple u,\tuple v}(y^j):=v_j
+  \qquad (1\le j\le d_C)
+\]
+によって定める。
+
+この写像を語へ一意に準同型拡張して得られる写像を
+\[
+  \widehat{\sigma}_{\tuple u,\tuple v}\colon
+  \Gamma_\rho^*\to\Sigma^*
+\]
+とする。規則 \(\rho\) を
+\(\tuple u,\tuple v\) に適用した結果を
+\[
+  \rho(\tuple u,\tuple v)
+  :=
+  \bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_1),
+    \ldots,
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_e)
+  \bigr)
+  \in(\Sigma^*)^e
+\]
+と定義する。これが二分規則の同時代入による意味論である。
+
+各非終端記号 \(A\in V\) のタプル言語
+\[
+  L_A(G)\subseteq(\Sigma^*)^{\mu(A)}
+\]
+は、次の条件を満たす最小の族として定義する。
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item 終端規則 \(A\to(a)\) が存在するならば、
+      \[
+        (a)\in L_A(G).
+      \]
+
+\item 二分規則
+      \[
+        \rho\colon
+        A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+      \]
+      が存在し、
+      \[
+        \tuple u\in L_B(G),
+        \qquad
+        \tuple v\in L_C(G)
+      \]
+      ならば、
+      \[
+        \rho(\tuple u,\tuple v)\in L_A(G).
+      \]
+
+\item 開始規則 \(S\to A\) が存在し、
+      \[
+        \tuple w\in L_A(G)
+      \]
+      ならば、
+      \[
+        \tuple w\in L_S(G).
+      \]
+\end{enumerate}
+文法 \(G\) が生成する文字列言語を
+\[
+  L(G):=
+  \{w\in\Sigma^*\mid (w)\in L_S(G)\}
+\]
+と定義する。開始記号のファンアウトは \(\mu(S)=1\) なので、
+必要に応じて \(L_S(G)\) と \(L(G)\) を同一視する。
+
+非終端記号 \(A\) が\emph{生成的}であるとは、
+\[
+  L_A(G)\ne\emptyset
+\]
+であることをいう。また、非終端記号依存グラフにおいて、
+開始記号 \(S\) から \(A\) への有向路が存在するとき、
+\(A\) は \(S\) から\emph{到達可能}であるという。
+ここで、開始規則 \(S\to A\) に対して辺 \(S\to A\) を置き、
+二分規則
+\[
+  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+に対して辺 \(A\to B\) および \(A\to C\) を置く。
+
+すべての非終端記号が \(S\) から到達可能であり、かつ生成的であるとき、
+文法 \(G\) は\emph{簡約されている}という。
 
 \begin{remark}[作業形の適用範囲と、主張しないこと]
 \label{rem:working-form-scope}
