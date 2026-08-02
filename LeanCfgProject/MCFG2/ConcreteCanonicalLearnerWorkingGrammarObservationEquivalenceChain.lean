@@ -239,14 +239,14 @@ theorem
     (r₀₁ : Refines obs₀ obs₁)
     (r₁₂ : Refines obs₁ obs₂)
     (f : Nat) :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₂ obs₂ f := by
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, x}
+        α M₂ obs₂ f := by
 
   exact
     startRootedCorrectedConcreteTargetClass_subset_of_refines
-      (z := z)
+      
       (r₀₁.compose r₁₂)
 
 /-- Failure-class inclusion along a two-step refinement chain. -/
@@ -255,14 +255,14 @@ theorem
     (r₀₁ : Refines obs₀ obs₁)
     (r₁₂ : Refines obs₁ obs₂)
     (f : Nat) :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₂ obs₂ f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₀ obs₀ f := by
+    StartRootedCorrectedConcreteObservationFailureClass.{u, x, z}
+        α M₂ obs₂ f ⊆
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M₀ obs₀ f := by
 
   exact
     observationFailureClass_subset_of_refines
-      (z := z)
+      
       (r₀₁.compose r₁₂)
 
 end RefinementIdentityAndComposition
@@ -285,8 +285,7 @@ variable {obs'' : α → M''}
 needed for the fixed-observation target theory. -/
 structure ObservationEquivalent
     (obs : α → M)
-    (obs' : α → M') :
-    Prop where
+    (obs' : α → M') where
 
   toRefines :
     Refines obs obs'
@@ -356,50 +355,50 @@ class. -/
 theorem observationEquivalent_targetClass_eq
     (equivalent :
       ObservationEquivalent obs obs') :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f := by
+    StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f := by
 
   apply Set.Subset.antisymm
 
   · exact
       startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z)
+        
         equivalent.toRefines
 
   · exact
       startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z)
+        
         equivalent.fromRefines
 
 /-- Mutually refining observations have exactly the same failure class. -/
 theorem observationEquivalent_failureClass_eq
     (equivalent :
       ObservationEquivalent obs obs') :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M obs f =
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M' obs' f := by
+    StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M obs f =
+      StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+        α M' obs' f := by
 
   apply Set.Subset.antisymm
 
   · exact
       observationFailureClass_subset_of_refines
-        (z := z)
+        
         equivalent.fromRefines
 
   · exact
       observationFailureClass_subset_of_refines
-        (z := z)
+        
         equivalent.toRefines
 
 /-- Mutual refinement leaves no strict gain from `obs` to `obs'`. -/
 theorem observationEquivalent_gainClass_eq_empty
     (equivalent :
       ObservationEquivalent obs obs') :
-    StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M M' obs obs' f =
+    StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M M' obs obs' f =
       ∅ := by
 
   ext language
@@ -412,7 +411,7 @@ theorem observationEquivalent_gainClass_eq_empty
       False.elim
         (hGain.2
           (startRootedCorrectedConcreteTarget_mem_of_refines
-            (z := z)
+            
             equivalent.fromRefines
             hGain.1))
 
@@ -424,13 +423,13 @@ theorem observationEquivalent_gainClass_eq_empty
 theorem observationEquivalent_reverseGainClass_eq_empty
     (equivalent :
       ObservationEquivalent obs obs') :
-    StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M' M obs' obs f =
+    StartRootedCorrectedConcreteObservationGainClass.{u, w, v, z}
+        α M' M obs' obs f =
       ∅ := by
 
   exact
     observationEquivalent_gainClass_eq_empty
-      (z := z)
+      
       f
       equivalent.symmetric
 
@@ -438,13 +437,13 @@ theorem observationEquivalent_reverseGainClass_eq_empty
 theorem observationEquivalent_lossClass_eq_empty
     (equivalent :
       ObservationEquivalent obs obs') :
-    StartRootedCorrectedConcreteObservationLossClass
-        (z := z) α M M' obs obs' f =
+    StartRootedCorrectedConcreteObservationLossClass.{u, v, w, z}
+        α M M' obs obs' f =
       ∅ := by
 
   exact
     observationLossClass_eq_empty_of_refines
-      (z := z)
+      
       equivalent.toRefines
 
 /-- Target success and observation failure are pointwise invariant under mutual
@@ -454,63 +453,63 @@ theorem observationEquivalent_target_failure_iff_package
       ObservationEquivalent obs obs')
     (language : Set (Word α)) :
     (language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f ↔
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f ↔
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f) ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f) ∧
       (language ∈
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M obs f ↔
+          StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+            α M obs f ↔
         language ∈
-          StartRootedCorrectedConcreteObservationFailureClass
-            (z := z) α M' obs' f) := by
+          StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+            α M' obs' f) := by
 
   constructor
 
   · rw [
       observationEquivalent_targetClass_eq
-        (z := z) f equivalent
+         f equivalent
     ]
 
   · rw [
       observationEquivalent_failureClass_eq
-        (z := z) f equivalent
+         f equivalent
     ]
 
 /-- Compact semantic observation-equivalence package. -/
 theorem observationEquivalent_semanticClass_package
     (equivalent :
       ObservationEquivalent obs obs') :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f) ∧
-      (StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M obs f =
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M' obs' f) ∧
-      (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M M' obs obs' f =
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f) ∧
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M obs f =
+        StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+          α M' obs' f) ∧
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M M' obs obs' f =
         ∅) ∧
-      (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M' M obs' obs f =
+      (StartRootedCorrectedConcreteObservationGainClass.{u, w, v, z}
+          α M' M obs' obs f =
         ∅) ∧
-      (StartRootedCorrectedConcreteObservationLossClass
-          (z := z) α M M' obs obs' f =
+      (StartRootedCorrectedConcreteObservationLossClass.{u, v, w, z}
+          α M M' obs obs' f =
         ∅) := by
 
   exact
     ⟨observationEquivalent_targetClass_eq
-        (z := z) f equivalent,
+         f equivalent,
       observationEquivalent_failureClass_eq
-        (z := z) f equivalent,
+         f equivalent,
       observationEquivalent_gainClass_eq_empty
-        (z := z) f equivalent,
+         f equivalent,
       observationEquivalent_reverseGainClass_eq_empty
-        (z := z) f equivalent,
+         f equivalent,
       observationEquivalent_lossClass_eq_empty
-        (z := z) f equivalent⟩
+         f equivalent⟩
 
 end ObservationEquivalenceSemanticClasses
 
@@ -534,6 +533,8 @@ variable (f : Nat)
 variable (equivalent :
   ObservationEquivalent obs obs')
 
+include equivalent
+
 /-- The certified learner built from `obs'` identifies the target class
 originally presented under `obs`. -/
 theorem
@@ -543,12 +544,12 @@ theorem
         obs' f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs' f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M obs f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M obs f) := by
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα obs obs' f
       equivalent.toRefines
 
@@ -561,12 +562,12 @@ theorem
         obs f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M' obs' f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M' obs' f) := by
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα obs' obs f
       equivalent.fromRefines
 
@@ -578,39 +579,39 @@ theorem observationEquivalent_bothCertifiedLearners_package :
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs' f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs' f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M obs f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M obs f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs' f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs' f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M' obs' f) := by
+        (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M' obs' f) := by
 
   exact
     ⟨correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := z) hα obs f,
+         hα obs f,
       observationEquivalent_refinedLearner_identifies_originalTargetClass
-        (z := z) hα obs obs' f equivalent,
+         hα obs obs' f equivalent,
       observationEquivalent_originalLearner_identifies_refinedTargetClass
-        (z := z) hα obs obs' f equivalent,
+         hα obs obs' f equivalent,
       correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-        (v := z) hα obs' f⟩
+         hα obs' f⟩
 
 end ObservationEquivalentCertifiedLearners
 
@@ -631,15 +632,18 @@ variable (f : Nat)
 variable (r₀₁ : Refines obs₀ obs₁)
 variable (r₁₂ : Refines obs₁ obs₂)
 
+include r₀₁
+include r₁₂
+
 /-- The direct strict gain from `obs₀` to `obs₂` is exactly the union of the
 two incremental gain classes. -/
 theorem observationGainClass_compose_eq_union :
-    StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M₀ M₂ obs₀ obs₂ f =
-      StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f := by
+    StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+        α M₀ M₂ obs₀ obs₂ f =
+      StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f := by
 
   ext language
 
@@ -649,8 +653,8 @@ theorem observationGainClass_compose_eq_union :
 
     by_cases hIntermediate :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₁ obs₁ f
+          StartRootedCorrectedConcreteTargetClass.{u, z, w}
+            α M₁ obs₁ f
 
     · exact
         Or.inl
@@ -669,7 +673,7 @@ theorem observationGainClass_compose_eq_union :
 
     · exact
         ⟨startRootedCorrectedConcreteTarget_mem_of_refines
-            (z := z)
+            
             r₁₂
             hFirst.1,
           hFirst.2⟩
@@ -683,17 +687,17 @@ theorem observationGainClass_compose_eq_union :
       exact
         hSecond.2
           (startRootedCorrectedConcreteTarget_mem_of_refines
-            (z := z)
+            
             r₀₁
             hCoarse)
 
 /-- The two incremental gain classes in a refinement chain are disjoint. -/
 theorem observationGainClasses_incremental_disjoint :
-    Set.Disjoint
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M₁ M₂ obs₁ obs₂ f) := by
+    Disjoint
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f)
+      (StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+        α M₁ M₂ obs₁ obs₂ f) := by
 
   rw [Set.disjoint_left]
 
@@ -706,133 +710,133 @@ theorem observationGainClasses_incremental_disjoint :
 /-- The finest target class decomposes into the coarsest targets, first-stage
 gains, and second-stage gains. -/
 theorem finestTargetClass_eq_coarsest_union_incrementalGains :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₂ obs₂ f =
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f) ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f := by
+    StartRootedCorrectedConcreteTargetClass.{u, z, x}
+        α M₂ obs₂ f =
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f) ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f := by
 
   calc
-    StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₂ obs₂ f =
-      StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f :=
+    StartRootedCorrectedConcreteTargetClass.{u, z, x}
+        α M₂ obs₂ f =
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f :=
       finerTargetClass_eq_coarser_union_observationGainClass
-        (z := z)
+        
         r₁₂
     _ =
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f) ∪
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f) ∪
+        StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f := by
 
       rw [
         finerTargetClass_eq_coarser_union_observationGainClass
-          (z := z)
+          
           r₀₁
       ]
 
 /-- Failure classes form the reverse inclusion chain. -/
 theorem observationFailureClasses_chain :
-    StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₂ obs₂ f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₁ obs₁ f ∧
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₁ obs₁ f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₀ obs₀ f ∧
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₂ obs₂ f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z) α M₀ obs₀ f := by
+    StartRootedCorrectedConcreteObservationFailureClass.{u, x, z}
+        α M₂ obs₂ f ⊆
+      StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+        α M₁ obs₁ f ∧
+      StartRootedCorrectedConcreteObservationFailureClass.{u, w, z}
+        α M₁ obs₁ f ⊆
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M₀ obs₀ f ∧
+      StartRootedCorrectedConcreteObservationFailureClass.{u, x, z}
+        α M₂ obs₂ f ⊆
+      StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+        α M₀ obs₀ f := by
 
   exact
     ⟨observationFailureClass_subset_of_refines
-        (z := z)
+        
         r₁₂,
       observationFailureClass_subset_of_refines
-        (z := z)
+        
         r₀₁,
       observationFailureClass_subset_of_refines
-        (z := z)
+        
         (r₀₁.compose r₁₂)⟩
 
 /-- No language is lost at either stage or along the composed refinement. -/
 theorem observationLossClasses_chain_eq_empty :
-    StartRootedCorrectedConcreteObservationLossClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f =
+    StartRootedCorrectedConcreteObservationLossClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f =
       ∅ ∧
-      StartRootedCorrectedConcreteObservationLossClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f =
+      StartRootedCorrectedConcreteObservationLossClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f =
         ∅ ∧
-      StartRootedCorrectedConcreteObservationLossClass
-          (z := z) α M₀ M₂ obs₀ obs₂ f =
+      StartRootedCorrectedConcreteObservationLossClass.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f =
         ∅ := by
 
   exact
     ⟨observationLossClass_eq_empty_of_refines
-        (z := z)
+        
         r₀₁,
       observationLossClass_eq_empty_of_refines
-        (z := z)
+        
         r₁₂,
       observationLossClass_eq_empty_of_refines
-        (z := z)
+        
         (r₀₁.compose r₁₂)⟩
 
 /-- Compact path-independent semantic gain decomposition package. -/
 theorem observationRefinementChain_semanticGain_package :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ⊆
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₂ obs₂ f) ∧
-      (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₂ obs₀ obs₂ f =
-        StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f ∪
-          StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
-      Set.Disjoint
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₂ obs₂ f =
-        (StartRootedCorrectedConcreteTargetClass
-            (v := z) α M₀ obs₀ f ∪
-          StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f) ∪
-          StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M₁ M₂ obs₁ obs₂ f) := by
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ⊆
+        StartRootedCorrectedConcreteTargetClass.{u, z, x}
+          α M₂ obs₂ f) ∧
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f =
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f ∪
+          StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+            α M₁ M₂ obs₁ obs₂ f) ∧
+      Disjoint
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f)
+        (StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, z, x}
+          α M₂ obs₂ f =
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+            α M₀ obs₀ f ∪
+          StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f) ∪
+          StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+            α M₁ M₂ obs₁ obs₂ f) := by
 
   exact
     ⟨startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z)
+        
         r₀₁,
       startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z)
+        
         r₁₂,
       observationGainClass_compose_eq_union
-        (z := z)
+        
         f r₀₁ r₁₂,
       observationGainClasses_incremental_disjoint
-        (z := z)
+        
         f r₀₁ r₁₂,
       finestTargetClass_eq_coarsest_union_incrementalGains
-        (z := z)
+        
         f r₀₁ r₁₂⟩
 
 end ThreeStageObservationRefinementChain
@@ -862,6 +866,9 @@ variable (f : Nat)
 variable (r₀₁ : Refines obs₀ obs₁)
 variable (r₁₂ : Refines obs₁ obs₂)
 
+include r₀₁
+include r₁₂
+
 /-- The finest certified learner identifies the coarsest target class. -/
 theorem
     finestCertifiedLearner_identifies_coarsestTargetClass :
@@ -870,12 +877,12 @@ theorem
         obs₂ f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs₂ f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f) := by
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα obs₀ obs₂ f
       (r₀₁.compose r₁₂)
 
@@ -887,12 +894,12 @@ theorem
         obs₂ f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs₂ f)
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f) := by
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f) := by
 
   exact
     refinedCertifiedLearner_identifies_coarserTargetClass
-      (z := z)
+      
       hα obs₁ obs₂ f
       r₁₂
 
@@ -904,18 +911,18 @@ theorem
         obs₂ f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs₂ f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M₀ M₁ obs₀ obs₁ f) := by
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+        α M₀ M₁ obs₀ obs₁ f) := by
 
   intro language hGain
 
   exact
     correctedConcreteCertifiedWorkingGrammarLearner_identifies_startRootedTargetClass
-      (v := z)
+      
       hα obs₂ f
       language
       (startRootedCorrectedConcreteTarget_mem_of_refines
-        (z := z)
+        
         r₁₂
         hGain.1)
 
@@ -927,12 +934,12 @@ theorem
         obs₂ f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs₂ f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M₁ M₂ obs₁ obs₂ f) := by
+      (StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+        α M₁ M₂ obs₁ obs₂ f) := by
 
   exact
     refinedCertifiedLearner_identifies_observationGainClass
-      (z := z)
+      
       hα obs₁ obs₂ f
       r₁₂
 
@@ -945,12 +952,12 @@ theorem
         obs₂ f)
       (correctedConcreteCertifiedWorkingGrammarLearner
         hα obs₂ f)
-      (StartRootedCorrectedConcreteObservationGainClass
-        (z := z) α M₀ M₂ obs₀ obs₂ f) := by
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+        α M₀ M₂ obs₀ obs₂ f) := by
 
   exact
     refinedCertifiedLearner_identifies_observationGainClass
-      (z := z)
+      
       hα obs₀ obs₂ f
       (r₀₁.compose r₁₂)
 
@@ -962,22 +969,22 @@ theorem
     {L : Set (Word α)}
     (hGain :
       L ∈
-        StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₂ obs₀ obs₂ f) :
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f) :
     L ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f ∧
+        StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f ∧
       L ∈
         CorrectedConcreteCertifiedRankProfileClass
           (α := α)
           (M := M₂)
           obs₂ f
           (startRootedTargetCertifiedDescriptionRank
-            (v := z) hα obs₂ f hGain.1) ∧
+             hα obs₂ f hGain.1) ∧
       startRootedTargetCertifiedDescriptionRank
-          (v := z) hα obs₂ f hGain.1 <=
+           hα obs₂ f hGain.1 <=
         startRootedTargetCharacteristicRank
-          (v := z) hα obs₂ f hGain.1 ∧
+           hα obs₂ f hGain.1 ∧
       ∃
         C :
           CorrectedConcreteCertifiedWorkingGrammarHypothesis
@@ -986,17 +993,17 @@ theorem
           C.bits.length <=
             correctedConcreteCertifiedRankBitBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := z) hα obs₂ f hGain.1)
+                 hα obs₂ f hGain.1)
               f ∧
           C.canonicalSearch.length <=
             correctedConcreteCertifiedRankSearchBudget
               (startRootedTargetCertifiedDescriptionRank
-                (v := z) hα obs₂ f hGain.1)
+                 hα obs₂ f hGain.1)
               f := by
 
   exact
     observationGain_target_refinedDescriptionRank_package
-      (z := z)
+      
       hα obs₀ obs₂ f
       (r₀₁.compose r₁₂)
       hGain
@@ -1008,52 +1015,52 @@ theorem finestCertifiedLearner_refinementChain_package :
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f) ∧
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
+        (StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₂ obs₀ obs₂ f) := by
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f) := by
 
   exact
     ⟨finestCertifiedLearner_identifies_coarsestTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂,
       finestCertifiedLearner_identifies_intermediateTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂,
       finestCertifiedLearner_identifies_firstObservationGainClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂,
       finestCertifiedLearner_identifies_secondObservationGainClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂,
       finestCertifiedLearner_identifies_directObservationGainClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂⟩
 
 end FinestCertifiedLearnerAlongRefinementChain
@@ -1083,69 +1090,72 @@ variable (f : Nat)
 variable (r₀₁ : Refines obs₀ obs₁)
 variable (r₁₂ : Refines obs₁ obs₂)
 
+include r₀₁
+include r₁₂
+
 /-- Final semantic and certified-learning package for a composed observation
 refinement chain. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationRefinementChain_package :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₀ obs₀ f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z) α M₁ obs₁ f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₁ obs₁ f ⊆
-        StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₂ obs₂ f) ∧
-      (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₂ obs₀ obs₂ f =
-        StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M₀ M₁ obs₀ obs₁ f ∪
-          StartRootedCorrectedConcreteObservationGainClass
-            (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
-      Set.Disjoint
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₁ obs₀ obs₁ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₁ M₂ obs₁ obs₂ f) ∧
-      (StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M₂ obs₂ f ⊆
-        StartRootedCorrectedConcreteObservationFailureClass
-          (z := z) α M₀ obs₀ f) ∧
+    (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+        α M₀ obs₀ f ⊆
+      StartRootedCorrectedConcreteTargetClass.{u, z, w}
+        α M₁ obs₁ f) ∧
+      (StartRootedCorrectedConcreteTargetClass.{u, z, w}
+          α M₁ obs₁ f ⊆
+        StartRootedCorrectedConcreteTargetClass.{u, z, x}
+          α M₂ obs₂ f) ∧
+      (StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f =
+        StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+            α M₀ M₁ obs₀ obs₁ f ∪
+          StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+            α M₁ M₂ obs₁ obs₂ f) ∧
+      Disjoint
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, w, z}
+          α M₀ M₁ obs₀ obs₁ f)
+        (StartRootedCorrectedConcreteObservationGainClass.{u, w, x, z}
+          α M₁ M₂ obs₁ obs₂ f) ∧
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, x, z}
+          α M₂ obs₂ f ⊆
+        StartRootedCorrectedConcreteObservationFailureClass.{u, v, z}
+          α M₀ obs₀ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteTargetClass
-          (v := z) α M₀ obs₀ f) ∧
+        (StartRootedCorrectedConcreteTargetClass.{u, z, v}
+          α M₀ obs₀ f) ∧
       IdentifiesClassFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           obs₂ f)
         (correctedConcreteCertifiedWorkingGrammarLearner
           hα obs₂ f)
-        (StartRootedCorrectedConcreteObservationGainClass
-          (z := z) α M₀ M₂ obs₀ obs₂ f) := by
+        (StartRootedCorrectedConcreteObservationGainClass.{u, v, x, z}
+          α M₀ M₂ obs₀ obs₂ f) := by
 
   exact
     ⟨startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z)
+        
         r₀₁,
       startRootedCorrectedConcreteTargetClass_subset_of_refines
-        (z := z)
+        
         r₁₂,
       observationGainClass_compose_eq_union
-        (z := z)
+        
         f r₀₁ r₁₂,
       observationGainClasses_incremental_disjoint
-        (z := z)
+        
         f r₀₁ r₁₂,
       observationFailureClass_subset_of_refines
-        (z := z)
+        
         (r₀₁.compose r₁₂),
       finestCertifiedLearner_identifies_coarsestTargetClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂,
       finestCertifiedLearner_identifies_directObservationGainClass
-        (z := z)
+        
         hα obs₀ obs₁ obs₂ f r₀₁ r₁₂⟩
 
 end ObservationEquivalenceChainFinalPackages

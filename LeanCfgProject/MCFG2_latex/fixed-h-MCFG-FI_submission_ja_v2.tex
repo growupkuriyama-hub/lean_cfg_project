@@ -1306,30 +1306,434 @@ $h_m$はモノイド準同型なので、
 
 \begin{proposition}[出力型不変量]
 \label{prop:output-invariants}
-\(G^h\) の任意の非終端記号 \(A_{\mathbf p}\) について、次が成り立つ。
+完全出力型精密化 \(G^h\) と、そのトリムされた部分文法
+\(\widetilde G_0\) について、次が成り立つ。
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \(G^h\) において \(A_{\mathbf p}\Rightarrow^*\tuple u\) ならば、
-\(h^{(\mu(A))}(\tuple u)=\mathbf p\) であり、型添字を消去すると \(A\) からの
-正しい \(G\)-導出が得られる。
-\item 根が開始記号でない非終端記号である任意の \(G\)-導出木は、各節点に、
-その節点で導出されるタプルの成分ごとの \(h\)-型を付すことによって、一意に
-\(G^h\)-導出木へ持ち上がる。
-\item \(L(G^h)=L(G)\) であり、\(\widetilde G_0\) へのトリミングは文字列言語を
-保存する。
+\item 任意の \(A\in V\setminus\{S\}\)、
+      \(\mathbf p\in M^{\mu(A)}\)、および
+      \(\tuple u\in(\Sigma^*)^{\mu(A)}\) に対して、
+      \[
+        A_{\mathbf p}\Rightarrow_{G^h}^*\tuple u
+      \]
+      ならば、
+      \[
+        h^{(\mu(A))}(\tuple u)=\mathbf p.
+      \]
+      さらに、この \(G^h\)-導出木からすべての型添字を消去すると、
+      \(A\Rightarrow_G^*\tuple u\) を示す正しい \(G\)-導出木が得られる。
+
+\item \(A\in V\setminus\{S\}\) を根にもつ任意の固定された
+      \(G\)-導出木は、各節点に、その節点で導出されるタプルの
+      成分ごとの \(h\)-型を付すことにより、一意な
+      \(G^h\)-導出木へ持ち上がる。
+      ここで一意性とは、もとの \(G\)-導出木の規則と木構造を固定したとき、
+      各節点に付される型添字が一意に定まることをいう。
+
+\item
+      \[
+        L(G^h)=L(G)
+      \]
+      である。さらに、
+      \[
+        L(\widetilde G_0)=L(G^h)=L(G)
+      \]
+      である。
 \end{enumerate}
 \end{proposition}
 
 \begin{proof}
-(i) は導出に関する帰納法による。終端規則の場合は直ちに従う。二分規則の場合、
-帰納法の仮定から子の出力型 \(\mathbf q\) と \(\mathbf r\) が得られ、親の
-出力型は \(h\) の準同型性により、ちょうど
-\(\out_\rho(\mathbf q,\mathbf r)\) である。添字を消去すれば、基礎となる
-\(G\) の規則が得られる。(ii) では、各節点に、その節点で導出されるタプルの
-\(h\)-型を付す。すると定義~\ref{def:output-refinement} により、各内部節点に
-必要な型付き規則がちょうど存在する。(iii) の二つの包含は (i) と (ii) から
-従い、トリミングで除かれるのは、いかなる成功導出にも現れない対象だけである。
-\end{proof}
+まず、二分規則に対するテンプレート評価と実際の文字列代入との
+関係を確認する。
 
+二分規則
+\[
+  \rho\colon
+  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+をとり、
+\[
+  d_B=\mu(B),
+  \qquad
+  d_C=\mu(C)
+\]
+とする。また、
+\[
+  \tuple u=(u_1,\ldots,u_{d_B})
+  \in(\Sigma^*)^{d_B},
+  \qquad
+  \tuple v=(v_1,\ldots,v_{d_C})
+  \in(\Sigma^*)^{d_C}
+\]
+とし、
+\[
+  \mathbf q:=h^{(d_B)}(\tuple u),
+  \qquad
+  \mathbf r:=h^{(d_C)}(\tuple v)
+\]
+とおく。
+
+規則 \(\rho\) の任意のテンプレート語
+\(\beta\in\Gamma_\rho^*\) に対して、
+\[
+  h\bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\beta)
+  \bigr)
+  =
+  \widehat{\eta}_{\mathbf q,\mathbf r}(\beta)
+  =
+  \ev_\rho(\beta;\mathbf q,\mathbf r)
+  \tag{1}
+\]
+が成り立つ。
+
+実際、二つの写像
+\[
+  h\circ\widehat{\sigma}_{\tuple u,\tuple v},
+  \qquad
+  \widehat{\eta}_{\mathbf q,\mathbf r}
+  \colon
+  \Gamma_\rho^*\to M
+\]
+はいずれもモノイド準同型である。さらに、任意の生成元について、
+終端記号 \(a\in\Sigma\) ならば
+\[
+  h\bigl(\widehat{\sigma}_{\tuple u,\tuple v}(a)\bigr)
+  =
+  h(a)
+  =
+  \eta_{\mathbf q,\mathbf r}(a),
+\]
+変数 \(x^i\) ならば
+\[
+  h\bigl(\widehat{\sigma}_{\tuple u,\tuple v}(x^i)\bigr)
+  =
+  h(u_i)
+  =
+  q_i
+  =
+  \eta_{\mathbf q,\mathbf r}(x^i),
+\]
+変数 \(y^j\) ならば
+\[
+  h\bigl(\widehat{\sigma}_{\tuple u,\tuple v}(y^j)\bigr)
+  =
+  h(v_j)
+  =
+  r_j
+  =
+  \eta_{\mathbf q,\mathbf r}(y^j)
+\]
+である。したがって、自由モノイド上の準同型の一意性により
+式~\textup{(1)} が従う。
+
+\medskip
+\noindent
+\textbf{(i) の証明。}
+\(A_{\mathbf p}\) を根とする \(G^h\)-導出木の高さに関する帰納法を行う。
+
+\smallskip
+\noindent
+\emph{基底の場合。}
+導出木の高さが \(1\) ならば、その根で用いられる規則は終端規則
+\[
+  A_{(h(a))}\to(a)
+\]
+である。したがって、
+\[
+  \tuple u=(a),
+  \qquad
+  \mathbf p=(h(a)),
+\]
+なので
+\[
+  h^{(\mu(A))}(\tuple u)
+  =
+  (h(a))
+  =
+  \mathbf p.
+\]
+この規則から型添字を消去すると、もとの終端規則
+\[
+  A\to(a)
+\]
+が得られる。
+
+\smallskip
+\noindent
+\emph{帰納段階。}
+根で用いられる規則が
+\[
+  A_{\mathbf p}
+  \to
+  \rho(B_{\mathbf q},C_{\mathbf r})
+  \tag{2}
+\]
+であるとする。ここで、もとの \(G\) の規則は
+\[
+  \rho\colon
+  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+であり、\(G^h\) の定義から
+\[
+  \mathbf p=\out_\rho(\mathbf q,\mathbf r)
+  \tag{3}
+\]
+である。
+
+二つの子部分木がそれぞれ
+\[
+  B_{\mathbf q}\Rightarrow_{G^h}^*\tuple u,
+  \qquad
+  C_{\mathbf r}\Rightarrow_{G^h}^*\tuple v
+\]
+を導くとする。帰納法の仮定により、
+\[
+  h^{(\mu(B))}(\tuple u)=\mathbf q,
+  \qquad
+  h^{(\mu(C))}(\tuple v)=\mathbf r.
+  \tag{4}
+\]
+また、二つの子部分木から型添字を消去すると、
+\[
+  B\Rightarrow_G^*\tuple u,
+  \qquad
+  C\Rightarrow_G^*\tuple v
+\]
+という正しい \(G\)-導出木が得られる。
+
+根で導出されるタプルを
+\[
+  \tuple w
+  :=
+  \rho(\tuple u,\tuple v)
+  =
+  \bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_1),
+    \ldots,
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_e)
+  \bigr)
+\]
+とする。式~\textup{(1)}、\textup{(3)}、\textup{(4)} により、
+各 \(1\le\ell\le e\) について
+\[
+\begin{aligned}
+  h(w_\ell)
+  &=
+  h\bigl(
+    \widehat{\sigma}_{\tuple u,\tuple v}(\alpha_\ell)
+  \bigr)
+  \\
+  &=
+  \ev_\rho(\alpha_\ell;\mathbf q,\mathbf r).
+\end{aligned}
+\]
+したがって、
+\[
+\begin{aligned}
+  h^{(e)}(\tuple w)
+  &=
+  \bigl(
+    \ev_\rho(\alpha_1;\mathbf q,\mathbf r),
+    \ldots,
+    \ev_\rho(\alpha_e;\mathbf q,\mathbf r)
+  \bigr)
+  \\
+  &=
+  \out_\rho(\mathbf q,\mathbf r)
+  \\
+  &=
+  \mathbf p.
+\end{aligned}
+\]
+さらに、根の規則~\textup{(2)}から型添字を消去すると、
+もとの規則
+\[
+  \rho\colon
+  A\to(\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+が得られる。これを、帰納法の仮定によって得られた二つの
+\(G\)-導出木の上に置けば、
+\[
+  A\Rightarrow_G^*\tuple w
+\]
+という正しい \(G\)-導出木が得られる。
+以上で (i) が示された。
+
+\medskip
+\noindent
+\textbf{(ii) の証明。}
+\(A\in V\setminus\{S\}\) を根にもつ固定された \(G\)-導出木
+\(T\) をとる。各節点 \(\nu\) について、その節点の非終端記号を
+\(A_\nu\)、その節点以下で導出されるタプルを
+\[
+  \tuple w_\nu
+  \in(\Sigma^*)^{\mu(A_\nu)}
+\]
+と書き、
+\[
+  \mathbf p_\nu
+  :=
+  h^{(\mu(A_\nu))}(\tuple w_\nu)
+  \]
+と定める。節点 \(\nu\) のラベル \(A_\nu\) を
+\[
+  (A_\nu)_{\mathbf p_\nu}
+\]
+に置き換える。
+
+この型付けが \(G^h\)-導出木を与えることを、木の高さに関する
+帰納法で示す。
+
+葉 \(\nu\) で終端規則
+\[
+  A_\nu\to(a)
+\]
+が用いられている場合、
+\[
+  \tuple w_\nu=(a),
+  \qquad
+  \mathbf p_\nu=(h(a))
+\]
+である。したがって \(G^h\) には規則
+\[
+  (A_\nu)_{\mathbf p_\nu}\to(a)
+\]
+が存在する。
+
+次に、内部節点 \(\nu\) で
+\[
+  \rho\colon
+  A_\nu\to
+  (\alpha_1,\ldots,\alpha_e)(B,C)
+\]
+が用いられているとする。二つの子節点で導出されるタプルを
+それぞれ \(\tuple u,\tuple v\) とし、その型を
+\[
+  \mathbf q:=h^{(\mu(B))}(\tuple u),
+  \qquad
+  \mathbf r:=h^{(\mu(C))}(\tuple v)
+\]
+とする。式~\textup{(1)} により、親節点で導出されるタプルの型は
+\[
+  \mathbf p_\nu
+  =
+  \out_\rho(\mathbf q,\mathbf r)
+\]
+である。したがって、\(G^h\) の定義により
+\[
+  (A_\nu)_{\mathbf p_\nu}
+  \to
+  \rho(B_{\mathbf q},C_{\mathbf r})
+\]
+という規則が存在する。帰納法の仮定と合わせれば、型を付した木全体が
+正しい \(G^h\)-導出木になる。
+
+一意性を示す。もとの \(G\)-導出木 \(T\) の木構造、各節点で用いる規則、
+および各節点で導出されるタプルを固定する。
+その任意の \(G^h\)-持ち上げにおいて、(i) により、節点 \(\nu\) の
+型添字は必ず
+\[
+  h^{(\mu(A_\nu))}(\tuple w_\nu)
+  =
+  \mathbf p_\nu
+\]
+でなければならない。したがって各節点の型添字は一意であり、
+固定された \(G\)-導出木 \(T\) の \(G^h\)-持ち上げも一意である。
+
+\medskip
+\noindent
+\textbf{(iii) の証明。}
+まず
+\[
+  L(G^h)\subseteq L(G)
+\]
+を示す。
+
+\(w\in L(G^h)\) とする。このとき、ある \(A\in V\setminus\{S\}\) と
+\(p\in M\) が存在して、
+\[
+  \widetilde S\to A_{(p)}
+\]
+を根の規則とし、
+\[
+  A_{(p)}\Rightarrow_{G^h}^*(w)
+\]
+となる成功導出木が存在する。(i) により、その部分木から型添字を
+消去すると
+\[
+  A\Rightarrow_G^*(w)
+\]
+が得られる。また、\(\widetilde S\to A_{(p)}\) は、もとの開始規則
+\[
+  S\to A
+\]
+から導入された規則である。したがって、
+\[
+  S\Rightarrow_G^*(w),
+\]
+すなわち \(w\in L(G)\) である。
+
+逆に、
+\[
+  L(G)\subseteq L(G^h)
+\]
+を示す。
+
+\(w\in L(G)\) とする。開始記号分離の仮定により、その成功導出木の
+根では、ある開始規則
+\[
+  S\to A
+\]
+が用いられ、その下には
+\[
+  A\Rightarrow_G^*(w)
+\]
+という、根が開始記号でない導出木がある。
+(ii) により、この部分木は
+\[
+  A_{(h(w))}\Rightarrow_{G^h}^*(w)
+\]
+という \(G^h\)-導出木へ一意に持ち上がる。
+また、\(G^h\) には開始規則
+\[
+  \widetilde S\to A_{(h(w))}
+\]
+が存在する。したがって、
+\[
+  \widetilde S\Rightarrow_{G^h}^*(w),
+\]
+すなわち \(w\in L(G^h)\) である。以上より、
+\[
+  L(G^h)=L(G).
+\]
+
+最後に、トリミングが言語を保存することを示す。
+\(\widetilde G_0\) は \(G^h\) の部分文法なので、
+\[
+  L(\widetilde G_0)\subseteq L(G^h)
+\]
+は明らかである。
+
+逆に、\(w\in L(G^h)\) とし、\(w\) に対する任意の成功導出木 \(T\) を
+一つ固定する。\(\widetilde G_0\) の定義により、ある成功導出に現れる
+すべての型付き非終端記号と型付き規則は保持される。
+\(T\) に現れる各非終端記号と各規則は、成功導出 \(T\) 自身に
+現れているので、すべて \(\widetilde G_0\) に含まれる。
+したがって、同じ木 \(T\) は \(\widetilde G_0\) における成功導出木でも
+あり、
+\[
+  w\in L(\widetilde G_0)
+\]
+である。よって、
+\[
+  L(G^h)\subseteq L(\widetilde G_0).
+\]
+以上から、
+\[
+  L(\widetilde G_0)=L(G^h)=L(G)
+\]
+を得る。
+\end{proof}
 \(\widetilde G_0\) に残る型付き非終端記号 \(X=A_{\mathbf p}\) に対し、その
 タプル言語を \(L_X\) と書く。タプルおよび具体的な文コンテクストの上に、長さ辞書式順序
 を精密化する全有効順序を一つ固定する。\(L_X\) における最小のタプルを
