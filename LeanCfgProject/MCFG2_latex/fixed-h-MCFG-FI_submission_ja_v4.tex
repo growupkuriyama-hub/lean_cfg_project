@@ -1636,12 +1636,137 @@ k_j+\sum_{i=1}^{d}|y_i|_{a_j}&=n'
 
 \begin{definition}[標本語中のタプル出現]
 \label{def:tuple-occurrence}
-\(w\in K\) におけるアリティ \(d\) のタプル出現とは、\(E\) が具体的な
-アリティ \(d\) の文コンテクスト、\(\tuple x\in(\Sigma^*)^d\)、かつ
-\(E[\tuple x]=w\) であるような対 \((E,\tuple x)\) をいう。同値な言い方を
-すれば、\(w\) の中で名前付きスロットを \(d\) 個選ぶ。正の長さをもつスロットは
-区間であり、空スロットは切断位置である。同じ切断位置を複数の空スロットが共有する
-場合には、同一切断位置にある局所順序を付す。
+\(K\subseteq\Sigma^*\) とし、
+\[
+  w=a_1a_2\cdots a_n\in K,
+  \qquad
+  d\ge 1
+\]
+とする。\(0\le p\le q\le n\) に対して、
+\[
+  w[p:q]:=a_{p+1}a_{p+2}\cdots a_q
+\]
+と定める。ただし、\(p=q\) のときは
+\[
+  w[p:p]:=\eps
+\]
+とする。
+
+\(w\) における\emph{アリティ \(d\) のタプル出現}とは、次のデータ
+\[
+  \mathfrak{o}
+  =
+  \bigl(
+    \sigma,(\ell_i,r_i)_{i=1}^d
+  \bigr)
+\]
+をいう。
+ここで、\(\sigma\) は集合 \(\{1,\ldots,d\}\) の置換であり、
+各 \(\ell_i,r_i\) は \(w\) の切断位置であって、
+\[
+  0
+  \le
+  \ell_{\sigma(1)}
+  \le
+  r_{\sigma(1)}
+  \le
+  \ell_{\sigma(2)}
+  \le
+  r_{\sigma(2)}
+  \le
+  \cdots
+  \le
+  \ell_{\sigma(d)}
+  \le
+  r_{\sigma(d)}
+  \le
+  n
+\]
+を満たす。
+
+この出現に対応するタプル
+\[
+  \tuple x_{\mathfrak{o}}
+  =
+  (x_1,\ldots,x_d)
+  \in(\Sigma^*)^d
+\]
+を
+\[
+  x_i:=w[\ell_i:r_i]
+  \qquad
+  (1\le i\le d)
+\]
+によって定める。
+
+また、固定部分の語
+\(u_0,\ldots,u_d\in\Sigma^*\) を
+\[
+  u_0:=w[0:\ell_{\sigma(1)}],
+\]
+\[
+  u_j
+  :=
+  w[r_{\sigma(j)}:\ell_{\sigma(j+1)}]
+  \qquad
+  (1\le j<d),
+\]
+\[
+  u_d:=w[r_{\sigma(d)}:n]
+\]
+によって定める。このとき、
+\[
+  E_{\mathfrak{o}}
+  :=
+  u_0
+  \blank_{\sigma(1)}
+  u_1
+  \blank_{\sigma(2)}
+  \cdots
+  u_{d-1}
+  \blank_{\sigma(d)}
+  u_d
+\]
+はアリティ \(d\) の文コンテクストであり、
+\[
+  E_{\mathfrak{o}}[\tuple x_{\mathfrak{o}}]=w
+\]
+が成り立つ。
+
+したがって、タプル出現 \(\mathfrak{o}\) を、それに対応する対
+\[
+  (E_{\mathfrak{o}},\tuple x_{\mathfrak{o}})
+\]
+と同一視する。この同一視の下で、\(w\) におけるアリティ \(d\) の
+タプル出現とは、同値に、
+\[
+  E[\tuple x]=w
+\]
+を満たすアリティ \(d\) の文コンテクスト \(E\) とタプル
+\(\tuple x\in(\Sigma^*)^d\) の対 \((E,\tuple x)\) である。
+
+各 \(i\in\{1,\ldots,d\}\) について、
+\(\ell_i<r_i\) の場合、\(i\) 番目のスロットは、切断位置による
+半開区間
+\[
+  [\ell_i,r_i)
+\]
+に対応する正の長さの区間である。一方、
+\(\ell_i=r_i\) の場合、\(i\) 番目のスロットは切断位置
+\(\ell_i\) に置かれた空スロットである。
+
+複数の空スロットが同じ切断位置 \(c\) を共有する場合、それらの
+局所的な順序は、置換 \(\sigma\) における出現順序によって定める。
+すなわち、
+\[
+  \ell_i=r_i=\ell_j=r_j=c
+\]
+である二つの空スロット \(i,j\) について、\(i\) が \(j\) より先に
+現れるとは、
+\[
+  \sigma^{-1}(i)<\sigma^{-1}(j)
+\]
+が成り立つことをいう。
 \end{definition}
 
 \begin{example}[空スロットと局所順序]
@@ -1672,24 +1797,256 @@ k_j+\sum_{i=1}^{d}|y_i|_{a_j}&=n'
 
 \begin{definition}[二分証人]
 \label{def:binary-witness}
-有限標本 \(K\) における二分証人は、次のデータからなる。
+\(K\subseteq\Sigma^*\) を有限標本とし、
+\(e,d_B,d_C\ge1\) とする。また、
+\[
+  X_B:=\{x^1,\ldots,x^{d_B}\},
+  \qquad
+  Y_C:=\{y^1,\ldots,y^{d_C}\},
+  \qquad
+  \Gamma:=\Sigma\uplus X_B\uplus Y_C
+\]
+とおく。
+
+有限標本 \(K\) における、出力アリティ \(e\)、左子アリティ
+\(d_B\)、右子アリティ \(d_C\) の\emph{二分証人}とは、次のデータ
+\[
+  \mathfrak b
+  =
+  \bigl(
+    \mathfrak o_P,
+    \mathfrak o_B,
+    \mathfrak o_C,
+    (m_i)_{i=1}^e,
+    (u_{i,r})_{\substack{1\le i\le e\\0\le r\le m_i}},
+    (\xi_{i,r})_{\substack{1\le i\le e\\1\le r\le m_i}}
+  \bigr)
+\]
+であって、以下の条件を満たすものをいう。
+
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item \(K\) のある語中の親タプル出現 \((E,\tuple z)\)。ここで
-      \(\tuple z=(z_1,\ldots,z_e)\) とする。
-\item 二つのタプル値
-      \(\tuple x=(x_1,\ldots,x_{d_B})\) と
-      \(\tuple y=(y_1,\ldots,y_{d_C})\)。各々は \(K\) のどこかで観測されているものとする。
-      それらを証明する観測は、親出現と同じ標本語中に現れる必要はない。
-\item 各親成分 \(z_i\) を、終端記号からなる隙間と、
-      \(\{x^1,\ldots,x^{d_B},y^1,\ldots,y^{d_C}\}\) の互いに異なる変数でラベル付けされた
-      変数区間とへ分ける順序付き分割。
-\item 各変数は親タプル全体でちょうど一度用いられ、\(x^j\) でラベル付けされた区間の文字列値は
-      ちょうど \(x_j\)、\(y^k\) でラベル付けされた区間の文字列値はちょうど \(y_k\) である。
-\item 長さゼロの子成分は、指定された切断位置にある長さゼロの区間として表す。同じ切断位置を
-      複数の長さゼロ区間が用いるとき、それらの局所順序も証人データの一部とする。
+
+\item
+ある語 \(w_P\in K\) におけるアリティ \(e\) のタプル出現
+\[
+  \mathfrak o_P=(E_P,\tuple z)
+\]
+が指定されている。ここで
+\[
+  \tuple z=(z_1,\ldots,z_e)\in(\Sigma^*)^e,
+  \qquad
+  E_P[\tuple z]=w_P
+\]
+である。この出現を\emph{親出現}と呼ぶ。
+
+\item
+ある語 \(w_B,w_C\in K\) におけるタプル出現
+\[
+  \mathfrak o_B=(E_B,\tuple x),
+  \qquad
+  \mathfrak o_C=(E_C,\tuple y)
+\]
+が指定されている。ここで
+\[
+  \tuple x=(x_1,\ldots,x_{d_B})\in(\Sigma^*)^{d_B},
+  \qquad
+  \tuple y=(y_1,\ldots,y_{d_C})\in(\Sigma^*)^{d_C},
+\]
+かつ
+\[
+  E_B[\tuple x]=w_B,
+  \qquad
+  E_C[\tuple y]=w_C
+\]
+である。
+
+語 \(w_P,w_B,w_C\) は互いに異なっていてもよく、同一であってもよい。
+したがって、子タプル \(\tuple x,\tuple y\) を証明する観測は、
+親出現と同じ標本語に含まれる必要はない。
+
+\item
+各 \(1\le i\le e\) に対して、整数 \(m_i\ge0\)、終端語
+\[
+  u_{i,0},u_{i,1},\ldots,u_{i,m_i}\in\Sigma^*
+\]
+および変数ラベル
+\[
+  \xi_{i,1},\ldots,\xi_{i,m_i}\in X_B\uplus Y_C
+\]
+が指定されている。
+
+変数ラベルの全体
+\[
+  \bigl\{
+    \xi_{i,r}
+    \bigm|
+    1\le i\le e,\ 1\le r\le m_i
+  \bigr\}
+\]
+は \(X_B\uplus Y_C\) に一致し、さらに写像
+\[
+  (i,r)\longmapsto \xi_{i,r}
+\]
+は単射である。言い換えれば、各変数
+\[
+  x^1,\ldots,x^{d_B},
+  y^1,\ldots,y^{d_C}
+\]
+は、すべての親成分を通じてちょうど一度ずつ現れる。
+
+\item
+写像
+\[
+  \tau_{\tuple x,\tuple y}
+  \colon X_B\uplus Y_C\to\Sigma^*
+\]
+を
+\[
+  \tau_{\tuple x,\tuple y}(x^j):=x_j
+  \qquad (1\le j\le d_B),
+\]
+\[
+  \tau_{\tuple x,\tuple y}(y^k):=y_k
+  \qquad (1\le k\le d_C)
+\]
+によって定める。
+
+各 \(1\le i\le e\) について、次の等式が成り立つ。
+\[
+  z_i
+  =
+  u_{i,0}\,
+  \tau_{\tuple x,\tuple y}(\xi_{i,1})\,
+  u_{i,1}\cdots
+  \tau_{\tuple x,\tuple y}(\xi_{i,m_i})\,
+  u_{i,m_i}.
+  \tag{\(*\)}
+\]
+したがって、式 \textup{(\(*\))} は親成分 \(z_i\) を、終端語からなる
+隙間と、子タプルの成分を値にもつ変数区間とに分解する。
+
+\item
+各 \(1\le i\le e\) および \(1\le r\le m_i\) に対して、
+\(\xi_{i,r}\) に対応する \(z_i\) 内の区間の左端と右端を
+\[
+  \ell_{i,r}
+  :=
+  |u_{i,0}|
+  +
+  \sum_{q=1}^{r-1}
+  \left(
+    \bigl|
+      \tau_{\tuple x,\tuple y}(\xi_{i,q})
+    \bigr|
+    +
+    |u_{i,q}|
+  \right),
+\]
+\[
+  r_{i,r}
+  :=
+  \ell_{i,r}
+  +
+  \bigl|
+    \tau_{\tuple x,\tuple y}(\xi_{i,r})
+  \bigr|
+\]
+によって定める。
+
+このとき
+\[
+  z_i[\ell_{i,r}:r_{i,r}]
+  =
+  \tau_{\tuple x,\tuple y}(\xi_{i,r})
+\]
+であり、区間は左から右へ
+\[
+  0\le
+  \ell_{i,1}\le r_{i,1}\le
+  \ell_{i,2}\le r_{i,2}\le
+  \cdots\le
+  \ell_{i,m_i}\le r_{i,m_i}\le |z_i|
+\]
+の順に並ぶ。
+
+\item
+\(\tau_{\tuple x,\tuple y}(\xi_{i,r})=\eps\) の場合、
+対応する変数区間は
+\[
+  [\ell_{i,r},r_{i,r})
+  =
+  [\ell_{i,r},\ell_{i,r})
+\]
+という長さゼロの区間として表される。
+
+複数の長さゼロの変数区間が同一の切断位置 \(c\) に置かれる場合、
+それらの局所順序は、列
+\[
+  \xi_{i,1},\ldots,\xi_{i,m_i}
+\]
+における順序によって定める。すなわち、
+\[
+  \ell_{i,r}=r_{i,r}
+  =
+  \ell_{i,s}=r_{i,s}=c
+\]
+かつ \(r<s\) ならば、\(\xi_{i,r}\) に対応する空区間は
+\(\xi_{i,s}\) に対応する空区間より先に置かれる。
+
 \end{enumerate}
-各親成分について終端記号からなる隙間と変数ラベルを左から右へ読めば、
-\(\tuple z=\rho(\tuple x,\tuple y)\) を満たす二分・線形・非消去テンプレート \(\rho\) が得られる。
+
+各 \(1\le i\le e\) に対してテンプレート語
+\[
+  \alpha_i
+  :=
+  u_{i,0}\xi_{i,1}u_{i,1}
+  \cdots
+  \xi_{i,m_i}u_{i,m_i}
+  \in\Gamma^*
+\]
+を定め、テンプレートタプルを
+\[
+  \boldsymbol{\alpha}_{\mathfrak b}
+  :=
+  (\alpha_1,\ldots,\alpha_e)
+  \in(\Gamma^*)^e
+\]
+とする。
+
+条件 (iii) により、各変数はテンプレートタプル全体でちょうど一度
+現れる。したがって、
+\(\boldsymbol{\alpha}_{\mathfrak b}\) は二分・線形・非消去の
+テンプレートタプルである。
+
+\(\tau_{\tuple x,\tuple y}\) を自由モノイド上の準同型へ一意に拡張した
+写像を
+\[
+  \widehat{\tau}_{\tuple x,\tuple y}
+  \colon\Gamma^*\to\Sigma^*
+\]
+とすると、条件 (iv) は
+\[
+  \widehat{\tau}_{\tuple x,\tuple y}(\alpha_i)=z_i
+  \qquad (1\le i\le e)
+\]
+と同値である。よって、この二分証人に付随する二分テンプレート
+\(\rho_{\mathfrak b}\) を
+\[
+  \rho_{\mathfrak b}(\tuple x,\tuple y)
+  :=
+  \bigl(
+    \widehat{\tau}_{\tuple x,\tuple y}(\alpha_1),
+    \ldots,
+    \widehat{\tau}_{\tuple x,\tuple y}(\alpha_e)
+  \bigr)
+\]
+と定めれば、
+\[
+  \tuple z
+  =
+  \rho_{\mathfrak b}(\tuple x,\tuple y)
+\]
+が成り立つ。
 \end{definition}
 
 \begin{remark}[二分証人の局所性]

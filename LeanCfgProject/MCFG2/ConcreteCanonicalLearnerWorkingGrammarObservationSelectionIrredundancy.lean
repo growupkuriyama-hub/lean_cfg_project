@@ -104,6 +104,7 @@ section SelectionMinimumAndIrredundancyDefinitions
 variable (α : Type u)
 variable (ι : Type v)
 variable (M : Type w)
+variable [DecidableEq ι]
 variable [Monoid M]
 variable (obsFamily : ι → α → M)
 variable (f : Nat)
@@ -117,8 +118,7 @@ def CorrectedConcreteObservationSelectionIsCardinalityMinimum
     Prop :=
   S ⊆ U ∧
     language ∈
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -126,8 +126,7 @@ def CorrectedConcreteObservationSelectionIsCardinalityMinimum
     ∀ R : Finset ι,
       R ⊆ U →
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥R → M)
           (selectedObservationProduct obsFamily R)
@@ -141,8 +140,7 @@ def CorrectedConcreteObservationSelectionIrredundant
     (S : Finset ι) :
     Prop :=
   language ∈
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -150,8 +148,7 @@ def CorrectedConcreteObservationSelectionIrredundant
     ∀ R : Finset ι,
       R ⊂ S →
       language ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥R → M)
           (selectedObservationProduct obsFamily R)
@@ -166,8 +163,7 @@ def CorrectedConcreteSelectedObservationCoordinateEssential
     Prop :=
   index ∈ S ∧
     language ∉
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥(S.erase index) → M)
         (selectedObservationProduct obsFamily (S.erase index))
@@ -205,14 +201,12 @@ theorem
           hSelection)
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f) :
-    CorrectedConcreteObservationSelectionIsCardinalityMinimum
-      (z := z)
+    CorrectedConcreteObservationSelectionIsCardinalityMinimum.{u, v, w, z}
       α ι M obsFamily f U language S := by
 
   refine
@@ -243,11 +237,9 @@ theorem
     observationSelection_cardinalityMinimum_irredundant
     {S : Finset ι}
     (hMinimum :
-      CorrectedConcreteObservationSelectionIsCardinalityMinimum
-        (z := z)
+      CorrectedConcreteObservationSelectionIsCardinalityMinimum.{u, v, w, z}
         α ι M obsFamily f U language S) :
-    CorrectedConcreteObservationSelectionIrredundant
-      (z := z)
+    CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
       α ι M obsFamily f language S := by
 
   refine
@@ -299,20 +291,18 @@ theorem
           hSelection)
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f) :
-    CorrectedConcreteObservationSelectionIrredundant
-      (z := z)
+    CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
       α ι M obsFamily f language S := by
 
   exact
     observationSelection_cardinalityMinimum_irredundant
       (observationSelection_exactCardinality_isCardinalityMinimum
-        (z := z)
+        
         hSelection hSU hcard hTarget)
 
 /-- Every coordinate of an irredundant selection is essential for the target
@@ -321,13 +311,11 @@ theorem
     observationSelection_irredundant_coordinateEssential
     {S : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S)
     {index : ι}
     (hindex : index ∈ S) :
-    CorrectedConcreteSelectedObservationCoordinateEssential
-      (z := z)
+    CorrectedConcreteSelectedObservationCoordinateEssential.{u, v, w, z}
       α ι M obsFamily f language S index := by
 
   refine
@@ -362,13 +350,11 @@ theorem
     observationSelection_irredundant_not_target_of_ssubset
     {S R : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S)
     (hRS : R ⊂ S) :
     language ∉
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥R → M)
         (selectedObservationProduct obsFamily R)
@@ -393,8 +379,7 @@ theorem
           hSelection)
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
@@ -402,8 +387,7 @@ theorem
     {index : ι}
     (hindex : index ∈ S) :
     language ∉
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥(S.erase index) → M)
         (selectedObservationProduct obsFamily (S.erase index))
@@ -411,9 +395,9 @@ theorem
 
   exact
     (observationSelection_irredundant_coordinateEssential
-      (z := z)
+      
       (observationSelection_exactCardinality_irredundant
-        (z := z)
+        
         hSelection hSU hcard hTarget)
       hindex).2
 
@@ -437,13 +421,11 @@ theorem
     observationSelection_irredundant_coordinateRefinementEssential
     {S : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S)
     {index : ι}
     (hindex : index ∈ S) :
-    CorrectedConcreteObservationRefinementEssential
-      (z := z)
+    CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
       α
       (↥(S.erase index) → M)
       (↥S → M)
@@ -455,7 +437,7 @@ theorem
     ⟨language,
       hIrredundant.1,
       (observationSelection_irredundant_coordinateEssential
-        (z := z)
+        
         hIrredundant hindex).2⟩
 
 /-- Every coordinate of an irredundant selection causes strict target-class
@@ -464,31 +446,26 @@ theorem
     observationSelection_irredundant_coordinate_strictTargetGrowth
     {S : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S)
     {index : ι}
     (hindex : index ∈ S) :
-    (StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥(S.erase index) → M)
         (selectedObservationProduct obsFamily (S.erase index))
         f ⊆
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
         f) ∧
-      (StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥(S.erase index) → M)
         (selectedObservationProduct obsFamily (S.erase index))
         f ≠
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -496,13 +473,13 @@ theorem
 
   exact
     (observationRefinementEssential_iff_strict_targetClass_growth
-      (z := z)
+      
       f
       (Refines.selectedObservationProductOfSubset
         obsFamily
         (Finset.erase_subset index S))).mp
       (observationSelection_irredundant_coordinateRefinementEssential
-        (z := z)
+        
         hIrredundant hindex)
 
 /-- Every coordinate of an irredundant selection causes strict failure-class
@@ -511,31 +488,26 @@ theorem
     observationSelection_irredundant_coordinate_strictFailureShrinkage
     {S : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S)
     {index : ι}
     (hindex : index ∈ S) :
-    (StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+    (StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
         f ⊆
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+      StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (↥(S.erase index) → M)
         (selectedObservationProduct obsFamily (S.erase index))
         f) ∧
-      (StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+      (StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
         f ≠
-      StartRootedCorrectedConcreteObservationFailureClass
-        (z := z)
+      StartRootedCorrectedConcreteObservationFailureClass.{u, max v w, z}
         α
         (↥(S.erase index) → M)
         (selectedObservationProduct obsFamily (S.erase index))
@@ -543,13 +515,13 @@ theorem
 
   exact
     (observationRefinementEssential_iff_strict_failureClass_shrinkage
-      (z := z)
+      
       f
       (Refines.selectedObservationProductOfSubset
         obsFamily
         (Finset.erase_subset index S))).mp
       (observationSelection_irredundant_coordinateRefinementEssential
-        (z := z)
+        
         hIrredundant hindex)
 
 /-- The target itself belongs to the strict gain created by restoring any
@@ -558,14 +530,13 @@ theorem
     observationSelection_irredundant_target_mem_coordinateGain
     {S : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S)
     {index : ι}
     (hindex : index ∈ S) :
     language ∈
-      StartRootedCorrectedConcreteSelectedObservationExtensionGainClass
-        (z := z)
+      StartRootedCorrectedConcreteSelectedObservationExtensionGainClass.{u, v, w, z}
+        
         obsFamily f
         (S.erase index)
         S := by
@@ -573,25 +544,22 @@ theorem
   exact
     ⟨hIrredundant.1,
       (observationSelection_irredundant_coordinateEssential
-        (z := z)
+        
         hIrredundant hindex).2⟩
 
 /-- Compact coordinatewise irredundancy/ablation package. -/
 theorem observationSelection_irredundant_coordinate_package
     {S : Finset ι}
     (hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S) :
     (∀ index : ι,
       index ∈ S →
-      CorrectedConcreteSelectedObservationCoordinateEssential
-        (z := z)
+      CorrectedConcreteSelectedObservationCoordinateEssential.{u, v, w, z}
         α ι M obsFamily f language S index) ∧
       (∀ index : ι,
         index ∈ S →
-        CorrectedConcreteObservationRefinementEssential
-          (z := z)
+        CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
           α
           (↥(S.erase index) → M)
           (↥S → M)
@@ -601,8 +569,8 @@ theorem observationSelection_irredundant_coordinate_package
       (∀ index : ι,
         index ∈ S →
         language ∈
-          StartRootedCorrectedConcreteSelectedObservationExtensionGainClass
-            (z := z)
+          StartRootedCorrectedConcreteSelectedObservationExtensionGainClass.{u, v, w, z}
+            
             obsFamily f
             (S.erase index)
             S) := by
@@ -610,15 +578,15 @@ theorem observationSelection_irredundant_coordinate_package
   exact
     ⟨fun index hindex =>
         observationSelection_irredundant_coordinateEssential
-          (z := z)
+          
           hIrredundant hindex,
       fun index hindex =>
         observationSelection_irredundant_coordinateRefinementEssential
-          (z := z)
+          
           hIrredundant hindex,
       fun index hindex =>
         observationSelection_irredundant_target_mem_coordinateGain
-          (z := z)
+          
           hIrredundant hindex⟩
 
 end MinimumSelectionCoordinateAblation
@@ -698,8 +666,7 @@ theorem
         S ⊆ U →
         S.card <= budget →
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -737,8 +704,7 @@ theorem
         S ⊆ U →
         S.card <= budget →
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -782,8 +748,7 @@ theorem observationSelectionCardinality_eq_zero_iff_emptyProductTarget
           hSelection =
         0 ↔
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥(∅ : Finset ι) → M)
           (selectedObservationProduct obsFamily ∅)
@@ -843,8 +808,7 @@ theorem observationSelectionCardinality_pos_of_not_emptyProductTarget
         U language)
     (hNotEmpty :
       language ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥(∅ : Finset ι) → M)
           (selectedObservationProduct obsFamily ∅)
@@ -891,8 +855,7 @@ theorem observationSelectionCardinality_obstruction_package
             S ⊆ U →
             S.card <= budget →
             language ∉
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥S → M)
                 (selectedObservationProduct obsFamily S)
@@ -901,8 +864,7 @@ theorem observationSelectionCardinality_obstruction_package
             hSelection =
           0 ↔
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥(∅ : Finset ι) → M)
             (selectedObservationProduct obsFamily ∅)
@@ -938,8 +900,7 @@ theorem ambientTarget_exists_minimumIrredundantObservationSelection
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -948,16 +909,14 @@ theorem ambientTarget_exists_minimumIrredundantObservationSelection
       (S : Finset ι),
       S ⊆ U ∧
         S.card =
-          ambientTargetObservationSelectionCardinality
-            (z := z)
+          ambientTargetObservationSelectionCardinality.{u, v, w, z}
+            
             obsFamily f U hTarget ∧
-        CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+        CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α ι M obsFamily f language S ∧
         ∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -967,7 +926,7 @@ theorem ambientTarget_exists_minimumIrredundantObservationSelection
 
   rcases
       ambientTarget_exists_minimumObservationSelection
-        (z := z)
+        
         obsFamily f U hTarget with
     ⟨S, hSU, hcard, hSelected⟩
 
@@ -978,13 +937,12 @@ theorem ambientTarget_exists_minimumIrredundantObservationSelection
       hTarget
 
   have hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S := by
 
     apply
       observationSelection_exactCardinality_irredundant
-        (z := z)
+        
         hSelection hSU
 
     · simpa [
@@ -1001,7 +959,7 @@ theorem ambientTarget_exists_minimumIrredundantObservationSelection
       hIrredundant,
       fun index hindex =>
         observationSelection_irredundant_coordinateRefinementEssential
-          (z := z)
+          
           hIrredundant hindex⟩
 
 end AmbientMinimumIrredundantSelection
@@ -1030,8 +988,7 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -1041,23 +998,20 @@ theorem
       (hSU : S ⊆ U)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       S.card =
-          ambientTargetObservationSelectionCardinality
-            (z := z)
+          ambientTargetObservationSelectionCardinality.{u, v, w, z}
+            
             obsFamily f U hTarget ∧
-        CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+        CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α ι M obsFamily f language S ∧
         (∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -1085,7 +1039,7 @@ theorem
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                  
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1094,7 +1048,7 @@ theorem
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                  
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1103,7 +1057,7 @@ theorem
 
   rcases
       ambientTarget_exists_minimumCertifiedObservationSelection
-        (z := z)
+        
         hα obsFamily f U hTarget with
     ⟨S,
       hSU,
@@ -1123,13 +1077,12 @@ theorem
       hTarget
 
   have hIrredundant :
-      CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
         α ι M obsFamily f language S := by
 
     apply
       observationSelection_exactCardinality_irredundant
-        (z := z)
+        
         hSelection hSU
 
     · simpa [
@@ -1147,7 +1100,7 @@ theorem
       hIrredundant,
       fun index hindex =>
         observationSelection_irredundant_coordinateRefinementEssential
-          (z := z)
+          
           hIrredundant hindex,
       hIdentifies,
       C,
@@ -1181,8 +1134,7 @@ theorem
       language : Set (Word α),
       ∀ hTarget :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥U → M)
             (selectedObservationProduct obsFamily U)
@@ -1191,16 +1143,14 @@ theorem
         (S : Finset ι),
         S ⊆ U ∧
           S.card =
-            ambientTargetObservationSelectionCardinality
-              (z := z)
+            ambientTargetObservationSelectionCardinality.{u, v, w, z}
+              
               obsFamily f U hTarget ∧
-          CorrectedConcreteObservationSelectionIrredundant
-            (z := z)
+          CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
             α ι M obsFamily f language S ∧
           ∀ index : ι,
             index ∈ S →
-            CorrectedConcreteObservationRefinementEssential
-              (z := z)
+            CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
               α
               (↥(S.erase index) → M)
               (↥S → M)
@@ -1211,23 +1161,21 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
         ∀ budget : Nat,
           (budget <
-              ambientTargetObservationSelectionCardinality
-                (z := z)
+              ambientTargetObservationSelectionCardinality.{u, v, w, z}
+                
                 obsFamily f U hTarget ↔
             ∀ S : Finset ι,
               S ⊆ U →
               S.card <= budget →
               language ∉
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S → M)
                   (selectedObservationProduct obsFamily S)
@@ -1236,8 +1184,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1247,18 +1194,16 @@ theorem
           (hSU : S ⊆ U)
           (hSelected :
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥S → M)
                 (selectedObservationProduct obsFamily S)
                 f),
           S.card =
-              ambientTargetObservationSelectionCardinality
-                (z := z)
+              ambientTargetObservationSelectionCardinality.{u, v, w, z}
+                
                 obsFamily f U hTarget ∧
-            CorrectedConcreteObservationSelectionIrredundant
-              (z := z)
+            CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
               α ι M obsFamily f language S ∧
             IdentifiesLanguageFromPositiveData
               (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1281,7 +1226,7 @@ theorem
                 C.bits.length <=
                   correctedConcreteCertifiedRankBitBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                      
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1290,7 +1235,7 @@ theorem
                 C.canonicalSearch.length <=
                   correctedConcreteCertifiedRankSearchBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                      
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1306,7 +1251,7 @@ theorem
 
     exact
       ambientTarget_exists_minimumIrredundantObservationSelection
-        (z := z)
+        
         obsFamily f U hTarget
 
   · intro language hTarget budget
@@ -1328,7 +1273,7 @@ theorem
 
     rcases
         ambientTarget_exists_minimumIrredundantCertifiedObservationSelection
-          (z := z)
+          
           hα obsFamily f U hTarget with
       ⟨S,
         hSU,
