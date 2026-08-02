@@ -468,6 +468,9 @@ variable (obs' : α → M')
 variable (f : Nat)
 variable (r : Refines obs obs')
 
+include hα
+include r
+
 /-- The certified learner built from the finer observation identifies every
 language already represented under the coarser observation. -/
 theorem
@@ -627,6 +630,8 @@ variable (obs : α → M)
 variable (obs' : α → M')
 variable (f : Nat)
 variable (r : Refines obs obs')
+
+include r
 
 /-- Final observation-refinement, failure, strict-gain, and certified-learning
 package. -/

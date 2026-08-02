@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  2 AUG 2026 15:15
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  2 AUG 2026 15:51
  restricted system commands enabled.
 **fixed-h-MCFG-FI_submission_ja_v2.tex
 (./fixed-h-MCFG-FI_submission_ja_v2.tex
@@ -2250,9 +2250,6 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `fixed-h-MCFG-FI_submission_ja_v2.out' has no
 t changed.
 (rerunfilecheck)             Checksum: 05B8FE13A2F33FD2F66BCEF755D7DDBA;2439.
@@ -2303,7 +2300,7 @@ s/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Owner/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/Owner/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/Owner/AppData
 /Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on fixed-h-MCFG-FI_submission_ja_v2.pdf (34 pages, 644235 bytes).
+Output written on fixed-h-MCFG-FI_submission_ja_v2.pdf (34 pages, 644285 bytes).
 
 
 PDF statistics: 675 PDF objects out of 1000 (max. 8388607)
