@@ -97,7 +97,7 @@ No `sorry`, `admit`, or `axiom` is used.
 
 namespace MCFG
 
-universe u v w z
+universe u v w
 
 
 section ObservationSelectionParetoDefinitions
@@ -277,7 +277,6 @@ def CorrectedConcreteObservationSelectionParetoOptimal
   S ⊆ U ∧
     language ∈
       StartRootedCorrectedConcreteTargetClass
-        (v := z)
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -286,7 +285,6 @@ def CorrectedConcreteObservationSelectionParetoOptimal
       R ⊆ U →
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥R → M)
           (selectedObservationProduct obsFamily R)
@@ -302,7 +300,6 @@ def CorrectedConcreteObservationSelectionParetoFrontier
     Set (Finset ι) :=
   {S |
     CorrectedConcreteObservationSelectionParetoOptimal
-      (z := z)
       obsFamily f selectionCost U language S}
 
 /-- Two-criterion profiles achieved by Pareto-optimal selections. -/
@@ -314,7 +311,6 @@ def CorrectedConcreteObservationSelectionParetoProfileSet
     ∃ S : Finset ι,
       S ∈
           CorrectedConcreteObservationSelectionParetoFrontier
-            (z := z)
             obsFamily f selectionCost U language ∧
         profile =
           correctedConcreteObservationSelectionProfile
@@ -356,13 +352,11 @@ theorem observationSelection_exactScalarMinimum_isPareto
     (hTarget :
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f) :
     CorrectedConcreteObservationSelectionParetoOptimal
-      (z := z)
       obsFamily f selectionCost U language S := by
 
   refine
@@ -413,7 +407,6 @@ theorem observationSelection_exists_paretoOptimal
         U language) :
     ∃ S : Finset ι,
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S := by
 
   rcases hSelection.exists_selection_exact_minimumCost with
@@ -422,7 +415,6 @@ theorem observationSelection_exists_paretoOptimal
   exact
     ⟨S,
       observationSelection_exactScalarMinimum_isPareto
-        (z := z)
         hSelection hSU hScalar hTarget⟩
 
 /-- The Pareto frontier is nonempty whenever the scalarized selection problem
@@ -438,12 +430,10 @@ theorem observationSelection_paretoFrontier_nonempty
     ∃ S : Finset ι,
       S ∈
         CorrectedConcreteObservationSelectionParetoFrontier
-          (z := z)
           obsFamily f selectionCost U language := by
 
   exact
     observationSelection_exists_paretoOptimal
-      (z := z)
       hSelection
 
 /-- The Pareto profile set is nonempty whenever the selection problem is
@@ -459,12 +449,10 @@ theorem observationSelection_paretoProfileSet_nonempty
     ∃ profile : Nat × Nat,
       profile ∈
         CorrectedConcreteObservationSelectionParetoProfileSet
-          (z := z)
           obsFamily f selectionCost U language := by
 
   rcases
       observationSelection_exists_paretoOptimal
-        (z := z)
         hSelection with
     ⟨S, hPareto⟩
 
@@ -496,14 +484,12 @@ theorem ambientTarget_exists_paretoObservationSelection
     (hTarget :
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
     ∃ S : Finset ι,
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S := by
 
   let hSelection :=
@@ -516,7 +502,6 @@ theorem ambientTarget_exists_paretoObservationSelection
 
   exact
     observationSelection_exists_paretoOptimal
-      (z := z)
       hSelection
 
 /-- The Pareto frontier is nonempty for every ambient-product target. -/
@@ -525,7 +510,6 @@ theorem ambientTarget_paretoFrontier_nonempty
     (hTarget :
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -533,12 +517,10 @@ theorem ambientTarget_paretoFrontier_nonempty
     ∃ S : Finset ι,
       S ∈
         CorrectedConcreteObservationSelectionParetoFrontier
-          (z := z)
           obsFamily f selectionCost U language := by
 
   exact
     ambientTarget_exists_paretoObservationSelection
-      (z := z)
       obsFamily f selectionCost U hTarget
 
 /-- The Pareto profile set is nonempty for every ambient-product target. -/
@@ -547,7 +529,6 @@ theorem ambientTarget_paretoProfileSet_nonempty
     (hTarget :
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -555,7 +536,6 @@ theorem ambientTarget_paretoProfileSet_nonempty
     ∃ profile : Nat × Nat,
       profile ∈
         CorrectedConcreteObservationSelectionParetoProfileSet
-          (z := z)
           obsFamily f selectionCost U language := by
 
   let hSelection :=
@@ -568,7 +548,6 @@ theorem ambientTarget_paretoProfileSet_nonempty
 
   exact
     observationSelection_paretoProfileSet_nonempty
-      (z := z)
       hSelection
 
 end AmbientParetoSelection
@@ -596,10 +575,8 @@ theorem observationSelection_paretoOptimal_irredundant
     {S : Finset ι}
     (hPareto :
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S) :
     CorrectedConcreteObservationSelectionIrredundant
-      (z := z)
       α ι M obsFamily f language S := by
 
   refine
@@ -654,19 +631,15 @@ theorem observationSelection_paretoOptimal_coordinateEssential
     {S : Finset ι}
     (hPareto :
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S)
     {index : ι}
     (hindex : index ∈ S) :
     CorrectedConcreteSelectedObservationCoordinateEssential
-      (z := z)
       α ι M obsFamily f language S index := by
 
   exact
     observationSelection_irredundant_coordinateEssential
-      (z := z)
       (observationSelection_paretoOptimal_irredundant
-        (z := z)
         hCostMonotone hPareto)
       hindex
 
@@ -680,12 +653,10 @@ theorem
     {S : Finset ι}
     (hPareto :
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S)
     {index : ι}
     (hindex : index ∈ S) :
     CorrectedConcreteObservationRefinementEssential
-      (z := z)
       α
       (↥(S.erase index) → M)
       (↥S → M)
@@ -695,9 +666,7 @@ theorem
 
   exact
     observationSelection_irredundant_coordinateRefinementEssential
-      (z := z)
       (observationSelection_paretoOptimal_irredundant
-        (z := z)
         hCostMonotone hPareto)
       hindex
 
@@ -710,22 +679,18 @@ theorem observationSelection_paretoOptimal_target_mem_coordinateGain
     {S : Finset ι}
     (hPareto :
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S)
     {index : ι}
     (hindex : index ∈ S) :
     language ∈
       StartRootedCorrectedConcreteSelectedObservationExtensionGainClass
-        (z := z)
         obsFamily f
         (S.erase index)
         S := by
 
   exact
     observationSelection_irredundant_target_mem_coordinateGain
-      (z := z)
       (observationSelection_paretoOptimal_irredundant
-        (z := z)
         hCostMonotone hPareto)
       hindex
 
@@ -756,7 +721,6 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
     (hTarget :
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -765,7 +729,6 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
       (S : Finset ι)
       (hPareto :
         CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
           obsFamily f selectionCost U language S),
       IdentifiesLanguageFromPositiveData
           (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -783,7 +746,6 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
             (selectedObservationProduct obsFamily S)
             f
             (startRootedTargetCertifiedDescriptionRank
-              (v := z)
               hα
               (selectedObservationProduct obsFamily S)
               f
@@ -800,7 +762,6 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -809,7 +770,6 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -832,12 +792,10 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
 
   have hPareto :
       CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
         obsFamily f selectionCost U language S := by
 
     apply
       observationSelection_exactScalarMinimum_isPareto
-        (z := z)
         hSelection hSU
 
     · simpa [scalarCost] using hScalar
@@ -848,17 +806,14 @@ theorem ambientTarget_exists_paretoCertifiedObservationSelection
     ⟨S,
       hPareto,
       selectedProductCertifiedLearner_identifies_targetClass
-        (z := z)
         hα obsFamily f S
         language hSelected,
       startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
         hα
         (selectedObservationProduct obsFamily S)
         f
         hSelected,
       startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
         hα
         (selectedObservationProduct obsFamily S)
         f
@@ -875,7 +830,6 @@ theorem
     (hTarget :
       language ∈
         StartRootedCorrectedConcreteTargetClass
-          (v := z)
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -884,23 +838,19 @@ theorem
       (S : Finset ι)
       (hPareto :
         CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
           obsFamily f selectionCost U language S)
       (hSelected :
         language ∈
           StartRootedCorrectedConcreteTargetClass
-            (v := z)
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
           α ι M obsFamily f language S ∧
         (∀ index : ι,
           index ∈ S →
           CorrectedConcreteObservationRefinementEssential
-            (z := z)
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -928,7 +878,6 @@ theorem
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -937,7 +886,6 @@ theorem
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
                 (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -946,7 +894,6 @@ theorem
 
   rcases
       ambientTarget_exists_paretoCertifiedObservationSelection
-        (z := z)
         hα obsFamily f selectionCost U hTarget with
     ⟨S,
       hPareto,
@@ -962,10 +909,8 @@ theorem
 
   have hIrredundant :
       CorrectedConcreteObservationSelectionIrredundant
-        (z := z)
         α ι M obsFamily f language S :=
     observationSelection_paretoOptimal_irredundant
-      (z := z)
       hCostMonotone hPareto
 
   exact
@@ -975,7 +920,6 @@ theorem
       hIrredundant,
       fun index hindex =>
         observationSelection_irredundant_coordinateRefinementEssential
-          (z := z)
           hIrredundant hindex,
       hIdentifies,
       C,
@@ -1010,7 +954,6 @@ theorem
       ∀ hTarget :
         language ∈
           StartRootedCorrectedConcreteTargetClass
-            (v := z)
             α
             (↥U → M)
             (selectedObservationProduct obsFamily U)
@@ -1018,14 +961,12 @@ theorem
       ∃ S : Finset ι,
         S ∈
           CorrectedConcreteObservationSelectionParetoFrontier
-            (z := z)
             obsFamily f selectionCost U language) ∧
       (∀
         language : Set (Word α),
         ∀ hTarget :
           language ∈
             StartRootedCorrectedConcreteTargetClass
-              (v := z)
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1033,14 +974,12 @@ theorem
         ∃ profile : Nat × Nat,
           profile ∈
             CorrectedConcreteObservationSelectionParetoProfileSet
-              (z := z)
               obsFamily f selectionCost U language) ∧
       (∀
         language : Set (Word α),
         ∀ hTarget :
           language ∈
             StartRootedCorrectedConcreteTargetClass
-              (v := z)
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1049,7 +988,6 @@ theorem
           (S : Finset ι)
           (hPareto :
             CorrectedConcreteObservationSelectionParetoOptimal
-              (z := z)
               obsFamily f selectionCost U language S),
           IdentifiesLanguageFromPositiveData
               (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1072,7 +1010,6 @@ theorem
                 C.bits.length <=
                   correctedConcreteCertifiedRankBitBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1081,7 +1018,6 @@ theorem
                 C.canonicalSearch.length <=
                   correctedConcreteCertifiedRankSearchBudget
                     (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1097,21 +1033,18 @@ theorem
 
     exact
       ambientTarget_paretoFrontier_nonempty
-        (z := z)
         obsFamily f selectionCost U hTarget
 
   · intro language hTarget
 
     exact
       ambientTarget_paretoProfileSet_nonempty
-        (z := z)
         obsFamily f selectionCost U hTarget
 
   · intro language hTarget
 
     rcases
         ambientTarget_exists_paretoCertifiedObservationSelection
-          (z := z)
           hα obsFamily f selectionCost U hTarget with
       ⟨S,
         hPareto,
@@ -1142,7 +1075,6 @@ theorem
       ∀ hTarget :
         language ∈
           StartRootedCorrectedConcreteTargetClass
-            (v := z)
             α
             (↥U → M)
             (selectedObservationProduct obsFamily U)
@@ -1151,15 +1083,12 @@ theorem
         (S : Finset ι)
         (hPareto :
           CorrectedConcreteObservationSelectionParetoOptimal
-            (z := z)
             obsFamily f selectionCost U language S),
         CorrectedConcreteObservationSelectionIrredundant
-            (z := z)
             α ι M obsFamily f language S ∧
           (∀ index : ι,
             index ∈ S →
             CorrectedConcreteObservationRefinementEssential
-              (z := z)
               α
               (↥(S.erase index) → M)
               (↥S → M)
@@ -1187,7 +1116,6 @@ theorem
               C.bits.length <=
                 correctedConcreteCertifiedRankBitBudget
                   (startRootedTargetCertifiedDescriptionRank
-                    (v := z)
                     hα
                     (selectedObservationProduct obsFamily S)
                     f
@@ -1196,7 +1124,6 @@ theorem
               C.canonicalSearch.length <=
                 correctedConcreteCertifiedRankSearchBudget
                   (startRootedTargetCertifiedDescriptionRank
-                    (v := z)
                     hα
                     (selectedObservationProduct obsFamily S)
                     f
@@ -1207,7 +1134,6 @@ theorem
 
   rcases
       ambientTarget_exists_irredundantParetoCertifiedObservationSelection
-        (z := z)
         hα obsFamily f selectionCost U hCostMonotone hTarget with
     ⟨S,
       hPareto,
