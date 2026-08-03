@@ -112,8 +112,8 @@ theorem finsetNatWeightedSum_mono
     (coordinateWeight : ι → Nat)
     {R S : Finset ι}
     (hRS : R ⊆ S) :
-    (∑ index in R, coordinateWeight index) <=
-      ∑ index in S, coordinateWeight index := by
+    R.sum coordinateWeight <=
+      S.sum coordinateWeight := by
 
   classical
 
@@ -154,22 +154,19 @@ theorem finsetNatWeightedSum_mono
           · exact hIndexS
 
         have hInduction :
-            (∑ index in R.erase selectedIndex,
-                coordinateWeight index) <=
-              ∑ index in S,
-                coordinateWeight index :=
+            (R.erase selectedIndex).sum coordinateWeight <=
+              S.sum coordinateWeight :=
           ih hEraseSubset
 
         calc
-          (∑ index in R, coordinateWeight index) =
-              ∑ index in insert selectedIndex (R.erase selectedIndex),
-                coordinateWeight index := by
+          R.sum coordinateWeight =
+              (insert selectedIndex (R.erase selectedIndex)).sum
+                coordinateWeight := by
                 rw [Finset.insert_erase hSelected]
 
           _ =
               coordinateWeight selectedIndex +
-                ∑ index in R.erase selectedIndex,
-                  coordinateWeight index := by
+                (R.erase selectedIndex).sum coordinateWeight := by
                 rw [
                   Finset.sum_insert
                     (Finset.not_mem_erase
@@ -178,15 +175,13 @@ theorem finsetNatWeightedSum_mono
 
           _ <=
               coordinateWeight selectedIndex +
-                ∑ index in S,
-                  coordinateWeight index :=
+                S.sum coordinateWeight :=
             Nat.add_le_add_left
               hInduction
               (coordinateWeight selectedIndex)
 
           _ =
-              ∑ index in insert selectedIndex S,
-                coordinateWeight index := by
+              (insert selectedIndex S).sum coordinateWeight := by
                 rw [
                   Finset.sum_insert hNotMem
                 ]
@@ -210,9 +205,8 @@ theorem finsetNatWeightedSum_mono
           · exact hIndexS
 
         have hInduction :
-            (∑ index in R, coordinateWeight index) <=
-              ∑ index in S,
-                coordinateWeight index :=
+            R.sum coordinateWeight <=
+              S.sum coordinateWeight :=
           ih hRSubset
 
         rw [
@@ -233,8 +227,7 @@ def correctedConcreteObservationSelectionAdditiveCost
     (coordinateWeight : ι → Nat)
     (S : Finset ι) :
     Nat :=
-  ∑ index in S,
-    coordinateWeight index
+  S.sum coordinateWeight
 
 /-- Strictly positive additive cost.  Each selected coordinate contributes
 `1 + coordinateWeight index`. -/
@@ -366,13 +359,13 @@ variable {costBudget : Nat}
 /-- Positive additive feasibility with zero extra weights is exactly the
 cardinality-budget feasibility relation. -/
 theorem observationSelectionAtZeroPositiveAdditiveCost_iff :
-    CorrectedConcreteObservationSelectionAtCost
+    CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionPositiveAdditiveCost
           (fun _ : ι => 0))
         U language costBudget ↔
-      CorrectedConcreteObservationSelectionAtCardinality
+      CorrectedConcreteObservationSelectionAtCardinality.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U language costBudget := by
@@ -388,7 +381,7 @@ theorem observationSelectionAtZeroPositiveAdditiveCost_iff :
       ⟨S,
         hSU,
         by
-          simpa using hcost,
+          simpa [correctedConcreteObservationSelectionCardinalityCost] using hcost,
         hTarget⟩
 
   · intro hSelection
@@ -400,7 +393,7 @@ theorem observationSelectionAtZeroPositiveAdditiveCost_iff :
       ⟨S,
         hSU,
         by
-          simpa using hcard,
+          simpa [correctedConcreteObservationSelectionCardinalityCost] using hcard,
         hTarget⟩
 
 end PositiveAdditiveCostCompatibility
@@ -424,15 +417,13 @@ noncomputable def
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
     Nat :=
-  ambientTargetObservationSelectionMinimumCost
-    (z := z)
+  ambientTargetObservationSelectionMinimumCost.{u, v, w, z}
     obsFamily
     f
     (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -447,21 +438,18 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-        (z := z)
+    ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
         obsFamily f coordinateWeight U hTarget <=
       correctedConcreteObservationSelectionPositiveAdditiveCost
         coordinateWeight U := by
 
   exact
-    ambientTargetObservationSelectionMinimumCost_le
-      (z := z)
+    ambientTargetObservationSelectionMinimumCost_le.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -476,16 +464,14 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f)
     (costBudget : Nat) :
     costBudget <
-        ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+        ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily f coordinateWeight U hTarget ↔
       ∀ S : Finset ι,
         S ⊆ U →
@@ -493,8 +479,7 @@ theorem
             coordinateWeight S <=
           costBudget →
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -508,10 +493,9 @@ theorem
         coordinateWeight)
       hTarget
 
-  simpa [
+  simpa only [
     ambientTargetObservationSelectionPositiveAdditiveMinimumCost,
-    ambientTargetObservationSelectionMinimumCost,
-    hSelection
+    ambientTargetObservationSelectionMinimumCost
   ] using
     observationSelection_minimumCost_gt_iff_all_boundedCost_selections_fail
       hSelection
@@ -525,8 +509,7 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -536,16 +519,13 @@ theorem
       S ⊆ U ∧
         correctedConcreteObservationSelectionPositiveAdditiveCost
             coordinateWeight S =
-          ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-            (z := z)
+          ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
             obsFamily f coordinateWeight U hTarget ∧
-        CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+        CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α ι M obsFamily f language S ∧
         ∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -554,8 +534,7 @@ theorem
             f := by
 
   exact
-    ambientTarget_exists_minimumCostIrredundantObservationSelection
-      (z := z)
+    ambientTarget_exists_minimumCostIrredundantObservationSelection.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -592,8 +571,7 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -603,24 +581,20 @@ theorem
       (hSU : S ⊆ U)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       correctedConcreteObservationSelectionPositiveAdditiveCost
           coordinateWeight S =
-        ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+        ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily f coordinateWeight U hTarget ∧
-        CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+        CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α ι M obsFamily f language S ∧
         (∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -647,8 +621,7 @@ theorem
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -656,8 +629,7 @@ theorem
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -665,8 +637,7 @@ theorem
                 f := by
 
   rcases
-      ambientTarget_exists_minimumCostIrredundantCertifiedObservationSelection
-        (z := z)
+      ambientTarget_exists_minimumCostIrredundantCertifiedObservationSelection.{u, v, w, z}
         hα
         obsFamily
         f
@@ -733,8 +704,7 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -742,8 +712,7 @@ theorem
     ∃
       (S : Finset ι)
       (hPareto :
-        CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -751,13 +720,11 @@ theorem
           U
           language
           S),
-      CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+      CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α ι M obsFamily f language S ∧
         (∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -784,8 +751,7 @@ theorem
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -793,8 +759,7 @@ theorem
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -802,8 +767,7 @@ theorem
                 f := by
 
   exact
-    correctedConcreteCertifiedWorkingGrammar_observationMonotoneCostParetoSelection_package
-      (z := z)
+    correctedConcreteCertifiedWorkingGrammar_observationMonotoneCostParetoSelection_package.{u, v, w, z}
       hα
       obsFamily
       f
@@ -847,16 +811,14 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
         ∀ costBudget : Nat,
           (costBudget <
-              ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-                (z := z)
+              ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
                 obsFamily f coordinateWeight U hTarget ↔
             ∀ S : Finset ι,
               S ⊆ U →
@@ -864,8 +826,7 @@ theorem
                   coordinateWeight S <=
                 costBudget →
               language ∉
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S → M)
                   (selectedObservationProduct obsFamily S)
@@ -874,8 +835,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -885,19 +845,16 @@ theorem
           (hSU : S ⊆ U)
           (hSelected :
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥S → M)
                 (selectedObservationProduct obsFamily S)
                 f),
           correctedConcreteObservationSelectionPositiveAdditiveCost
               coordinateWeight S =
-            ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-              (z := z)
+            ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
               obsFamily f coordinateWeight U hTarget ∧
-            CorrectedConcreteObservationSelectionIrredundant
-              (z := z)
+            CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
               α ι M obsFamily f language S ∧
             IdentifiesLanguageFromPositiveData
               (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -919,8 +876,7 @@ theorem
                   language ∧
                 C.bits.length <=
                   correctedConcreteCertifiedRankBitBudget
-                    (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                    (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -928,8 +884,7 @@ theorem
                     f ∧
                 C.canonicalSearch.length <=
                   correctedConcreteCertifiedRankSearchBudget
-                    (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                    (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -939,8 +894,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -948,8 +902,7 @@ theorem
         ∃
           (S : Finset ι)
           (hPareto :
-            CorrectedConcreteObservationSelectionParetoOptimal
-              (z := z)
+            CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
               obsFamily
               f
               (correctedConcreteObservationSelectionAdditiveCost
@@ -957,8 +910,7 @@ theorem
               U
               language
               S),
-          CorrectedConcreteObservationSelectionIrredundant
-              (z := z)
+          CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
               α ι M obsFamily f language S ∧
             IdentifiesLanguageFromPositiveData
               (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -980,8 +932,7 @@ theorem
                   language ∧
                 C.bits.length <=
                   correctedConcreteCertifiedRankBitBudget
-                    (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                    (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -989,8 +940,7 @@ theorem
                     f ∧
                 C.canonicalSearch.length <=
                   correctedConcreteCertifiedRankSearchBudget
-                    (startRootedTargetCertifiedDescriptionRank
-                      (v := z)
+                    (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                       hα
                       (selectedObservationProduct obsFamily S)
                       f
@@ -1009,15 +959,13 @@ theorem
   · intro language hTarget costBudget
 
     exact
-      ambientTargetPositiveAdditiveMinimumCost_gt_iff_all_bounded_selections_fail
-        (z := z)
+      ambientTargetPositiveAdditiveMinimumCost_gt_iff_all_bounded_selections_fail.{u, v, w, z}
         obsFamily f coordinateWeight U hTarget costBudget
 
   · intro language hTarget
 
     rcases
-        ambientTarget_exists_positiveAdditiveMinimumCertifiedSelection
-          (z := z)
+        ambientTarget_exists_positiveAdditiveMinimumCertifiedSelection.{u, v, w, z}
           hα obsFamily f coordinateWeight U hTarget with
       ⟨S,
         hSU,
@@ -1046,8 +994,7 @@ theorem
   · intro language hTarget
 
     rcases
-        ambientTarget_exists_additiveParetoCertifiedObservationSelection
-          (z := z)
+        ambientTarget_exists_additiveParetoCertifiedObservationSelection.{u, v, w, z}
           hα obsFamily f coordinateWeight U hTarget with
       ⟨S,
         hPareto,
