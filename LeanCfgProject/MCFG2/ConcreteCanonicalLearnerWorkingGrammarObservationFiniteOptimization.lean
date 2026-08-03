@@ -145,8 +145,7 @@ noncomputable def correctedConcreteObservationFeasibleSelections :
     U.powerset.filter
       (fun S =>
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -157,13 +156,11 @@ theorem mem_correctedConcreteObservationFeasibleSelections_iff
     [DecidableEq ι]
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationFeasibleSelections
-          (z := z)
+        correctedConcreteObservationFeasibleSelections.{u, v, w, z}
           obsFamily f U language ↔
       S ⊆ U ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -178,8 +175,7 @@ theorem mem_correctedConcreteObservationFeasibleSelections_iff
 /-- Every feasible candidate belongs to the ambient powerset. -/
 theorem correctedConcreteObservationFeasibleSelections_subset_powerset
     [DecidableEq ι] :
-    correctedConcreteObservationFeasibleSelections
-        (z := z)
+    correctedConcreteObservationFeasibleSelections.{u, v, w, z}
         obsFamily f U language ⊆
       U.powerset := by
 
@@ -187,27 +183,23 @@ theorem correctedConcreteObservationFeasibleSelections_subset_powerset
 
   exact
     Finset.mem_powerset.mpr
-      ((mem_correctedConcreteObservationFeasibleSelections_iff
-        (z := z)
+      ((mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
         obsFamily f U language).mp
         hS).1
 
 /-- The finite feasible-selection search has at most `2^|U|` candidates. -/
 theorem correctedConcreteObservationFeasibleSelections_card_le_two_pow
     [DecidableEq ι] :
-    (correctedConcreteObservationFeasibleSelections
-        (z := z)
+    (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
         obsFamily f U language).card <=
       2 ^ U.card := by
 
   calc
-    (correctedConcreteObservationFeasibleSelections
-        (z := z)
+    (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
         obsFamily f U language).card <=
       U.powerset.card :=
         Finset.card_le_card
-          (correctedConcreteObservationFeasibleSelections_subset_powerset
-            (z := z)
+          (correctedConcreteObservationFeasibleSelections_subset_powerset.{u, v, w, z}
             obsFamily f U language)
 
     _ =
@@ -235,10 +227,9 @@ variable {language : Set (Word α)}
 finite-cost observation selection exists. -/
 theorem
     correctedConcreteObservationFeasibleSelections_nonempty_iff_hasSelectionCost :
-    (correctedConcreteObservationFeasibleSelections
-          (z := z)
+    (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
           obsFamily f U language).Nonempty ↔
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
@@ -252,8 +243,7 @@ theorem
       ⟨S, hS⟩
 
     rcases
-        (mem_correctedConcreteObservationFeasibleSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
           obsFamily f U language).mp
           hS with
       ⟨hSU, hTarget⟩
@@ -276,8 +266,7 @@ theorem
 
     exact
       ⟨S,
-        (mem_correctedConcreteObservationFeasibleSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
           obsFamily f U language).mpr
           ⟨hSU, hTarget⟩⟩
 
@@ -287,20 +276,17 @@ theorem
     correctedConcreteObservationFeasibleSelections_nonempty_of_fullProductTarget
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    (correctedConcreteObservationFeasibleSelections
-        (z := z)
+    (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
         obsFamily f U language).Nonempty := by
 
   exact
     ⟨U,
-      (mem_correctedConcreteObservationFeasibleSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
         obsFamily f U language).mpr
         ⟨by
             intro index hindex
@@ -331,8 +317,7 @@ noncomputable def correctedConcreteObservationCostFeasibleSelections :
   classical
 
   exact
-    (correctedConcreteObservationFeasibleSelections
-      (z := z)
+    (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
       obsFamily f U language).filter
       (fun S =>
         selectionCost S <= costBudget)
@@ -342,14 +327,12 @@ theorem mem_correctedConcreteObservationCostFeasibleSelections_iff
     [DecidableEq ι]
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationCostFeasibleSelections
-          (z := z)
+        correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
           obsFamily f selectionCost U language costBudget ↔
       S ⊆ U ∧
         selectionCost S <= costBudget ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -365,8 +348,7 @@ theorem mem_correctedConcreteObservationCostFeasibleSelections_iff
       ⟨hFeasible, hCost⟩
 
     rcases
-        (mem_correctedConcreteObservationFeasibleSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
           obsFamily f U language).mp
           hFeasible with
       ⟨hSU, hTarget⟩
@@ -383,8 +365,7 @@ theorem mem_correctedConcreteObservationCostFeasibleSelections_iff
 
     exact
       Finset.mem_filter.mpr
-        ⟨(mem_correctedConcreteObservationFeasibleSelections_iff
-            (z := z)
+        ⟨(mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
             obsFamily f U language).mpr
             ⟨hSU, hTarget⟩,
           hCost⟩
@@ -393,10 +374,9 @@ theorem mem_correctedConcreteObservationCostFeasibleSelections_iff
 selection feasibility at that budget. -/
 theorem
     correctedConcreteObservationCostFeasibleSelections_nonempty_iff :
-    (correctedConcreteObservationCostFeasibleSelections
-          (z := z)
+    (correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
           obsFamily f selectionCost U language costBudget).Nonempty ↔
-      CorrectedConcreteObservationSelectionAtCost
+      CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
@@ -410,8 +390,7 @@ theorem
       ⟨S, hS⟩
 
     rcases
-        (mem_correctedConcreteObservationCostFeasibleSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationCostFeasibleSelections_iff.{u, v, w, z}
           obsFamily f selectionCost U language costBudget).mp
           hS with
       ⟨hSU, hCost, hTarget⟩
@@ -429,8 +408,7 @@ theorem
 
     exact
       ⟨S,
-        (mem_correctedConcreteObservationCostFeasibleSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationCostFeasibleSelections_iff.{u, v, w, z}
           obsFamily f selectionCost U language costBudget).mpr
           ⟨hSU, hCost, hTarget⟩⟩
 
@@ -438,8 +416,7 @@ theorem
 theorem
     correctedConcreteObservationCostFeasibleSelections_subset_powerset
     [DecidableEq ι] :
-    correctedConcreteObservationCostFeasibleSelections
-        (z := z)
+    correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
         obsFamily f selectionCost U language costBudget ⊆
       U.powerset := by
 
@@ -447,8 +424,7 @@ theorem
 
   exact
     Finset.mem_powerset.mpr
-      ((mem_correctedConcreteObservationCostFeasibleSelections_iff
-        (z := z)
+      ((mem_correctedConcreteObservationCostFeasibleSelections_iff.{u, v, w, z}
         obsFamily f selectionCost U language costBudget).mp
         hS).1
 
@@ -456,19 +432,16 @@ theorem
 theorem
     correctedConcreteObservationCostFeasibleSelections_card_le_two_pow
     [DecidableEq ι] :
-    (correctedConcreteObservationCostFeasibleSelections
-        (z := z)
+    (correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
         obsFamily f selectionCost U language costBudget).card <=
       2 ^ U.card := by
 
   calc
-    (correctedConcreteObservationCostFeasibleSelections
-        (z := z)
+    (correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
         obsFamily f selectionCost U language costBudget).card <=
       U.powerset.card :=
         Finset.card_le_card
-          (correctedConcreteObservationCostFeasibleSelections_subset_powerset
-            (z := z)
+          (correctedConcreteObservationCostFeasibleSelections_subset_powerset.{u, v, w, z}
             obsFamily f selectionCost U language costBudget)
 
     _ =
@@ -495,7 +468,7 @@ variable {language : Set (Word α)}
 cost. -/
 noncomputable def correctedConcreteObservationMinimumCostSelections
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
@@ -505,8 +478,7 @@ noncomputable def correctedConcreteObservationMinimumCostSelections
   classical
 
   exact
-    (correctedConcreteObservationFeasibleSelections
-      (z := z)
+    (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
       obsFamily f U language).filter
       (fun S =>
         selectionCost S =
@@ -517,20 +489,18 @@ noncomputable def correctedConcreteObservationMinimumCostSelections
 theorem mem_correctedConcreteObservationMinimumCostSelections_iff
     [DecidableEq ι]
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U language)
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationMinimumCostSelections
-          (z := z)
+        correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
           selectionCost hSelection ↔
       S ⊆ U ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -549,8 +519,7 @@ theorem mem_correctedConcreteObservationMinimumCostSelections_iff
       ⟨hFeasible, hCost⟩
 
     rcases
-        (mem_correctedConcreteObservationFeasibleSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
           obsFamily f U language).mp
           hFeasible with
       ⟨hSU, hTarget⟩
@@ -567,8 +536,7 @@ theorem mem_correctedConcreteObservationMinimumCostSelections_iff
 
     exact
       Finset.mem_filter.mpr
-        ⟨(mem_correctedConcreteObservationFeasibleSelections_iff
-            (z := z)
+        ⟨(mem_correctedConcreteObservationFeasibleSelections_iff.{u, v, w, z}
             obsFamily f U language).mpr
             ⟨hSU, hTarget⟩,
           hCost⟩
@@ -577,13 +545,12 @@ theorem mem_correctedConcreteObservationMinimumCostSelections_iff
 theorem correctedConcreteObservationMinimumCostSelections_nonempty
     [DecidableEq ι]
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U language) :
-    (correctedConcreteObservationMinimumCostSelections
-        (z := z)
+    (correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
         selectionCost hSelection).Nonempty := by
 
   rcases hSelection.exists_selection_exact_minimumCost with
@@ -591,8 +558,7 @@ theorem correctedConcreteObservationMinimumCostSelections_nonempty
 
   exact
     ⟨S,
-      (mem_correctedConcreteObservationMinimumCostSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationMinimumCostSelections_iff.{u, v, w, z}
         selectionCost hSelection).mpr
         ⟨hSU,
           hTarget,
@@ -603,7 +569,7 @@ feasible ambient selection. -/
 theorem correctedConcreteObservationMinimumCostSelections_le_every_feasible
     [DecidableEq ι]
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
@@ -611,14 +577,12 @@ theorem correctedConcreteObservationMinimumCostSelections_le_every_feasible
     {S R : Finset ι}
     (hS :
       S ∈
-        correctedConcreteObservationMinimumCostSelections
-          (z := z)
+        correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
           selectionCost hSelection)
     (hRU : R ⊆ U)
     (hRTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥R → M)
           (selectedObservationProduct obsFamily R)
@@ -630,8 +594,7 @@ theorem correctedConcreteObservationMinimumCostSelections_le_every_feasible
       selectionCost S =
         correctedConcreteObservationSelectionMinimumCost
           selectionCost hSelection :=
-    ((mem_correctedConcreteObservationMinimumCostSelections_iff
-      (z := z)
+    ((mem_correctedConcreteObservationMinimumCostSelections_iff.{u, v, w, z}
       selectionCost hSelection).mp
       hS).2.2
 
@@ -650,13 +613,12 @@ theorem correctedConcreteObservationMinimumCostSelections_le_every_feasible
 theorem correctedConcreteObservationMinimumCostSelections_subset_powerset
     [DecidableEq ι]
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U language) :
-    correctedConcreteObservationMinimumCostSelections
-        (z := z)
+    correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
         selectionCost hSelection ⊆
       U.powerset := by
 
@@ -664,8 +626,7 @@ theorem correctedConcreteObservationMinimumCostSelections_subset_powerset
 
   exact
     Finset.mem_powerset.mpr
-      ((mem_correctedConcreteObservationMinimumCostSelections_iff
-        (z := z)
+      ((mem_correctedConcreteObservationMinimumCostSelections_iff.{u, v, w, z}
         selectionCost hSelection).mp
         hS).1
 
@@ -673,24 +634,21 @@ theorem correctedConcreteObservationMinimumCostSelections_subset_powerset
 theorem correctedConcreteObservationMinimumCostSelections_card_le_two_pow
     [DecidableEq ι]
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U language) :
-    (correctedConcreteObservationMinimumCostSelections
-        (z := z)
+    (correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
         selectionCost hSelection).card <=
       2 ^ U.card := by
 
   calc
-    (correctedConcreteObservationMinimumCostSelections
-        (z := z)
+    (correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
         selectionCost hSelection).card <=
       U.powerset.card :=
         Finset.card_le_card
-          (correctedConcreteObservationMinimumCostSelections_subset_powerset
-            (z := z)
+          (correctedConcreteObservationMinimumCostSelections_subset_powerset.{u, v, w, z}
             selectionCost hSelection)
 
     _ =
@@ -722,8 +680,7 @@ noncomputable def correctedConcreteObservationParetoSelections :
   exact
     U.powerset.filter
       (fun S =>
-        CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
           obsFamily f selectionCost U language S)
 
 /-- Exact membership theorem for the finite Pareto search. -/
@@ -731,11 +688,9 @@ theorem mem_correctedConcreteObservationParetoSelections_iff
     [DecidableEq ι]
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationParetoSelections
-          (z := z)
+        correctedConcreteObservationParetoSelections.{u, v, w, z}
           obsFamily f selectionCost U language ↔
-      CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
+      CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
         obsFamily f selectionCost U language S := by
 
   classical
@@ -761,34 +716,29 @@ theorem correctedConcreteObservationParetoSelections_nonempty_of_fullProductTarg
     [DecidableEq ι]
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    (correctedConcreteObservationParetoSelections
-        (z := z)
+    (correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily f selectionCost U language).Nonempty := by
 
   rcases
-      ambientTarget_exists_paretoObservationSelection
-        (z := z)
+      ambientTarget_exists_paretoObservationSelection.{u, v, w, z}
         obsFamily f selectionCost U hTarget with
     ⟨S, hPareto⟩
 
   exact
     ⟨S,
-      (mem_correctedConcreteObservationParetoSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
         obsFamily f selectionCost U language).mpr
         hPareto⟩
 
 /-- The finite Pareto search is contained in the ambient powerset. -/
 theorem correctedConcreteObservationParetoSelections_subset_powerset
     [DecidableEq ι] :
-    correctedConcreteObservationParetoSelections
-        (z := z)
+    correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily f selectionCost U language ⊆
       U.powerset := by
 
@@ -796,27 +746,23 @@ theorem correctedConcreteObservationParetoSelections_subset_powerset
 
   exact
     Finset.mem_powerset.mpr
-      ((mem_correctedConcreteObservationParetoSelections_iff
-        (z := z)
+      ((mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
         obsFamily f selectionCost U language).mp
         hS).1
 
 /-- The finite Pareto frontier has at most `2^|U|` selected subsets. -/
 theorem correctedConcreteObservationParetoSelections_card_le_two_pow
     [DecidableEq ι] :
-    (correctedConcreteObservationParetoSelections
-        (z := z)
+    (correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily f selectionCost U language).card <=
       2 ^ U.card := by
 
   calc
-    (correctedConcreteObservationParetoSelections
-        (z := z)
+    (correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily f selectionCost U language).card <=
       U.powerset.card :=
         Finset.card_le_card
-          (correctedConcreteObservationParetoSelections_subset_powerset
-            (z := z)
+          (correctedConcreteObservationParetoSelections_subset_powerset.{u, v, w, z}
             obsFamily f selectionCost U language)
 
     _ =
@@ -831,8 +777,7 @@ noncomputable def correctedConcreteObservationParetoProfiles :
   classical
 
   exact
-    (correctedConcreteObservationParetoSelections
-      (z := z)
+    (correctedConcreteObservationParetoSelections.{u, v, w, z}
       obsFamily f selectionCost U language).image
       (correctedConcreteObservationSelectionProfile
         selectionCost)
@@ -842,12 +787,10 @@ theorem mem_correctedConcreteObservationParetoProfiles_iff
     [DecidableEq ι]
     {profile : Nat × Nat} :
     profile ∈
-        correctedConcreteObservationParetoProfiles
-          (z := z)
+        correctedConcreteObservationParetoProfiles.{u, v, w, z}
           obsFamily f selectionCost U language ↔
       ∃ S : Finset ι,
-        CorrectedConcreteObservationSelectionParetoOptimal
-            (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
             obsFamily f selectionCost U language S ∧
           profile =
             correctedConcreteObservationSelectionProfile
@@ -864,8 +807,7 @@ theorem mem_correctedConcreteObservationParetoProfiles_iff
 
     exact
       ⟨S,
-        (mem_correctedConcreteObservationParetoSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
           obsFamily f selectionCost U language).mp
           hS,
         hEq.symm⟩
@@ -879,8 +821,7 @@ theorem mem_correctedConcreteObservationParetoProfiles_iff
 
     exact
       ⟨S,
-        (mem_correctedConcreteObservationParetoSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
           obsFamily f selectionCost U language).mpr
           hPareto,
         hEq.symm⟩
@@ -891,19 +832,16 @@ theorem correctedConcreteObservationParetoProfiles_nonempty_of_fullProductTarget
     [DecidableEq ι]
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    (correctedConcreteObservationParetoProfiles
-        (z := z)
+    (correctedConcreteObservationParetoProfiles.{u, v, w, z}
         obsFamily f selectionCost U language).Nonempty := by
 
   rcases
-      correctedConcreteObservationParetoSelections_nonempty_of_fullProductTarget
-        (z := z)
+      correctedConcreteObservationParetoSelections_nonempty_of_fullProductTarget.{u, v, w, z}
         obsFamily f selectionCost U language hTarget with
     ⟨S, hS⟩
 
@@ -917,24 +855,20 @@ theorem correctedConcreteObservationParetoProfiles_nonempty_of_fullProductTarget
 subsets and hence at most `2^|U|`. -/
 theorem correctedConcreteObservationParetoProfiles_card_le_two_pow
     [DecidableEq ι] :
-    (correctedConcreteObservationParetoProfiles
-        (z := z)
+    (correctedConcreteObservationParetoProfiles.{u, v, w, z}
         obsFamily f selectionCost U language).card <=
       2 ^ U.card := by
 
   calc
-    (correctedConcreteObservationParetoProfiles
-        (z := z)
+    (correctedConcreteObservationParetoProfiles.{u, v, w, z}
         obsFamily f selectionCost U language).card <=
-      (correctedConcreteObservationParetoSelections
-        (z := z)
+      (correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily f selectionCost U language).card :=
           Finset.card_image_le
 
     _ <=
       2 ^ U.card :=
-        correctedConcreteObservationParetoSelections_card_le_two_pow
-          (z := z)
+        correctedConcreteObservationParetoSelections_card_le_two_pow.{u, v, w, z}
           obsFamily f selectionCost U language
 
 end FiniteParetoSearch
@@ -958,26 +892,23 @@ search. -/
 theorem
     correctedConcreteObservationScalarMinimumSelections_subset_paretoSelections
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionParetoScalarCost
           selectionCost)
         U language) :
-    correctedConcreteObservationMinimumCostSelections
-        (z := z)
+    correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
         (correctedConcreteObservationSelectionParetoScalarCost
           selectionCost)
         hSelection ⊆
-      correctedConcreteObservationParetoSelections
-        (z := z)
+      correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily f selectionCost U language := by
 
   intro S hS
 
   rcases
-      (mem_correctedConcreteObservationMinimumCostSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationMinimumCostSelections_iff.{u, v, w, z}
         (correctedConcreteObservationSelectionParetoScalarCost
           selectionCost)
         hSelection).mp
@@ -985,13 +916,11 @@ theorem
     ⟨hSU, hTarget, hScalar⟩
 
   apply
-    (mem_correctedConcreteObservationParetoSelections_iff
-      (z := z)
+    (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
       obsFamily f selectionCost U language).mpr
 
   exact
-    observationSelection_exactScalarMinimum_isPareto
-      (z := z)
+    observationSelection_exactScalarMinimum_isPareto.{u, v, w, z}
       hSelection hSU hScalar hTarget
 
 end ScalarMinimumSearchInsidePareto
@@ -1020,8 +949,7 @@ theorem correctedConcreteObservationParetoSelection_certified_package
     {S : Finset ι}
     (hS :
       S ∈
-        correctedConcreteObservationParetoSelections
-          (z := z)
+        correctedConcreteObservationParetoSelections.{u, v, w, z}
           obsFamily f selectionCost U language) :
     IdentifiesLanguageFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1038,13 +966,11 @@ theorem correctedConcreteObservationParetoSelection_certified_package
           (M := ↥S → M)
           (selectedObservationProduct obsFamily S)
           f
-          (startRootedTargetCertifiedDescriptionRank
-            (v := z)
+          (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
             hα
             (selectedObservationProduct obsFamily S)
             f
-            ((mem_correctedConcreteObservationParetoSelections_iff
-              (z := z)
+            ((mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
               obsFamily f selectionCost U language).mp
               hS).2.1) ∧
       ∃
@@ -1058,32 +984,27 @@ theorem correctedConcreteObservationParetoSelection_certified_package
             language ∧
           C.bits.length <=
             correctedConcreteCertifiedRankBitBudget
-              (startRootedTargetCertifiedDescriptionRank
-                (v := z)
+              (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                 hα
                 (selectedObservationProduct obsFamily S)
                 f
-                ((mem_correctedConcreteObservationParetoSelections_iff
-                  (z := z)
+                ((mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
                   obsFamily f selectionCost U language).mp
                   hS).2.1)
               f ∧
           C.canonicalSearch.length <=
             correctedConcreteCertifiedRankSearchBudget
-              (startRootedTargetCertifiedDescriptionRank
-                (v := z)
+              (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                 hα
                 (selectedObservationProduct obsFamily S)
                 f
-                ((mem_correctedConcreteObservationParetoSelections_iff
-                  (z := z)
+                ((mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
                   obsFamily f selectionCost U language).mp
                   hS).2.1)
               f := by
 
   let hPareto :=
-    (mem_correctedConcreteObservationParetoSelections_iff
-      (z := z)
+    (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
       obsFamily f selectionCost U language).mp
       hS
 
@@ -1091,18 +1012,15 @@ theorem correctedConcreteObservationParetoSelection_certified_package
     hPareto.2.1
 
   exact
-    ⟨selectedProductCertifiedLearner_identifies_targetClass
-        (z := z)
+    ⟨selectedProductCertifiedLearner_identifies_targetClass.{u, v, w, z}
         hα obsFamily f S
         language hTarget,
-      startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
+      startRootedTarget_mem_minimumCertifiedDescriptionRankProfile.{u, max v w, z}
         hα
         (selectedObservationProduct obsFamily S)
         f
         hTarget,
-      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank.{u, max v w, z}
         hα
         (selectedObservationProduct obsFamily S)
         f
@@ -1114,23 +1032,19 @@ theorem
     fullProductTarget_finiteParetoCertifiedSearch_package
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    (correctedConcreteObservationParetoSelections
-          (z := z)
+    (correctedConcreteObservationParetoSelections.{u, v, w, z}
           obsFamily f selectionCost U language).Nonempty ∧
-      (correctedConcreteObservationParetoSelections
-          (z := z)
+      (correctedConcreteObservationParetoSelections.{u, v, w, z}
           obsFamily f selectionCost U language).card <=
         2 ^ U.card ∧
       ∀ S : Finset ι,
         S ∈
-          correctedConcreteObservationParetoSelections
-            (z := z)
+          correctedConcreteObservationParetoSelections.{u, v, w, z}
             obsFamily f selectionCost U language →
         IdentifiesLanguageFromPositiveData
           (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1143,15 +1057,12 @@ theorem
           language := by
 
   exact
-    ⟨correctedConcreteObservationParetoSelections_nonempty_of_fullProductTarget
-        (z := z)
+    ⟨correctedConcreteObservationParetoSelections_nonempty_of_fullProductTarget.{u, v, w, z}
         obsFamily f selectionCost U language hTarget,
-      correctedConcreteObservationParetoSelections_card_le_two_pow
-        (z := z)
+      correctedConcreteObservationParetoSelections_card_le_two_pow.{u, v, w, z}
         obsFamily f selectionCost U language,
       fun S hS =>
-        (correctedConcreteObservationParetoSelection_certified_package
-          (z := z)
+        (correctedConcreteObservationParetoSelection_certified_package.{u, v, w, z}
           hα obsFamily f selectionCost U language hS).1⟩
 
 end FiniteParetoCertifiedCandidates
@@ -1175,8 +1086,7 @@ variable (costBudget : Nat)
 noncomputable def
     correctedConcreteObservationPositiveAdditiveCostFeasibleSelections :
     Finset (Finset ι) :=
-  correctedConcreteObservationCostFeasibleSelections
-    (z := z)
+  correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
     obsFamily
     f
     (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1190,24 +1100,21 @@ theorem
     mem_correctedConcreteObservationPositiveAdditiveCostFeasibleSelections_iff
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationPositiveAdditiveCostFeasibleSelections
-          (z := z)
+        correctedConcreteObservationPositiveAdditiveCostFeasibleSelections.{u, v, w, z}
           obsFamily f coordinateWeight U language costBudget ↔
       S ⊆ U ∧
         correctedConcreteObservationSelectionPositiveAdditiveCost
             coordinateWeight S <=
           costBudget ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f := by
 
   exact
-    mem_correctedConcreteObservationCostFeasibleSelections_iff
-      (z := z)
+    mem_correctedConcreteObservationCostFeasibleSelections_iff.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1219,14 +1126,12 @@ theorem
 /-- The positive additive budget search has at most `2^|U|` candidates. -/
 theorem
     correctedConcreteObservationPositiveAdditiveCostFeasibleSelections_card_le_two_pow :
-    (correctedConcreteObservationPositiveAdditiveCostFeasibleSelections
-        (z := z)
+    (correctedConcreteObservationPositiveAdditiveCostFeasibleSelections.{u, v, w, z}
         obsFamily f coordinateWeight U language costBudget).card <=
       2 ^ U.card := by
 
   exact
-    correctedConcreteObservationCostFeasibleSelections_card_le_two_pow
-      (z := z)
+    correctedConcreteObservationCostFeasibleSelections_card_le_two_pow.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1259,17 +1164,15 @@ certified-candidate package. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationFiniteOptimization_package :
     (∀ language : Set (Word α),
-      (correctedConcreteObservationFeasibleSelections
-          (z := z)
+      (correctedConcreteObservationFeasibleSelections.{u, v, w, z}
           obsFamily f U language).card <=
         2 ^ U.card) ∧
       (∀
         language : Set (Word α),
         ∀ costBudget : Nat,
-          ((correctedConcreteObservationCostFeasibleSelections
-              (z := z)
+          ((correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
               obsFamily f selectionCost U language costBudget).Nonempty ↔
-            CorrectedConcreteObservationSelectionAtCost
+            CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
               (obsFamily := obsFamily)
               (f := f)
               selectionCost
@@ -1280,23 +1183,19 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
-          (correctedConcreteObservationParetoSelections
-              (z := z)
+          (correctedConcreteObservationParetoSelections.{u, v, w, z}
               obsFamily f selectionCost U language).Nonempty ∧
-            (correctedConcreteObservationParetoSelections
-              (z := z)
+            (correctedConcreteObservationParetoSelections.{u, v, w, z}
               obsFamily f selectionCost U language).card <=
               2 ^ U.card ∧
             ∀ S : Finset ι,
               S ∈
-                correctedConcreteObservationParetoSelections
-                  (z := z)
+                correctedConcreteObservationParetoSelections.{u, v, w, z}
                   obsFamily f selectionCost U language →
               IdentifiesLanguageFromPositiveData
                 (correctedConcreteCertifiedWorkingGrammarHypLanguage
@@ -1310,16 +1209,13 @@ theorem
 
   exact
     ⟨fun language =>
-        correctedConcreteObservationFeasibleSelections_card_le_two_pow
-          (z := z)
+        correctedConcreteObservationFeasibleSelections_card_le_two_pow.{u, v, w, z}
           obsFamily f U language,
       fun language costBudget =>
-        correctedConcreteObservationCostFeasibleSelections_nonempty_iff
-          (z := z)
+        correctedConcreteObservationCostFeasibleSelections_nonempty_iff.{u, v, w, z}
           obsFamily f selectionCost U language costBudget,
       fun language hTarget =>
-        fullProductTarget_finiteParetoCertifiedSearch_package
-          (z := z)
+        fullProductTarget_finiteParetoCertifiedSearch_package.{u, v, w, z}
           hα obsFamily f selectionCost U language hTarget⟩
 
 end ObservationFiniteOptimizationFinalPackage
