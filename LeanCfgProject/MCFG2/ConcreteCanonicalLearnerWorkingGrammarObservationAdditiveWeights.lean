@@ -168,9 +168,7 @@ theorem finsetNatWeightedSum_mono
               coordinateWeight selectedIndex +
                 (R.erase selectedIndex).sum coordinateWeight := by
                 rw [
-                  Finset.sum_insert
-                    (Finset.not_mem_erase
-                      selectedIndex R)
+                  Finset.sum_insert (by simp)
                 ]
 
           _ <=
@@ -209,11 +207,21 @@ theorem finsetNatWeightedSum_mono
               S.sum coordinateWeight :=
           ih hRSubset
 
-        rw [
-          Finset.sum_insert hNotMem
-        ]
+        calc
+          R.sum coordinateWeight <=
+              S.sum coordinateWeight :=
+            hInduction
 
-        omega
+          _ <=
+              coordinateWeight selectedIndex +
+                S.sum coordinateWeight := by
+            omega
+
+          _ =
+              (insert selectedIndex S).sum coordinateWeight := by
+            rw [
+              Finset.sum_insert hNotMem
+            ]
 
 end FiniteNaturalWeightedSum
 
