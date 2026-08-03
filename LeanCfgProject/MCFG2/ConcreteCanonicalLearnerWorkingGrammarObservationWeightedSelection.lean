@@ -882,8 +882,7 @@ theorem ambientTargetObservationSelectionMinimumCost_le
         obsFamily f selectionCost U hTarget <=
       selectionCost U := by
 
-  unfold
-    ambientTargetObservationSelectionMinimumCost.{u, v, w, z}
+  unfold ambientTargetObservationSelectionMinimumCost
 
   let hSelection :=
     hasCorrectedConcreteObservationSelectionCost_of_fullProductTarget
@@ -926,8 +925,7 @@ theorem ambientTarget_exists_minimumCostObservationSelection
             (selectedObservationProduct obsFamily S)
             f := by
 
-  unfold
-    ambientTargetObservationSelectionMinimumCost.{u, v, w, z}
+  unfold ambientTargetObservationSelectionMinimumCost
 
   exact
     (hasCorrectedConcreteObservationSelectionCost_of_fullProductTarget
@@ -956,6 +954,8 @@ variable (hStrict :
 
 /-- Under strict cost monotonicity, every ambient-product target has an actual
 minimum-cost selected subset that is irredundant and coordinatewise essential. -/
+include hStrict
+
 theorem
     ambientTarget_exists_minimumCostIrredundantObservationSelection
     {language : Set (Word α)}
@@ -1004,10 +1004,7 @@ theorem
         
         hStrict hSelection hSU
 
-    · simpa [
-        ambientTargetObservationSelectionMinimumCost.{u, v, w, z},
-        hSelection
-      ] using hcost
+    · simpa only [ambientTargetObservationSelectionMinimumCost] using hcost
 
     · exact hSelected
 
@@ -1015,10 +1012,7 @@ theorem
     ⟨S,
       hSU,
       by
-        simpa [
-          ambientTargetObservationSelectionMinimumCost.{u, v, w, z},
-          hSelection
-        ] using hcost,
+        simpa only [ambientTargetObservationSelectionMinimumCost] using hcost,
       hIrredundant,
       fun index hindex =>
         observationSelection_irredundant_coordinateRefinementEssential
@@ -1172,6 +1166,8 @@ variable (hStrict :
 /-- Under strict cost monotonicity, an ambient-product target admits an
 irredundant minimum-cost selected product whose own certified learner identifies
 the target. -/
+include hStrict
+
 theorem
     ambientTarget_exists_minimumCostIrredundantCertifiedObservationSelection
     {language : Set (Word α)}
@@ -1275,10 +1271,7 @@ theorem
         
         hStrict hSelection hSU
 
-    · simpa [
-        ambientTargetObservationSelectionMinimumCost.{u, v, w, z},
-        hSelection
-      ] using hcost
+    · simpa only [ambientTargetObservationSelectionMinimumCost] using hcost
 
     · exact hSelected
 
@@ -1438,10 +1431,7 @@ theorem
         selectionCost
         hTarget
 
-    simpa [
-      ambientTargetObservationSelectionMinimumCost.{u, v, w, z},
-      hSelection
-    ] using
+    simpa only [ambientTargetObservationSelectionMinimumCost] using
       observationSelection_minimumCost_gt_iff_all_boundedCost_selections_fail
         hSelection costBudget
 
@@ -1554,8 +1544,13 @@ theorem
 
   exact
     ambientTarget_exists_minimumCostIrredundantCertifiedObservationSelection
-      
-      hα obsFamily f selectionCost U hStrict hTarget
+      (hα := hα)
+      (obsFamily := obsFamily)
+      (f := f)
+      (selectionCost := selectionCost)
+      (U := U)
+      (hStrict := hStrict)
+      hTarget
 
 end ObservationWeightedSelectionFinalPackage
 
