@@ -1,4 +1,5 @@
-name: MCFG2 Successful Experiments Regression v3
+name: MCFG2 Confirmed-Success Regression v4 (233 roots)
+run-name: "MCFG2 confirmed 233 regression — ${{ github.ref_name }} @ ${{ github.sha }}"
 
 on:
   workflow_dispatch:
@@ -7,20 +8,20 @@ permissions:
   contents: read
 
 concurrency:
-  group: mcfg2-successful-experiments-${{ github.ref }}
+  group: mcfg2-confirmed-233-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  MCFG2_SUCCESS_VERSION: "v3-232-directly-confirmed-through-observation-selection"
+  MCFG2_SUCCESS_VERSION: "v4-233-directly-confirmed-through-observation-selection-irredundancy"
   MCFG2_ROOT: LeanCfgProject/MCFG2
-  MCFG2_SUCCESS_COUNT: "232"
+  MCFG2_SUCCESS_COUNT: "233"
   MCFG2_TOTAL_SNAPSHOT_COUNT: "303"
-  MCFG2_UNVERIFIED_COUNT: "71"
+  MCFG2_UNVERIFIED_COUNT: "70"
   MCFG2_SUCCESS_SHARDS: "12"
 
 jobs:
   prepare:
-    name: Prepare 232 directly confirmed-success MCFG2 roots
+    name: Prepare 233 directly confirmed-success MCFG2 roots
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -204,6 +205,7 @@ jobs:
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationProduct
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationRefinementFailure
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelection
+          LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionIrredundancy
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObstruction
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPaperBitEnvelope
           LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarPaperPowerBitBound
@@ -382,7 +384,7 @@ jobs:
       - name: Upload successful-root manifest
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-success-v3-manifest
+          name: mcfg2-success-v4-manifest
           path: ci-artifacts/manifest
           if-no-files-found: error
           retention-days: 30
@@ -413,7 +415,7 @@ jobs:
       - name: Download successful-root manifest
         uses: actions/download-artifact@v7
         with:
-          name: mcfg2-success-v3-manifest
+          name: mcfg2-success-v4-manifest
           path: ci-input/manifest
 
       - name: Rebuild every assigned successful root separately
@@ -568,14 +570,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-success-v3-shard-${{ matrix.shard }}
+          name: mcfg2-success-v4-shard-${{ matrix.shard }}
           path: ci-artifacts/shard-${{ matrix.shard }}
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
 
   summarize:
-    name: Summarize all 232 directly confirmed-success roots
+    name: Summarize all 233 directly confirmed-success roots
     needs:
       - prepare
       - regression
@@ -719,7 +721,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: mcfg2-success-v3-combined-${{ github.run_number }}
+          name: mcfg2-success-v4-combined-${{ github.run_number }}
           path: ci-artifacts/combined
           if-no-files-found: error
           retention-days: 30
