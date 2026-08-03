@@ -334,7 +334,7 @@ variable {language : Set (Word α)}
 /-- An exact minimum of the scalarized profile cost is Pareto optimal. -/
 theorem observationSelection_exactScalarMinimum_isPareto
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionParetoScalarCost
@@ -399,7 +399,7 @@ theorem observationSelection_exactScalarMinimum_isPareto
 solution. -/
 theorem observationSelection_exists_paretoOptimal
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionParetoScalarCost
@@ -421,7 +421,7 @@ theorem observationSelection_exists_paretoOptimal
 is feasible. -/
 theorem observationSelection_paretoFrontier_nonempty
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionParetoScalarCost
@@ -440,7 +440,7 @@ theorem observationSelection_paretoFrontier_nonempty
 feasible. -/
 theorem observationSelection_paretoProfileSet_nonempty
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionParetoScalarCost
