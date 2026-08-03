@@ -952,10 +952,10 @@ variable (hStrict :
   CorrectedConcreteObservationSelectionCostStrictlyMonotone
     selectionCost)
 
-/-- Under strict cost monotonicity, every ambient-product target has an actual
-minimum-cost selected subset that is irredundant and coordinatewise essential. -/
 include hStrict
 
+/-- Under strict cost monotonicity, every ambient-product target has an actual
+minimum-cost selected subset that is irredundant and coordinatewise essential. -/
 theorem
     ambientTarget_exists_minimumCostIrredundantObservationSelection
     {language : Set (Word α)}
@@ -1163,11 +1163,11 @@ variable (hStrict :
   CorrectedConcreteObservationSelectionCostStrictlyMonotone
     selectionCost)
 
+include hStrict
+
 /-- Under strict cost monotonicity, an ambient-product target admits an
 irredundant minimum-cost selected product whose own certified learner identifies
 the target. -/
-include hStrict
-
 theorem
     ambientTarget_exists_minimumCostIrredundantCertifiedObservationSelection
     {language : Set (Word α)}
