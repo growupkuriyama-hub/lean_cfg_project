@@ -382,6 +382,8 @@ theorem
         selectionCost
         U language costBudget := by
 
+  classical
+
   constructor
 
   · intro hNonempty
