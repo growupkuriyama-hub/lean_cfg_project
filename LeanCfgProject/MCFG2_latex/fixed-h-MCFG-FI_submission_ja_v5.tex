@@ -1611,27 +1611,188 @@ k_j+\sum_{i=1}^{d}|y_i|_{a_j}&=n'
 
 \begin{proposition}[具体的文脈の十分性]
 \label{prop:concrete-context-sufficiency}
-\(G\) を証人となる作業形表示とし、\(\widetilde G_0\) をそのトリムされた出力型精密化とする。
-残っている各型付き非終端記号 \(X\) について、アンカータプル \(\omega(X)\) と、\(X\) から
-導出されるすべてのタプルを受理する具体的露出文脈 \(\chi(X)\) を選ぶ。このとき、次のデータは、
-正準学習器が \(\widetilde G_0\) のすべての規則をシミュレートするために十分である。
+\(G\) を簡約された作業形 MCFG とし、\(\widetilde G_0\) を
+\(G\) のトリムされた出力型精密化とする。
+
+\(\widetilde G_0\) に残る各型付き非終端記号 \(X\) に対して、
+アンカータプル \(\omega(X)\in L_X\) と、任意の
+\(\tuple u\in L_X\) に対して
+\(\chi(X)[\tuple u]\in L(G)\) を満たす具体的露出文脈
+\(\chi(X)\) を固定する。型付き開始規則
+\(\widetilde S\to X\) が存在する場合には、
+\(\chi(X)=\blank_1\) とする。
+
+次の有限集合を \(S_{\mathrm{ctx}}\subseteq L(G)\) とする。
 \begin{enumerate}[label=(\roman*),leftmargin=*]
-\item 残っている各型付き記号の成分ごとの出力 \(h\)-型、
-\item 残っている各型付き記号について一つの露出されたアンカー、
-\item 残っている各型付き規則について一つの露出された充填例。
+\item 各型付き非終端記号 \(X\) に対するアンカー露出語
+      \(\chi(X)[\omega(X)]\)。
+\item 各型付き終端規則 \(X\to(a)\) に対する終端露出語
+      \(\chi(X)[(a)]\)。
+\item 各型付き二分規則
+      \(R\colon X\to\rho(Y,Z)\) に対する規則露出語
+      \(\chi(X)[\tuple z_R]\)。ここで
+      \(\tuple z_R:=\rho(\omega(Y),\omega(Z))\) とする。
 \end{enumerate}
-学習器の非終端記号に、これ以外の文レベルのインターフェース標識を付す必要はない。
+
+このとき、\(S_{\mathrm{ctx}}\subseteq K\subseteq L(G)\) を満たす
+任意の有限標本 \(K\) に対して、正準学習器の仮説文法
+\(\widehat G_0(K)\) は、写像
+\(\iota(X):=[\omega(X)]\) の下で、
+\(\widetilde G_0\) の各規則を次の意味でシミュレートする。
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \(\widetilde S\to X\) が型付き開始規則ならば、
+      \(\widehat S\to\iota(X)\) は
+      \(\widehat G_0(K)\) の開始規則である。
+\item \(X\to(a)\) が型付き終端規則ならば、
+      \(\widehat G_0(K)\) において
+      \(\iota(X)\Rightarrow[(a)]\Rightarrow(a)\) が成り立つ。
+\item \(R\colon X\to\rho(Y,Z)\) が型付き二分規則ならば、
+      \(\widehat G_0(K)\) において
+      \[
+        \iota(X)
+        \Rightarrow[\tuple z_R]
+        \Rightarrow
+        \rho\bigl(\iota(Y),\iota(Z)\bigr)
+      \]
+      が成り立つ。
+\end{enumerate}
+
+したがって、このシミュレーションに必要なのは、観測タプルから
+計算される成分ごとの \(h\)-型、各型付き非終端記号について一つの
+露出されたアンカー、および各型付き規則について一つの露出された
+充填例だけである。露出文脈そのものを学習器の非終端記号に付加的な
+文レベルの標識として記録する必要はない。
 \end{proposition}
 
 \begin{proof}
-出力型により、型付き親アンカーと対応する充填済み規則タプルは、成分ごとに同じ \(h\)-値をもつ。
-それらを露出する二つの標本語は同じ具体的文脈 \(\chi(X)\) を用いるため、学習器は両観測タプル値を
-保護された単位規則で結ぶことができる。充填済み二分規則語は、親タプル内にある二つの子アンカーの
-実際の変数区間を記録する。アンカー自体は、それぞれ自身の露出語を通じて観測されていてよい。
-こうして得られる二分証人は、基礎となる線形テンプレートを再構成する。終端規則と開始規則は、
-対応する露出された終端語とアンカー語によって処理される。規則ごとの形式的シミュレーションは
-補題~\ref{lem:rule-simulation} で与える。
+まず、\(S_{\mathrm{ctx}}\) が \(L(G)\) の有限部分集合であることを確認する。
+\(\widetilde G_0\) に残る型付き非終端記号と型付き規則は有限個なので、
+\(S_{\mathrm{ctx}}\) は有限である。
+
+各 \(X\) について \(\omega(X)\in L_X\) であるから、露出文脈の性質により
+\(\chi(X)[\omega(X)]\in L(G)\) である。型付き終端規則
+\(X\to(a)\) が存在する場合には \((a)\in L_X\) なので、
+\(\chi(X)[(a)]\in L(G)\) である。
+
+また、型付き二分規則 \(R\colon X\to\rho(Y,Z)\) が存在する場合、
+\(\omega(Y)\in L_Y\) および \(\omega(Z)\in L_Z\) であるから、
+\(\tuple z_R=\rho(\omega(Y),\omega(Z))\in L_X\) である。
+したがって、\(\chi(X)[\tuple z_R]\in L(G)\) である。
+よって \(S_{\mathrm{ctx}}\subseteq L(G)\) が成り立つ。
+
+以下、\(S_{\mathrm{ctx}}\subseteq K\subseteq L(G)\) を満たす
+有限標本 \(K\) を固定し、規則の種類ごとに示す。
+
+\medskip
+\noindent
+\textbf{開始規則の場合。}
+型付き開始規則 \(\widetilde S\to X\) をとる。
+この場合、\(X\) のファンアウトは \(1\) であり、
+\(\chi(X)=\blank_1\) と選んでいる。したがって、
+\(\omega(X)=(w_X)\) と書けば、そのアンカー露出語は
+\(\chi(X)[\omega(X)]=w_X\) である。
+
+この語は \(S_{\mathrm{ctx}}\subseteq K\) に属するので、
+正準学習器の定義~\ref{def:learner}により、開始規則
+\(\widehat S\to[(w_X)]=[\omega(X)]=\iota(X)\) が加えられる。
+
+\medskip
+\noindent
+\textbf{終端規則の場合。}
+型付き終端規則 \(X\to(a)\) をとる。
+アンカー露出語 \(\chi(X)[\omega(X)]\) と終端露出語
+\(\chi(X)[(a)]\) は、いずれも \(K\) に属する。
+したがって、\(\omega(X)\) と \((a)\) は同じ具体的文脈
+\(\chi(X)\) において観測される。
+
+\(X=A_{\mathbf p}\) と書く。命題~\ref{prop:output-invariants} により、
+\(h^{(\mu(A))}(\omega(X))=\mathbf p\) である。
+また、型付き終端規則の定義から \(\mu(A)=1\) かつ
+\(\mathbf p=(h(a))\) であるため、
+\(h^{(1)}(\omega(X))=h^{(1)}((a))\) が成り立つ。
+
+
+したがって、正準学習器~\ref{def:learner}の単位規則の条件により
+\([\omega(X)]\to[(a)]\) が加えられる。
+さらに、\((a)\) は \(K\) において観測されているので、
+終端規則 \([(a)]\to(a)\) も加えられる。よって
+\(\iota(X)\Rightarrow[(a)]\Rightarrow(a)\) を得る。
+
+\medskip
+\noindent
+\textbf{二分規則の場合。}
+型付き二分規則
+\(R\colon X\to\rho(Y,Z)\) をとり、
+\(\tuple z_R:=\rho(\omega(Y),\omega(Z))\) とおく。
+
+アンカー露出語 \(\chi(X)[\omega(X)]\) と規則露出語
+\(\chi(X)[\tuple z_R]\) は、いずれも \(K\) に属するので、
+\(\omega(X)\) と \(\tuple z_R\) は同じ具体的文脈
+\(\chi(X)\) において観測される。
+
+\(X=A_{\mathbf p}\) と書く。命題~\ref{prop:output-invariants} により
+\(h^{(\mu(A))}(\omega(X))=\mathbf p\) である。
+一方、\(R\) が \(X\) を左辺にもつ型付き規則であることから、
+同じ命題および出力型精密化の定義により
+\(h^{(\mu(A))}(\tuple z_R)=\mathbf p\) である。
+したがって、
+\(h^{(\mu(A))}(\omega(X))
+ =h^{(\mu(A))}(\tuple z_R)\)
+が成り立つ。
+
+よって、正準学習器~\ref{def:learner}の単位規則の条件により、
+\([\omega(X)]\to[\tuple z_R]\) が加えられる。
+
+次に、語 \(\chi(X)[\tuple z_R]\) における親タプル出現
+\((\chi(X),\tuple z_R)\) を考える。
+子タプル \(\omega(Y)\) と \(\omega(Z)\) は、それぞれ
+アンカー露出語 \(\chi(Y)[\omega(Y)]\) と
+\(\chi(Z)[\omega(Z)]\) によって \(K\) において観測されている。
+これらの観測語は、親タプルの観測語と同一である必要はない。
+
+規則 \(\rho\) のテンプレートタプルは、
+\(\tuple z_R=\rho(\omega(Y),\omega(Z))\) において、
+各親成分を終端語からなる隙間と、
+\(\omega(Y)\) および \(\omega(Z)\) の各成分に対応する
+変数区間とに分割する。線形性と非消去性により、各変数は
+親タプル全体でちょうど一度現れる。
+空の子成分に対応する変数については、規則テンプレート中の
+変数順序を、同一切断位置における局所順序として用いる。
+
+したがって、この親出現、二つの子タプルの観測、および
+\(\rho\) が与える順序付き分割は、定義~\ref{def:binary-witness}
+の意味で二分証人をなす。
+補題~\ref{lem:unique-induced-template} により、この二分証人から
+誘導されるテンプレートは、もとのテンプレート \(\rho\) と一致する。
+
+よって、正準学習器の定義により、二分規則
+\[
+  [\tuple z_R]
+  \to
+  \rho\bigl([\omega(Y)],[\omega(Z)]\bigr)
+\]
+が加えられる。先に得た単位規則と合わせると、
+\[
+  \iota(X)
+  \Rightarrow
+  [\tuple z_R]
+  \Rightarrow
+  \rho\bigl(\iota(Y),\iota(Z)\bigr)
+\]
+を得る。
+
+以上により、\(\widetilde G_0\) に残るすべての開始規則、終端規則、
+および二分規則が、写像 \(X\mapsto\iota(X)\) の下で
+\(\widehat G_0(K)\) によってシミュレートされる。
+
+この構成において、具体的露出文脈 \(\chi(X)\) は、
+二つの観測タプルが同じ受理文脈を共有することを証明し、
+単位規則の追加を正当化するためにだけ用いられる。
+学習器の非終端記号は観測タプル値 \([\tuple x]\) のみによって
+添字付けられており、\(\chi(X)\) やその他の文レベルの
+インターフェース情報を非終端記号の一部として保存する必要はない。
 \end{proof}
+
 
 \subsection{観測タプルと具体的証人}
 
@@ -2279,42 +2440,126 @@ MCFG 表示の存在によって定義されていることを再確認してお
 
 \begin{definition}[露出サイズ]
 \label{def:exposure-size}
-\(G\) を対象の証人表示とし、\(\widetilde G_0\) をそのトリムされた出力型精密化とする。
-\(B_{\mathrm{exp}}(G,h)\) を、\(\widetilde G_0\) に残る型付き非終端記号、終端規則、二分規則に
-対して用いる特徴標本語
+\(G\) を対象言語の証人となる作業形表示とし、
+\(\widetilde G_0\) を \(G\) のトリムされた出力型精密化とする。
+命題~\ref{prop:concrete-context-sufficiency} で固定した各型付き
+非終端記号 \(X\) のアンカータプル \(\omega(X)\) と露出文脈
+\(\chi(X)\) を用いる。
+
+\(\widetilde G_0\) に残る型付き非終端記号の集合を
+\(\widetilde V_0\)、型付き終端規則の集合を
+\(\widetilde P_{\mathrm{ter}}\)、型付き二分規則の集合を
+\(\widetilde P_{\mathrm{bin}}\) とする。露出語集合を
 \[
-  \chi(X)[\omega(X)],\qquad
-  \chi(X)[(a)],\qquad
-  \chi(X)[\rho(\omega(Y),\omega(Z))]
+\begin{aligned}
+\mathcal E_{\mathrm{exp}}(G,h)
+:={}&
+ \{\chi(X)[\omega(X)]\mid X\in\widetilde V_0\}\\
+&{}\cup
+ \{\chi(X)[(a)]\mid X\to(a)\in\widetilde P_{\mathrm{ter}}\}\\
+&{}\cup
+ \{\chi(X)[\rho(\omega(Y),\omega(Z))]
+      \mid X\to\rho(Y,Z)\in\widetilde P_{\mathrm{bin}}\}
+\end{aligned}
 \]
-の正例サイズの最大値として定義する。
+と定める。
+
+\(\widetilde G_0\) は少なくとも一つの型付き非終端記号をもつので、
+\(\mathcal E_{\mathrm{exp}}(G,h)\ne\emptyset\) である。
+このとき、\(G\) の \(h\) に関する\emph{露出サイズ}を
+\[
+  B_{\mathrm{exp}}(G,h)
+  :=
+  \max_{w\in\mathcal E_{\mathrm{exp}}(G,h)}
+  \max\{1,|w|\}
+\]
+と定める。
+
+この記法では、あらかじめ固定した
+\(\omega(X)\) と \(\chi(X)\) への依存を省略している。
 \end{definition}
 
 \begin{proposition}[露出上界の下での特徴標本サイズ]
 \label{prop:cs-exposure-bound}
-\(N_{\mathrm{NT}}\) を \(\widetilde G_0\) に残る型付き非終端記号の個数、
-\(N_{\mathrm{rule}}\) を残る開始規則以外の型付き規則の個数とする。このとき
+\(N_{\mathrm{NT}}:=|\widetilde V_0|\) とする。また、
+\(N_{\mathrm{rule}}
+:=|\widetilde P_{\mathrm{ter}}|
+ +|\widetilde P_{\mathrm{bin}}|\)、すなわち
+\(\widetilde G_0\) に残る開始規則以外の型付き規則の個数とする。
+
+定義~\ref{def:cs} の特徴標本
+\(\CS(\widetilde G_0)\) について、
 \[
   |\CS(\widetilde G_0)|
-  \le N_{\mathrm{NT}}+N_{\mathrm{rule}}
-\]
-かつ
-\[
+  \le N_{\mathrm{NT}}+N_{\mathrm{rule}},
+  \qquad
   \|\CS(\widetilde G_0)\|_+
   \le
   (N_{\mathrm{NT}}+N_{\mathrm{rule}})
   B_{\mathrm{exp}}(G,h)
 \]
-である。したがって、選ばれた証人表示のサイズに関して \(N_{\mathrm{NT}}\)、
-\(N_{\mathrm{rule}}\)、\(B_{\mathrm{exp}}(G,h)\) が多項式で抑えられる任意の部分クラスは、
-多項式サイズの特徴標本をもつ。
+が成り立つ。
+
+したがって、証人表示のサイズを \(|G|\) とし、ある部分クラス上で
+\(N_{\mathrm{NT}}\)、\(N_{\mathrm{rule}}\) および
+\(B_{\mathrm{exp}}(G,h)\) がいずれも \(|G|\) の多項式で上から
+抑えられるならば、その部分クラスの各対象は、選ばれた証人表示
+\(G\) の大きさに関して多項式サイズの特徴標本をもつ。
 \end{proposition}
 
 \begin{proof}
-定義~\ref{def:cs} は、残っている各型付き非終端記号について高々一つのアンカー語を、残っている
-開始規則以外の各型付き規則について高々一つの充填語を加える。重複する語は個数を減らすだけである。
-各語の正例サイズは高々 \(B_{\mathrm{exp}}(G,h)\) なので、二つの上界が得られる。
+定義~\ref{def:cs} により、
+\(\CS(\widetilde G_0)\) は、次の語を集合として集めたものである。
+
+各 \(X\in\widetilde V_0\) について、アンカー露出語
+\(\chi(X)[\omega(X)]\) を高々一語加える。
+また、各規則 \(X\to(a)\in\widetilde P_{\mathrm{ter}}\) について
+終端露出語 \(\chi(X)[(a)]\) を高々一語加え、各規則
+\(X\to\rho(Y,Z)\in\widetilde P_{\mathrm{bin}}\) について規則露出語
+\(\chi(X)[\rho(\omega(Y),\omega(Z))]\) を高々一語加える。
+
+したがって、語を重複も含めて数えた場合でも、その総数は
+\(N_{\mathrm{NT}}+N_{\mathrm{rule}}\) 以下である。
+\(\CS(\widetilde G_0)\) は集合なので、異なる記号または規則から
+同じ語が選ばれた場合、その重複を除くことによって要素数が増える
+ことはない。ゆえに
+\(|\CS(\widetilde G_0)|
+ \le N_{\mathrm{NT}}+N_{\mathrm{rule}}\)
+を得る。
+
+さらに、定義~\ref{def:exposure-size} により、
+各 \(w\in\CS(\widetilde G_0)\) は
+\(\max\{1,|w|\}\le B_{\mathrm{exp}}(G,h)\) を満たす。
+したがって、
+\[
+\begin{aligned}
+  \|\CS(\widetilde G_0)\|_+
+  &=
+  \sum_{w\in\CS(\widetilde G_0)}\max\{1,|w|\}\\
+  &\le
+  |\CS(\widetilde G_0)|B_{\mathrm{exp}}(G,h)\\
+  &\le
+  (N_{\mathrm{NT}}+N_{\mathrm{rule}})
+  B_{\mathrm{exp}}(G,h).
+\end{aligned}
+\]
+
+最後に、ある多項式 \(p_1,p_2,p_3\) が存在して、対象とする部分クラスの
+すべての証人表示 \(G\) について
+\(N_{\mathrm{NT}}\le p_1(|G|)\)、
+\(N_{\mathrm{rule}}\le p_2(|G|)\)、
+\(B_{\mathrm{exp}}(G,h)\le p_3(|G|)\)
+であると仮定する。このとき、
+\(\|\CS(\widetilde G_0)\|_+
+ \le (p_1(|G|)+p_2(|G|))p_3(|G|)\)
+であり、右辺は \(|G|\) の多項式である。
+したがって、その部分クラスは表示相対的に多項式サイズの
+特徴標本をもつ。
 \end{proof}
+```
+
+
+
 
 完全出力型精密化がもつ型付き非終端記号の個数は高々
 \[
