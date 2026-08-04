@@ -5,6 +5,11 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity
 
+/- FIX SNAPSHOT: CostOverhead v20, 2026-08-04.
+   Universe parameters are explicit and fixed-overhead cancellation proofs
+   are written against the extracted cost inequalities.
+-/
+
 /-!
 # ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead.lean
 
@@ -219,7 +224,7 @@ variable {language : Set (Word α)}
 /-- Exact shifted feasibility theorem for a fixed cost overhead. -/
 theorem observationSelectionAtCostWithOverhead_iff
     (costBudget : Nat) :
-    CorrectedConcreteObservationSelectionAtCost
+    CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionCostWithOverhead
@@ -227,7 +232,7 @@ theorem observationSelectionAtCostWithOverhead_iff
         U
         language
         (costBudget + overhead) ↔
-      CorrectedConcreteObservationSelectionAtCost
+      CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
@@ -265,6 +270,8 @@ theorem observationSelectionAtCostWithOverhead_iff
         ?_,
         hTarget⟩
 
+    have hCost := hDominance.2
+
     unfold
       correctedConcreteObservationSelectionCostWithOverhead
 
@@ -273,14 +280,14 @@ theorem observationSelectionAtCostWithOverhead_iff
 /-- Adding a fixed overhead does not change whether some finite observation
 selection exists. -/
 theorem hasObservationSelectionCostWithOverhead_iff :
-    HasCorrectedConcreteObservationSelectionCost
+    HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionCostWithOverhead
           selectionCost overhead)
         U
         language ↔
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
@@ -321,8 +328,7 @@ theorem hasObservationSelectionCostWithOverhead_iff :
 /-- Cumulative profiles are translated exactly by the fixed overhead. -/
 theorem observationSelectionCostProfileClass_withOverhead_eq_shifted
     (costBudget : Nat) :
-    CorrectedConcreteObservationSelectionCostProfileClass
-        (z := z)
+    CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
         α
         ι
         M
@@ -332,8 +338,7 @@ theorem observationSelectionCostProfileClass_withOverhead_eq_shifted
           selectionCost overhead)
         U
         (costBudget + overhead) =
-      CorrectedConcreteObservationSelectionCostProfileClass
-        (z := z)
+      CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
         α
         ι
         M
@@ -371,8 +376,7 @@ variable {language : Set (Word α)}
 /-- Finite budget filtrations are translated exactly by a fixed overhead. -/
 theorem observationCostBudgetFiltration_withOverhead_eq_shifted
     (costBudget : Nat) :
-    correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionCostWithOverhead
@@ -380,8 +384,7 @@ theorem observationCostBudgetFiltration_withOverhead_eq_shifted
         U
         language
         (costBudget + overhead) =
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -396,14 +399,12 @@ theorem observationCostBudgetFiltration_withOverhead_eq_shifted
   · intro hS
 
     rcases
-        (mem_correctedConcreteObservationCostBudgetFiltration_iff
-          (z := z)).mp
+        (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
           hS with
       ⟨hSU, hCost, hTarget⟩
 
     refine
-      (mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mpr
+      (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
         ⟨hSU,
           ?_,
           hTarget⟩
@@ -417,14 +418,12 @@ theorem observationCostBudgetFiltration_withOverhead_eq_shifted
   · intro hS
 
     rcases
-        (mem_correctedConcreteObservationCostBudgetFiltration_iff
-          (z := z)).mp
+        (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
           hS with
       ⟨hSU, hCost, hTarget⟩
 
     refine
-      (mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mpr
+      (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
         ⟨hSU,
           ?_,
           hTarget⟩
@@ -454,14 +453,14 @@ variable {language : Set (Word α)}
 cost by exactly that overhead. -/
 theorem observationSelectionMinimumCost_withOverhead_eq
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U
         language)
     (hSelectionOverhead :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionCostWithOverhead
@@ -516,7 +515,7 @@ theorem observationSelectionMinimumCost_withOverhead_eq
 
     unfold
       correctedConcreteObservationSelectionCostWithOverhead
-      at hCost
+      at hCost ⊢
 
     rw [← hCost]
 
@@ -529,14 +528,14 @@ theorem observationSelectionMinimumCost_withOverhead_eq
 it is minimum for the overhead cost. -/
 theorem observationSelection_isMinimumCost_iff_isMinimumCostWithOverhead
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U
         language)
     (hSelectionOverhead :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionCostWithOverhead
@@ -547,8 +546,7 @@ theorem observationSelection_isMinimumCost_iff_isMinimumCostWithOverhead
     (hSU : S ⊆ U)
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
@@ -595,8 +593,7 @@ variable {language : Set (Word α)}
 theorem observationSelection_mem_exactRankWithOverhead_iff
     (rank : Nat) :
     language ∈
-        CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -607,8 +604,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
           U
           (rank + overhead) ↔
       language ∈
-        CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -623,7 +619,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
   · intro hOverhead
 
     let hSelectionOverhead :
-        HasCorrectedConcreteObservationSelectionCost
+        HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           (correctedConcreteObservationSelectionCostWithOverhead
@@ -634,7 +630,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
         hOverhead.1⟩
 
     let hSelection :
-        HasCorrectedConcreteObservationSelectionCost
+        HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           selectionCost
@@ -651,8 +647,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
             (correctedConcreteObservationSelectionCostWithOverhead
               selectionCost overhead)
             hSelectionOverhead :=
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelectionOverhead
         (rank + overhead)).mp
         hOverhead
@@ -679,8 +674,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
       omega
 
     exact
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelection
         rank).mpr
         hRank
@@ -688,7 +682,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
   · intro hOriginal
 
     let hSelection :
-        HasCorrectedConcreteObservationSelectionCost
+        HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           selectionCost
@@ -698,7 +692,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
         hOriginal.1⟩
 
     let hSelectionOverhead :
-        HasCorrectedConcreteObservationSelectionCost
+        HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           (correctedConcreteObservationSelectionCostWithOverhead
@@ -715,8 +709,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
           correctedConcreteObservationSelectionMinimumCost
             selectionCost
             hSelection :=
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelection
         rank).mp
         hOriginal
@@ -735,8 +728,7 @@ theorem observationSelection_mem_exactRankWithOverhead_iff
         hSelectionOverhead
 
     apply
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelectionOverhead
         (rank + overhead)).mpr
 
@@ -763,22 +755,19 @@ theorem ambientTargetObservationSelectionCostRank_withOverhead_eq
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-        (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionCostWithOverhead
           selectionCost overhead)
         U
         hTarget =
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -848,9 +837,11 @@ theorem observationSelectionWeakDominance_withOverhead_iff
       ⟨hDominance.1,
         ?_⟩
 
+    have hCost := hDominance.2
+
     unfold
       correctedConcreteObservationSelectionCostWithOverhead
-      at hDominance
+      at hCost
 
     omega
 
@@ -930,8 +921,7 @@ theorem observationSelectionStrictDominance_withOverhead_iff
 /-- Pareto optimality is invariant under adding a fixed overhead. -/
 theorem observationSelectionParetoOptimal_withOverhead_iff
     (S : Finset ι) :
-    CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
+    CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionCostWithOverhead
@@ -939,8 +929,7 @@ theorem observationSelectionParetoOptimal_withOverhead_iff
         U
         language
         S ↔
-      CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
+      CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -1011,16 +1000,14 @@ variable {language : Set (Word α)}
 
 /-- The explicit finite Pareto frontier is unchanged by a fixed overhead. -/
 theorem correctedConcreteObservationParetoSelections_withOverhead_eq :
-    correctedConcreteObservationParetoSelections
-        (z := z)
+    correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionCostWithOverhead
           selectionCost overhead)
         U
         language =
-      correctedConcreteObservationParetoSelections
-        (z := z)
+      correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -1034,8 +1021,7 @@ theorem correctedConcreteObservationParetoSelections_withOverhead_eq :
   · intro hS
 
     apply
-      (mem_correctedConcreteObservationParetoSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -1047,8 +1033,7 @@ theorem correctedConcreteObservationParetoSelections_withOverhead_eq :
         (selectionCost := selectionCost)
         (overhead := overhead)
         S).mp
-        ((mem_correctedConcreteObservationParetoSelections_iff
-          (z := z)
+        ((mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionCostWithOverhead
@@ -1060,8 +1045,7 @@ theorem correctedConcreteObservationParetoSelections_withOverhead_eq :
   · intro hS
 
     apply
-      (mem_correctedConcreteObservationParetoSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionCostWithOverhead
@@ -1074,8 +1058,7 @@ theorem correctedConcreteObservationParetoSelections_withOverhead_eq :
         (selectionCost := selectionCost)
         (overhead := overhead)
         S).mpr
-        ((mem_correctedConcreteObservationParetoSelections_iff
-          (z := z)
+        ((mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -1110,8 +1093,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -1120,15 +1102,13 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
       (S : Finset ι)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       selectionCost S =
-          ambientTargetObservationSelectionCostRank
-            (z := z)
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             selectionCost
@@ -1136,24 +1116,21 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
             hTarget ∧
         correctedConcreteObservationSelectionCostWithOverhead
             selectionCost overhead S =
-          ambientTargetObservationSelectionCostRank
-            (z := z)
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionCostWithOverhead
               selectionCost overhead)
             U
             hTarget ∧
-        ambientTargetObservationSelectionCostRank
-            (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionCostWithOverhead
               selectionCost overhead)
             U
             hTarget =
-          ambientTargetObservationSelectionCostRank
-              (z := z)
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
               obsFamily
               f
               selectionCost
@@ -1180,8 +1157,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1189,8 +1165,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1205,8 +1180,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
       hTarget
 
   let result :=
-    correctedConcreteObservationMinimumCostSelectionResult
-      (z := z)
+    correctedConcreteObservationMinimumCostSelectionResult.{u, v, w, z}
       obsFamily
       f
       selectionCost
@@ -1215,8 +1189,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
       hSelection
 
   have hCertified :=
-    correctedConcreteObservationMinimumCostSelectionResult_certified_package
-      (z := z)
+    correctedConcreteObservationMinimumCostSelectionResult_certified_package.{u, v, w, z}
       hα
       obsFamily
       f
@@ -1228,8 +1201,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
 
   have hOriginalCost :
       selectionCost result.selected =
-        ambientTargetObservationSelectionCostRank
-          (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -1244,24 +1216,21 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
       result.selected_cost_eq_minimum
 
   have hRankShift :
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionCostWithOverhead
             selectionCost overhead)
           U
           hTarget =
-        ambientTargetObservationSelectionCostRank
-            (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             selectionCost
             U
             hTarget +
           overhead :=
-    ambientTargetObservationSelectionCostRank_withOverhead_eq
-      (z := z)
+    ambientTargetObservationSelectionCostRank_withOverhead_eq.{u, v, w, z}
       obsFamily
       f
       selectionCost
@@ -1272,8 +1241,7 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
   have hOverheadCost :
       correctedConcreteObservationSelectionCostWithOverhead
           selectionCost overhead result.selected =
-        ambientTargetObservationSelectionCostRank
-          (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionCostWithOverhead
@@ -1320,8 +1288,7 @@ and certified same-selection package for a fixed cost overhead. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationSelectionCostOverhead_package :
     (∀ costBudget : Nat,
-      CorrectedConcreteObservationSelectionCostProfileClass
-          (z := z)
+      CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
           α
           ι
           M
@@ -1331,8 +1298,7 @@ theorem
             selectionCost overhead)
           U
           (costBudget + overhead) =
-        CorrectedConcreteObservationSelectionCostProfileClass
-          (z := z)
+        CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
           α
           ι
           M
@@ -1344,8 +1310,7 @@ theorem
       (∀
         language : Set (Word α),
         ∀ costBudget : Nat,
-          correctedConcreteObservationCostBudgetFiltration
-              (z := z)
+          correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
               obsFamily
               f
               (correctedConcreteObservationSelectionCostWithOverhead
@@ -1353,8 +1318,7 @@ theorem
               U
               language
               (costBudget + overhead) =
-            correctedConcreteObservationCostBudgetFiltration
-              (z := z)
+            correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
               obsFamily
               f
               selectionCost
@@ -1365,8 +1329,7 @@ theorem
         language : Set (Word α),
         ∀ rank : Nat,
           (language ∈
-              CorrectedConcreteObservationSelectionExactCostRankClass
-                (z := z)
+              CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
                 α
                 ι
                 M
@@ -1377,8 +1340,7 @@ theorem
                 U
                 (rank + overhead) ↔
             language ∈
-              CorrectedConcreteObservationSelectionExactCostRankClass
-                (z := z)
+              CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
                 α
                 ι
                 M
@@ -1389,16 +1351,14 @@ theorem
                 rank)) ∧
       (∀
         language : Set (Word α),
-          correctedConcreteObservationParetoSelections
-              (z := z)
+          correctedConcreteObservationParetoSelections.{u, v, w, z}
               obsFamily
               f
               (correctedConcreteObservationSelectionCostWithOverhead
                 selectionCost overhead)
               U
               language =
-            correctedConcreteObservationParetoSelections
-              (z := z)
+            correctedConcreteObservationParetoSelections.{u, v, w, z}
               obsFamily
               f
               selectionCost
@@ -1408,22 +1368,19 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
-          ambientTargetObservationSelectionCostRank
-              (z := z)
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
               obsFamily
               f
               (correctedConcreteObservationSelectionCostWithOverhead
                 selectionCost overhead)
               U
               hTarget =
-            ambientTargetObservationSelectionCostRank
-                (z := z)
+            ambientTargetObservationSelectionCostRank.{u, v, w, z}
                 obsFamily
                 f
                 selectionCost
@@ -1434,8 +1391,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1444,15 +1400,13 @@ theorem
             (S : Finset ι)
             (hSelected :
               language ∈
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S → M)
                   (selectedObservationProduct obsFamily S)
                   f),
             selectionCost S =
-                ambientTargetObservationSelectionCostRank
-                  (z := z)
+                ambientTargetObservationSelectionCostRank.{u, v, w, z}
                   obsFamily
                   f
                   selectionCost
@@ -1460,8 +1414,7 @@ theorem
                   hTarget ∧
               correctedConcreteObservationSelectionCostWithOverhead
                   selectionCost overhead S =
-                ambientTargetObservationSelectionCostRank
-                  (z := z)
+                ambientTargetObservationSelectionCostRank.{u, v, w, z}
                   obsFamily
                   f
                   (correctedConcreteObservationSelectionCostWithOverhead
@@ -1489,35 +1442,30 @@ theorem
   · intro costBudget
 
     exact
-      observationSelectionCostProfileClass_withOverhead_eq_shifted
-        (z := z)
+      observationSelectionCostProfileClass_withOverhead_eq_shifted.{u, v, w, z}
         costBudget
 
   · intro language costBudget
 
     exact
-      observationCostBudgetFiltration_withOverhead_eq_shifted
-        (z := z)
+      observationCostBudgetFiltration_withOverhead_eq_shifted.{u, v, w, z}
         costBudget
 
   · intro language rank
 
     exact
-      observationSelection_mem_exactRankWithOverhead_iff
-        (z := z)
+      observationSelection_mem_exactRankWithOverhead_iff.{u, v, w, z}
         rank
 
   · intro language
 
     exact
-      correctedConcreteObservationParetoSelections_withOverhead_eq
-        (z := z)
+      correctedConcreteObservationParetoSelections_withOverhead_eq.{u, v, w, z}
 
   · intro language hTarget
 
     exact
-      ambientTargetObservationSelectionCostRank_withOverhead_eq
-        (z := z)
+      ambientTargetObservationSelectionCostRank_withOverhead_eq.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -1528,8 +1476,7 @@ theorem
   · intro language hTarget
 
     rcases
-        ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
-          (z := z)
+        ambientTarget_sameMinimumSelection_underCostOverhead_certified_package.{u, v, w, z}
           hα
           obsFamily
           f
