@@ -650,7 +650,52 @@ k_j+\sum_{i=1}^{d}|y_i|_{a_j}&=n'
 二つのタプル分布は等しい。
 \end{proof}
 
-この議論を一般化させることができる。以下ではたとえば \(\{a^n\#_2b^m\#_3c^n\#_4d^m\mid n\ge1,\, m\ge1\}\) のような言語を一般化して取り扱う。
+\begin{example}[三ブロック一致言語]
+\label{ex:l3-language}
+\[
+  L_3=\{a^n b^n c^n\mid n\ge1\},
+  \qquad R_3=a^*b^*c^*
+\]
+とする。\(h_{R_3}\) を、\(R_3\) を認識する標準 DFA の遷移準同型とする。
+この準同型は、各成分が属する粗いブロックゾーンを記録するが、三つのブロック長が等しいことは
+記録しない。
+\end{example}
+
+\begin{proposition}[\(L_3\) の作業形表示]
+\label{prop:l3-running-example}
+言語 \(L_3\) は、ファンアウト 2 の簡約された二分・線形・非消去の作業形 MCFG 表示をもつ。
+\end{proposition}
+
+\begin{proof}
+\(V=\{S,T,A,A_a,A_b,A_c\}\) とし、\(\mu(A)=2\)、その他のすべての非終端記号の
+ファンアウトを 1 とする。次の規則を用いる。
+\[
+  S\to T,\qquad A_a\to(a),\qquad A_b\to(b),\qquad A_c\to(c),
+\]
+\[
+  A\to(x^1,y^1)(A_a,A_b),\qquad
+  A\to(a x^1,b x^2 y^1)(A,A_c),
+\]
+\[
+  T\to(x^1x^2y^1)(A,A_c).
+\]
+直接の帰納法により、
+\(L_A=\{(a^n,b^n c^{n-1})\mid n\ge1\}\) であり、最上位規則はちょうど
+\(a^n b^n c^n\) を生成する。この文法は定義~\ref{def:working-mcfg} の作業形にある。
+\end{proof}
+
+\begin{corollary}[三ブロックの例は固定観測クラスに属する]
+\label{cor:l3-in-fixed-observation-class}
+任意の \(f\ge2\) に対して、\(L_3\in\Cmcf{f}{h_{R_3}}\) である。
+\end{corollary}
+
+\begin{proof}
+表示は命題~\ref{prop:l3-running-example} で与えられる。
+意味論的仮定は、命題~\ref{prop:equality-block-substitutable} において
+\((a_1,a_2,a_3)=(a,b,c)\) とおけば従う。
+\end{proof}
+
+この議論を一般化させることができる。以下ではたとえば \(\{a^n\#_2b^m\#_3c^n\#_4d^m\mid n\ge1,\, m\ge1\}\) のような言語を一般化して取り扱う。この状況を$\Lambda:=\{(1,3),(2,4)\}$と表現して以下の定義を行う。
 
 \begin{definition}[固定順序ブロック包絡]
 \label{def:fixed-ordered-block-envelope}
@@ -883,50 +928,6 @@ k_j+\sum_{i=1}^{d}|y_i|_{a_j}&=n'
 \end{proof}
 
 
-\begin{example}[三ブロック一致言語]
-\label{ex:l3-language}
-\[
-  L_3=\{a^n b^n c^n\mid n\ge1\},
-  \qquad R_3=a^*b^*c^*
-\]
-とする。\(h_{R_3}\) を、\(R_3\) を認識する標準 DFA の遷移準同型とする。
-この準同型は、各成分が属する粗いブロックゾーンを記録するが、三つのブロック長が等しいことは
-記録しない。
-\end{example}
-
-\begin{proposition}[\(L_3\) の作業形表示]
-\label{prop:l3-running-example}
-言語 \(L_3\) は、ファンアウト 2 の簡約された二分・線形・非消去の作業形 MCFG 表示をもつ。
-\end{proposition}
-
-\begin{proof}
-\(V=\{S,T,A,A_a,A_b,A_c\}\) とし、\(\mu(A)=2\)、その他のすべての非終端記号の
-ファンアウトを 1 とする。次の規則を用いる。
-\[
-  S\to T,\qquad A_a\to(a),\qquad A_b\to(b),\qquad A_c\to(c),
-\]
-\[
-  A\to(x^1,y^1)(A_a,A_b),\qquad
-  A\to(a x^1,b x^2 y^1)(A,A_c),
-\]
-\[
-  T\to(x^1x^2y^1)(A,A_c).
-\]
-直接の帰納法により、
-\(L_A=\{(a^n,b^n c^{n-1})\mid n\ge1\}\) であり、最上位規則はちょうど
-\(a^n b^n c^n\) を生成する。この文法は定義~\ref{def:working-mcfg} の作業形にある。
-\end{proof}
-
-\begin{corollary}[三ブロックの例は固定観測クラスに属する]
-\label{cor:l3-in-fixed-observation-class}
-任意の \(f\ge2\) に対して、\(L_3\in\Cmcf{f}{h_{R_3}}\) である。
-\end{corollary}
-
-\begin{proof}
-表示は命題~\ref{prop:l3-running-example} で与えられる。
-意味論的仮定は、命題~\ref{prop:equality-block-substitutable} において
-\((a_1,a_2,a_3)=(a,b,c)\) とおけば従う。
-\end{proof}
 
 \begin{example}[四ブロック並列一致言語]
 \label{ex:parallel-language}
