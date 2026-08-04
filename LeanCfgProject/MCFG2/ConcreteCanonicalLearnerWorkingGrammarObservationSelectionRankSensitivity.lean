@@ -224,14 +224,14 @@ theorem observationSelectionAtCost_shift_of_leUpToWithin
         U selectionCost₀ selectionCost₁ delta)
     {costBudget : Nat}
     (hSelection :
-      CorrectedConcreteObservationSelectionAtCost
+      CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₀
         U
         language
         costBudget) :
-    CorrectedConcreteObservationSelectionAtCost
+    CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       selectionCost₁
@@ -262,13 +262,13 @@ theorem hasObservationSelectionCost_of_leUpToWithin
       CorrectedConcreteObservationSelectionCostLeUpToWithin
         U selectionCost₀ selectionCost₁ delta)
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₀
         U
         language) :
-    HasCorrectedConcreteObservationSelectionCost
+    HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       selectionCost₁
@@ -289,8 +289,7 @@ theorem observationSelectionCostProfileClass_subset_shifted_of_leUpToWithin
       CorrectedConcreteObservationSelectionCostLeUpToWithin
         U selectionCost₀ selectionCost₁ delta)
     (costBudget : Nat) :
-    CorrectedConcreteObservationSelectionCostProfileClass
-        (z := z)
+    CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
         α
         ι
         M
@@ -299,8 +298,7 @@ theorem observationSelectionCostProfileClass_subset_shifted_of_leUpToWithin
         selectionCost₀
         U
         costBudget ⊆
-      CorrectedConcreteObservationSelectionCostProfileClass
-        (z := z)
+      CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
         α
         ι
         M
@@ -326,8 +324,7 @@ theorem
     {costBudget : Nat}
     (hNot :
       language ∉
-        CorrectedConcreteObservationSelectionCostProfileClass
-          (z := z)
+        CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
           α
           ι
           M
@@ -337,8 +334,7 @@ theorem
           U
           (costBudget + delta)) :
     language ∉
-      CorrectedConcreteObservationSelectionCostProfileClass
-        (z := z)
+      CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
         α
         ι
         M
@@ -352,8 +348,7 @@ theorem
 
   exact
     hNot
-      (observationSelectionCostProfileClass_subset_shifted_of_leUpToWithin
-        (z := z)
+      (observationSelectionCostProfileClass_subset_shifted_of_leUpToWithin.{u, v, w, z}
         hCost
         costBudget
         hProfile₀)
@@ -381,16 +376,14 @@ theorem observationCostBudgetFiltration_subset_shifted_of_leUpToWithin
       CorrectedConcreteObservationSelectionCostLeUpToWithin
         U selectionCost₀ selectionCost₁ delta)
     (costBudget : Nat) :
-    correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost₀
         U
         language
         costBudget ⊆
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost₁
@@ -401,8 +394,7 @@ theorem observationCostBudgetFiltration_subset_shifted_of_leUpToWithin
   intro S hS
 
   rcases
-      (mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mp
+      (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
         hS with
     ⟨hSU, hCost₀, hTarget⟩
 
@@ -412,8 +404,7 @@ theorem observationCostBudgetFiltration_subset_shifted_of_leUpToWithin
     hCost S hSU
 
   exact
-    (mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)).mpr
+    (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
       ⟨hSU,
         hPerturb.trans
           (Nat.add_le_add_right
@@ -444,14 +435,14 @@ theorem observationSelectionMinimumCost_le_add_of_leUpToWithin
       CorrectedConcreteObservationSelectionCostLeUpToWithin
         U selectionCost₀ selectionCost₁ delta)
     (hSelection₀ :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₀
         U
         language)
     (hSelection₁ :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₁
@@ -495,14 +486,14 @@ theorem observationSelectionMinimumCosts_twoSidedBounds
         delta₀₁
         delta₁₀)
     (hSelection₀ :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₀
         U
         language)
     (hSelection₁ :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₁
@@ -558,8 +549,7 @@ theorem observationSelection_exactRank_exists_perturbedRank_le_add
     {rank₀ : Nat}
     (hRank₀ :
       language ∈
-        CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -571,8 +561,7 @@ theorem observationSelection_exactRank_exists_perturbedRank_le_add
     ∃ rank₁ : Nat,
       rank₁ <= rank₀ + delta ∧
         language ∈
-          CorrectedConcreteObservationSelectionExactCostRankClass
-            (z := z)
+          CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
             α
             ι
             M
@@ -583,7 +572,7 @@ theorem observationSelection_exactRank_exists_perturbedRank_le_add
             rank₁ := by
 
   let hSelection₁ :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost₁
@@ -609,8 +598,7 @@ theorem observationSelection_exactRank_exists_perturbedRank_le_add
   exact
     ⟨rank₁,
       hRankBound,
-      observationSelection_mem_exactMinimumCostRankClass
-        (z := z)
+      observationSelection_mem_exactMinimumCostRankClass.{u, v, w, z}
         hSelection₁⟩
 
 end ExactRankSensitivity
@@ -637,21 +625,18 @@ theorem ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-        (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
         obsFamily
         f
         selectionCost₁
         U
         hTarget <=
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           selectionCost₀
@@ -697,36 +682,31 @@ theorem ambientTargetObservationSelectionCostRanks_twoSidedBounds
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-          (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           selectionCost₁
           U
           hTarget <=
-        ambientTargetObservationSelectionCostRank
-            (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             selectionCost₀
             U
             hTarget +
           delta₀₁ ∧
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           selectionCost₀
           U
           hTarget <=
-        ambientTargetObservationSelectionCostRank
-            (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             selectionCost₁
@@ -735,8 +715,7 @@ theorem ambientTargetObservationSelectionCostRanks_twoSidedBounds
           delta₁₀ := by
 
   exact
-    ⟨ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
-        (z := z)
+    ⟨ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin.{u, v, w, z}
         obsFamily
         f
         selectionCost₀
@@ -744,8 +723,7 @@ theorem ambientTargetObservationSelectionCostRanks_twoSidedBounds
         U
         hCosts.1
         hTarget,
-      ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
-        (z := z)
+      ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin.{u, v, w, z}
         obsFamily
         f
         selectionCost₁
@@ -798,8 +776,8 @@ theorem finsetNatWeightedSum_le_add_delta_mul_card
         coordinateWeight₁
         coordinateDelta)
     (S : Finset ι) :
-    (∑ index in S, coordinateWeight₁ index) <=
-      (∑ index in S, coordinateWeight₀ index) +
+    (∑ index ∈ S, coordinateWeight₁ index) <=
+      (∑ index ∈ S, coordinateWeight₀ index) +
         coordinateDelta * S.card := by
 
   classical
@@ -822,7 +800,7 @@ theorem finsetNatWeightedSum_le_add_delta_mul_card
         (∑ index in insert selectedIndex S,
             coordinateWeight₁ index) =
             coordinateWeight₁ selectedIndex +
-              ∑ index in S,
+              ∑ index ∈ S,
                 coordinateWeight₁ index := by
                   rw [
                     Finset.sum_insert hNotMem
@@ -831,7 +809,7 @@ theorem finsetNatWeightedSum_le_add_delta_mul_card
         _ <=
             (coordinateWeight₀ selectedIndex +
                 coordinateDelta) +
-              ((∑ index in S,
+              ((∑ index ∈ S,
                   coordinateWeight₀ index) +
                 coordinateDelta * S.card) :=
           Nat.add_le_add
@@ -1021,22 +999,19 @@ theorem ambientTarget_additiveCostRank_le_add_weightPerturbation
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-        (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionAdditiveCost
           coordinateWeight₁)
         U
         hTarget <=
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -1046,8 +1021,7 @@ theorem ambientTarget_additiveCostRank_le_add_weightPerturbation
         coordinateDelta * U.card := by
 
   exact
-    ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
-      (z := z)
+    ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionAdditiveCost
@@ -1072,22 +1046,19 @@ theorem ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-        (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionPositiveAdditiveCost
           coordinateWeight₁)
         U
         hTarget <=
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1097,8 +1068,7 @@ theorem ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation
         coordinateDelta * U.card := by
 
   exact
-    ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
-      (z := z)
+    ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1124,22 +1094,19 @@ theorem ambientTarget_positiveAdditiveCostRanks_twoSidedWeightBounds
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-          (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionPositiveAdditiveCost
             coordinateWeight₁)
           U
           hTarget <=
-        ambientTargetObservationSelectionCostRank
-            (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1147,16 +1114,14 @@ theorem ambientTarget_positiveAdditiveCostRanks_twoSidedWeightBounds
             U
             hTarget +
           delta₀₁ * U.card ∧
-      ambientTargetObservationSelectionCostRank
-          (z := z)
+      ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionPositiveAdditiveCost
             coordinateWeight₀)
           U
           hTarget <=
-        ambientTargetObservationSelectionCostRank
-            (z := z)
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1166,15 +1131,13 @@ theorem ambientTarget_positiveAdditiveCostRanks_twoSidedWeightBounds
           delta₁₀ * U.card := by
 
   exact
-    ⟨ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation
-        (z := z)
+    ⟨ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation.{u, v, w, z}
         obsFamily
         f
         U
         hWeights.1
         hTarget,
-      ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation
-        (z := z)
+      ambientTarget_positiveAdditiveCostRank_le_add_weightPerturbation.{u, v, w, z}
         obsFamily
         f
         U
@@ -1210,8 +1173,7 @@ theorem ambientTarget_costRankSensitivity_certified_package
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -1221,16 +1183,14 @@ theorem ambientTarget_costRankSensitivity_certified_package
       (S₀ S₁ : Finset ι)
       (hSelected₀ :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S₀ → M)
             (selectedObservationProduct obsFamily S₀)
             f)
       (hSelected₁ :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S₁ → M)
             (selectedObservationProduct obsFamily S₁)
@@ -1258,8 +1218,7 @@ theorem ambientTarget_costRankSensitivity_certified_package
           language := by
 
   rcases
-      ambientTarget_observationSelectionCostRank_certified_package
-        (z := z)
+      ambientTarget_observationSelectionCostRank_certified_package.{u, v, w, z}
         hα
         obsFamily
         f
@@ -1279,8 +1238,7 @@ theorem ambientTarget_costRankSensitivity_certified_package
       hSearch₀⟩
 
   rcases
-      ambientTarget_observationSelectionCostRank_certified_package
-        (z := z)
+      ambientTarget_observationSelectionCostRank_certified_package.{u, v, w, z}
         hα
         obsFamily
         f
@@ -1305,8 +1263,7 @@ theorem ambientTarget_costRankSensitivity_certified_package
     rw [hRank₀, hRank₁]
 
     exact
-      ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
-        (z := z)
+      ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin.{u, v, w, z}
         obsFamily
         f
         selectionCost₀
@@ -1356,8 +1313,7 @@ theorem
       CorrectedConcreteObservationSelectionCostLeUpToWithin
         U selectionCost₀ selectionCost₁ delta) :
     (∀ costBudget : Nat,
-      CorrectedConcreteObservationSelectionCostProfileClass
-          (z := z)
+      CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
           α
           ι
           M
@@ -1366,8 +1322,7 @@ theorem
           selectionCost₀
           U
           costBudget ⊆
-        CorrectedConcreteObservationSelectionCostProfileClass
-          (z := z)
+        CorrectedConcreteObservationSelectionCostProfileClass.{u, v, w, z}
           α
           ι
           M
@@ -1379,16 +1334,14 @@ theorem
       (∀
         language : Set (Word α),
         ∀ costBudget : Nat,
-          correctedConcreteObservationCostBudgetFiltration
-              (z := z)
+          correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
               obsFamily
               f
               selectionCost₀
               U
               language
               costBudget ⊆
-            correctedConcreteObservationCostBudgetFiltration
-              (z := z)
+            correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
               obsFamily
               f
               selectionCost₁
@@ -1399,8 +1352,7 @@ theorem
         language : Set (Word α),
         ∀ rank₀ : Nat,
           language ∈
-              CorrectedConcreteObservationSelectionExactCostRankClass
-                (z := z)
+              CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
                 α
                 ι
                 M
@@ -1412,8 +1364,7 @@ theorem
             ∃ rank₁ : Nat,
               rank₁ <= rank₀ + delta ∧
                 language ∈
-                  CorrectedConcreteObservationSelectionExactCostRankClass
-                    (z := z)
+                  CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
                     α
                     ι
                     M
@@ -1426,21 +1377,18 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
-          ambientTargetObservationSelectionCostRank
-              (z := z)
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
               obsFamily
               f
               selectionCost₁
               U
               hTarget <=
-            ambientTargetObservationSelectionCostRank
-                (z := z)
+            ambientTargetObservationSelectionCostRank.{u, v, w, z}
                 obsFamily
                 f
                 selectionCost₀
@@ -1451,8 +1399,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1462,16 +1409,14 @@ theorem
             (S₀ S₁ : Finset ι)
             (hSelected₀ :
               language ∈
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S₀ → M)
                   (selectedObservationProduct obsFamily S₀)
                   f)
             (hSelected₁ :
               language ∈
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S₁ → M)
                   (selectedObservationProduct obsFamily S₁)
@@ -1508,32 +1453,28 @@ theorem
   · intro costBudget
 
     exact
-      observationSelectionCostProfileClass_subset_shifted_of_leUpToWithin
-        (z := z)
+      observationSelectionCostProfileClass_subset_shifted_of_leUpToWithin.{u, v, w, z}
         hCost
         costBudget
 
   · intro language costBudget
 
     exact
-      observationCostBudgetFiltration_subset_shifted_of_leUpToWithin
-        (z := z)
+      observationCostBudgetFiltration_subset_shifted_of_leUpToWithin.{u, v, w, z}
         hCost
         costBudget
 
   · intro language rank₀ hRank₀
 
     exact
-      observationSelection_exactRank_exists_perturbedRank_le_add
-        (z := z)
+      observationSelection_exactRank_exists_perturbedRank_le_add.{u, v, w, z}
         hCost
         hRank₀
 
   · intro language hTarget
 
     exact
-      ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin
-        (z := z)
+      ambientTargetObservationSelectionCostRank_le_add_of_leUpToWithin.{u, v, w, z}
         obsFamily
         f
         selectionCost₀
@@ -1545,8 +1486,7 @@ theorem
   · intro language hTarget
 
     exact
-      ambientTarget_costRankSensitivity_certified_package
-        (z := z)
+      ambientTarget_costRankSensitivity_certified_package.{u, v, w, z}
         hα
         obsFamily
         f
