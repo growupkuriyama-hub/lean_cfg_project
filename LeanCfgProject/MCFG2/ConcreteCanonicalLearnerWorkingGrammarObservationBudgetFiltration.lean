@@ -141,8 +141,7 @@ noncomputable def correctedConcreteObservationCostBudgetFiltration
     (language : Set (Word α))
     (costBudget : Nat) :
     Finset (Finset ι) :=
-  correctedConcreteObservationCostFeasibleSelections
-    (z := z)
+  correctedConcreteObservationCostFeasibleSelections.{u, v, w, z}
     obsFamily
     f
     selectionCost
@@ -161,8 +160,7 @@ theorem mem_correctedConcreteObservationCostBudgetFiltration_iff
     {costBudget : Nat}
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+        correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -172,16 +170,14 @@ theorem mem_correctedConcreteObservationCostBudgetFiltration_iff
       S ⊆ U ∧
         selectionCost S <= costBudget ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f := by
 
   exact
-    mem_correctedConcreteObservationCostFeasibleSelections_iff
-      (z := z)
+    mem_correctedConcreteObservationCostFeasibleSelections_iff.{u, v, w, z}
       obsFamily
       f
       selectionCost
@@ -210,16 +206,14 @@ theorem correctedConcreteObservationCostBudgetFiltration_mono
     {costBudget costBudget' : Nat}
     (hBudget :
       costBudget <= costBudget') :
-    correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
         U
         language
         costBudget ⊆
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -230,14 +224,12 @@ theorem correctedConcreteObservationCostBudgetFiltration_mono
   intro S hS
 
   rcases
-      (mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mp
+      (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
         hS with
     ⟨hSU, hCost, hTarget⟩
 
   exact
-    (mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)).mpr
+    (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
       ⟨hSU,
         hCost.trans hBudget,
         hTarget⟩
@@ -246,8 +238,7 @@ theorem correctedConcreteObservationCostBudgetFiltration_mono
 theorem
     correctedConcreteObservationCostBudgetFiltration_subset_powerset
     (costBudget : Nat) :
-    correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -260,16 +251,14 @@ theorem
 
   exact
     Finset.mem_powerset.mpr
-      ((mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mp
+      ((mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
         hS).1
 
 /-- Every budget layer has at most `2^|U|` candidates. -/
 theorem
     correctedConcreteObservationCostBudgetFiltration_card_le_two_pow
     (costBudget : Nat) :
-    (correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -279,8 +268,7 @@ theorem
       2 ^ U.card := by
 
   exact
-    correctedConcreteObservationCostFeasibleSelections_card_le_two_pow
-      (z := z)
+    correctedConcreteObservationCostFeasibleSelections_card_le_two_pow.{u, v, w, z}
       obsFamily
       f
       selectionCost
@@ -305,7 +293,7 @@ variable {U : Finset ι}
 variable {language : Set (Word α)}
 variable
   (hSelection :
-    HasCorrectedConcreteObservationSelectionCost
+    HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       selectionCost
@@ -316,8 +304,7 @@ variable
 theorem
     correctedConcreteObservationCostBudgetFiltration_nonempty_iff_minimum_le
     (costBudget : Nat) :
-    (correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+    (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -330,8 +317,7 @@ theorem
         costBudget := by
 
   calc
-    (correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+    (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -339,15 +325,14 @@ theorem
           language
           costBudget).Nonempty
         ↔
-      CorrectedConcreteObservationSelectionAtCost
+      CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         selectionCost
         U
         language
         costBudget :=
-          correctedConcreteObservationCostFeasibleSelections_nonempty_iff
-            (z := z)
+          correctedConcreteObservationCostFeasibleSelections_nonempty_iff.{u, v, w, z}
             obsFamily
             f
             selectionCost
@@ -367,8 +352,7 @@ theorem
 theorem
     correctedConcreteObservationCostBudgetFiltration_eq_empty_iff_lt_minimum
     (costBudget : Nat) :
-    correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -395,8 +379,7 @@ theorem
       omega
 
     have hNonempty :
-        (correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+        (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -423,8 +406,7 @@ theorem
     · intro hS
 
       have hNonempty :
-          (correctedConcreteObservationCostBudgetFiltration
-            (z := z)
+          (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
             obsFamily
             f
             selectionCost
@@ -452,8 +434,7 @@ theorem
 /-- The minimum-cost budget layer is nonempty. -/
 theorem
     correctedConcreteObservationCostBudgetFiltration_minimum_nonempty :
-    (correctedConcreteObservationCostBudgetFiltration
-      (z := z)
+    (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
       obsFamily
       f
       selectionCost
@@ -480,8 +461,7 @@ theorem
         correctedConcreteObservationSelectionMinimumCost
           selectionCost
           hSelection) :
-    correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -499,8 +479,7 @@ theorem
 /-- Exact first-nonempty-budget package. -/
 theorem
     correctedConcreteObservationCostBudgetFiltration_firstNonempty_package :
-    (correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -514,8 +493,7 @@ theorem
             correctedConcreteObservationSelectionMinimumCost
               selectionCost
               hSelection →
-          correctedConcreteObservationCostBudgetFiltration
-              (z := z)
+          correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
               obsFamily
               f
               selectionCost
@@ -549,7 +527,7 @@ variable {U : Finset ι}
 variable {language : Set (Word α)}
 variable
   (hSelection :
-    HasCorrectedConcreteObservationSelectionCost
+    HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
       (obsFamily := obsFamily)
       (f := f)
       selectionCost
@@ -560,8 +538,7 @@ variable
 minimum-cost selections. -/
 theorem
     correctedConcreteObservationCostBudgetFiltration_minimum_eq_minimumCostSelections :
-    correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+    correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -570,8 +547,7 @@ theorem
         (correctedConcreteObservationSelectionMinimumCost
           selectionCost
           hSelection) =
-      correctedConcreteObservationMinimumCostSelections
-        (z := z)
+      correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
         selectionCost
         hSelection := by
 
@@ -582,8 +558,7 @@ theorem
   · intro hS
 
     rcases
-        (mem_correctedConcreteObservationCostBudgetFiltration_iff
-          (z := z)).mp
+        (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
           hS with
       ⟨hSU, hCost, hTarget⟩
 
@@ -612,8 +587,7 @@ theorem
         hMinimum
 
     exact
-      (mem_correctedConcreteObservationMinimumCostSelections_iff
-        (z := z)
+      (mem_correctedConcreteObservationMinimumCostSelections_iff.{u, v, w, z}
         selectionCost
         hSelection).mpr
         ⟨hSU,
@@ -623,16 +597,14 @@ theorem
   · intro hS
 
     rcases
-        (mem_correctedConcreteObservationMinimumCostSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationMinimumCostSelections_iff.{u, v, w, z}
           selectionCost
           hSelection).mp
           hS with
       ⟨hSU, hTarget, hCostEq⟩
 
     exact
-      (mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mpr
+      (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
         ⟨hSU,
           by
             rw [hCostEq],
@@ -643,8 +615,7 @@ layer. -/
 theorem
     correctedConcreteObservationMinimumCostSelectionResult_mem_firstNonemptyLayer
     (result :
-      CorrectedConcreteObservationMinimumCostSelectionResult
-        (z := z)
+      CorrectedConcreteObservationMinimumCostSelectionResult.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -652,8 +623,7 @@ theorem
         language
         hSelection) :
     result.selected ∈
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -691,8 +661,7 @@ variable (hSU : S ⊆ U)
 variable
   (hTarget :
     language ∈
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥S → M)
         (selectedObservationProduct obsFamily S)
@@ -701,8 +670,7 @@ variable
 /-- Every feasible selection enters the filtration at its own cost. -/
 theorem correctedConcreteObservationSelection_mem_ownCostLayer :
     S ∈
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -711,8 +679,7 @@ theorem correctedConcreteObservationSelection_mem_ownCostLayer :
         (selectionCost S) := by
 
   exact
-    (mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)).mpr
+    (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
       ⟨hSU,
         Nat.le_refl _,
         hTarget⟩
@@ -723,8 +690,7 @@ theorem correctedConcreteObservationSelection_mem_laterCostLayer
     (hCost :
       selectionCost S <= costBudget) :
     S ∈
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -733,8 +699,7 @@ theorem correctedConcreteObservationSelection_mem_laterCostLayer
         costBudget := by
 
   exact
-    (mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)).mpr
+    (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mpr
       ⟨hSU,
         hCost,
         hTarget⟩
@@ -745,8 +710,7 @@ theorem correctedConcreteObservationSelection_not_mem_earlierCostLayer
     (hCost :
       costBudget < selectionCost S) :
     S ∉
-      correctedConcreteObservationCostBudgetFiltration
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         selectionCost
@@ -758,8 +722,7 @@ theorem correctedConcreteObservationSelection_not_mem_earlierCostLayer
 
   have hBound :
       selectionCost S <= costBudget :=
-    ((mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)).mp
+    ((mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
       hS).2.1
 
   omega
@@ -769,8 +732,7 @@ theorem
     correctedConcreteObservationSelection_mem_costLayer_iff_cost_le
     (costBudget : Nat) :
     S ∈
-        correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+        correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -784,8 +746,7 @@ theorem
   · intro hS
 
     exact
-      ((mem_correctedConcreteObservationCostBudgetFiltration_iff
-        (z := z)).mp
+      ((mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
         hS).2.1
 
   · intro hCost
@@ -823,8 +784,7 @@ theorem correctedConcreteObservationCostBudgetCandidate_certified_package
     {S : Finset ι}
     (hS :
       S ∈
-        correctedConcreteObservationCostBudgetFiltration
-          (z := z)
+        correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           selectionCost
@@ -847,13 +807,11 @@ theorem correctedConcreteObservationCostBudgetCandidate_certified_package
           (M := ↥S → M)
           (selectedObservationProduct obsFamily S)
           f
-          (startRootedTargetCertifiedDescriptionRank
-            (v := z)
+          (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
             hα
             (selectedObservationProduct obsFamily S)
             f
-            ((mem_correctedConcreteObservationCostBudgetFiltration_iff
-              (z := z)).mp
+            ((mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
               hS).2.2) ∧
       ∃
         C :
@@ -866,30 +824,25 @@ theorem correctedConcreteObservationCostBudgetCandidate_certified_package
             language ∧
           C.bits.length <=
             correctedConcreteCertifiedRankBitBudget
-              (startRootedTargetCertifiedDescriptionRank
-                (v := z)
+              (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                 hα
                 (selectedObservationProduct obsFamily S)
                 f
-                ((mem_correctedConcreteObservationCostBudgetFiltration_iff
-                  (z := z)).mp
+                ((mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
                   hS).2.2)
               f ∧
           C.canonicalSearch.length <=
             correctedConcreteCertifiedRankSearchBudget
-              (startRootedTargetCertifiedDescriptionRank
-                (v := z)
+              (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                 hα
                 (selectedObservationProduct obsFamily S)
                 f
-                ((mem_correctedConcreteObservationCostBudgetFiltration_iff
-                  (z := z)).mp
+                ((mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
                   hS).2.2)
               f := by
 
   let hMembership :=
-    (mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)).mp
+    (mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}).mp
       hS
 
   let hTarget :=
@@ -897,22 +850,19 @@ theorem correctedConcreteObservationCostBudgetCandidate_certified_package
 
   exact
     ⟨hMembership.2.1,
-      selectedProductCertifiedLearner_identifies_targetClass
-        (z := z)
+      selectedProductCertifiedLearner_identifies_targetClass.{u, v, w, z}
         hα
         obsFamily
         f
         S
         language
         hTarget,
-      startRootedTarget_mem_minimumCertifiedDescriptionRankProfile
-        (v := z)
+      startRootedTarget_mem_minimumCertifiedDescriptionRankProfile.{u, max v w, z}
         hα
         (selectedObservationProduct obsFamily S)
         f
         hTarget,
-      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank.{u, max v w, z}
         hα
         (selectedObservationProduct obsFamily S)
         f
@@ -939,8 +889,7 @@ noncomputable def
     correctedConcreteObservationPositiveAdditiveBudgetFiltration
     (costBudget : Nat) :
     Finset (Finset ι) :=
-  correctedConcreteObservationCostBudgetFiltration
-    (z := z)
+  correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
     obsFamily
     f
     (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -955,8 +904,7 @@ theorem
     {costBudget : Nat}
     {S : Finset ι} :
     S ∈
-        correctedConcreteObservationPositiveAdditiveBudgetFiltration
-          (z := z)
+        correctedConcreteObservationPositiveAdditiveBudgetFiltration.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -968,16 +916,14 @@ theorem
             coordinateWeight S <=
           costBudget ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f := by
 
   exact
-    mem_correctedConcreteObservationCostBudgetFiltration_iff
-      (z := z)
+    mem_correctedConcreteObservationCostBudgetFiltration_iff.{u, v, w, z}
 
 /-- Positive-additive budget layers are monotone. -/
 theorem
@@ -985,16 +931,14 @@ theorem
     {costBudget costBudget' : Nat}
     (hBudget :
       costBudget <= costBudget') :
-    correctedConcreteObservationPositiveAdditiveBudgetFiltration
-        (z := z)
+    correctedConcreteObservationPositiveAdditiveBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
         U
         language
         costBudget ⊆
-      correctedConcreteObservationPositiveAdditiveBudgetFiltration
-        (z := z)
+      correctedConcreteObservationPositiveAdditiveBudgetFiltration.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1003,8 +947,7 @@ theorem
         costBudget' := by
 
   exact
-    correctedConcreteObservationCostBudgetFiltration_mono
-      (z := z)
+    correctedConcreteObservationCostBudgetFiltration_mono.{u, v, w, z}
       hBudget
 
 end PositiveAdditiveBudgetFiltration
@@ -1034,16 +977,14 @@ theorem
       language : Set (Word α),
       ∀ costBudget costBudget' : Nat,
         costBudget <= costBudget' →
-        correctedConcreteObservationCostBudgetFiltration
-            (z := z)
+        correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
             obsFamily
             f
             selectionCost
             U
             language
             costBudget ⊆
-          correctedConcreteObservationCostBudgetFiltration
-            (z := z)
+          correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
             obsFamily
             f
             selectionCost
@@ -1053,14 +994,13 @@ theorem
       (∀
         language : Set (Word α),
         ∀ hSelection :
-          HasCorrectedConcreteObservationSelectionCost
+          HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
             (obsFamily := obsFamily)
             (f := f)
             selectionCost
             U
             language,
-          (correctedConcreteObservationCostBudgetFiltration
-              (z := z)
+          (correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
               obsFamily
               f
               selectionCost
@@ -1074,8 +1014,7 @@ theorem
                   correctedConcreteObservationSelectionMinimumCost
                     selectionCost
                     hSelection →
-                correctedConcreteObservationCostBudgetFiltration
-                    (z := z)
+                correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
                     obsFamily
                     f
                     selectionCost
@@ -1083,8 +1022,7 @@ theorem
                     language
                     costBudget =
                   ∅) ∧
-            correctedConcreteObservationCostBudgetFiltration
-                (z := z)
+            correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
                 obsFamily
                 f
                 selectionCost
@@ -1093,8 +1031,7 @@ theorem
                 (correctedConcreteObservationSelectionMinimumCost
                   selectionCost
                   hSelection) =
-              correctedConcreteObservationMinimumCostSelections
-                (z := z)
+              correctedConcreteObservationMinimumCostSelections.{u, v, w, z}
                 selectionCost
                 hSelection) ∧
       (∀
@@ -1102,8 +1039,7 @@ theorem
         ∀ costBudget : Nat,
         ∀ S : Finset ι,
           S ∈
-              correctedConcreteObservationCostBudgetFiltration
-                (z := z)
+              correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
                 obsFamily
                 f
                 selectionCost
@@ -1128,8 +1064,7 @@ theorem
   · intro language costBudget costBudget' hBudget
 
     exact
-      correctedConcreteObservationCostBudgetFiltration_mono
-        (z := z)
+      correctedConcreteObservationCostBudgetFiltration_mono.{u, v, w, z}
         hBudget
 
   · intro language hSelection
@@ -1147,8 +1082,7 @@ theorem
   · intro language costBudget S hS
 
     exact
-      (correctedConcreteObservationCostBudgetCandidate_certified_package
-        (z := z)
+      (correctedConcreteObservationCostBudgetCandidate_certified_package.{u, v, w, z}
         hα
         obsFamily
         f
