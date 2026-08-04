@@ -220,11 +220,16 @@ Corollary~\ref{cor:gold} gives identification in the limit.
 
 \begin{theorem}[Hypothesis construction, preview]
 \label{thm:main-poly-preview}
-For fixed \(f\) and fixed explicit \(h\), the canonical hypothesis associated
-with a finite sample \(K\) is constructible in time
-\(\|K\|_+^{O(f)}\), including its output size.  This is a construction bound
-from the sample at hand; it is not by itself a polynomial-data theorem for the
-full target class.
+Fix a fan-out bound \(f\) and an explicit finite monoid morphism \(h\).  For
+every finite sample \(K\), the corresponding canonical hypothesis grammar can
+be constructed in time \(\|K\|_+^{O(f)}\), including the time required to
+write the output grammar.
+
+Thus, for fixed \(f\) and \(h\), hypothesis construction is polynomial in the
+sample size \(\|K\|_+\).  This is only a bound on constructing a hypothesis
+from the sample at hand; it does not assert that a characteristic sample
+sufficient for exact identification has size polynomial in the target
+presentation.
 \end{theorem}
 
 The construction bound is proved in Theorem~\ref{thm:poly}, and the precise
@@ -618,13 +623,14 @@ sample to previously unseen strings.
 \label{sec:running-examples}
 
 Before the abstract reconstruction proof, we record concrete grammars showing
-what the fixed observation morphism is meant to capture in familiar block
-synchronization languages.  The fixed regular envelope supplies only the coarse
-zone pattern; the equality constraints are recovered distributionally from
-positive examples.  We also verify the semantic promise for these examples, so
-that the examples really belong to the relevant fixed-observation fibers.  For
-related letter-count separations and calibrations in MCFLs, see
-\cite{LehnerLindorfer2020}.
+what the fixed observation morphism captures in familiar block-synchronization
+languages.  A fixed regular envelope supplies only coarse information such as
+the order of the letter blocks.  Equalities between block lengths are not
+encoded by the envelope; they are recovered by the learner from the
+sentence-context distributions of tuples observed in positive examples.  We
+also verify the semantic promise for these examples, so that they really belong
+to the relevant fixed-observation fibers.  For related letter-count separations
+and calibrations in MCFLs, see \cite{LehnerLindorfer2020}.
 
 For a finite ordered alphabet \(\Sigma_m=\{a_1,\ldots,a_m\}\), put
 \[
@@ -738,11 +744,46 @@ contradicting Lemma~\ref{lem:zone-morphism-basic}.  Thus
 \(\tuple x\) and \(\tuple y\), so their tuple distributions are equal.
 \end{proof}
 
-The preceding argument can be generalized.  In particular, the framework below
-covers languages such as
+\begin{example}[The three-block agreement language]
+\label{ex:l3-language}
+Let
 \[
-  \{a^n\#_2b^m\#_3c^n\#_4d^m\mid n,m\ge1\}.
+  L_3=\{a^n b^n c^n\mid n\ge1\},
+  \qquad R_3=a^*b^*c^* .
 \]
+Let \(h_{R_3}\) be the transition morphism of the standard DFA recognizing
+\(R_3\).  The morphism records the coarse block zone of a component, but not the
+equality of the three block lengths.
+\end{example}
+
+\begin{proposition}[A working presentation for \(L_3\)]
+\label{prop:l3-running-example}
+The language \(L_3\) has a reduced working binary linear nondeleting MCFG
+presentation of fan-out two.
+\end{proposition}
+
+\begin{proof}
+Let \(V=\{S,T,A,A_a,A_b,A_c\}\), let \(\mu(A)=2\), and let all other
+nonterminals have fan-out \(1\).  Use the rules
+\[
+  S\to T,\qquad A_a\to(a),\qquad A_b\to(b),\qquad A_c\to(c),
+\]
+\[
+  A\to(x^1,y^1)(A_a,A_b),\qquad
+  A\to(a x^1,b x^2 y^1)(A,A_c),
+\]
+\[
+  T\to(x^1x^2y^1)(A,A_c).
+\]
+A direct induction gives
+\(L_A=\{(a^n,b^n c^{n-1})\mid n\ge1\}\), and the top rule yields exactly
+\(a^n b^n c^n\).  The grammar is in the working form of
+Definition~\ref{def:working-mcfg}.
+\end{proof}
+
+The preceding argument can be generalized.  For example, the language
+\(\{a^n\#_2b^m\#_3c^n\#_4d^m\mid n,m\ge1\}\) is represented in the following
+definition by \(\Lambda:=\{(1,3),(2,4)\}\).
 
 \begin{definition}[Fixed ordered block envelope]
 \label{def:fixed-ordered-block-envelope}
@@ -959,42 +1000,7 @@ Since \(d\le f\) was arbitrary, \(L_\Lambda\) is
 \((f,h_R)\)-tuple-substitutable.
 \end{proof}
 
-\begin{example}[The three-block agreement language]
-\label{ex:l3-language}
-Let
-\[
-  L_3=\{a^n b^n c^n\mid n\ge1\},
-  \qquad R_3=a^*b^*c^* .
-\]
-Let \(h_{R_3}\) be the transition morphism of the standard DFA recognizing
-\(R_3\).  The morphism records the coarse block zone of a component, but not the
-equality of the three block lengths.
-\end{example}
 
-\begin{proposition}[A working presentation for \(L_3\)]
-\label{prop:l3-running-example}
-The language \(L_3\) has a reduced working binary linear nondeleting MCFG
-presentation of fan-out two.
-\end{proposition}
-
-\begin{proof}
-Let \(V=\{S,T,A,A_a,A_b,A_c\}\), let \(\mu(A)=2\), and let all other
-nonterminals have fan-out \(1\).  Use the rules
-\[
-  S\to T,\qquad A_a\to(a),\qquad A_b\to(b),\qquad A_c\to(c),
-\]
-\[
-  A\to(x^1,y^1)(A_a,A_b),\qquad
-  A\to(a x^1,b x^2 y^1)(A,A_c),
-\]
-\[
-  T\to(x^1x^2y^1)(A,A_c).
-\]
-A direct induction gives
-\(L_A=\{(a^n,b^n c^{n-1})\mid n\ge1\}\), and the top rule yields exactly
-\(a^n b^n c^n\).  The grammar is in the working form of
-Definition~\ref{def:working-mcfg}.
-\end{proof}
 
 \begin{corollary}[The three-block example belongs to the fixed-observation class]
 \label{cor:l3-in-fixed-observation-class}
@@ -1627,35 +1633,7 @@ rule \(X\to(a)\), and the tuple \(\rho(\omega(Y),\omega(Z))\) for a binary rule
 \(L(G)\).
 \end{proof}
 
-\begin{proposition}[Concrete-context sufficiency]
-\label{prop:concrete-context-sufficiency}
-Let \(G\) be a witnessing working presentation and let \(\widetilde G_0\) be
-its trimmed output-type refinement.  For each surviving typed nonterminal
-\(X\), choose an anchor tuple \(\omega(X)\) and a concrete exposing context
-\(\chi(X)\) that accepts every tuple derived from \(X\).  Then the data
-consisting of
-\begin{enumerate}[label=(\roman*),leftmargin=*]
-\item the componentwise output \(h\)-type of each surviving typed symbol,
-\item one exposed anchor for each surviving typed symbol, and
-\item one exposed filled instance of each surviving typed rule
-\end{enumerate}
-are sufficient for the canonical learner to simulate every rule of
-\(\widetilde G_0\).  No additional sentence-level interface label is required
-on the learner's nonterminals.
-\end{proposition}
 
-\begin{proof}
-The output type guarantees that a typed parent anchor and the corresponding
-filled rule tuple have the same componentwise \(h\)-value.  Their two exposed
-sample words use the same concrete context \(\chi(X)\), so the learner may
-connect the two observed tuple values by a guarded unit rule.  A filled binary
-rule word records the actual variable intervals of its two child anchors inside
-the parent tuple; the anchors themselves may be observed through their own
-exposing words.  The resulting binary witness reconstructs the underlying
-linear template.  Terminal and start rules are handled by the corresponding
-exposed terminal and anchor words.  The formal rule-by-rule simulation is
-Lemma~\ref{lem:rule-simulation}.
-\end{proof}
 
 \subsection{Observed tuples and concrete witnesses}
 
@@ -2031,6 +2009,141 @@ nonterminals and rules.
 \end{proof}
 
 
+\subsection{Sufficiency of concrete contexts}
+
+\begin{proposition}[Concrete-context sufficiency]
+\label{prop:concrete-context-sufficiency}
+Let \(G\) be a reduced working MCFG, and let \(\widetilde G_0\) be its trimmed
+output-type refinement.  For each surviving typed nonterminal \(X\), fix an
+anchor tuple \(\omega(X)\in L_X\) and a concrete exposing context \(\chi(X)\)
+such that \(\chi(X)[\tuple u]\in L(G)\) for every \(\tuple u\in L_X\).  If
+\(\widetilde S\to X\) is a typed start rule, choose
+\(\chi(X)=\blank_1\).
+
+Let \(S_{\mathrm{ctx}}\subseteq L(G)\) consist of the following words:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item the anchor exposure \(\chi(X)[\omega(X)]\) for every surviving typed
+      nonterminal \(X\);
+\item the terminal exposure \(\chi(X)[(a)]\) for every surviving typed terminal
+      rule \(X\to(a)\);
+\item the rule exposure \(\chi(X)[\tuple z_R]\) for every surviving typed
+      binary rule \(R\colon X\to\rho(Y,Z)\), where
+      \(\tuple z_R:=\rho(\omega(Y),\omega(Z))\).
+\end{enumerate}
+Thus \(S_{\mathrm{ctx}}=\CS(\widetilde G_0)\).
+
+For every finite sample \(K\) satisfying
+\(S_{\mathrm{ctx}}\subseteq K\subseteq L(G)\), the canonical hypothesis
+\(\widehat G_0(K)\) simulates every rule of \(\widetilde G_0\) under the map
+\(\iota(X):=[\omega(X)]\), in the following precise sense.
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item If \(\widetilde S\to X\) is a typed start rule, then
+      \(\widehat S\to\iota(X)\) is a start rule of \(\widehat G_0(K)\).
+\item If \(X\to(a)\) is a typed terminal rule, then
+      \(\iota(X)\Rightarrow[(a)]\Rightarrow(a)\) in \(\widehat G_0(K)\).
+\item If \(R\colon X\to\rho(Y,Z)\) is a typed binary rule, then
+      \[
+        \iota(X)\Rightarrow[\tuple z_R]\Rightarrow
+        \rho\bigl(\iota(Y),\iota(Z)\bigr)
+      \]
+      in \(\widehat G_0(K)\).
+\end{enumerate}
+
+Consequently, the simulation requires only the componentwise \(h\)-types
+computed from observed tuples, one exposed anchor for each surviving typed
+nonterminal, and one exposed filled example for each surviving typed rule.  No
+additional sentence-level interface marker has to be stored in a learner
+nonterminal.
+\end{proposition}
+
+\begin{proof}
+The set \(S_{\mathrm{ctx}}\) is finite because \(\widetilde G_0\) has only
+finitely many surviving typed nonterminals and typed rules.  Moreover, every
+word listed above belongs to \(L(G)\).  Indeed,
+\(\omega(X)\in L_X\), and the defining property of \(\chi(X)\) gives
+\(\chi(X)[\omega(X)]\in L(G)\).  If \(X\to(a)\) is a typed terminal rule,
+then \((a)\in L_X\), so \(\chi(X)[(a)]\in L(G)\).  If
+\(R\colon X\to\rho(Y,Z)\) is a typed binary rule, then
+\(\omega(Y)\in L_Y\) and \(\omega(Z)\in L_Z\), whence
+\(\tuple z_R=\rho(\omega(Y),\omega(Z))\in L_X\) and
+\(\chi(X)[\tuple z_R]\in L(G)\).  Thus
+\(S_{\mathrm{ctx}}\subseteq L(G)\).
+
+Fix a finite \(K\) with
+\(S_{\mathrm{ctx}}\subseteq K\subseteq L(G)\).  We consider the three rule
+forms separately.
+
+\medskip
+\noindent
+\textbf{Start rules.}
+Let \(\widetilde S\to X\) be a typed start rule.  Then \(X\) has fan-out one
+and \(\chi(X)=\blank_1\).  Write \(\omega(X)=(w_X)\).  Since
+\(w_X=\chi(X)[\omega(X)]\in K\),
+Definition~\ref{def:learner}(i) adds the start rule
+\(\widehat S\to[(w_X)]=[\omega(X)]=\iota(X)\).
+
+\medskip
+\noindent
+\textbf{Terminal rules.}
+Let \(X\to(a)\) be a typed terminal rule.  Both
+\(\chi(X)[\omega(X)]\) and \(\chi(X)[(a)]\) belong to \(K\), so
+\(\omega(X)\) and \((a)\) are observed in the same concrete context
+\(\chi(X)\).  Write \(X=A_{\mathbf p}\).  By
+Proposition~\ref{prop:output-invariants},
+\(h^{(\mu(A))}(\omega(X))=\mathbf p\).  The definition of a typed terminal
+rule gives \(\mu(A)=1\) and \(\mathbf p=(h(a))\), hence
+\(h^{(1)}(\omega(X))=h^{(1)}((a))\).  Therefore
+Definition~\ref{def:learner}(iv) adds the unit rule
+\([\omega(X)]\to[(a)]\), while Definition~\ref{def:learner}(ii) adds
+\([(a)]\to(a)\).  Thus
+\(\iota(X)\Rightarrow[(a)]\Rightarrow(a)\).
+
+\medskip
+\noindent
+\textbf{Binary rules.}
+Let \(R\colon X\to\rho(Y,Z)\) be a typed binary rule and put
+\(\tuple z_R:=\rho(\omega(Y),\omega(Z))\).  The two words
+\(\chi(X)[\omega(X)]\) and \(\chi(X)[\tuple z_R]\) belong to \(K\), so
+\(\omega(X)\) and \(\tuple z_R\) are observed in the same concrete context
+\(\chi(X)\).  If \(X=A_{\mathbf p}\), then
+Proposition~\ref{prop:output-invariants} gives
+\(h^{(\mu(A))}(\omega(X))=\mathbf p\).  Because \(R\) is a typed rule with
+left-hand side \(X\), the definition of the output-type refinement and the
+same proposition give \(h^{(\mu(A))}(\tuple z_R)=\mathbf p\).  Hence
+Definition~\ref{def:learner}(iv) adds the unit rule
+\([\omega(X)]\to[\tuple z_R]\).
+
+Consider the parent occurrence \((\chi(X),\tuple z_R)\) in the word
+\(\chi(X)[\tuple z_R]\).  The child tuples \(\omega(Y)\) and \(\omega(Z)\)
+are observed in \(K\) through their own anchor exposures
+\(\chi(Y)[\omega(Y)]\) and \(\chi(Z)[\omega(Z)]\); these observations need
+not occur in the parent sample word.  In the equality
+\(\tuple z_R=\rho(\omega(Y),\omega(Z))\), the template of \(\rho\) partitions
+each parent component into terminal gaps and variable intervals carrying the
+components of \(\omega(Y)\) and \(\omega(Z)\).  Linearity and nondeletion make
+each variable occur exactly once over the whole parent tuple.  If a child
+component is empty, the variable order in the template supplies the local tie
+order at the common cut.
+
+The parent occurrence, the two child observations, and this ordered
+segmentation therefore form a binary witness in the sense of
+Definition~\ref{def:binary-witness}.  By
+Lemma~\ref{lem:unique-induced-template}, its induced template is exactly the
+original template \(\rho\).  Definition~\ref{def:learner}(iii) consequently
+adds the binary rule
+\([\tuple z_R]\to\rho([\omega(Y)],[\omega(Z)])\).  Combining it with the unit
+rule obtained above yields
+\(\iota(X)\Rightarrow[\tuple z_R]\Rightarrow
+\rho(\iota(Y),\iota(Z))\).
+
+Thus every surviving start, terminal, and binary rule of \(\widetilde G_0\) is
+simulated under \(X\mapsto\iota(X)\).  The context \(\chi(X)\) is used only as
+positive evidence that two observed tuples share an accepting context, thereby
+justifying the relevant unit rule.  Learner nonterminals remain indexed solely
+by observed tuple values \([\tuple x]\); neither \(\chi(X)\) nor any other
+sentence-level interface information has to be stored in their names.
+\end{proof}
+
 \section{Soundness and Exact Reconstruction}
 \label{sec:exact}
 
@@ -2309,46 +2422,74 @@ only polynomial blow-up for fixed \(f\) and \(h\).
 
 \begin{definition}[Exposure size]
 \label{def:exposure-size}
-Let \(G\) be a witnessing target presentation and let \(\widetilde G_0\) be its
-trimmed output-type refinement.  Define \(B_{\mathrm{exp}}(G,h)\) as the
-maximum positive size of the characteristic-sample words
+Let \(G\) be a witnessing working presentation of the target language, and let
+\(\widetilde G_0\) be its trimmed output-type refinement.  Use the anchor tuples
+\(\omega(X)\) and exposing contexts \(\chi(X)\) fixed in
+Proposition~\ref{prop:concrete-context-sufficiency}.
+
+Let \(\widetilde V_0\) be the set of surviving typed nonterminals of
+\(\widetilde G_0\), and let \(\widetilde P_{\mathrm{ter}}\) and
+\(\widetilde P_{\mathrm{bin}}\) be its sets of surviving typed terminal and
+binary rules, respectively.  Define the exposure-word set by
 \[
-  \chi(X)[\omega(X)],\qquad
-  \chi(X)[(a)],\qquad
-  \chi(X)[\rho(\omega(Y),\omega(Z))]
+\begin{aligned}
+\mathcal E_{\mathrm{exp}}(G,h):={}&
+ \{\chi(X)[\omega(X)]\mid X\in\widetilde V_0\}\\
+&{}\cup\{\chi(X)[(a)]\mid X\to(a)\in\widetilde P_{\mathrm{ter}}\}\\
+&{}\cup\{\chi(X)[\rho(\omega(Y),\omega(Z))]\mid
+          X\to\rho(Y,Z)\in\widetilde P_{\mathrm{bin}}\}.
+\end{aligned}
 \]
-used for surviving typed nonterminals, terminal rules, and binary rules of
-\(\widetilde G_0\).
+The set is nonempty because \(\widetilde G_0\) has at least one surviving
+typed nonterminal.  The \emph{exposure size} of \(G\) relative to \(h\) is
+\(B_{\mathrm{exp}}(G,h):=
+\max_{w\in\mathcal E_{\mathrm{exp}}(G,h)}\max\{1,|w|\}\).
+The notation suppresses the dependence on the fixed choices of \(\omega(X)\)
+and \(\chi(X)\).
 \end{definition}
 
 \begin{proposition}[Characteristic-sample size under an exposure bound]
 \label{prop:cs-exposure-bound}
-Let \(N_{\mathrm{NT}}\) be the number of surviving typed nonterminals of
-\(\widetilde G_0\), and let \(N_{\mathrm{rule}}\) be the number of surviving
-non-start typed rules.  Then
+Put \(N_{\mathrm{NT}}:=|\widetilde V_0|\) and
+\(N_{\mathrm{rule}}:=|\widetilde P_{\mathrm{ter}}|+
+|\widetilde P_{\mathrm{bin}}|\), the number of surviving typed non-start rules.
+Then
 \[
-  |\CS(\widetilde G_0)|
-  \le N_{\mathrm{NT}}+N_{\mathrm{rule}}
-\]
-and
-\[
+  |\CS(\widetilde G_0)|\le N_{\mathrm{NT}}+N_{\mathrm{rule}},
+  \qquad
   \|\CS(\widetilde G_0)\|_+
-  \le
-  (N_{\mathrm{NT}}+N_{\mathrm{rule}})
-  B_{\mathrm{exp}}(G,h).
+  \le (N_{\mathrm{NT}}+N_{\mathrm{rule}})B_{\mathrm{exp}}(G,h).
 \]
-Consequently, every subclass for which \(N_{\mathrm{NT}}\),
-\(N_{\mathrm{rule}}\), and \(B_{\mathrm{exp}}(G,h)\) are polynomially bounded
-in the chosen witnessing-presentation size has polynomial-size characteristic
-samples.
+Consequently, if \(N_{\mathrm{NT}}\), \(N_{\mathrm{rule}}\), and
+\(B_{\mathrm{exp}}(G,h)\) are all polynomially bounded in the size \(|G|\) of
+the chosen witnessing presentation on a subclass, then every target in that
+subclass has a characteristic sample of size polynomial in \(|G|\).
 \end{proposition}
 
 \begin{proof}
-Definition~\ref{def:cs} contributes at most one anchor word for every surviving
-typed nonterminal and at most one filled word for every surviving non-start
-typed rule; duplicate words can only reduce the cardinality.  Every contributed
-word has positive size at most \(B_{\mathrm{exp}}(G,h)\), which gives the two
-bounds.
+By Definition~\ref{def:cs}, the characteristic sample contains at most one
+anchor exposure for each \(X\in\widetilde V_0\), at most one terminal exposure
+for each rule in \(\widetilde P_{\mathrm{ter}}\), and at most one binary-rule
+exposure for each rule in \(\widetilde P_{\mathrm{bin}}\).  Counting before
+duplicate words are removed gives at most
+\(N_{\mathrm{NT}}+N_{\mathrm{rule}}\) words; taking a set can only decrease
+this number.
+
+Every \(w\in\CS(\widetilde G_0)\) satisfies
+\(\max\{1,|w|\}\le B_{\mathrm{exp}}(G,h)\).  Therefore
+\[
+  \|\CS(\widetilde G_0)\|_+
+  =\sum_{w\in\CS(\widetilde G_0)}\max\{1,|w|\}
+  \le |\CS(\widetilde G_0)|B_{\mathrm{exp}}(G,h)
+  \le (N_{\mathrm{NT}}+N_{\mathrm{rule}})B_{\mathrm{exp}}(G,h).
+\]
+
+Finally, suppose that polynomials \(p_1,p_2,p_3\) satisfy
+\(N_{\mathrm{NT}}\le p_1(|G|)\),
+\(N_{\mathrm{rule}}\le p_2(|G|)\), and
+\(B_{\mathrm{exp}}(G,h)\le p_3(|G|)\) throughout the subclass.  Then
+\(\|\CS(\widetilde G_0)\|_+\le
+(p_1(|G|)+p_2(|G|))p_3(|G|)\), which is polynomial in \(|G|\).
 \end{proof}
 
 The full output-type refinement has at most
