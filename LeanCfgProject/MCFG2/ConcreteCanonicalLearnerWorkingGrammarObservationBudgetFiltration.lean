@@ -668,6 +668,7 @@ variable
         f)
 
 /-- Every feasible selection enters the filtration at its own cost. -/
+include hSU hTarget in
 theorem correctedConcreteObservationSelection_mem_ownCostLayer :
     S ∈
       correctedConcreteObservationCostBudgetFiltration.{u, v, w, z}
@@ -685,6 +686,7 @@ theorem correctedConcreteObservationSelection_mem_ownCostLayer :
         hTarget⟩
 
 /-- A feasible selection belongs to every layer at or above its own cost. -/
+include hSU hTarget in
 theorem correctedConcreteObservationSelection_mem_laterCostLayer
     {costBudget : Nat}
     (hCost :
@@ -728,6 +730,7 @@ theorem correctedConcreteObservationSelection_not_mem_earlierCostLayer
   omega
 
 /-- Exact entry-stage characterization for one feasible selected subset. -/
+include hSU hTarget in
 theorem
     correctedConcreteObservationSelection_mem_costLayer_iff_cost_le
     (costBudget : Nat) :

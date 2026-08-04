@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  4 AUG 2026 09:53
+This is LuaHBTeX, Version 1.24.0 (MiKTeX 26.2) (format=lualatex 2026.3.19)  4 AUG 2026 10:40
  restricted system commands enabled.
 **fixed-h-MCFG-FI_submission_ja_v5.tex
 (./fixed-h-MCFG-FI_submission_ja_v5.tex
@@ -1900,10 +1900,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1001.
+ [12]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1007.
- [12]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1028.
@@ -1924,10 +1924,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1178.
+ [14]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1203.
- [14]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 1247.
@@ -1946,11 +1946,10 @@ ndefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 1260.
- [15]
+ [15] [16]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1437.
- [16]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1448.
@@ -1967,10 +1966,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1604.
+ [18]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1612.
- [18]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1627.
@@ -1987,11 +1986,10 @@ File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 File: mt-euf.cfg 2006/07/03 v1.1 microtype config. file: AMS Euler Fraktur (RS)
 
 )
+[19]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1691.
-
-[19]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1708.
@@ -2018,10 +2016,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1930.
+ [22]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1952.
- [22]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 1972.
@@ -2037,13 +2035,13 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2017.
+ [23]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2026.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2035.
- [23]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2040.
@@ -2062,10 +2060,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2095.
+ [24]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2118.
- [24]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2134.
@@ -2075,13 +2073,13 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2177.
+ [25]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2191.
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2202.
- [25]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2206.
@@ -2110,10 +2108,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2314.
+ [27]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2340.
- [27]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2351.
@@ -2126,10 +2124,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2391.
+ [28]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2415.
- [28]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2425.
@@ -2148,10 +2146,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2474.
+ [29]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2484.
- [29]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2492.
@@ -2180,10 +2178,10 @@ undefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2613.
+ [31]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2634.
- [31]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/it' 
 undefined
 (Font)              No change on input line 2649.
@@ -2225,6 +2223,7 @@ ndefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 2965.
+ [36]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 2971.
@@ -2237,7 +2236,6 @@ ndefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 2987.
- [36]
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 2993.
@@ -2271,7 +2269,7 @@ ndefined
 LaTeX Font Info:    Kanji font shape `JY3/HaranoAjiGothic-Medium.otf(0)/m/it' u
 ndefined
 (Font)              No change on input line 3060.
- [37] (./fixed-h-MCFG-FI_submission_ja_v5.aux)
+ [37] [38] (./fixed-h-MCFG-FI_submission_ja_v5.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -2281,19 +2279,22 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.5pt have occurred.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `fixed-h-MCFG-FI_submission_ja_v5.out' has no
 t changed.
 (rerunfilecheck)             Checksum: 05B8FE13A2F33FD2F66BCEF755D7DDBA;2439.
 )
 
 Here is how much of LuaTeX's memory you used:
- 18670 strings out of 476076
+ 18671 strings out of 476076
  305802,953878 words of node,token memory allocated
  6031 words of node memory still in use:
    12 hlist, 2 vlist, 7 rule, 1 local_par, 5 glue, 4 kern, 2 penalty, 3 glyph, 2
 427 attribute, 61 glue_spec, 233 attribute_list, 1 write, 15 user_defined nodes
-   avail lists: 1:54,2:57682,3:503,4:310,5:338,6:52,7:7828,8:55,9:3583,10:37,11:
-360
+   avail lists: 1:54,2:57682,3:503,4:343,5:351,6:52,7:7828,8:55,9:3583,10:37,11:
+488
  40489 multiletter control sequences out of 65536+600000
  127 fonts using 109877535 bytes
  119i,12n,122p,2091b,748s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -2335,10 +2336,10 @@ er/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:
 /Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/m
 sam10.pfb><C:/Users/Owner/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
 nts/symbols/msbm10.pfb>
-Output written on fixed-h-MCFG-FI_submission_ja_v5.pdf (37 pages, 702669 bytes).
+Output written on fixed-h-MCFG-FI_submission_ja_v5.pdf (38 pages, 703529 bytes).
 
 
-PDF statistics: 710 PDF objects out of 1000 (max. 8388607)
- 224 named destinations out of 1000 (max. 1048576)
+PDF statistics: 716 PDF objects out of 1000 (max. 8388607)
+ 225 named destinations out of 1000 (max. 1048576)
  177 words of extra memory for PDF output out of 10000 (max. 100000000)
 
