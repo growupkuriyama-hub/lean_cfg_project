@@ -5,6 +5,10 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankComparison
 
+/- FIX SNAPSHOT: v19, 2026-08-04.
+   Two remaining Finset sum binders were updated for Lean 4.31 syntax.
+-/
+
 /-!
 # ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity.lean
 
@@ -797,7 +801,7 @@ theorem finsetNatWeightedSum_le_add_delta_mul_card
         hWeight selectedIndex
 
       calc
-        (∑ index in insert selectedIndex S,
+        (∑ index ∈ insert selectedIndex S,
             coordinateWeight₁ index) =
             coordinateWeight₁ selectedIndex +
               ∑ index ∈ S,
@@ -817,7 +821,7 @@ theorem finsetNatWeightedSum_le_add_delta_mul_card
             ih
 
         _ =
-            (∑ index in insert selectedIndex S,
+            (∑ index ∈ insert selectedIndex S,
                 coordinateWeight₀ index) +
               coordinateDelta *
                 (insert selectedIndex S).card := by
