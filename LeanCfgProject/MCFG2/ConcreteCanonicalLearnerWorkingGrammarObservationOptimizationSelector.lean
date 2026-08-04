@@ -552,7 +552,7 @@ noncomputable def correctedConcreteObservationParetoSelectionResult :
       selectionCost
       U
       language
-      hTarget := by
+      := by
 
   classical
 
@@ -582,7 +582,7 @@ theorem selected_pareto
         selectionCost
         U
         language
-        hTarget) :
+        ) :
     CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
       obsFamily
       f
@@ -609,7 +609,7 @@ theorem selected_subset
         selectionCost
         U
         language
-        hTarget) :
+        ) :
     result.selected ⊆ U := by
 
   exact
@@ -624,7 +624,7 @@ theorem selected_target
         selectionCost
         U
         language
-        hTarget) :
+        ) :
     language ∈
       StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
@@ -644,7 +644,7 @@ theorem not_strictlyDominated
         selectionCost
         U
         language
-        hTarget)
+        )
     {R : Finset ι}
     (hRU : R ⊆ U)
     (hRTarget :
@@ -675,7 +675,7 @@ theorem semantic_package
         selectionCost
         U
         language
-        hTarget) :
+        ) :
     result.selected ⊆ U ∧
       language ∈
         StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
@@ -736,7 +736,7 @@ theorem correctedConcreteObservationParetoSelectionResult_certified_package
         selectionCost
         U
         language
-        hTarget) :
+        ) :
     IdentifiesLanguageFromPositiveData
         (correctedConcreteCertifiedWorkingGrammarHypLanguage
           (selectedObservationProduct obsFamily result.selected)
@@ -830,7 +830,7 @@ theorem correctedConcreteObservationParetoSelectionResult_irredundant
         selectionCost
         U
         language
-        hTarget) :
+        ) :
     CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
       α
       ι
@@ -859,7 +859,7 @@ theorem
         selectionCost
         U
         language
-        hTarget)
+        )
     {index : ι}
     (hindex : index ∈ result.selected) :
     CorrectedConcreteSelectedObservationCoordinateEssential.{u, v, w, z}
@@ -893,7 +893,7 @@ theorem
         selectionCost
         U
         language
-        hTarget)
+        )
     {index : ι}
     (hindex : index ∈ result.selected) :
     CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
@@ -1185,7 +1185,6 @@ theorem
         selectionCost
         U
         language
-        hTarget
         result
 
     exact
