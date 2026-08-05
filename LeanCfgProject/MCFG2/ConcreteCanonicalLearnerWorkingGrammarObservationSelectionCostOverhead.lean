@@ -5,7 +5,7 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankSensitivity
 
-/- FIX SNAPSHOT: CostOverhead v20, 2026-08-04.
+/- FIX SNAPSHOT: CostOverhead v21, 2026-08-05.
    Universe parameters are explicit and fixed-overhead cancellation proofs
    are written against the extracted cost inequalities.
 -/
@@ -269,8 +269,6 @@ theorem observationSelectionAtCostWithOverhead_iff
         hSU,
         ?_,
         hTarget⟩
-
-    have hCost := hDominance.2
 
     unfold
       correctedConcreteObservationSelectionCostWithOverhead
@@ -851,6 +849,8 @@ theorem observationSelectionWeakDominance_withOverhead_iff
       ⟨hDominance.1,
         ?_⟩
 
+    have hCost := hDominance.2
+
     unfold
       correctedConcreteObservationSelectionCostWithOverhead
 
@@ -1249,10 +1249,28 @@ theorem ambientTarget_sameMinimumSelection_underCostOverhead_certified_package
           U
           hTarget := by
 
-    unfold
+    calc
       correctedConcreteObservationSelectionCostWithOverhead
-
-    rw [hOriginalCost, hRankShift]
+          selectionCost overhead result.selected =
+        selectionCost result.selected + overhead := rfl
+      _ =
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
+              obsFamily
+              f
+              selectionCost
+              U
+              hTarget +
+            overhead := by
+        rw [hOriginalCost]
+      _ =
+          ambientTargetObservationSelectionCostRank.{u, v, w, z}
+            obsFamily
+            f
+            (correctedConcreteObservationSelectionCostWithOverhead
+              selectionCost overhead)
+            U
+            hTarget :=
+        hRankShift.symm
 
   exact
     ⟨result.selected,
