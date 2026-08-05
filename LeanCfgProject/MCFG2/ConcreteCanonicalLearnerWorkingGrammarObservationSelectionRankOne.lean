@@ -5,6 +5,11 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankZero
 
+/- FIX SNAPSHOT: RankOne v24, 2026-08-05.
+   Legacy named universe pseudo-arguments are replaced by explicit
+   universe applications across the rank-one classes and certificates.
+-/
+
 /-!
 # ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne.lean
 
@@ -118,8 +123,7 @@ def CorrectedConcreteObservationSelectionOneCoordinateTargetClass :
       S ⊆ U ∧
         S.card = 1 ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -131,8 +135,7 @@ def CorrectedConcreteCardinalityObservationSelectionRankOneClass :
     Set (Set (Word α)) :=
   {language |
     language ∈
-        CorrectedConcreteObservationSelectionOneCoordinateTargetClass
-          (z := z)
+        CorrectedConcreteObservationSelectionOneCoordinateTargetClass.{u, v, w, z}
           α
           ι
           M
@@ -140,8 +143,7 @@ def CorrectedConcreteCardinalityObservationSelectionRankOneClass :
           f
           U ∧
       language ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥(∅ : Finset ι) → M)
           (selectedObservationProduct obsFamily ∅)
@@ -174,8 +176,7 @@ def CorrectedConcretePositiveAdditiveObservationSelectionUnitTargetClass :
             coordinateWeight S =
           0 ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -187,8 +188,7 @@ def CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass :
     Set (Set (Word α)) :=
   {language |
     language ∈
-        CorrectedConcretePositiveAdditiveObservationSelectionUnitTargetClass
-          (z := z)
+        CorrectedConcretePositiveAdditiveObservationSelectionUnitTargetClass.{u, v, w, z}
           α
           ι
           M
@@ -197,8 +197,7 @@ def CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass :
           coordinateWeight
           U ∧
       language ∉
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥(∅ : Finset ι) → M)
           (selectedObservationProduct obsFamily ∅)
@@ -222,8 +221,7 @@ variable {language : Set (Word α)}
 /-- Exact membership theorem for the one-coordinate target class. -/
 theorem mem_observationSelectionOneCoordinateTargetClass_iff :
     language ∈
-        CorrectedConcreteObservationSelectionOneCoordinateTargetClass
-          (z := z)
+        CorrectedConcreteObservationSelectionOneCoordinateTargetClass.{u, v, w, z}
           α
           ι
           M
@@ -234,8 +232,7 @@ theorem mem_observationSelectionOneCoordinateTargetClass_iff :
         S ⊆ U ∧
           S.card = 1 ∧
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥S → M)
               (selectedObservationProduct obsFamily S)
@@ -246,8 +243,7 @@ theorem mem_observationSelectionOneCoordinateTargetClass_iff :
 /-- Exact membership theorem for the cardinality-rank-one candidate class. -/
 theorem mem_cardinalityObservationSelectionRankOneClass_iff :
     language ∈
-        CorrectedConcreteCardinalityObservationSelectionRankOneClass
-          (z := z)
+        CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
           α
           ι
           M
@@ -258,15 +254,13 @@ theorem mem_cardinalityObservationSelectionRankOneClass_iff :
         S ⊆ U ∧
           S.card = 1 ∧
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥S → M)
               (selectedObservationProduct obsFamily S)
               f) ∧
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥(∅ : Finset ι) → M)
             (selectedObservationProduct obsFamily ∅)
@@ -277,8 +271,7 @@ theorem mem_cardinalityObservationSelectionRankOneClass_iff :
 /-- Exact membership theorem for the positive-additive unit-target class. -/
 theorem mem_positiveAdditiveObservationSelectionUnitTargetClass_iff :
     language ∈
-        CorrectedConcretePositiveAdditiveObservationSelectionUnitTargetClass
-          (z := z)
+        CorrectedConcretePositiveAdditiveObservationSelectionUnitTargetClass.{u, v, w, z}
           α
           ι
           M
@@ -293,8 +286,7 @@ theorem mem_positiveAdditiveObservationSelectionUnitTargetClass_iff :
               coordinateWeight S =
             0 ∧
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥S → M)
               (selectedObservationProduct obsFamily S)
@@ -306,8 +298,7 @@ theorem mem_positiveAdditiveObservationSelectionUnitTargetClass_iff :
 class. -/
 theorem mem_positiveAdditiveObservationSelectionRankOneClass_iff :
     language ∈
-        CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
-          (z := z)
+        CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass.{u, v, w, z}
           α
           ι
           M
@@ -322,15 +313,13 @@ theorem mem_positiveAdditiveObservationSelectionRankOneClass_iff :
               coordinateWeight S =
             0 ∧
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥S → M)
               (selectedObservationProduct obsFamily S)
               f) ∧
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥(∅ : Finset ι) → M)
             (selectedObservationProduct obsFamily ∅)
@@ -412,8 +401,7 @@ variable {U : Finset ι}
 represented by one coordinate but not by the empty selected product. -/
 theorem
     cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass :
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -422,8 +410,7 @@ theorem
         correctedConcreteObservationSelectionCardinalityCost
         U
         1 =
-      CorrectedConcreteCardinalityObservationSelectionRankOneClass
-        (z := z)
+      CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
         α
         ι
         M
@@ -446,7 +433,7 @@ theorem
       intro hCardZero
 
       have hAtZero :
-          CorrectedConcreteObservationSelectionAtCost
+          CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
             (obsFamily := obsFamily)
             (f := f)
             correctedConcreteObservationSelectionCardinalityCost
@@ -488,7 +475,7 @@ theorem
     intro hEmptyTarget
 
     have hAtZero :
-        CorrectedConcreteObservationSelectionAtCost
+        CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           correctedConcreteObservationSelectionCardinalityCost
@@ -579,8 +566,7 @@ represented by a zero-extra-weight one-coordinate product but not by the empty
 selected product. -/
 theorem
     positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass :
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -590,8 +576,7 @@ theorem
           coordinateWeight)
         U
         1 =
-      CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
-        (z := z)
+      CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass.{u, v, w, z}
         α
         ι
         M
@@ -617,7 +602,7 @@ theorem
       intro hCostZero
 
       have hAtZero :
-          CorrectedConcreteObservationSelectionAtCost
+          CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
             (obsFamily := obsFamily)
             (f := f)
             (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -663,7 +648,7 @@ theorem
     intro hEmptyTarget
 
     have hAtZero :
-        CorrectedConcreteObservationSelectionAtCost
+        CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -764,8 +749,7 @@ variable {U : Finset ι}
 rank-one shells coincide. -/
 theorem
     zeroPositiveAdditiveExactRankOneClass_eq_cardinalityExactRankOneClass :
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -775,8 +759,7 @@ theorem
           (fun _ : ι => 0))
         U
         1 =
-      CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -787,8 +770,7 @@ theorem
         1 := by
 
   exact
-    observationSelectionExactCostRankClass_eq_of_pointwiseEquivalent
-      (z := z)
+    observationSelectionExactCostRankClass_eq_of_pointwiseEquivalent.{u, v, w, z}
       observationSelectionZeroPositiveAdditiveCost_equivalent_cardinality
       1
 
@@ -811,14 +793,12 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-          (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           correctedConcreteObservationSelectionCardinalityCost
@@ -826,8 +806,7 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
           hTarget =
         1 ↔
       language ∈
-        CorrectedConcreteCardinalityObservationSelectionRankOneClass
-          (z := z)
+        CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
           α
           ι
           M
@@ -840,8 +819,7 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
   · intro hRank
 
     have hShell :=
-      ambientTarget_mem_exactObservationSelectionCostRankClass
-        (z := z)
+      ambientTarget_mem_exactObservationSelectionCostRankClass.{u, v, w, z}
         obsFamily
         f
         correctedConcreteObservationSelectionCardinalityCost
@@ -851,8 +829,7 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
     rw [hRank] at hShell
 
     rw [
-      cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass
-        (z := z)
+      cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
     ] at hShell
 
     exact hShell
@@ -861,8 +838,7 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
 
     have hShell :
         language ∈
-          CorrectedConcreteObservationSelectionExactCostRankClass
-            (z := z)
+          CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
             α
             ι
             M
@@ -873,8 +849,7 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
             1 := by
 
       rw [
-        cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass
-          (z := z)
+        cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
       ]
 
       exact hClass
@@ -891,8 +866,7 @@ theorem ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
           correctedConcreteObservationSelectionMinimumCost
             correctedConcreteObservationSelectionCardinalityCost
             hSelection :=
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelection
         1).mp
         hShell
@@ -925,14 +899,12 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-          (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -941,8 +913,7 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
           hTarget =
         1 ↔
       language ∈
-        CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
-          (z := z)
+        CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass.{u, v, w, z}
           α
           ι
           M
@@ -956,8 +927,7 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
   · intro hRank
 
     have hShell :=
-      ambientTarget_mem_exactObservationSelectionCostRankClass
-        (z := z)
+      ambientTarget_mem_exactObservationSelectionCostRankClass.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -968,8 +938,7 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
     rw [hRank] at hShell
 
     rw [
-      positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass
-        (z := z)
+      positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
     ] at hShell
 
     exact hShell
@@ -978,8 +947,7 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
 
     have hShell :
         language ∈
-          CorrectedConcreteObservationSelectionExactCostRankClass
-            (z := z)
+          CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
             α
             ι
             M
@@ -991,8 +959,7 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
             1 := by
 
       rw [
-        positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass
-          (z := z)
+        positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
       ]
 
       exact hClass
@@ -1011,8 +978,7 @@ theorem ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
             (correctedConcreteObservationSelectionPositiveAdditiveCost
               coordinateWeight)
             hSelection :=
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelection
         1).mp
         hShell
@@ -1048,8 +1014,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
     {language : Set (Word α)}
     (hRankOne :
       language ∈
-        CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -1062,8 +1027,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
       (S : Finset ι)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -1071,8 +1035,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
       S ⊆ U ∧
         S.card = 1 ∧
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥(∅ : Finset ι) → M)
             (selectedObservationProduct obsFamily ∅)
@@ -1097,8 +1060,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1106,8 +1068,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1116,8 +1077,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
 
   have hClass :
       language ∈
-        CorrectedConcreteCardinalityObservationSelectionRankOneClass
-          (z := z)
+        CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
           α
           ι
           M
@@ -1126,8 +1086,7 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
           U := by
 
     rw [
-      ← cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass
-          (z := z)
+      ← cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
     ]
 
     exact hRankOne
@@ -1142,16 +1101,14 @@ theorem cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
       hSU,
       hCardOne,
       hNotEmpty,
-      selectedProductCertifiedLearner_identifies_targetClass
-        (z := z)
+      selectedProductCertifiedLearner_identifies_targetClass.{u, v, w, z}
         hα
         obsFamily
         f
         S
         language
         hSelected,
-      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank.{u, max v w, z}
         hα
         (selectedObservationProduct obsFamily S)
         f
@@ -1183,8 +1140,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
     {language : Set (Word α)}
     (hRankOne :
       language ∈
-        CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -1198,8 +1154,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
       (S : Finset ι)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -1210,8 +1165,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
             coordinateWeight S =
           0 ∧
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥(∅ : Finset ι) → M)
             (selectedObservationProduct obsFamily ∅)
@@ -1236,8 +1190,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1245,8 +1198,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1255,8 +1207,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
 
   have hClass :
       language ∈
-        CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
-          (z := z)
+        CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass.{u, v, w, z}
           α
           ι
           M
@@ -1266,8 +1217,7 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
           U := by
 
     rw [
-      ← positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass
-          (z := z)
+      ← positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
     ]
 
     exact hRankOne
@@ -1287,16 +1237,14 @@ theorem positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
       hCardOne,
       hAdditiveZero,
       hNotEmpty,
-      selectedProductCertifiedLearner_identifies_targetClass
-        (z := z)
+      selectedProductCertifiedLearner_identifies_targetClass.{u, v, w, z}
         hα
         obsFamily
         f
         S
         language
         hSelected,
-      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank
-        (v := z)
+      startRootedTarget_exists_output_at_minimumCertifiedDescriptionRank.{u, max v w, z}
         hα
         (selectedObservationProduct obsFamily S)
         f
@@ -1325,8 +1273,7 @@ variable (U : Finset ι)
 one-coordinate witness package. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationSelectionRankOne_package :
-    (CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    (CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -1335,16 +1282,14 @@ theorem
         correctedConcreteObservationSelectionCardinalityCost
         U
         1 =
-      CorrectedConcreteCardinalityObservationSelectionRankOneClass
-        (z := z)
+      CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
         α
         ι
         M
         obsFamily
         f
         U) ∧
-      (CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+      (CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -1354,8 +1299,7 @@ theorem
           coordinateWeight)
         U
         1 =
-      CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
-        (z := z)
+      CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass.{u, v, w, z}
         α
         ι
         M
@@ -1367,14 +1311,12 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
-          (ambientTargetObservationSelectionCostRank
-              (z := z)
+          (ambientTargetObservationSelectionCostRank.{u, v, w, z}
               obsFamily
               f
               correctedConcreteObservationSelectionCardinalityCost
@@ -1382,8 +1324,7 @@ theorem
               hTarget =
             1 ↔
             language ∈
-              CorrectedConcreteCardinalityObservationSelectionRankOneClass
-                (z := z)
+              CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
                 α
                 ι
                 M
@@ -1394,14 +1335,12 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
-          (ambientTargetObservationSelectionCostRank
-              (z := z)
+          (ambientTargetObservationSelectionCostRank.{u, v, w, z}
               obsFamily
               f
               (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1410,8 +1349,7 @@ theorem
               hTarget =
             1 ↔
             language ∈
-              CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass
-                (z := z)
+              CorrectedConcretePositiveAdditiveObservationSelectionRankOneClass.{u, v, w, z}
                 α
                 ι
                 M
@@ -1422,8 +1360,7 @@ theorem
       (∀
         language : Set (Word α),
         language ∈
-            CorrectedConcreteObservationSelectionExactCostRankClass
-              (z := z)
+            CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
               α
               ι
               M
@@ -1436,8 +1373,7 @@ theorem
             (S : Finset ι)
             (hSelected :
               language ∈
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S → M)
                   (selectedObservationProduct obsFamily S)
@@ -1456,8 +1392,7 @@ theorem
       (∀
         language : Set (Word α),
         language ∈
-            CorrectedConcreteObservationSelectionExactCostRankClass
-              (z := z)
+            CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
               α
               ι
               M
@@ -1471,8 +1406,7 @@ theorem
             (S : Finset ι)
             (hSelected :
               language ∈
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S → M)
                   (selectedObservationProduct obsFamily S)
@@ -1493,10 +1427,8 @@ theorem
                 language) := by
 
   refine
-    ⟨cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass
-        (z := z),
-      positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass
-        (z := z),
+    ⟨cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z},
+      positiveAdditiveObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z},
       ?_,
       ?_,
       ?_,
@@ -1505,8 +1437,7 @@ theorem
   · intro language hTarget
 
     exact
-      ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass
-        (z := z)
+      ambientTarget_cardinalityCostRank_eq_one_iff_rankOneClass.{u, v, w, z}
         obsFamily
         f
         U
@@ -1515,8 +1446,7 @@ theorem
   · intro language hTarget
 
     exact
-      ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass
-        (z := z)
+      ambientTarget_positiveAdditiveCostRank_eq_one_iff_rankOneClass.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1526,8 +1456,7 @@ theorem
   · intro language hRankOne
 
     rcases
-        cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness
-          (z := z)
+        cardinalityExactRankOne_exists_oneCoordinateCertifiedWitness.{u, v, w, z}
           hα
           obsFamily
           f
@@ -1554,8 +1483,7 @@ theorem
   · intro language hRankOne
 
     rcases
-        positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness
-          (z := z)
+        positiveAdditiveExactRankOne_exists_unitCostCertifiedWitness.{u, v, w, z}
           hα
           obsFamily
           f
