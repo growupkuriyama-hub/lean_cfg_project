@@ -5,6 +5,12 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionRankOne
 
+/- FIX SNAPSHOT: CardinalityRank v25, 2026-08-05.
+   Legacy named universe pseudo-arguments are replaced by explicit
+   universe applications; the cardinality-cost compatibility proof is
+   normalized on both sides.
+-/
+
 /-!
 # ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCardinalityRank.lean
 
@@ -125,8 +131,7 @@ def CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
       S ⊆ U ∧
         S.card = rank ∧
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -134,8 +139,7 @@ def CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
         ∀ R : Finset ι,
           R ⊆ U →
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥R → M)
               (selectedObservationProduct obsFamily R)
@@ -161,8 +165,7 @@ variable {rank : Nat}
 theorem
     mem_observationSelectionExactCardinalityRankWitnessClass_iff :
     language ∈
-        CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
           α
           ι
           M
@@ -174,8 +177,7 @@ theorem
         S ⊆ U ∧
           S.card = rank ∧
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥S → M)
               (selectedObservationProduct obsFamily S)
@@ -183,8 +185,7 @@ theorem
           ∀ R : Finset ι,
             R ⊆ U →
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥R → M)
                 (selectedObservationProduct obsFamily R)
@@ -211,8 +212,7 @@ direct minimum-cardinality witness class. -/
 theorem
     cardinalityObservationSelectionExactRankClass_eq_witnessClass
     (rank : Nat) :
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -221,8 +221,7 @@ theorem
         correctedConcreteObservationSelectionCardinalityCost
         U
         rank =
-      CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -250,7 +249,7 @@ theorem
         omega
 
       have hAtSmaller :
-          CorrectedConcreteObservationSelectionAtCost
+          CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
             (obsFamily := obsFamily)
             (f := f)
             correctedConcreteObservationSelectionCardinalityCost
@@ -301,7 +300,7 @@ theorem
       omega
 
     have hAtSmaller :
-        CorrectedConcreteObservationSelectionAtCost
+        CorrectedConcreteObservationSelectionAtCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           correctedConcreteObservationSelectionCardinalityCost
@@ -379,14 +378,14 @@ variable {language : Set (Word α)}
 direct minimum-cardinality value. -/
 theorem observationSelectionCardinalityCostMinimum_eq_cardinality
     (hCostSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         correctedConcreteObservationSelectionCardinalityCost
         U
         language)
     (hCardSelection :
-      HasCorrectedConcreteObservationSelection
+      HasCorrectedConcreteObservationSelection.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         U
@@ -417,11 +416,10 @@ theorem observationSelectionCardinalityCostMinimum_eq_cardinality
           Nat.le_refl _,
           hTarget⟩
 
-    unfold
-      correctedConcreteObservationSelectionCardinalityCost
-      at hMinimum
-
-    simpa [hCard] using hMinimum
+    simpa [
+      correctedConcreteObservationSelectionCardinalityCost,
+      hCard
+    ] using hMinimum
 
   · rcases hCostSelection.exists_selection_exact_minimumCost with
       ⟨S, hSU, hCost, hTarget⟩
@@ -467,21 +465,18 @@ theorem ambientTarget_cardinalityCostRank_eq_selectionCardinality
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionCostRank
-        (z := z)
+    ambientTargetObservationSelectionCostRank.{u, v, w, z}
         obsFamily
         f
         correctedConcreteObservationSelectionCardinalityCost
         U
         hTarget =
-      ambientTargetObservationSelectionCardinality
-        (z := z)
+      ambientTargetObservationSelectionCardinality.{u, v, w, z}
         obsFamily
         f
         U
@@ -517,31 +512,27 @@ theorem ambientTarget_mem_exactCardinalityRankWitnessClass
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
     language ∈
-      CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
         α
         ι
         M
         obsFamily
         f
         U
-        (ambientTargetObservationSelectionCardinality
-          (z := z)
+        (ambientTargetObservationSelectionCardinality.{u, v, w, z}
           obsFamily
           f
           U
           hTarget) := by
 
   have hShell :=
-    ambientTarget_mem_exactObservationSelectionCostRankClass
-      (z := z)
+    ambientTarget_mem_exactObservationSelectionCostRankClass.{u, v, w, z}
       obsFamily
       f
       correctedConcreteObservationSelectionCardinalityCost
@@ -549,14 +540,12 @@ theorem ambientTarget_mem_exactCardinalityRankWitnessClass
       hTarget
 
   rw [
-    ambientTarget_cardinalityCostRank_eq_selectionCardinality
-      (z := z)
+    ambientTarget_cardinalityCostRank_eq_selectionCardinality.{u, v, w, z}
       obsFamily
       f
       U
       hTarget,
-    cardinalityObservationSelectionExactRankClass_eq_witnessClass
-      (z := z)
+    cardinalityObservationSelectionExactRankClass_eq_witnessClass.{u, v, w, z}
   ] at hShell
 
   exact hShell
@@ -578,8 +567,7 @@ variable (U : Finset ι)
 shells bounded by the ambient candidate count. -/
 theorem
     fullProductTargetClass_eq_exists_boundedExactCardinalityRank :
-    StartRootedCorrectedConcreteTargetClass
-        (v := z)
+    StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥U → M)
         (selectedObservationProduct obsFamily U)
@@ -588,8 +576,7 @@ theorem
         ∃ rank : Nat,
           rank <= U.card ∧
             language ∈
-              CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-                (z := z)
+              CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
                 α
                 ι
                 M
@@ -605,8 +592,7 @@ theorem
   · intro hTarget
 
     let rank :=
-      ambientTargetObservationSelectionCardinality
-        (z := z)
+      ambientTargetObservationSelectionCardinality.{u, v, w, z}
         obsFamily
         f
         U
@@ -614,14 +600,12 @@ theorem
 
     exact
       ⟨rank,
-        ambientTargetObservationSelectionCardinality_le
-          (z := z)
+        ambientTargetObservationSelectionCardinality_le.{u, v, w, z}
           obsFamily
           f
           U
           hTarget,
-        ambientTarget_mem_exactCardinalityRankWitnessClass
-          (z := z)
+        ambientTarget_mem_exactCardinalityRankWitnessClass.{u, v, w, z}
           obsFamily
           f
           U
@@ -636,8 +620,7 @@ theorem
       ⟨S, hSU, hCard, hTarget, hMinimum⟩
 
     exact
-      selectedObservationProductTargetClass_mono
-        (z := z)
+      selectedObservationProductTargetClass_mono.{u, v, w, z}
         obsFamily
         f
         hSU
@@ -650,8 +633,7 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -659,8 +641,7 @@ theorem
     ∃! rank : Nat,
       rank <= U.card ∧
         language ∈
-          CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-            (z := z)
+          CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
             α
             ι
             M
@@ -670,8 +651,7 @@ theorem
             rank := by
 
   let rank :=
-    ambientTargetObservationSelectionCardinality
-      (z := z)
+    ambientTargetObservationSelectionCardinality.{u, v, w, z}
       obsFamily
       f
       U
@@ -679,14 +659,12 @@ theorem
 
   refine
     ⟨rank,
-      ⟨ambientTargetObservationSelectionCardinality_le
-          (z := z)
+      ⟨ambientTargetObservationSelectionCardinality_le.{u, v, w, z}
           obsFamily
           f
           U
           hTarget,
-        ambientTarget_mem_exactCardinalityRankWitnessClass
-          (z := z)
+        ambientTarget_mem_exactCardinalityRankWitnessClass.{u, v, w, z}
           obsFamily
           f
           U
@@ -697,8 +675,7 @@ theorem
 
   have hShell :
       language ∈
-        CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -709,8 +686,7 @@ theorem
           rank' := by
 
     rw [
-      cardinalityObservationSelectionExactRankClass_eq_witnessClass
-        (z := z)
+      cardinalityObservationSelectionExactRankClass_eq_witnessClass.{u, v, w, z}
     ]
 
     exact hRank'.2
@@ -727,8 +703,7 @@ theorem
         correctedConcreteObservationSelectionMinimumCost
           correctedConcreteObservationSelectionCardinalityCost
           hCostSelection :=
-    (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-      (z := z)
+    (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
       hCostSelection
       rank').mp
       hShell
@@ -742,8 +717,7 @@ theorem
     unfold rank
 
     rw [
-      ← ambientTarget_cardinalityCostRank_eq_selectionCardinality
-          (z := z)
+      ← ambientTarget_cardinalityCostRank_eq_selectionCardinality.{u, v, w, z}
           obsFamily
           f
           U
@@ -777,16 +751,14 @@ theorem ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f)
     (cardinalityBudget : Nat) :
     cardinalityBudget <
-        ambientTargetObservationSelectionCardinality
-          (z := z)
+        ambientTargetObservationSelectionCardinality.{u, v, w, z}
           obsFamily
           f
           U
@@ -795,8 +767,7 @@ theorem ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
         S ⊆ U →
         S.card <= cardinalityBudget →
         language ∉
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
@@ -827,8 +798,7 @@ theorem ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
           hSelected⟩
 
     have hRankEq :
-        ambientTargetObservationSelectionCardinality
-            (z := z)
+        ambientTargetObservationSelectionCardinality.{u, v, w, z}
             obsFamily
             f
             U
@@ -850,8 +820,7 @@ theorem ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
     by_contra hNotLt
 
     have hRankLe :
-        ambientTargetObservationSelectionCardinality
-            (z := z)
+        ambientTargetObservationSelectionCardinality.{u, v, w, z}
             obsFamily
             f
             U
@@ -860,8 +829,7 @@ theorem ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
       omega
 
     rcases
-        ambientTarget_exists_minimumObservationSelection
-          (z := z)
+        ambientTarget_exists_minimumObservationSelection.{u, v, w, z}
           obsFamily
           f
           U
@@ -900,8 +868,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -911,15 +878,13 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
       (S : Finset ι)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       rank =
-          ambientTargetObservationSelectionCardinality
-            (z := z)
+          ambientTargetObservationSelectionCardinality.{u, v, w, z}
             obsFamily
             f
             U
@@ -927,8 +892,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
         S ⊆ U ∧
         S.card = rank ∧
         language ∈
-          CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-            (z := z)
+          CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
             α
             ι
             M
@@ -936,8 +900,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
             f
             U
             rank ∧
-        CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+        CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α
           ι
           M
@@ -947,8 +910,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
           S ∧
         (∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -975,8 +937,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -984,8 +945,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -993,8 +953,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
                 f := by
 
   rcases
-      ambientTarget_exists_minimumIrredundantCertifiedObservationSelection
-        (z := z)
+      ambientTarget_exists_minimumIrredundantCertifiedObservationSelection.{u, v, w, z}
         hα
         obsFamily
         f
@@ -1013,8 +972,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
       hSearch⟩
 
   let rank :=
-    ambientTargetObservationSelectionCardinality
-      (z := z)
+    ambientTargetObservationSelectionCardinality.{u, v, w, z}
       obsFamily
       f
       U
@@ -1022,8 +980,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
 
   have hRankWitness :
       language ∈
-        CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
           α
           ι
           M
@@ -1031,8 +988,7 @@ theorem ambientTarget_exists_cardinalityRankCertifiedSelection
           f
           U
           rank :=
-    ambientTarget_mem_exactCardinalityRankWitnessClass
-      (z := z)
+    ambientTarget_mem_exactCardinalityRankWitnessClass.{u, v, w, z}
       obsFamily
       f
       U
@@ -1071,8 +1027,7 @@ variable (U : Finset ι)
 /-- The general exact cardinality-rank witness theorem specializes at rank zero
 to the empty selected product target class. -/
 theorem exactCardinalityRankWitnessClass_zero_eq_emptyProductTargetClass :
-    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -1080,16 +1035,14 @@ theorem exactCardinalityRankWitnessClass_zero_eq_emptyProductTargetClass :
         f
         U
         0 =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥(∅ : Finset ι) → M)
         (selectedObservationProduct obsFamily ∅)
         f := by
 
   calc
-    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -1097,8 +1050,7 @@ theorem exactCardinalityRankWitnessClass_zero_eq_emptyProductTargetClass :
         f
         U
         0 =
-      CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -1109,19 +1061,16 @@ theorem exactCardinalityRankWitnessClass_zero_eq_emptyProductTargetClass :
         0 := by
           symm
           exact
-            cardinalityObservationSelectionExactRankClass_eq_witnessClass
-              (z := z)
+            cardinalityObservationSelectionExactRankClass_eq_witnessClass.{u, v, w, z}
               0
 
     _ =
-      StartRootedCorrectedConcreteTargetClass
-        (v := z)
+      StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
         α
         (↥(∅ : Finset ι) → M)
         (selectedObservationProduct obsFamily ∅)
         f :=
-          cardinalityObservationSelectionExactRankZeroClass_eq_emptyProductTargetClass
-            (z := z)
+          cardinalityObservationSelectionExactRankZeroClass_eq_emptyProductTargetClass.{u, v, w, z}
             obsFamily
             f
             U
@@ -1129,8 +1078,7 @@ theorem exactCardinalityRankWitnessClass_zero_eq_emptyProductTargetClass :
 /-- The general exact cardinality-rank witness theorem specializes at rank one
 to the one-coordinate/nonempty-interface class from the preceding file. -/
 theorem exactCardinalityRankWitnessClass_one_eq_rankOneClass :
-    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -1138,8 +1086,7 @@ theorem exactCardinalityRankWitnessClass_one_eq_rankOneClass :
         f
         U
         1 =
-      CorrectedConcreteCardinalityObservationSelectionRankOneClass
-        (z := z)
+      CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
         α
         ι
         M
@@ -1148,8 +1095,7 @@ theorem exactCardinalityRankWitnessClass_one_eq_rankOneClass :
         U := by
 
   calc
-    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -1157,8 +1103,7 @@ theorem exactCardinalityRankWitnessClass_one_eq_rankOneClass :
         f
         U
         1 =
-      CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -1169,21 +1114,18 @@ theorem exactCardinalityRankWitnessClass_one_eq_rankOneClass :
         1 := by
           symm
           exact
-            cardinalityObservationSelectionExactRankClass_eq_witnessClass
-              (z := z)
+            cardinalityObservationSelectionExactRankClass_eq_witnessClass.{u, v, w, z}
               1
 
     _ =
-      CorrectedConcreteCardinalityObservationSelectionRankOneClass
-        (z := z)
+      CorrectedConcreteCardinalityObservationSelectionRankOneClass.{u, v, w, z}
         α
         ι
         M
         obsFamily
         f
         U :=
-          cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass
-            (z := z)
+          cardinalityObservationSelectionExactRankOneClass_eq_rankOneClass.{u, v, w, z}
 
 end CardinalityRankZeroOneCompatibility
 
@@ -1208,8 +1150,7 @@ lower-bound obstruction, and certified minimum-cardinality selection package. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationSelectionCardinalityRank_package :
     (∀ rank : Nat,
-      CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+      CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -1218,8 +1159,7 @@ theorem
           correctedConcreteObservationSelectionCardinalityCost
           U
           rank =
-        CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
           α
           ι
           M
@@ -1227,8 +1167,7 @@ theorem
           f
           U
           rank) ∧
-      (StartRootedCorrectedConcreteTargetClass
-          (v := z)
+      (StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -1237,8 +1176,7 @@ theorem
           ∃ rank : Nat,
             rank <= U.card ∧
               language ∈
-                CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass
-                  (z := z)
+                CorrectedConcreteObservationSelectionExactCardinalityRankWitnessClass.{u, v, w, z}
                   α
                   ι
                   M
@@ -1250,16 +1188,14 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
         ∀ cardinalityBudget : Nat,
           (cardinalityBudget <
-              ambientTargetObservationSelectionCardinality
-                (z := z)
+              ambientTargetObservationSelectionCardinality.{u, v, w, z}
                 obsFamily
                 f
                 U
@@ -1268,8 +1204,7 @@ theorem
               S ⊆ U →
               S.card <= cardinalityBudget →
               language ∉
-                StartRootedCorrectedConcreteTargetClass
-                  (v := z)
+                StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                   α
                   (↥S → M)
                   (selectedObservationProduct obsFamily S)
@@ -1278,8 +1213,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1289,23 +1223,20 @@ theorem
           (S : Finset ι)
           (hSelected :
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥S → M)
                 (selectedObservationProduct obsFamily S)
                 f),
           rank =
-              ambientTargetObservationSelectionCardinality
-                (z := z)
+              ambientTargetObservationSelectionCardinality.{u, v, w, z}
                 obsFamily
                 f
                 U
                 hTarget ∧
             S ⊆ U ∧
             S.card = rank ∧
-            CorrectedConcreteObservationSelectionIrredundant
-              (z := z)
+            CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
               α
               ι
               M
@@ -1325,8 +1256,7 @@ theorem
 
   refine
     ⟨?_,
-      fullProductTargetClass_eq_exists_boundedExactCardinalityRank
-        (z := z)
+      fullProductTargetClass_eq_exists_boundedExactCardinalityRank.{u, v, w, z}
         obsFamily
         f
         U,
@@ -1336,15 +1266,13 @@ theorem
   · intro rank
 
     exact
-      cardinalityObservationSelectionExactRankClass_eq_witnessClass
-        (z := z)
+      cardinalityObservationSelectionExactRankClass_eq_witnessClass.{u, v, w, z}
         rank
 
   · intro language hTarget cardinalityBudget
 
     exact
-      ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail
-        (z := z)
+      ambientTarget_cardinalityRank_gt_iff_all_boundedSelections_fail.{u, v, w, z}
         obsFamily
         f
         U
@@ -1354,8 +1282,7 @@ theorem
   · intro language hTarget
 
     rcases
-        ambientTarget_exists_cardinalityRankCertifiedSelection
-          (z := z)
+        ambientTarget_exists_cardinalityRankCertifiedSelection.{u, v, w, z}
           hα
           obsFamily
           f
