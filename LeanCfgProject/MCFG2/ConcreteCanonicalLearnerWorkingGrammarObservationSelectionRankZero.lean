@@ -5,7 +5,7 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionCostOverhead
 
-/- FIX SNAPSHOT: RankZero v22, 2026-08-05.
+/- FIX SNAPSHOT: RankZero v23, 2026-08-05.
    Legacy named universe pseudo-arguments are replaced by explicit
    universe applications, including the certified rank-zero package.
 -/
@@ -547,7 +547,9 @@ theorem positiveAdditiveObservationSelectionZeroCostClass_eq_emptyProductTargetC
         S).mp
         hCost
 
-    simpa [hEmpty] using hTarget
+    subst S
+
+    exact hTarget
 
   · intro hEmptyTarget
 
@@ -557,7 +559,11 @@ theorem positiveAdditiveObservationSelectionZeroCostClass_eq_emptyProductTargetC
           intro index hindex
           simp at hindex,
         by
-          simp,
+          exact
+            (observationSelectionPositiveAdditiveCost_eq_zero_iff
+              coordinateWeight
+              ∅).2
+              rfl,
         hEmptyTarget⟩
 
 /-- The positive-additive exact rank-zero shell is exactly the target class of
@@ -659,7 +665,9 @@ theorem cardinalityObservationSelectionZeroCostClass_eq_emptyProductTargetClass 
         S).mp
         hCost
 
-    simpa [hEmpty] using hTarget
+    subst S
+
+    exact hTarget
 
   · intro hEmptyTarget
 
@@ -955,15 +963,6 @@ theorem
         hTarget).selected =
       ∅ := by
 
-  let hSelection :=
-    positiveAdditiveSelectionExists.{u, v, w, z}
-      obsFamily
-      f
-      coordinateWeight
-      U
-      language
-      hTarget
-
   let result :=
     correctedConcreteObservationPositiveAdditiveMinimumSelectionResult.{u, v, w, z}
       obsFamily
@@ -973,31 +972,37 @@ theorem
       language
       hTarget
 
-  have hMinimumZero :
-      correctedConcreteObservationSelectionMinimumCost
-          (correctedConcreteObservationSelectionPositiveAdditiveCost
-            coordinateWeight)
-          hSelection =
-        0 := by
-
-    simpa [
-      ambientTargetObservationSelectionCostRank,
-      ambientTargetObservationSelectionMinimumCost,
-      hSelection
-    ] using
-      hRankZero
-
   have hSelectedCostZero :
       correctedConcreteObservationSelectionPositiveAdditiveCost
           coordinateWeight
           result.selected =
         0 := by
 
-    rw [
-      CorrectedConcreteObservationMinimumCostSelectionResult.selected_cost_eq_minimum
-        result,
-      hMinimumZero
-    ]
+    calc
+      correctedConcreteObservationSelectionPositiveAdditiveCost
+          coordinateWeight
+          result.selected =
+        correctedConcreteObservationSelectionMinimumCost
+          (correctedConcreteObservationSelectionPositiveAdditiveCost
+            coordinateWeight)
+          (hasCorrectedConcreteObservationSelectionCost_of_fullProductTarget
+            (obsFamily := obsFamily)
+            (f := f)
+            (correctedConcreteObservationSelectionPositiveAdditiveCost
+              coordinateWeight)
+            hTarget) := by
+        exact
+          CorrectedConcreteObservationMinimumCostSelectionResult.selected_cost_eq_minimum
+            result
+      _ =
+        ambientTargetObservationSelectionCostRank.{u, v, w, z}
+          obsFamily
+          f
+          (correctedConcreteObservationSelectionPositiveAdditiveCost
+            coordinateWeight)
+          U
+          hTarget := rfl
+      _ = 0 := hRankZero
 
   exact
     (observationSelectionPositiveAdditiveCost_eq_zero_iff
