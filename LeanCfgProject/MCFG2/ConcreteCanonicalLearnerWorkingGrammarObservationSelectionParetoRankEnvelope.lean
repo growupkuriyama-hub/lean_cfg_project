@@ -5,6 +5,11 @@ Authors: Takayuki Kuriyama
 -/
 import LeanCfgProject.MCFG2.ConcreteCanonicalLearnerWorkingGrammarObservationSelectionPositiveAdditiveRank
 
+/- FIX SNAPSHOT: ParetoRankEnvelope v27, 2026-08-05.
+   Legacy named universe pseudo-arguments are replaced by explicit
+   universe applications throughout the Pareto-rank and envelope layers.
+-/
+
 /-!
 # ConcreteCanonicalLearnerWorkingGrammarObservationSelectionParetoRankEnvelope.lean
 
@@ -174,7 +179,7 @@ variable {language : Set (Word α)}
 theorem
     observationSelection_exactPositiveAdditiveMinimum_is_additivePareto
     (hSelection :
-      HasCorrectedConcreteObservationSelectionCost
+      HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
         (obsFamily := obsFamily)
         (f := f)
         (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -192,14 +197,12 @@ theorem
           hSelection)
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f) :
-    CorrectedConcreteObservationSelectionParetoOptimal
-      (z := z)
+    CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionAdditiveCost
@@ -279,8 +282,7 @@ theorem ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -290,8 +292,7 @@ theorem ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto
     (hCost :
       correctedConcreteObservationSelectionPositiveAdditiveCost
           coordinateWeight S =
-        ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+        ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -299,14 +300,12 @@ theorem ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto
           hTarget)
     (hSelected :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
           f) :
-    CorrectedConcreteObservationSelectionParetoOptimal
-      (z := z)
+    CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionAdditiveCost
@@ -339,8 +338,7 @@ theorem ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto
       hCost
 
   exact
-    observationSelection_exactPositiveAdditiveMinimum_is_additivePareto
-      (z := z)
+    observationSelection_exactPositiveAdditiveMinimum_is_additivePareto.{u, v, w, z}
       hSelection
       hSU
       hMinimum
@@ -367,8 +365,7 @@ def CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
     Set (Set (Word α)) :=
   {language |
     ∃ S : Finset ι,
-      CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
+      CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -382,8 +379,7 @@ def CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
         ∀ R : Finset ι,
           R ⊆ U →
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥R → M)
               (selectedObservationProduct obsFamily R)
@@ -412,8 +408,7 @@ variable {rank : Nat}
 theorem
     mem_observationSelectionExactPositiveAdditiveParetoRankClass_iff :
     language ∈
-        CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass.{u, v, w, z}
           α
           ι
           M
@@ -423,8 +418,7 @@ theorem
           U
           rank ↔
       ∃ S : Finset ι,
-        CorrectedConcreteObservationSelectionParetoOptimal
-            (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionAdditiveCost
@@ -438,8 +432,7 @@ theorem
           ∀ R : Finset ι,
             R ⊆ U →
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥R → M)
                 (selectedObservationProduct obsFamily R)
@@ -469,8 +462,7 @@ Pareto-certified refinement. -/
 theorem
     exactPositiveAdditiveRankWitnessClass_eq_paretoRankClass
     (rank : Nat) :
-    CorrectedConcreteObservationSelectionExactPositiveAdditiveRankWitnessClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactPositiveAdditiveRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -479,8 +471,7 @@ theorem
         coordinateWeight
         U
         rank =
-      CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass.{u, v, w, z}
         α
         ι
         M
@@ -514,8 +505,7 @@ theorem
         hCostDecomposition
 
     have hPareto :
-        CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -628,8 +618,7 @@ targets having a Pareto-optimal exact-rank witness. -/
 theorem
     positiveAdditiveExactCostRankClass_eq_paretoRankClass
     (rank : Nat) :
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -639,8 +628,7 @@ theorem
           coordinateWeight)
         U
         rank =
-      CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass.{u, v, w, z}
         α
         ι
         M
@@ -651,8 +639,7 @@ theorem
         rank := by
 
   calc
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -662,8 +649,7 @@ theorem
           coordinateWeight)
         U
         rank =
-      CorrectedConcreteObservationSelectionExactPositiveAdditiveRankWitnessClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactPositiveAdditiveRankWitnessClass.{u, v, w, z}
         α
         ι
         M
@@ -672,13 +658,11 @@ theorem
         coordinateWeight
         U
         rank :=
-          positiveAdditiveObservationSelectionExactRankClass_eq_witnessClass
-            (z := z)
+          positiveAdditiveObservationSelectionExactRankClass_eq_witnessClass.{u, v, w, z}
             rank
 
     _ =
-      CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass.{u, v, w, z}
         α
         ι
         M
@@ -687,8 +671,7 @@ theorem
         coordinateWeight
         U
         rank :=
-          exactPositiveAdditiveRankWitnessClass_eq_paretoRankClass
-            (z := z)
+          exactPositiveAdditiveRankWitnessClass_eq_paretoRankClass.{u, v, w, z}
             rank
 
 end ExactShellEqualsParetoRankClass
@@ -715,8 +698,7 @@ noncomputable def
   classical
 
   exact
-    (correctedConcreteObservationParetoSelections
-      (z := z)
+    (correctedConcreteObservationParetoSelections.{u, v, w, z}
       obsFamily
       f
       (correctedConcreteObservationSelectionAdditiveCost
@@ -732,16 +714,14 @@ theorem
     [DecidableEq ι]
     {rank : Nat} :
     rank ∈
-        correctedConcreteObservationPositiveAdditiveParetoRankValues
-          (z := z)
+        correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
           U
           language ↔
       ∃ S : Finset ι,
-        CorrectedConcreteObservationSelectionParetoOptimal
-            (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionAdditiveCost
@@ -764,8 +744,7 @@ theorem
 
     exact
       ⟨S,
-        (mem_correctedConcreteObservationParetoSelections_iff
-          (z := z)
+        (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -783,8 +762,7 @@ theorem
     exact
       Finset.mem_image.mpr
         ⟨S,
-          (mem_correctedConcreteObservationParetoSelections_iff
-            (z := z)
+          (mem_correctedConcreteObservationParetoSelections_iff.{u, v, w, z}
             obsFamily
             f
             (correctedConcreteObservationSelectionAdditiveCost
@@ -799,8 +777,7 @@ at most `2^|U|`. -/
 theorem
     correctedConcreteObservationPositiveAdditiveParetoRankValues_card_le_two_pow
     [DecidableEq ι] :
-    (correctedConcreteObservationPositiveAdditiveParetoRankValues
-        (z := z)
+    (correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -809,15 +786,13 @@ theorem
       2 ^ U.card := by
 
   calc
-    (correctedConcreteObservationPositiveAdditiveParetoRankValues
-        (z := z)
+    (correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
         U
         language).card <=
-      (correctedConcreteObservationParetoSelections
-        (z := z)
+      (correctedConcreteObservationParetoSelections.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionAdditiveCost
@@ -828,8 +803,7 @@ theorem
 
     _ <=
       2 ^ U.card :=
-        correctedConcreteObservationParetoSelections_card_le_two_pow
-          (z := z)
+        correctedConcreteObservationParetoSelections_card_le_two_pow.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -858,8 +832,7 @@ def CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass
     Set (Set (Word α)) :=
   {language |
     rank ∈
-        correctedConcreteObservationPositiveAdditiveParetoRankValues
-          (z := z)
+        correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -867,8 +840,7 @@ def CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass
           language ∧
       ∀ value : Nat,
         value ∈
-            correctedConcreteObservationPositiveAdditiveParetoRankValues
-              (z := z)
+            correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
               obsFamily
               f
               coordinateWeight
@@ -896,8 +868,7 @@ finite additive Pareto frontier. -/
 theorem
     positiveAdditiveExactCostRankClass_eq_paretoEnvelopeRankClass
     (rank : Nat) :
-    CorrectedConcreteObservationSelectionExactCostRankClass
-        (z := z)
+    CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
         α
         ι
         M
@@ -907,8 +878,7 @@ theorem
           coordinateWeight)
         U
         rank =
-      CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass
-        (z := z)
+      CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass.{u, v, w, z}
         α
         ι
         M
@@ -926,8 +896,7 @@ theorem
 
     have hParetoRank :
         language ∈
-          CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass
-            (z := z)
+          CorrectedConcreteObservationSelectionExactPositiveAdditiveParetoRankClass.{u, v, w, z}
             α
             ι
             M
@@ -938,8 +907,7 @@ theorem
             rank := by
 
       rw [
-        ← positiveAdditiveExactCostRankClass_eq_paretoRankClass
-            (z := z)
+        ← positiveAdditiveExactCostRankClass_eq_paretoRankClass.{u, v, w, z}
             rank
       ]
 
@@ -952,8 +920,7 @@ theorem
         hMinimum⟩
 
     refine
-      ⟨(mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff
-          (z := z)
+      ⟨(mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -967,8 +934,7 @@ theorem
     intro value hValue
 
     rcases
-        (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff
-          (z := z)
+        (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -989,8 +955,7 @@ theorem
   · intro hEnvelope
 
     rcases
-        (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff
-          (z := z)
+        (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1000,7 +965,7 @@ theorem
       ⟨S, hPareto, hRankEq⟩
 
     let hSelection :
-        HasCorrectedConcreteObservationSelectionCost
+        HasCorrectedConcreteObservationSelectionCost.{u, v, w, z}
           (obsFamily := obsFamily)
           (f := f)
           (correctedConcreteObservationSelectionPositiveAdditiveCost
@@ -1020,8 +985,7 @@ theorem
       ⟨T, hTU, hTCost, hTTarget⟩
 
     have hTPareto :
-        CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -1029,8 +993,7 @@ theorem
           U
           language
           T :=
-      observationSelection_exactPositiveAdditiveMinimum_is_additivePareto
-        (z := z)
+      observationSelection_exactPositiveAdditiveMinimum_is_additivePareto.{u, v, w, z}
         hSelection
         hTU
         hTCost
@@ -1041,8 +1004,7 @@ theorem
             (correctedConcreteObservationSelectionPositiveAdditiveCost
               coordinateWeight)
             hSelection ∈
-          correctedConcreteObservationPositiveAdditiveParetoRankValues
-            (z := z)
+          correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
             obsFamily
             f
             coordinateWeight
@@ -1050,8 +1012,7 @@ theorem
             language := by
 
       apply
-        (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff
-          (z := z)
+        (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1113,8 +1074,7 @@ theorem
         hMinimumLeRank
 
     exact
-      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum
-        (z := z)
+      (observationSelection_mem_exactCostRankClass_iff_rank_eq_minimum.{u, v, w, z}
         hSelection
         rank).mpr
         hRankEqMinimum
@@ -1146,8 +1106,7 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
@@ -1157,15 +1116,13 @@ theorem
       (S : Finset ι)
       (hSelected :
         language ∈
-          StartRootedCorrectedConcreteTargetClass
-            (v := z)
+          StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
             α
             (↥S → M)
             (selectedObservationProduct obsFamily S)
             f),
       rank =
-          ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-            (z := z)
+          ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
             obsFamily
             f
             coordinateWeight
@@ -1174,8 +1131,7 @@ theorem
         correctedConcreteObservationSelectionPositiveAdditiveCost
             coordinateWeight S =
           rank ∧
-        CorrectedConcreteObservationSelectionParetoOptimal
-          (z := z)
+        CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
           obsFamily
           f
           (correctedConcreteObservationSelectionAdditiveCost
@@ -1183,8 +1139,7 @@ theorem
           U
           language
           S ∧
-        CorrectedConcreteObservationSelectionIrredundant
-          (z := z)
+        CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
           α
           ι
           M
@@ -1194,8 +1149,7 @@ theorem
           S ∧
         (∀ index : ι,
           index ∈ S →
-          CorrectedConcreteObservationRefinementEssential
-            (z := z)
+          CorrectedConcreteObservationRefinementEssential.{u, max v w, max v w, z}
             α
             (↥(S.erase index) → M)
             (↥S → M)
@@ -1222,8 +1176,7 @@ theorem
               language ∧
             C.bits.length <=
               correctedConcreteCertifiedRankBitBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1231,8 +1184,7 @@ theorem
                 f ∧
             C.canonicalSearch.length <=
               correctedConcreteCertifiedRankSearchBudget
-                (startRootedTargetCertifiedDescriptionRank
-                  (v := z)
+                (startRootedTargetCertifiedDescriptionRank.{u, max v w, z}
                   hα
                   (selectedObservationProduct obsFamily S)
                   f
@@ -1240,8 +1192,7 @@ theorem
                 f := by
 
   rcases
-      ambientTarget_exists_positiveAdditiveRankCertifiedSelection
-        (z := z)
+      ambientTarget_exists_positiveAdditiveRankCertifiedSelection.{u, v, w, z}
         hα
         obsFamily
         f
@@ -1278,8 +1229,7 @@ theorem
   have hMinimumCost :
       correctedConcreteObservationSelectionPositiveAdditiveCost
           coordinateWeight S =
-        ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+        ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1289,8 +1239,7 @@ theorem
     rw [hCost, hRank]
 
   have hPareto :
-      CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
+      CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionAdditiveCost
@@ -1298,8 +1247,7 @@ theorem
         U
         language
         S :=
-    ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto
-      (z := z)
+    ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto.{u, v, w, z}
       obsFamily
       f
       coordinateWeight
@@ -1346,21 +1294,18 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+    ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
           U
           hTarget ∈
-        correctedConcreteObservationPositiveAdditiveParetoRankValues
-          (z := z)
+        correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1368,15 +1313,13 @@ theorem
           language ∧
       ∀ value : Nat,
         value ∈
-            correctedConcreteObservationPositiveAdditiveParetoRankValues
-              (z := z)
+            correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
               obsFamily
               f
               coordinateWeight
               U
               language →
-          ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-              (z := z)
+          ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
               obsFamily
               f
               coordinateWeight
@@ -1393,8 +1336,7 @@ theorem
       hTarget
 
   rcases
-      ambientTarget_exists_positiveAdditiveMinimumIrredundantSelection
-        (z := z)
+      ambientTarget_exists_positiveAdditiveMinimumIrredundantSelection.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1408,8 +1350,7 @@ theorem
 
   have hSelected :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥S → M)
           (selectedObservationProduct obsFamily S)
@@ -1417,8 +1358,7 @@ theorem
     hIrredundant.1
 
   have hPareto :
-      CorrectedConcreteObservationSelectionParetoOptimal
-        (z := z)
+      CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
         obsFamily
         f
         (correctedConcreteObservationSelectionAdditiveCost
@@ -1426,8 +1366,7 @@ theorem
         U
         language
         S :=
-    ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto
-      (z := z)
+    ambientTarget_positiveAdditiveMinimumSelection_is_additivePareto.{u, v, w, z}
       obsFamily
       f
       coordinateWeight
@@ -1438,8 +1377,7 @@ theorem
       hSelected
 
   refine
-    ⟨(mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff
-        (z := z)
+    ⟨(mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1453,8 +1391,7 @@ theorem
   intro value hValue
 
   rcases
-      (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff
-        (z := z)
+      (mem_correctedConcreteObservationPositiveAdditiveParetoRankValues_iff.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1495,14 +1432,12 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f) :
-    (correctedConcreteObservationPositiveAdditiveParetoRankValues
-      (z := z)
+    (correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
       obsFamily
       f
       coordinateWeight
@@ -1510,15 +1445,13 @@ theorem
       language).Nonempty := by
 
   exact
-    ⟨ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-        (z := z)
+    ⟨ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
         U
         hTarget,
-      (ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue
-        (z := z)
+      (ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1532,16 +1465,14 @@ theorem
     {language : Set (Word α)}
     (hTarget :
       language ∈
-        StartRootedCorrectedConcreteTargetClass
-          (v := z)
+        StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
           α
           (↥U → M)
           (selectedObservationProduct obsFamily U)
           f)
     (costBudget : Nat) :
     costBudget <
-        ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+        ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1549,8 +1480,7 @@ theorem
           hTarget ↔
       ∀ value : Nat,
         value ∈
-            correctedConcreteObservationPositiveAdditiveParetoRankValues
-              (z := z)
+            correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
               obsFamily
               f
               coordinateWeight
@@ -1559,8 +1489,7 @@ theorem
           costBudget < value := by
 
   let hEnvelope :=
-    ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue
-      (z := z)
+    ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue.{u, v, w, z}
       obsFamily
       f
       coordinateWeight
@@ -1582,8 +1511,7 @@ theorem
 
     exact
       hAll
-        (ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-          (z := z)
+        (ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1615,8 +1543,7 @@ and certified Pareto-rank witness package. -/
 theorem
     correctedConcreteCertifiedWorkingGrammar_observationSelectionParetoRankEnvelope_package :
     (∀ rank : Nat,
-      CorrectedConcreteObservationSelectionExactCostRankClass
-          (z := z)
+      CorrectedConcreteObservationSelectionExactCostRankClass.{u, v, w, z}
           α
           ι
           M
@@ -1626,8 +1553,7 @@ theorem
             coordinateWeight)
           U
           rank =
-        CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass
-          (z := z)
+        CorrectedConcreteObservationSelectionPositiveAdditiveParetoEnvelopeRankClass.{u, v, w, z}
           α
           ι
           M
@@ -1640,36 +1566,31 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
-          (correctedConcreteObservationPositiveAdditiveParetoRankValues
-              (z := z)
+          (correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
               obsFamily
               f
               coordinateWeight
               U
               language).Nonempty ∧
-            (correctedConcreteObservationPositiveAdditiveParetoRankValues
-              (z := z)
+            (correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
               obsFamily
               f
               coordinateWeight
               U
               language).card <=
                 2 ^ U.card ∧
-            ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-                (z := z)
+            ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
                 obsFamily
                 f
                 coordinateWeight
                 U
                 hTarget ∈
-              correctedConcreteObservationPositiveAdditiveParetoRankValues
-                (z := z)
+              correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
                 obsFamily
                 f
                 coordinateWeight
@@ -1677,15 +1598,13 @@ theorem
                 language ∧
             ∀ value : Nat,
               value ∈
-                  correctedConcreteObservationPositiveAdditiveParetoRankValues
-                    (z := z)
+                  correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
                     obsFamily
                     f
                     coordinateWeight
                     U
                     language →
-                ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-                    (z := z)
+                ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
                     obsFamily
                     f
                     coordinateWeight
@@ -1696,16 +1615,14 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
               f,
         ∀ costBudget : Nat,
           (costBudget <
-              ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-                (z := z)
+              ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
                 obsFamily
                 f
                 coordinateWeight
@@ -1713,8 +1630,7 @@ theorem
                 hTarget ↔
             ∀ value : Nat,
               value ∈
-                  correctedConcreteObservationPositiveAdditiveParetoRankValues
-                    (z := z)
+                  correctedConcreteObservationPositiveAdditiveParetoRankValues.{u, v, w, z}
                     obsFamily
                     f
                     coordinateWeight
@@ -1725,8 +1641,7 @@ theorem
         language : Set (Word α),
         ∀ hTarget :
           language ∈
-            StartRootedCorrectedConcreteTargetClass
-              (v := z)
+            StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
               α
               (↥U → M)
               (selectedObservationProduct obsFamily U)
@@ -1736,15 +1651,13 @@ theorem
           (S : Finset ι)
           (hSelected :
             language ∈
-              StartRootedCorrectedConcreteTargetClass
-                (v := z)
+              StartRootedCorrectedConcreteTargetClass.{u, z, max v w}
                 α
                 (↥S → M)
                 (selectedObservationProduct obsFamily S)
                 f),
           rank =
-              ambientTargetObservationSelectionPositiveAdditiveMinimumCost
-                (z := z)
+              ambientTargetObservationSelectionPositiveAdditiveMinimumCost.{u, v, w, z}
                 obsFamily
                 f
                 coordinateWeight
@@ -1753,8 +1666,7 @@ theorem
             correctedConcreteObservationSelectionPositiveAdditiveCost
                 coordinateWeight S =
               rank ∧
-            CorrectedConcreteObservationSelectionParetoOptimal
-              (z := z)
+            CorrectedConcreteObservationSelectionParetoOptimal.{u, v, w, z}
               obsFamily
               f
               (correctedConcreteObservationSelectionAdditiveCost
@@ -1762,8 +1674,7 @@ theorem
               U
               language
               S ∧
-            CorrectedConcreteObservationSelectionIrredundant
-              (z := z)
+            CorrectedConcreteObservationSelectionIrredundant.{u, v, w, z}
               α
               ι
               M
@@ -1790,15 +1701,13 @@ theorem
   · intro rank
 
     exact
-      positiveAdditiveExactCostRankClass_eq_paretoEnvelopeRankClass
-        (z := z)
+      positiveAdditiveExactCostRankClass_eq_paretoEnvelopeRankClass.{u, v, w, z}
         rank
 
   · intro language hTarget
 
     let hEnvelope :=
-      ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue
-        (z := z)
+      ambientTarget_positiveAdditiveRank_isMinimum_paretoRankValue.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1806,15 +1715,13 @@ theorem
         hTarget
 
     exact
-      ⟨correctedConcreteObservationPositiveAdditiveParetoRankValues_nonempty_of_fullProductTarget
-          (z := z)
+      ⟨correctedConcreteObservationPositiveAdditiveParetoRankValues_nonempty_of_fullProductTarget.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
           U
           hTarget,
-        correctedConcreteObservationPositiveAdditiveParetoRankValues_card_le_two_pow
-          (z := z)
+        correctedConcreteObservationPositiveAdditiveParetoRankValues_card_le_two_pow.{u, v, w, z}
           obsFamily
           f
           coordinateWeight
@@ -1826,8 +1733,7 @@ theorem
   · intro language hTarget costBudget
 
     exact
-      ambientTarget_positiveAdditiveRank_gt_iff_lt_all_paretoRankValues
-        (z := z)
+      ambientTarget_positiveAdditiveRank_gt_iff_lt_all_paretoRankValues.{u, v, w, z}
         obsFamily
         f
         coordinateWeight
@@ -1838,8 +1744,7 @@ theorem
   · intro language hTarget
 
     rcases
-        ambientTarget_exists_positiveAdditiveRankParetoCertifiedSelection
-          (z := z)
+        ambientTarget_exists_positiveAdditiveRankParetoCertifiedSelection.{u, v, w, z}
           hα
           obsFamily
           f
