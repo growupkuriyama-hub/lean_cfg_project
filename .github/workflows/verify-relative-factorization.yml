@@ -1,0 +1,44 @@
+name: Verify Relative Factorization Witness
+
+on:
+  push:
+    paths:
+      - "LeanCfgProject/Relative-Factorization/verify_36.py"
+      - "LeanCfgProject/Relative-Factorization/certificate_36.json"
+      - ".github/workflows/verify-relative-factorization.yml"
+
+  pull_request:
+    paths:
+      - "LeanCfgProject/Relative-Factorization/verify_36.py"
+      - "LeanCfgProject/Relative-Factorization/certificate_36.json"
+      - ".github/workflows/verify-relative-factorization.yml"
+
+  workflow_dispatch:
+
+jobs:
+  verify-36-witness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run 36-element witness verifier
+        working-directory: LeanCfgProject/Relative-Factorization
+        run: |
+          python verify_36.py --json certificate_36.generated.json
+
+      - name: Check committed certificate
+        working-directory: LeanCfgProject/Relative-Factorization
+        run: |
+          diff -u certificate_36.json certificate_36.generated.json
+
+      - name: Verification summary
+        run: |
+          echo "36-element relative-factorization witness verified successfully."
+          echo "The regenerated certificate is identical to the committed certificate."
