@@ -1,0 +1,2738 @@
+\documentclass[11pt,a4paper]{ltjsarticle}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\numberwithin{equation}{section}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{tikz}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{corollary}[theorem]{系}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定義}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{注意}
+\newtheorem{example}[theorem]{例}
+\renewcommand{\proofname}{証明}
+
+\newcommand{\CS}{\mathrm{CS}}
+\newcommand{\Cmcf}[2]{\mathcal{C}^{\mathrm{mcf}}_{#1,#2}}
+\newcommand{\Clatent}[2]{\mathcal{C}^{\mathrm{mcf},\le #2}_{#1}}
+\newcommand{\Callobs}[1]{\mathcal{C}^{\mathrm{mcf},\mathrm{fin}}_{#1}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\out}{\mathrm{out}}
+\newcommand{\tuple}[1]{\vec{#1}}
+\newcommand{\blank}{\square}
+\newcommand{\eps}{\varepsilon}
+
+\providecommand{\keywords}[1]{\par\smallskip\noindent\textbf{キーワード：}#1\par}
+
+\title{有限観測に基づく多重文脈自由言語の正例学習}
+\author{Takayuki Kuriyama\\\texttt{growup.kuriyama@gmail.com}}
+\date{}
+
+\newcommand{\cutpos}[1]{%
+  \raisebox{-0.7ex}{%
+    \tikz[baseline=(char.base)]{%
+      \node[draw,circle,inner sep=0.4pt,font=\scriptsize]
+        (char) {\ensuremath{#1}};%
+    }%
+  }%
+}
+
+\begin{document}
+\setlength{\abovedisplayskip}{6pt plus 2pt minus 3pt}
+\setlength{\belowdisplayskip}{6pt plus 2pt minus 3pt}
+\setlength{\abovedisplayshortskip}{3pt plus 1pt minus 2pt}
+\setlength{\belowdisplayshortskip}{3pt plus 1pt minus 2pt}
+\maketitle
+
+\begin{abstract}
+本論文では，学習器に有限モノイド準同型によって表される有限な合成的観測が与えられる場合の，多重文脈自由言語の正例データからの学習を研究する．固定された任意のファンアウト上限 $f$ と明示的な観測 $h$ に対し，対応する意味論的スライスに属するすべての言語を，有限な特徴標本から正確に再構成する単一の集合駆動学習器を構成する．この再構成では，観測された標本から導かれるランク探索上限を用いるため，対象に固有の規則ランクに関する事前情報を必要としない．証明は，出力型による精密化，向きの伝播，無音子の圧縮，および標本によって上界づけられる証人ランクの議論を組み合わせる．したがって，スライス全体が TxtBc 識別可能であり，さらに保守的ラッパーを用いることで TxtEx 識別可能性も得られる．規則ランクを制限しない場合の主張は定性的なものであるが，追加で固定された分岐上限 $b$ を仮定すれば，有限標本 $K$ から現在の仮説を $(1+\|K\|_+)^{O(fb)}$ 時間で構成できる．
+
+有限観測の枠組みは，Yoshinaka の多次元代入可能言語族より本質的に広い．固定アルファベット $\Gamma=\{a,b,c\}$ 上では，標準的な対称境界観測 $b_\Gamma=b_\Gamma^{1,1}$ だけで，任意の $p\ge2$ に対し，$\Cmcf{p}{b_\Gamma}\setminus\bigl(S(p)\cap p\text{-}\mathrm{MCFL}\bigr)$ に，互いに異なる無限個の非文脈自由・ファンアウト2・規則ランク1の言語族が含まれる．さらに一般に，境界観測スライスと有限 boundary guard クラスの間には，同じ深さでの包含と一段 buffer を加えた逆向きの包含からなる sandwich が成り立つ．これにより，すべての有限 boundary guard から分離するためには，純粋な境界情報を越える有限状態因子が必要となる理由が明確になる．
+
+最後に，観測を内在的な代数的不変量ではなく，有限の学習助言として扱う．観測そのものが隠されていても，その値域モノイドの大きさが $k$ 以下と分かっていれば，そのようなすべての観測を一つの有効な普遍有限観測へコンパイルでき，学習可能性が回復する．しかし，この有界潜在スライスでさえ，明示的な言語族に沿って，学習器一様な $2^{\Omega(\sqrt{k})}$ の正例ロッキング情報を強制する．隠れた有限観測に大きさの上限が与えられなければ，TxtBc 識別可能性は失われる．また，Rambow--Satta による較正から，最小規則ランクは一つの固定3文字アルファベット上ですでに非有界であることが分かる一方，この構成を証言するために必要な有限観測の大きさは，なおランクパラメータとともに増大することを示す．
+\end{abstract}
+
+\keywords{文法推論，多重文脈自由文法，正例データ，有限観測，多次元代入可能性，TxtBc 学習，TxtEx 学習，規則ランク}
+
+\section{序論}
+\label{sec:introduction}
+
+テキストからの正例データ学習は Gold に端を発し，不完全な証拠から文法を推論する大きな理論へ発展してきた
+\cite{Gold1967,Angluin1980,Angluin1982Reversible}．とりわけ成功してきた一つの方向は分布的な方法であり，十分に類似した文脈に現れる部分文字列やタプルを相互に置換可能なものとして扱う．文脈自由言語に対しては，この観点が代入可能言語の学習の基礎となっており，Yoshinaka は多次元文脈を用いることで，これを多重文脈自由言語（MCFL）へ拡張した
+\cite{ClarkEyraud2007,Yoshinaka2008,Yoshinaka2009,Yoshinaka2011}．これらの研究は，本論文に最も近い先行研究である．
+
+制限のない MCFG 学習における基本的な困難は，ファンアウトだけでは規則右辺に現れ得る非終端記号の個数を上から抑えられないことである．このため Yoshinaka の正例学習器は，次元（あるいはファンアウト）パラメータ $p$ と規則ランクパラメータ $q$ の双方を固定する．ここから自然な定性的問題が生じる．すなわち，対象ごとの規則ランク上限を学習器に与えることなく，意味論的に定義された MCFG 言語族を識別できるだろうか．問題は各対象が有限規則ランクを持つかどうかではない．有限 MCFG 表現はすべて有限規則ランクを持つ．問題は，その上限を学習器があらかじめ知る必要があるかどうかである．ただし定性的な水準では，事前のランクパラメータを取り除くこと自体は，Yoshinaka の枠組みからの分離にはならない．彼の固定ランク conjecture grammar 構成は，$p$D-代入可能な対象から得られる正例標本に対してランク上限 $q$ に関して一様に健全であり，すなわち $q$ を大きくしても対象言語の外の語を新たに生成することはなく，選んだランク上限が対象のある表現のランク以上であれば，特徴標本による完全性が成立する
+\cite{Yoshinaka2011}．明示的な再定式化については
+\cite[Proposition~1]{CaseYoshinakaZeugmann2013} も参照されたい．したがって，ランク上限は標本とともに増大させることができる．Section~\ref{sec:comparison} では，この適応的ランクというベースラインを明示的に記録する．ゆえに本論文の寄与は，単に $\bigcup_q SL(p,q)$ が学習可能であるということではなく，以下で導入する，より広い有限観測意味論スライスに対する標準的再構成定理である．
+
+有限観測という考え方には，著者によるファンアウト1の文脈自由設定における先行形
+\cite{kuriyamaCFG} がある．%
+\footnote{この結果は著者の総合研究大学院における修士論文に由来し，学内査読を受けたものである．\url{https://makotokanazawa.ws.hosei.ac.jp/students-j.html} を参照されたい．改訂版は \cite{kuriyamaCFG} である．本稿の結果はこの先行結果には依存しない．}
+しかし，多次元への拡張には通常の CFG には存在しない構造的障害がある．ファンアウト1では，標準的な CFG の二分化によって右辺ランクを独立パラメータとして除去できる．これに対してファンアウト2以上の MCFG では，最小規則ランクが真の階層をなす
+\cite{RambowSatta1999}．したがって，本結果は CFG 定理を単にタプル値へ言い換えたものではない．証明では，合成を通じてタプルの向きと誘導される子の向きを追跡し，真に無音な子を圧縮し，正例標本の支持から必要な非有界探索ランクを回収しなければならない．
+
+本論文では，別種の有限インターフェースを与えることでこの問題に答える．\emph{有限観測}とは，明示的な有限モノイド準同型 $h:\Sigma^*\to M$ である．さらに，タプルの出現には，周囲の文中における左から右への向きを付随させる．大まかに言えば，二つのタプルは，同じ向きを持ち，各成分の $h$ 値が等しく，かつその向きにおいて共通の受理文脈を持つときに同一視できる．ファンアウト高々 $f$ におけるこの意味論的クラスを $\Cmcf{f}{h}$ と書く．写像 $h$ は構文木でも membership oracle でもない．これは文字列上で一様に計算される固定有限状態写像である．たとえば，既知の正則包絡言語や，Yoshinaka との比較で用いるアルファベット依存の境界観測から得ることができる．
+
+本論文では $h$ を，対象ごとに別々に回収すべき標準的不変量ではなく，クラス全体に共有される有限の補助情報とみなす．特に，一つのスライス内のすべての言語が同じ観測を共有し，後で与える主要な真の分離例でも，無限個の対象言語族に対して単一の観測を用いる．Sections~\ref{sec:fixed-observation} と \ref{sec:comparison} では，このモデル化の選択を検証可能な形にする．すなわち，隠れた観測の大きさに上限があれば普遍的な有限助言へコンパイルできる一方，そのような上限をすべて取り除くと TxtBc 識別可能性は失われる．
+
+以下の特徴標本定理は，MCFG 表現の自然な空間を意味論的仮定を満たすものだけに有効にフィルタリングすることで得られるものではない．Appendix~\ref{app:decision-complexity} では，この認識問題が， trivial observation を用いた文脈自由表現の場合に既に $\Pi^0_1$-完全であることを示す．この主張は対象クラスの自然な文法表現に関するものであり，あらゆる代替的な有効添字付けが存在しないと主張するものではない．
+
+主定理は，各固定観測スライス上での正確な再構成を与える．証明側でのみ任意の対象表現から出発し，ファンアウトも規則ランクも増加させずに正規化し，生成的状態を成分ごとの $h$ 型によって精密化し，正規化された規則を通してタプルの向きを伝播させる．その後，真に無音な子出現を圧縮する．成功する規則露出に残る各子は正の終端記号支持を寄与するので，標本語 $w$ の内部で証言される規則のランクは高々 $|w|$ である．したがって学習器は，未知の対象表現からではなく，現在の有限標本から得られるランク上限を用いて，必要な合成証人をすべて列挙できる．有限特徴標本は，正規化された対象規則をすべて露出し，意味論的代入規則は健全性を保つ．その結果，一つの集合駆動学習器が任意の $L\in\Cmcf{f}{h}$ を正確に再構成し，TxtBc 識別と TxtEx 識別の双方を与える．外部の分岐上限 $b$ も固定すれば，対応する現在仮説は $(1+\|K\|_+)^{O(fb)}$ 時間で構成できる．ただし後者は，与えられた有限標本から仮説を構成する計算量に関する主張であり，特徴データの総長が多項式であるという主張ではない．
+
+観測を有限の学習助言とみなすと，さらに明瞭な定性的境界が得られる．実際の準同型が隠されているが，値域モノイドの大きさが高々 $k$ であることだけは分かっているとする．大きさ $k$ 以下のモノイド構造と文字写像は有限個しか存在しないので，それらを一つの有効な普遍観測 $U_{\Sigma,k}$ にコンパイルできる．すると観測の精密化に関する単調性によって，有界潜在問題は観測が与えられる場合の定理へ還元される．ただし，この回復は定量的には無償ではない．有限正則言語だけを対象にしても，有界スライス全体を TxtBc 学習する任意の学習器は，明示的な言語族に沿って，正例内容の大きさが $2^{\Omega(\sqrt{k})}$ となるロッキング列を持たざるを得ない．観測が完全に潜在化し，その大きさに上限を与えなければ，すべての有限観測スライスの和集合は正例データから TxtBc 識別可能ではない．
+
+Yoshinaka との比較は，本結果の適用範囲と意義の双方を較正する．固定アルファベット $\Gamma=\{a,b,c\}$ 上で，標準的な対称境界観測 $b_\Gamma=b_\Gamma^{1,1}$ だけで，任意の $p\ge2$ に対し
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  \subsetneq
+  \Cmcf{p}{b_\Gamma}
+\]
+が成り立つ．しかも差集合には，非文脈自由・ファンアウト2で，最小規則ランクが1である互いに異なる無限言語族
+$H_t=\{a^{tn}b^nc^n:n\ge0\}$ が含まれる．したがって，本質的な分離は補助的な正則制御因子を付加して初めて現れるのではなく，最も単純な標準的アルファベット境界スライスの内部ですでに生じる．一方，有限 $(k,\ell)$ boundary guard との比較には鋭い限界がある．同じ深さの境界スライスは対応する guarded 意味論的クラスに含まれ，逆に境界を一文字だけ深くすれば guarded クラスを有限観測スライスへ埋め込める．したがって，以下では，すべての有限 boundary guard から分離するという，より強く別種の目的のために固定正則制御観測を残す．
+
+また，$\bigcup_q SL(p,q)$ の定性的学習可能性は，Yoshinaka 自身の conjecture grammar 構成を適応的ランクで用いることから既に従うのであり，本論文の寄与としては主張しない．これに対し，タグ付き Rambow--Satta 構成は構造的較正として用いる．その正確な最小規則ランク階層は，ランクを崩すことなく固定3文字アルファベット $\{a,b,c\}$ 上へ圧縮できるので，最小規則ランクの非有界性はアルファベット増大の人工物ではない．それでも，共通文脈における型 packing の障害はこの圧縮後にも残る．すなわち，パラメータ $r$ の固定アルファベット言語を証言する任意の有限観測 $h$ は
+$r\le |\operatorname{im}h|^2$ を満たす．したがって，この構成は一つの固定観測スライス内で規則ランクが非有界であることを示すものではなく，この下界を一般的な「規則ランク対観測」のトレードオフとして主張するものでもない．最後に，出力型構成によって，各固定観測対象は規則ランクを保存したまま有限個の congruential component に分解でき，Clark と Yoshinaka の構文的・分布的アプローチへの直接的な橋渡しが得られる．
+
+以上より，本論文の寄与は次のようにまとめられる．
+\begin{enumerate}[leftmargin=*]
+\item \textbf{固定観測スライス上での正確な再構成．}
+固定された $f$ と明示的な $h$ に対し，$\Cmcf{f}{h}$ に属するすべての言語は，一つの有効な標準学習器に対する有限特徴標本を持ち，スライス全体が TxtBc と TxtEx の双方で識別可能である．必要な探索ランクは対象固有の助言として与えるのではなく，標本から導出される．固定された外部分岐上限 $b$ のもとでは，現在のランク制限付き仮説を $(1+\|K\|_+)^{O(fb)}$ 時間で構成できる．
+\item \textbf{標準的境界スライスにおける本質的分離．}
+固定アルファベット $\Gamma=\{a,b,c\}$ 上で，一つの標準観測 $b_\Gamma=b_\Gamma^{1,1}$ がすべての $p\ge2$ に対して機能し，差集合に，互いに異なる無限個の非文脈自由・ファンアウト2で最小規則ランク1の言語を含む分離を与える．さらに，対応する有限境界スライスは guarded 多次元代入可能性との間で same-depth/buffered sandwich を満たし，有限境界情報より一般の有限状態制御がどこで真に強くなるかを明確にする．
+\item \textbf{観測助言の境界．}
+隠れた有限観測の大きさに上限 $k$ があれば，普遍的な精密化によって十分である．一方，有界潜在スライスで既に学習器一様な $2^{\Omega(\sqrt{k})}$ のロッキング下界が生じ，観測サイズに上限のない潜在和集合は TxtBc 識別可能ではない．
+\item \textbf{構造的較正．}
+アルファベットだけに依存する境界観測は，Yoshinaka の意味論的言語族全体を既に含む．Rambow--Satta の最小規則ランク階層は一つの固定3文字アルファベットへ圧縮しても厳密に保存されるが，そのパラメータ $r$ の要素を証言する任意の有限観測の像の大きさは少なくとも $\sqrt r$ である．したがって，この構成は依然として一つの固定観測スライス内に非有界ランクを置くものではない．さらに，各固定観測対象は規則ランクを保存した有限 congruential decomposition を持つ．
+\end{enumerate}
+
+本論文の構成は次の通りである．Section~\ref{sec:prelim} では，学習モデル，MCFG の記法，向き付きタプル分布，有限観測意味論スライスを定める．Section~\ref{sec:running-examples} では二つの基本例・境界例を与える．Section~\ref{sec:learner} では標準学習器を構成し，正確な再構成を証明する．Section~\ref{sec:poly-time} では固定ランクのもとでの構成計算量を切り分ける．Section~\ref{sec:fixed-observation} では，学習理論的観点から有界および非有界の潜在観測を研究する．Section~\ref{sec:comparison} では，本枠組みを Yoshinaka および関連する分布的学習アプローチと比較する．Appendix~\ref{app:rank-hierarchy} では規則ランク階層の技術的較正を与え，Appendix~\ref{app:decision-complexity} では意味論的仮定の決定複雑性を記録する．
+
+\section{学習モデルと有限観測意味論}
+\label{sec:prelim}
+
+\subsection{正例データからの学習}
+
+\begin{definition}[テキストと TxtBc/TxtEx 識別]
+空言語を扱うため，一時停止記号
+\(\#\notin\Sigma\) を固定する．%
+\footnote{一時停止記号を許すことで，
+\(\#,\#,\ldots\) を空言語に対するテキストとして扱える．}
+\(L\subseteq\Sigma^*\) に対する \emph{テキスト}とは，
+\(L\cup\{\#\}\) 上の無限列であって，$L$ の各要素が少なくとも一度は現れるものをいう．一時停止記号は任意に現れてよく，$\#$ はテキスト終端記号ではない．
+
+有限接頭辞の \emph{内容（content）}とは，その接頭辞中に現れた $\Sigma^*$ 上の正例の有限集合 $K\subseteq L$ である．したがって，一時停止記号の位置や個数，また同じ正例が何回現れたかは内容に影響しない．学習器とは，各有限接頭辞を仮説文法へ写す計算可能関数である．
+
+学習器が言語 $L$ を正例データから \emph{TxtBc 識別する}とは，$L$ の任意のテキストに対し，ある $n_0$ が存在して，段階 $n_0$ 以後に出力されるすべての仮説の言語が $L$ となることをいう
+\cite{CaseLynes1982,CaseSmith1983}．したがって，最終的にすべての仮説が意味論的に正しくなることは要求されるが，仮説文法そのものが構文的に安定することは要求されない．
+
+学習器が $L$ を正例データから \emph{TxtEx 識別する}とは，$L$ の任意のテキストに対し，ある $n_0$ と一つの仮説文法 $H$ が存在して，$n_0$ 以後のすべての段階で厳密に同じ $H$ が出力され，かつ $L(H)=L$ となることをいう．学習器があるクラスを TxtBc または TxtEx 識別するとは，そのクラスのすべての言語をそれぞれの意味で識別することをいう．本論文では集合駆動学習器によって TxtBc 結果を証明し，Corollary~\ref{cor:gold-explanatory} で保守的ラッパーを用いることにより TxtEx 収束を得る．両者の区別が重要な箇所では，単に ``identification in the limit'' という表現を用いない．
+\end{definition}
+
+\begin{definition}[集合駆動学習器と特徴標本]
+学習器 $\mathcal A$ が \emph{集合駆動（set-driven）} であるとは，出力仮説が提示順序や多重度に依存せず，それまでに観測された正例の有限集合 $K$ のみに依存することをいう．観測集合 $K$ に対する仮説を $\mathcal A(K)$ と書く．
+
+対象言語 $L$ に対し，有限集合 $S\subseteq L$ が $\mathcal A$ に対する \emph{特徴標本（characteristic sample）} であるとは，任意の有限集合 $K$ について，$S\subseteq K\subseteq L$ ならば $L(\mathcal A(K))=L$ が成り立つことをいう．$S=\emptyset$ の場合も許す．
+
+以下で構成する標準学習器は集合駆動である．したがって，特徴標本は正の結果および集合駆動学習器に対する下界を定量化する自然な証明書となる．一般の学習器は，提示順序，多重度，一時停止記号も利用し得る．そのような学習器にも一様な下界を与えるため，Section~\ref{sec:fixed-observation} で必要になる場合に限って意味論的ロッキング列を用いる．以下で構成する表現依存の特徴標本は，標準学習器に対する具体的な特徴標本である．対象表現はその存在を証明するためにのみ用いられ，学習器への入力として与えられることはない．
+\end{definition}
+
+以下で用いる意味論的ロッキングの概念とその存在証明は，behaviorally correct な言語学習において標準的である．Case と Lynes の TxtBc 枠組み
+\cite{CaseLynes1982} およびその後の研究と比較されたい．自己完結性のため短い証明も与える．本論文で新たに用いるのは，Section~\ref{subsec:uniform-observation-bound} における一語削除言語族への適用であり，ロッキング内容を，本論文で扱う有界観測 MCFG クラスに対する学習器一様な定量的下界へ変換する．
+
+\begin{definition}[正例標本サイズ]
+有限集合 $K\subseteq\Sigma^*$ に対して
+\[
+\|K\|_+:=\sum_{w\in K}\max(1,|w|)
+\]
+と定義する．%
+\footnote{因子 $\max(1,|w|)$ は，観測された空語が標本サイズに退化的なゼロ寄与しか与えないことを防ぐ．}
+タプル $\tuple u=(u_1,\ldots,u_d)$ に対しては，その成分長の総和を
+\[
+\|\tuple u\|_1:=\sum_{i=1}^d|u_i|
+\]
+と書く．
+\end{definition}
+
+以下の一般 MCFG 定理では，$\eps$ を生成するランク0規則を許す．
+
+\begin{remark}[スライスごとの多項式性]
+\label{rem:slicewise-poly}
+定理が追加のパラメータ依存性を明示しない限り，多項式時間上界は，固定された外部パラメータごとのスライス上で理解する．特に Theorem~\ref{thm:poly} では，ファンアウト上限，分岐上限，および与えられた有限観測を固定する．これらのパラメータについて一様な多項式時間上界を主張するものではない．
+\end{remark}
+
+\subsection{有限観測}
+
+\begin{definition}[明示的有限準同型]
+\label{def-monoid-morphism}
+有限モノイド $M$ へのモノイド準同型 $h\colon\Sigma^*\to M$ が \emph{明示的} であるとは，$M$ の乗法表と，各 $a\in\Sigma$ に対する値 $h(a)$ が与えられていることをいう．タプル $\tuple w=(w_1,\ldots,w_d)$ に対し，
+\[
+h^{(d)}(\tuple w):=(h(w_1),\ldots,h(w_d))\in M^d
+\]
+と書く．
+\end{definition}
+
+本論文では，有限モノイド準同型を，MCFL の正例学習における有限状態の補助観測として用いる．有限モノイド準同型と有限オートマトンによる正則言語認識との古典的対応については Pin~\cite{Pin1986} を参照されたい．
+
+有限観測 $h$ は，たとえば $R\supseteq L$ なる正則言語 $R$ を認識する DFA があらかじめ利用可能な場合に得られる．この DFA の遷移準同型は明示的準同型 $h:\Sigma^*\to M$ を与える．各語 $w\in\Sigma^*$ に対して，元 $h(w)$ は $w$ を読むことによって誘導される状態変換を記録する．
+
+したがって $h(u)=h(v)$ とは，$u$ と $v$ をどの DFA 状態から読んでも同じ結果状態へ到達することを意味する．学習器は $R$ そのものを推論するわけではなく，$R$ を $L$ に対する membership oracle として用いるわけでもない．学習器が利用するのは DFA から得られるこの有限状態情報だけであり，正例データ中で観測されたどのタプルを同一視してよいかを制御する補助情報として用いる．
+
+\subsection{多重文脈自由文法}
+
+本論文では，多重文脈自由文法の標準的なタプル生成定義
+\cite{SekiEtAl1991} を用いる．MCFG および関連する mildly context-sensitive formalism の一般的概観については \cite{Kallmeyer2010} も参照されたい．以下で明示する一般ランクの記法を，学習器，証明，および基本例の全体を通して用いる．
+
+\begin{definition}[標準線形 MCFG 表現]
+\label{def:standard-mcfg}
+\emph{多重文脈自由文法}とは，タプル
+\(G=(V,\Sigma,P,S,\mu)\) である．ここで $V$ は有限非終端記号集合，$\Sigma$ は有限終端アルファベット，$S\in V$ は $\mu(S)=1$ を満たし，各 $A\in V$ に対して $\mu(A)\ge1$ は $A$ のファンアウトである．ランク $r\ge0$ の規則は
+\[
+  \rho:\quad
+  A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_r)
+\]
+の形を持つ．ここで $e=\mu(A)$，$d_j=\mu(B_j)$ であり，
+\[
+  X_j:=\{x_j^1,\ldots,x_j^{d_j}\},
+  \qquad
+  \Gamma_\rho:=\Sigma\uplus X_1\uplus\cdots\uplus X_r
+\]
+と置くと，各 $\alpha_i\in\Gamma_\rho^*$ であり，$X_1\uplus\cdots\uplus X_r$ の各変数はタプル全体 $(\alpha_1,\ldots,\alpha_e)$ 中に高々一度しか現れない．すべての変数がちょうど一度ずつ現れるとき，この規則を \emph{非削除的（nondeleting）} という．
+
+整合する子タプル $\tuple u_j=(u_{j,1},\ldots,u_{j,d_j})$ に対し，$x_j^k$ を $u_{j,k}$ で同時代入することにより
+\[
+  \rho(\tuple u_1,\ldots,\tuple u_r)\in(\Sigma^*)^e
+\]
+を定義する．$r=0$ のとき，規則は定数規則であり，タプル $(\alpha_1,\ldots,\alpha_e)$ を導出する．タプル言語 $L_A(G)$ は，成分ごとの包含で順序づけられた族のうち，すべての規則適用に閉じた最小の族として定義され，
+\[
+  L(G):=\{w\in\Sigma^*:(w)\in L_S(G)\}
+\]
+とする．すべての非終端記号について $\mu(A)\le f$ である MCFG を $f$-MCFG といい，$f$-MCFG によって生成される言語を $f$-MCFL という．すべての規則のランクが高々 $b$ である文法を $b$-分岐（$b$-branching）という．
+\end{definition}
+
+整数 $f,q\ge1$ に対して
+\[
+  L(f,q):=\{L(G):G\text{ はファンアウト高々 }f
+  \text{ かつ規則ランク高々 }q\text{ の MCFG}\}
+\]
+と書く．すべての有限 MCFG 表現は有限規則ランクを持つので，
+\[
+f\text{-}\mathrm{MCFL}=\bigcup_{q<\infty}L(f,q)
+\]
+である．$L\in f\text{-}\mathrm{MCFL}$ に対して，\emph{ファンアウト $f$ における最小規則ランク}を
+\[
+  \operatorname{rr}_f(L)
+  :=\min\{q\ge1:L\in L(f,q)\}
+\]
+と定義する．これは，特定の与えられた文法のランクではなく，$L$ を生成するすべてのファンアウト $f$ 表現にわたる言語レベルの最小値である．
+
+二つの非終端記号が同じファンアウト $d$ を持つとき，
+\[
+  A\to B
+\]
+を，単項恒等テンプレート規則
+\[
+A\to(x_1^1,\ldots,x_1^d)(B)
+\]
+の略記として用いる．%
+\footnote{この略記は成分間の恒等対応だけを表す．たとえばファンアウト2では，$A\to B$ は $A\to(x_1^1,x_1^2)(B)$ を意味し，$A\to(x_1^2,x_1^1)(B)$ のような成分交換規則を意味しない．}
+同様に，$A\to\tuple c$ はランク0の定数規則を表す．これらの略記は，型付き開始リンクおよび学習器の意味論的単項規則に用いる．
+
+標準形式は，ランク0規則，恒等でない単項規則，任意の有限規則ランク，削除規則を許す．線形非削除規則
+\[
+\rho:A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_r)
+\]
+について，各子 $B_j$ の変数 $x_j^1,\ldots,x_j^{\mu(B_j)}$ が，親テンプレート成分 $\alpha_1,\ldots,\alpha_e$ を左から右へ走査したときにこの順序で現れるなら，その規則を \emph{非置換的（nonpermuting）} という．意味論的定理を表現上の人工物から切り離すため，二つの事実を用いる．第一に，MCFG に対する標準的な削除除去構成
+\cite[Lemma~2.2]{SekiEtAl1991}（\cite[Section~2]{Kanazawa2019Ogden} も参照）は，ファンアウトも分岐ランクも増加させずに同値な非削除表現を与える．概略的には，周囲の導出で保持される出力成分の部分集合によって非終端記号を装飾し，各規則を実際に生き残る変数へ射影する．完全に未使用の子出現は複製せず削除する．新たな子出現は導入されないため規則ランクは増加せず，保持されるタプルのアリティも元の非終端記号以下なのでファンアウトも増加しない．非削除表現から出発すれば，後の Lemma~\ref{lem:permutation-decoration} により，ファンアウトと最大規則ランクを再び保存した同値な非置換表現を得る自己完結な置換装飾構成が与えられる．第二に，有界ファンアウトのもとでも規則ランクは真に独立なパラメータである．同期並列性を有界にしても，独立並列性による階層は潰れない
+\cite{RambowSatta1999}．文法変換の水準では，LCFRS の二分化はファンアウトの増加を必要とする場合がある
+\cite{GomezRodriguezEtAl2009}．ファンアウト2について，Sagot と Satta は，ファンアウト2制約を保ちながら与えられた LCFRS 規則の右辺ランクを下げる最適手続きを与えている
+\cite{SagotSatta2010}．ただしこれは与えられた表現を因子分解する問題であり，同じ言語を生成するすべての文法にわたる最小ランクをそれだけで決定するものではない．%
+\footnote{文法レベルの直観として，ファンアウト2の非終端記号 $A,B,C,D,E$ とランク4規則
+\[
+A\to(x_1^1x_2^1x_3^1x_4^1,\,
+ x_3^2x_1^2x_4^2x_2^2)(B,C,D,E)
+\]
+を考える．任意の二つの子について，対応する変数は一方の親成分では隣接するが，他方の成分では別の子の変数によって隔てられている．したがって，最初にどの二つの子を二項結合しても，後の interleaving を可能にするには少なくとも三つの断片を保持しなければならない．これは，特定の規則がファンアウト2のまま強く二分化できるとは限らないことを示す直観例である．言語レベルで階層が潰れないこと自体は Rambow と Satta によって与えられる \cite{RambowSatta1999}．}
+したがって，以下の任意ランク証人構成を，ファンアウトパラメータ $f$ を固定したまま無害な二分正規形へ置き換えることはできない．
+
+\begin{definition}[生成性，到達可能性，縮約]
+\label{def:productive-reachable-reduced}
+$G=(V,\Sigma,P,S,\mu)$ を標準 MCFG とする．
+
+非終端記号 $A\in V$ が \emph{生成的（productive）} であるとは，$L_A(G)\ne\emptyset$ であることをいう．
+
+$G$ の \emph{非終端記号依存グラフ}は頂点集合 $V$ を持ち，各規則
+\[
+A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_k)
+\]
+および各 $1\le j\le k$ に対して辺 $A\to B_j$ を持つ．非終端記号 $A$ が \emph{到達可能（reachable）} であるとは，このグラフ中で $S$ から $A$ への有向路が存在することをいう．長さ0の路も許すので，開始記号 $S$ は常に到達可能である．
+
+すべての非終端記号が到達可能かつ生成的であるとき，文法 $G$ を \emph{縮約済み（reduced）} という．
+\end{definition}
+
+\paragraph{規則ランクとファンアウト．}
+生成規則の \emph{ランク}は右辺に現れる非終端の子の個数であり，ファンアウト $\mu(A)$ は $A$ が導出するタプルのアリティである．両者は独立である．たとえば $\mu(A)=\mu(B)=3$ のとき，単項規則
+\[
+A\to(x_1^1a,x_1^2,bx_1^3)(B)
+\]
+のランクは1だが，$A$ のファンアウトは3である．逆に $\mu(C)=\mu(D)=\mu(E)=\mu(F)=1$ のとき，
+\[
+C\to(x_1^1x_2^1x_3^1)(D,E,F)
+\]
+は親ファンアウト1だが規則ランク3である．ファンアウトはタプル対象のアリティを制御し，規則ランクは一つの合成証人の中で同時に組み合わせる必要がある子出現の個数を制御する．
+
+規則
+\[
+\rho:A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_r)
+\]
+について，$(\alpha_1,\ldots,\alpha_e)$ をその \emph{テンプレートタプル}と呼ぶ．以下の例ではすべて Definition~\ref{def:standard-mcfg} の標準 MCFG 記法を用い，別個の二分文法形式は仮定しない．
+
+\subsection{向き付きタプル文脈と意味論的スライス}
+
+\begin{definition}[文文脈と向き]
+\label{def:sentence-context}
+アリティ $d$ の \emph{文文脈（sentence context）}とは，
+\[
+  E=u_0\blank_{\sigma(1)}u_1\cdots\blank_{\sigma(d)}u_d
+\]
+の形の語である．ここで $\sigma$ は $\{1,\ldots,d\}$ の置換，各 $u_i\in\Sigma^*$ であり，名前付き穴 $\blank_i$ はそれぞれちょうど一度現れる．その \emph{向き（orientation）}を
+\[
+\operatorname{ori}(E):=\sigma
+\]
+と定義する．$\tuple w=(w_1,\ldots,w_d)$ に対し，各 $\blank_i$ を $w_i$ で置換して得られる文字列を $E[\tuple w]$ と書く．置換 $\sigma\in S_d$ に対し，向き $\sigma$ を持つアリティ $d$ の文文脈全体を $\mathcal E_{d,\sigma}$ とする．
+\end{definition}
+
+\begin{definition}[誘導される子の向き]
+\label{def:induced-orientation}
+\[
+\rho:A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_r)
+\]
+を線形非削除規則テンプレートとし，$\varpi\in S_e$ をその出力タプルの向きとする．ファンアウト $d_j$ の子 $B_j$ について，連結されたテンプレート成分
+\[
+  \alpha_{\varpi(1)}\alpha_{\varpi(2)}\cdots\alpha_{\varpi(e)}
+\]
+を左から右へ走査し，子 $j$ に属する変数 $x_j^1,\ldots,x_j^{d_j}$ だけを記録する．線形性と非削除性により，各上付き添字はちょうど一度ずつ現れるので，$\{1,\ldots,d_j\}$ の一意な置換が得られる．この置換を
+\[
+  \operatorname{ind}_j(\rho,\varpi)\in S_{d_j}
+\]
+と書く．これは，親タプルを向き $\varpi$ で露出したときに子 $j$ 上へ誘導される向きである．
+\end{definition}
+
+非削除規則 $\rho$ に対し，上で導入した非置換条件は，等価に
+\[
+  \operatorname{ind}_j(\rho,\mathrm{id}_{\mu(A)})
+  =\mathrm{id}_{\mu(B_j)}
+  \qquad(1\le j\le r)
+\]
+と書ける．
+
+\begin{lemma}[置換装飾正規化]
+\label{lem:permutation-decoration}
+$G$ を有限な線形非削除 $f$-MCFG とする．最大規則ランクを保つ同値な非置換 $f$-MCFG $G^{\mathrm{np}}$ が存在し，各元の非終端記号は高々 $f!$ 個の装飾付きコピーを持ち，各元の規則も高々 $f!$ 個の装飾付きコピーを持つ．したがって
+\[
+  |G^{\mathrm{np}}|=O_f(|G|)
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+ファンアウト $d$ の各非終端記号 $A$ に対して，$\tau\in S_d$ で添字づけられたコピー $A^\tau$ を導入する．$A^\tau$ の意図するタプル言語は，$L_A(G)$ の成分を $\tau$ に従って置換したものである．元の規則と，その親成分に対して選んだ置換に対し，置換後の親テンプレートを走査する．各子について，この走査によりその子の成分変数の一意な置換が決まる．対応する装飾付き子記号を使い，それらの変数を自然順序へ改名する．こうして得られる規則は構成上非置換的である．元の開始記号の恒等コピーから開始すれば，$G$ との間に導出ごとの対応が得られる．
+
+任意の記号のコピー数は高々 $d!\le f!$ であり，親の置換を選べばすべての子の装飾が決まるので，同じ上界が各規則にも成り立つ．子の個数は増減しないため規則ランクは保存される．到達不能な装飾付きコピーを削除しても同値性は保たれ，ファンアウトも規則ランクも増加しない．
+\end{proof}
+
+\begin{definition}[標本語中のタプル出現]
+\label{def:tuple-occurrence}
+$K\subseteq\Sigma^*$ とし，$w=a_1\cdots a_n\in K$ とする．$w$ の切断位置を
+\[
+\cutpos{0}a_1\cutpos{1}a_2\cutpos{2}\cdots a_n\cutpos{n}
+\]
+と番号づける．$0\le\ell\le r\le n$ に対して
+\[
+w[\ell:r]:=a_{\ell+1}\cdots a_r
+\]
+と書く．特に $w[\ell:\ell]=\eps$ である．
+
+$d\ge1$ とする．$w$ 中の \emph{アリティ $d$ のタプル出現}とは，データ
+\[
+\mathfrak{o}=(\sigma,(\ell_i,r_i)_{i=1}^d)
+\]
+であって，$\sigma\in S_d$ かつ
+\[
+  0\le\ell_{\sigma(1)}\le r_{\sigma(1)}
+  \le\cdots\le\ell_{\sigma(d)}\le r_{\sigma(d)}\le n
+\]
+を満たすものをいう．空区間 $\ell_i=r_i$ も許し，複数の空区間が同じ切断位置にある場合には，$\sigma$ はそれらの局所順序も記録する．
+
+このような出現に対して
+\[
+\tuple x=(w[\ell_1:r_1],\ldots,w[\ell_d:r_d])
+\]
+と置く．指定された区間を対応する名前付き穴へ置換すると，$\operatorname{ori}(E)=\sigma$ かつ $E[\tuple x]=w$ を満たすアリティ $d$ の文脈 $E$ が得られる．この出現を，向き付き対 $(E,\tuple x)$ と同一視する．
+
+例として，
+\[
+w=\cutpos{0}a\cutpos{1}b\cutpos{2}c\cutpos{3}d\cutpos{4}
+\]
+とし，$d=2$，$(\ell_1,r_1)=(2,4)$，$(\ell_2,r_2)=(0,1)$ とする．第2成分が左側に先に現れるので $\sigma=(2,1)$ であり，タプルは $(cd,a)$，文文脈は $\blank_2b\blank_1$ である．
+\end{definition}
+
+MCFG 規則のテンプレート成分は空でもよいので，Definition~\ref{def:tuple-occurrence} では空区間を許している．たとえば $w=ab$ に対し，$(\eps,\eps)$ の両成分を中央の切断位置で観測すると，二つの局所順序 $\mathrm{id}_2$ と $(2,1)$ は，それぞれ異なる文脈
+$a\blank_1\blank_2b$ と $a\blank_2\blank_1b$ を与える．したがって，タプル値が同一であっても，向きは真の有限出現情報である．
+
+\begin{definition}[セクター別タプル分布]
+\label{def:tuple-distribution}
+$L\subseteq\Sigma^*$，$\tuple x\in(\Sigma^*)^d$，$\sigma\in S_d$ に対し，\emph{向きセクター分布}を
+\[
+  \D_{L,\sigma}^{(d)}(\tuple x)
+  :=
+  \{E\in\mathcal E_{d,\sigma}:E[\tuple x]\in L\}
+\]
+と定義する．名前付き文脈全体に関する分布は，セクターの直和的和集合
+\[
+  \D_L^{(d)}(\tuple x)
+  :=\bigcup_{\sigma\in S_d}\D_{L,\sigma}^{(d)}(\tuple x)
+\]
+である．アリティが明らかな場合，上付き添字を省略する．
+\end{definition}
+
+\begin{definition}[向きを考慮した $(f,h)$-タプル代入可能性]
+\label{def:tuple-substitutable}
+$f\ge1$ とし，$h\colon\Sigma^*\to M$ を明示的有限モノイド準同型とする．言語 $L\subseteq\Sigma^*$ が \emph{向きを考慮した $(f,h)$-タプル代入可能}であるとは，任意の $1\le d\le f$，任意の $\sigma\in S_d$，および任意の
+$\tuple x,\tuple y\in(\Sigma^*)^d$ に対して，
+\[
+ h^{(d)}(\tuple x)=h^{(d)}(\tuple y),\qquad
+ \D_{L,\sigma}^{(d)}(\tuple x)\cap
+ \D_{L,\sigma}^{(d)}(\tuple y)\ne\emptyset
+\]
+ならば
+\[
+  \D_{L,\sigma}^{(d)}(\tuple x)
+  =\D_{L,\sigma}^{(d)}(\tuple y)
+\]
+が成り立つことをいう．通常は単に \emph{$(f,h)$-タプル代入可能}と略す．つまり，向きは有限な構造状態の一部であり，代入可能性は各置換セクターの内部で要求されるが，異なるセクター間では要求されない．なお
+$h^{(d)}(\tuple w)=(h(w_1),\ldots,h(w_d))\in M^d$ である．
+\end{definition}
+
+\begin{lemma}[向きセクターの標準化]
+\label{lem:sector-canonicalization}
+$d\ge1$，$\sigma\in S_d$ とする．
+\[
+  \tuple x=(x_1,\ldots,x_d)
+\]
+に対して
+\[
+  P_\sigma(\tuple x):=(x_{\sigma(1)},\ldots,x_{\sigma(d)})
+\]
+と置く．また，文脈
+\[
+  E=u_0\blank_{\sigma(1)}u_1\cdots\blank_{\sigma(d)}u_d
+  \in\mathcal E_{d,\sigma}
+\]
+に対して
+\[
+  C_\sigma(E):=u_0\blank_1u_1\cdots\blank_du_d
+  \in\mathcal E_{d,\mathrm{id}_d}
+\]
+と定義する．このとき $C_\sigma$ は全単射
+\[
+  \mathcal E_{d,\sigma}\longrightarrow\mathcal E_{d,\mathrm{id}_d}
+\]
+であり，
+\[
+  C_\sigma(E)[P_\sigma(\tuple x)]=E[\tuple x]
+\]
+を満たす．したがって
+\[
+  C_\sigma\!\left(\D_{L,\sigma}^{(d)}(\tuple x)\right)
+  =
+  \D_{L,\mathrm{id}_d}^{(d)}\!\left(P_\sigma(\tuple x)\right)
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+写像 $C_\sigma$ は，穴を左から右への出現順序に従って改名するだけである．したがって全単射であり，逆写像は $\blank_i$ を $\blank_{\sigma(i)}$ へ戻す改名によって得られる．充填に関する等式は定義から直ちに従い，同じ全単射を受理文脈へ制限すれば分布に関する等式が得られる．
+\end{proof}
+
+\begin{corollary}[恒等セクターによる定式化]
+\label{cor:identity-sector-equivalence}
+Definition~\ref{def:tuple-substitutable} は，任意の $1\le d\le f$ とアリティ $d$ のすべてのタプルについて，代入可能性の含意を恒等セクター $\sigma=\mathrm{id}_d$ だけに要求することと同値である．
+\end{corollary}
+
+\begin{proof}
+一方向は自明である．逆に，$\sigma\in S_d$ と，sector $\sigma$ で Definition~\ref{def:tuple-substitutable} の前提を満たすタプル $\tuple x,\tuple y$ を固定する．両タプルに同じ置換を作用させても，成分ごとの観測値の等しさは保存される．Lemma~\ref{lem:sector-canonicalization} により，両者の共通受理文脈は恒等セクターへ移される．したがって恒等セクターに対する仮定から二つの恒等セクター分布が等しくなり，$C_\sigma^{-1}$ で戻せば
+\[
+  \D_{L,\sigma}^{(d)}(\tuple x)
+  =
+  \D_{L,\sigma}^{(d)}(\tuple y)
+\]
+を得る．
+\end{proof}
+
+\begin{remark}[セクター別代入可能性と全文脈代入可能性]
+\label{rem:full-context-stronger}
+Lemma~\ref{lem:sector-canonicalization} は，個々の向きセクターがタプル座標の置換を除けば互いに同値であることを示す．したがって Definition~\ref{def:tuple-substitutable} で全セクターを量化することは，恒等セクターを超える追加の意味論的制約ではなく，座標変換に共変な形で条件を述べているにすぎない．
+
+これは，各セクター分布 $\D_{L,\sigma}^{(d)}$ を全文脈分布 $\D_L^{(d)}$ で置き換えて得られる，真に強い条件とは区別しなければならない．後者は異なる向きセクターに属する文脈を結びつけるので，単なる座標改名へ還元できない．Proposition~\ref{prop:orientation-strict} は，この強い含意が真に強いことを示す．後の証明では，合成証人における座標順序を管理する証明側 bookkeeping としてだけセクターラベルを明示的に保持する．Corollary~\ref{cor:identity-sector-equivalence} により，これは追加の学習助言でも追加の意味論的制約でもない．
+\end{remark}
+
+\begin{proposition}[セクター別代入可能性は全文脈代入可能性より真に弱い]
+\label{prop:orientation-strict}
+有限アルファベット $\Sigma$，有限正則言語 $L\subseteq\Sigma^*$，明示的有限観測 $h:\Sigma^*\to M$ が存在して，$L$ は向きを考慮した $(2,h)$-タプル代入可能であるが，より強い全文脈条件を満たさない．したがって Remark~\ref{rem:full-context-stronger} の含意は真に強い．
+\end{proposition}
+
+\begin{proof}
+$\Sigma=\{a,b,c,d\}$ とし，
+\[
+  L:=\{ac,bd,ca\}
+\]
+と置く．$\Gamma=\{A,C\}$ とし，$a,b$ を $A$ へ，$c,d$ を $C$ へ写す．また，長さ2以下の語を正確に記録し，それより長い積をすべて吸収元 $\top$ へ写す Rees 商モノイドを
+\[
+T_2(\Gamma)=\Gamma^{\le2}\cup\{\top\}
+\]
+とする．文字写像と商準同型を合成して有限観測 $h:\Sigma^*\to T_2(\Gamma)$ を得る．
+
+まず向きを考慮した条件を確認する．アリティ $d\le2$ のタプル $\tuple x,\tuple y$ が成分ごとに同じ $h$ 型を持ち，ある固定された向きの中で共通の受理文脈 $E$ を持つとする．$L$ のすべての語は長さ2なので，このような充填に現れる成分の $h$ 値が $\top$ になることはない．したがって対応する成分は同じ長さと同じ $A/C$ パターンを持つ．タプル全長が2なら，固定向きにおける受理文脈の終端部分はすべて空であるため，そのセクターには対応する純粋穴文脈しかない．タプル全長が1なら，同じ型を持つ異なる置換は $a$ と $b$，または $c$ と $d$ の交換に限られる．しかし一文字文脈が，これらいずれかの組の両方を $L$ の語へ補完することはない．$a$ と $b$ の可能な補完は異なり，$c$ と $d$ についても同様である．よって共通文脈という前提から，関係する一文字成分は実際には一致する．タプル全長が0なら，二つのタプル自体が同一である．したがってすべての場合に二つのセクター分布は等しく，$L$ は向きを考慮した $(2,h)$-タプル代入可能である．
+
+全文脈条件が失敗することを見るため，
+\[
+  \tuple x=(a,c),\qquad \tuple y=(b,d)
+\]
+とする．両者の成分ごとの $h$ 型は等しい．恒等セクターでは $E=\blank_1\blank_2$ が両タプルを受理する．実際，
+$E[\tuple x]=ac\in L$，$E[\tuple y]=bd\in L$ である．しかし逆向きセクターでは，$F=\blank_2\blank_1$ に対して
+\[
+  F[\tuple x]=ca\in L,
+  \qquad
+  F[\tuple y]=db\notin L
+\]
+となる．したがって名前付き全文脈分布は交わりを持つにもかかわらず一致せず，これはちょうど強い条件の失敗である．よって，真の差は有限正則言語の段階で既に生じる．
+\end{proof}
+
+$d=1$ では向きは一つしかなく，文文脈は通常の両側文脈 $u\blank_1v$ である．したがって Definition~\ref{def:tuple-substitutable} は，CFL に対する固定 $h$ の両側代入可能性条件
+\cite{kuriyamaCFG} に正確に特殊化される．
+
+\begin{definition}[観測--分布同値]
+\label{def:observation-distribution-equivalence}
+$L\subseteq\Sigma^*$，$h:\Sigma^*\to M$ を有限観測，$d\ge1$，$\sigma\in S_d$ とする．タプル $\tuple x,\tuple y\in(\Sigma^*)^d$ に対し，
+\[
+  \tuple x\equiv_{L,h,\sigma}^d\tuple y
+\]
+と書くのは，
+\[
+  h^{(d)}(\tuple x)=h^{(d)}(\tuple y)
+  \qquad\text{かつ}\qquad
+  \D_{L,\sigma}^{(d)}(\tuple x)=\D_{L,\sigma}^{(d)}(\tuple y)
+\]
+が成り立つとき，かつそのときに限る．固定された $L,h,d,\sigma$ に対し，これは同値関係である．アリティが明らかな場合，上付き $d$ を省略することがある．
+\end{definition}
+
+\begin{definition}[対象クラス]
+\label{def:class-cmcf}
+$f\ge1$ と明示的有限モノイド準同型 $h$ を固定する．クラス $\Cmcf{f}{h}$ は，
+\[
+  L\in f\text{-}\mathrm{MCFL}
+  \qquad\text{かつ}\qquad
+  L\text{ は向きを考慮した }(f,h)\text{-タプル代入可能}
+\]
+を満たすすべての言語 $L\subseteq\Sigma^*$ からなる．
+\end{definition}
+
+\begin{proposition}[$h$-認識可能言語は固定観測スライスに属する]
+\label{prop:h-recognizable-in-slice}
+$h:\Sigma^*\to M$ を有限モノイド準同型，$P\subseteq M$ とする．このとき任意の $f\ge1$ に対して
+\[
+  h^{-1}(P)\in\Cmcf{f}{h}
+\]
+である．したがって，各固定観測スライスは，その観測準同型によって認識される言語のブール代数全体を含む．
+\end{proposition}
+
+\begin{proof}
+$L=h^{-1}(P)$ と置く．$h$ は有限なので $L$ は正則であり，したがって任意の $f\ge1$ に対して $f$-MCFL である．アリティ $d\le f$，向き $\sigma\in S_d$，および
+$h^{(d)}(\tuple x)=h^{(d)}(\tuple y)$ を満たすタプル $\tuple x,\tuple y$ を固定する．向き $\sigma$ を持つ任意の固定された名前付き文文脈で，準同型性により，$\tuple x$ で充填しても $\tuple y$ で充填しても語全体の $h$ 値は同じになる．対応する成分の $h$ 値が等しいからである．したがって二つの充填はともに $h^{-1}(P)$ に属するか，ともに属さない．よってセクター分布は等しい．共通文脈という前提すら必要ない．したがって $L$ は向きを考慮した $(f,h)$-タプル代入可能である．
+\end{proof}
+
+固定された $f$ と $h$ に対し，$\Cmcf{f}{h}$ を \emph{$h$ によって定まる固定観測スライス}と呼ぶ．観測準同型は外部から固定され，クラス内のすべての対象に共有される．向きは具体的な各タプル出現から直接読み取られるので，追加の助言ではない．
+
+\begin{remark}[対象クラスの意味論的性質]
+\label{rem:semantic-class}
+$\Cmcf{f}{h}$ への所属は，対象言語に課される意味論的仮定である．学習器自体は任意の有限正例標本上で定義されるが，対象言語の MCFG 表現を入力として受け取るわけではなく，正例データからこの仮定を検査するわけでもない．これは単なるモデル化上の便宜ではない．Appendix~\ref{app:decision-complexity} では，MCFG 表現と明示的観測からこの仮定を認識する問題が，trivial observation を持つ文脈自由の場合に既に $\Pi^0_1$-完全であることを示す．分布的性質および congruential property に関する関連決定問題は，文脈自由設定で研究されている
+\cite{ClarkEyraud2007,Clark2017,KanazawaKappe2019}．
+\end{remark}
+
+\begin{definition}[有限観測準同型の精密化]
+\label{def:h-refinement}
+$h\colon\Sigma^*\to M$ と $h'\colon\Sigma^*\to M'$ を明示的有限準同型とする．モノイド準同型 $\pi\colon M'\to M$ が存在して $h=\pi\circ h'$ を満たすとき，$h'$ は $h$ を \emph{精密化する（refines）}といい，$h\preceq h'$ と書く．
+\end{definition}
+
+\begin{proposition}[観測準同型の精密化に関する単調性]
+\label{prop:h-refinement-monotonicity}
+$h\preceq h'$ であり，$L$ が $(f,h)$-タプル代入可能ならば，$L$ は $(f,h')$-タプル代入可能である．したがって $h\preceq h'$ を満たす任意の明示的有限準同型の組に対して
+\[
+\Cmcf{f}{h}\subseteq\Cmcf{f}{h'}
+\]
+が成り立つ．
+\end{proposition}
+
+\begin{proof}
+$h=\pi\circ h'$ を満たす $\pi\colon M'\to M$ をとる．アリティ $d\le f$ と向き $\sigma\in S_d$ を固定する．$h'^{(d)}(\tuple x)=h'^{(d)}(\tuple y)$ で，二つのタプルが向き $\sigma$ の共通受理文脈を持つとする．$\pi$ を成分ごとに作用させれば
+$h^{(d)}(\tuple x)=h^{(d)}(\tuple y)$ を得る．$L$ の $(f,h)$-タプル代入可能性より
+\[
+\D_{L,\sigma}^{(d)}(\tuple x)=\D_{L,\sigma}^{(d)}(\tuple y)
+\]
+であり，これはこのセクターにおける $(f,h')$ 条件そのものである．$f$-MCFL への所属は変わらないので，クラス包含も従う．
+\end{proof}
+
+\begin{lemma}[共通文脈による代入可能性]
+\label{lem:shared-context}
+$L$ を $(f,h)$-タプル代入可能とする．$d\le f$，$\sigma\in S_d$，
+$h^{(d)}(\tuple x)=h^{(d)}(\tuple y)$ であり，向き $\sigma$ の具体的文脈 $E$ が
+$E[\tuple x],E[\tuple y]\in L$ を満たすならば，
+\[
+  \tuple x\equiv_{L,h,\sigma}^d\tuple y
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+文脈 $E$ は二つのセクター分布の双方に属する．Definition~\ref{def:tuple-substitutable} によりそれらの分布は等しく，型の等しさは仮定されている．
+\end{proof}
+
+\section{基本例}
+\label{sec:running-examples}
+
+以下の例には二つの目的がある．三ブロック言語は，粗い正則観測が，真に多重文脈自由的な数値同期と両立し得ることを示す．一方，コピー言語は反対側の境界を示す．すなわち，単に $2$-MCFL であるだけでは，意味論的仮定を証言する有限観測が存在するとは限らない．
+
+\begin{proposition}[正則制御と可換群上のバランス制約]
+\label{prop:regular-abelian-balance}
+$R\subseteq\Sigma^*$ を正則言語とし，有限モノイド $M$，準同型 $h_R\colon\Sigma^*\to M$，部分集合 $P\subseteq M$ によって
+$R=h_R^{-1}(P)$ と表されているとする．$\mathbb A$ を加法記法で書かれた可換群，$\varphi\colon\Sigma^*\to\mathbb A$ をモノイド準同型，$H\le\mathbb A$ を部分群とする．このとき
+\[
+L:=R\cap\varphi^{-1}(H)
+\]
+は任意の $f\ge1$ に対して $(f,h_R)$-タプル代入可能である．
+\end{proposition}
+
+\begin{proof}
+Remark~\ref{rem:full-context-stronger} の，より強い全文脈条件を証明すれば十分である．$1\le d\le f$ を固定し，
+$\tuple{x}=(x_1,\ldots,x_d)$ と $\tuple{y}=(y_1,\ldots,y_d)$ が
+\[
+h_R^{(d)}(\tuple{x})=h_R^{(d)}(\tuple{y}),
+\qquad
+\D_L^{(d)}(\tuple{x})\cap\D_L^{(d)}(\tuple{y})\ne\emptyset
+\]
+を満たすとする．$\D_L^{(d)}(\tuple{x})=\D_L^{(d)}(\tuple{y})$ を示せばよい．
+
+$E\in\D_L^{(d)}(\tuple{x})\cap\D_L^{(d)}(\tuple{y})$ を固定する．すると
+$E[\tuple{x}],E[\tuple{y}]\in L$ であり，特に
+$\varphi(E[\tuple{x}]),\varphi(E[\tuple{y}])\in H$ である．
+
+まず正則制御を考える．
+\[
+F=u_0\blank_{\sigma(1)}u_1\cdots\blank_{\sigma(d)}u_d
+\]
+を任意のアリティ $d$ の文文脈とする．
+$h_R^{(d)}(\tuple{x})=h_R^{(d)}(\tuple{y})$ なので，各 $i$ に対して
+$h_R(x_i)=h_R(y_i)$ であり，したがって
+$h_R(F[\tuple{x}])=h_R(F[\tuple{y}])$ である．$R=h_R^{-1}(P)$ より，
+$F[\tuple{x}]\in R$ と $F[\tuple{y}]\in R$ は同値である．
+
+次に，可換群上のバランス制約を考える．
+\[
+\Delta:=\sum_{i=1}^d(\varphi(y_i)-\varphi(x_i))\in\mathbb A
+\]
+と置く．$\mathbb A$ は可換なので穴の順序は無関係であり，任意のアリティ $d$ の文文脈 $F$ に対して
+\[
+\varphi(F[\tuple{y}])-\varphi(F[\tuple{x}])=\Delta
+\]
+となる．$F$ の固定終端部分は差を取ると相殺され，成分ごとの差の和だけが残るからである．
+
+$F=E$ とすると
+\[
+\Delta=\varphi(E[\tuple{y}])-\varphi(E[\tuple{x}])
+\]
+を得る．両項は $H$ に属するので $\Delta\in H$ である．したがって任意の $F$ について
+\[
+\varphi(F[\tuple{y}])=\varphi(F[\tuple{x}])+\Delta
+\]
+であり，ゆえに
+$F[\tuple{x}]\in\varphi^{-1}(H)$ と
+$F[\tuple{y}]\in\varphi^{-1}(H)$ は同値である．
+
+これと $L=R\cap\varphi^{-1}(H)$ を合わせると，任意のアリティ $d$ の文文脈 $F$ に対して
+$F[\tuple{x}]\in L$ と $F[\tuple{y}]\in L$ が同値となる．したがって
+\[
+\D_L^{(d)}(\tuple{x})=\D_L^{(d)}(\tuple{y})
+\]
+である．$d\le f$ は任意だったので，$L$ は $(f,h_R)$-タプル代入可能である．
+\end{proof}
+
+正のブロック包絡
+\[
+P_m:=a_1^+a_2^+\cdots a_m^+
+\]
+に対して，$D_m^+$ を状態集合
+$\{0,1,\ldots,m,\mathsf{sink}\}$，初期状態 $0$，唯一の受理状態 $m$ を持つ完全 DFA とする．
+
+各 $1\le i<m$ に対し，遷移
+\[
+  i\xrightarrow{a_i}i,
+  \qquad
+  i\xrightarrow{a_{i+1}}i+1
+\]
+を用い，さらに
+$0\xrightarrow{a_1}1$ と $m\xrightarrow{a_m}m$ を入れる．ここに書かれていないすべての遷移は $\mathsf{sink}$ へ進み，$\mathsf{sink}$ はすべての文字で自己ループする．
+
+$h_m^+:\Sigma_m^*\to M_m^+$ を $D_m^+$ の遷移準同型とする．このとき $D_m^+$ はちょうど $P_m$ を認識する．
+
+\begin{example}[三ブロック一致言語]
+\label{ex:l3-language}
+\[
+L_3:=\{a^n b^n c^n\mid n\ge1\},
+\qquad
+P_3:=a^+b^+c^+
+\]
+とし，$h_{P_3}:=h_3^+$ と置く．この準同型は各成分がどの粗いブロック領域に属するかを記録するが，三つのブロック長が等しいこと自体は記録しない．
+\end{example}
+
+\begin{proposition}[$L_3$ のコンパクトなファンアウト2表現]
+\label{prop:l3-running-example}
+言語 $L_3$ は，ファンアウト2・規則ランク2の縮約済み線形非削除 MCFG 表現を持つ．
+\end{proposition}
+
+\begin{proof}
+$V=\{S,T,A,A_a,A_b,A_c\}$ とし，$\mu(A)=2$，その他のすべての非終端記号のファンアウトを $1$ とする．規則として
+\[
+  S\to T,\quad
+  A_a\to(a),\quad
+  A_b\to(b),\quad
+  A_c\to(c),\quad
+  A\to(x_1^1,x_2^1)(A_a,A_b),
+\]
+\[
+  A\to(ax_1^1,bx_1^2x_2^1)(A,A_c),\qquad
+  T\to(x_1^1x_1^2x_2^1)(A,A_c)
+\]
+を用いる．
+
+直接的な帰納法により
+\[
+  L_A=\{(a^n,b^nc^{n-1})\mid n\ge1\}
+\]
+を得る．したがって最上位規則
+\[
+T\to(x_1^1x_1^2x_2^1)(A,A_c)
+\]
+は $S\to T$ と合わせてちょうど $L_3$ を生成する．
+
+最後に，すべての非終端記号は到達可能かつ生成的であり，すべての規則は線形かつ非削除である．したがってこの文法は，ファンアウト2・規則ランク2の縮約済み線形非削除 MCFG である．
+\end{proof}
+
+\begin{corollary}[三ブロック例は固定観測クラスに属する]
+\label{cor:l3-in-fixed-observation-class}
+任意の $f\ge2$ に対して $L_3\in\Cmcf{f}{h_{P_3}}$ である．
+\end{corollary}
+
+\begin{proof}
+MCFG 表現は Proposition~\ref{prop:l3-running-example} で与えられている．正則制御 $P_3=a^+b^+c^+$ に対し，
+\[
+\varphi(w):=(|w|_a-|w|_b,\ |w|_b-|w|_c)\in\mathbb Z^2
+\]
+と定義する．すると
+\[
+L_3=P_3\cap\varphi^{-1}(\{(0,0)\})
+\]
+なので，Proposition~\ref{prop:regular-abelian-balance} により
+$(f,h_{P_3})$-タプル代入可能性が従う．
+\end{proof}
+
+\begin{proposition}[コピー言語には有限な証言観測が存在しない]
+\label{prop:copy-infinite-observation}
+$\Sigma:=\{a,b\}$ とし，
+\[
+\mathrm{COPY}:=\{ww:w\in\Sigma^+\}
+\]
+と定義する．このとき $\mathrm{COPY}\in2\text{-}\mathrm{MCFL}$ であるが，任意の有限モノイド準同型 $h:\Sigma^*\to M$ に対して，$\mathrm{COPY}$ は $(2,h)$-タプル代入可能ではない．
+\end{proposition}
+
+\begin{proof}
+まず $\mathrm{COPY}\in2\text{-}\mathrm{MCFL}$ を示す．ファンアウト2の非終端記号 $A$ と，ファンアウト1の開始記号 $S$ を用いる．$A$ に規則
+\[
+A\to(a,a),\qquad A\to(b,b),
+\]
+\[
+A\to(a x_1^1,a x_1^2)(A),\qquad
+A\to(b x_1^1,b x_1^2)(A)
+\]
+を与え，開始規則
+\[
+S\to(x_1^1x_1^2)(A)
+\]
+を用いる．このとき
+\[
+L_A=\{(w,w):w\in\Sigma^+\}
+\]
+である．実際，二つの基底規則は $(a,a)$ と $(b,b)$ を導出し，各再帰規則は既に導出された $(w,w)$ を $(aw,aw)$ または $(bw,bw)$ に写し，それ以外の形は導出できない．したがって開始規則はちょうど $\{ww:w\in\Sigma^+\}$ を生成し，$\mathrm{COPY}\in2\text{-}\mathrm{MCFL}$ が従う．
+
+次に任意の有限モノイド $M$ と任意のモノイド準同型 $h\colon\Sigma^*\to M$ を固定する．$\mathrm{COPY}$ が $(2,h)$-タプル代入可能でないことを示す．$2^n>|M|$ を満たす $n\ge1$ を選ぶ．長さ $n$ の語はちょうど $2^n$ 個あるので，鳩の巣原理により，$h(u)=h(v)$ を満たす相異なる $u,v\in\Sigma^n$ が存在する．
+
+$\tuple x:=(u,u)$，$\tuple y:=(v,v)$ と置く．すると
+$h^{(2)}(\tuple x)=h^{(2)}(\tuple y)$ である．さらにアリティ2の名前付き文脈
+$E:=\blank_1\blank_2$ に対して
+$E[\tuple x]=uu\in\mathrm{COPY}$，$E[\tuple y]=vv\in\mathrm{COPY}$ である．$E$ と以下で用いる文脈はいずれも向き $\mathrm{id}_2$ を持ち，
+\[
+E\in\D_{\mathrm{COPY},\mathrm{id}_2}^{(2)}(\tuple x)\cap
+\D_{\mathrm{COPY},\mathrm{id}_2}^{(2)}(\tuple y)
+\]
+である．
+
+しかし二つの分布は，同じ向きセクター内ですでに異なる．
+$F:=\blank_1\blank_2uu$ とする．すると
+\[
+F[\tuple x]=uuuu=(uu)(uu)\in\mathrm{COPY}
+\]
+である．一方，$F[\tuple y]=vvuu$ である．反対に $vvuu\in\mathrm{COPY}$ と仮定すると，ある $z\in\Sigma^+$ に対して $vvuu=zz$ となる．$|vvuu|=4n$ なので $|z|=2n$ である．したがって $vvuu$ の長さ $2n$ の前半と後半は等しくなければならず，$vv=uu$ を得る．さらに $|u|=|v|=n$ なので最初の $n$ 文字を比較すれば $u=v$ となり矛盾する．よって
+$F[\tuple y]\notin\mathrm{COPY}$ である．したがって
+\[
+\D_{\mathrm{COPY},\mathrm{id}_2}^{(2)}(\tuple x)\neq
+\D_{\mathrm{COPY},\mathrm{id}_2}^{(2)}(\tuple y)
+\]
+である．
+
+以上より，$\tuple x$ と $\tuple y$ は成分ごとに同じ $h$ 型を持ち，一つの向きセクター内で共通受理文脈を持つにもかかわらず，同じセクター内で分布が異なる．Definition~\ref{def:tuple-substitutable} により，$\mathrm{COPY}$ は $(2,h)$-タプル代入可能ではない．有限モノイド準同型 $h$ は任意だったので，$\mathrm{COPY}$ の $(2,h)$-タプル代入可能性を証言する有限観測は存在しない．
+\end{proof}
+
+\section{正例データからの標準再構成}
+\label{sec:learner}
+
+\paragraph{証明の構成．}
+再構成証明は四つの依存関係からなる．第一に，出力型精密化と向きの伝播によって，各生産的な証明側状態を，一つの固定された成分ごとの \(h\) 型と，一つの露出された向きに置く．第二に，無音子圧縮によって，終端記号をまったく寄与しない子を，ファンアウトや対象言語を変えずに除去する．第三に，成功導出に残る各子は正の支持を持つため，標本語の内部で証言される規則のランクは正例標本サイズ以下である．最後に，意味論的単項規則は，共通文脈の証拠と有限型によって代入が正当化される観測タプルだけを正確に同一視する．健全性はこれらの要素を子ごとに用い，完全性では正規化された対象規則をすべて露出する有限特徴標本を選ぶ．依存関係は次のようにまとめられる．
+\[
+\begin{aligned}
+  \text{型付け／向き}
+  &\Longrightarrow \text{無音子圧縮}
+  \Longrightarrow \text{標本有界ランク}\\
+  &\Longrightarrow \text{健全性＋有限規則露出}
+  \Longrightarrow \text{正確な再構成}.
+\end{aligned}
+\]
+
+学習器が用いるのは，固定されたファンアウト上限 \(f\)，与えられた観測 \(h\)，および現在の段階で利用可能な有限正例標本だけである．対象 MCFG は有限特徴標本の存在を証明するために証明側でのみ用いる．対象表現が学習器に与えられることは決してない．
+
+定性的定理のため，\(G\) を，ファンアウト高々 \(f\) の任意の有限標準 MCFG で，規則が非削除的かつ非置換的であるものとする．最終的な正確再構成定理では，Section~\ref{sec:prelim} で述べた正規化により，任意の標準 MCFG 表現から，ファンアウトも分岐ランクも変えずにこのような表現を得る．Corollary~\ref{cor:identity-sector-equivalence} により，観測された各タプルを左から右への成分順序へ標準化し，意味論的仮定を恒等向きセクターだけで定式化しても同値である．それでも学習器では向き注釈を明示的に保持する．これは標本中の出現に付随する元の成分名を保存し，任意の標本由来テンプレートのもとで誘導される子の向きを透明にするためである．したがって向きは合成のための帳簿付けであって，追加の対象助言でも，より強い意味論的仮定でもない．
+
+証明の構造を明示しておくことには意味がある．対象言語の任意の標準 \(f\)-MCFG 表現から出発し，まず証明側で，ファンアウトも分岐ランクも増加させずに，同値な非削除的・非置換的表現へ移る．次に，非終端記号を有限観測の出力型で精密化し，真に無音な子出現を圧縮によって除去する．証明側規則が非置換的であるため，恒等向きは根から各子出現へ伝播する．これにより特徴標本と完全性の議論では，証明側の各状態につき恒等向きセクターでの標準的な露出を一つだけ用いればよい．得られた正ランク規則は二分化せずに直接露出する．最後に，それらのランクは対象クラス全体で一様には有界でないものの，再構成に必要な各規則には正例標本内の露出が存在し，その語長がその規則のランクを上から抑える．したがって一般学習器は，標本依存のランク上限だけを用いて必要な証言をすべて列挙できる．
+
+\subsection{出力型精密化と露出文脈}
+\label{sec:refinement}
+
+\begin{definition}[テンプレート出力型]
+\label{def:output-map}
+\(\rho:A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_r)\)
+を非削除的規則とし，\(e=\mu(A)\)，\(d_j:=\mu(B_j)\) と置く．さらに各 \(1\le j\le r\) について \(\mathbf q_j\in M^{d_j}\) を選ぶ．
+
+テンプレートアルファベット
+\(
+  \Gamma_\rho
+  :=\Sigma\uplus\biguplus_{j=1}^r
+  \{x_j^1,\ldots,x_j^{d_j}\}
+\)
+上に写像
+\(\theta_{\mathbf q_1,\ldots,\mathbf q_r}\colon\Gamma_\rho\to M\)
+を，\(a\in\Sigma\) に対して
+\(\theta_{\mathbf q_1,\ldots,\mathbf q_r}(a):=h(a)\)，また
+\(\theta_{\mathbf q_1,\ldots,\mathbf q_r}(x_j^k):=(\mathbf q_j)_k\)
+と定義する．
+
+そのモノイド準同型への一意的拡張を
+\(
+  \widehat\theta_{\mathbf q_1,\ldots,\mathbf q_r}
+  \colon\Gamma_\rho^*\to M
+\)
+とする．そして
+\[
+  \out_\rho(\mathbf q_1,\ldots,\mathbf q_r)
+  :=
+  \bigl(
+    \widehat\theta_{\mathbf q_1,\ldots,\mathbf q_r}(\alpha_1),
+    \ldots,
+    \widehat\theta_{\mathbf q_1,\ldots,\mathbf q_r}(\alpha_e)
+  \bigr)
+  \in M^e
+\]
+と定義する．ランク0の場合，\(\out_\rho\) は単に
+\((h(\alpha_1),\ldots,h(\alpha_e))\)，すなわち定数テンプレートの成分ごとの \(h\) 型である．
+\end{definition}
+
+\begin{definition}[出力型精密化]
+\label{def:output-refinement}
+有限非削除 MCFG \(G=(V,\Sigma,P,S,\mu)\) と有限観測 \(h\) が与えられたとする．\emph{完全出力型精密化} \(G^h\) は，新しい開始記号 \(\widetilde S\) と，各 \(A\in V\) および \(\mathbf p\in M^{\mu(A)}\) に対する型付き非終端記号 \(A_{\mathbf p}\) を持つ．
+\(\mu(\widetilde S):=1\)，\(\mu(A_{\mathbf p}):=\mu(A)\) と置く．
+
+各 \(m\in M\) について開始規則
+\(\widetilde S\to S_{(m)}\)
+を加える．各ランク0規則 \(A\to\tuple c\) について
+\(A_{h^{(\mu(A))}(\tuple c)}\to\tuple c\)
+を加える．
+
+各正ランク規則
+\(\rho:A\to(\alpha_1,\ldots,\alpha_e)(B_1,\ldots,B_r)\)
+と，各 \(\mathbf q_j\in M^{\mu(B_j)}\)（\(1\le j\le r\)）の選択について，
+\[
+  A_{\out_\rho(\mathbf q_1,\ldots,\mathbf q_r)}
+  \to
+  \rho(B_{1,\mathbf q_1},\ldots,B_{r,\mathbf q_r})
+\]
+を加える．ここで \(B_{j,\mathbf q_j}\) は \(\mathbf q_j\) で添字付けされた \(B_j\) の型付きコピーを表す．
+
+最後に，\emph{刈り込み済み精密化} \(\widetilde G_0\) は，\(\widetilde S\) からのある成功導出に実際に現れる型付き非終端記号と型付き規則だけを残すことによって得られる．
+\end{definition}
+
+\begin{proposition}[出力型の不変量]
+\label{prop:output-invariants}
+\(G^h\) および \(\widetilde G_0\) について次が成り立つ．
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \(A_{\mathbf p}\Rightarrow^*\tuple u\) ならば
+\(h^{(\mu(A))}(\tuple u)=\mathbf p\) であり，型添字を消去すれば \(\tuple u\) の正しい \(G\)-導出が得られる．
+\item 固定された任意の \(G\)-導出木は，各節点にその節点で導出されるタプルの成分ごとの \(h\) 型を付与することにより，\(G^h\) へ一意的に持ち上がる．
+\item \(L(\widetilde G_0)=L(G^h)=L(G)\)．
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+規則適用時にテンプレートを準同型的に評価すると
+\[
+  h^{(\mu(A))}
+  \bigl(\rho(\tuple u_1,\ldots,\tuple u_r)\bigr)
+  =
+  \out_\rho
+  \bigl(h^{(\mu(B_1))}(\tuple u_1),\ldots,
+        h^{(\mu(B_r))}(\tuple u_r)\bigr)
+\]
+を得る．ランク0の場合は直ちに従う．導出高さに関する帰納法で (i) が示され，同じ恒等式が (ii) の一意的持ち上げを与える．型を消去すれば一方の言語包含が，持ち上げれば他方の包含が得られ，刈り込みは成功導出に現れない対象だけを除去する．
+\end{proof}
+
+\begin{lemma}[出力型付けは非置換的規則を保存する]
+\label{lem:refinement-nonpermuting}
+証明側文法 \(G\) が非置換的ならば，\(G^h\) の各非開始規則，したがって刈り込み済み精密化 \(\widetilde G_0\) の各そのような規則も非置換的である．
+\end{lemma}
+
+\begin{proof}
+出力型付けは非終端記号のラベルだけを変更し，各規則テンプレートを変更しない．したがって各子の成分変数の相対順序は不変である．
+\end{proof}
+
+生き残った型付き非終端記号 \(X=A_{\mathbf p}\) に対して
+\(L_X:=\{\tuple u:X\Rightarrow_{\widetilde G_0}^*\tuple u\}\)
+と置く．刈り込みによりこれは空でない．
+
+\begin{definition}[証明側の恒等向き露出文脈]
+\label{def:identity-exposing-context}
+\(X=A_{\mathbf p}\) が \(\widetilde G_0\) に残り，そのアリティを \(d\) とする．\(X\) の \emph{恒等向き露出文脈}とは，
+\(E\in\mathcal E_{d,\mathrm{id}_d}\) であって，
+\[
+  E[\tuple u]\in L(G)
+  \qquad(\tuple u\in L_X)
+\]
+を満たすものをいう．
+\end{definition}
+
+\begin{lemma}[正規化された証明文法では恒等向き露出が存在する]
+\label{lem:identity-exposing-contexts}
+証明側文法 \(G\) が非削除的かつ非置換的であると仮定する．生き残った各型付き非終端記号 \(X\) は恒等向き露出文脈を持つ．\(\widetilde S\to X\) が型付き開始規則ならば，\(\blank_1\) を用いてよい．
+\end{lemma}
+
+\begin{proof}
+\(X\) の出現を含む成功型付き導出を一つ選び，その出現を根とする部分木を削除し，その出力成分を名前付き穴で置き換える．根では唯一の成分は恒等向きを持つ．Lemma~\ref{lem:refinement-nonpermuting} により各型付き規則は非置換的なので，Definition~\ref{def:induced-orientation} から，親が恒等向きなら各子にも恒等向きが誘導される．したがって，選んだ根から \(X\) への経路に沿った帰納法により，削除された \(X\) の出現は恒等向きで露出される．削除した部分木を任意の別の \(X\)-導出で置き換えても成功導出が得られるので，得られた文脈は \(L_X\) 全体を露出する．
+\end{proof}
+
+生き残った各型付き非終端記号 \(X\) について，恒等向き露出文脈を一つ固定し，それを \(\chi(X)\) と書く．\(X\) が生き残った型付き開始規則 \(\widetilde S\to X\) の子である場合は，\(\chi(X)=\blank_1\) と選ぶ．その他の \(X\) については，直前の補題のように成功導出から得られる任意の恒等向き露出文脈を選ぶ．これらの選択は証明側での存在証言であり，学習器に与えられることも，学習器によって計算されることもない．
+
+\begin{lemma}[恒等向きは正規化規則を通して伝播する]
+\label{lem:identity-orientation-propagation}
+\(R:X\to\rho(Y_1,\ldots,Y_r)\) を生き残った型付き規則とする．\(G\) が非置換的ならば，
+\[
+  \operatorname{ind}_j(\rho,\mathrm{id}_{\mu(X)})
+  =\mathrm{id}_{\mu(Y_j)}
+  \qquad(1\le j\le r).
+\]
+同じ主張は，無音子圧縮された規則で残された子についても成り立つ．
+\end{lemma}
+
+\begin{proof}
+最初の主張は，出力型精密化によって保存される非置換条件そのものである．無音子圧縮は空語だけを導出する子の変数を削除するだけであり，残された子の変数の相対順序を変えない．
+\end{proof}
+\subsection{無音子圧縮と有限規則露出}
+
+\begin{definition}[無音型付き非終端記号と正アンカー]
+\label{def:silent-typed}
+生き残ったアリティ \(d\) の型付き非終端記号 \(X\) が \emph{無音（silent）} であるとは，
+\(L_X=\{(\eps,\ldots,\eps)\}\)
+であることをいう．
+
+\(X\) が無音でないとき，
+\(L_X^+:=\{\tuple u\in L_X:\|\tuple u\|_1>0\}\)
+と置き，総長が最小の \(\omega(X)\in L_X^+\) を選ぶ．同率の場合は，タプル符号化上で固定した shortlex 順序により決める．\(X\) が無音ならば，
+\(\omega(X):=(\eps,\ldots,\eps)\)
+と置く．
+\end{definition}
+
+\begin{lemma}[空タプルと正アンカーの恒等向きセクター同値性]
+\label{lem:mixed-empty-positive}
+\(L:=L(G)\) が \((f,h)\)-タプル代入可能であるとし，\(X\) を生き残ったアリティ \(d\) の型付き非終端記号とする．\(X\) が無音でなく，かつ \((\eps,\ldots,\eps)\in L_X\) ならば，
+\[
+  \omega(X)\equiv_{L,h,\mathrm{id}_d}^d(\eps,\ldots,\eps).
+\]
+\end{lemma}
+
+\begin{proof}
+両タプルは \(L_X\) に属するので，Proposition~\ref{prop:output-invariants} により成分ごとの出力型が同じである．恒等向き露出文脈 \(\chi(X)\) は両者を受理するので，恒等向きセクターで Lemma~\ref{lem:shared-context} を適用できる．
+\end{proof}
+
+\begin{definition}[無音子圧縮]
+\label{def:silent-compression}
+新しい開始リンク \(\widetilde S\to S_{(m)}\) はすべてそのまま残す．それ以外の生き残った各型付き規則
+\(R:X\to\rho(Y_1,\ldots,Y_r)\)
+について，無音な子出現を本体からすべて削除し，その変数もテンプレートから削除する．残った非無音の子は元の順序のまま保持し，得られる規則を
+\(R^+:X\to\rho^+(Y_{j_1},\ldots,Y_{j_s})\)
+と呼ぶ．すべての子が無音なら \(s=0\) である．この場合 \(\rho^+\) は，元のテンプレートから無音子のすべての変数を削除して得られるランク0の定数タプルである．重複する結果規則を除去し，圧縮後の文法を \(\widetilde G_0^+\) と呼ぶ．
+\end{definition}
+
+\begin{lemma}[無音子圧縮はすべての型付きタプル言語を保存する]
+\label{lem:silent-compression}
+文法 \(\widetilde G_0^+\) は有限線形非削除 MCFG であり，非終端記号とファンアウトは \(\widetilde G_0\) と同じである．証明側文法 \(G\) が非置換的ならば，\(\widetilde G_0^+\) も非置換的である．さらに，生き残ったすべての型付き非終端記号 \(X\) について
+\(L_X(\widetilde G_0^+)=L_X(\widetilde G_0)\)
+が成り立つ．特に \(L(\widetilde G_0^+)=L(G)\) である．\(X=A_{\mathbf p}\) が圧縮規則の左辺ならば，その規則が生成するすべてのタプルの成分ごとの \(h\) 型は \(\mathbf p\) である．
+\end{lemma}
+
+\begin{proof}
+削除される無音子が導出するのは全成分空のタプルだけであり，その成分ごとの \(h\) 型は恒等元のタプルである．したがって，その子のすべての変数を削除しても，基底化された親タプルもその出力型も変わらない．空タプルも導出できる非無音型付き状態は \emph{削除しない} ことに注意されたい．その状態は正アンカー \(\omega(X)\) とともに保持され，そのアンカーと空タプルとの向き付き同値性は Lemma~\ref{lem:mixed-empty-positive} により扱われる．一方向では真に無音な部分導出を捨て，逆方向では削除された各出現において唯一の全成分空タプルの導出を再挿入する．導出高さに関する帰納法により，すべての型付きタプル言語の一致が得られる．残された各子変数について線形性と非削除性は保存される．圧縮は変数を削除するだけで残された変数の相対順序を変えないので，非置換性も保存される．
+\end{proof}
+
+\begin{definition}[表現依存の特徴標本]
+\label{def:cs}
+生き残った各型付き非終端記号 \(X\) について，恒等向きセクターのアンカー露出
+\[
+  \chi(X)[\omega(X)]
+\]
+を含める．各正ランク圧縮規則
+\(R^+:X\to\rho(Y_1,\ldots,Y_r)\)
+について，恒等向きセクターの規則露出
+\[
+  \chi(X)[\rho(\omega(Y_1),\ldots,\omega(Y_r))]
+\]
+を含める．各圧縮ランク0規則 \(R^+:X\to\tuple c\) については
+\(\chi(X)[\tuple c]\) を含める．こうして選ばれた有限語集合を
+\(\CS(\widetilde G_0)\)
+と書く．
+\end{definition}
+
+\begin{lemma}[特徴標本は有限かつ正例からなる]
+\label{lem:cs-positive}
+\(L(G)\ne\emptyset\) ならば，\(\CS(\widetilde G_0)\) は \(L(G)\) の有限非空部分集合である．
+\end{lemma}
+
+\begin{proof}
+生き残った型付き記号と圧縮規則は有限個しかなく，関係する各左辺について証明側の恒等向き露出を一つ選んでいる．成功開始子は開始子のアンカー露出を一つ与えるので，選択集合は非空である．また，\(\chi(X)\) は \(L_X\) 全体を露出し，無音子圧縮は型付きタプル言語を保存するので，選ばれた各語は \(L(G)\) に属する．
+\end{proof}
+
+\subsection{標本有界ランクと標準学習器}
+
+Definition~\ref{def:tuple-occurrence} に従い，標本 \(K\) 中のアリティ高々 \(f\) のタプル出現をすべて列挙する．\emph{観測された向き付きタプル}とは，そのような出現によって実現される組 \((\tuple x,\sigma)\) をいう．学習器は，観測された各向き付きタプルに対して一つの非終端記号 \([\tuple x;\sigma]\) を用い，さらに新しい開始記号 \(\widehat S\) を持つ．
+
+\begin{definition}[正支持合成証言]
+\label{def:composition-witness}
+\(r\ge1\) とする．\(K\) におけるランク \(r\) の \emph{正支持合成証言}とは，アリティ \(e\le f\) の親出現 \((E_P,\tuple z)\) と，その親の向き
+\(\varpi:=\operatorname{ori}(E_P)\)，および順序付けられた \(r\) 個の子タプル値
+\(\tuple x_j=(x_{j,1},\ldots,x_{j,d_j})\)
+からなり，各子タプルは標本中の出現から得られ，\(\|\tuple x_j\|_1>0\) を満たすものをいう．
+
+各親成分を，終端記号の隙間と，正規化された変数
+\(X_j=\{x_j^1,\ldots,x_j^{d_j}\}\)
+でラベル付けされた区間とへ，順序を保って分割する．すべての親成分を通じて各変数はちょうど一度使われ，\(x_j^k\) とラベル付けされた区間はちょうど \(x_{j,k}\) を綴る．同じ位置に一致する空区間については，明示的な局所順序を保持する．この分割により，一意な線形非削除テンプレート \(\rho_{\mathfrak b}\) が定まり，
+\[
+  \tuple z=\rho_{\mathfrak b}(\tuple x_1,\ldots,\tuple x_r)
+\]
+となる．各子について
+\[
+  \sigma_j:=\operatorname{ind}_j(\rho_{\mathfrak b},\varpi)
+\]
+と置く．親出現内部の分割そのものが，同じ標本語の中で \((\tuple x_j,\sigma_j)\) を向き付きタプル出現として実現する．したがって，誘導規則が用いるすべての状態 \([\tuple x_j;\sigma_j]\) は観測済みである．
+\end{definition}
+
+\begin{example}
+親タプルを \(\tuple z=(ab,cd)\)，子を
+\(\tuple x_1=(a,c)\)，\(\tuple x_2=(b,d)\) とし，親が向き \(\mathrm{id}_2\) で露出されているとする．テンプレート
+\(\rho=(x_1^1x_2^1,x_1^2x_2^2)\)
+は両方の子に向き \(\mathrm{id}_2\) を誘導する．親の向きが \((2,1)\) ならば，同じテンプレートは両方の子に \((2,1)\) を誘導する．
+\end{example}
+
+\begin{lemma}[標本有界の証言ランク]
+\label{lem:sample-bounded-rank}
+正支持ランク \(r\) 証言の親タプル \(\tuple z\) が標本語 \(w\) に出現するならば，
+\(r\le\|\tuple z\|_1\le|w|\le\|K\|_+\)
+である．
+\end{lemma}
+
+\begin{proof}
+各子は正の総長を持ち，各子成分は非削除テンプレート中にちょうど一度現れる．したがって
+\(\|\tuple z\|_1\ge\sum_j\|\tuple x_j\|_1\ge r\)
+である．親成分は，長さ0の端点一致を除けば \(w\) の互いに素な区間なので，残りの不等式も従う．
+\end{proof}
+
+\begin{lemma}[任意ランク証言の列挙]
+\label{lem:general-witness-enumeration}
+\(f\) と有限標本 \(K\) を固定し，\(n:=\|K\|_+\) と置く．正支持合成証言は，親および誘導された子の向きと標準規則符号化を含めて，すべて実効的に列挙できる．任意の固定分岐上限 \(b\) に対して，ランク高々 \(b\) のすべての証言は \(n^{O(fb)}\) 時間・空間で列挙できる．
+\end{lemma}
+
+\begin{proof}
+アリティ \(d\) の出現は \(2d\) 個の切断位置と，高々 \(d!\le f!\) 個の向きのうち一つによって決まるので，向き付き出現の列挙による増加は固定ファンアウト上限 \(f\) のみに依存する因子である．ランク \(r\) の候補について，親値と子値，変数区間，終端記号の隙間，および一致する空区間の局所順序を列挙する．候補数は \(n^{O(fr)}\) である．誘導される子の向きは，得られたテンプレートと親の向きから決定的に読み取れる．Lemma~\ref{lem:sample-bounded-rank} により，上限なしの探索でも \(r\le n\) に抑えられる．
+\end{proof}
+
+特に，\(f\) を固定すると，ランク高々2のすべての正支持証言は \(\|K\|_+^{O(f)}\) 時間・空間で列挙できる．
+
+\begin{lemma}[恒等向きで露出された圧縮規則は列挙に現れる]
+\label{lem:exposed-rule-enumerated}
+\(R^+:X\to\rho(Y_1,\ldots,Y_r)\) を \(\widetilde G_0^+\) の正ランク規則とし，
+\[
+  \tuple z_R:=\rho(\omega(Y_1),\ldots,\omega(Y_r))
+\]
+と置く．特徴標本が \(K\) に含まれていれば，証言列挙は規則
+\[
+  [\tuple z_R;\mathrm{id}_{\mu(X)}]\to
+  \rho([\omega(Y_1);\mathrm{id}_{\mu(Y_1)}],\ldots,
+       [\omega(Y_r);\mathrm{id}_{\mu(Y_r)}])
+\]
+を含む．
+\end{lemma}
+
+\begin{proof}
+規則露出 \(\chi(X)[\tuple z_R]\) が，恒等向きの親出現を与える．これを \(\rho\) の変数によって基底分割すると，各子アンカーが同じ標本語の内部で実現される．Lemma~\ref{lem:identity-orientation-propagation} により，残された各子も恒等向きで実現される．残された子はすべて非無音なので正の総長を持つ．したがってこの分割は Definition~\ref{def:composition-witness} を満たし，証言列挙の完全性により表示した規則が出力される．
+\end{proof}
+
+\begin{definition}[上限付きおよび一般の向き付き標準仮説]
+\label{def:learner}
+\(b\ge1\) に対し，上限付き仮説 \(\widehat G_{\le b}(K)\) は開始記号 \(\widehat S\)，\(K\) 中の向き付きタプル出現によって実現されるすべての非終端記号 \([\tuple x;\sigma]\)，および次の規則を持つ．
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item 各 \(w\in K\) について，
+      \(\widehat S\to[(w);\mathrm{id}_1]\)．
+\item 観測された各向き付きタプルについて，定数規則
+      \([\tuple x;\sigma]\to\tuple x\)．
+\item ランク \(1\le r\le b\) の各正支持証言について，親の向きを \(\varpi\)，親タプルを \(\tuple z\)，テンプレートを \(\rho\)，誘導される子の向きを
+      \(\sigma_j=\operatorname{ind}_j(\rho,\varpi)\)
+      として，規則
+      \[
+        [\tuple z;\varpi]\to
+        \rho([\tuple x_1;\sigma_1],\ldots,[\tuple x_r;\sigma_r])
+      \]
+      を加える．
+\item 同じアリティの観測済み \((\tuple x,\sigma)\) と \((\tuple y,\sigma)\) について，
+      \(h^{(d)}(\tuple x)=h^{(d)}(\tuple y)\) であり，向き \(\sigma\) のある具体的文脈 \(E\) が
+      \(E[\tuple x],E[\tuple y]\in K\)
+      を満たすとき，恒等テンプレート規則
+      \([\tuple x;\sigma]\to[\tuple y;\sigma]\)
+      を加える．
+\end{enumerate}
+\(K\ne\emptyset\) なら
+\(\widehat G(K):=\widehat G_{\le\|K\|_+}(K)\)
+と定義する．\(K=\emptyset\) の場合は，生産的な開始規則を持たない文法を用いる．固定された符号化順序により，学習器は決定的かつ集合駆動となる．入力は \(K,f,h\) だけであり，向きは標本中の出現から読み取る．
+\end{definition}
+
+\begin{remark}[意味論的単項規則の圧縮]
+定義上は，多数の観測対について意味論的単項規則が追加され得る．実装では，各アリティ・向き・\(h\) 型ごとに観測された向き付きタプルを，そのセクター内で生成される共通文脈関係によってまず分割し，得られた各クラスにつき代表を一つ選び，他の要素はその代表にだけ接続してよい．これにより，仮説が生成する言語や以下の計算量主張を変えずに，冗長な単項規則を減らせる．
+\end{remark}
+
+\begin{lemma}[標準仮説の有限性と実効性]
+\label{lem:learner-effective}
+任意の有限 \(K\) と \(b\ge1\) に対し，\(\widehat G_{\le b}(K)\) と \(\widehat G(K)\) はともにファンアウト高々 \(f\) の有限標準 MCFG である．これらは \(K,f,h\) から実効的に構成できる．\(K\ne\emptyset\) なら，\(\widehat G(K)\) の各規則のランクは高々 \(\|K\|_+\) である．
+\end{lemma}
+
+\begin{proof}
+有限標本には各アリティ高々 \(f\) のタプル出現が有限個しかないので，観測されるタプル値も意味論的単項規則候補も有限個である．規則 (iv) において，関係する各具体的文脈は，有限個の標本語の一つにおける印付きタプル出現を名前付き穴で置き換えることで得られるので，調べるべき候補文脈も有限個である．Lemma~\ref{lem:general-witness-enumeration} は任意の固定上限以下の証言規則を実効的に列挙し，Lemma~\ref{lem:sample-bounded-rank} により，一般仮説では標本依存上限 \(\|K\|_+\) で十分である．開始規則と定数規則が有限かつ実効的であることは明らかである．各非終端記号 \([\tuple x;\sigma]\) のファンアウトは \(\tuple x\) のアリティに等しく，高々 \(f\) である．向きは有限状態注釈にすぎず，導出タプルそのものを変えない．出力される各合成テンプレートは線形かつ非削除的なので，標準 MCFG 規則である．
+\end{proof}
+
+\paragraph{選択された証言集合の大きさ．}
+証明側表現の非終端記号集合を $V$，規則集合を $P$，ファンアウト上限を $f$，規則ランク上限を $b$ とすると，出力型精密化が持つ型付き非終端記号は高々 $|V||M|^f$ 個，型付き規則インスタンスは高々 $|P||M|^{fb}$ 個である．したがって特徴標本が選ぶ状態露出と規則露出の数も高々その程度である．固定された有限証明側文法に対して，これらの証言は実効的に計算できる．すなわち，成功導出木を dovetailing により列挙し，必要な状態または規則の露出が最初に現れた時点でそれを採用すればよい．これは選択される語の個数だけを数えるものであり，その総語長に対する多項式上界を与えるものではない．
+\subsection{健全性と正確な再構成}
+\subsubsection{健全性}
+\label{sec:soundness}
+
+\begin{lemma}[誘導される子文脈とその向き]
+\label{lem:filling-identity}
+\(\rho\) をランク \(r\) の線形非削除テンプレートとし，\(E\) をその出力タプルに対する向き \(\varpi\) の文文脈とする．子 \(j\) 以外のすべての子について整合するタプルを固定する．子 \(j\) の各変数を対応する名前付き穴で置き換え，他の子の各変数を対応する固定成分で置き換えると，文文脈 \(E_j\) が得られ，
+\[
+  E_j[\tuple u_j]=E[\rho(\tuple u_1,\ldots,\tuple u_r)]
+\]
+かつ
+\[
+  \operatorname{ori}(E_j)=\operatorname{ind}_j(\rho,\varpi)
+\]
+が成り立つ．この恒等式と向きは，固定した兄弟タプルを任意に置き換えても保たれる．
+\end{lemma}
+
+\begin{proof}
+線形性と非削除性により，子 \(j\) の各変数はちょうど一度現れる．親成分を \(\varpi\) の順に走査すると，Definition~\ref{def:induced-orientation} で用いた変数順序がちょうど得られる．穴を充填する操作は，子の代入をテンプレートへ合成し，さらに \(E\) へ合成することに等しい．
+\end{proof}
+
+\begin{lemma}[証言された向き付き合成は同値性を保存する]
+\label{lem:witnessed-composition}
+\(L\) が \((f,h)\)-タプル代入可能であり，\(\rho\) がランク \(r\) の線形非削除テンプレートであるとする．また \(E\) を向き \(\varpi\) の受理親文脈とし，
+\[
+  E[\rho(\tuple x_1,\ldots,\tuple x_r)]\in L
+\]
+とする．\(\sigma_j:=\operatorname{ind}_j(\rho,\varpi)\) と置く．もし
+\[
+  \tuple u_j\equiv_{L,h,\sigma_j}\tuple x_j
+  \qquad(1\le j\le r)
+\]
+ならば，
+\[
+  \rho(\tuple u_1,\ldots,\tuple u_r)
+  \equiv_{L,h,\varpi}
+  \rho(\tuple x_1,\ldots,\tuple x_r)
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+子を一つずつ置き換える．Lemma~\ref{lem:filling-identity} により，段階 \(j\) では向き \(\sigma_j\) の誘導受理文脈が得られる．対応するセクター分布が等しいので，\(\tuple x_j\) を \(\tuple u_j\) で置き換えられる．すべての置換後も，親は \(E\) によって受理され続ける．テンプレートの準同型的評価と子の \(h\) 型の一致により，親の \(h\) 型も一致する．元の親と更新後の親はセクター \(\varpi\) で共通受理文脈 \(E\) を持つので，Lemma~\ref{lem:shared-context} により表示した親同値性が得られる．
+\end{proof}
+
+\begin{proposition}[すべての上限付き仮説の健全性]
+\label{prop:learner-soundness}
+\(L\) が \((f,h)\)-タプル代入可能で，\(K\subseteq L\) とする．任意の \(b\ge1\) に対し，\(\widehat G_{\le b}(K)\) において
+\[
+  [\tuple x;\sigma]\Rightarrow^*\tuple u
+\]
+ならば，
+\(\tuple u\equiv_{L,h,\sigma}\tuple x\)
+である．したがって
+\[
+  L(\widehat G_{\le b}(K))\subseteq L,
+  \qquad
+  L(\widehat G(K))\subseteq L.
+\]
+\end{proposition}
+
+\begin{proof}
+導出に関して帰納する．定数規則の場合は反射性から従う．意味論的単項規則は Lemma~\ref{lem:shared-context} により健全であり，そのような規則はすべて同じ向きを保存する．証言規則の場合，その親出現がセクター \(\varpi\) における受理親適用を与えるので，子に帰納法の仮定を適用し，Lemma~\ref{lem:witnessed-composition} を用いる．最後に，各開始導出はある \(w_0\in K\) に対する \(\widehat S\to[(w_0);\mathrm{id}_1]\) から始まる．空の単項文脈を用いれば，導出された語が \(L\) に属することが分かる．
+\end{proof}
+
+\subsubsection{完全性と正確な再構成}
+\label{sec:completeness}
+
+\begin{proposition}[固定された正規化表現に対する完全性]
+\label{prop:completeness}
+\(G\) をファンアウト高々 \(f\) の有限非削除・非置換 MCFG とし，\(L=L(G)\) が \((f,h)\)-タプル代入可能であるとする．上記のように \(\widetilde G_0^+\) と \(\CS(\widetilde G_0)\) を構成する．圧縮規則の最大ランクを \(b_G\) とする．もし
+\[
+  \CS(\widetilde G_0)\subseteq K\subseteq L
+\]
+ならば，任意の \(b\ge\max\{1,b_G\}\) について
+\[
+  L\subseteq L(\widehat G_{\le b}(K))
+\]
+であり，さらに \(L\subseteq L(\widehat G(K))\) も成り立つ．
+\end{proposition}
+
+\begin{proof}
+生き残った各型付き非終端記号 \(X\) について
+\[
+  \iota(X):=[\omega(X);\mathrm{id}_{\mu(X)}]
+\]
+と置く．\(\widetilde S\to X\) が残っているなら，\(\chi(X)=\blank_1\) なので，学習器の \(\iota(X)\) への開始規則が存在する．
+
+圧縮ランク0規則 \(R:X\to\tuple c\) を固定する．アンカー露出と規則露出は恒等向き文脈 \(\chi(X)\) を共有し，\(\tuple c\) は \(X\) の出力型を持つ．したがって意味論的単項規則
+\[
+  \iota(X)\to[\tuple c;\mathrm{id}_{\mu(X)}]
+\]
+が存在し，その後に定数規則が続く．\(X\) が全成分空タプルと正のタプルの両方を導出できる場合，必要な恒等向きセクターでの置換は Lemma~\ref{lem:mixed-empty-positive} によって正当化される．
+
+次に正ランク圧縮規則
+\(R:X\to\rho(Y_1,\ldots,Y_r)\)
+を固定し，
+\[
+  \tuple z_R:=\rho(\omega(Y_1),\ldots,\omega(Y_r))
+\]
+と置く．親アンカーと規則露出は \(\chi(X)\) を共有し，同じ出力型を持つので，意味論的単項規則
+\[
+  \iota(X)\to[\tuple z_R;\mathrm{id}_{\mu(X)}]
+\]
+が存在する．Lemma~\ref{lem:exposed-rule-enumerated} により，上限が少なくとも \(r\) なら，学習器はさらに
+\[
+  [\tuple z_R;\mathrm{id}_{\mu(X)}]\to
+  \rho(\iota(Y_1),\ldots,\iota(Y_r))
+\]
+を含む．したがって，成功する \(\widetilde G_0^+\)-導出に関する帰納法により，恒等向きの証明側状態だけを用いて正規化導出全体を模倣できる．この制限は完全性のためだけの装置である．Proposition~\ref{prop:learner-soundness} の健全性証明では，標本由来規則に対して学習器が任意の向きセクターを保持することが依然として必要である．根では唯一の向きが \(\mathrm{id}_1\) なので，\(L\) のすべての語が得られる．
+
+上限なしの学習器では，必要な各証言には規則露出語 \(w_R\in K\) があり，Lemma~\ref{lem:sample-bounded-rank} により
+\(r\le|w_R|\le\|K\|_+\)
+である．したがって必要なすべての証言は標本依存上限以下に入る．
+\end{proof}
+
+\begin{theorem}[固定観測 MCFG の正確な再構成]
+\label{thm:exact-reconstruction}
+\(f\ge1\) と明示的有限準同型 \(h:\Sigma^*\to M\) を固定する．
+\[
+  L\in\Cmcf{f}{h}
+\]
+とする．このとき有限特徴標本 \(S_L\subseteq L\) が存在し，任意の有限集合
+\[
+  S_L\subseteq K\subseteq L
+\]
+に対して，一般標準学習器は
+\[
+  L(\widehat G(K))=L
+\]
+を満たす．\(L\ne\emptyset\) なら，\(L\) の非削除・非置換な証明側表現に対して
+\(S_L=\CS(\widetilde G_0)\)
+と選べる．\(L=\emptyset\) の場合は \(S_L=\emptyset\) とする．
+\end{theorem}
+
+\begin{proof}
+\(L=\emptyset\) なら，\(K\subseteq L\) を満たす有限集合は \(K=\emptyset\) だけであり，定義により \(\widehat G(\emptyset)\) の言語も空である．以下 \(L\ne\emptyset\) とする．Definition~\ref{def:class-cmcf} により，\(L(G)=L\) を満たす有限標準 \(f\)-MCFG \(G\) を選ぶ．\(G\) は有限なので有限の分岐上限を持つ．標準的な削除消去構成 \cite[Lemma~2.2]{SekiEtAl1991} により，同じ分岐上限を持つ同値な非削除 \(f\)-MCFG \(G_{\mathrm{nd}}\) を選ぶ．Lemma~\ref{lem:permutation-decoration} を適用して，同値な非削除・非置換 \(f\)-MCFG \(G_{\mathrm{np}}\) を得る．ここでも分岐上限は増加しない．\(G_{\mathrm{np}}\) に対して上記の精密化，圧縮，特徴標本構成を適用する．Proposition~\ref{prop:completeness} により
+\[
+  L\subseteq L(\widehat G(K))
+\]
+を得る一方，Proposition~\ref{prop:learner-soundness} により逆包含が得られる．
+\end{proof}
+
+\begin{corollary}[正例データからの TxtBc 識別]
+\label{cor:semantic-identification}
+固定された任意の \(f\) と固定された明示的 \(h\) に対し，意味論的スライス全体 \(\Cmcf{f}{h}\) は，集合駆動学習器
+\[
+  K\longmapsto\widehat G(K)
+\]
+によって正例データから TxtBc 識別可能である．対象クラスには，対象固有の規則ランク上限も，既約表現であるという仮定も課さない．
+\end{corollary}
+
+\begin{proof}
+空でない任意の対象について，どのテキストの内容も最終的には Theorem~\ref{thm:exact-reconstruction} の有限特徴標本を含む．その時点以後，すべての仮説言語は対象と一致する．空の対象では，すべてのテキストは一時停止記号だけからなり，その内容は常に空なので，学習器は常に空言語を返す．
+\end{proof}
+
+\begin{corollary}[保守的ラッパーによる TxtEx 識別]
+\label{cor:gold-explanatory}
+固定された任意の \(f\) と固定された明示的 \(h\) に対し，意味論的スライス全体 \(\Cmcf{f}{h}\) は正例データから TxtEx 識別可能である．すなわち，仮説文法そのものが最終的に一定となり，かつ対象言語を生成する計算可能学習器が存在する．
+\end{corollary}
+
+\begin{proof}
+標準学習器の周囲に保守的ラッパーを置く．現在の仮説を \(H:=\widehat G(\emptyset)\) で初期化する．一時停止記号は無視する．正例 \(w\) を受け取ったとき，\(w\in L(H)\) なら \(H\) を変更せず，そうでなければ現在の有限内容 \(K\) から \(H:=\widehat G(K)\) を再計算する．固定された有限 MCFG に対する所属判定は決定可能なので，このラッパーは計算可能である．
+
+実行の全期間を通じて，現在の仮説はそれまでに観測されたすべての正例を含む．実際，再計算直後には \(K\subseteq L(\widehat G(K))\) であり，\(H\) を維持する場合には新たに観測された語がすでに \(L(H)\) に属しているので，この性質は保存される．
+
+対象 \(L\in\Cmcf{f}{h}\) に対して，再計算される各標準仮説は Proposition~\ref{prop:learner-soundness} により健全であり，その言語は \(L\) の部分集合である．現在の仮説言語が \(L\) の真部分集合なら，欠けている対象語のいずれかが任意のテキスト上で最終的に現れ，再計算を強制する．Theorem~\ref{thm:exact-reconstruction} の有限特徴標本が観測内容に含まれた後は，その後に再計算が起これば，生成される文法の言語はちょうど \(L\) となる．もしその時点以後に再計算が起こらないなら，現在の仮説はなお健全であり，その後のすべての正例を受理する．テキスト上では \(L\) の各語が最終的に現れるので，その仮説はすでに \(L\) 全体を含み，したがって正確でもある．最初に正確な段階へ到達した後は，すべての正例が受理され，ラッパーはその文法を二度と変更しない．正しい文法により早く到達した場合は，より早く安定する．空の対象の場合は直ちに従う．
+\end{proof}
+
+% ===== Section 5 まで日本語化済み =====
+\section{仮説の効率的構成}
+\label{sec:poly-time}
+
+定性的学習器では任意の有限規則ランクを許すため，有限標本に対して多項式時間で動作するとは主張しない．本節では一貫して Remark~\ref{rem:slicewise-poly} のスライスごとの規約を用いる．本節では，この計算量上の問題を TxtBc 識別可能性とは切り分けて扱う．合成におけるランクを固定された \(b\) で上限づければ，同じ証人構成は多項式時間となる．特徴データの大きさはこれとは別の問題であり，仮説構成が多項式時間であっても指数的であり得る．
+
+\paragraph{符号化規約．}
+標本から導かれるすべての対象には標準的な有限符号化を用いる．出現は，標本語のインデックス，成分の置換，および切断位置によって記録する．タプル文脈とテンプレートは，アリティに加えて，区切られた終端記号因子と，順序づけられた穴または変数のラベルによって記録する．
+
+明示的に与えられた観測 \(h:\Sigma^*\to M\) に対し，その乗法表と文字像を符号化するためのビット長を
+\(\|h\|_{\mathrm{enc}}\) と書く．以下の最初の定理は，\(f,b,h\) を固定した各スライスごとの主張である．
+
+\begin{theorem}[分岐上限の下でのスライスごとの多項式時間構成]
+\label{thm:poly}
+ファンアウト上限 \(f\ge1\)，分岐上限 \(b\ge1\)，および明示的有限モノイド準同型
+\(h:\Sigma^*\to M\) を固定する．任意の有限正例標本 \(K\) から，分岐上限付き標準仮説
+\[
+  \widehat G_{\le b}(K)
+\]
+を，その完全な出力符号化も含めて，
+\[
+  (1+\|K\|_+)^{O(fb)}
+\]
+時間で構成できる．そのファンアウトは高々 \(f\) であり，すべての合成証人規則のランクは高々 \(b\) である（意味論的単項規則およびランク0の定数規則も許す）．多項式の次数は \(f\) と \(b\) に依存してよい．
+\end{theorem}
+
+\begin{proof}
+\(n:=\max(1,\|K\|_+)\) とおく．アリティが高々 \(f\) のタプル出現は，\(n^{O(f)}\) 時間で列挙できる．%
+\footnote{長さ \(m\) の語におけるアリティ \(d\) の出現は，各成分について二つの切断位置と，名前付き成分の順序によって指定されるので，候補数は高々
+\((m+1)^{2d}d!\) である．さらに \(|K|\le\|K\|_+\le n\) かつ，すべての \(w\in K\) について \(|w|\le n\) である．したがって，固定された \(f\) に対して \(d\le f\) のすべての出現は \(n^{O(f)}\) 時間で列挙できる．}
+観測された定数規則はすべて，これらのタプルから読み取れる．意味論的単項規則は，出現をアリティと具体的文脈の符号化によってグループ化し，成分ごとの \(h\) 型を比較することで得られる．すべての対を総当たりで比較しても，なお \(n^{O(f)}\) の範囲に収まる．
+
+Lemma~\ref{lem:general-witness-enumeration} により，ランクが高々 \(b\) の正の支持をもつ合成証人はすべて，その標準テンプレート符号化とともに，\(n^{O(fb)}\) 時間・空間で列挙できる．標準的なソートによって，同一の非終端記号と規則の重複を同じ計算量上限内で除去できる．したがって，出力される記号数，規則数，およびそれらの総符号長はいずれも \(n^{O(fb)}\) である．
+\end{proof}
+
+\paragraph{計算量上限の射程．}
+この定理が扱うのは，与えられた有限標本から，その出力符号化まで含めて現在の分岐上限付き仮説を構成する計算量である．特徴標本の総長に対して多項式上限を与えるものではない．一般の学習器は標本依存の上限 \(\|K\|_+\) を用いるため，未知のランクパラメータをもつ多項式時間アルゴリズムではなく，定性的な識別結果である．
+
+\section{潜在観測による学習}
+\label{sec:fixed-observation}
+
+再構成定理では，有限観測が学習器に与えられていることを仮定した．ここではこの助言を弱める．まず，観測の大きさの上限だけが与えられている場合を考え，それと整合するすべての有限観測を一つの普遍的な精密化へコンパイルする．次に，そのような有界スライス上で任意の学習器が観測を強制され得る正例情報量を定量化し，最後に大きさの上限そのものを取り除く．
+
+\subsection{有界な潜在観測}
+\begin{definition}[大きさ有界観測の和集合]
+\label{def:bounded-observation-union}
+有限アルファベット \(\Sigma\)，ファンアウト上限 \(f\ge1\)，および \(k\ge1\) を固定する．
+\[
+  \Clatent{f}{k}:=\bigcup_{\substack{h:\Sigma^*\to M\\ |M|\le k}} \Cmcf{f}{h}
+\]
+と定める．ここで和集合は，\(|M|\le k\) を満たすすべての有限モノイド準同型
+\(h:\Sigma^*\to M\) にわたって取る．
+\end{definition}
+
+\begin{remark}[埋め込み不変性]
+\(\varphi:M\to M'\) が単射ならば
+\(\Cmcf{f}{h}=\Cmcf{f}{\varphi\circ h}\) である．実際，Definition~\ref{def:tuple-substitutable} では観測は成分ごとの値の等号を通してしか用いられない．
+\end{remark}
+
+\begin{definition}[普遍有界観測]
+\label{def:universal-bounded-observation}
+空でない有限アルファベット \(\Sigma\) と \(k\ge1\) を固定する．明示的有限準同型
+\[
+  U:\Sigma^*\to N
+\]
+が \emph{\(k\)-普遍} であるとは，\(|M|\le k\) を満たすすべての明示的準同型
+\(h:\Sigma^*\to M\) が \(U\) を経由して分解することをいう．同値に，そのようなすべての \(h\) に対して \(h\preceq U\) が成り立つ．
+\end{definition}
+
+\begin{proposition}[観測サイズの有界性は TxtBc 識別可能性を回復する]
+\label{prop:bounded-union-identifiable}
+任意の固定有限アルファベット \(\Sigma\)，ファンアウト上限 \(f\ge1\)，および \(k\ge1\) に対して，\((\Sigma,k)\) から計算可能な明示的有限モノイド準同型
+\[
+  U_{\Sigma,k}:\Sigma^*\twoheadrightarrow M_{\Sigma,k}^{\mathrm{univ}}
+\]
+で
+\[
+  \Clatent{f}{k}\subseteq\Cmcf{f}{U_{\Sigma,k}}
+\]
+を満たすものが存在する．\(|M|\le k\) を満たすすべての明示的準同型 \(h:\Sigma^*\to M\) は \(U_{\Sigma,k}\) を経由して分解する．したがって，パラメータ \((f,U_{\Sigma,k})\) をもつ標準学習器は，正例データから \(\Clatent{f}{k}\) を TxtBc 識別する．
+\end{proposition}
+
+\begin{proof}
+抽象的な同型類代表系を選ばなくても，構成は完全に有効に行える．各 \(1\le j\le k\) に対し，標準集合
+\([j]=\{1,\ldots,j\}\) 上のすべての二項演算表を列挙し，モノイド公理を満たすものだけを残す．残った各モノイド表について，すべての写像 \(\Sigma\to[j]\) を列挙する．自由性により，各写像は \(\Sigma^*\) からの一意な準同型を定める．こうして有限な有効リスト
+\(h_i:\Sigma^*\to M_i\)，\(1\le i\le r\) が得られ，これは大きさ高々 \(k\) のモノイドへのすべての準同型を，台集合の付け替えを除いて含む．
+
+一時的な直積
+\[
+  P_{\Sigma,k}:=M_1\times\cdots\times M_r,
+  \qquad
+  H^{\mathrm{prod}}_{\Sigma,k}:=(h_1,\ldots,h_r):
+     \Sigma^*\to P_{\Sigma,k}
+\]
+を作る．この直積は，有限性と有効性を明示するためだけに用いる．有限個の文字値
+\(H^{\mathrm{prod}}_{\Sigma,k}(a)\)，\(a\in\Sigma\) が生成する部分モノイドを計算し，
+\[
+  M_{\Sigma,k}^{\mathrm{univ}}
+  :=\operatorname{im}(H^{\mathrm{prod}}_{\Sigma,k})
+\]
+と置く．さらに
+\[
+  U_{\Sigma,k}:\Sigma^*\twoheadrightarrow M_{\Sigma,k}^{\mathrm{univ}}
+\]
+を，同じ直積写像の余域をその像に制限したものとする．その乗法表と文字の像は \((\Sigma,k)\) から計算可能なので，\(U_{\Sigma,k}\) は明示的有限観測である．
+
+\(|M|=j\le k\) を満たす明示的準同型 \(h:\Sigma^*\to M\) を取る．全単射 \(\varphi:M\to[j]\) を選び，\(M\) の乗法表を \(\varphi\) に沿って移す．得られた表と文字写像 \(\varphi\circ h|_\Sigma\) は上の列挙に現れるから，ある座標 \(i\) について \(\varphi\circ h=h_i\) である．\(\operatorname{pr}_i\) をその座標射影とする．このとき
+\(\pi_h:=\varphi^{-1}\circ\operatorname{pr}_i|_{M_{\Sigma,k}^{\mathrm{univ}}}\)
+は \(M_{\Sigma,k}^{\mathrm{univ}}\to M\) のモノイド準同型であり，
+\[
+  h=\pi_h\circ U_{\Sigma,k}
+\]
+を満たす．したがって \(h\preceq U_{\Sigma,k}\) であり，Proposition~\ref{prop:h-refinement-monotonicity} から
+\(\Cmcf{f}{h}\subseteq\Cmcf{f}{U_{\Sigma,k}}\) を得る．すべての \(|M|\le k\) について和集合を取れば表示した包含が従う．Corollary~\ref{cor:semantic-identification} により，固定準同型 \(U_{\Sigma,k}\) に対する標準学習器は \(\Cmcf{f}{U_{\Sigma,k}}\) を TxtBc 識別し，したがってその部分クラスである大きさ有界観測和集合も TxtBc 識別する．
+\end{proof}
+
+
+\subsection{普遍化の情報コスト}
+\label{subsec:uniform-observation-bound}
+
+学習器一様な下界を述べるため，標準的な意味論的ロッキング概念を用いる．
+\begin{definition}[意味論的 TxtBc ロッキング列]
+\label{def:semantic-locking-sequence}
+任意の学習器 \(\mathcal A\) と \(L\subseteq\Sigma^*\) を取る．有限列
+\[
+  \sigma\in(L\cup\{\#\})^*
+\]
+が，\(L\) 上の \(\mathcal A\) に対する \emph{意味論的 TxtBc ロッキング列} であるとは，任意の有限継続
+\(\tau\in(L\cup\{\#\})^*\) に対して
+\[
+  L(\mathcal A(\sigma\tau))=L
+\]
+が成り立つことをいう．その \emph{ロッキング内容} を
+\(\operatorname{content}(\sigma)\) とし，その正例ロッキング内容サイズを
+\(\|\operatorname{content}(\sigma)\|_+\) とする．したがって，この証明書が順序と重複を無視するのは正例情報量を測るときだけであり，学習器自体が集合駆動である必要はない．
+\end{definition}
+
+\begin{lemma}[意味論的ロッキング補題]
+\label{lem:semantic-locking-exists}
+任意の学習器 \(\mathcal A\) が空でない言語 \(L\) を正例データから TxtBc 識別するならば，\(\mathcal A\) は \(L\) 上で意味論的 TxtBc ロッキング列を持つ．
+\end{lemma}
+
+\begin{proof}
+そのような列が存在しないと仮定する．\(L\) の各要素が少なくとも一度現れる列
+\(x_0,x_1,x_2,\ldots\) を取る．\(L\) が有限ならば，その後は要素を繰り返す．\(\sigma_0=\eps\) から始め，有限接頭辞を帰納的に構成する．\(\sigma_i\) が得られているとし，\(\rho_i=\sigma_i x_i\) と置く．\(\rho_i\) はロッキング列ではないから，ある有限列
+\(\tau_i\in(L\cup\{\#\})^*\) が存在して
+\[
+  L(\mathcal A(\rho_i\tau_i))\ne L
+\]
+となる．\(\sigma_{i+1}=\rho_i\tau_i\) とする．無限連結
+\[
+  x_0\tau_0x_1\tau_1x_2\tau_2\cdots
+\]
+は \(L\) の text であるが，各ブロック \(x_i\tau_i\) の末尾で学習器は意味論的に誤っている．したがってこの text 上で学習器は無限回誤り，TxtBc 識別に反する．
+\end{proof}
+
+
+\begin{lemma}[固定長正則スライス]
+\label{lem:fixed-length-regular-slices}
+\(N\ge0\)，有限モノイド準同型 \(g:\Sigma^*\to M\)，および \(P\subseteq M\) を取る．このとき
+\[
+  L:=\Sigma^N\cap g^{-1}(P)
+\]
+は任意の \(f\ge1\) に対して \((f,g)\)-タプル代入可能である．
+\end{lemma}
+
+\begin{proof}
+\(\tuple x,\tuple y\) が成分ごとに同じ \(g\) 型を持ち，共通の受理文脈 \(E\) を持つとする．二つの充填結果はいずれも長さ \(N\) なので，二つのタプルの総長は等しい．したがって，他の任意の文文脈 \(F\) に入れても二つの充填結果の総長は再び等しい．対応成分の \(g\) 値が等しいので，両者の \(g\) 値も等しい．ゆえに，任意の向きセクターにおいて，二つの充填結果はともに \(\Sigma^N\cap g^{-1}(P)\) に属するか，ともに属さない．
+\end{proof}
+
+
+\begin{lemma}[固定長一点削除族]
+\label{lem:fixed-length-deletion-family}
+\(\Gamma=\{0,1\}\)，\(n\ge1\) とし，
+\[
+  F_n:=\Gamma^n,\qquad
+  F_{n,w}:=\Gamma^n\setminus\{w\}\quad(w\in\Gamma^n),
+  \qquad
+  k_n:=\frac{n(n+1)}2+2
+\]
+と置く．任意のファンアウト上限 \(f\ge1\) に対して
+\[
+  F_n\in\Clatent{f}{1},
+  \qquad
+  F_{n,w}\in\Clatent{f}{k_n}
+  \quad(w\in F_n)
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+言語 \(F_n\) は固定長正則スライスであり，一元観測によって証言されるので，\(F_n\in\Clatent{f}{1}\) である．固定した \(w\in\Gamma^n\) に対し，\(\eta_w:\Gamma^*\to M_w\) を単集合言語 \(\{w\}\) の構文準同型とする．\(w\) の空でない因子は高々 \(n(n+1)/2\) 個であり，さらに \(\eps\) を含むクラスが一つ，因子でないすべての語を含むジャンククラスが一つある．したがって
+\[
+  |M_w|\le \frac{n(n+1)}2+2=k_n.
+\]
+また
+\[
+  F_{n,w}=\Gamma^n\cap
+  \eta_w^{-1}\bigl(M_w\setminus\{\eta_w(w)\}\bigr)
+\]
+である．実際，空の両側文脈だけで既に \(w\) は他のすべての長さ \(n\) の語から区別される．したがって固定長正則スライス補題より \((f,\eta_w)\)-タプル代入可能性が得られ，\(F_{n,w}\in\Clatent{f}{k_n}\) が従う．
+\end{proof}
+
+\begin{lemma}[一点削除族によるロッキング障害]
+\label{lem:deletion-locking-obstruction}
+\(L\ne\emptyset\) とし，\(\mathcal A\) が \(L\) と，すべての一点削除 \(L\setminus\{w\}\)，\(w\in L\) を TxtBc 識別するとする．このとき，\(L\) 上の \(\mathcal A\) に対する任意の意味論的 TxtBc ロッキング列 \(\sigma\) は
+\[
+  \operatorname{content}(\sigma)=L
+\]
+を満たす．
+\end{lemma}
+
+\begin{proof}
+ある \(w\in L\) がロッキング内容に含まれないとする．するとそのロッキング接頭辞を \(L\setminus\{w\}\) の text へ延長できる．ロッキング性により以後のすべての仮説は \(L\) を表さなければならないが，一点削除言語の TxtBc 識別性により，最終的には \(L\setminus\{w\}\) を表さなければならず，矛盾する．
+\end{proof}
+
+\begin{lemma}[ロッキング内容と特徴標本]
+\label{lem:locking-characteristic-bridge}
+\(\mathcal A\) を集合駆動学習器，\(L\subseteq\Sigma^*\) とする．有限集合 \(S\subseteq L\) が \(L\) 上で \(\mathcal A\) に対する特徴標本であることと，内容が \(S\) である任意の \(L\cup\{\#\}\) 上の有限列が意味論的 TxtBc ロッキング列であることは同値である．
+\end{lemma}
+
+\begin{proof}
+\(S\) が特徴的ならば，任意の継続の有限内容 \(K\) は \(S\subseteq K\subseteq L\) を満たすので，集合駆動性と特徴性により仮説言語は \(L\) のままである．逆に，内容が \(S\) の列がロッキングであり，有限な \(S\subseteq K\subseteq L\) が与えられたとする．\(K\setminus S\) の要素をちょうど一度ずつ追加すれば，集合駆動性から特徴標本の性質が従う．
+\end{proof}
+
+以下で用いる一点削除族のロッキング段階は，正例データ学習における標準的な罠である．有限言語上でロックされた学習器は，対応する一点削除言語も同時に学習しながら，ある語だけを見落とすことはできない．本設定に固有の定量的内容は Lemma~\ref{lem:fixed-length-deletion-family} にあり，そこでは各一点削除言語が大きさわずか \(O(n^2)\) の観測スライスに入る．
+
+\begin{theorem}[学習器一様な \(2^{\Omega(\sqrt{k})}\) ロッキング下界]
+\label{thm:no-uniform-polynomial-k-data}
+\(\Gamma=\{0,1\}\) と \(f\ge1\) を固定し，\(k_n=n(n+1)/2+2\) と置く．任意の \(n\) と，意味論的スライス全体 \(\Clatent{f}{k_n}\) を TxtBc 識別する任意の学習器 \(\mathcal A_{k_n}\) に対し，対象 \(F_n=\Gamma^n\) 上の任意の意味論的ロッキング列 \(\sigma\) は
+\[
+  \operatorname{content}(\sigma)=F_n,
+  \qquad
+  \|\operatorname{content}(\sigma)\|_+=n2^n
+\]
+を満たす．したがって必要な正例ロッキング情報量は
+\(2^{\Omega(\sqrt{k_n})}\) である．学習器が集合駆動ならば，\(F_n\) の任意の特徴標本はちょうど \(F_n\) 自身である．
+\end{theorem}
+
+\begin{proof}
+正しく TxtBc 学習される各対象について意味論的ロッキング列が存在することは Lemma~\ref{lem:semantic-locking-exists} により保証される．Lemma~\ref{lem:fixed-length-deletion-family} により，\(F_n\) とすべての一点削除 \(F_{n,w}\) は同じ意味論的スライス \(\Clatent{f}{k_n}\) に属する．したがって Lemma~\ref{lem:deletion-locking-obstruction} は，任意のロッキング内容が \(F_n\) に等しいことを強制する．ゆえにその正例サイズは
+\[
+  \sum_{w\in\Gamma^n}|w|=n2^n
+\]
+である．\(k_n=\Theta(n^2)\) なので，主張した漸近形が従う．集合駆動の場合の主張は Lemma~\ref{lem:locking-characteristic-bridge} である．
+\end{proof}
+
+\begin{corollary}[任意の観測予算に対する下界]
+\label{cor:locking-lower-bound-all-k}
+十分大きい任意の整数 \(k\) に対し，\(\Clatent{f}{k}\) を TxtBc 識別する任意の学習器は，そのスライス内に，すべての意味論的ロッキング列の正例内容総長が \(2^{\Omega(\sqrt{k})}\) となる対象を持つ．
+\end{corollary}
+
+\begin{proof}
+\(k_n=n(n+1)/2+2\le k\) を満たす最大の \(n\) を取る．このとき
+\(\Clatent{f}{k_n}\subseteq\Clatent{f}{k}\) なので，Theorem~\ref{thm:no-uniform-polynomial-k-data} を対象 \(F_n\) に適用できる．最大性より \(k<k_{n+1}=\Theta(n^2)\) であるから \(n=\Theta(\sqrt{k})\) であり，必要なロッキング内容の総長は
+\(n2^n=2^{\Omega(\sqrt{k})}\) となる．
+\end{proof}
+
+
+\subsection{無界な潜在観測}
+\begin{definition}[無界潜在観測和集合]
+\label{def:no-advice-union}
+アルファベット \(\Sigma\) とファンアウト上限 \(f\) を固定する．ここでは対象が任意の固定観測スライスに属することを許す一方，その所属を証言する有限準同型がどれであるかを学習器には知らせない．そこで \emph{無界潜在観測和集合} を
+\[
+  \Callobs{f}
+  :=
+  \bigcup_h \Cmcf{f}{h}
+\]
+と定める．ここで和集合は，すべての明示的有限モノイド準同型
+\[
+  h:\Sigma^*\to M
+\]
+にわたって取る．\(\Callobs{f}\) に対する学習器が受け取るのは正例データと固定ファンアウト上限だけであり，特に，証言準同型もその余域モノイドの大きさの上限も与えられない．
+\end{definition}
+
+Proposition~\ref{prop:copy-infinite-observation} により，COPY はどの有限観測スライスにも属さない．したがって
+\(\Callobs{2}\subsetneq2\text{-}\mathrm{MCFL}\) である．
+
+\begin{lemma}[昇鎖障害]
+\label{lem:ascending-chain-obstruction}
+言語クラス \(\mathcal C\) が
+\[
+  L_1\subsetneq L_2\subsetneq\cdots
+\]
+とその和集合 \(L_\infty=\bigcup_{k\ge1}L_k\) を含むとする．このとき \(\mathcal C\) は正例データから TxtBc 識別可能ではない．
+\end{lemma}
+
+\begin{proof}
+ある学習器 \(\mathcal A\) が \(\mathcal C\) のすべての言語を TxtBc 識別すると仮定する．\(\mathcal A\) が無限個の異なる仮説言語を出力する \(L_\infty\) の text を構成する．\(L_\infty\) の列挙 \(v_1,v_2,\ldots\) を固定する．有限接頭辞 \(\sigma_s\) が構成され，その内容がある \(L_{k_s}\) に含まれているとする．\(\sigma_s\) に \(L_{k_s}\) の text の要素を続ける．得られる無限継続は \(L_{k_s}\) の text なので，ある有限延長の時点で学習器は言語 \(L_{k_s}\) をもつ仮説を出力しなければならない．そこで \(L_{k_s+1}\setminus L_{k_s}\) の要素を一つ追加し，さらに \(v_s\) がまだ現れていなければそれも追加する．新しい有限内容は，ある後続の \(L_{k_{s+1}}\) に含まれ，同じ構成を繰り返せる．
+
+各 \(v_s\) は最終的に現れるので，得られる列は \(L_\infty\) の text である．しかし選んだ各段階で，学習器は真に増大する近似言語 \(L_{k_s}\) を出力する．したがってこの text 上で意味論的に収束できない．これは \(L_\infty\) の TxtBc 識別に矛盾する．
+\end{proof}
+
+\begin{corollary}[正則言語は潜在観測和集合に含まれる]
+\label{cor:regular-in-latent-union}
+任意の \(f\ge1\) に対して
+\[
+  \mathrm{REG}\subseteq\Callobs{f}
+\]
+である．
+\end{corollary}
+
+\begin{proof}
+正則言語 \(L\) に対し，\(\eta_L\) をその有限構文準同型とし，対応する受理集合 \(P\) を用いて \(L=\eta_L^{-1}(P)\) と書く．Proposition~\ref{prop:h-recognizable-in-slice} を適用すればよい．
+\end{proof}
+
+以下は，Gold 型および有限 tell-tale 型の不可能性議論の基礎にある標準的な superfinite 障害である．
+
+\begin{theorem}[無界潜在観測のもとでの TxtBc 識別可能性の失敗]
+\label{thm:no-advice-nonidentifiability}
+空でない有限アルファベット \(\Sigma\) を固定する．任意の固定 \(f\ge1\) に対し，潜在観測和集合 \(\Callobs{f}\) は正例データから TxtBc 識別可能ではない．
+\end{theorem}
+
+\begin{proof}
+Corollary~\ref{cor:regular-in-latent-union} により，このクラスは
+\[
+  R_k:=\{a,a^2,\ldots,a^k\}\qquad(k\ge1)
+\]
+とその和集合 \(R_\infty=a^+\) を含む．
+\(R_1\subsetneq R_2\subsetneq\cdots\) なので，Lemma~\ref{lem:ascending-chain-obstruction} を適用できる．
+\end{proof}
+
+本節では，観測サイズを潜在的な学習助言の大きさの上限として用いた．Section~\ref{sec:comparison} では，同じパラメータを構成依存の構造的較正に再び用いる．そこに現れるタグ付き Rambow--Satta 証人では，パラメータの増大とともに観測像の大きさも増大しなければならない．最小観測サイズとその代数構造の体系的理論は，本論文の範囲外である．
+
+% ===== 日本語化はここまで（原稿 Section 6 の末尾） =====
+% ===== 以下は次回以降の継続用として英語原文を残す =====
+\section{多次元分布学習との関係}
+\label{sec:comparison}
+
+Yoshinaka の多次元代入可能性は，MCFG に対する既存の正例データ学習枠組みのうち，本研究に最も近いものである．本節の役割は較正にある．まず，彼の意味論的言語族全体が一つのアルファベット依存観測スライスに含まれることを示し，次に，彼の元の予想文法構成に既に暗黙に含まれていた適応的ランクの基準線を明示する．そのうえで，タグ付き Rambow--Satta 族を用いて最小規則ランクと観測コストを較正する．最後に，有限状態観測と有限 prefix/suffix guard を比較し，出力型付き証明構造を congruential MCFG と結びつける．
+
+\subsection{一つの観測スライスにおける Yoshinaka の意味論的言語族}
+
+\begin{definition}[Yoshinaka の多重文脈と充填]
+\label{def:yoshinaka-multicontexts}
+$m\ge1$ に対し，$\mathsf{Ctx}_{\mathrm Y}^{(m)}$ を，
+\[
+  x=u_0\blank_1u_1\blank_2\cdots
+    u_{m-1}\blank_m u_m
+\]
+という形の式全体とする．ここで $u_0,u_m\in\Sigma^*$，
+$u_1,\ldots,u_{m-1}\in\Sigma^+$ である．したがって両端の区間は空でもよいが，連続する二つの穴の間にある部分は非空である．充填子
+$\tuple y=(y_1,\ldots,y_m)\in(\Sigma^+)^m$ に対して，
+\[
+  x\odot\tuple y
+  :=u_0y_1u_1y_2\cdots u_{m-1}y_mu_m
+\]
+と定義する．これは Yoshinaka の journal 版の定義で用いられている，充填子および穴間部分を非空とする規約である \cite[Section~3.1, p.~1824]{Yoshinaka2011}．
+\end{definition}
+
+\begin{definition}[Yoshinaka の \(p\)D-代入可能性
+{\cite[Section~3.1, p.~1824]{Yoshinaka2011}}]
+\label{def:yoshinaka-pd-substitutability}
+言語 \(L\) が \emph{\(p\)D-代入可能} であるとは，任意の
+\(1\le m\le p\)，任意の \(x_1,x_2\in\mathsf{Ctx}_{\mathrm Y}^{(m)}\)，および任意の
+\(\tuple y_1,\tuple y_2\in(\Sigma^+)^m\) に対して，
+\[
+ x_1\odot\tuple y_1,\quad x_1\odot\tuple y_2,\quad
+ x_2\odot\tuple y_1\in L
+ \quad\Longrightarrow\quad
+ x_2\odot\tuple y_2\in L
+\]
+が成り立つことをいう．この意味論的クラスを \(S(p)\) と書く．Yoshinaka が学習するクラスは
+\(SL(p,r)=S(p)\cap L(p,r)\) であり，ここで \(p\) は非終端記号の次元を，\(r\) は規則関数のランクを上から抑える．
+\end{definition}
+
+Yoshinaka の journal 版の定義に従い，条件は \(m=p\) の場合だけでなく，すべての arity \(m\le p\) に対して要求される．Yoshinaka はまた，充填子と穴間部分を非空とする規約を，空成分も許す制限なしの版に置き換えることは可能だが，その場合は意味論的制約が大幅に強くなることを指摘している \cite[footnote~3, p.~1824]{Yoshinaka2011}．以下の境界構成では，この緊張関係を別の方法で解消する．すなわち，Yoshinaka の元の非空 \(p\)D クラスをそのまま保ちつつ，再構成定理で用いる，より寛容な名前付き文脈インターフェースへ埋め込む．
+
+したがって，これらの多重文脈と，本稿の名前付き文脈における一つの固定された向きセクターとの表面的な違いは，Yoshinaka が非空の充填子と，連続穴間の非空部分を要求していることだけである．有限境界商は，まさにこの不一致を取り除く．
+
+\begin{definition}[有限 \((k,\ell)\)-境界観測]
+\label{def:boundary-observation}
+整数 \(k,\ell\ge0\) を固定し，\(s=k+\ell\) と置き，
+\(\operatorname{pref}_0(w)=\operatorname{suf}_0(w)=\eps\) と約束する．
+有限アルファベット \(\Sigma\) に対し，\(\Sigma^*\) 上の同値関係
+\(\equiv_{\partial}^{k,\ell}\) を，次のいずれかが成り立つとき
+\(u\equiv_{\partial}^{k,\ell}v\) として定義する．
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \(u=v\) かつ \(|u|\le s\)，または
+\item \(|u|,|v|>s\)，
+\(\operatorname{pref}_k(u)=\operatorname{pref}_k(v)\)，かつ
+\(\operatorname{suf}_\ell(u)=\operatorname{suf}_\ell(v)\)．
+\end{enumerate}
+\(\Sigma=\emptyset\) の場合は一元関係を用いる．
+\end{definition}
+
+\begin{lemma}[境界同値関係は有限モノイド合同である]
+\label{lem:boundary-congruence}
+任意の有限アルファベット $\Sigma$ と任意の $k,\ell\ge0$ に対し，
+$\equiv_{\partial}^{k,\ell}$ は自由モノイド $\Sigma^*$ 上の有限指数の両側合同である．したがって
+\[
+  B_\Sigma^{k,\ell}:=\Sigma^*/{\equiv_{\partial}^{k,\ell}}
+\]
+は有限モノイドであり，商写像
+\[
+  b_\Sigma^{k,\ell}:\Sigma^*\twoheadrightarrow B_\Sigma^{k,\ell}
+\]
+はモノイド準同型である．
+\end{lemma}
+
+\begin{proof}
+$u\equiv_{\partial}^{k,\ell}v$ が短い部分に属するなら $u=v$ であるから，任意の $x,y\in\Sigma^*$ に対して $xuy=xvy$ である．そうでなければ $|u|,|v|>k+\ell$ で，$u,v$ は同じ $k$-prefix と同じ $\ell$-suffix をもつ．$xuy$ と $xvy$ も再び $k+\ell$ より長い．その先頭 $k$ 文字は，すべて $x$ の内部に含まれるか，あるいは $x$ の後に $u$ または $v$ の長さ高々 $k$ の先頭部分が続く形である．$u,v$ の $k$-prefix が一致するので，これらは一致する．右端について対称な議論を行えば，$\ell$-suffix も一致する．したがって $xuy\equiv_{\partial}^{k,\ell}xvy$ である．有限指数であることは，短い部分が長さ高々 $k+\ell$ の有限個の語しか含まず，一方，長い各同値類は $k$-prefix と $\ell$-suffix の組だけで決まることから従う．空アルファベットの場合は明らかである．
+\end{proof}
+
+以下の多次元比較で用いる境界観測は，特別な場合
+\[
+  b_\Sigma:=b_\Sigma^{1,1}
+\]
+である．したがって \(b_\Sigma\) は長さ高々2の語を正確に記録し，それより長い語については最初と最後の文字だけを記録する．
+
+\begin{theorem}[Yoshinaka の意味論的クラスは一つの境界スライスに含まれる]
+\label{thm:yoshinaka-inclusion}
+任意の有限アルファベット \(\Sigma\) と任意の \(p\ge1\) に対し，
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  \subseteq
+  \Cmcf{p}{b_\Sigma}.
+\]
+したがって，任意の \(r\) に対して
+\[
+  SL(p,r)\subseteq\Cmcf{p}{b_\Sigma}
+\]
+である．
+\end{theorem}
+
+\begin{proof}
+\(L\in S(p)\cap p\text{-}\mathrm{MCFL}\) とする．\(d\le p\)，向き \(\sigma\in S_d\)，および成分ごとに同じ \(b_\Sigma\) 型をもち，向き \(\sigma\) の共通受理文脈 \(E\) をもつタプル \(\tuple x,\tuple y\) を固定する．この同じセクター内で両者の分布が等しいことを示す．
+
+各座標 \(i\) について，境界型が等しいことから二つの場合のいずれかになる．\(|x_i|\le2\) なら，正確に \(x_i=y_i\) である．\(|x_i|\ge3\) なら \(|y_i|\ge3\) でもあり，ある文字 \(a_i,b_i\in\Sigma\) と非空の内部語 \(x_i^\circ,y_i^\circ\in\Sigma^+\) が存在して
+\[
+  x_i=a_i x_i^\circ b_i,
+  \qquad
+  y_i=a_i y_i^\circ b_i
+\]
+と書ける．
+
+向き \(\sigma\) の任意の文脈 \(F\) を取る．\(F\) を次のように正規化する．短い座標に対応する各穴を，共通のリテラル語 \(x_i=y_i\) で置き換える．残る長い座標の各穴 \(\blank_i\) を \(a_i\blank b_i\) で置き換え，その後で穴の名前を忘れる．残った穴を左から右に，すなわち \(\sigma\) から継承される順序で読む．穴が一つも残らなければ \(F[\tuple x]=F[\tuple y]\) なので示すことはない．\(m\ge1\) 個の穴が残れば，正規化後の対象は \(\mathsf{Ctx}_{\mathrm Y}^{(m)}\) に属する．実際，残った各充填子は非空であり，連続する二穴の間には少なくとも，前の長い成分の最後の境界文字と，後の長い成分の最初の境界文字が入る．さらに，\(\tuple x\) から得られる内部語タプルをその順に充填すればちょうど \(F[\tuple x]\) となり，\(\tuple y\) の場合は \(F[\tuple y]\) となる．
+
+共通受理文脈 \(E\) にも同じ正規化を施す．その二つの充填結果はいずれも \(L\) に属する．もし \(F[\tuple x]\in L\) なら，正規化された \(E,F\) に Yoshinaka の \(m\)D-代入可能性を適用して \(F[\tuple y]\in L\) を得る．\(\tuple x\) と \(\tuple y\) を入れ替えれば逆向きも従う．したがって
+\[
+  \D_{L,\sigma}^{(d)}(\tuple x)
+  =\D_{L,\sigma}^{(d)}(\tuple y),
+\]
+であり，これは Definition~\ref{def:tuple-substitutable} の条件である．\(L\) はもともと \(p\)-MCFL なので，\(L\in\Cmcf{p}{b_\Sigma}\) である．
+\end{proof}
+
+\begin{lemma}[境界型はブロック順序包絡を制御する]
+\label{lem:block-order-boundary-control}
+$\Gamma=\{a,b,c\}$，$P=a^*b^*c^*$ とする．$u,v$ が $P$ に属する語の因子であり，$b_\Gamma(u)=b_\Gamma(v)$ ならば，任意の $\alpha,\beta\in\Gamma^*$ に対して
+\[
+  \alpha u\beta\in P
+  \quad\Longleftrightarrow\quad
+  \alpha v\beta\in P
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+$P$ の語の任意の因子は再び $P$ に属する．$|u|\le2$ なら，$b_\Gamma$ 型の等しさから $u=v$ である．それ以外では両語の長さは少なくとも3で，最初と最後の文字がそれぞれ一致する．$P$ の非空語は，順序づけられた phase $a<b<c$ を単調に進む．語自身のブロック順序が適法であることが既に分かっているとき，任意の左側・右側の語との連結可能性は，その語の最初と最後の phase だけで決まる．したがって $u,v$ は $P$ に関して同じ両側挙動をもつ．空語の場合も，境界観測の短い exact 部分に含まれる．
+\end{proof}
+
+\begin{theorem}[標準的境界スライスの本質的な真の包含]
+\label{thm:canonical-boundary-strictness}
+$\Gamma=\{a,b,c\}$，$b_\Gamma=b_\Gamma^{1,1}$ とする．任意の整数 $t\ge1$ に対し
+\[
+  H_t:=\{a^{tn}b^nc^n:n\ge0\}
+\]
+と置く．このとき，各 $H_t$ は非文脈自由で，最小 fan-out は2，fan-out 2 における最小規則ランクは1であり，任意の $p\ge2$ に対して
+\[
+  H_t\in \Cmcf{p}{b_\Gamma}\setminus S(p)
+\]
+である．さらに，$H_t$ は二つずつ異なる．したがって任意の $p\ge2$ に対して
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  \subsetneq
+  \Cmcf{p}{b_\Gamma}
+\]
+であり，差集合は，互いに異なる無限個の非文脈自由・ファンアウト2で最小規則ランク1の言語族を含む．より一般に，任意の非空有限アルファベット $\Sigma$ と任意の $p\ge1$ に対して
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  \subsetneq
+  \Cmcf{p}{b_\Sigma}
+\]
+が成り立つ．
+\end{theorem}
+
+\begin{proof}
+$H_t$ の fan-out 2・ランク1文法は，fan-out 2 の非終端記号 $A$ と規則
+\[
+  A\to(\eps,\eps),\qquad
+  A\to(a^t x_1^1,bx_1^2c)(A),\qquad
+  S\to(x_1^1x_1^2)(A)
+\]
+からなる．したがって $H_t\in L(2,1)$ であり，$\operatorname{rr}_2(H_t)=1$ である．$H_t$ は文脈自由ではない．実際，準同型 $g:\{u,b,c\}^*\to\Gamma^*$ を
+$g(u)=a^t$，$g(b)=b$，$g(c)=c$ と定めると，
+\[
+  g^{-1}(H_t)\cap u^*b^*c^*=\{u^nb^nc^n:n\ge0\}
+\]
+となり，CFL の逆準同型および正則言語との共通部分に関する閉包性に反する．fan-out 1 はちょうど文脈自由の場合なので，最小 fan-out は2である．
+
+次に $(p,b_\Gamma)$-タプル代入可能性を示す．実際には任意のアリティ上限に対して成り立つ．$P=a^*b^*c^*$ とし，加法的準同型
+\[
+  \varphi_t(w):=(|w|_a-t|w|_b,\ |w|_b-|w|_c)\in\mathbb Z^2
+\]
+を定める．すると
+\[
+  H_t=P\cap\varphi_t^{-1}(0,0)
+\]
+である．アリティ $d$，向き $\sigma$，および成分ごとに同じ $b_\Gamma$ 型をもち，セクター $\sigma$ で共通受理文脈 $E$ を共有するタプル $\tuple x,\tuple y$ を固定する．$E[\tuple x],E[\tuple y]$ はともに $P$ に属するので，各成分 $x_i,y_i$ は $P$ の語の因子である．Lemma~\ref{lem:block-order-boundary-control} を成分ごとに適用すると，同じセクターの任意の文脈 $F$ に対して
+\[
+  F[\tuple x]\in P\quad\Longleftrightarrow\quad F[\tuple y]\in P
+\]
+を得る．また $E[\tuple x],E[\tuple y]\in\ker\varphi_t$ である．$\mathbb Z^2$ はアーベル群なので，$E$ の固定終端記号部分の寄与を消去して
+\[
+  \sum_{i=1}^d\varphi_t(x_i)=
+  \sum_{i=1}^d\varphi_t(y_i)
+\]
+を得る．この等式は向きに依存せず，任意の $F$ に対して
+$\varphi_t(F[\tuple x])=\varphi_t(F[\tuple y])$ を与える．したがって
+\[
+  F[\tuple x]\in H_t\quad\Longleftrightarrow\quad F[\tuple y]\in H_t,
+\]
+ゆえに二つのセクター分布は等しい．したがって任意の $p\ge2$ について $H_t\in\Cmcf{p}{b_\Gamma}$ である．
+
+$S(p)$ から外れることはアリティ1だけで示せる．
+\[
+  y_1=b,\qquad y_2=a^tb^2c,
+  \qquad E=a^t\blank_1c,
+  \qquad F=a^{2t}\blank_1bc^2
+\]
+と置く．すると
+\[
+  E\odot y_1=a^tbc,
+  \qquad
+  E\odot y_2=F\odot y_1=a^{2t}b^2c^2
+\]
+は $H_t$ に属するが，
+\[
+  F\odot y_2=a^{3t}b^2cbc^2\notin a^*b^*c^*
+\]
+である．よって $H_t\notin S(1)$，したがって任意の $p\ge1$ に対して $H_t\notin S(p)$ である．さらに $s\ne t$ なら $H_s\ne H_t$ である．実際，$a^tbc\in H_t$ である一方，$H_s$ のうち $b$ をちょうど1個含む語は $a$ をちょうど $s$ 個含む．
+
+包含自体は Theorem~\ref{thm:yoshinaka-inclusion} である．任意の非空 $\Sigma$ について $a\in\Sigma$ を選ぶ．二語言語 $\{a,aa\}$ は，二語が異なる短い exact 境界型をもつため $\Cmcf{p}{b_\Sigma}$ に属するが，アリティ1の文脈 $E=\blank_1$ と $F=a\blank_1$ が $S(1)$，したがって任意の $S(p)$ の失敗を証言する．
+\end{proof}
+
+\paragraph{境界深さの較正．}
+Theorem~\ref{thm:yoshinaka-inclusion} の証明は \((1,1)\) 境界に特有ではない．任意の $k,\ell\ge0$ で $k+\ell\ge1$ のとき，各残存穴のまわりに共通の $k$-prefix と $\ell$-suffix を用いる同じ正規化により
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  \subseteq \Cmcf{p}{b_\Sigma^{k,\ell}}
+\]
+を得る．条件 $k+\ell\ge1$ は，正規化された成分が寄与する部分によって，連続する残存穴同士が分離されることを保証する．したがって，非自明な片側または両側の有限境界 guard はいずれもこの意味論的包含を支える．以下では，最も単純な対称的アルファベット依存選択として $b_\Sigma=b_\Sigma^{1,1}$ を用いる．
+
+\begin{remark}[Yoshinaka の予想文法構成における適応的ランク]
+\label{rem:yoshinaka-adaptive-rank}
+Yoshinaka の固定ランククラスの和集合が定性的に学習可能であること自体は，有限観測構成に固有ではない．$\eps\in L$ の場合，空語はいったん観測された後に開始記号からの $\eps$-規則で別扱いできる．Yoshinaka の構成における標本由来のタプル非終端記号は，非空の充填子を対象としている．次元上限 $p$，規則ランク上限 $q$ の Yoshinaka の予想文法を $Y_{p,q}(K)$ と書く．Yoshinaka の健全性証明は $q$ に一様であり，明示的な再記述が \cite[Proposition~1]{CaseYoshinakaZeugmann2013} に与えられている．したがって，任意の $p$D-代入可能な対象 $L$ と任意の有限 $K\subseteq L$ に対して
+\[
+  L(Y_{p,q}(K))\subseteq L
+\]
+である．さらに，対象表現の規則ランクが $q_*$ なら，Yoshinaka の有限特徴標本の議論は任意の上限 $q\ge q_*$ に対して完全である \cite{Yoshinaka2011,CaseYoshinakaZeugmann2013}．したがって，一つの集合駆動学習器が，たとえば $q(K)=\max\{1,|K|\}$ として，有限内容とともに上限を増大させることができる．対象が無限言語なら，対象側の特徴標本に有限個の相異なる正例を加え，その濃度が少なくとも $q_*$ になるようにする．対象が有限言語なら，ランク高々1の lexical presentation を用い，必要なら有限言語全体を取る．その有限内容が現れた後は，健全性と完全性により正確な再構成が得られる．さらに Corollary~\ref{cor:gold-explanatory} と同じ議論により，保守的 wrapper が TxtEx 収束を与える．
+
+したがって，対象固有のランク助言そのものが Yoshinaka との新規性境界なのではない．Theorem~\ref{thm:yoshinaka-inclusion} の要点はむしろ意味論的埋め込みにある．すなわち，彼の言語族全体が一つの固定されたアルファベット依存観測スライスに取り込まれ，より一般的な再構成定理が適用できる．この適応的ランクの基準線は純粋に定性的である．標本とともに $q(K)$ を増加させても，Yoshinaka の固定 $(p,q)$ に対する多項式時間保証は保存されない．
+\end{remark}
+
+\begin{corollary}[Yoshinaka の意味論的言語族の回収]
+\label{cor:yoshinaka-full-union-learning}
+任意の固定有限アルファベット $\Sigma$ とファンアウト上限 $p$ に対し，$b_\Sigma$ を与えられた標準有限観測学習器は
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  =\bigcup_{q\ge1}SL(p,q)
+\]
+を正例データから TxtBc 識別する．これは新しい和集合学習可能性の結果としてではなく，較正上の帰結として記録する．
+\end{corollary}
+
+\begin{proof}
+Theorem~\ref{thm:yoshinaka-inclusion} により，表示された言語族の各対象は一つのスライス $\Cmcf{p}{b_\Sigma}$ に属する．したがって Corollary~\ref{cor:semantic-identification} が言語族全体に一様に適用できる．
+\end{proof}
+
+\subsection{規則ランクと観測コスト：タグ付き較正と固定アルファベット較正}
+\label{subsec:rank-observation-calibration}
+
+次の構成では，Yoshinaka 埋め込みを最小規則ランクに照らして較正する．まずタグ付き Rambow--Satta 言語族を用いる．この言語族では正確なランク階層が透明であり，その後で同じ階層を一つの固定3文字アルファベットへ圧縮する．後者により，最小規則ランクの非有界性がアルファベット増大に由来するものではないことが分かる．そのうえで，真に残る障害を定量化する．すなわち，この構成を証言するために必要な有限観測は，依然としてパラメータとともに大きくならなければならない．
+
+$r\ge2$，$\pi\in S_r$ に対し，
+\[
+ P_{r,\pi}=c_1^*d_1c_2^*d_2\cdots d_{2r-1}c_{2r}^*,
+\]
+と置く．ここで
+$c_1,\ldots,c_{2r}=A_1,\ldots,A_r,B_{\pi(1)},\ldots,B_{\pi(r)}$
+であり，すべての区切り記号 $d_j$ は相異なるものとする．$\mathbb Z^r$ において
+$\delta(A_i)=e_i$，$\delta(B_i)=-e_i$，$\delta(d_j)=0$ と定め，
+$T_{r,\pi}=P_{r,\pi}\cap\ker\delta$ と置く．
+
+\begin{theorem}[$S(2)$ 内の厳密な規則ランク階層]
+\label{thm:s2-rank-hierarchy}
+任意の $r\ge6$ と Rambow--Satta の階層置換 $\pi_r$ に対し，
+\[
+  T_{r,\pi_r}\in L(2,r-2)\setminus L(2,r-3).
+\]
+さらに $T_{r,\pi_r}\in S(2)$ であり，したがって
+\[
+  T_{r,\pi_r}\in SL(2,r-2)\setminus SL(2,r-3).
+\]
+よって，このアルファベット添字付き言語族に沿って，
+$S(2)\cap2\text{-}\mathrm{MCFL}$ 上の最小規則ランクは非有界である．
+\end{theorem}
+
+\begin{proof}[証明概略]
+相異なる区切り記号を用いる構成により $P_{r,\pi_r}\in S(2)$ であり，アーベル準同型 $\delta$ の零ファイバーとの共通部分を取っても多次元代入可能性は保存されるので，$T_{r,\pi_r}\in S(2)$ を得る．区切り記号を消去すると，$T_{r,\pi_r}$ は対応する零指数 Rambow--Satta 証人へ写る．同じ固定 fan-out／規則ランク層の内部での準同型に関する閉包性から下界が得られ，一方，同じ層内での逆準同型と正則言語との共通部分によって対応する上界が移される．詳細は Appendix~\ref{app:rank-hierarchy} に与える．
+\end{proof}
+
+\begin{corollary}[一つの固定アルファベット上でもランク階層は保たれる]
+\label{cor:fixed-alphabet-rank-hierarchy}
+$\Delta=\{a,b,c\}$ とする．$r\ge6$ と Rambow--Satta の階層置換 $\pi_r$ に対し，
+\[
+ C_r:=\{a^{n_1}c\cdots ca^{n_r}c
+ b^{n_{\pi_r(1)}}c\cdots cb^{n_{\pi_r(r)}}:
+ n_1,\ldots,n_r\ge0\}
+\]
+と定める．このとき
+\[
+  C_r\in L(2,r-2)\setminus L(2,r-3).
+\]
+したがって，最小規則ランクは固定アルファベット $\Delta$ 上ですでに非有界である．
+\end{corollary}
+
+\begin{proof}
+$q_r$ を，各 $A_i$ を $a$ に，各 $B_i$ を $b$ に，各区切り記号 $d_j$ を $c$ に写す準同型とする．すると
+$q_r(T_{r,\pi_r})=C_r$ である．したがって，固定 fan-out／規則ランク層の準同型に関する閉包性と Theorem~\ref{thm:s2-rank-hierarchy} により $C_r\in L(2,r-2)$ を得る．
+
+仮に $C_r\in L(2,r-3)$ とする．元のタグ付きアルファベット上では
+\[
+  T_{r,\pi_r}=q_r^{-1}(C_r)\cap P_{r,\pi_r}
+\]
+である．Rambow--Satta の full-AFL 定理と MCFG 対応により，固定パラメータ層 $L(2,r-3)$ は逆準同型および正則言語との共通部分で閉じている．同じ閉包性は Appendix~\ref{app:rank-hierarchy} でも用いる．したがって
+$T_{r,\pi_r}\in L(2,r-3)$ となり，Theorem~\ref{thm:s2-rank-hierarchy} に矛盾する．
+\end{proof}
+
+先の recognizable-language proposition は，固定観測スライスへの所属に対する一般的十分条件を与えた．次の proposition は，これと相補的な必要容量上限を与える．すなわち，一つの有限観測は，一つの共通文脈の内部で，分布が互いに異なるタプル型を有限個しか支えられない．
+
+\begin{proposition}[共通文脈における型 packing 上限]
+\label{prop:shared-context-packing}
+$L$ を向きを考慮した $(f,h)$-タプル代入可能言語とし，
+$h:\Sigma^*\to M$ は有限とする．$1\le d\le f$ と向き
+$\sigma\in S_d$ を固定する．
+\[
+  \tuple x_1,\ldots,\tuple x_N\in(\Sigma^*)^d
+\]
+が一つの受理文脈
+\[
+  E\in\bigcap_{i=1}^N \D_{L,\sigma}^{(d)}(\tuple x_i)
+\]
+を共有し，かつセクター分布が二つずつ異なる，すなわち
+\[
+  \D_{L,\sigma}^{(d)}(\tuple x_i)
+  \ne
+  \D_{L,\sigma}^{(d)}(\tuple x_j)
+  \qquad(i\ne j)
+\]
+と仮定する．このとき
+\[
+  N\le |\operatorname{im}h|^d.
+\]
+\end{proposition}
+
+\begin{proof}
+ある $i\ne j$ について
+\[
+  h^{(d)}(\tuple x_i)=h^{(d)}(\tuple x_j)
+\]
+であれば，共通受理文脈 $E$ により二つのセクター分布は交わる．すると，向きを考慮した $(f,h)$-タプル代入可能性から
+\[
+  \D_{L,\sigma}^{(d)}(\tuple x_i)
+  =
+  \D_{L,\sigma}^{(d)}(\tuple x_j)
+\]
+が従い，仮定に反する．したがって $N$ 個のタプルは互いに異なる $h^{(d)}$ 型をもつ．そのような型は高々 $|\operatorname{im}h|^d$ 個である．
+\end{proof}
+
+\begin{corollary}[固定アルファベットでも観測障害は残る]
+\label{cor:fixed-alphabet-rank-observation}
+Corollary~\ref{cor:fixed-alphabet-rank-hierarchy} の固定アルファベット言語 $C_r$ について，$C_r\in\Cmcf{2}{h}$ を満たすすべての有限観測
+$h:\Delta^*\to M$ は
+\[
+  r\le |\operatorname{im}h|^2
+\]
+を満たす．したがって，正確な最小ランク階層はアルファベット圧縮後も残るが，この特定の言語族全体を非有界な $r$ にわたって一つの有限観測で証言することはできない．
+\end{corollary}
+
+\begin{proof}
+$D=c^{2r-1}$ と置き，$1\le j\le r$ に対して
+\[
+  \tau_j=(c^{j-1},c^{r-j})
+\]
+とする．すべての $\tau_j$ は恒等向きの受理文脈
+$E=\blank_1\blank_2c^r$ を共有する．実際，$E[\tau_j]=D\in C_r$ である．$s(j)=\pi_r^{-1}(j)$ と置き，
+\[
+  F_j:=\blank_1a\blank_2c^{s(j)}bc^{r-s(j)}
+\]
+と定める．すると $F_j[\tau_j]\in C_r$ である．前半で唯一非零の指数は第 $j$ 成分であり，後半で唯一非零の指数はそれに対応する $\pi_r$-位置にあるからである．一方 $k\ne j$ なら，$F_j[\tau_k]\notin C_r$ である．前半の非零指数が第 $k$ 成分へ移るのに対し，後半の非零指数は依然として $j$ に対応する位置に残るからである．したがって，$r$ 個のタプルは一つの受理文脈を共有しつつ，恒等セクターで二つずつ異なる分布をもつ．Proposition~\ref{prop:shared-context-packing} を $d=2$ で適用すれば主張が従う．
+\end{proof}
+
+Corollaries~\ref{cor:fixed-alphabet-rank-hierarchy} と~\ref{cor:fixed-alphabet-rank-observation} により，この較正の意味をより鋭く述べられる．ランク階層はアルファベット増大の人工物ではないが，固定アルファベット $\{a,b,c\}$ へ圧縮しても観測障害は残る．これは構成固有の事実であり，高い最小規則ランクが一般に大きな観測を強制するという定理として読むべきではなく，$\Clatent{2}{k}$ の任意の言語について最小規則ランクを上から抑えるものでもない．fan-out 2 の一つの固定有限観測スライスが非有界な最小規則ランクを持ちうるかどうかは，依然として未解決である．
+
+したがって，一つの有限規則ランク上限では，固定3文字アルファベット上でさえこの較正族全体を覆えないが，この特定の階層を一つの一様に有界な有限観測で証言することもできない．Remark~\ref{rem:yoshinaka-adaptive-rank} を踏まえると，ここでの階層は構造的較正として用いるものであり，Yoshinaka のランクパラメータを適応的に除去すること自体が新しい学習可能性結果であることの証拠として用いるものではない．
+
+\subsection{有限状態制御と有限境界 guard の比較}
+
+一般の有限状態インターフェースと有界 prefix/suffix 情報を比較するため，Yoshinaka の $(k,\ell)$ 条件の直接的な多次元 guard 版を用いる．これは比較のための制御されたクラスとして導入するだけであり，Yoshinaka 自身に帰属させるものではない．
+
+\begin{definition}[多次元 \((k,\ell)\)-guarded 代入可能性]
+\label{def:guarded-pd-substitutability}
+\(p\ge1\) と \(k,\ell\ge0\) を固定する．言語 \(L\subseteq\Sigma^*\) が
+\emph{\((k,\ell)\)-guarded \(p\)D-代入可能} であるとは，任意の
+\(1\le m\le p\)，任意の \(x_1,x_2\in\mathsf{Ctx}_{\mathrm Y}^{(m)}\)，および
+\[
+  b_\Sigma^{k,\ell}(y_{1,i})=b_\Sigma^{k,\ell}(y_{2,i})
+  \qquad(1\le i\le m)
+\]
+を満たすすべての \(\tuple y_1,\tuple y_2\in(\Sigma^+)^m\) に対して，
+\[
+ x_1\odot\tuple y_1,\quad x_1\odot\tuple y_2,\quad
+ x_2\odot\tuple y_1\in L
+ \quad\Longrightarrow\quad
+ x_2\odot\tuple y_2\in L
+\]
+が成り立つことをいう．この意味論的クラスを \(S^{k,\ell}(p)\) と書く．これは Yoshinaka の \((k,\ell)\)-代入可能性 \cite{Yoshinaka2008} の直接的な多次元類似物として導入するものであり，この正確な多次元版が同文献で既に明示的に切り出されていたと主張するものではない．すべての充填子が非空なので，\(S^{0,0}(p)=S(p)\) である．
+\end{definition}
+
+\begin{proposition}[同じ深さの境界スライスは guarded クラスに含まれる]
+\label{prop:same-depth-guarded-converse}
+任意の有限アルファベット $\Sigma$，任意の $p\ge1$，および任意の $k,\ell\ge0$ に対して
+\[
+  \Cmcf{p}{b_\Sigma^{k,\ell}}
+  \subseteq
+  S^{k,\ell}(p)\cap p\text{-}\mathrm{MCFL}
+\]
+である．
+\end{proposition}
+
+\begin{proof}
+$L\in\Cmcf{p}{b_\Sigma^{k,\ell}}$ とし，アリティ $m\le p$ において，Definition~\ref{def:guarded-pd-substitutability} の前提が，多重文脈 $x_1,x_2$ と，成分ごとに同じ境界型をもつ非空充填子タプル $\tuple y_1,\tuple y_2$ について成立するとする．多重文脈 $x_1$ は，恒等向きの名前付き文脈とみなせば二つの充填子をともに受理するので，二つの恒等セクター分布は交わる．向きを考慮したタプル代入可能性により，それらの分布は等しい．したがって $x_2$ が $\tuple y_1$ を受理するなら $\tuple y_2$ も受理する．よって guarded rectangular implication が成立する．また，$L$ はスライスの定義により既に $p$-MCFL である．
+\end{proof}
+
+\begin{theorem}[guarded 多次元代入可能性の buffer 付き埋め込み]
+\label{thm:guarded-buffered-embedding}
+任意の有限アルファベット \(\Sigma\)，任意の \(p\ge1\)，および任意の
+\(k,\ell\ge0\) に対して，
+\[
+  S^{k,\ell}(p)\cap p\text{-}\mathrm{MCFL}
+  \subseteq
+  \Cmcf{p}{b_\Sigma^{k,\ell+1}}.
+\]
+左右対称性により
+\[
+  S^{k,\ell}(p)\cap p\text{-}\mathrm{MCFL}
+  \subseteq
+  \Cmcf{p}{b_\Sigma^{k+1,\ell}}
+\]
+も成り立つ．したがって，どちらか一方の側に境界記号を一つ追加するだけで，名前付き文脈インターフェースを Yoshinaka 多重文脈の「穴間非空」インターフェースへ変換できる．
+\end{theorem}
+
+\begin{proof}
+suffix 側に buffer を加える場合を示す．prefix 側はその鏡像である．\(1\le d\le p\)，向き \(\sigma\in S_d\)，および成分ごとに同じ \(b_\Sigma^{k,\ell+1}\) 型をもち，共通受理名前付き文脈 \(E\in\mathcal E_{d,\sigma}\) をもつタプル \(\tuple x,\tuple y\in(\Sigma^*)^d\) を固定する．\(F\in\mathcal E_{d,\sigma}\) とし，\(F[\tuple x]\in L\) と仮定する．\(F[\tuple y]\in L\) を示せば十分である．
+
+成分 \(x_i\) が境界商の短い exact 部分に属するなら \(x_i=y_i\) であるから，\(E,F\) の両方でその穴を共通のリテラルに置き換える．残る各成分については，両語とも長さが \(k+\ell+1\) より大きい．境界型の等しさから共通の最後の文字 \(c_i\) と分解
+\[
+  x_i=x_i'c_i,\qquad y_i=y_i'c_i
+\]
+が得られ，\(x_i',y_i'\ne\eps\) かつ
+\[
+  b_\Sigma^{k,\ell}(x_i')=b_\Sigma^{k,\ell}(y_i')
+\]
+である．対応する名前付き穴を \(\blank_i c_i\) で置き換える．すると表面順序において，連続する二つの残存穴は，少なくとも先行穴が寄与する buffer 文字によって分離される．残存穴の個数を \(m\le d\) とする．\(m=0\) なら全成分が exact な短い部分に属していたので，各穴で \(\tuple x=\tuple y\) であり，主張は明らかである．\(m\ge1\) とする．穴名を忘れれば，正規化された \(E,F\) は \(\mathsf{Ctx}_{\mathrm Y}^{(m)}\) の元である．残存成分を表面順序，すなわち共通の向き \(\sigma\) が誘導する順序で読むと，得られる充填子タプルは非空であり，成分ごとに同じ \((k,\ell)\)-境界型をもつ．三つの受理充填
+\(E[\tuple x],E[\tuple y],F[\tuple x]\) は Definition~\ref{def:guarded-pd-substitutability} の条件を満たすので，\(F[\tuple y]\in L\) である．\(\tuple x\) と \(\tuple y\) を入れ替えれば逆向きも得られるので，向きセクター分布は等しい．\(d,\sigma\) は任意であり，\(L\) は \(p\)-MCFL だから主張が従う．
+\end{proof}
+
+Proposition~\ref{prop:same-depth-guarded-converse} と Theorem~\ref{thm:guarded-buffered-embedding} を合わせると，same-depth/buffered sandwich
+\[
+  \Cmcf{p}{b_\Sigma^{k,\ell}}
+  \subseteq
+  S^{k,\ell}(p)\cap p\text{-}\mathrm{MCFL}
+  \subseteq
+  \Cmcf{p}{b_\Sigma^{k,\ell+1}}
+\]
+が得られ，最後の項は左右対称な $b_\Sigma^{k+1,\ell}$ に置き換えることもできる．
+
+\begin{theorem}[すべての有限境界 guard を越える無限非文脈自由分離]
+\label{thm:guarded-infinite-noncfl-separation}
+\(\Gamma=\{a,b,c\}\) とし，
+\[
+ R_\star:=\{a^i b^j c^k:i,k\ge0,\ j\ge1,\ j\bmod3\in\{0,1\}\}
+\]
+と置く．\(R_\star\) を認識する有限オートマトンの遷移準同型
+\(h_\star:\Gamma^*\to M_\star\) を一つ固定する．任意の整数 \(t\ge1\) に対し，
+\[
+  L_t:=\{a^{tn}b^nc^n:n\ge1,\ n\bmod3\in\{0,1\}\}
+\]
+と置く．このとき次が成り立つ．
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item 各 \(L_t\) は非文脈自由な \(2\)-MCFL であり，fan-out 2，規則ランク1の表現をもつ．
+\item 任意の \(p\ge2\) に対し，各 \(L_t\) は同じ固定観測スライス \(\Cmcf{p}{h_\star}\) に属する．
+\item 任意の有限 \(k,\ell\ge0\) と任意の \(p\ge2\) に対し，\(L_t\notin S^{k,\ell}(p)\) である．
+\end{enumerate}
+したがって，任意の \(p\ge2\)，\(q\ge1\)，\(k,\ell\ge0\) に対して
+\[
+ \widehat h_{k,\ell}:=(b_\Gamma^{k,\ell+1},h_\star)
+\]
+と置く．ここでこの組は，積モノイド $B_\Gamma^{k,\ell+1}\times M_\star$ への積準同型
+\[
+  w\longmapsto\bigl(b_\Gamma^{k,\ell+1}(w),h_\star(w)\bigr)
+\]
+を表す．このとき，
+\[
+ S^{k,\ell}(p)\cap L(p,q)
+ \subsetneq
+ \Cmcf{p}{\widehat h_{k,\ell}}\cap L(p,q),
+\]
+かつ差集合は，非文脈自由かつランク1で互いに異なる無限言語族
+\(\{L_t:t\ge1\}\) を含む．
+\end{theorem}
+
+\begin{proof}
+\(L_t\) のランク1・fan-out 2 表現には，fan-out 2 の非終端記号 \(A\)，二つのランク0規則
+\[
+ A\to(a^t,bc),\qquad A\to(a^{3t},b^3c^3),
+\]
+ランク1再帰規則
+\[
+ A\to(a^{3t}x_1^1,b^3x_1^2c^3)(A),
+\]
+および開始規則 \(S\to(x_1^1x_1^2)(A)\) を用いればよい．したがって \(L_t\in L(2,1)\) である．これは文脈自由ではない．実際，準同型
+\(g:\{u,b,c\}^*\to\Gamma^*\) を \(g(u)=a^t\)，\(g(b)=b\)，\(g(c)=c\) を考えると，もし \(L_t\) が文脈自由なら，逆準同型を取り，さらに \(u^*b^*c^*\) と共通部分を取ることで
+\[
+ \{u^nb^nc^n:n\ge1,\ n\bmod3\in\{0,1\}\}
+\]
+も文脈自由になる．さらに
+\((u^3)^*(b^3)^*(c^3)^*\) と共通部分を取り，長さを3倍する準同型の逆像を取れば \(\{u^mb^mc^m:m\ge1\}\) が文脈自由となり，矛盾する．
+
+スライスへの所属について，加法的準同型
+\[
+ \varphi_t(w):=(|w|_a-t|w|_b,\ |w|_b-|w|_c):\Gamma^*\to\mathbb Z^2
+\]
+を定義する．すると
+\[
+ L_t=R_\star\cap\varphi_t^{-1}(\{(0,0)\}).
+\]
+固定観測 \(h_\star\) は \(R_\star\) を認識するので，Proposition~\ref{prop:regular-abelian-balance} により，任意の \(p\ge2\) に対して \(L_t\in\Cmcf{p}{h_\star}\) である．同じ観測がすべての \(t\) に対して機能することに注意する．ただしこの観測はアルファベットだけから canonical に選ばれたものではなく，この分離族に共通する正則 envelope \(R_\star\) から選ばれている．
+
+残るのはすべての有限境界 guard を排除することである．\(k,\ell\ge0\) を固定し，以下で現れる境界 prefix/suffix がすべて \(b_\Gamma^{k,\ell}\) の long part に入るほど十分大きい \(n=3m\) を選ぶ．
+\[
+ \tuple x=(a^{tn}b^{n-1},c^n),\qquad
+ \tuple y=(a^{t(n+1)}b^n,c^{n+1})
+\]
+と置く．すると \(b_\Gamma^{k,\ell}\) は \(\tuple x,\tuple y\) の各成分で一致する．二つの Yoshinaka 多重文脈
+\[
+ E=\blank_1 b\blank_2,
+ \qquad
+ F=a^{2t}\blank_1 b^3\blank_2c^2
+\]
+に対し，
+\[
+ E\odot\tuple x=a^{tn}b^nc^n\in L_t,
+ \qquad
+ E\odot\tuple y=a^{t(n+1)}b^{n+1}c^{n+1}\in L_t,
+\]
+かつ
+\[
+ F\odot\tuple y=a^{t(n+3)}b^{n+3}c^{n+3}\in L_t,
+ \qquad
+ F\odot\tuple x=a^{t(n+2)}b^{n+2}c^{n+2}\notin L_t.
+\]
+したがって Definition~\ref{def:guarded-pd-substitutability} の含意で二つの充填子タプルの名前を交換すれば条件が破れる．ゆえに \(L_t\notin S^{k,\ell}(2)\)，したがって任意の \(p\ge2\) に対して \(L_t\notin S^{k,\ell}(p)\) である．
+
+最後に Theorem~\ref{thm:guarded-buffered-embedding} により
+\(S^{k,\ell}(p)\cap L(p,q)\subseteq
+\Cmcf{p}{b_\Gamma^{k,\ell+1}}\cap L(p,q)\) である．積観測
+\(\widehat h_{k,\ell}\) は両因子を精密化し，すべての \(L_t\) はそのスライスに属し，かつ \(L(p,1)\subseteq L(p,q)\) に属する．各 \(L_t\) の任意の語は \(|w|_a=t|w|_b\) を満たすので，これらの言語は二つずつ異なる．これで差集合の真の包含と無限性が従う．
+\end{proof}
+
+\begin{remark}[境界深さと一般有限状態制御]
+Theorem~\ref{thm:canonical-boundary-strictness} と Proposition~\ref{prop:same-depth-guarded-converse} は，二つの異なる現象を切り分ける．標準スライス $\Cmcf{p}{b_\Gamma}$ は，Yoshinaka の無 guard 意味論的言語族 $S(p)$ を，無限個の非文脈自由・ランク1言語によって既に真に拡張している．しかし，同じ深さのスライス $\Cmcf{p}{b_\Gamma^{k,\ell}}$ に属する言語は，自動的に対応する guarded クラス $S^{k,\ell}(p)$ に属する．したがって，同じ深さの境界観測だけでは，その guard からの分離を証言できない．Theorem~\ref{thm:guarded-infinite-noncfl-separation} の固定準同型 $h_\star$ は，中央ブロックの内部的な正則性質を記録し，有界境界情報を越える真の有限状態情報を与える．これは，すべての有限 guard から分離するという目的のために用いられる．
+\end{remark}
+
+\subsection{Congruential 分解}
+\begin{proposition}[ランクを保存する congruential 分解]
+\label{prop:congruential-decomposition}
+\(L\in\Cmcf{f}{h}\cap L(f,q)\) とする．このとき，
+\(m\le |\operatorname{im}h|\) を満たす言語
+\(L_1,\ldots,L_m\) が存在して
+\[
+  L=\bigcup_{i=1}^m L_i
+\]
+であり，各 \(L_i\) は fan-out 高々 \(f\)，規則ランク高々 \(q\) の congruential MCFG 表現をもつ．ここで congruential は標準的な nonpermuting MCFG の意味であり，各非終端記号について，そこから生成されるすべてのタプルが同じ順序付き言語文脈集合をもつことをいう
+\cite{Yoshinaka2010,ClarkYoshinaka2016}．
+\end{proposition}
+
+\begin{proof}
+\(L\) の fan-out \(f\)，規則ランク \(q\) の表現から始め，証明構成で用いたのと同じ，ランクを保存する nondeleting/nonpermuting 正規化を施し，Definition~\ref{def:output-refinement} の trimmed output-type refinement \(\widetilde G_0\) を作る．残る各 typed 非終端記号 \(X=A_{\mathbf p}\) について，Proposition~\ref{prop:output-invariants} は一つの成分ごとの \(h\) 型 \(\mathbf p\) を与え，Lemma~\ref{lem:identity-exposing-contexts} は \(L_X\) のすべてのタプルを受理する一つの恒等向き文脈 \(\chi(X)\) を与える．固定 \(h\) 代入可能性により，\(L_X\) のすべてのタプルは \(L\) において同じ順序付き文脈集合をもつ．
+
+次に新しい開始記号 \(\widetilde S\) を除去し，残る各 typed 開始状態 \(S_{(s)}\) について，\(S_{(s)}\) を唯一の開始記号とする reachable trimmed subgrammar を取る．その言語は，導出の一意 lifting により
+\[
+  L_s=L\cap h^{-1}(s)
+\]
+である．同じ congruential 性は \(L_s\) に相対化しても成り立つ．実際，二つのタプルが同じ typed \(h\) 値をもつなら，任意の順序付き文脈で充填した語の全体 \(h\) 値も等しいので，\(L\) からファイバー \(h^{-1}(s)\) に制限しても文脈集合の等しさは保たれる．したがって各成分文法は congruential である．出力型付けは規則 template，タプル次元，規則 arity のいずれも変えず，新しい開始記号を削除しても何も追加されないため，fan-out と規則ランクはそれぞれ \(f,q\) 以下のままである．残る unary 開始型は高々 \(|\operatorname{im}h|\) 個であり，それらの言語の和集合が \(L\) となる．
+\end{proof}
+
+\paragraph{syntactic approach への正例側からの橋渡し．}
+この proposition は，Clark--Yoshinaka の言語から導かれる代数的意味論を補完する，表現レベルの接続を与える．外部から与えられる有限観測は syntactic structure を置き換えるのではなく，正例文脈によって露出される congruential 成分を有限個の色で分離する．しかも fan-out も規則ランクも増やさない．標準の single-start 規約のもとでは，対象全体が一つの congruential 成分である必要はないため，ここでは有限分解が自然な主張となる．このランク保存は \cite{ClarkYoshinaka2014Algebraic} の pcis/SCL minimality とも別物である．後者は，すべての同値文法にわたる最小右辺ランクではなく，忠実な意味論的構造と非終端記号の同定を扱う．
+
+\paragraph{構造的制限のもとでの canonicality と強学習．}
+Clark は，文字列の正例標本から確率的 dimension-two MCFG のあるクラスを強学習する学習器を与えている \cite{Clark2021Strong}．学習可能クラスは well-nested normal form に加え，double anchoring，局所非曖昧性，completeness を用いる．アルゴリズムに与えられる admissible production sets は，暗黙に規則ランクの上限を固定している．これらの条件のもとで，学習された文法は，単に同じ文字列言語を生成する文法ではなく，対象と同型な文法へ，そこで定義された確率的意味で収束する．この結果は本研究と相補的である．Clark は強い対象側構造制約のもとで文字列から canonical な文法表現を回収するのに対し，本稿の学習器は，外部から与えられた有限観測スライス内で対象言語を同定し，対象固有のランク上限を与えられない．well-nestedness，anchoring，completeness のいずれも仮定しない．したがってランクに関する問題も異なる．dimension-two well-nested MCFG は弱生成能力を変えずに binarization できる \cite{Clark2021Strong} のに対し，本稿の未解決問題は，制限なしの固定観測スライスにおける最小規則ランクに関するものである．
+
+\subsection{その他の分布学習枠組み}
+
+本稿の意味論的スライスは，分布的 MCFG 学習の finite-kernel および finite-context アプローチと関係するが，同一ではない
+\cite{Yoshinaka2010,ClarkYoshinaka2014,ClarkYoshinaka2016,KanazawaYoshinaka2017}．これらの条件は通常，選択された一つの文法表現に課されるのに対し，$\Cmcf{f}{h}$ は外部有限観測によって定まる言語レベルの意味論的クラスである．出力型精密化は，各 typed component 内で single-representative 的な性格をもつが，スライス全体について finite-context characterization を主張するものではない．
+
+言語レベルで比較するため，$\mathsf{FCP}_{\rm PMCFG}$ を，Clark--Yoshinaka の finite-context PMCFG クラスをすべての有限パラメータにわたって合併したものとする
+\cite{ClarkYoshinaka2012PMCFG,ClarkYoshinaka2014}．
+
+\begin{proposition}[finite-context PMCFG は有限観測スライスに包含されない]
+\label{prop:fcp-not-contained-observation}
+$\Sigma=\{a,b\}$ とし，$\mathrm{COPY}_*:=\{ww:w\in\Sigma^*\}$ と置く．このとき
+$\mathrm{COPY}_*\in\mathsf{FCP}_{\rm PMCFG}$ だが，
+\[
+ \mathrm{COPY}_*\notin
+ \bigcup_{f\ge2}\ \bigcup_{\substack{h:\Sigma^*\to M\\ M\text{ finite}}}
+ \Cmcf{f}{h}.
+\]
+したがって $\mathsf{FCP}_{\rm PMCFG}$ は有限観測 MCFG スライスの和集合には包含されない．
+\end{proposition}
+
+\begin{proof}
+Clark と Yoshinaka は copy language を finite-context class $L(1,1,2,1)$ に置いている \cite[Definition~2 and Example~3]{ClarkYoshinaka2012PMCFG}．Proposition~\ref{prop:copy-infinite-observation} の証人は非空語しか用いないので，$\eps$ を追加してもそのまま適用できる．したがって，すべての有限 $h$ に対して $\mathrm{COPY}_*$ は $(2,h)$-タプル代入可能ではない．同じ arity-two 証人は，すべての fan-out 上限 $f\ge2$ を排除する．
+\end{proof}
+
+Clark の確率的 dimension-two MCFG クラスに対する強学習結果は，well-nested normal form に加え，anchoring，局所非曖昧性，completeness を用い，canonical な文法表現を回収する \cite{Clark2021Strong}．本稿の保証は異なる．対象固有の規則ランク上限を与えられずに有限観測スライス内で対象言語を同定するが，文法同型性も同じ定量的データ上限も主張しない．正例データと query を組み合わせるアプローチは，外部有限観測を能動的 membership 情報に置き換えるという，別の直交的 tradeoff を与える
+\cite{Yoshinaka2010,KanazawaYoshinaka2021,KanazawaYoshinaka2023,YoshinakaClark2012}．
+
+fan-out 1 では，同じ有限型付けの考え方は著者の文脈自由の場合へ特殊化される \cite{kuriyamaCFG}．そこでは標準的 CFG binarization によって右辺ランクは独立な構造パラメータではなくなる．これは fan-out 2 以上の一般 MCFG では利用できず，そこでは最小規則ランクが真の階層を形成する \cite{RambowSatta1999}．したがって本稿の証明は CFG 結果を単に呼び出したものではない．タプルの向き，誘導される子の向き，無音子圧縮，および任意ランクの MCFG 合成が，ここで展開した多次元再構成論証に本質的である．
+
+
+\section{結論}
+\label{sec:conclusion}
+
+有限観測は，多重文脈自由言語の広い意味論的言語族を正例データから再構成するための，十分な合成的インターフェースを与える．任意の固定 fan-out と，学習器に与えられた有限観測に対して，標準学習器は対象固有の規則ランク上限を受け取ることなく，有限特徴標本の後に対象を正確に再構成する．証明は，このランク上限の除去を可能にする機構を切り分けている．すなわち，出力型付けと向きによって意味論的代入が合成的になり，無音子圧縮によって正の支持をもつ子だけが残り，さらに標本それ自体が，列挙すべきすべての規則証人のランクを上から抑える．保守的ラッパーによって TxtEx 収束が得られ，さらに外部の分岐上限を固定すれば，現在仮説を多項式時間で構成できる．
+
+観測を学習助言とみなすことで，相補的な境界も得られる．実際の観測が隠されていても，その値域の大きさに上限があれば，一つの有効な普遍的精密化によって TxtBc 学習可能性を回復できる．ただし，これによって必要情報が安価になるわけではない．有界スライスでさえ，明示的な言語族に沿って，任意の TxtBc 学習器に $2^{\Omega(\sqrt{k})}$ の正例ロッキング情報を強制する．大きさの上限を完全に取り除くと，潜在和集合は正例データから TxtBc 識別可能ではない．
+
+多次元分布学習との比較から，これらの結果が，人為的に狭い意味論的スライスを選ぶことで得られたものではないことも分かる．$\Gamma=\{a,b,c\}$ 上では，標準的な対称境界観測 $b_\Gamma=b_\Gamma^{1,1}$ だけで，任意の $p\ge2$ に対して
+\[
+  S(p)\cap p\text{-}\mathrm{MCFL}
+  \subsetneq
+  \Cmcf{p}{b_\Gamma}
+\]
+が成り立ち，差集合には，互いに異なる無限言語族
+$H_t=\{a^{tn}b^nc^n:n\ge0\}$ が含まれる．各 $H_t$ は非文脈自由・ファンアウト2で，最小規則ランクは1である．さらに，guarded クラスとの same-depth/buffered sandwich によって，すべての有限 boundary guard から分離するという，より強い結果のために，なぜ追加の固定有限状態因子 $h_\star$ が必要なのかが正確に分かる．定性的な和集合学習可能性については，Remark~\ref{rem:yoshinaka-adaptive-rank} に記録したように，適応的ランクによる既存の説明が既にある．本論文の新しい学習定理は，それより広い固定観測スライスに対するものである．
+
+Rambow--Satta の較正は，正確な最小規則ランク $r-2$ を保ったまま，固定アルファベット $\{a,b,c\}$ 上へ圧縮できる．したがって，その非有界ランクはアルファベット増大の人工物ではない．しかし，共通文脈 packing の障害もこの圧縮後に残る．すなわち，パラメータ $r$ の固定アルファベット言語を証言する任意の有限観測は $r\le|\operatorname{im}h|^2$ を満たす．これは，高い規則ランクが一般に大きな観測を強制するという定理ではなく，構成固有の較正である．特に，この結果も一つの固定観測スライス内で最小規則ランクが非有界であることを示さない．さらに，ランクを保存する congruential 分解によって，外部観測インターフェースと，言語から導かれる分布的構造との間にも接続が得られる．
+
+いくつかの問題が残されている．第一に，自然な固定観測部分クラスでは，本論文で示したものよりも，特徴データの総長に対して強い定量的上限が得られる可能性がある．第二に，有限合成的助言をどこまで弱めても，ランクパラメータを与えない再構成がなお可能なのかは未解決である．第三に，有限核型および有限文脈型の MCFG 学習との，より精密な言語レベルの比較によって，外部有限観測と表現から導かれる分布情報を交換できる領域がさらに明らかになる可能性がある．より鋭い構造的問題として，固定有限アルファベット $\Sigma$ と固定有限観測 $h:\Sigma^*\to M$ が存在して
+\[
+  \sup\{\operatorname{rr}_2(L):L\in\Cmcf{2}{h}\}=\infty
+\]
+となるか，という問いがある．Rambow--Satta の較正は，固定アルファベットへ圧縮した後でもこの問いには答えない．Corollary~\ref{cor:fixed-alphabet-rank-observation} により，そのパラメータ $r$ の要素を証言する任意の観測の像の大きさは少なくとも $\sqrt r$ でなければならない．したがって，この構成ではアルファベットの増大は除去できるが，観測の増大は除去できない．一つの固定スライスが非有界な最小規則ランクを支えられるかどうかは依然として未解決である．さらに一般に，各固定観測スライスが，ここで切り分けた具体的な代数的・分布的部分クラスをどこまで越えて広がるのか，また各スライスが正則包絡と代数的ファイバーの組合せによって尽くされるのかを特徴づけることも未解決である．証言観測の最小サイズと代数構造に関する体系的理論も今後の課題として残る．
+
+\section*{謝辞}
+金澤誠先生に感謝する．また，10年前に未完のまま中断していた博士論文に再び取り組み，その完成を目指すことを励ましてくださった吉中亮先生に，とりわけ深く感謝する．
+
+\appendix
+\section{ランク階層の技術的証明}
+\label{app:rank-hierarchy}
+
+この付録では，Theorem~\ref{thm:s2-rank-hierarchy} で用いた詳細を与える．二つの要素を分けて示す．すなわち，タグ付き言語が多次元代入可能性を保つこと，およびタグ付けが Rambow--Satta の正確な最小規則ランクを保存することである．
+
+相異なる phase 文字 $c_1,\ldots,c_k$ と区切り記号
+$d_1,\ldots,d_{k-1}$ に対して，
+\[
+  P_k=c_1^*d_1c_2^*d_2\cdots d_{k-1}c_k^*
+\]
+とおく．
+
+\begin{lemma}[一意区切り記号鎖]
+\label{lem:unique-delimiter-chain}
+任意の $p\ge1$ に対して，正則言語 $P_k$ は $S(p)$ に属する．
+\end{lemma}
+
+\begin{proof}
+状態 $1,\ldots,k$ をもち，遷移として
+\[
+  i\xrightarrow{c_i}i,
+  \qquad
+  i\xrightarrow{d_i}i+1
+\]
+だけをもつ部分 DFA を用いる．各 phase 文字と各区切り記号が一意であるため，任意の非空語 $u$ が誘導する部分遷移の定義域の大きさは高々1である．Yoshinaka の $p$ 次元 multicontext では，充填語と，連続する穴の間にあるすべての部分が非空である．二つの充填タプルが一つの受理 multicontext を共有するとする．固定 prefix が同一なので，最初の穴への入力状態は二つの走行で同じである．それ以後の各穴については，直前にある固定された非空部分の部分遷移が高々一つの開始状態しか許さないため，受理されるためには二つの走行の入力状態が一致しなければならない．双対的に，最後以外の各穴については，直後の固定された穴間の非空部分が高々一つの状態からしか開始できないので，出力状態も一致する．最後の穴についても，共通の固定 suffix と一意な最終状態から同じ結論が得られる．したがって，対応する充填語は同じ状態間遷移を実現する．これらを別の任意の受理 multicontext 内で置き換えても，状態列全体は保存される．ゆえに二つのタプルは同じ分布をもち，$P_k\in S(p)$ である．
+\end{proof}
+
+\begin{lemma}[アーベルファイバーの保存]
+\label{lem:abelian-fiber-preservation}
+$P\in S(p)$ とし，$\delta:\Sigma^*\to A$ をアーベル群への準同型とする．任意の $g\in A$ に対して
+\[
+  P\cap\delta^{-1}(g)\in S(p)
+\]
+である．
+\end{lemma}
+
+\begin{proof}
+二つの充填タプル $\tuple y,\tuple y'$ が一つの $p$-multicontext $x$ を共有し，両方の充填語が $P\cap\delta^{-1}(g)$ に属するとする．$A$ はアーベル群なので，$x$ の固定部分は両方の語に同じ群要素を寄与し，したがって
+\[
+  \sum_i\delta(y_i)=\sum_i\delta(y_i')
+\]
+である．別の任意の multicontext $x'$ に対して，$x'\odot\tuple y$ が $P$ に属するならば，$P\in S(p)$ より $x'\odot\tuple y'$ も $P$ に属する．さらに上の等式から両者の $\delta$ 値も等しい．したがってファイバー $\delta^{-1}(g)$ への所属も移される．逆向きも対称である．
+\end{proof}
+
+$r\ge2$ および $\pi\in S_r$ に対して，$2r$ 個の phase を
+\[
+  c_1,\ldots,c_{2r}
+  =A_1,\ldots,A_r,B_{\pi(1)},\ldots,B_{\pi(r)}
+\]
+とし，相異なる区切り記号 $d_1,\ldots,d_{2r-1}$ をとる．
+\[
+  P_{r,\pi}:=c_1^*d_1c_2^*d_2\cdots d_{2r-1}c_{2r}^*
+\]
+と定義し，$\mathbb Z^r$ への準同型 $\delta$ を
+\[
+  A_i\mapsto e_i,
+  \qquad
+  B_i\mapsto -e_i,
+  \qquad
+  d_j\mapsto0
+\]
+で定める．さらに
+\[
+  T_{r,\pi}:=P_{r,\pi}\cap\ker\delta
+\]
+とおく．
+
+\begin{theorem}[タグ付き Rambow--Satta 証人は多次元代入可能である]
+\label{thm:tagged-rs-s2}
+任意の $p\ge1$ に対して
+\[
+  T_{r,\pi}\in S(p)
+\]
+である．特に $T_{r,\pi}\in S(2)$ である．
+\end{theorem}
+
+\begin{proof}
+Lemma~\ref{lem:unique-delimiter-chain} より $P_{r,\pi}\in S(p)$ であり，$\delta:\Sigma^*\to\mathbb Z^r$ の零ファイバーに Lemma~\ref{lem:abelian-fiber-preservation} を適用すれば結論を得る．
+\end{proof}
+
+\paragraph{ランクのみの Rambow--Satta 較正．}
+\enlargethispage{2pt}
+ここで用いるパラメータ移送を明示する．Rambow と Satta の階層証人の2トラックの場合を考える．第1トラック上のブロックを左から右へ $1,\ldots,r$ と番号付けする．任意の $r\ge6$ に対し，$\pi_r\in S_r$ を \cite[Definition~6]{RambowSatta1994} で固定された置換そのものとする．同報告の Figure~3 は，具体例として
+\[
+  \pi_6(1),\ldots,\pi_6(6)=1,3,5,2,4,6,
+  \qquad
+  \pi_7(1),\ldots,\pi_7(7)=1,5,3,6,2,4,7
+\]
+を与えている．したがって $\pi_r$ は証明の後段で任意に選ばれる置換ではなく，Rambow と Satta の明示的な階層族である．二つのトラックのアルファベットをそれぞれ $A_1,\ldots,A_r$ と $B_1,\ldots,B_r$ に改名すると，彼らの証人は
+\[
+ R^+_{r,\pi_r}=\{A_1^{n_1}\cdots A_r^{n_r}
+ B_{\pi_r(1)}^{n_{\pi_r(1)}}\cdots B_{\pi_r(r)}^{n_{\pi_r(r)}}:
+ n_1,\ldots,n_r\ge1\}
+\]
+となる．任意の $r\ge6$ に対して，Rambow と Satta の階層定理は，レベル $r-2$ と $r-3$ の間に independent parallelism の分離を与える
+\cite[Theorem~1]{RambowSatta1994}（査読済み journal 版 \cite{RambowSatta1999} も参照）．また，彼らの言語クラス対応によって，同じ fan-out 上限とランク上限をもつ LUSCG と MCFG の言語族が同一視される
+\cite[Theorem~6]{RambowSatta1994}（\cite{RambowSatta1999} も参照）．\footnote{Rambow と Satta は，規則ランク上限 $q$，fan-out 上限 $f$ の MCFG を $q$-MCFG$(f)$ と書いている．これは本論文で $L(f,q)$ と表す言語族である．LUSCG 側では，彼らのランクは，元の sentential tuple に含まれる非終端記号数そのものではなく，導出文法 $\operatorname{der}(G)$ における右辺長によって定義される \cite[Definition~4]{RambowSatta1994}．ここで用いる MCFG 規則ランクとの同一視は，彼らの Theorem~6 によって与えられる．}したがって本論文の記法では
+\[
+ R^+_{r,\pi_r}\in L(2,r-2)\setminus L(2,r-3)
+\]
+である．以下，各 $r$ についてこの $\pi_r$ を固定し，すべての指数を $\mathbb N_0$ に取ることを許して $R^0_{r,\pi_r}$ を定義する．
+
+以下の閉包性の議論のために，Rambow と Satta は，任意の固定ランク上限 $q\ge2$ と fan-out 上限 $f\ge1$ に対して，対応する固定パラメータ LUSCG 言語族が substitution-closed full AFL であることを示している
+\cite[Theorem~5]{RambowSatta1994}（\cite{RambowSatta1999} も参照）．技術報告の Theorem~6 によって，それは同じ二つのパラメータ上限をもつ MCFG 言語族と同一視される．したがって，以下で用いるパラメータ範囲では，$L(f,q)$ は同じパラメータ層の内部で，準同型，逆準同型，正則言語との共通部分，有限和，連接，Kleene plus，および substitution に関して閉じている．以下の二つの移送で用いる閉包性は，ちょうどこれらである．
+
+\begin{proposition}[零指数証人の正確な最小ランク]
+\label{prop:rs-zero-rank-only}
+任意の $r\ge6$ に対して
+\[
+ R^0_{r,\pi_r}\in L(2,r-2)\setminus L(2,r-3)
+\]
+である．
+\end{proposition}
+
+\begin{proof}
+\[
+ \mathcal R_r=A_1^+\cdots A_r^+
+ B_{\pi_r(1)}^+\cdots B_{\pi_r(r)}^+
+\]
+とおく．このとき
+$R^+_{r,\pi_r}=R^0_{r,\pi_r}\cap\mathcal R_r$ である．もし $R^0_{r,\pi_r}$ が規則ランク高々 $r-3$ の fan-out 2 表現をもつなら，同じ固定 fan-out／規則ランク層の内部で正則共通部分に関する閉包性を適用することで，上に示した Rambow--Satta の分離に矛盾する．
+
+逆向きについては，各 $Z\subseteq\{1,\ldots,r\}$ に対して，$i\in Z$ なら $A_i$ と $B_i$ をともに消去し，それ以外の終端記号を固定する準同型 $e_Z$ をとる．すると
+\[
+ R^0_{r,\pi_r}=\bigcup_{Z\subseteq\{1,\ldots,r\}} e_Z(R^+_{r,\pi_r})
+\]
+である．したがって，上で述べた固定パラメータ層内の準同型および有限和に関する閉包性により，fan-out も規則ランクも変えずに，$R^+_{r,\pi_r}$ の上界 $r-2$ を移送できる．
+\end{proof}
+
+$e$ を，すべての区切り記号 $d_j$ を消去し，phase 文字を固定する準同型とする．Section~\ref{sec:comparison} のタグ付き言語について
+\[
+ e(T_{r,\pi})=R^0_{r,\pi},
+ \qquad
+ T_{r,\pi}=e^{-1}(R^0_{r,\pi})\cap P_{r,\pi}
+\]
+である．Rambow と Satta の固定パラメータ full-AFL 結果と LUSCG--MCFG 対応
+\cite[Theorems~5 and~6]{RambowSatta1994}（\cite{RambowSatta1999} も参照）により，ここで扱うパラメータ範囲では，$e$ による逆準同型と正則言語 $P_{r,\pi}$ との共通部分は，同じ fan-out／規則ランク層を保存する．したがって Proposition~\ref{prop:rs-zero-rank-only} によって，正確なランク $r-2$ が $T_{r,\pi_r}$ へ移送される．一方，Theorem~\ref{thm:tagged-rs-s2} より $T_{r,\pi_r}\in S(2)$ である．この二つを合わせることで Theorem~\ref{thm:s2-rank-hierarchy} の証明が完了する．
+
+% ===== Appendix B まで日本語化済み =====
+
+\section{意味論的仮定の決定複雑性}
+\label{app:decision-complexity}
+
+学習アルゴリズムは，対象文法から意味論的仮定を認識する必要はない．この点は有限特徴標本を用いる際にも重要である．すなわち，自然な文法表現を有効にフィルタリングするだけで，意味論的スライスに対する添字付き言語族を得ることはできない．完全を期すため，本付録ではこの認識問題の正確な計算可能性境界と，それとは対照的な正則言語の場合を記録する．
+
+学習器は対象文法を受け取らないので，上で示した学習可能性の結果は，意味論的スライスへの所属を認識するアルゴリズムを必要としない．それでも，認識問題それ自体は，本枠組みに対する有用な決定理論的境界を与える．以下では $\Pi^0_1$ を co-recursively enumerable（co-r.e.）と同義に用いる．
+
+\begin{proposition}[仮定認識問題は co-r.e. である]
+\label{prop:promise-pi1-upper}
+$f\ge1$ を固定する．$\Sigma$ 上の標準 $f$-MCFG $G$ と，明示的有限観測 $h:\Sigma^*\to M$ が与えられたとき，$L(G)$ が $\Cmcf{f}{h}$ に属さないことは再帰的可算である．同値に，$(f,h)$-タプル代入可能性の認識は $\Pi^0_1$ に属する．
+\end{proposition}
+
+\begin{proof}
+Definition~\ref{def:tuple-substitutable} の失敗には有限の証人が存在する．すなわち，ある $d\le f$，向き $\sigma\in S_d$，タプル
+$\tuple x,\tuple y\in(\Sigma^*)^d$，および名前付き文文脈
+$E,F\in\mathcal E_{d,\sigma}$ が存在して，
+\[
+ h^{(d)}(\tuple x)=h^{(d)}(\tuple y),
+ \qquad
+ E[\tuple x],E[\tuple y]\in L(G),
+\]
+が成り立ち，必要なら $\tuple x,\tuple y$ を入れ替えることで，さらに
+\[
+ F[\tuple x]\in L(G),
+ \qquad
+ F[\tuple y]\notin L(G)
+\]
+が成り立つ．これらの有限対象はすべて有効に列挙できる．MCFG 言語への所属は決定可能であり，明示的有限観測 $h$ も有効に評価できる．したがって，仮定の失敗を列挙できる．
+\end{proof}
+
+\begin{theorem}[意味論的仮定の認識は $\Pi^0_1$-完全である]
+\label{thm:promise-pi1-complete}
+任意の固定された $f\ge1$ に対して，次の問題は $\Pi^0_1$-完全である：
+\begin{quote}
+標準 $f$-MCFG $G$ と明示的有限観測 $h$ が与えられたとき，$L(G)$ が $(f,h)$-タプル代入可能であるかを判定せよ．
+\end{quote}
+困難性は，$G$ を文脈自由文法に制限し，$h=\mathbf 1$ を一元観測とした場合にすでに成立する．
+\end{theorem}
+
+\begin{proof}
+上界は Proposition~\ref{prop:promise-pi1-upper} による．困難性には文脈自由文法の普遍性問題を用いる．古典的な計算履歴構成は非受理からの many-one reduction を与える．すなわち，Turing 機械 $T$ と入力 $x$ から，CFG $G_{T,x}$ を有効に構成して
+\[
+  L(G_{T,x})=\Delta^*
+  \quad\Longleftrightarrow\quad
+  T\text{ は }x\text{ を受理しない}
+\]
+を満たす
+\cite[p.~281]{HopcroftUllman1979}．したがって
+$\overline{A_{\rm TM}}\le_m\mathrm{UNIV}_{\rm CFG}$ であり，CFG 普遍性は $\Pi^0_1$-困難である．逆に，非普遍性は再帰的可算である．$\Delta^*$ の語を列挙し，CFG 所属判定を用いて欠けている語が見つかるまで探索すればよい．ゆえに普遍性は co-r.e.，すなわち $\Pi^0_1$ に属し，したがって $\Pi^0_1$-完全である．
+
+ここで，$|\Delta|\ge2$ を満たすアルファベット $\Delta$ 上の CFG $G_0$ を取り，$L_0=L(G_0)$ と書く．さらに新しい文字 $d\notin\Delta$ を選び，$\Sigma=\Delta\uplus\{d\}$ とおく．
+
+まず，決定可能な条件 $\eps\in L_0$ および
+$L_0\cap\Delta^+\ne\varnothing$ を検査する．いずれかが失敗すれば，$L_0\ne\Delta^*$ であることはすでに分かっているので，$a\in\Delta$ として，代入可能でない固定言語 $\{a,aa\}$ を生成する CFG を出力する．そうでなければ，
+\[
+ L' := L_0\ \cup\ D,
+ \qquad
+ D:=\Sigma^*d\Sigma^*
+\]
+を生成する CFG を有効に構成する．$L_0=\Delta^*$ なら，$\Sigma$ 上のすべての語は $d$ を含むか，または $\Delta^*$ に属するので，$L'=\Sigma^*$ である．したがって $L'$ は任意の $f$ に対して $(f,\mathbf1)$-タプル代入可能である．
+
+一方，$L_0\ne\Delta^*$ と仮定する．この分岐での仮定より，
+\[
+ y\in L_0\cap\Delta^+,
+ \qquad
+ z\in\Delta^+\setminus L_0
+\]
+を満たす $y,z$ が存在する．アリティ1では，文字列 $y,z$ は同じ自明観測型を持つ．また，受理文脈 $E=d\blank_1$ を共有する．実際，$dy$ と $dz$ はともに $D\subseteq L'$ に属する．しかし，空文脈 $F=\blank_1$ における分布は異なる．すなわち，$F[y]=y\in L'$ である一方，$z$ は $d$ を含まず，かつ $z\notin L_0$ なので，$F[z]=z\notin L'$ である．したがって $L'$ は $(f,\mathbf1)$-タプル代入可能ではない．ゆえに
+\[
+ L'\text{ が }(f,\mathbf1)\text{-タプル代入可能}
+ \quad\Longleftrightarrow\quad
+ L_0=\Delta^*
+\]
+であり，$\Pi^0_1$-困難性が従う．最後に，フォールバックとして用いた固定言語 $\{a,aa\}$ が実際に代入可能でないことも確認しておく．$a$ と $aa$ は空文脈を共有するが，$a\blank_1$ は $a$ を受理し，$aa$ を拒否する．
+\end{proof}
+
+% ===== 本文・付録の日本語化はここまで =====
+% ===== 参考文献の書誌情報・論文タイトルは原語のまま保持 =====
+
+\begin{thebibliography}{99}
+
+\bibitem{Angluin1980}
+D.~Angluin.
+\newblock Inductive inference of formal languages from positive data.
+\newblock {\em Information and Control}, 45(2):117--135, 1980.
+
+\bibitem{Angluin1982Reversible}
+D.~Angluin.
+\newblock Inference of reversible languages.
+\newblock {\em Journal of the ACM}, 29(3):741--765, 1982.
+
+\bibitem{CaseYoshinakaZeugmann2013}
+J.~Case, R.~Yoshinaka, and T.~Zeugmann.
+\newblock Stochastic finite learning of some mildly context-sensitive languages.
+\newblock Presented at the ICALP 2013 Satellite Workshop on Learning Theory and
+Complexity, Riga, Latvia, 2013.
+\newblock Author manuscript available at
+\url{https://www-alg.ist.hokudai.ac.jp/~thomas/LTC/PAPERS/yoshinaka.pdf}.
+
+\bibitem{CaseLynes1982}
+J.~Case and C.~Lynes.
+\newblock Machine inductive inference and language identification.
+\newblock In M.~Nielsen and E.~M. Schmidt (eds.), \emph{Automata, Languages
+and Programming: 9th Colloquium}, Lecture Notes in Computer Science, vol.~140,
+pp.~107--115. Springer, 1982.
+\newblock doi:10.1007/BFb0012761.
+
+\bibitem{CaseSmith1983}
+J. Case and C. Smith,
+``Comparison of identification criteria for machine inductive inference,''
+\emph{Theoretical Computer Science},
+Vol.~25, No.~2, 1983, pp.~193--220.
+doi:10.1016/0304-3975(83)90061-0.
+
+\bibitem{Clark2017}
+A.~Clark.
+\newblock Testing distributional properties of context-free grammars.
+\newblock In {\em Proceedings of the 13th International Conference on
+Grammatical Inference}, PMLR 57, pp.~42--53, 2017.
+
+\bibitem{Clark2021Strong}
+A.~Clark.
+\newblock Strong learning of some probabilistic multiple context-free grammars.
+\newblock In {\em Proceedings of the 17th Meeting on the Mathematics of Language},
+pp.~23--37. Association for Computational Linguistics, 2021.
+
+\bibitem{ClarkEyraud2007}
+A.~Clark and R.~Eyraud.
+\newblock Polynomial identification in the limit of substitutable context-free
+languages.
+\newblock {\em Journal of Machine Learning Research}, 8:1725--1745, 2007.
+
+\bibitem{ClarkYoshinaka2012PMCFG}
+A.~Clark and R.~Yoshinaka.
+\newblock Beyond semilinearity: Distributional learning of parallel multiple
+context-free grammars.
+\newblock In {\em Proceedings of the Eleventh International Conference on
+Grammatical Inference}, PMLR 21, pp.~84--96, 2012.
+
+\bibitem{ClarkYoshinaka2014}
+A.~Clark and R.~Yoshinaka.
+\newblock Distributional learning of parallel multiple context-free grammars.
+\newblock {\em Machine Learning}, 96(1--2):5--31, 2014.
+\newblock doi:10.1007/s10994-013-5403-2.
+
+
+\bibitem{ClarkYoshinaka2014Algebraic}
+A.~Clark and R.~Yoshinaka.
+\newblock An algebraic approach to multiple context-free grammars.
+\newblock In {\em Logical Aspects of Computational Linguistics: 8th International
+Conference, LACL 2014}, LNCS 8535, pp.~57--69. Springer, 2014.
+\newblock doi:10.1007/978-3-662-43742-1\_5.
+
+\bibitem{ClarkYoshinaka2016}
+A.~Clark and R.~Yoshinaka.
+\newblock Distributional learning of context-free and multiple context-free
+grammars.
+\newblock In {\em Topics in Grammatical Inference}, pp.~143--172. Springer,
+2016.
+\newblock doi:10.1007/978-3-662-48395-4\_6.
+
+\bibitem{Gold1967}
+E.~M.~Gold.
+\newblock Language identification in the limit.
+\newblock {\em Information and Control}, 10(5):447--474, 1967.
+
+\bibitem{GomezRodriguezEtAl2009}
+C.~G\'omez-Rodr\'iguez, M.~Kuhlmann, G.~Satta, and D.~Weir.
+\newblock Optimal reduction of rule length in linear context-free rewriting systems.
+\newblock In {\em Proceedings of Human Language Technologies: The 2009 Annual
+Conference of the North American Chapter of the Association for Computational
+Linguistics}, pp.~539--547. Association for Computational Linguistics, 2009.
+
+\bibitem{HopcroftUllman1979}
+J.~E. Hopcroft and J.~D. Ullman.
+\newblock \emph{Introduction to Automata Theory, Languages, and Computation}.
+\newblock Addison--Wesley, 1979.
+
+\bibitem{Kallmeyer2010}
+L.~Kallmeyer.
+\newblock {\em Parsing Beyond Context-Free Grammars}.
+\newblock Springer, Berlin, Heidelberg, 2010.
+\newblock doi:10.1007/978-3-642-14846-0.
+
+\bibitem{Kanazawa2019Ogden}
+M.~Kanazawa.
+\newblock Ogden's lemma, multiple context-free grammars, and the control language hierarchy.
+\newblock {\em Information and Computation}, 269:104449, 2019.
+\newblock doi:10.1016/j.ic.2019.104449.
+
+\bibitem{KanazawaKappe2019}
+M.~Kanazawa and T.~Kapp\'{e}.
+\newblock Decision problems for Clark-congruential languages.
+\newblock In {\em Proceedings of the 14th International Conference on
+Grammatical Inference}, PMLR 93, pp.~3--16, 2019.
+
+\bibitem{KanazawaYoshinaka2017}
+M.~Kanazawa and R.~Yoshinaka.
+\newblock The strong, weak, and very weak finite context and kernel properties.
+\newblock In {\em Language and Automata Theory and Applications}, LNCS 10168,
+pp.~77--88. Springer, 2017.
+\newblock doi:10.1007/978-3-319-53733-7\_5.
+
+\bibitem{KanazawaYoshinaka2021}
+M.~Kanazawa and R.~Yoshinaka.
+\newblock A hierarchy of context-free languages learnable from positive data
+and membership queries.
+\newblock In {\em Proceedings of the 15th International Conference on
+Grammatical Inference}, PMLR 153, pp.~18--31, 2021.
+
+\bibitem{KanazawaYoshinaka2023}
+M.~Kanazawa and R.~Yoshinaka.
+\newblock Extending distributional learning from positive data and membership
+queries.
+\newblock In {\em Proceedings of the 16th International Conference on
+Grammatical Inference}, PMLR 217, pp.~8--22, 2023.
+
+\bibitem{kuriyamaCFG}
+T.~Kuriyama.
+\newblock Distributional learning of context-free languages under fixed finite-monoid typing.
+\newblock arXiv:1409.6247 [cs.FL], 2014; revised version v4, May 2026.
+
+\bibitem{Pin1986}
+J.-E. Pin.
+\newblock {\em Varieties of Formal Languages}.
+\newblock North Oxford Academic, London, and Plenum, New York, 1986.
+
+\bibitem{RambowSatta1994}
+O.~Rambow and G.~Satta.
+\newblock A two-dimensional hierarchy for parallel rewriting systems.
+\newblock Technical Report IRCS-94-02, Institute for Research in Cognitive
+Science, University of Pennsylvania, 1994.
+\newblock Public repository copy:
+\url{https://repository.upenn.edu/ircs_reports/148/}.
+
+\bibitem{RambowSatta1999}
+O.~Rambow and G.~Satta.
+\newblock Independent parallelism in finite copying parallel rewriting systems.
+\newblock {\em Theoretical Computer Science}, 223(1--2):87--120, 1999.
+\newblock doi:10.1016/S0304-3975(97)00190-4.
+
+\bibitem{SagotSatta2010}
+B.~Sagot and G.~Satta.
+\newblock Optimal rank reduction for linear context-free rewriting systems with fan-out two.
+\newblock In {\em Proceedings of the 48th Annual Meeting of the Association for
+Computational Linguistics}, pp.~525--533. Association for Computational Linguistics, 2010.
+
+\bibitem{SekiEtAl1991}
+H.~Seki, T.~Matsumura, M.~Fujii, and T.~Kasami.
+\newblock On multiple context-free grammars.
+\newblock {\em Theoretical Computer Science}, 88(2):191--229, 1991.
+\newblock doi:10.1016/0304-3975(91)90374-B.
+
+\bibitem{Yoshinaka2008}
+R.~Yoshinaka.
+\newblock Identification in the limit of \(k,\ell\)-substitutable context-free
+ languages.
+\newblock In {\em Grammatical Inference: Algorithms and Applications},
+ LNCS 5278, pp.~266--279. Springer, 2008.
+\newblock doi:10.1007/978-3-540-88009-7\_21.
+
+\bibitem{Yoshinaka2009}
+R.~Yoshinaka.
+\newblock Learning mildly context-sensitive languages with multidimensional
+ substitutability from positive data.
+\newblock In {\em Algorithmic Learning Theory}, LNCS 5809, pp.~278--292.
+ Springer, 2009.
+\newblock doi:10.1007/978-3-642-04414-4\_24.
+
+\bibitem{Yoshinaka2010}
+R.~Yoshinaka.
+\newblock Polynomial-time identification of multiple context-free languages
+from positive data and membership queries.
+\newblock In {\em Grammatical Inference: Theoretical Results and Applications},
+LNCS 6339, pp.~230--244. Springer, 2010.
+\newblock doi:10.1007/978-3-642-15488-1\_19.
+
+\bibitem{Yoshinaka2011}
+R.~Yoshinaka.
+\newblock Efficient learning of multiple context-free languages with
+multidimensional substitutability from positive data.
+\newblock {\em Theoretical Computer Science}, 412(19):1821--1831, 2011.
+\newblock doi:10.1016/j.tcs.2010.12.058.
+
+\bibitem{YoshinakaClark2012}
+R.~Yoshinaka and A.~Clark.
+\newblock Polynomial time learning of some multiple context-free languages
+with a minimally adequate teacher.
+\newblock In {\em Formal Grammar}, LNCS 7395, pp.~192--207. Springer, 2012.
+\newblock doi:10.1007/978-3-642-32024-8\_13.
+
+\end{thebibliography}
+
+\end{document}
