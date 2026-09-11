@@ -9,8 +9,8 @@ Current paper-facing regression reference:
 
 ```text
 Workflow: Verify MCFG v4 core
-Run: #13
-Commit: d374e302461741a61d1205334048c8ff70aa0626
+Run: #21
+Commit: f498f47f189173ca0cb15a68cefa4222c470c285
 Result: PASS
 Placeholder check: PASS
 ```
@@ -21,8 +21,8 @@ Placeholder check: PASS
 | 541 | Oriented tuple contexts | corollary | `cor:rank-preserving-normalization` | Rank-preserving normalization | PENDING | Depends on nondeleting normalization + previous lemma |
 | 669 | Oriented tuple contexts | lemma | `lem:sector-canonicalization` | Canonicalization of orientation sectors | **VERIFIED** | `OrientedContexts.lean`: `canonicalizeEquiv`, `canonicalize_fill`, `canonicalize_distribution`; proves the manuscript claim, slightly stronger since no `d≥1` premise is needed |
 | 705 | Oriented tuple contexts | corollary | `cor:identity-sector-equivalence` | Identity-sector formulation | **VERIFIED** | `TupleSubstitutability.lean`: `identitySector_equiv_tupleSubstitutable` using the concrete sector transport |
-| 725 | Oriented tuple contexts | proposition | `prop:fanout-one-specialization` | Fan-out-one specialization | PENDING | Fresh paper-facing bridge |
-| 774 | Oriented tuple contexts | proposition | `prop:h-recognizable-in-slice` | h-recognizable languages lie in the fixed-observation slice | PENDING | Semantic result; inspect legacy only for ideas |
+| 725 | Oriented tuple contexts | proposition | `prop:fanout-one-specialization` | Fan-out-one specialization | **VERIFIED** | `FanoutOne.lean`: identifies unary sector contexts with ordinary two-sided contexts and proves `fanoutOne_specialization` exactly |
+| 774 | Oriented tuple contexts | proposition | `prop:h-recognizable-in-slice` | h-recognizable languages lie in the fixed-observation slice | **PARTIAL** | `RecognizableSlice.lean`: `recognizedLanguage_tupleSubstitutable` proves the full orientation-aware substitutability part (indeed without using the shared-context premise); the regular-language ⇒ `f`-MCFL wrapper and target-class constructor remain to be connected |
 | 803 | Oriented tuple contexts | proposition | `prop:abelian-coset-filter` | Abelian-coset filtering preserves substitutability | PENDING | Fresh semantic result |
 | 863 | Oriented tuple contexts | proposition | `prop:h-refinement-monotonicity` | Monotonicity under refinement of the observation morphism | **PARTIAL** | `TupleSubstitutability.lean`: `tupleSubstitutable_of_refines` verifies the main substitutability implication. The displayed class inclusion additionally needs the current-v4 target-class / `f`-MCFL wrapper |
 | 883 | Oriented tuple contexts | lemma | `lem:shared-context` | Shared-context substitutability | **VERIFIED** | `TupleSubstitutability.lean`: `sharedContext_substitutability` matches the concrete common-context statement |
@@ -63,8 +63,8 @@ Placeholder check: PASS
 ## Counts
 
 - theorem-like manuscript items (`lemma`, `proposition`, `theorem`, `corollary`): **42**
-- current-v4 items marked `VERIFIED`: **3**
-- current-v4 items marked `PARTIAL`: **1**
+- current-v4 items marked `VERIFIED`: **4**
+- current-v4 items marked `PARTIAL`: **2**
 - legacy items counted as current-v4 verification: **0**
 
-The next short semantic targets are the fan-out-one specialization and completion of the refinement proposition's class-level wrapper. The first major structural target remains arbitrary-rank permutation-decoration normalization, which is needed before the output-type refinement and reconstruction chain.
+The next short semantic target is Abelian-coset filtering. In parallel, the first major structural target is arbitrary-rank permutation-decoration normalization, for which the current-v4 tuple-generation semantics and induced-orientation machinery will be built before attempting the equivalence theorem.
