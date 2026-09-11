@@ -164,7 +164,12 @@ theorem decorateVariable_surjective (r : MCFGRule sig α)
   refine ⟨rv, ?_⟩
   apply ruleVariable_ext_val
   · simp [rv, j]
-  · simp [rv, k, k0, j]
+  · rw [r.decorateVariable_component_val π hlin hnd rv]
+    change
+      ((r.inducedOrientation π j hlin hnd).symm
+        (r.inducedOrientation π j hlin hnd k0)).val = z.component.val
+    rw [Equiv.symm_apply_apply]
+    exact finCast_val hArity z.component
 
 /-- Permutation decoration preserves the manuscript's rule-linearity property. -/
 theorem permutationDecorate_linear (r : MCFGRule sig α)
