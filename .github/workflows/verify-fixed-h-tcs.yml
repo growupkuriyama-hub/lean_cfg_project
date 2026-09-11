@@ -60,6 +60,9 @@ jobs:
       - name: Build Section 7 linear sample-bound target
         run: lake build LeanCfgProject.FixedHCFG.LinearBounds
 
+      - name: Build Lemma 7.3 strict-linear spine target
+        run: lake build LeanCfgProject.FixedHCFG.LinearSpine
+
       - name: Build aggregate fixed-h summary target
         run: lake build LeanCfgProject.FixedHCFG.Summary
 
