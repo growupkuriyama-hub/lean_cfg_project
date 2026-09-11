@@ -65,11 +65,8 @@ theorem selectedCanonical_preserves_separation
     (hsep : rho.SeparatesProfilesThrough UnsafeProfile f) :
     (canonicalRel eta heta (selectedHom eta rho)).SeparatesProfilesThrough
       UnsafeProfile f := by
-  apply RelMorphism.separatesProfiles_mono UnsafeProfile
-    (rho' := canonicalRel eta heta (selectedHom eta rho)) (rho := rho)
-  · intro t
-    exact selectedCanonical_fiber_subset eta heta rho t
-  · exact hsep
+  exact RelMorphism.separatesProfiles_mono UnsafeProfile
+    (fun t => selectedCanonical_fiber_subset eta heta rho t) hsep
 
 end SCLCompression
 end LeanCfgProject
