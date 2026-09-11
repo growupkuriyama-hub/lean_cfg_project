@@ -1,4 +1,4 @@
-import LeanCfgProject.FixedHCFG.LinearBounds
+import LeanCfgProject.FixedHCFG.LinearSpine
 
 namespace LeanCfgProject
 namespace FixedHCFG
@@ -24,14 +24,18 @@ Current verified chain:
   expression into degree five;
 * Section 7 finite envelopes underlying Proposition 7.7: typed-state and
   typed-rule `|M|^3` bounds, the `|W|+|R|+1` characteristic-sample bound,
-  the `2|W|` witness-length arithmetic, and the induced total-data bound.
+  the `2|W|` witness-length arithmetic, and the induced total-data bound;
+* the relational spine core of Lemma 7.3: repeated-state cycle deletion,
+  strict shortening, and the finite simple-spine cardinality bounds used by
+  Lemmas 7.5 and 7.6.
 
 The Section-6 file verifies the theorem-facing combinatorial/arithmetic bound,
 not a low-level cost semantics for trie and radix-sort implementations.  For
-Section 7, the next remaining proof-theoretic block is the strict-linear spine
-cycle-deletion argument of Lemma 7.3 and its derivation-level consequences
-Lemmas 7.5--7.6, followed by the linear exact-reconstruction Lemma 7.8 and
-Theorem 7.9.  Sections 8--10 remain after that.
+Section 7, the next remaining proof-theoretic block is to connect the generic
+cycle-deletion lemma to concrete strict-linear derivations and shortlex
+minimality, yielding the full derivation-level Lemmas 7.5--7.6, followed by the
+linear exact-reconstruction Lemma 7.8 and Theorem 7.9.  Sections 8--10 remain
+after that.
 -/
 
 end FixedHCFG
