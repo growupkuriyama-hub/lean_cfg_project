@@ -29,7 +29,7 @@ theorem linear_typed_state_card_le
     Fintype.card W ≤ Fintype.card (V × M × M × M) :=
       Fintype.card_le_of_injective encode hinj
     _ = Fintype.card V * Fintype.card M ^ 3 := by
-      simp [pow_three, mul_assoc]
+      simp [pow_three]
 
 /-- A finite realised typed-rule family embeds in `P × M^3`. -/
 theorem linear_typed_rule_card_le
@@ -42,7 +42,7 @@ theorem linear_typed_rule_card_le
     Fintype.card R ≤ Fintype.card (P × M × M × M) :=
       Fintype.card_le_of_injective encode hinj
     _ = Fintype.card P * Fintype.card M ^ 3 := by
-      simp [pow_three, mul_assoc]
+      simp [pow_three]
 
 /--
 Indices for the three families occurring in `CS_lin(H)`: an anchor, a rule
@@ -102,11 +102,13 @@ theorem linear_anchor_length_le_two_states
 
 /--
 The same Section-7 bound for a rule witness containing one explicit terminal
-and one child canonical yield.
+and one child canonical yield.  A realised rule supplies a parent state, hence
+`stateCount` is positive.
 -/
 theorem linear_rule_witness_length_le_two_states
     {Sigma : Type u} {stateCount : Nat}
     (u child v : Word Sigma) (a : Sigma)
+    (hstate : 1 ≤ stateCount)
     (hctx : u.length + v.length ≤ stateCount - 1)
     (hchild : child.length ≤ stateCount) :
     (u ++ [a] ++ child ++ v).length ≤ 2 * stateCount := by
@@ -117,6 +119,7 @@ theorem linear_rule_witness_length_le_two_states
 theorem linear_rule_witness_right_length_le_two_states
     {Sigma : Type u} {stateCount : Nat}
     (u child v : Word Sigma) (a : Sigma)
+    (hstate : 1 ≤ stateCount)
     (hctx : u.length + v.length ≤ stateCount - 1)
     (hchild : child.length ≤ stateCount) :
     (u ++ child ++ [a] ++ v).length ≤ 2 * stateCount := by
