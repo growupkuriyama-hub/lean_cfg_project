@@ -57,7 +57,15 @@ theorem map_plugTupleContext
       plugSyntacticContext (contextImage eta c) (tupleImage eta x) := by
   unfold plugTupleContext plugSyntacticContext contextImage tupleImage
   rw [map_word_foldr eta]
-  simp only [List.map_ofFn, Function.comp_def, eta.map_mul]
+  have hlist :
+      (List.ofFn (fun i : Fin d => c i.castSucc ++ x i)).map eta =
+        List.ofFn (fun i : Fin d => eta (c i.castSucc) * eta (x i)) := by
+    rw [List.map_ofFn]
+    apply congrArg List.ofFn
+    funext i
+    change eta (c i.castSucc * x i) = eta (c i.castSucc) * eta (x i)
+    exact eta.map_mul _ _
+  rw [hlist]
 
 /-- The finite profile `Phi_d(s)` of the manuscript. -/
 def FiniteProfile
