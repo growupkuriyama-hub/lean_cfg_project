@@ -57,7 +57,7 @@ theorem map_plugTupleContext
       plugSyntacticContext (contextImage eta c) (tupleImage eta x) := by
   unfold plugTupleContext plugSyntacticContext contextImage tupleImage
   rw [map_word_foldr eta]
-  simp only [List.map_ofFn, eta.map_mul]
+  simp only [List.map_ofFn, Function.comp_def, eta.map_mul]
 
 /-- The finite profile `Phi_d(s)` of the manuscript. -/
 def FiniteProfile
