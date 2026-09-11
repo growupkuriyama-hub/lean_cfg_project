@@ -29,6 +29,14 @@ namespace ReesMatrix
 variable {I : Type u} {Lambda : Type v} {G : Type w} [Group G]
 variable (D : ReesData I Lambda G)
 
+@[ext] theorem rees_ext {x y : ReesMatrix D}
+    (hrow : x.row = y.row)
+    (hgroup : x.group = y.group)
+    (hcol : x.col = y.col) : x = y := by
+  cases x
+  cases y
+  simp_all
+
 /-- The normalized Rees multiplication `(i,g,l)(j,h,m)=(i,g q_{lj} h,m)`. -/
 def mul (x y : ReesMatrix D) : ReesMatrix D :=
   ⟨x.row, x.group * D.sandwich x.col y.row * y.group, y.col⟩
@@ -66,7 +74,7 @@ def bar (g : G) : ReesMatrix D := ⟨D.row0, g, D.col0⟩
   rfl
 
 @[simp] theorem e_mul_e : e D * e D = e D := by
-  simpa [← bar_one D] using bar_mul_bar D (1 : G) 1
+  ext <;> simp [e, D.row_normalized, D.col_normalized]
 
 /-- Normalization gives `x e=(i,g,1)`. -/
 @[simp] theorem mul_e (x : ReesMatrix D) :
@@ -124,7 +132,7 @@ theorem compressed_related
   have hleft : tau (e D * x) (e D * y) := htau.2.2 _ _ _ _ he hxy
   have hboth : tau ((e D * x) * e D) ((e D * y) * e D) :=
     htau.2.2 _ _ _ _ hleft he
-  simpa using hboth
+  simpa [bar] using hboth
 
 /-- The right defect `h^{-1}g` belongs to the local kernel. -/
 theorem right_defect_mem_kernel
@@ -134,7 +142,7 @@ theorem right_defect_mem_kernel
     y.group⁻¹ * x.group ∈
       toleranceKernelSubgroup (barRelation D tau)
         (barRelation_isCompatibleTolerance D tau htau) := by
-  change barRelation D tau 1 (y.group⁻¹ * x.group)
+  change tau (bar D 1) (bar D (y.group⁻¹ * x.group))
   have hbar : tau (bar D x.group) (bar D y.group) :=
     compressed_related D tau htau hxy
   have hsym : tau (bar D y.group) (bar D x.group) := htau.2.1 _ _ hbar
@@ -150,27 +158,27 @@ theorem left_defect_mem_kernel
     x.group * y.group⁻¹ ∈
       toleranceKernelSubgroup (barRelation D tau)
         (barRelation_isCompatibleTolerance D tau htau) := by
-  change barRelation D tau 1 (x.group * y.group⁻¹)
+  change tau (bar D 1) (bar D (x.group * y.group⁻¹))
   have hbar : tau (bar D x.group) (bar D y.group) :=
     compressed_related D tau htau hxy
   have href : tau (bar D y.group⁻¹) (bar D y.group⁻¹) := htau.1 _
   have hmul := htau.2.2 _ _ _ _ hbar href
-  have hrev : tau (e D) (bar D (x.group * y.group⁻¹)) := by
-    have := htau.2.1 _ _ hmul
-    simpa using this
-  exact hrev
+  have hrev := htau.2.1 _ _ hmul
+  simpa using hrev
 
 /-- Equality `x e = y bar(d)` forces equality of Rees rows. -/
 theorem row_eq_of_mul_e_eq
     {x y : ReesMatrix D} {d : G}
     (h : x * e D = y * bar D d) : x.row = y.row := by
-  exact congrArg ReesMatrix.row h
+  have hr := congrArg (fun z : ReesMatrix D => z.row) h
+  simpa using hr
 
 /-- Equality `e x = bar(d) y` forces equality of Rees columns. -/
 theorem col_eq_of_e_mul_eq
     {x y : ReesMatrix D} {d : G}
     (h : e D * x = bar D d * y) : x.col = y.col := by
-  exact congrArg ReesMatrix.col h
+  have hc := congrArg (fun z : ReesMatrix D => z.col) h
+  simpa using hc
 
 /--
 Algebraic core of Lemma `cr:lem:index-rigidity`.  The two equalities are the
@@ -227,7 +235,7 @@ theorem centralTranslate_mul_right
 /-- The central-translation action is free. -/
 theorem centralTranslate_free {m n : G} {x : ReesMatrix D}
     (h : centralTranslate D m x = centralTranslate D n x) : m = n := by
-  have hg := congrArg ReesMatrix.group h
+  have hg := congrArg (fun z : ReesMatrix D => z.group) h
   simp only [centralTranslate_group] at hg
   exact mul_right_cancel hg
 
