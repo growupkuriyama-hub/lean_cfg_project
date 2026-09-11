@@ -8,6 +8,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearBounds.lean"
       - "LeanCfgProject/FixedHCFG/LinearSpine.lean"
       - "LeanCfgProject/FixedHCFG/LinearDerivation.lean"
+      - "LeanCfgProject/FixedHCFG/LinearShortlex.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
 
@@ -35,6 +36,9 @@ jobs:
       - name: Build derivation-level Lemmas 7.3--7.6
         run: lake build LeanCfgProject.FixedHCFG.LinearDerivation
 
+      - name: Build manuscript shortlex bridge for Lemmas 7.5--7.6
+        run: lake build LeanCfgProject.FixedHCFG.LinearShortlex
+
       - name: Reject proof placeholders in Section 7 sources
         shell: bash
         run: |
@@ -42,7 +46,8 @@ jobs:
           if grep -n -E '\b(sorry|admit)\b' \
             LeanCfgProject/FixedHCFG/LinearBounds.lean \
             LeanCfgProject/FixedHCFG/LinearSpine.lean \
-            LeanCfgProject/FixedHCFG/LinearDerivation.lean; then
+            LeanCfgProject/FixedHCFG/LinearDerivation.lean \
+            LeanCfgProject/FixedHCFG/LinearShortlex.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
           fi
