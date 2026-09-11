@@ -65,6 +65,9 @@ jobs:
       - name: Build completely-regular local kernel
         run: lake build LeanCfgProject.SCLCompression.CompletelyRegularKernel
 
+      - name: Build normalized Rees local algebra
+        run: lake build LeanCfgProject.SCLCompression.ReesMatrixLocal
+
       - name: Build relational-characterization kernel
         run: lake build LeanCfgProject.SCLCompression.RelationalCharacterizationKernel
 
