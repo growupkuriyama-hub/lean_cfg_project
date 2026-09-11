@@ -1,0 +1,48 @@
+name: Verify fixed-h TCS Section 7
+
+on:
+  push:
+    branches:
+      - tcs-fixed-h-verification
+    paths:
+      - "LeanCfgProject/FixedHCFG/LinearBounds.lean"
+      - "LeanCfgProject/FixedHCFG/LinearSpine.lean"
+      - "LeanCfgProject/FixedHCFG/LinearDerivation.lean"
+      - ".github/workflows/verify-fixed-h-section7.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-section7:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build Section 7 finite bounds
+        run: lake build LeanCfgProject.FixedHCFG.LinearBounds
+
+      - name: Build strict-linear spine deletion
+        run: lake build LeanCfgProject.FixedHCFG.LinearSpine
+
+      - name: Build derivation-level Lemmas 7.3--7.6
+        run: lake build LeanCfgProject.FixedHCFG.LinearDerivation
+
+      - name: Reject proof placeholders in Section 7 sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -n -E '\b(sorry|admit)\b' \
+            LeanCfgProject/FixedHCFG/LinearBounds.lean \
+            LeanCfgProject/FixedHCFG/LinearSpine.lean \
+            LeanCfgProject/FixedHCFG/LinearDerivation.lean; then
+            echo "Found a proof placeholder in Section 7 Lean sources."
+            exit 1
+          fi
