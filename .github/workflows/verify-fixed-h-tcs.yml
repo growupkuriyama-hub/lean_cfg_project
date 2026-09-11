@@ -30,6 +30,9 @@ jobs:
       - name: Build Section 4 typed-refinement target
         run: lake build LeanCfgProject.FixedHCFG.TypedRefinement
 
+      - name: Build Lemma 4.5(iii) trimmed-language target
+        run: lake build LeanCfgProject.FixedHCFG.TrimmedLanguage
+
       - name: Build Lemma 4.6 canonical-witness target
         run: lake build LeanCfgProject.FixedHCFG.CanonicalWitness
 
