@@ -18,6 +18,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearBasisExtraction.lean"
       - "LeanCfgProject/FixedHCFG/LinearTimeData.lean"
       - "LeanCfgProject/FixedHCFG/LinearActualTimeData.lean"
+      - "LeanCfgProject/FixedHCFG/LinearActualSample.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
 
@@ -79,6 +80,9 @@ jobs:
       - name: Build actual typed-linear Theorem 7.9 specialization
         run: lake build LeanCfgProject.FixedHCFG.LinearActualTimeData
 
+      - name: Build actual realised linear sample slots
+        run: lake build LeanCfgProject.FixedHCFG.LinearActualSample
+
       - name: Reject proof placeholders in Section 7 sources
         shell: bash
         run: |
@@ -96,7 +100,8 @@ jobs:
             LeanCfgProject/FixedHCFG/LinearReconstruction.lean \
             LeanCfgProject/FixedHCFG/LinearBasisExtraction.lean \
             LeanCfgProject/FixedHCFG/LinearTimeData.lean \
-            LeanCfgProject/FixedHCFG/LinearActualTimeData.lean; then
+            LeanCfgProject/FixedHCFG/LinearActualTimeData.lean \
+            LeanCfgProject/FixedHCFG/LinearActualSample.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
           fi
