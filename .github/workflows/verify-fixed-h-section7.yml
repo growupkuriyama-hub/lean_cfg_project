@@ -14,6 +14,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearTrimmed.lean"
       - "LeanCfgProject/FixedHCFG/LinearCanonical.lean"
       - "LeanCfgProject/FixedHCFG/LinearReconstruction.lean"
+      - "LeanCfgProject/FixedHCFG/LinearTimeData.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
 
@@ -63,6 +64,9 @@ jobs:
       - name: Build Lemma 7.8 exact reconstruction
         run: lake build LeanCfgProject.FixedHCFG.LinearReconstruction
 
+      - name: Build Theorem 7.9 polynomial time-and-data envelope
+        run: lake build LeanCfgProject.FixedHCFG.LinearTimeData
+
       - name: Reject proof placeholders in Section 7 sources
         shell: bash
         run: |
@@ -76,7 +80,8 @@ jobs:
             LeanCfgProject/FixedHCFG/LinearRuleSlots.lean \
             LeanCfgProject/FixedHCFG/LinearTrimmed.lean \
             LeanCfgProject/FixedHCFG/LinearCanonical.lean \
-            LeanCfgProject/FixedHCFG/LinearReconstruction.lean; then
+            LeanCfgProject/FixedHCFG/LinearReconstruction.lean \
+            LeanCfgProject/FixedHCFG/LinearTimeData.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
           fi
