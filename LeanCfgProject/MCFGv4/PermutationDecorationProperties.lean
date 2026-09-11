@@ -84,6 +84,14 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
   cases h
   rfl
 
+/-- A generic type cast between finite-index types also preserves the stored
+natural-number value.  This is the cast inserted by the dependent result type of
+`decorateVariable`. -/
+@[simp] private theorem castFin_val {m n : Nat} (h : Fin m = Fin n) (i : Fin m) :
+    (cast h i).val = i.val := by
+  cases h
+  rfl
+
 @[simp] theorem decorateVariable_component_val (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
     (hlin : r.Linear) (hnd : r.Nondeleting)
