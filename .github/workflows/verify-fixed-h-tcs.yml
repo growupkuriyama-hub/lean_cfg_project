@@ -63,6 +63,9 @@ jobs:
       - name: Build Lemma 7.3 strict-linear spine target
         run: lake build LeanCfgProject.FixedHCFG.LinearSpine
 
+      - name: Build derivation-level Lemmas 7.3--7.6 target
+        run: lake build LeanCfgProject.FixedHCFG.LinearDerivation
+
       - name: Build aggregate fixed-h summary target
         run: lake build LeanCfgProject.FixedHCFG.Summary
 
