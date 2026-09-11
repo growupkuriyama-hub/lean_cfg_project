@@ -272,8 +272,14 @@ theorem enrichedCS_subset_trimmed
         (chosenOmega Ys ++ chosenOmega Zs) :=
       TypedDerives.binary hBC hProduct
         (chosenOmega_spec Ys) (chosenOmega_spec Zs)
-    exact typedOccurs_plug_trimmed Obs terminal binary start epsilonStart
+    have hPlug := typedOccurs_plug_trimmed
+      (X := Xs.1)
+      (u := chosenLeftCtx Xs)
+      (v := chosenRightCtx Xs)
+      (w := chosenOmega Ys ++ chosenOmega Zs)
+      Obs terminal binary start epsilonStart
       (chosenContext_spec Xs).1 hDeriv
+    simpa [Xs, Ys, Zs, binaryObservationWord, List.append_assoc] using hPlug
   · rcases hEps with ⟨rfl, hEpsilon⟩
     exact Or.inl ⟨rfl, hEpsilon⟩
 
