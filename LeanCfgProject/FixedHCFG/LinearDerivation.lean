@@ -10,11 +10,9 @@ universe u v
 /-!
 Strict-linear derivations for Section 7 of the TCS manuscript.
 
-This file isolates exactly the post-refinement grammar shape used in Section 7:
-non-start rules are `X → aY`, `X → Ya`, or `X → a`.  The monoid typing has
-already been enforced when the retained typed states and rules are extracted,
-so the cycle-deletion and length arguments below depend only on this strict
-linear rule shape.
+The spine is carried as an explicit index of each derivation proposition.  This
+avoids eliminating proof objects into data while still exposing exactly the
+finite path on which Lemmas 7.3, 7.5, and 7.6 operate.
 -/
 
 /-- The retained strict-linear grammar underlying the typed grammar `H`. -/
@@ -25,130 +23,120 @@ structure StrictLinearGrammar (W : Type v) (Sigma : Type u) where
   startState : W → Prop
   hasEpsilon : Prop
 
-/-- Terminal derivations in a strict-linear grammar. -/
-inductive LinearDerives {W : Type v} {Sigma : Type u}
-    (G : StrictLinearGrammar W Sigma) : W → Word Sigma → Prop
+/-- Terminal derivations together with their unique nonterminal spine. -/
+inductive LinearDerivesSpine {W : Type v} {Sigma : Type u}
+    (G : StrictLinearGrammar W Sigma) : W → List W → Word Sigma → Prop
   | terminal {X : W} {a : Sigma}
       (hrule : G.terminalRule X a) :
-      LinearDerives G X [a]
-  | left {X Y : W} {a : Sigma} {w : Word Sigma}
+      LinearDerivesSpine G X [X] [a]
+  | left {X Y : W} {a : Sigma} {sp : List W} {w : Word Sigma}
       (hrule : G.leftRule X a Y)
-      (child : LinearDerives G Y w) :
-      LinearDerives G X (a :: w)
-  | right {X Y : W} {a : Sigma} {w : Word Sigma}
+      (child : LinearDerivesSpine G Y sp w) :
+      LinearDerivesSpine G X (X :: sp) (a :: w)
+  | right {X Y : W} {a : Sigma} {sp : List W} {w : Word Sigma}
       (hrule : G.rightRule X Y a)
-      (child : LinearDerives G Y w) :
-      LinearDerives G X (w ++ [a])
+      (child : LinearDerivesSpine G Y sp w) :
+      LinearDerivesSpine G X (X :: sp) (w ++ [a])
 
-namespace LinearDerives
+/-- Ordinary derivability forgets the explicit spine index. -/
+def LinearDerives {W : Type v} {Sigma : Type u}
+    (G : StrictLinearGrammar W Sigma) (X : W) (w : Word Sigma) : Prop :=
+  ∃ sp : List W, LinearDerivesSpine G X sp w
 
-/-- The unique nonterminal spine of a strict-linear terminal derivation. -/
-def spine {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {w : Word Sigma}
-    (d : LinearDerives G X w) : List W :=
-  match d with
-  | .terminal _ => [X]
-  | .left _ child => X :: spine child
-  | .right _ child => X :: spine child
+namespace LinearDerivesSpine
 
 /-- Each spine state contributes exactly one terminal to the final yield. -/
 theorem yield_length_eq_spine_length
     {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {w : Word Sigma}
-    (d : LinearDerives G X w) :
-    w.length = (spine d).length := by
+    {G : StrictLinearGrammar W Sigma} {X : W} {sp : List W} {w : Word Sigma}
+    (d : LinearDerivesSpine G X sp w) :
+    w.length = sp.length := by
   induction d with
   | terminal hrule => rfl
-  | left hrule child ih =>
-      simp only [List.length_cons, spine]
-      omega
-  | right hrule child ih =>
-      simp only [List.length_append, List.length_singleton, spine, List.length_cons]
-      omega
+  | left hrule child ih => simp [ih]
+  | right hrule child ih => simp [ih]
 
 /--
 If a state occurs on the spine, the suffix beginning at that occurrence is
-itself a terminal derivation from that state.  Its yield cannot be longer than
-the yield of the whole derivation.
+itself a terminal derivation from that state.  Its yield is no longer than the
+original yield.
 -/
 theorem suffix_of_mem_spine
     {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X Z : W} {w : Word Sigma}
-    (d : LinearDerives G X w)
-    (hZ : Z ∈ spine d) :
-    ∃ z : Word Sigma, LinearDerives G Z z ∧ z.length ≤ w.length := by
+    {G : StrictLinearGrammar W Sigma} {X Z : W}
+    {sp : List W} {w : Word Sigma}
+    (d : LinearDerivesSpine G X sp w)
+    (hZ : Z ∈ sp) :
+    ∃ sp' : List W, ∃ z : Word Sigma,
+      LinearDerivesSpine G Z sp' z ∧ z.length ≤ w.length := by
   induction d with
   | @terminal X a hrule =>
-      simp only [spine, List.mem_singleton] at hZ
+      simp only [List.mem_singleton] at hZ
       subst Z
-      exact ⟨[a], LinearDerives.terminal hrule, le_rfl⟩
-  | @left X Y a w hrule child ih =>
-      simp only [spine, List.mem_cons] at hZ
-      rcases hZ with hZX | hZ
+      exact ⟨[X], [a], LinearDerivesSpine.terminal hrule, le_rfl⟩
+  | @left X Y a sp w hrule child ih =>
+      rcases List.mem_cons.mp hZ with hZX | hZ
       · subst Z
-        exact ⟨a :: w, LinearDerives.left hrule child, le_rfl⟩
-      · obtain ⟨z, hz, hlen⟩ := ih hZ
-        refine ⟨z, hz, ?_⟩
+        exact ⟨X :: sp, a :: w, LinearDerivesSpine.left hrule child, le_rfl⟩
+      · obtain ⟨sp', z, hz, hlen⟩ := ih hZ
+        refine ⟨sp', z, hz, ?_⟩
         simp only [List.length_cons]
         omega
-  | @right X Y a w hrule child ih =>
-      simp only [spine, List.mem_cons] at hZ
-      rcases hZ with hZX | hZ
+  | @right X Y a sp w hrule child ih =>
+      rcases List.mem_cons.mp hZ with hZX | hZ
       · subst Z
-        exact ⟨w ++ [a], LinearDerives.right hrule child, le_rfl⟩
-      · obtain ⟨z, hz, hlen⟩ := ih hZ
-        refine ⟨z, hz, ?_⟩
+        exact ⟨X :: sp, w ++ [a], LinearDerivesSpine.right hrule child, le_rfl⟩
+      · obtain ⟨sp', z, hz, hlen⟩ := ih hZ
+        refine ⟨sp', z, hz, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
 
 /--
-Derivation-level cycle deletion (Lemma 7.3 / Remark 7.4 consequence): if the
-spine repeats a state, there is another terminal derivation from the same root
-with strictly shorter yield.  The new yield need not equal the old yield.
+Derivation-level Lemma 7.3: a repeated state on a strict-linear terminal spine
+can be deleted, producing another derivation from the same root with strictly
+shorter yield.  As in the manuscript, the new yield need not equal the old one.
 -/
 theorem exists_shorter_of_spine_not_nodup
     {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {w : Word Sigma}
-    (d : LinearDerives G X w)
-    (hdup : ¬(spine d).Nodup) :
-    ∃ z : Word Sigma, LinearDerives G X z ∧ z.length < w.length := by
+    {G : StrictLinearGrammar W Sigma} {X : W}
+    {sp : List W} {w : Word Sigma}
+    (d : LinearDerivesSpine G X sp w)
+    (hdup : ¬ sp.Nodup) :
+    ∃ sp' : List W, ∃ z : Word Sigma,
+      LinearDerivesSpine G X sp' z ∧ z.length < w.length := by
   induction d with
   | @terminal X a hrule =>
       exact (hdup (List.nodup_singleton X)).elim
-  | @left X Y a w hrule child ih =>
-      have hdupCons : ¬(X :: spine child).Nodup := by
-        simpa only [spine] using hdup
-      by_cases hmem : X ∈ spine child
-      · obtain ⟨z, hz, hlen⟩ := suffix_of_mem_spine child hmem
-        refine ⟨z, hz, ?_⟩
+  | @left X Y a sp w hrule child ih =>
+      by_cases hmem : X ∈ sp
+      · obtain ⟨sp', z, hz, hlen⟩ := suffix_of_mem_spine child hmem
+        refine ⟨sp', z, hz, ?_⟩
         simp only [List.length_cons]
         omega
-      · have hChildDup : ¬(spine child).Nodup := by
+      · have hChildDup : ¬ sp.Nodup := by
           intro hnd
-          exact hdupCons (hnd.cons hmem)
-        obtain ⟨z, hz, hshort⟩ := ih hChildDup
-        refine ⟨a :: z, LinearDerives.left hrule hz, ?_⟩
+          exact hdup (List.nodup_cons.mpr ⟨hmem, hnd⟩)
+        obtain ⟨sp', z, hz, hshort⟩ := ih hChildDup
+        refine ⟨X :: sp', a :: z, LinearDerivesSpine.left hrule hz, ?_⟩
         simp only [List.length_cons]
         omega
-  | @right X Y a w hrule child ih =>
-      have hdupCons : ¬(X :: spine child).Nodup := by
-        simpa only [spine] using hdup
-      by_cases hmem : X ∈ spine child
-      · obtain ⟨z, hz, hlen⟩ := suffix_of_mem_spine child hmem
-        refine ⟨z, hz, ?_⟩
+  | @right X Y a sp w hrule child ih =>
+      by_cases hmem : X ∈ sp
+      · obtain ⟨sp', z, hz, hlen⟩ := suffix_of_mem_spine child hmem
+        refine ⟨sp', z, hz, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
-      · have hChildDup : ¬(spine child).Nodup := by
+      · have hChildDup : ¬ sp.Nodup := by
           intro hnd
-          exact hdupCons (hnd.cons hmem)
-        obtain ⟨z, hz, hshort⟩ := ih hChildDup
-        refine ⟨z ++ [a], LinearDerives.right hrule hz, ?_⟩
+          exact hdup (List.nodup_cons.mpr ⟨hmem, hnd⟩)
+        obtain ⟨sp', z, hz, hshort⟩ := ih hChildDup
+        refine ⟨X :: sp', z ++ [a], LinearDerivesSpine.right hrule hz, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
 
-end LinearDerives
+end LinearDerivesSpine
 
-/-- A derivation whose yield has minimum possible length from its root state. -/
+/-- A derivable word having minimum possible length from a fixed root state. -/
 def LinearYieldMinimal
     {W : Type v} {Sigma : Type u}
     (G : StrictLinearGrammar W Sigma) (X : W) (w : Word Sigma) : Prop :=
@@ -156,15 +144,18 @@ def LinearYieldMinimal
     ∀ z : Word Sigma, LinearDerives G X z → w.length ≤ z.length
 
 /-- Lemma 7.5: a minimum-length strict-linear derivation has a simple spine. -/
-theorem lemma_7_5_minimal_spine_nodup
+theorem lemma_7_5_minimal_has_simple_spine
     {W : Type v} {Sigma : Type u}
     {G : StrictLinearGrammar W Sigma} {X : W} {w : Word Sigma}
     (hmin : LinearYieldMinimal G X w) :
-    (LinearDerives.spine hmin.1).Nodup := by
+    ∃ sp : List W, LinearDerivesSpine G X sp w ∧ sp.Nodup := by
+  rcases hmin.1 with ⟨sp, d⟩
+  refine ⟨sp, d, ?_⟩
   by_contra hdup
-  obtain ⟨z, hz, hshort⟩ :=
-    LinearDerives.exists_shorter_of_spine_not_nodup hmin.1 hdup
-  exact (Nat.not_lt_of_ge (hmin.2 z hz)) hshort
+  obtain ⟨sp', z, hz, hshort⟩ :=
+    LinearDerivesSpine.exists_shorter_of_spine_not_nodup d hdup
+  have hge := hmin.2 z ⟨sp', hz⟩
+  exact (Nat.not_lt_of_ge hge) hshort
 
 /-- Lemma 7.5: every minimum-length yield has length at most `|W|`. -/
 theorem lemma_7_5_minimal_yield_length_le
@@ -172,159 +163,137 @@ theorem lemma_7_5_minimal_yield_length_le
     {G : StrictLinearGrammar W Sigma} {X : W} {w : Word Sigma}
     (hmin : LinearYieldMinimal G X w) :
     w.length ≤ Fintype.card W := by
-  have hSimple := lemma_7_5_minimal_spine_nodup hmin
-  rw [LinearDerives.yield_length_eq_spine_length hmin.1]
+  obtain ⟨sp, d, hSimple⟩ := lemma_7_5_minimal_has_simple_spine hmin
+  rw [LinearDerivesSpine.yield_length_eq_spine_length d]
   exact hSimple.length_le_card
 
-/-- Reachable occurrence of a state, recording its two-sided terminal context. -/
-inductive LinearOccurs {W : Type v} {Sigma : Type u}
-    (G : StrictLinearGrammar W Sigma) : W → Word Sigma → Word Sigma → Prop
+/-- Reachable occurrence of a state with an explicit start-to-state spine. -/
+inductive LinearOccursSpine {W : Type v} {Sigma : Type u}
+    (G : StrictLinearGrammar W Sigma) : W → List W → Word Sigma → Word Sigma → Prop
   | start {X : W}
       (hstart : G.startState X) :
-      LinearOccurs G X [] []
-  | left {X Y : W} {a : Sigma} {u v : Word Sigma}
-      (parent : LinearOccurs G X u v)
+      LinearOccursSpine G X [X] [] []
+  | left {X Y : W} {a : Sigma} {sp : List W} {u v : Word Sigma}
+      (parent : LinearOccursSpine G X sp u v)
       (hrule : G.leftRule X a Y) :
-      LinearOccurs G Y (u ++ [a]) v
-  | right {X Y : W} {a : Sigma} {u v : Word Sigma}
-      (parent : LinearOccurs G X u v)
+      LinearOccursSpine G Y (sp.concat Y) (u ++ [a]) v
+  | right {X Y : W} {a : Sigma} {sp : List W} {u v : Word Sigma}
+      (parent : LinearOccursSpine G X sp u v)
       (hrule : G.rightRule X Y a) :
-      LinearOccurs G Y u ([a] ++ v)
+      LinearOccursSpine G Y (sp.concat Y) u ([a] ++ v)
 
-namespace LinearOccurs
+/-- Ordinary occurrence forgets its explicit spine. -/
+def LinearOccurs {W : Type v} {Sigma : Type u}
+    (G : StrictLinearGrammar W Sigma) (X : W)
+    (u v : Word Sigma) : Prop :=
+  ∃ sp : List W, LinearOccursSpine G X sp u v
 
-/-- The unique start-to-occurrence spine. -/
-def spine {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
-    (d : LinearOccurs G X u v) : List W :=
-  match d with
-  | .start _ => [X]
-  | .left parent _ => (spine parent).concat X
-  | .right parent _ => (spine parent).concat X
+namespace LinearOccursSpine
 
-/-- Number of strict-linear steps below the start rule. -/
-def depth {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
-    (d : LinearOccurs G X u v) : Nat :=
-  match d with
-  | .start _ => 0
-  | .left parent _ => depth parent + 1
-  | .right parent _ => depth parent + 1
-
-/-- The external context contains exactly one terminal per spine step. -/
-theorem context_length_eq_depth
+/-- A strict-linear occurrence has one terminal of outer context per spine edge. -/
+theorem context_succ_eq_spine_length
     {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
-    (d : LinearOccurs G X u v) :
-    u.length + v.length = depth d := by
+    {G : StrictLinearGrammar W Sigma} {X : W}
+    {sp : List W} {u v : Word Sigma}
+    (d : LinearOccursSpine G X sp u v) :
+    u.length + v.length + 1 = sp.length := by
   induction d with
   | start hstart => rfl
   | left parent hrule ih =>
-      simp only [List.length_append, List.length_singleton, depth]
+      simp only [List.length_append, List.length_singleton, List.length_concat]
       omega
   | right parent hrule ih =>
-      simp only [List.length_append, List.length_singleton, depth]
-      omega
-
-/-- The occurrence spine has one more state than its number of steps. -/
-theorem spine_length_eq_depth_succ
-    {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
-    (d : LinearOccurs G X u v) :
-    (spine d).length = depth d + 1 := by
-  induction d with
-  | start hstart => rfl
-  | left parent hrule ih =>
-      simp only [spine, List.length_concat, depth]
-      omega
-  | right parent hrule ih =>
-      simp only [spine, List.length_concat, depth]
+      simp only [List.length_append, List.length_singleton, List.length_concat]
       omega
 
 /--
-An earlier state on the occurrence spine is itself reachable with context no
-longer than the context of the final state.
+An earlier state on an occurrence spine is itself reachable with no longer an
+outer context than the final state.
 -/
 theorem prefix_of_mem_spine
     {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X Z : W} {u v : Word Sigma}
-    (d : LinearOccurs G X u v)
-    (hZ : Z ∈ spine d) :
-    ∃ u' v' : Word Sigma,
-      LinearOccurs G Z u' v' ∧
+    {G : StrictLinearGrammar W Sigma} {X Z : W}
+    {sp : List W} {u v : Word Sigma}
+    (d : LinearOccursSpine G X sp u v)
+    (hZ : Z ∈ sp) :
+    ∃ sp' : List W, ∃ u' v' : Word Sigma,
+      LinearOccursSpine G Z sp' u' v' ∧
         u'.length + v'.length ≤ u.length + v.length := by
   induction d with
   | @start X hstart =>
-      simp only [spine, List.mem_singleton] at hZ
+      simp only [List.mem_singleton] at hZ
       subst Z
-      exact ⟨[], [], LinearOccurs.start hstart, le_rfl⟩
-  | @left X Y a u v parent hrule ih =>
-      simp only [spine, List.mem_concat] at hZ
-      rcases hZ with hZ | hZY
-      · obtain ⟨u', v', hocc, hlen⟩ := ih hZ
-        refine ⟨u', v', hocc, ?_⟩
+      exact ⟨[X], [], [], LinearOccursSpine.start hstart, le_rfl⟩
+  | @left X Y a sp u v parent hrule ih =>
+      rw [List.concat_eq_append] at hZ
+      rcases List.mem_append.mp hZ with hZ | hZY
+      · obtain ⟨sp', u', v', hocc, hlen⟩ := ih hZ
+        refine ⟨sp', u', v', hocc, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
-      · subst Z
-        exact ⟨u ++ [a], v, LinearOccurs.left parent hrule, le_rfl⟩
-  | @right X Y a u v parent hrule ih =>
-      simp only [spine, List.mem_concat] at hZ
-      rcases hZ with hZ | hZY
-      · obtain ⟨u', v', hocc, hlen⟩ := ih hZ
-        refine ⟨u', v', hocc, ?_⟩
+      · have hEq : Z = Y := List.mem_singleton.mp hZY
+        subst Z
+        exact ⟨sp.concat Y, u ++ [a], v,
+          LinearOccursSpine.left parent hrule, le_rfl⟩
+  | @right X Y a sp u v parent hrule ih =>
+      rw [List.concat_eq_append] at hZ
+      rcases List.mem_append.mp hZ with hZ | hZY
+      · obtain ⟨sp', u', v', hocc, hlen⟩ := ih hZ
+        refine ⟨sp', u', v', hocc, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
-      · subst Z
-        exact ⟨u, [a] ++ v, LinearOccurs.right parent hrule, le_rfl⟩
+      · have hEq : Z = Y := List.mem_singleton.mp hZY
+        subst Z
+        exact ⟨sp.concat Y, u, [a] ++ v,
+          LinearOccursSpine.right parent hrule, le_rfl⟩
 
 /--
-Occurrence-level cycle deletion: a repeated state on a start-to-state spine can
-be removed while preserving the final state and strictly shortening its outer
+Occurrence-level Lemma 7.3: a repeated state on the start-to-state spine can
+be deleted while preserving the final state and strictly shortening its outer
 context.
 -/
 theorem exists_shorter_context_of_spine_not_nodup
     {W : Type v} {Sigma : Type u}
-    {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
-    (d : LinearOccurs G X u v)
-    (hdup : ¬(spine d).Nodup) :
-    ∃ u' v' : Word Sigma,
-      LinearOccurs G X u' v' ∧
+    {G : StrictLinearGrammar W Sigma} {X : W}
+    {sp : List W} {u v : Word Sigma}
+    (d : LinearOccursSpine G X sp u v)
+    (hdup : ¬ sp.Nodup) :
+    ∃ sp' : List W, ∃ u' v' : Word Sigma,
+      LinearOccursSpine G X sp' u' v' ∧
         u'.length + v'.length < u.length + v.length := by
   induction d with
   | @start X hstart =>
       exact (hdup (List.nodup_singleton X)).elim
-  | @left X Y a u v parent hrule ih =>
-      have hdupConcat : ¬(spine parent).concat Y |>.Nodup := by
-        simpa only [spine] using hdup
-      by_cases hmem : Y ∈ spine parent
-      · obtain ⟨u', v', hocc, hlen⟩ := prefix_of_mem_spine parent hmem
-        refine ⟨u', v', hocc, ?_⟩
+  | @left X Y a sp u v parent hrule ih =>
+      by_cases hmem : Y ∈ sp
+      · obtain ⟨sp', u', v', hocc, hlen⟩ := prefix_of_mem_spine parent hmem
+        refine ⟨sp', u', v', hocc, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
-      · have hParentDup : ¬(spine parent).Nodup := by
+      · have hParentDup : ¬ sp.Nodup := by
           intro hnd
-          exact hdupConcat ((List.nodup_concat _ _).2 ⟨hmem, hnd⟩)
-        obtain ⟨u', v', hocc, hshort⟩ := ih hParentDup
-        refine ⟨u' ++ [a], v', LinearOccurs.left hocc hrule, ?_⟩
+          exact hdup ((List.nodup_concat _ _).mpr ⟨hmem, hnd⟩)
+        obtain ⟨sp', u', v', hocc, hshort⟩ := ih hParentDup
+        refine ⟨sp'.concat Y, u' ++ [a], v',
+          LinearOccursSpine.left hocc hrule, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
-  | @right X Y a u v parent hrule ih =>
-      have hdupConcat : ¬(spine parent).concat Y |>.Nodup := by
-        simpa only [spine] using hdup
-      by_cases hmem : Y ∈ spine parent
-      · obtain ⟨u', v', hocc, hlen⟩ := prefix_of_mem_spine parent hmem
-        refine ⟨u', v', hocc, ?_⟩
+  | @right X Y a sp u v parent hrule ih =>
+      by_cases hmem : Y ∈ sp
+      · obtain ⟨sp', u', v', hocc, hlen⟩ := prefix_of_mem_spine parent hmem
+        refine ⟨sp', u', v', hocc, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
-      · have hParentDup : ¬(spine parent).Nodup := by
+      · have hParentDup : ¬ sp.Nodup := by
           intro hnd
-          exact hdupConcat ((List.nodup_concat _ _).2 ⟨hmem, hnd⟩)
-        obtain ⟨u', v', hocc, hshort⟩ := ih hParentDup
-        refine ⟨u', [a] ++ v', LinearOccurs.right hocc hrule, ?_⟩
+          exact hdup ((List.nodup_concat _ _).mpr ⟨hmem, hnd⟩)
+        obtain ⟨sp', u', v', hocc, hshort⟩ := ih hParentDup
+        refine ⟨sp'.concat Y, u', [a] ++ v',
+          LinearOccursSpine.right hocc hrule, ?_⟩
         simp only [List.length_append, List.length_singleton]
         omega
 
-end LinearOccurs
+end LinearOccursSpine
 
 /-- A reachable context of minimum total length for a fixed retained state. -/
 def LinearContextMinimal
@@ -337,15 +306,18 @@ def LinearContextMinimal
         u.length + v.length ≤ u'.length + v'.length
 
 /-- Lemma 7.6: a minimum-length occurrence context has a simple spine. -/
-theorem lemma_7_6_minimal_context_spine_nodup
+theorem lemma_7_6_minimal_context_has_simple_spine
     {W : Type v} {Sigma : Type u}
     {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
     (hmin : LinearContextMinimal G X u v) :
-    (LinearOccurs.spine hmin.1).Nodup := by
+    ∃ sp : List W, LinearOccursSpine G X sp u v ∧ sp.Nodup := by
+  rcases hmin.1 with ⟨sp, d⟩
+  refine ⟨sp, d, ?_⟩
   by_contra hdup
-  obtain ⟨u', v', hocc, hshort⟩ :=
-    LinearOccurs.exists_shorter_context_of_spine_not_nodup hmin.1 hdup
-  exact (Nat.not_lt_of_ge (hmin.2 u' v' hocc)) hshort
+  obtain ⟨sp', u', v', hocc, hshort⟩ :=
+    LinearOccursSpine.exists_shorter_context_of_spine_not_nodup d hdup
+  have hge := hmin.2 u' v' ⟨sp', hocc⟩
+  exact (Nat.not_lt_of_ge hge) hshort
 
 /-- Lemma 7.6: the canonical minimum context has length at most `|W|-1`. -/
 theorem lemma_7_6_minimal_context_length_le
@@ -353,11 +325,9 @@ theorem lemma_7_6_minimal_context_length_le
     {G : StrictLinearGrammar W Sigma} {X : W} {u v : Word Sigma}
     (hmin : LinearContextMinimal G X u v) :
     u.length + v.length ≤ Fintype.card W - 1 := by
-  have hSimple := lemma_7_6_minimal_context_spine_nodup hmin
-  have hCard : (LinearOccurs.spine hmin.1).length ≤ Fintype.card W :=
-    hSimple.length_le_card
-  have hCtx := LinearOccurs.context_length_eq_depth hmin.1
-  have hSpine := LinearOccurs.spine_length_eq_depth_succ hmin.1
+  obtain ⟨sp, d, hSimple⟩ := lemma_7_6_minimal_context_has_simple_spine hmin
+  have hCard : sp.length ≤ Fintype.card W := hSimple.length_le_card
+  have hLen := LinearOccursSpine.context_succ_eq_spine_length d
   omega
 
 end FixedHCFG
