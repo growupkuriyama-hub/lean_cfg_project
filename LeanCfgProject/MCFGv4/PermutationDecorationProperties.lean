@@ -17,20 +17,19 @@ namespace MCFGRule
 
 variable {N : Type v} {α : Type u} {sig : MCFGSignature N}
 
+/-- Uniform projection of the variable carried by a template atom. -/
+private def variableOfAtom {N' : Type*} {α' : Type*}
+    {sig' : MCFGSignature N'} {children : List N'} :
+    TemplateAtom sig' α' children → Option (RuleVariable sig' children)
+  | TemplateAtom.terminal _ => none
+  | TemplateAtom.variable rv => some rv
+
 private theorem filterMap_decorateComponent (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
     (hlin : r.Linear) (hnd : r.Nondeleting)
     (component : List (TemplateAtom sig α r.children)) :
-    (r.decorateComponent π hlin hnd component).filterMap
-        (fun atom =>
-          match atom with
-          | TemplateAtom.terminal _ => none
-          | TemplateAtom.variable rv => some rv) =
-      (component.filterMap
-        (fun atom =>
-          match atom with
-          | TemplateAtom.terminal _ => none
-          | TemplateAtom.variable rv => some rv)).map
+    (r.decorateComponent π hlin hnd component).filterMap variableOfAtom =
+      (component.filterMap variableOfAtom).map
         (r.decorateVariable π hlin hnd) := by
   unfold decorateComponent
   rw [List.filterMap_map, List.map_filterMap]
@@ -43,17 +42,9 @@ private theorem decoratedComponentList_variables (r : MCFGRule sig α)
     (hlin : r.Linear) (hnd : r.Nondeleting)
     (components : List (List (TemplateAtom sig α r.children))) :
     ((components.map (r.decorateComponent π hlin hnd)).flatMap
-        (fun component =>
-          component.filterMap fun atom =>
-            match atom with
-            | TemplateAtom.terminal _ => none
-            | TemplateAtom.variable rv => some rv)) =
+        (fun component => component.filterMap variableOfAtom)) =
       (components.flatMap
-        (fun component =>
-          component.filterMap fun atom =>
-            match atom with
-            | TemplateAtom.terminal _ => none
-            | TemplateAtom.variable rv => some rv)).map
+        (fun component => component.filterMap variableOfAtom)).map
         (r.decorateVariable π hlin hnd) := by
   induction components with
   | nil => rfl
@@ -64,12 +55,10 @@ private theorem orientedVariables_eq_flatMap (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) :
     r.orientedVariables π =
       (r.orientedComponents π).flatMap
-        (fun component =>
-          component.filterMap fun atom =>
-            match atom with
-            | TemplateAtom.terminal _ => none
-            | TemplateAtom.variable rv => some rv) := by
+        (fun component => component.filterMap variableOfAtom) := by
   unfold orientedVariables orientedAtoms
+  change
+    ((r.orientedComponents π).foldr (· ++ ·) []).filterMap variableOfAtom = _
   generalize r.orientedComponents π = components
   induction components with
   | nil => rfl
@@ -84,11 +73,13 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
     (hlin : r.Linear) (hnd : r.Nondeleting) :
     (r.permutationDecorate π hlin hnd).usedVariables =
       (r.orientedVariables π).map (r.decorateVariable π hlin hnd) := by
-  simp only [usedVariables, permutationDecorate]
+  unfold usedVariables
+  change
+    (r.decoratedComponents π hlin hnd).flatMap
+        (fun component => component.filterMap variableOfAtom) = _
   rw [orientedVariables_eq_flatMap]
   unfold decoratedComponents
-  simpa using
-    (decoratedComponentList_variables r π hlin hnd (r.orientedComponents π))
+  exact decoratedComponentList_variables r π hlin hnd (r.orientedComponents π)
 
 end MCFGRule
 
