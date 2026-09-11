@@ -1,6 +1,7 @@
 import LeanCfgProject.MCFGv4.StandardSemantics
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.List.Nodup
+import Mathlib.Data.List.NodupEquivFin
 import Mathlib.GroupTheory.Perm.Basic
 
 /-!
@@ -12,7 +13,8 @@ and Lemma `lem:permutation-decoration` in the frozen 2026-09-07 manuscript.
 The key representation choice is to expose, for every parent orientation, the
 left-to-right scan order of child-component indices.  For a linear nondeleting
 rule this list is a permutation of `0, ..., d_j-1`; the results below establish
-that fact directly from the manuscript hypotheses.
+that fact directly from the manuscript hypotheses and package the scan as the
+actual finite permutation `ind_j(ρ,π)` used in the paper.
 -/
 
 namespace MCFGv4
@@ -209,6 +211,73 @@ theorem childComponentOrder_perm_range (r : MCFGRule sig α)
   intro k
   rw [r.childComponentOrder_mem_iff π j hnd k]
   simp
+
+/-- The same scan order, now with each superscript packaged in its actual
+finite component-index type. -/
+def childComponentFinOrder (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) :
+    List (Fin (sig.arity (r.children.get j))) :=
+  (r.childComponentOrder π j).attach.map fun x =>
+    ⟨x.1, r.childComponentOrder_bounded π j x.2⟩
+
+@[simp] theorem childComponentFinOrder_length (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) :
+    (r.childComponentFinOrder π j).length =
+      (r.childComponentOrder π j).length := by
+  simp [childComponentFinOrder]
+
+/-- The finite-index scan contains no repetitions under linearity. -/
+theorem childComponentFinOrder_nodup (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) (hlin : r.Linear) :
+    (r.childComponentFinOrder π j).Nodup := by
+  unfold childComponentFinOrder
+  apply (r.childComponentOrder_nodup π j hlin).attach.map
+  intro x y hxy
+  apply Subtype.ext
+  exact congrArg Fin.val hxy
+
+/-- Under nondeletion, every finite child-component index appears in the scan. -/
+theorem mem_childComponentFinOrder (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) (hnd : r.Nondeleting)
+    (k : Fin (sig.arity (r.children.get j))) :
+    k ∈ r.childComponentFinOrder π j := by
+  let hk : k.val ∈ r.childComponentOrder π j :=
+    r.childComponentOrder_complete π j hnd k.val k.isLt
+  unfold childComponentFinOrder
+  apply List.mem_map.2
+  refine ⟨⟨k.val, hk⟩, ?_, ?_⟩
+  · simp
+  · apply Fin.ext
+    rfl
+
+/-- The finite-index scan has exactly the child's fan-out many entries. -/
+theorem childComponentFinOrder_length_eq (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) (hlin : r.Linear) (hnd : r.Nondeleting) :
+    (r.childComponentFinOrder π j).length =
+      sig.arity (r.children.get j) := by
+  rw [r.childComponentFinOrder_length π j]
+  simpa using (r.childComponentOrder_perm_range π j hlin hnd).length_eq
+
+/-- The actual induced child orientation `ind_j(ρ,π)` from the manuscript.
+Its value at position `i` is the child-component superscript encountered at the
+`i`-th child occurrence in the parent scan. -/
+noncomputable def inducedOrientation (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) (hlin : r.Linear) (hnd : r.Nondeleting) :
+    Equiv.Perm (Fin (sig.arity (r.children.get j))) := by
+  let l := r.childComponentFinOrder π j
+  have hlen : l.length = sig.arity (r.children.get j) :=
+    r.childComponentFinOrder_length_eq π j hlin hnd
+  have hnodup : l.Nodup := r.childComponentFinOrder_nodup π j hlin
+  have hall : ∀ k : Fin (sig.arity (r.children.get j)), k ∈ l :=
+    fun k => r.mem_childComponentFinOrder π j hnd k
+  exact (Equiv.cast (congrArg Fin hlen.symm)).trans
+    (hnodup.getEquivOfForallMemList l hall)
 
 end MCFGRule
 
