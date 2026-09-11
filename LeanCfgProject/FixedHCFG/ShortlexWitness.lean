@@ -27,11 +27,32 @@ theorem contextShortlex_wf {Sigma : Type u} [LT Sigma] [WellFoundedLT Sigma] :
   (wordShortlex_wf (Sigma := Sigma)).prod_lex
     (wordShortlex_wf (Sigma := Sigma))
 
-/--
-Appending the same suffix preserves strict shortlex.  Mathlib already provides
-prefix compatibility; this is the companion fact needed for the canonical-yield
-root decomposition.
--/
+/-- Equal-length lexicographic comparison is preserved by a common suffix. -/
+theorem lex_append_right_same_of_length_eq
+    {Sigma : Type u} [LinearOrder Sigma]
+    {x y : Word Sigma}
+    (hlen : x.length = y.length)
+    (hlex : List.Lex (fun a b : Sigma => a < b) x y)
+    (t : Word Sigma) :
+    List.Lex (fun a b : Sigma => a < b) (x ++ t) (y ++ t) := by
+  induction x generalizing y with
+  | nil =>
+      cases y with
+      | nil => cases hlex
+      | cons b ys => simp at hlen
+  | cons a xs ih =>
+      cases y with
+      | nil => simp at hlen
+      | cons b ys =>
+          cases hlex with
+          | rel hab => exact List.Lex.rel hab
+          | cons htail =>
+              apply List.Lex.cons
+              apply ih
+              · simpa using hlen
+              · exact htail
+
+/-- Appending the same suffix preserves strict shortlex. -/
 theorem wordShortlex_append_right_same
     {Sigma : Type u} [LinearOrder Sigma]
     {x y : Word Sigma} (hxy : WordShortlex x y) (t : Word Sigma) :
@@ -41,15 +62,7 @@ theorem wordShortlex_append_right_same
     simpa [List.length_append] using Nat.add_lt_add_right hlen t.length
   · apply List.Shortlex.of_lex
     · simp [List.length_append, hlen]
-    · induction hlex with
-      | nil =>
-          simp at hlen
-      | @rel a b as bs hab =>
-          exact List.Lex.rel hab
-      | @cons a as bs htail ih =>
-          have htailLen : as.length = bs.length := by
-            simpa using hlen
-          exact List.Lex.cons (ih htailLen)
+    · exact lex_append_right_same_of_length_eq hlen hlex t
 
 /-- Terminal yields of a retained typed state. -/
 def TypedYieldSet {N : Type v} {Sigma : Type u}
@@ -171,28 +184,93 @@ theorem shortlexChi_start_empty {N : Type v} {Sigma : Type u}
     shortlexLeftCtx X = [] ∧ shortlexRightCtx X = [] := by
   have hEmpty : ([], []) ∈ TypedContextSet X := by
     exact keptStart_occurs_empty X hStart
-  have hMin := (contextShortlex_wf (Sigma := Sigma)).not_lt_min
-    (TypedContextSet X) hEmpty
-  have hSpec := shortlexChi_spec X
+  have hNoLess : ∀ c ∈ TypedContextSet X,
+      ¬ ContextShortlex (Sigma := Sigma) c ([], []) := by
+    intro c hc hlt
+    rcases c with ⟨u, v⟩
+    cases hlt with
+    | left _ _ hu =>
+        exact (List.not_shortlex_nil_right hu).elim
+    | right hu hv =>
+        exact (List.not_shortlex_nil_right hv).elim
   have hPair : shortlexChi X = ([], []) := by
-    rcases shortlexChi X with ⟨u, v⟩
-    by_cases hu : u = []
-    · subst u
-      by_cases hv : v = []
-      · rfl
-      · have hNil : WordShortlex ([] : Word Sigma) v :=
-          (List.shortlex_nil_or_eq_nil v).resolve_right hv
-        have hLess : ContextShortlex (Sigma := Sigma) ([], []) ([], v) :=
-          Prod.Lex.right rfl hNil
-        exact (hMin hLess).elim
-    · have hNil : WordShortlex ([] : Word Sigma) u :=
-        (List.shortlex_nil_or_eq_nil u).resolve_right hu
-      have hLess : ContextShortlex (Sigma := Sigma) ([], []) (u, v) :=
-        Prod.Lex.left _ _ hNil
-      exact (hMin hLess).elim
+    unfold shortlexChi
+    exact (contextShortlex_wf (Sigma := Sigma)).min_eq_of_forall_not_lt
+      hEmpty hNoLess
   constructor
-  · simpa [shortlexLeftCtx, hPair]
-  · simpa [shortlexRightCtx, hPair]
+  · simp [shortlexLeftCtx, hPair]
+  · simp [shortlexRightCtx, hPair]
+
+/-- A retained binary rule combines derivations of its two retained children. -/
+theorem keptBinary_derives
+    {N : Type v} {Sigma : Type u}
+    {Obs : Observer Sigma}
+    {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
+    {start : StartRules N}
+    {X Y Z : KeptState Obs terminal binary start}
+    (hRule : keptBinary X Y Z)
+    {x y : Word Sigma}
+    (dx : TypedDerives Obs terminal binary Y.1 x)
+    (dy : TypedDerives Obs terminal binary Z.1 y) :
+    TypedDerives Obs terminal binary X.1 (x ++ y) := by
+  rcases X with ⟨⟨A, p, m, n⟩, hX⟩
+  rcases Y with ⟨⟨B, q, mY, nY⟩, hY⟩
+  rcases Z with ⟨⟨C, r, mZ, nZ⟩, hZ⟩
+  change binary A B C ∧ Obs.mul q r = p ∧
+    mY = m ∧ nY = Obs.mul r n ∧
+    mZ = Obs.mul m q ∧ nZ = n at hRule
+  rcases hRule with ⟨hBC, hProduct, hmY, hnY, hmZ, hnZ⟩
+  subst mY
+  subst nY
+  subst mZ
+  subst nZ
+  exact TypedDerives.binary hBC hProduct dx dy
+
+/-- Root-shape inversion for a derivation from a retained typed state. -/
+theorem keptDerives_root_shape
+    {N : Type v} {Sigma : Type u}
+    {Obs : Observer Sigma}
+    {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
+    {start : StartRules N}
+    (X : KeptState Obs terminal binary start)
+    {w : Word Sigma}
+    (d : TypedDerives Obs terminal binary X.1 w) :
+    (∃ a : Sigma, keptTerminal X a ∧ w = [a]) ∨
+    (∃ Y Z : KeptState Obs terminal binary start,
+      keptBinary X Y Z ∧
+      ∃ x y : Word Sigma,
+        w = x ++ y ∧
+        TypedDerives Obs terminal binary Y.1 x ∧
+        TypedDerives Obs terminal binary Z.1 y) := by
+  rcases X with ⟨⟨A, p, m, n⟩, hKeep⟩
+  cases d with
+  | @terminal A a p m n hrule htype =>
+      exact Or.inl ⟨a, ⟨hrule, htype⟩, rfl⟩
+  | @binary A B C p m n q r x y hrule hproduct leftDeriv rightDeriv =>
+      rcases hKeep.2 with ⟨u, v, hOcc⟩
+      have hYKeep : TypedKept Obs terminal binary start
+          { label := B, yieldType := q, leftType := m,
+            rightType := Obs.mul r n } := by
+        constructor
+        · exact ⟨x, leftDeriv⟩
+        · exact ⟨u, y ++ v,
+            TypedOccurs.left hOcc hrule hproduct rightDeriv⟩
+      have hZKeep : TypedKept Obs terminal binary start
+          { label := C, yieldType := r, leftType := Obs.mul m q,
+            rightType := n } := by
+        constructor
+        · exact ⟨y, rightDeriv⟩
+        · exact ⟨u ++ x, v,
+            TypedOccurs.right hOcc hrule hproduct leftDeriv⟩
+      let Y : KeptState Obs terminal binary start :=
+        ⟨{ label := B, yieldType := q, leftType := m,
+           rightType := Obs.mul r n }, hYKeep⟩
+      let Z : KeptState Obs terminal binary start :=
+        ⟨{ label := C, yieldType := r, leftType := Obs.mul m q,
+           rightType := n }, hZKeep⟩
+      exact Or.inr ⟨Y, Z,
+        ⟨hrule, hproduct, rfl, rfl, rfl, rfl⟩,
+        x, y, rfl, leftDeriv, rightDeriv⟩
 
 /--
 Shortlex root decomposition.  If the canonical yield of `X` begins with a
@@ -210,66 +288,46 @@ theorem shortlexOmega_root_decomposition
     (∃ Y Z : KeptState Obs terminal binary start,
       keptBinary X Y Z ∧
       shortlexOmega X = shortlexOmega Y ++ shortlexOmega Z) := by
-  rcases X with ⟨⟨A, p, m, n⟩, hKeep⟩
-  let Xs : KeptState Obs terminal binary start :=
-    ⟨{ label := A, yieldType := p, leftType := m, rightType := n }, hKeep⟩
-  have d := shortlexOmega_spec Xs
-  cases d with
-  | @terminal A a p m n hrule htype =>
-      left
-      exact ⟨a, ⟨hrule, htype⟩, rfl⟩
-  | @binary A B C p m n q r x y hrule hproduct leftDeriv rightDeriv =>
-      rcases hKeep.2 with ⟨u, v, hOcc⟩
-      have hYKeep : TypedKept Obs terminal binary start
-          { label := B, yieldType := q, leftType := m,
-            rightType := Obs.mul r n } := by
-        constructor
-        · exact ⟨x, leftDeriv⟩
-        · exact ⟨u, y ++ v,
-            TypedOccurs.left hOcc hrule hproduct rightDeriv⟩
-      have hZKeep : TypedKept Obs terminal binary start
-          { label := C, yieldType := r, leftType := Obs.mul m q,
-            rightType := n } := by
-        constructor
-        · exact ⟨y, rightDeriv⟩
-        · exact ⟨u ++ x, v,
-            TypedOccurs.right hOcc hrule hproduct leftDeriv⟩
-      let Ys : KeptState Obs terminal binary start :=
-        ⟨{ label := B, yieldType := q, leftType := m,
-           rightType := Obs.mul r n }, hYKeep⟩
-      let Zs : KeptState Obs terminal binary start :=
-        ⟨{ label := C, yieldType := r, leftType := Obs.mul m q,
-           rightType := n }, hZKeep⟩
-      have hx : x = shortlexOmega Ys := by
-        rcases trichotomous_of (WordShortlex (Sigma := Sigma))
-            (shortlexOmega Ys) x with hsmall | heq | hlarge
-        · have hNew : TypedDerives Obs terminal binary Xs.1
-              (shortlexOmega Ys ++ y) :=
-            TypedDerives.binary hrule hproduct
-              (shortlexOmega_spec Ys) rightDeriv
-          have hlt : WordShortlex
-              (shortlexOmega Ys ++ y) (x ++ y) :=
-            wordShortlex_append_right_same hsmall y
-          exact (shortlexOmega_minimal Xs hNew hlt).elim
-        · exact heq.symm
-        · exact (shortlexOmega_minimal Ys leftDeriv hlarge).elim
-      have hy : y = shortlexOmega Zs := by
-        rcases trichotomous_of (WordShortlex (Sigma := Sigma))
-            (shortlexOmega Zs) y with hsmall | heq | hlarge
-        · have hNew : TypedDerives Obs terminal binary Xs.1
-              (x ++ shortlexOmega Zs) :=
-            TypedDerives.binary hrule hproduct
-              leftDeriv (shortlexOmega_spec Zs)
-          have hlt : WordShortlex
-              (x ++ shortlexOmega Zs) (x ++ y) :=
-            List.Shortlex.append_left hsmall x
-          exact (shortlexOmega_minimal Xs hNew hlt).elim
-        · exact heq.symm
-        · exact (shortlexOmega_minimal Zs rightDeriv hlarge).elim
-      right
-      refine ⟨Ys, Zs, ?_, ?_⟩
-      · exact ⟨hrule, hproduct, rfl, rfl, rfl, rfl⟩
-      · simpa [hx, hy]
+  rcases keptDerives_root_shape X (shortlexOmega_spec X) with hTerm | hBin
+  · rcases hTerm with ⟨a, hRule, hWord⟩
+    exact Or.inl ⟨a, hRule, hWord⟩
+  · rcases hBin with ⟨Y, Z, hRule, x, y, hWord, dx, dy⟩
+    have hx : x = shortlexOmega Y := by
+      rcases trichotomous_of (WordShortlex (Sigma := Sigma))
+          (shortlexOmega Y) x with hsmall | heq | hlarge
+      · have hNew : TypedDerives Obs terminal binary X.1
+            (shortlexOmega Y ++ y) :=
+          keptBinary_derives hRule (shortlexOmega_spec Y) dy
+        have hlt0 : WordShortlex
+            (shortlexOmega Y ++ y) (x ++ y) :=
+          wordShortlex_append_right_same hsmall y
+        have hlt : WordShortlex
+            (shortlexOmega Y ++ y) (shortlexOmega X) := by
+          rw [hWord]
+          exact hlt0
+        exact (shortlexOmega_minimal X hNew hlt).elim
+      · exact heq.symm
+      · exact (shortlexOmega_minimal Y dx hlarge).elim
+    have hy : y = shortlexOmega Z := by
+      rcases trichotomous_of (WordShortlex (Sigma := Sigma))
+          (shortlexOmega Z) y with hsmall | heq | hlarge
+      · have hNew : TypedDerives Obs terminal binary X.1
+            (x ++ shortlexOmega Z) :=
+          keptBinary_derives hRule dx (shortlexOmega_spec Z)
+        have hlt0 : WordShortlex
+            (x ++ shortlexOmega Z) (x ++ y) :=
+          List.Shortlex.append_left hsmall x
+        have hlt : WordShortlex
+            (x ++ shortlexOmega Z) (shortlexOmega X) := by
+          rw [hWord]
+          exact hlt0
+        exact (shortlexOmega_minimal X hNew hlt).elim
+      · exact heq.symm
+      · exact (shortlexOmega_minimal Z dy hlarge).elim
+    exact Or.inr ⟨Y, Z, hRule, by
+      calc
+        shortlexOmega X = x ++ y := hWord
+        _ = shortlexOmega Y ++ shortlexOmega Z := by rw [hx, hy]⟩
 
 end FixedHCFG
 end LeanCfgProject
