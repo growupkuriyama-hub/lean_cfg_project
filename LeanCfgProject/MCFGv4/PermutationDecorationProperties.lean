@@ -120,6 +120,21 @@ theorem decorateVariable_injective (r : MCFGRule sig α)
           subst k'
           rfl
 
+/-- Permutation decoration preserves the manuscript's rule-linearity property. -/
+theorem permutationDecorate_linear (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting) :
+    (r.permutationDecorate π hlin hnd).Linear := by
+  unfold Linear
+  rw [r.permutationDecorate_usedVariables π hlin hnd]
+  have hnodup :
+      ((r.orientedVariables π).map (r.decorateVariable π hlin hnd)).Nodup :=
+    (r.orientedVariables_nodup π hlin).map
+      (r.decorateVariable_injective π hlin hnd)
+  exact hnodup.pairwise_of_forall_ne (by
+    intro a ha b hb hab
+    exact hab)
+
 end MCFGRule
 
 end MCFGv4
