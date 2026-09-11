@@ -39,6 +39,9 @@ jobs:
       - name: Build Theorems 5.2--5.7 reconstruction target
         run: lake build LeanCfgProject.FixedHCFG.Reconstruction
 
+      - name: Build Corollary 5.8 identification target
+        run: lake build LeanCfgProject.FixedHCFG.Identification
+
       - name: Reject proof placeholders in fixed-h sources
         shell: bash
         run: |
