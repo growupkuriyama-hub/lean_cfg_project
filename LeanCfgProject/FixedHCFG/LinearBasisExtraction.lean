@@ -41,8 +41,10 @@ theorem trimLinearChi_eq_nil_of_start
   have hnot := trimLinearChi_minimal G X hocc0
   have hLeft : trimLinearLeftCtx G X = [] := by
     by_contra hne
-    have hpos : 0 < (trimLinearLeftCtx G X).length :=
-      List.length_pos.mpr hne
+    have hpos : 0 < (trimLinearLeftCtx G X).length := by
+      cases hleft : trimLinearLeftCtx G X with
+      | nil => exact (hne hleft).elim
+      | cons a xs => simp
     have hword : WordShortlex ([] : Word Sigma) (trimLinearLeftCtx G X) :=
       List.Shortlex.of_length_lt hpos
     have hsmall : ContextShortlex
@@ -52,8 +54,10 @@ theorem trimLinearChi_eq_nil_of_start
     exact hnot hsmall
   have hRight : trimLinearRightCtx G X = [] := by
     by_contra hne
-    have hpos : 0 < (trimLinearRightCtx G X).length :=
-      List.length_pos.mpr hne
+    have hpos : 0 < (trimLinearRightCtx G X).length := by
+      cases hright : trimLinearRightCtx G X with
+      | nil => exact (hne hright).elim
+      | cons a xs => simp
     have hword : WordShortlex ([] : Word Sigma) (trimLinearRightCtx G X) :=
       List.Shortlex.of_length_lt hpos
     have hsmall : ContextShortlex
@@ -180,12 +184,20 @@ theorem actualLinearCS_subset_language
     rcases trimLinearOmega_spec F Y with ⟨sp, hY⟩
     have hder : LinearDerives H X ([a] ++ trimLinearOmega F Y) := by
       exact ⟨X :: sp, LinearDerivesSpine.left hrule hY⟩
-    exact linear_occurs_plug_derivation (trimLinearChi_spec F X) hder
+    have hplug : StrictLinearLanguage H
+        (trimLinearLeftCtx F X ++ ([a] ++ trimLinearOmega F Y) ++
+          trimLinearRightCtx F X) :=
+      linear_occurs_plug_derivation (trimLinearChi_spec F X) hder
+    simpa [H, ActualLinearGrammar, List.append_assoc] using hplug
   · rcases hRight with ⟨X, Y, a, hrule, rfl⟩
     rcases trimLinearOmega_spec F Y with ⟨sp, hY⟩
     have hder : LinearDerives H X (trimLinearOmega F Y ++ [a]) :=
       ⟨X :: sp, LinearDerivesSpine.right hrule hY⟩
-    exact linear_occurs_plug_derivation (trimLinearChi_spec F X) hder
+    have hplug : StrictLinearLanguage H
+        (trimLinearLeftCtx F X ++ (trimLinearOmega F Y ++ [a]) ++
+          trimLinearRightCtx F X) :=
+      linear_occurs_plug_derivation (trimLinearChi_spec F X) hder
+    simpa [H, ActualLinearGrammar, List.append_assoc] using hplug
   · rcases hEps with ⟨heps, rfl⟩
     exact Or.inl ⟨rfl, heps⟩
 
