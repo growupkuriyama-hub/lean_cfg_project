@@ -32,10 +32,11 @@ private theorem filterMap_decorateComponent (r : MCFGRule sig α)
           | TemplateAtom.terminal _ => none
           | TemplateAtom.variable rv => some rv)).map
         (r.decorateVariable π hlin hnd) := by
-  induction component with
-  | nil => rfl
-  | cons atom rest ih =>
-      cases atom <;> simp [decorateComponent, decorateAtom, ih]
+  unfold decorateComponent
+  rw [List.filterMap_map, List.map_filterMap]
+  apply congrArg (fun f => component.filterMap f)
+  funext atom
+  cases atom <;> rfl
 
 private theorem decoratedComponentList_variables (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
@@ -73,7 +74,7 @@ private theorem orientedVariables_eq_flatMap (r : MCFGRule sig α)
   induction components with
   | nil => rfl
   | cons component rest ih =>
-      simp [ih]
+      simpa [ih]
 
 /-- The complete variable scan of a decorated rule is exactly the original
 parent-oriented scan with the induced child-variable renaming applied. -/
@@ -82,14 +83,7 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
     (hlin : r.Linear) (hnd : r.Nondeleting) :
     (r.permutationDecorate π hlin hnd).usedVariables =
       (r.orientedVariables π).map (r.decorateVariable π hlin hnd) := by
-  change
-    (r.decoratedComponents π hlin hnd).flatMap
-        (fun component =>
-          component.filterMap fun atom =>
-            match atom with
-            | TemplateAtom.terminal _ => none
-            | TemplateAtom.variable rv => some rv) =
-      (r.orientedVariables π).map (r.decorateVariable π hlin hnd)
+  simp only [usedVariables, permutationDecorate]
   rw [orientedVariables_eq_flatMap]
   unfold decoratedComponents
   exact decoratedComponentList_variables r π hlin hnd (r.orientedComponents π)
