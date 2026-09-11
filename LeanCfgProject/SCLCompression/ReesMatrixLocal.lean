@@ -230,7 +230,22 @@ theorem centralTranslate_mul_right
     {n : G} (hn : n ∈ Subgroup.center G) (x y : ReesMatrix D) :
     x * centralTranslate D n y = centralTranslate D n (x * y) := by
   rw [Subgroup.mem_center_iff] at hn
-  ext <;> simp [centralTranslate, mul_assoc, hn]
+  apply rees_ext D
+  · rfl
+  · have hx : x.group * n = n * x.group := hn x.group
+    have hq : D.sandwich x.col y.row * n =
+        n * D.sandwich x.col y.row := hn (D.sandwich x.col y.row)
+    calc
+      x.group * D.sandwich x.col y.row * (n * y.group) =
+          x.group * (D.sandwich x.col y.row * n) * y.group := by
+            simp [mul_assoc]
+      _ = x.group * (n * D.sandwich x.col y.row) * y.group := by rw [hq]
+      _ = (x.group * n) * D.sandwich x.col y.row * y.group := by
+            simp [mul_assoc]
+      _ = (n * x.group) * D.sandwich x.col y.row * y.group := by rw [hx]
+      _ = n * (x.group * D.sandwich x.col y.row * y.group) := by
+            simp [mul_assoc]
+  · rfl
 
 /-- The central-translation action is free. -/
 theorem centralTranslate_free {m n : G} {x : ReesMatrix D}
