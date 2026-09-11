@@ -143,7 +143,8 @@ theorem exists_contextShortlex_smaller_of_spine_not_nodup
               omega
             have hvSmall : WordShortlex v' ([a] ++ v) :=
               List.Shortlex.of_length_lt hvLen
-            exact ⟨sp', u', v', hocc, Prod.Lex.right _ hvSmall⟩
+            exact ⟨sp', u', v', hocc, by
+              simpa using (Prod.Lex.right u' hvSmall)⟩
         | cons b l =>
             have huLen : u'.length < u.length := by
               rw [hu]
