@@ -45,9 +45,10 @@ theorem unarySectorContext_reconstruct
     unarySectorContext (E.spacers 0) (E.spacers 1) = E := by
   cases E with
   | mk spacers =>
-      apply SectorContext.mk.inj
+      unfold unarySectorContext
+      congr
       funext i
-      fin_cases i <;> simp [unarySectorContext]
+      fin_cases i <;> simp
 
 /-- Filling the arity-one sector context is ordinary two-sided concatenation. -/
 theorem sectorFill_unarySectorContext (u v x : Word α) :
@@ -144,17 +145,18 @@ theorem fanoutOne_specialization
   · intro hOrd d hpos hd1 x y htype hshare
     have hd : d = 1 := by omega
     subst d
-    have hx : x = singletonTuple (x 0) := unaryTuple_eq_singleton x
-    have hy : y = singletonTuple (y 0) := unaryTuple_eq_singleton y
     have hwordType : evalObs obs (x 0) = evalObs obs (y 0) := by
       exact congrFun htype 0
+    have hx : x = singletonTuple (x 0) := unaryTuple_eq_singleton x
+    have hy : y = singletonTuple (y 0) := unaryTuple_eq_singleton y
+    rw [hx, hy] at hshare
     have hoverlap :
-        (OrdinaryDistribution L (x 0) ∩ OrdinaryDistribution L (y 0)).Nonempty := by
-      apply (unarySharesSectorContext_iff L (x 0) (y 0)).1
-      simpa [hx, hy] using hshare
+        (OrdinaryDistribution L (x 0) ∩ OrdinaryDistribution L (y 0)).Nonempty :=
+      (unarySharesSectorContext_iff L (x 0) (y 0)).1 hshare
     have hord := hOrd (x 0) (y 0) hwordType hoverlap
     have hsector := (unarySectorDistribution_eq_iff L (x 0) (y 0)).2 hord
-    simpa [hx, hy] using hsector
+    rw [hx, hy]
+    exact hsector
 
 end
 
