@@ -57,6 +57,9 @@ jobs:
       - name: Build Section 6 complexity-envelope target
         run: lake build LeanCfgProject.FixedHCFG.ComplexityBounds
 
+      - name: Build Section 7 linear sample-bound target
+        run: lake build LeanCfgProject.FixedHCFG.LinearBounds
+
       - name: Build aggregate fixed-h summary target
         run: lake build LeanCfgProject.FixedHCFG.Summary
 
