@@ -20,6 +20,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearActualTimeData.lean"
       - "LeanCfgProject/FixedHCFG/LinearActualSample.lean"
       - "LeanCfgProject/FixedHCFG/LinearActualSampleFinite.lean"
+      - "LeanCfgProject/FixedHCFG/LinearActualSampleExact.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
 
@@ -41,6 +42,9 @@ jobs:
 
       - name: Set up Lean
         uses: leanprover/lean-action@v1
+
+      - name: Build exact actual sample specifications
+        run: lake build LeanCfgProject.FixedHCFG.LinearActualSampleExact
 
       - name: Build exact finite actual sample target
         run: lake build LeanCfgProject.FixedHCFG.LinearActualSampleFinite
@@ -106,7 +110,8 @@ jobs:
             LeanCfgProject/FixedHCFG/LinearTimeData.lean \
             LeanCfgProject/FixedHCFG/LinearActualTimeData.lean \
             LeanCfgProject/FixedHCFG/LinearActualSample.lean \
-            LeanCfgProject/FixedHCFG/LinearActualSampleFinite.lean; then
+            LeanCfgProject/FixedHCFG/LinearActualSampleFinite.lean \
+            LeanCfgProject/FixedHCFG/LinearActualSampleExact.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
           fi
