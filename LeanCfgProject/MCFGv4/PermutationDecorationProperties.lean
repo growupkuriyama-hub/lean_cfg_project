@@ -17,26 +17,28 @@ namespace MCFGRule
 
 variable {N : Type v} {α : Type u} {sig : MCFGSignature N}
 
-private theorem filterMap_decorateComponent (r : MCFGRule sig α)
-    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
-    (hlin : r.Linear) (hnd : r.Nondeleting)
-    (component : List (TemplateAtom sig α r.children)) :
-    (r.decorateComponent π hlin hnd component).filterMap
-        (fun atom =>
-          match atom with
-          | TemplateAtom.terminal _ => none
-          | TemplateAtom.variable rv => some rv) =
-      (component.filterMap
-        (fun atom =>
-          match atom with
-          | TemplateAtom.terminal _ => none
-          | TemplateAtom.variable rv => some rv)).map
-        (r.decorateVariable π hlin hnd) := by
-  unfold decorateComponent
-  rw [List.filterMap_map, List.map_filterMap]
-  apply congrArg (fun f => component.filterMap f)
-  funext atom
-  cases atom <;> rfl
+/-- A plain-list transport lemma used to keep the dependent MCFG indices out of
+the component-list induction below. -/
+private theorem flatMap_map_filterMap
+    {A B X Y : Type*}
+    (d : A → B) (f : A → Option X) (g : B → Option Y) (e : X → Y)
+    (h : ∀ a, g (d a) = (f a).map e)
+    (components : List (List A)) :
+    (components.map (fun component => component.map d)).flatMap
+        (fun component => component.filterMap g) =
+      (components.flatMap (fun component => component.filterMap f)).map e := by
+  induction components with
+  | nil => rfl
+  | cons component rest ih =>
+      have hhead :
+          (component.map d).filterMap g =
+            (component.filterMap f).map e := by
+        rw [List.filterMap_map, List.map_filterMap]
+        apply congrArg (fun q => component.filterMap q)
+        funext a
+        exact h a
+      simp only [List.map_cons, List.flatMap_cons, List.map_append]
+      rw [hhead, ih]
 
 private theorem orientedVariables_eq_flatMap (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) :
@@ -64,14 +66,10 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
       (r.orientedVariables π).map (r.decorateVariable π hlin hnd) := by
   simp only [usedVariables, permutationDecorate]
   rw [orientedVariables_eq_flatMap]
-  unfold decoratedComponents
-  generalize r.orientedComponents π = components
-  induction components with
-  | nil => rfl
-  | cons component rest ih =>
-      simp only [List.map_cons, List.flatMap_cons, List.map_append]
-      rw [filterMap_decorateComponent]
-      rw [ih]
+  unfold decoratedComponents decorateComponent
+  apply flatMap_map_filterMap
+  intro atom
+  cases atom <;> rfl
 
 end MCFGRule
 
