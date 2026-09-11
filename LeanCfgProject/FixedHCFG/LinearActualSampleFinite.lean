@@ -19,7 +19,7 @@ epsilon rule.
 abbrev ActualLinearEpsilonSlot
     {N : Type v} {Sigma : Type u} {P : Type w}
     (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P) :=
-  {u : Unit // (ActualLinearGrammar Obs G).hasEpsilon}
+  {_ : Unit // (ActualLinearGrammar Obs G).hasEpsilon}
 
 /-- Exact finite index family: retained-state anchors, realised rules, optional epsilon. -/
 abbrev ActualLinearSampleIndex
@@ -74,7 +74,9 @@ theorem actualLinearRuleWitness_mem_CS
       have hz : ActualLinearCS Obs G
           (trimLinearLeftCtx F X ++ [a] ++ trimLinearRightCtx F X) :=
         Or.inr (Or.inl ⟨X, a, hruleH, rfl⟩)
-      simpa [actualLinearRuleWitness, F, X, hshape] using hz
+      unfold actualLinearRuleWitness
+      rw [hshape]
+      simpa [F, X] using hz
   | left a B =>
       let Y := actualLinearLeftSlotChildState Obs G s a B hshape
       have hruleF : F.leftRule X.1 a Y.1 := by
@@ -101,7 +103,9 @@ theorem actualLinearRuleWitness_mem_CS
           (trimLinearLeftCtx F X ++ [a] ++ trimLinearOmega F Y ++
             trimLinearRightCtx F X) :=
         Or.inr (Or.inr (Or.inl ⟨X, Y, a, hruleH, rfl⟩))
-      simpa [actualLinearRuleWitness, F, X, Y, hshape] using hz
+      unfold actualLinearRuleWitness
+      rw [hshape]
+      simpa [F, X, Y] using hz
   | right B a =>
       let Y := actualLinearRightSlotChildState Obs G s B a hshape
       have hruleF : F.rightRule X.1 Y.1 a := by
@@ -128,7 +132,9 @@ theorem actualLinearRuleWitness_mem_CS
           (trimLinearLeftCtx F X ++ trimLinearOmega F Y ++ [a] ++
             trimLinearRightCtx F X) :=
         Or.inr (Or.inr (Or.inr (Or.inl ⟨X, Y, a, hruleH, rfl⟩)))
-      simpa [actualLinearRuleWitness, F, X, Y, hshape] using hz
+      unfold actualLinearRuleWitness
+      rw [hshape]
+      simpa [F, X, Y] using hz
 
 /-- Every finitely indexed actual sample word belongs to the manuscript sample language. -/
 theorem actualLinearSampleWord_mem_CS
@@ -181,21 +187,27 @@ theorem actualLinearRuleWitness_length_le
       have h := linear_rule_witness_length_le_two_states
         (trimLinearLeftCtx F X) ([] : Word Sigma) (trimLinearRightCtx F X) a
         hstate hctx (Nat.zero_le _)
-      simpa [actualLinearRuleWitness, F, X, hshape] using h
+      unfold actualLinearRuleWitness
+      rw [hshape]
+      simpa [F, X] using h
   | left a B =>
       let Y := actualLinearLeftSlotChildState Obs G s a B hshape
       have hy := trimLinearOmega_length_le F Y
       have h := linear_rule_witness_length_le_two_states
         (trimLinearLeftCtx F X) (trimLinearOmega F Y) (trimLinearRightCtx F X) a
         hstate hctx hy
-      simpa [actualLinearRuleWitness, F, X, Y, hshape] using h
+      unfold actualLinearRuleWitness
+      rw [hshape]
+      simpa [F, X, Y] using h
   | right B a =>
       let Y := actualLinearRightSlotChildState Obs G s B a hshape
       have hy := trimLinearOmega_length_le F Y
       have h := linear_rule_witness_right_length_le_two_states
         (trimLinearLeftCtx F X) (trimLinearOmega F Y) (trimLinearRightCtx F X) a
         hstate hctx hy
-      simpa [actualLinearRuleWitness, F, X, Y, hshape] using h
+      unfold actualLinearRuleWitness
+      rw [hshape]
+      simpa [F, X, Y] using h
 
 /-- Uniform `2|W|` bound for the exact actual finite sample indexing. -/
 theorem actualLinearSampleWord_length_le
