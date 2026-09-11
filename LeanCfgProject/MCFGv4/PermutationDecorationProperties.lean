@@ -1,0 +1,99 @@
+import LeanCfgProject.MCFGv4.PermutationDecoration
+
+/-!
+# MCFGv4.PermutationDecorationProperties
+
+Structural preservation lemmas for the rule-level permutation-decoration
+construction.  The first bridge identifies the variable scan of a decorated
+rule with the original variable scan in the chosen parent orientation, followed
+by the variable-renaming map.
+-/
+
+namespace MCFGv4
+
+universe u v
+
+namespace MCFGRule
+
+variable {N : Type v} {α : Type u} {sig : MCFGSignature N}
+
+private theorem filterMap_decorateComponent (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting)
+    (component : List (TemplateAtom sig α r.children)) :
+    (r.decorateComponent π hlin hnd component).filterMap
+        (fun atom =>
+          match atom with
+          | TemplateAtom.terminal _ => none
+          | TemplateAtom.variable rv => some rv) =
+      (component.filterMap
+        (fun atom =>
+          match atom with
+          | TemplateAtom.terminal _ => none
+          | TemplateAtom.variable rv => some rv)).map
+        (r.decorateVariable π hlin hnd) := by
+  induction component with
+  | nil => rfl
+  | cons atom rest ih =>
+      cases atom <;> simp [decorateComponent, decorateAtom, ih]
+
+private theorem decoratedComponentList_variables (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting)
+    (components : List (List (TemplateAtom sig α r.children))) :
+    ((components.map (r.decorateComponent π hlin hnd)).flatMap
+        (fun component =>
+          component.filterMap fun atom =>
+            match atom with
+            | TemplateAtom.terminal _ => none
+            | TemplateAtom.variable rv => some rv)) =
+      (components.flatMap
+        (fun component =>
+          component.filterMap fun atom =>
+            match atom with
+            | TemplateAtom.terminal _ => none
+            | TemplateAtom.variable rv => some rv)).map
+        (r.decorateVariable π hlin hnd) := by
+  induction components with
+  | nil => rfl
+  | cons component rest ih =>
+      simp [filterMap_decorateComponent, ih]
+
+private theorem orientedVariables_eq_flatMap (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs))) :
+    r.orientedVariables π =
+      (r.orientedComponents π).flatMap
+        (fun component =>
+          component.filterMap fun atom =>
+            match atom with
+            | TemplateAtom.terminal _ => none
+            | TemplateAtom.variable rv => some rv) := by
+  unfold orientedVariables orientedAtoms
+  generalize r.orientedComponents π = components
+  induction components with
+  | nil => rfl
+  | cons component rest ih =>
+      simp [ih]
+
+/-- The complete variable scan of a decorated rule is exactly the original
+parent-oriented scan with the induced child-variable renaming applied. -/
+theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting) :
+    (r.permutationDecorate π hlin hnd).usedVariables =
+      (r.orientedVariables π).map (r.decorateVariable π hlin hnd) := by
+  change
+    (r.decoratedComponents π hlin hnd).flatMap
+        (fun component =>
+          component.filterMap fun atom =>
+            match atom with
+            | TemplateAtom.terminal _ => none
+            | TemplateAtom.variable rv => some rv) =
+      (r.orientedVariables π).map (r.decorateVariable π hlin hnd)
+  rw [orientedVariables_eq_flatMap]
+  unfold decoratedComponents
+  exact decoratedComponentList_variables r π hlin hnd (r.orientedComponents π)
+
+end MCFGRule
+
+end MCFGv4
