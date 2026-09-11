@@ -73,6 +73,21 @@ def FiniteProfile
     (s : Tuple T d) : Set (SyntacticContext T d) :=
   {q | plugSyntacticContext q s ∈ P}
 
+/--
+Part (i) of Lemma `alg:lem:profile`: membership in a complete tuple
+distribution is exactly membership of the syntactic context image in the finite
+profile of the tuple image.
+-/
+theorem inTupleDistribution_iff_finiteProfile
+    {Sigma : Type u} {T : Type v} [Monoid T]
+    (L : Language Sigma) (eta : Word Sigma →* T) (P : Set T)
+    (hL : ∀ w : Word Sigma, w ∈ L ↔ eta w ∈ P)
+    {d : Nat} (x : Tuple (Word Sigma) d) (c : TupleContext Sigma d) :
+    InTupleDistribution L x c ↔
+      contextImage eta c ∈ FiniteProfile P (tupleImage eta x) := by
+  unfold InTupleDistribution FiniteProfile
+  rw [hL (plugTupleContext c x), map_plugTupleContext eta c x]
+
 /-- Unsafe syntactic tuple pair from Definition `U_d(T,P)`. -/
 def SyntacticUnsafe
     {T : Type v} [Monoid T] (P : Set T) (d : Nat)
