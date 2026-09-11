@@ -61,7 +61,8 @@ theorem lift_linear_derivation_to_trim
           LinearOccursSpine.left hocc hrule⟩
       have hChild := ih hReachY
       rcases hChild with ⟨spK, dK⟩
-      exact ⟨_ :: spK, LinearDerivesSpine.left hrule dK⟩
+      refine ⟨_ :: spK, LinearDerivesSpine.left ?_ dK⟩
+      simpa [trimStrictLinearGrammar] using hrule
   | @right X Y a sp z hrule child ih =>
       rcases hReach with ⟨l, r, osp, hocc⟩
       have hReachY : ∃ l' r' : Word Sigma, LinearOccurs G Y l' r' := by
@@ -69,7 +70,8 @@ theorem lift_linear_derivation_to_trim
           LinearOccursSpine.right hocc hrule⟩
       have hChild := ih hReachY
       rcases hChild with ⟨spK, dK⟩
-      exact ⟨_ :: spK, LinearDerivesSpine.right hrule dK⟩
+      refine ⟨_ :: spK, LinearDerivesSpine.right ?_ dK⟩
+      simpa [trimStrictLinearGrammar] using hrule
 
 /--
 A successful occurrence spine to a productive target lifts wholly into the
@@ -94,7 +96,8 @@ theorem lift_linear_occurrence_to_trim
           LinearDerivesSpine.left hrule dY⟩
       have hParent := ih hProdX
       rcases hParent with ⟨ospK, hoccK⟩
-      exact ⟨ospK.concat _, LinearOccursSpine.left hoccK hrule⟩
+      refine ⟨ospK.concat _, LinearOccursSpine.left hoccK ?_⟩
+      simpa [trimStrictLinearGrammar] using hrule
   | @right X Y a sp l r parent hrule ih =>
       rcases hProd with ⟨z, dsp, dY⟩
       have hProdX : ∃ z' : Word Sigma, LinearDerives G X z' := by
@@ -102,7 +105,8 @@ theorem lift_linear_occurrence_to_trim
           LinearDerivesSpine.right hrule dY⟩
       have hParent := ih hProdX
       rcases hParent with ⟨ospK, hoccK⟩
-      exact ⟨ospK.concat _, LinearOccursSpine.right hoccK hrule⟩
+      refine ⟨ospK.concat _, LinearOccursSpine.right hoccK ?_⟩
+      simpa [trimStrictLinearGrammar] using hrule
 
 /-- Every retained state remains productive after restriction to retained states. -/
 theorem trim_kept_productive
