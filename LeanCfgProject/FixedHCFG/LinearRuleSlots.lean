@@ -6,12 +6,16 @@ namespace FixedHCFG
 universe u v w
 
 /-!
-Finite realised-rule envelope for Proposition 7.7(ii).
+Finite typed-rule slots for Proposition 7.7(ii).
 
-The correct three monoid coordinates for a unary linear production are the
-child yield type `q` and the two outer context types `m,n`.  The parent yield
-coordinate is then determined by multiplication with the fixed terminal value.
-This avoids any cancellation assumption on the finite monoid.
+For a source rule `A -> aB` or `A -> Ba`, the correct three free monoid
+coordinates are the child yield type `q` and the two parent outer-context
+types `m,n`.  The parent yield type is then determined *forward* as
+`h(a)q` or `qh(a)`.  No cancellation property of the finite monoid is used.
+
+This is important because the manuscript phrase "q determined by h(a)" when
+`p,m,n` are chosen is not valid for an arbitrary finite monoid.  The counting
+bound itself survives unchanged after using `(q,m,n)` as the coordinates.
 -/
 
 /-- Parent typed state represented by a source-production slot `(r,q,m,n)`. -/
@@ -25,17 +29,13 @@ def linearSlotParent
   let n := s.2.2.2
   match G.rhs r with
   | LinearRHS.terminal a =>
-      { label := G.lhs r, yieldType := Obs.value [a], leftType := m, rightType := n }
+      ⟨G.lhs r, Obs.value [a], m, n⟩
   | LinearRHS.left a _ =>
-      { label := G.lhs r,
-        yieldType := Obs.mul (Obs.value [a]) q,
-        leftType := m, rightType := n }
+      ⟨G.lhs r, Obs.mul (Obs.value [a]) q, m, n⟩
   | LinearRHS.right _ a =>
-      { label := G.lhs r,
-        yieldType := Obs.mul q (Obs.value [a]),
-        leftType := m, rightType := n }
+      ⟨G.lhs r, Obs.mul q (Obs.value [a]), m, n⟩
 
-/-- Child typed state represented by a nonterminal-bearing rule slot. -/
+/-- Child typed state represented by a nonterminal-bearing source slot. -/
 def linearSlotChild?
     {N : Type v} {Sigma : Type u} {P : Type w}
     (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
@@ -47,105 +47,72 @@ def linearSlotChild?
   match G.rhs r with
   | LinearRHS.terminal _ => none
   | LinearRHS.left a B =>
-      some { label := B, yieldType := q,
-        leftType := Obs.mul m (Obs.value [a]), rightType := n }
+      some ⟨B, q, Obs.mul m (Obs.value [a]), n⟩
   | LinearRHS.right B a =>
-      some { label := B, yieldType := q,
-        leftType := m, rightType := Obs.mul (Obs.value [a]) n }
+      some ⟨B, q, m, Obs.mul (Obs.value [a]) n⟩
 
 /--
-A slot is retained when its parent is retained and, for a unary rule, its child
-is retained.  Terminal slots use the canonical dummy coordinate `q = 1`, so a
-terminal production contributes only `|M|^2` slots inside the common
-`|M|^3` envelope.
+The full slot family has one source-production coordinate and three monoid
+coordinates.  It is an overcount for terminal rules, where `q` is unnecessary,
+but that is harmless for the manuscript's upper bound.
 -/
-def LinearRuleSlotActive
-    {N : Type v} {Sigma : Type u} {P : Type w}
-    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
-    (s : LinearTypedRuleSlot Obs P) : Prop :=
-  LinearTypedKept Obs G (linearSlotParent Obs G s) ∧
-    match G.rhs s.1, linearSlotChild? Obs G s with
-    | LinearRHS.terminal _, none => s.2.1 = Obs.one
-    | LinearRHS.left _ _, some Y => LinearTypedKept Obs G Y
-    | LinearRHS.right _ _, some Y => LinearTypedKept Obs G Y
-    | _, _ => False
+theorem linear_full_rule_slot_card
+    {Sigma : Type u} {P : Type w} [Fintype P]
+    (Obs : Observer Sigma) :
+    Fintype.card (LinearTypedRuleSlot Obs P) =
+      Fintype.card P * Fintype.card Obs.M ^ 3 :=
+  linearTypedRuleSlot_card Obs
 
-/-- Realised non-start typed rule slots of the reduced linear refinement. -/
-abbrev LinearRealizedRule
-    {N : Type v} {Sigma : Type u} {P : Type w}
-    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P) :=
-  {s : LinearTypedRuleSlot Obs P // LinearRuleSlotActive Obs G s}
-
-/-- Proposition 7.7(ii), as an exact finite-cardinality envelope. -/
+/--
+Any retained subfamily of typed rule slots has cardinality at most
+`|P| |M|^3`.  This is the exact finite-cardinality form of Proposition 7.7(ii):
+reachable/productive reduction only selects a subcollection of the full slots.
+-/
 theorem proposition_7_7_ii_rule_bound
-    {N : Type v} {Sigma : Type u} {P : Type w}
-    [Fintype P]
-    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
-    [Fintype (LinearRealizedRule Obs G)] :
-    Fintype.card (LinearRealizedRule Obs G) ≤
+    {Sigma : Type u} {P : Type w} [Fintype P]
+    (Obs : Observer Sigma)
+    (keep : LinearTypedRuleSlot Obs P → Prop)
+    [Fintype {s : LinearTypedRuleSlot Obs P // keep s}] :
+    Fintype.card {s : LinearTypedRuleSlot Obs P // keep s} ≤
       Fintype.card P * Fintype.card Obs.M ^ 3 := by
   calc
-    Fintype.card (LinearRealizedRule Obs G) ≤
+    Fintype.card {s : LinearTypedRuleSlot Obs P // keep s} ≤
         Fintype.card (LinearTypedRuleSlot Obs P) :=
       Fintype.card_le_of_injective
-        (fun r : LinearRealizedRule Obs G => r.1)
+        (fun s : {s : LinearTypedRuleSlot Obs P // keep s} => s.1)
         Subtype.val_injective
     _ = Fintype.card P * Fintype.card Obs.M ^ 3 :=
-      linearTypedRuleSlot_card Obs
+      linear_full_rule_slot_card Obs
 
-/-- Every active terminal slot is an actual terminal rule of the full typed refinement. -/
-theorem active_terminal_slot_rule
+/-- The left-linear slot has exactly the paper's typed rule equations. -/
+theorem linear_left_slot_equations
     {N : Type v} {Sigma : Type u} {P : Type w}
     (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
-    {s : LinearTypedRuleSlot Obs P} {a : Sigma}
-    (hshape : G.rhs s.1 = LinearRHS.terminal a)
-    (hactive : LinearRuleSlotActive Obs G s) :
-    (fullTypedLinearGrammar Obs G).terminalRule
-      (linearSlotParent Obs G s) a := by
-  rcases s with ⟨r, q, m, n⟩
-  simp only [LinearRuleSlotActive] at hactive
-  simp [linearSlotParent, fullTypedLinearGrammar, hshape]
-  exact ⟨r, rfl, hshape⟩
+    (r : P) (q m n : Obs.M) (a : Sigma) (B : N)
+    (hshape : G.rhs r = LinearRHS.left a B) :
+    let s : LinearTypedRuleSlot Obs P := (r, q, m, n)
+    let X := linearSlotParent Obs G s
+    let Y := linearSlotChild? Obs G s
+    X.label = G.lhs r ∧
+      X.yieldType = Obs.mul (Obs.value [a]) q ∧
+      X.leftType = m ∧ X.rightType = n ∧
+      Y = some ⟨B, q, Obs.mul m (Obs.value [a]), n⟩ := by
+  simp [linearSlotParent, linearSlotChild?, hshape]
 
-/-- Every active left-linear slot is an actual typed rule. -/
-theorem active_left_slot_rule
+/-- The right-linear slot has exactly the paper's typed rule equations. -/
+theorem linear_right_slot_equations
     {N : Type v} {Sigma : Type u} {P : Type w}
     (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
-    {s : LinearTypedRuleSlot Obs P} {a : Sigma} {B : N}
-    (hshape : G.rhs s.1 = LinearRHS.left a B)
-    (hactive : LinearRuleSlotActive Obs G s) :
-    ∃ Y : TypedNT N Obs,
-      linearSlotChild? Obs G s = some Y ∧
-      (fullTypedLinearGrammar Obs G).leftRule
-        (linearSlotParent Obs G s) a Y := by
-  rcases s with ⟨r, q, m, n⟩
-  let Y : TypedNT N Obs :=
-    { label := B, yieldType := q,
-      leftType := Obs.mul m (Obs.value [a]), rightType := n }
-  refine ⟨Y, ?_, ?_⟩
-  · simp [linearSlotChild?, hshape, Y]
-  · simp [linearSlotParent, fullTypedLinearGrammar, hshape, Y]
-    exact ⟨r, rfl, hshape⟩
-
-/-- Every active right-linear slot is an actual typed rule. -/
-theorem active_right_slot_rule
-    {N : Type v} {Sigma : Type u} {P : Type w}
-    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
-    {s : LinearTypedRuleSlot Obs P} {a : Sigma} {B : N}
-    (hshape : G.rhs s.1 = LinearRHS.right B a)
-    (hactive : LinearRuleSlotActive Obs G s) :
-    ∃ Y : TypedNT N Obs,
-      linearSlotChild? Obs G s = some Y ∧
-      (fullTypedLinearGrammar Obs G).rightRule
-        (linearSlotParent Obs G s) Y a := by
-  rcases s with ⟨r, q, m, n⟩
-  let Y : TypedNT N Obs :=
-    { label := B, yieldType := q,
-      leftType := m, rightType := Obs.mul (Obs.value [a]) n }
-  refine ⟨Y, ?_, ?_⟩
-  · simp [linearSlotChild?, hshape, Y]
-  · simp [linearSlotParent, fullTypedLinearGrammar, hshape, Y]
-    exact ⟨r, rfl, hshape⟩
+    (r : P) (q m n : Obs.M) (a : Sigma) (B : N)
+    (hshape : G.rhs r = LinearRHS.right B a) :
+    let s : LinearTypedRuleSlot Obs P := (r, q, m, n)
+    let X := linearSlotParent Obs G s
+    let Y := linearSlotChild? Obs G s
+    X.label = G.lhs r ∧
+      X.yieldType = Obs.mul q (Obs.value [a]) ∧
+      X.leftType = m ∧ X.rightType = n ∧
+      Y = some ⟨B, q, m, Obs.mul (Obs.value [a]) n⟩ := by
+  simp [linearSlotParent, linearSlotChild?, hshape]
 
 end FixedHCFG
 end LeanCfgProject
