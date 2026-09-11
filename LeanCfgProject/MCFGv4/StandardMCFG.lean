@@ -62,7 +62,7 @@ def usedVariables (r : MCFGRule sig α) : List (RuleVariable sig r.children) :=
     component.filterMap fun atom =>
       match atom with
       | TemplateAtom.terminal _ => none
-      | TemplateAtom.variable variable => some variable
+      | TemplateAtom.variable rv => some rv
 
 /-- Linearity: no child-component variable occurs more than once in the complete
 parent template tuple.  This is the manuscript's "at most once" requirement. -/
