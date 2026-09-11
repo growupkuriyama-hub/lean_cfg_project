@@ -48,6 +48,9 @@ jobs:
       - name: Build end-to-end SSBNF identification bridge
         run: lake build LeanCfgProject.FixedHCFG.EndToEnd
 
+      - name: Build shortlex canonical witness target
+        run: lake build LeanCfgProject.FixedHCFG.ShortlexWitness
+
       - name: Build aggregate fixed-h summary target
         run: lake build LeanCfgProject.FixedHCFG.Summary
 
