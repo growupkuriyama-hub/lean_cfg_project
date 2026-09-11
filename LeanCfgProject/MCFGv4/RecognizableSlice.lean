@@ -43,7 +43,7 @@ theorem evalObs_sectorFill_formula {d : Nat}
         (· * ·) 1) *
       evalObs obs (E.spacers (Fin.last d)) := by
   rw [sectorFill, evalObs_append, evalObs_foldr_append]
-  simp only [List.map_ofFn, evalObs_append]
+  simp only [List.map_ofFn, Function.comp_apply, evalObs_append]
 
 /-- Equal componentwise observation type makes every fixed oriented context
 have the same total observation value after filling. -/
