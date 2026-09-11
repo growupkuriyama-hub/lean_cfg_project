@@ -60,6 +60,7 @@ theorem derives_sound {Sigma : Type u}
           simpa [List.append_assoc] using hmem₂
         have hwSecond : InDistribution L w₁ u (w₂ ++ v) :=
           (hdist u (w₂ ++ v)).mp hxSecond
+        change u ++ w₁ ++ (w₂ ++ v) ∈ L at hwSecond
         change u ++ (w₁ ++ w₂) ++ v ∈ L
         simpa [List.append_assoc] using hwSecond
       · calc
