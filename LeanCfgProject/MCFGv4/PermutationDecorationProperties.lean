@@ -71,6 +71,49 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
   intro atom
   cases atom <;> rfl
 
+@[simp] theorem decorateVariable_child_val (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting)
+    (rv : RuleVariable sig r.children) :
+    (r.decorateVariable π hlin hnd rv).child.val = rv.child.val := by
+  simp [decorateVariable, decoratedChildIndex]
+
+@[simp] theorem decorateVariable_component_val (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting)
+    (rv : RuleVariable sig r.children) :
+    (r.decorateVariable π hlin hnd rv).component.val =
+      ((r.inducedOrientation π rv.child hlin hnd).symm rv.component).val := by
+  simp [decorateVariable, decoratedChildIndex, decoratedChildren, decoratedChild,
+    permutationDecoratedSignature]
+
+/-- The child-variable renaming used by permutation decoration is injective. -/
+theorem decorateVariable_injective (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting) :
+    Function.Injective (r.decorateVariable π hlin hnd) := by
+  intro rv rv' h
+  have hchildVal : rv.child.val = rv'.child.val := by
+    have := congrArg (fun z => z.child.val) h
+    simpa using this
+  have hchild : rv.child = rv'.child := Fin.ext hchildVal
+  cases rv with
+  | mk j k =>
+      cases rv' with
+      | mk j' k' =>
+          dsimp at hchild ⊢
+          subst j'
+          have hcomponentVal := congrArg (fun z => z.component.val) h
+          have horiented :
+              (r.inducedOrientation π j hlin hnd).symm k =
+                (r.inducedOrientation π j hlin hnd).symm k' := by
+            apply Fin.ext
+            simpa using hcomponentVal
+          have hk : k = k' :=
+            (r.inducedOrientation π j hlin hnd).symm.injective horiented
+          subst k'
+          rfl
+
 end MCFGRule
 
 end MCFGv4
