@@ -48,15 +48,6 @@ def apply (r : MCFGRule sig α) (values : r.ChildTuples) :
     r.evalComponent values
       (r.components.get (Fin.cast r.components_length.symm i))
 
-/-- Constant rules are exactly the rank-zero instance of `apply`; their result
-is independent of the (empty) child assignment. -/
-theorem apply_rankZero_irrelevant (r : MCFGRule sig α)
-    (hrank : r.rank = 0) (values values' : r.ChildTuples) :
-    r.apply values = r.apply values' := by
-  funext i
-  apply congrArg (r.evalComponent values)
-  rfl
-
 end MCFGRule
 
 namespace StandardMCFG
