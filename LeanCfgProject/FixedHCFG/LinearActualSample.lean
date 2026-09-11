@@ -68,5 +68,94 @@ theorem actualLinearRuleSlot_card_le
     (actualLinearRuleEncode Obs G)
     (actualLinearRuleEncode_injective Obs G)
 
+/-- Every realised slot has a retained parent typed state. -/
+theorem actualLinearSlot_parent_kept
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    (s : ActualLinearRuleSlot Obs G) :
+    StrictLinearKept (fullTypedLinearGrammar Obs G)
+      (linearSlotParent Obs G s.1) := by
+  have hs := s.2
+  cases hchild : actualLinearSlotChild? Obs G s.1 with
+  | none =>
+      simpa [ActualLinearSlotRealized, hchild] using hs
+  | some Y =>
+      have hp :
+          StrictLinearKept (fullTypedLinearGrammar Obs G)
+              (linearSlotParent Obs G s.1) ∧
+            StrictLinearKept (fullTypedLinearGrammar Obs G) Y := by
+        simpa [ActualLinearSlotRealized, hchild] using hs
+      exact hp.1
+
+/-- If the slot has a child, that child is retained as well. -/
+theorem actualLinearSlot_child_kept_of_some
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    (s : ActualLinearRuleSlot Obs G) {Y : TypedNT N Obs}
+    (hchild : actualLinearSlotChild? Obs G s.1 = some Y) :
+    StrictLinearKept (fullTypedLinearGrammar Obs G) Y := by
+  have hs := s.2
+  have hp :
+      StrictLinearKept (fullTypedLinearGrammar Obs G)
+          (linearSlotParent Obs G s.1) ∧
+        StrictLinearKept (fullTypedLinearGrammar Obs G) Y := by
+    simpa [ActualLinearSlotRealized, hchild] using hs
+  exact hp.2
+
+/-- Parent state as an element of the actual retained state family `W`. -/
+def actualLinearSlotParentState
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    (s : ActualLinearRuleSlot Obs G) : ActualLinearState Obs G :=
+  ⟨linearSlotParent Obs G s.1, actualLinearSlot_parent_kept Obs G s⟩
+
+/-- Retained child state for a realised left rule slot. -/
+def actualLinearLeftSlotChildState
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    (s : ActualLinearRuleSlot Obs G)
+    (a : Sigma) (B : N)
+    (hshape : G.rhs s.1.1 = LinearRHS.left a B) :
+    ActualLinearState Obs G := by
+  let Y : TypedNT N Obs :=
+    ⟨B, s.1.2.1, Obs.mul s.1.2.2.1 (Obs.value [a]), s.1.2.2.2⟩
+  refine ⟨Y, ?_⟩
+  apply actualLinearSlot_child_kept_of_some Obs G s
+  simp [actualLinearSlotChild?, linearSlotChild?, hshape, Y]
+
+/-- Retained child state for a realised right rule slot. -/
+def actualLinearRightSlotChildState
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    (s : ActualLinearRuleSlot Obs G)
+    (B : N) (a : Sigma)
+    (hshape : G.rhs s.1.1 = LinearRHS.right B a) :
+    ActualLinearState Obs G := by
+  let Y : TypedNT N Obs :=
+    ⟨B, s.1.2.1, s.1.2.2.1, Obs.mul (Obs.value [a]) s.1.2.2.2⟩
+  refine ⟨Y, ?_⟩
+  apply actualLinearSlot_child_kept_of_some Obs G s
+  simp [actualLinearSlotChild?, linearSlotChild?, hshape, Y]
+
+/-- The exact Section-7 rule-observation word selected by a realised source slot. -/
+noncomputable def actualLinearRuleWitness
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    (s : ActualLinearRuleSlot Obs G) : Word Sigma :=
+  let F := fullTypedLinearGrammar Obs G
+  let X := actualLinearSlotParentState Obs G s
+  match hshape : G.rhs s.1.1 with
+  | LinearRHS.terminal a =>
+      trimLinearLeftCtx F X ++ [a] ++ trimLinearRightCtx F X
+  | LinearRHS.left a B =>
+      let Y := actualLinearLeftSlotChildState Obs G s a B hshape
+      trimLinearLeftCtx F X ++ [a] ++ trimLinearOmega F Y ++
+        trimLinearRightCtx F X
+  | LinearRHS.right B a =>
+      let Y := actualLinearRightSlotChildState Obs G s B a hshape
+      trimLinearLeftCtx F X ++ trimLinearOmega F Y ++ [a] ++
+        trimLinearRightCtx F X
+
 end FixedHCFG
 end LeanCfgProject
