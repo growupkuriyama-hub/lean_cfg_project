@@ -25,6 +25,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Restore existing Lean cache read-only
+        uses: actions/cache/restore@v5
+        with:
+          path: ./.lake
+          key: scl-readonly-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            lake-Linux-X64-5f659f5fff1147b7392a5c37a29d621b29f614f04fb0a47ccd7d89a5fcc99cc1-0d16de33711487a280f0573712c91217a24ed28e0f7405b4d3365d0db23dd916
+
       - name: Set up Lean only for #3 targets
         uses: leanprover/lean-action@v1
         with:
