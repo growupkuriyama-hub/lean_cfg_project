@@ -82,4 +82,29 @@ def SectorDistribution {α : Type u} {d : Nat} {σ : Equiv.Perm (Fin d)}
     (L : Set (Word α)) (x : Tuple α d) : Set (SectorContext α d σ) :=
   { E | sectorFill E x ∈ L }
 
+/-- Canonicalization transports the whole accepting distribution to the
+identity sector.  Together with `canonicalizeEquiv` and `canonicalize_fill`,
+this is the complete mathematical content of manuscript
+Lemma `lem:sector-canonicalization`. -/
+theorem canonicalize_distribution {α : Type u} {d : Nat}
+    (σ : Equiv.Perm (Fin d)) (L : Set (Word α)) (x : Tuple α d) :
+    canonicalizeContext σ '' SectorDistribution (σ := σ) L x =
+      SectorDistribution (σ := idOrientation d) L (permuteTuple σ x) := by
+  ext E
+  constructor
+  · rintro ⟨D, hD, rfl⟩
+    change sectorFill D x ∈ L at hD
+    change sectorFill (canonicalizeContext σ D) (permuteTuple σ x) ∈ L
+    rw [canonicalize_fill]
+    exact hD
+  · intro hE
+    let D : SectorContext α d σ := uncanonicalizeContext σ E
+    refine ⟨D, ?_, ?_⟩
+    · change sectorFill D x ∈ L
+      have hfill := canonicalize_fill σ D x
+      rw [← hfill]
+      simpa [D, canonicalizeContext, uncanonicalizeContext] using hE
+    · cases E
+      rfl
+
 end MCFGv4
