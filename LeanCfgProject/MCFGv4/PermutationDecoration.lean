@@ -79,10 +79,15 @@ noncomputable def decorateVariable (r : MCFGRule sig α)
     RuleVariable (permutationDecoratedSignature sig)
       (r.decoratedChildren π hlin hnd) := by
   let j' := r.decoratedChildIndex π hlin hnd rv.child
+  let k := (r.inducedOrientation π rv.child hlin hnd).symm rv.component
   refine { child := j', component := ?_ }
-  simpa [j', decoratedChildIndex, decoratedChildren, decoratedChild,
-    permutationDecoratedSignature] using
-    ((r.inducedOrientation π rv.child hlin hnd).symm rv.component)
+  have hArity :
+      sig.arity (r.children.get rv.child) =
+        (permutationDecoratedSignature sig).arity
+          ((r.decoratedChildren π hlin hnd).get j') := by
+    simp [j', decoratedChildIndex, decoratedChildren, decoratedChild,
+      permutationDecoratedSignature]
+  exact Fin.cast hArity k
 
 /-- Transform one template atom. -/
 noncomputable def decorateAtom (r : MCFGRule sig α)
