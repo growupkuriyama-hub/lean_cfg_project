@@ -3,19 +3,29 @@
 Source: `MCFG_arXiv_v4_20260907_final_v3.tex`  
 SHA-256: `9999952ce78624a92053ab0d28fc861a23d9ca30bb58c548df11add354c2d9dd`
 
-This inventory was extracted from the frozen 2026-09-07 TeX. `PENDING` means that no current-v4 verification claim is made yet. Old `MCFG2` modules are only legacy candidates until statement/hypothesis comparison and a fresh `MCFGv4` CI proof are complete.
+This inventory was extracted from the frozen 2026-09-07 TeX. `PENDING` means that no current-v4 verification claim is made yet. `PARTIAL` means that an exact logical component has been verified but the full manuscript item contains an additional claim not yet represented. Old `MCFG2` modules are only legacy candidates until statement/hypothesis comparison and a fresh `MCFGv4` CI proof are complete.
 
-| TeX line | Section | Kind | Label | Manuscript title | Status | Legacy candidate / note |
+Current paper-facing regression reference:
+
+```text
+Workflow: Verify MCFG v4 core
+Run: #13
+Commit: d374e302461741a61d1205334048c8ff70aa0626
+Result: PASS
+Placeholder check: PASS
+```
+
+| TeX line | Section | Kind | Label | Manuscript title | Status | Current-v4 evidence / legacy note |
 |---:|---|---|---|---|---|---|
 | 512 | Oriented tuple contexts | lemma | `lem:permutation-decoration` | Permutation-decoration normalization | PENDING | New v4-facing proof expected; arbitrary-rank presentation |
 | 541 | Oriented tuple contexts | corollary | `cor:rank-preserving-normalization` | Rank-preserving normalization | PENDING | Depends on nondeleting normalization + previous lemma |
-| 669 | Oriented tuple contexts | lemma | `lem:sector-canonicalization` | Canonicalization of orientation sectors | PENDING | Likely small fresh semantic lemma |
-| 705 | Oriented tuple contexts | corollary | `cor:identity-sector-equivalence` | Identity-sector formulation | PENDING | Depends on sector canonicalization |
+| 669 | Oriented tuple contexts | lemma | `lem:sector-canonicalization` | Canonicalization of orientation sectors | **VERIFIED** | `OrientedContexts.lean`: `canonicalizeEquiv`, `canonicalize_fill`, `canonicalize_distribution`; proves the manuscript claim, slightly stronger since no `d≥1` premise is needed |
+| 705 | Oriented tuple contexts | corollary | `cor:identity-sector-equivalence` | Identity-sector formulation | **VERIFIED** | `TupleSubstitutability.lean`: `identitySector_equiv_tupleSubstitutable` using the concrete sector transport |
 | 725 | Oriented tuple contexts | proposition | `prop:fanout-one-specialization` | Fan-out-one specialization | PENDING | Fresh paper-facing bridge |
 | 774 | Oriented tuple contexts | proposition | `prop:h-recognizable-in-slice` | h-recognizable languages lie in the fixed-observation slice | PENDING | Semantic result; inspect legacy only for ideas |
 | 803 | Oriented tuple contexts | proposition | `prop:abelian-coset-filter` | Abelian-coset filtering preserves substitutability | PENDING | Fresh semantic result |
-| 863 | Oriented tuple contexts | proposition | `prop:h-refinement-monotonicity` | Monotonicity under refinement of the observation morphism | PENDING | `MCFG2/Basic.lean` has a related refinement theorem; statement must be rechecked |
-| 883 | Oriented tuple contexts | lemma | `lem:shared-context` | Shared-context substitutability | PENDING | Related abstract machinery exists in `MCFG2/Basic.lean` |
+| 863 | Oriented tuple contexts | proposition | `prop:h-refinement-monotonicity` | Monotonicity under refinement of the observation morphism | **PARTIAL** | `TupleSubstitutability.lean`: `tupleSubstitutable_of_refines` verifies the main substitutability implication. The displayed class inclusion additionally needs the current-v4 target-class / `f`-MCFL wrapper |
+| 883 | Oriented tuple contexts | lemma | `lem:shared-context` | Shared-context substitutability | **VERIFIED** | `TupleSubstitutability.lean`: `sharedContext_substitutability` matches the concrete common-context statement |
 | 910 | Oriented tuple contexts | proposition | `prop:copy-infinite-observation` | The copy language has no finite witnessing observation | PENDING | Fresh boundary example |
 | 1089 | Output-type refinement | proposition | `prop:output-invariants` | Output-type invariants | PENDING | `MCFG2/OutputTypeRefinement.lean`, `OutputTypeLift.lean`; old early interface was terminal/binary |
 | 1129 | Output-type refinement | lemma | `lem:refinement-nonpermuting` | Output typing preserves nonpermuting rules | PENDING | New arbitrary-rank paper-facing statement |
@@ -53,7 +63,8 @@ This inventory was extracted from the frozen 2026-09-07 TeX. `PENDING` means tha
 ## Counts
 
 - theorem-like manuscript items (`lemma`, `proposition`, `theorem`, `corollary`): **42**
-- current-v4 items marked `VERIFIED`: **0** at initialization
+- current-v4 items marked `VERIFIED`: **3**
+- current-v4 items marked `PARTIAL`: **1**
 - legacy items counted as current-v4 verification: **0**
 
-The first milestone is not to maximize this count quickly. It is to establish a trustworthy arbitrary-rank semantic foundation and then promote items one by one with exact source correspondence.
+The next short semantic targets are the fan-out-one specialization and completion of the refinement proposition's class-level wrapper. The first major structural target remains arbitrary-rank permutation-decoration normalization, which is needed before the output-type refinement and reconstruction chain.
