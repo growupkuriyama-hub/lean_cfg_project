@@ -6,7 +6,7 @@ namespace FixedHCFG
 
 universe u v
 
-/-- Canonical terminal-rule observation from Definition 4.3 / Section 4.3. -/
+/-- Canonical terminal-rule observation from Section 4.3. -/
 noncomputable def paperTerminalObservationWord
     {N : Type v} {Sigma : Type u}
     [LinearOrder Sigma] [WellFoundedLT Sigma]
@@ -39,7 +39,7 @@ noncomputable def paperAnchorWord
 /--
 The characteristic sample exactly as in Section 4.3 of the TCS manuscript:
 one canonical observation per realizable non-start rule, plus epsilon when the
-start epsilon rule is present.  Unlike `EnrichedCS`, anchors are *not* added as
+start epsilon rule is present.  Unlike `EnrichedCS`, anchors are not added as
 an extra family.
 -/
 noncomputable def PaperCS
@@ -223,6 +223,71 @@ theorem lemma_4_7_paperCS_subset_untyped
       (lemma_4_7_paperCS_subset_trimmed
         Obs terminal binary start epsilonStart hw)
 
+/-- A trimmed derivation is represented by the paper reconstruction basis. -/
+theorem keptDerives_to_paperBasis_exists
+    {N : Type v} {Sigma : Type u}
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : TerminalRules N Sigma) (binary : BinaryRules N)
+    (start : StartRules N) (epsilonStart : Prop)
+    {X : TypedNT N Obs} {w : Word Sigma}
+    (d : KeptDerives Obs terminal binary start X w) :
+    ∃ hkeep : TypedKept Obs terminal binary start X,
+      BasisDerives
+        (paperReconstructionBasis Obs terminal binary start epsilonStart)
+        (⟨X, hkeep⟩ : KeptState Obs terminal binary start) w := by
+  induction d with
+  | @terminal A a p m n hrule htype hkeep =>
+      refine ⟨hkeep, ?_⟩
+      exact BasisDerives.terminal ⟨hrule, htype⟩
+  | @binary A B C p m n q r x y hrule hproduct hkeep left right ihLeft ihRight =>
+      rcases ihLeft with ⟨hLeftKeep, hLeftBasis⟩
+      rcases ihRight with ⟨hRightKeep, hRightBasis⟩
+      let Xs : KeptState Obs terminal binary start :=
+        ⟨{ label := A, yieldType := p, leftType := m, rightType := n }, hkeep⟩
+      let Ys : KeptState Obs terminal binary start :=
+        ⟨{ label := B, yieldType := q, leftType := m,
+           rightType := Obs.mul r n }, hLeftKeep⟩
+      let Zs : KeptState Obs terminal binary start :=
+        ⟨{ label := C, yieldType := r, leftType := Obs.mul m q,
+           rightType := n }, hRightKeep⟩
+      have hRule : keptBinary Xs Ys Zs := by
+        exact ⟨hrule, hproduct, rfl, rfl, rfl, rfl⟩
+      refine ⟨hkeep, ?_⟩
+      exact BasisDerives.binary hRule hLeftBasis hRightBasis
+
+/-- A paper-basis derivation is a trimmed typed derivation after removing subtype wrappers. -/
+theorem paperBasisDerives_to_kept
+    {N : Type v} {Sigma : Type u}
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : TerminalRules N Sigma) (binary : BinaryRules N)
+    (start : StartRules N) (epsilonStart : Prop)
+    {X : KeptState Obs terminal binary start} {w : Word Sigma}
+    (d : BasisDerives
+      (paperReconstructionBasis Obs terminal binary start epsilonStart) X w) :
+    KeptDerives Obs terminal binary start X.1 w := by
+  induction d with
+  | @terminal X a hrule =>
+      exact KeptDerives.terminal hrule.1 hrule.2 X.property
+  | @binary X Y Z x y hrule left right ihLeft ihRight =>
+      rcases X with ⟨⟨A, p, m, n⟩, hXKeep⟩
+      rcases Y with ⟨⟨B, q, mY, nY⟩, hYKeep⟩
+      rcases Z with ⟨⟨C, r, mZ, nZ⟩, hZKeep⟩
+      change
+        binary A B C ∧
+          Obs.mul q r = p ∧
+          mY = m ∧
+          nY = Obs.mul r n ∧
+          mZ = Obs.mul m q ∧
+          nZ = n at hrule
+      rcases hrule with ⟨hBinary, hProduct, hmY, hnY, hmZ, hnZ⟩
+      subst mY
+      subst nY
+      subst mZ
+      subst nZ
+      exact KeptDerives.binary hBinary hProduct hXKeep ihLeft ihRight
+
 /-- The paper basis generates exactly the trimmed typed language. -/
 theorem paperBasisLanguage_iff_trimmed
     {N : Type v} {Sigma : Type u}
@@ -234,9 +299,30 @@ theorem paperBasisLanguage_iff_trimmed
     BasisLanguage
         (paperReconstructionBasis Obs terminal binary start epsilonStart) w ↔
       TrimmedTypedStartLanguage Obs terminal binary start epsilonStart w := by
-  simpa [paperReconstructionBasis, enrichedReconstructionBasis] using
-    (enrichedBasisLanguage_iff_trimmed
-      Obs terminal binary start epsilonStart w)
+  constructor
+  · intro h
+    rcases h with hEps | hNonempty
+    · exact Or.inl hEps
+    · rcases hNonempty with ⟨X, hStart, hDeriv⟩
+      have hKept := paperBasisDerives_to_kept
+        Obs terminal binary start epsilonStart hDeriv
+      rcases X with ⟨⟨A, p, m, n⟩, hXKeep⟩
+      change start A ∧ m = Obs.one ∧ n = Obs.one at hStart
+      rcases hStart with ⟨hA, hm, hn⟩
+      subst m
+      subst n
+      exact Or.inr ⟨A, p, hA, hKept⟩
+  · intro h
+    rcases h with hEps | hNonempty
+    · exact Or.inl hEps
+    · rcases hNonempty with ⟨A, p, hA, hDeriv⟩
+      rcases keptDerives_to_paperBasis_exists
+          Obs terminal binary start epsilonStart hDeriv with
+        ⟨hKeep, hBasis⟩
+      let X : KeptState Obs terminal binary start :=
+        ⟨{ label := A, yieldType := p,
+           leftType := Obs.one, rightType := Obs.one }, hKeep⟩
+      exact Or.inr ⟨X, ⟨hA, rfl, rfl⟩, hBasis⟩
 
 /-- Consequently the paper basis generates exactly the original SSBNF language. -/
 theorem paperBasisLanguage_iff_untyped
