@@ -3,6 +3,9 @@
 This directory formalizes theorem-facing parts of the manuscript
 `fixed-h-CFG-arXiv-v4 = TCS-D-26-00494`.
 
+Paper-side issues discovered by formalization are tracked separately in
+[`LEAN_VERIFICATION_GAPS.md`](./LEAN_VERIFICATION_GAPS.md).
+
 ## Verified chain
 
 The Lean development currently checks, without `sorry` or `admit`:
@@ -13,21 +16,34 @@ The Lean development currently checks, without `sorry` or `admit`:
 - Lemma 4.5(ii) (two-sided context-type invariant);
 - Lemma 4.5(iii) (language preservation under reachable/productive trimming);
 - Lemma 4.6 (types of canonical yield/context witnesses);
+- shortlex canonical yield and context witnesses;
+- Lemma 4.7 (characteristic-sample observation words are positive);
+- Lemma 4.8 (anchor recovery from the paper characteristic sample);
+- the finite reconstruction-basis bridge corresponding to Theorem 4.12;
 - the learner rule kernel (paper Rules (1)--(5));
-- Theorem 5.6 (soundness), via the stronger induction invariant
+- Theorem 5.6 (soundness), via the stronger invariant
   `[x:u,v] =>* w -> u w v in L and h(w)=h(x)`;
-- Lemmas 5.2--5.4 at the reconstruction-basis interface;
-- Theorem 5.5 (completeness) at that interface;
-- Theorem 5.7 (exact reconstruction) by combining 5.5 and 5.6;
-- Corollary 5.8 in the paper's semantic identification sense: after a finite
-  observation set has appeared in a positive text, every later hypothesis
-  generates exactly the target language.
+- Lemmas 5.2--5.4 in the repaired terminal case described below;
+- Theorem 5.5 (completeness);
+- Theorem 5.7 (exact reconstruction);
+- Corollary 5.8 (identification in the limit);
+- an end-to-end bridge from a reduced SSBNF presentation, through the exact
+  manuscript characteristic sample, to eventual exact hypotheses;
+- the Section 6 combinatorial/arithmetic envelope underlying the manuscript's
+  polynomial hypothesis-construction bound;
+- Section 7 finite typed-state / typed-rule counting envelopes;
+- strict-linear derivation and occurrence spines;
+- cycle deletion and simple-spine bounds for the linear subclass;
+- the derivation-level content of Lemmas 7.3--7.6 in a generic strict-linear
+  grammar model.
 
-The aggregate build target is:
+The aggregate core build target is:
 
 ```text
 lake build LeanCfgProject.FixedHCFG.Summary
 ```
+
+Section 7 also has a focused CI workflow.
 
 ## Important manuscript discrepancy found during formalization
 
@@ -55,23 +71,18 @@ Thus Theorem 5.5 remains valid, but the prose statement/proof of Lemma 5.2(i)
 and the height-one case of Theorem 5.5 should be revised before the next
 manuscript version.
 
-## Remaining end-to-end gap
+## Current frontier: manuscript-faithful Section 7 shortlex bridge
 
-The current reconstruction theorem is proved against an abstract
-`ReconstructionBasis` carrying exactly the finite typed local data used in
-Section 5.  What is not yet connected end-to-end is the explicit construction
-of that object from a raw reduced SSBNF grammar using the paper's shortlex
-choices and characteristic sample:
+The generic strict-linear spine development is green.  The remaining Section 7
+work is to connect those generic bounds to the manuscript's exact canonical
+choices and then to the retained typed linear grammar `H`.
 
-- Lemma 4.7 (observation words are positive examples);
-- Lemma 4.8 (anchor words occur in the characteristic sample);
-- Theorem 4.9 (well-definedness/finiteness of `CS`);
-- Definition 4.11 / Theorem 4.12 (finite typed reconstruction basis).
+A subtle proof obligation appears in Lemma 7.6: `chi(X)` is minimal in the
+lexicographic extension of word-shortlex, not by total context length.  The
+formalization therefore proves the stronger cycle-deletion fact that the
+replacement context is strictly smaller in the *actual context shortlex order*.
+This is implemented in `LinearShortlex.lean`; its CI is being stabilized before
+we use it as the final bridge to Proposition 7.7 and Theorem 7.9.
 
-The next formalization phase should construct the shortlex witness layer and
-then instantiate `ReconstructionBasis` from the trimmed typed grammar.  After
-that bridge is checked, Sections 4--5 will form one end-to-end Lean chain from a
-reduced SSBNF presentation to identification in the limit.
-
-Computational Sections 6--7 and the separation examples are outside the current
-Lean scope.
+See `LEAN_VERIFICATION_GAPS.md` for manuscript-side consequences and revision
+notes.
