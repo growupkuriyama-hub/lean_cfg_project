@@ -78,6 +78,12 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
     (r.decorateVariable π hlin hnd rv).child.val = rv.child.val := by
   simp [decorateVariable, decoratedChildIndex]
 
+/-- Casting a finite index along an equality of bounds never changes its value. -/
+@[simp] private theorem finCast_val {m n : Nat} (h : m = n) (i : Fin m) :
+    (Fin.cast h i).val = i.val := by
+  cases h
+  rfl
+
 @[simp] theorem decorateVariable_component_val (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
     (hlin : r.Linear) (hnd : r.Nondeleting)
