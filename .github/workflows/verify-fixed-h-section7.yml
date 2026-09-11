@@ -15,6 +15,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearLanguage.lean"
       - "LeanCfgProject/FixedHCFG/LinearCanonical.lean"
       - "LeanCfgProject/FixedHCFG/LinearReconstruction.lean"
+      - "LeanCfgProject/FixedHCFG/LinearBasisExtraction.lean"
       - "LeanCfgProject/FixedHCFG/LinearTimeData.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
@@ -68,6 +69,9 @@ jobs:
       - name: Build Lemma 7.8 exact reconstruction
         run: lake build LeanCfgProject.FixedHCFG.LinearReconstruction
 
+      - name: Build actual typed-linear reconstruction-basis extraction
+        run: lake build LeanCfgProject.FixedHCFG.LinearBasisExtraction
+
       - name: Build Theorem 7.9 polynomial time-and-data envelope
         run: lake build LeanCfgProject.FixedHCFG.LinearTimeData
 
@@ -86,6 +90,7 @@ jobs:
             LeanCfgProject/FixedHCFG/LinearLanguage.lean \
             LeanCfgProject/FixedHCFG/LinearCanonical.lean \
             LeanCfgProject/FixedHCFG/LinearReconstruction.lean \
+            LeanCfgProject/FixedHCFG/LinearBasisExtraction.lean \
             LeanCfgProject/FixedHCFG/LinearTimeData.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
