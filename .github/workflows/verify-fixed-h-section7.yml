@@ -11,6 +11,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearShortlex.lean"
       - "LeanCfgProject/FixedHCFG/LinearTypedRefinement.lean"
       - "LeanCfgProject/FixedHCFG/LinearRuleSlots.lean"
+      - "LeanCfgProject/FixedHCFG/LinearTrimmed.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
 
@@ -47,6 +48,9 @@ jobs:
       - name: Build Proposition 7.7(ii) rule-slot bound
         run: lake build LeanCfgProject.FixedHCFG.LinearRuleSlots
 
+      - name: Build strict-linear reachable/productive trimming bridge
+        run: lake build LeanCfgProject.FixedHCFG.LinearTrimmed
+
       - name: Reject proof placeholders in Section 7 sources
         shell: bash
         run: |
@@ -57,7 +61,8 @@ jobs:
             LeanCfgProject/FixedHCFG/LinearDerivation.lean \
             LeanCfgProject/FixedHCFG/LinearShortlex.lean \
             LeanCfgProject/FixedHCFG/LinearTypedRefinement.lean \
-            LeanCfgProject/FixedHCFG/LinearRuleSlots.lean; then
+            LeanCfgProject/FixedHCFG/LinearRuleSlots.lean \
+            LeanCfgProject/FixedHCFG/LinearTrimmed.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
           fi
