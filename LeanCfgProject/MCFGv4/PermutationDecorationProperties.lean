@@ -57,8 +57,14 @@ private theorem orientedVariables_eq_flatMap (r : MCFGRule sig α)
       (r.orientedComponents π).flatMap
         (fun component => component.filterMap variableOfAtom) := by
   unfold orientedVariables orientedAtoms
-  change
-    ((r.orientedComponents π).foldr (· ++ ·) []).filterMap variableOfAtom = _
+  have hproj :
+      (fun atom : TemplateAtom sig α r.children =>
+        match atom with
+        | TemplateAtom.terminal _ => none
+        | TemplateAtom.variable rv => some rv) = variableOfAtom := by
+    funext atom
+    cases atom <;> rfl
+  rw [hproj]
   generalize r.orientedComponents π = components
   induction components with
   | nil => rfl
@@ -73,11 +79,16 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
     (hlin : r.Linear) (hnd : r.Nondeleting) :
     (r.permutationDecorate π hlin hnd).usedVariables =
       (r.orientedVariables π).map (r.decorateVariable π hlin hnd) := by
-  unfold usedVariables
-  change
-    (r.decoratedComponents π hlin hnd).flatMap
-        (fun component => component.filterMap variableOfAtom) = _
-  rw [orientedVariables_eq_flatMap]
+  simp only [usedVariables, permutationDecorate]
+  have hproj :
+      (fun atom : TemplateAtom (permutationDecoratedSignature sig) α
+          (r.decoratedChildren π hlin hnd) =>
+        match atom with
+        | TemplateAtom.terminal _ => none
+        | TemplateAtom.variable rv => some rv) = variableOfAtom := by
+    funext atom
+    cases atom <;> rfl
+  rw [hproj, orientedVariables_eq_flatMap]
   unfold decoratedComponents
   exact decoratedComponentList_variables r π hlin hnd (r.orientedComponents π)
 
