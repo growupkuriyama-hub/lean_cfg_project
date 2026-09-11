@@ -91,5 +91,35 @@ theorem actualLinearRuleObservation_word_right
       subst b
       simpa using hword
 
+/-- Every retained terminal rule comes from a realised finite source slot. -/
+theorem exists_actualLinearRuleSlot_terminal
+    {N : Type v} {Sigma : Type u} {P : Type w}
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
+    [Fintype (ActualLinearState Obs G)]
+    (X : ActualLinearState Obs G) (a : Sigma)
+    (hrule : (ActualLinearGrammar Obs G).terminalRule X a) :
+    ∃ s : ActualLinearRuleSlot Obs G,
+      actualLinearSlotParentState Obs G s = X ∧
+      G.rhs s.1.1 = LinearRHS.terminal a := by
+  have hruleF :
+      (fullTypedLinearGrammar Obs G).terminalRule X.1 a := by
+    simpa [ActualLinearGrammar, trimStrictLinearGrammar] using hrule
+  rcases hruleF.1 with ⟨r, hlhs, hrhs⟩
+  let raw : LinearTypedRuleSlot Obs P :=
+    (r, Obs.one, X.1.leftType, X.1.rightType)
+  have hparent : linearSlotParent Obs G raw = X.1 := by
+    apply encodeTypedNT_injective Obs
+    simp [encodeTypedNT, linearSlotParent, raw, hrhs, hlhs, hruleF.2]
+  have hchild : actualLinearSlotChild? Obs G raw = none := by
+    simp [actualLinearSlotChild?, linearSlotChild?, raw, hrhs]
+  have hreal : ActualLinearSlotRealized Obs G raw := by
+    simpa [ActualLinearSlotRealized, hchild, hparent] using X.2
+  let s : ActualLinearRuleSlot Obs G := ⟨raw, hreal⟩
+  refine ⟨s, ?_, ?_⟩
+  · apply Subtype.ext
+    simpa [s, actualLinearSlotParentState] using hparent
+  · simpa [s, raw] using hrhs
+
 end FixedHCFG
 end LeanCfgProject
