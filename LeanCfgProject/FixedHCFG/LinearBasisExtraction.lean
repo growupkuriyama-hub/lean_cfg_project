@@ -188,7 +188,7 @@ theorem actualLinearCS_subset_language
         (trimLinearLeftCtx F X ++ ([a] ++ trimLinearOmega F Y) ++
           trimLinearRightCtx F X) :=
       linear_occurs_plug_derivation (trimLinearChi_spec F X) hder
-    simpa [H, ActualLinearGrammar, List.append_assoc] using hplug
+    simpa [F, H, ActualLinearGrammar, List.append_assoc] using hplug
   · rcases hRight with ⟨X, Y, a, hrule, rfl⟩
     rcases trimLinearOmega_spec F Y with ⟨sp, hY⟩
     have hder : LinearDerives H X (trimLinearOmega F Y ++ [a]) :=
@@ -197,7 +197,7 @@ theorem actualLinearCS_subset_language
         (trimLinearLeftCtx F X ++ (trimLinearOmega F Y ++ [a]) ++
           trimLinearRightCtx F X) :=
       linear_occurs_plug_derivation (trimLinearChi_spec F X) hder
-    simpa [H, ActualLinearGrammar, List.append_assoc] using hplug
+    simpa [F, H, ActualLinearGrammar, List.append_assoc] using hplug
   · rcases hEps with ⟨heps, rfl⟩
     exact Or.inl ⟨rfl, heps⟩
 
