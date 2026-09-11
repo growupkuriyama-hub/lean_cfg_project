@@ -30,12 +30,24 @@ The Lean development currently checks, without `sorry` or `admit`:
 - an end-to-end bridge from a reduced SSBNF presentation, through the exact
   manuscript characteristic sample, to eventual exact hypotheses;
 - the Section 6 combinatorial/arithmetic envelope underlying the manuscript's
-  polynomial hypothesis-construction bound;
-- Section 7 finite typed-state / typed-rule counting envelopes;
+  `O(||K||^5)` hypothesis-construction bound;
+- Section 7 finite typed-state and typed-rule counting envelopes;
 - strict-linear derivation and occurrence spines;
-- cycle deletion and simple-spine bounds for the linear subclass;
-- the derivation-level content of Lemmas 7.3--7.6 in a generic strict-linear
-  grammar model.
+- cycle deletion and the derivation-level content of Lemmas 7.3--7.6;
+- the manuscript-faithful lexicographic-shortlex proof of Lemma 7.6;
+- the fixed-h typed linear refinement and its yield/context invariants;
+- Proposition 7.7(i) and the corrected `(production,q,m,n)` proof of
+  Proposition 7.7(ii), avoiding any cancellation assumption on the monoid;
+- reachable/productive trimming for strict-linear grammars;
+- the actual shortlex canonical `omega(X)` and `chi(X)` on the reduced
+  strict-linear grammar, including the bounds of Lemmas 7.5--7.6;
+- Lemma 7.8 exact reconstruction via learner Rules (1)--(5);
+- a theorem-facing Theorem 7.9 package combining Lemma 7.8, a polynomial
+  total-data envelope for `CS_lin`, and the Section-6 degree-five construction
+  envelope.
+
+The focused Section-7 CI run `34594044883` is green through the Theorem 7.9
+time-and-data envelope and the proof-placeholder audit.
 
 The aggregate core build target is:
 
@@ -71,18 +83,30 @@ Thus Theorem 5.5 remains valid, but the prose statement/proof of Lemma 5.2(i)
 and the height-one case of Theorem 5.5 should be revised before the next
 manuscript version.
 
-## Current frontier: manuscript-faithful Section 7 shortlex bridge
+## Current frontier: discharge the abstract Section-7 interface from the actual `H`
 
-The generic strict-linear spine development is green.  The remaining Section 7
-work is to connect those generic bounds to the manuscript's exact canonical
-choices and then to the retained typed linear grammar `H`.
+The Section-7 mathematical chain is now green at the theorem-facing interface,
+including Lemma 7.8 and the time/data envelope for Theorem 7.9.  The remaining
+high-value bridge is to construct that interface directly from the manuscript's
+actual grammar
 
-A subtle proof obligation appears in Lemma 7.6: `chi(X)` is minimal in the
-lexicographic extension of word-shortlex, not by total context length.  The
-formalization therefore proves the stronger cycle-deletion fact that the
-replacement context is strictly smaller in the *actual context shortlex order*.
-This is implemented in `LinearShortlex.lean`; its CI is being stabilized before
-we use it as the final bridge to Proposition 7.7 and Theorem 7.9.
+```text
+H = trim(fullTypedLinearGrammar Obs G0)
+```
+
+and its exact `CS_lin(H)`.
+
+The next layer therefore proves generic strict-linear language semantics and a
+plugging lemma (`S =>* u X v` together with `X =>* w` gives `u w v`), then uses
+the canonical `omega/chi` witnesses of the trimmed typed grammar to build the
+`LinearReconstructionBasis` automatically.  This will remove the remaining
+abstract assumptions `hCSrepr`, witness typing, and rule-observation membership
+from the Section-7 end-to-end statement.
+
+A separate remaining normalization target is Proposition 7.2: the present Lean
+development starts from an indexed SSLNF presentation and does not yet verify a
+concrete polynomial-time transformation from an arbitrary linear CFG to reduced
+SSLNF.
 
 See `LEAN_VERIFICATION_GAPS.md` for manuscript-side consequences and revision
 notes.
