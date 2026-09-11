@@ -89,7 +89,7 @@ private theorem filterMap_foldr_append {β γ : Type*}
 order, not the multiset of components. -/
 theorem orientedComponents_perm_components (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) :
-    r.orientedComponents π ~ r.components := by
+    List.Perm (r.orientedComponents π) r.components := by
   have hbase :
       List.ofFn (fun i : Fin (sig.arity r.lhs) => r.componentAt i) =
         r.components := by
@@ -100,20 +100,15 @@ theorem orientedComponents_perm_components (r : MCFGRule sig α)
             simpa [componentAt] using
               (List.ofFn_congr r.components_length (List.get r.components))
       _ = r.components := List.ofFn_get _
-  calc
-    r.orientedComponents π =
-        List.ofFn ((fun i : Fin (sig.arity r.lhs) => r.componentAt i) ∘ π) := by
-          rfl
-    _ ~ List.ofFn (fun i : Fin (sig.arity r.lhs) => r.componentAt i) :=
-      π.ofFn_comp_perm _
-    _ = r.components := hbase
+  simpa [orientedComponents, Function.comp_def, hbase] using
+    (π.ofFn_comp_perm (fun i : Fin (sig.arity r.lhs) => r.componentAt i))
 
 /-- The oriented variable scan is a permutation of the rule's ordinary
 left-to-right variable list.  Thus parent orientation cannot create or delete a
 child-component occurrence. -/
 theorem orientedVariables_perm_usedVariables (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) :
-    r.orientedVariables π ~ r.usedVariables := by
+    List.Perm (r.orientedVariables π) r.usedVariables := by
   have hflat :=
     (r.orientedComponents_perm_components π).flatMap
       (f := fun component =>
@@ -134,8 +129,7 @@ theorem orientedVariables_perm_usedVariables (r : MCFGRule sig α)
 theorem orientedVariables_nodup (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) (hlin : r.Linear) :
     (r.orientedVariables π).Nodup := by
-  have hused : r.usedVariables.Nodup := by
-    simpa [Linear] using hlin
+  have hused : r.usedVariables.Nodup := hlin.nodup
   exact (r.orientedVariables_perm_usedVariables π).nodup_iff.mpr hused
 
 /-- Under linearity, the recorded superscripts for one child have no
@@ -155,7 +149,7 @@ theorem childComponentOrder_nodup (r : MCFGRule sig α)
       subst c
       subst c'
       simp at hb hb'
-      have hval : k.val = k'.val := hb.symm.trans hb'
+      have hval : k.val = k'.val := hb.trans hb'.symm
       have hk : k = k' := Fin.ext hval
       subst k'
       rfl
@@ -172,10 +166,11 @@ theorem childComponentOrder_bounded (r : MCFGRule sig α)
   unfold childComponentOrder at hk
   rcases List.mem_filterMap.1 hk with ⟨rv, hrv, hmem⟩
   by_cases hc : rv.child = j
-  · have hlt := rv.component.isLt
-    rw [hc] at hlt
-    simp [hc] at hmem
-    simpa [hmem] using hlt
+  · rcases rv with ⟨c, component⟩
+    dsimp at hc hmem ⊢
+    subst c
+    simp at hmem
+    simpa [hmem] using component.isLt
   · simp [hc] at hmem
 
 /-- Nondeletion guarantees that every component superscript of child `j`
@@ -214,8 +209,8 @@ component order. -/
 theorem childComponentOrder_perm_range (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
     (j : Fin r.children.length) (hlin : r.Linear) (hnd : r.Nondeleting) :
-    r.childComponentOrder π j ~
-      List.range (sig.arity (r.children.get j)) := by
+    List.Perm (r.childComponentOrder π j)
+      (List.range (sig.arity (r.children.get j))) := by
   refine (List.perm_ext_iff_of_nodup
     (r.childComponentOrder_nodup π j hlin) (by simp)).2 ?_
   intro k
