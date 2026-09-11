@@ -31,6 +31,41 @@ def plugSyntacticContext
     (q : SyntacticContext T d) (s : Tuple T d) : T :=
   (List.ofFn (fun i : Fin d => q i.castSucc * s i)).foldr (· * ·) (q (Fin.last d))
 
+/-- A monoid homomorphism transports a right-associated word concatenation fold. -/
+theorem map_word_foldr
+    {Sigma : Type u} {T : Type v} [Monoid T]
+    (eta : Word Sigma →* T) (xs : List (Word Sigma)) (z : Word Sigma) :
+    eta (xs.foldr (· ++ ·) z) =
+      (xs.map eta).foldr (· * ·) (eta z) := by
+  induction xs with
+  | nil =>
+      rfl
+  | cons a tail ih =>
+      change eta (a * tail.foldr (· ++ ·) z) =
+        eta a * (tail.map eta).foldr (· * ·) (eta z)
+      rw [eta.map_mul, ih]
+
+/--
+Part (i), algebraic core, of Lemma `alg:lem:profile`: applying `eta` after
+plugging a concrete tuple context is exactly the finite monoid profile product.
+-/
+theorem map_plugTupleContext
+    {Sigma : Type u} {T : Type v} [Monoid T]
+    (eta : Word Sigma →* T) {d : Nat}
+    (c : TupleContext Sigma d) (x : Tuple (Word Sigma) d) :
+    eta (plugTupleContext c x) =
+      plugSyntacticContext (contextImage eta c) (tupleImage eta x) := by
+  unfold plugTupleContext plugSyntacticContext contextImage tupleImage
+  rw [map_word_foldr eta]
+  simp only [List.map_ofFn]
+  congr 1
+  · apply List.ext_get
+    · simp
+    · intro n hn₁ hn₂
+      simp only [List.getElem_map, List.getElem_ofFn]
+      exact eta.map_mul _ _
+  · rfl
+
 /-- The finite profile `Phi_d(s)` of the manuscript. -/
 def FiniteProfile
     {T : Type v} [Monoid T] (P : Set T) {d : Nat}
