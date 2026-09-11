@@ -13,6 +13,7 @@ on:
       - "LeanCfgProject/FixedHCFG/LinearRuleSlots.lean"
       - "LeanCfgProject/FixedHCFG/LinearTrimmed.lean"
       - "LeanCfgProject/FixedHCFG/LinearCanonical.lean"
+      - "LeanCfgProject/FixedHCFG/LinearReconstruction.lean"
       - ".github/workflows/verify-fixed-h-section7.yml"
   workflow_dispatch:
 
@@ -59,6 +60,9 @@ jobs:
       - name: Build canonical shortlex witnesses on the reduced linear grammar
         run: lake build LeanCfgProject.FixedHCFG.LinearCanonical
 
+      - name: Build Lemma 7.8 exact reconstruction
+        run: lake build LeanCfgProject.FixedHCFG.LinearReconstruction
+
       - name: Reject proof placeholders in Section 7 sources
         shell: bash
         run: |
@@ -71,7 +75,8 @@ jobs:
             LeanCfgProject/FixedHCFG/LinearTypedRefinement.lean \
             LeanCfgProject/FixedHCFG/LinearRuleSlots.lean \
             LeanCfgProject/FixedHCFG/LinearTrimmed.lean \
-            LeanCfgProject/FixedHCFG/LinearCanonical.lean; then
+            LeanCfgProject/FixedHCFG/LinearCanonical.lean \
+            LeanCfgProject/FixedHCFG/LinearReconstruction.lean; then
             echo "Found a proof placeholder in Section 7 Lean sources."
             exit 1
           fi
