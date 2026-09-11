@@ -46,6 +46,9 @@ jobs:
       - name: Build canonical relational morphism
         run: lake build LeanCfgProject.SCLCompression.CanonicalRelation
 
+      - name: Build relational-characterization kernel
+        run: lake build LeanCfgProject.SCLCompression.RelationalCharacterizationKernel
+
       - name: Reject proof placeholders in #3 sources
         shell: bash
         run: |
