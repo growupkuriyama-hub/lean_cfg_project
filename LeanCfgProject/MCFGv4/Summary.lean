@@ -3,6 +3,7 @@ import LeanCfgProject.MCFGv4.SemanticKernel
 import LeanCfgProject.MCFGv4.StandardMCFG
 import LeanCfgProject.MCFGv4.OrientedContexts
 import LeanCfgProject.MCFGv4.TupleSubstitutability
+import LeanCfgProject.MCFGv4.FanoutOne
 
 /-!
 # MCFGv4.Summary
@@ -13,6 +14,7 @@ The current target contains the independent finite-observation foundation,
 fresh arbitrary-finite-rank standard MCFG syntax, the concrete orientation-sector
 context model, and the paper-facing semantic tuple-substitutability core.  In
 particular it now includes the orientation-sector canonicalization machinery,
-the identity-sector equivalence proof, shared-context substitutability, and the
-semantic monotonicity theorem for refinements of the finite observation.
+the identity-sector equivalence proof, shared-context substitutability,
+observation-refinement monotonicity, and the exact fan-out-one specialization
+to ordinary two-sided distributions.
 -/
