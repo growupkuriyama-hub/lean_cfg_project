@@ -147,19 +147,28 @@ theorem actualLinearCS_iff_mem_actualLinearSampleFinset
         ⟨s, hsParent, hsShape⟩
       refine ⟨Sum.inr (Sum.inl s), ?_⟩
       have hword := actualLinearRuleObservation_word_terminal Obs G s a hsShape
-      simpa [actualLinearSampleWord, hsParent] using hword.trans hz.symm
+      rw [hsParent] at hword
+      have hEq : (actualLinearRuleObservation Obs G s).word = z :=
+        hword.trans hz.symm
+      simpa [actualLinearSampleWord] using hEq
     · rcases hLeft with ⟨X, Y, a, hrule, hz⟩
       rcases exists_actualLinearRuleSlot_left Obs G X Y a hrule with
         ⟨s, hsShape, hsParent, hsChild⟩
       refine ⟨Sum.inr (Sum.inl s), ?_⟩
       have hword := actualLinearRuleObservation_word_left Obs G s a Y.1.label hsShape
-      simpa [actualLinearSampleWord, hsParent, hsChild] using hword.trans hz.symm
+      rw [hsParent, hsChild] at hword
+      have hEq : (actualLinearRuleObservation Obs G s).word = z :=
+        hword.trans hz.symm
+      simpa [actualLinearSampleWord] using hEq
     · rcases hRight with ⟨X, Y, a, hrule, hz⟩
       rcases exists_actualLinearRuleSlot_right Obs G X Y a hrule with
         ⟨s, hsShape, hsParent, hsChild⟩
       refine ⟨Sum.inr (Sum.inl s), ?_⟩
       have hword := actualLinearRuleObservation_word_right Obs G s Y.1.label a hsShape
-      simpa [actualLinearSampleWord, hsParent, hsChild] using hword.trans hz.symm
+      rw [hsParent, hsChild] at hword
+      have hEq : (actualLinearRuleObservation Obs G s).word = z :=
+        hword.trans hz.symm
+      simpa [actualLinearSampleWord] using hEq
     · rcases hEps with ⟨heps, hz⟩
       let e : ActualLinearEpsilonSlot Obs G := ⟨(), heps⟩
       refine ⟨Sum.inr (Sum.inr e), ?_⟩
