@@ -1,0 +1,37 @@
+name: Verify fixed-h TCS Lean formalization
+
+on:
+  push:
+    branches:
+      - tcs-fixed-h-verification
+    paths:
+      - "LeanCfgProject/FixedHCFG/**"
+      - ".github/workflows/verify-fixed-h-tcs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-fixed-h-soundness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build Theorem 5.6 target
+        run: lake build LeanCfgProject.FixedHCFG.Soundness
+
+      - name: Reject proof placeholders in fixed-h sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n -E '\b(sorry|admit)\b' LeanCfgProject/FixedHCFG; then
+            echo "Found a proof placeholder in LeanCfgProject/FixedHCFG."
+            exit 1
+          fi
