@@ -122,7 +122,7 @@ theorem chosenContext_spec {N : Type v} {Sigma : Type u}
     (Classical.choose_spec (exists_preferred_context X))
 
 /-- Anchor observation associated with a retained state. -/
-def anchorWord {N : Type v} {Sigma : Type u}
+noncomputable def anchorWord {N : Type v} {Sigma : Type u}
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N}
@@ -130,7 +130,7 @@ def anchorWord {N : Type v} {Sigma : Type u}
   chosenLeftCtx X ++ chosenOmega X ++ chosenRightCtx X
 
 /-- Observation associated with a retained terminal rule. -/
-def terminalObservationWord {N : Type v} {Sigma : Type u}
+noncomputable def terminalObservationWord {N : Type v} {Sigma : Type u}
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N}
@@ -138,7 +138,7 @@ def terminalObservationWord {N : Type v} {Sigma : Type u}
   chosenLeftCtx X ++ [a] ++ chosenRightCtx X
 
 /-- Observation associated with a retained binary rule. -/
-def binaryObservationWord {N : Type v} {Sigma : Type u}
+noncomputable def binaryObservationWord {N : Type v} {Sigma : Type u}
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N}
@@ -151,7 +151,7 @@ minimal `CS`, this set includes anchors explicitly.  This avoids using shortlex
 root-decomposition in the extraction bridge while preserving finiteness and all
 reconstruction guarantees.
 -/
-def EnrichedCS {N : Type v} {Sigma : Type u}
+noncomputable def EnrichedCS {N : Type v} {Sigma : Type u}
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N}
