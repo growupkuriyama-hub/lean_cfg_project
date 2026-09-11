@@ -55,7 +55,7 @@ noncomputable def decoratedChildren (r : MCFGRule sig α)
   simp [decoratedChildren, decoratedChild]
 
 /-- The child-index cast from an original rule into its decorated child list. -/
-def decoratedChildIndex (r : MCFGRule sig α)
+noncomputable def decoratedChildIndex (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
     (hlin : r.Linear) (hnd : r.Nondeleting)
     (j : Fin r.children.length) :
