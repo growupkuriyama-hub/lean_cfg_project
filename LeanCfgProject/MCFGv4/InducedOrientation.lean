@@ -109,26 +109,19 @@ child-component occurrence. -/
 theorem orientedVariables_perm_usedVariables (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) :
     List.Perm (r.orientedVariables π) r.usedVariables := by
-  have hflat :=
-    (r.orientedComponents_perm_components π).flatMap
-      (f := fun component =>
-        component.filterMap fun atom =>
-          match atom with
-          | TemplateAtom.terminal _ => none
-          | TemplateAtom.variable rv => some rv)
-      (g := fun component =>
-        component.filterMap fun atom =>
-          match atom with
-          | TemplateAtom.terminal _ => none
-          | TemplateAtom.variable rv => some rv)
-      (fun _ _ => List.Perm.refl _)
-  simpa [orientedVariables, orientedAtoms, usedVariables,
-    filterMap_foldr_append] using hflat
+  unfold orientedVariables orientedAtoms
+  rw [filterMap_foldr_append]
+  unfold usedVariables
+  apply (r.orientedComponents_perm_components π).flatMap
+  intro component hcomponent
+  exact List.Perm.refl _
 
 /-- Linearity remains visible after an arbitrary parent-orientation scan. -/
 theorem orientedVariables_nodup (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs))) (hlin : r.Linear) :
     (r.orientedVariables π).Nodup := by
+  letI : Std.Irrefl (fun x y : RuleVariable sig r.children => x ≠ y) :=
+    ⟨fun x h => h rfl⟩
   have hused : r.usedVariables.Nodup := hlin.nodup
   exact (r.orientedVariables_perm_usedVariables π).nodup_iff.mpr hused
 
@@ -212,7 +205,7 @@ theorem childComponentOrder_perm_range (r : MCFGRule sig α)
     List.Perm (r.childComponentOrder π j)
       (List.range (sig.arity (r.children.get j))) := by
   refine (List.perm_ext_iff_of_nodup
-    (r.childComponentOrder_nodup π j hlin) (by simp)).2 ?_
+    (r.childComponentOrder_nodup π j hlin) List.nodup_range).2 ?_
   intro k
   rw [r.childComponentOrder_mem_iff π j hnd k]
   simp
