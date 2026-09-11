@@ -1,0 +1,42 @@
+name: Verify MCFG v4 core
+
+on:
+  push:
+    branches:
+      - mcfg-v4-verification
+    paths:
+      - "LeanCfgProject/MCFGv4/**"
+      - "FORMALIZATION_MCFG_V4.md"
+      - ".github/workflows/verify-mcfg-v4-core.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: mcfg-v4-core-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build isolated MCFG v4 summary
+        run: lake build LeanCfgProject.MCFGv4.Summary
+
+      - name: Reject proof placeholders in MCFG v4 Lean sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n -E '\b(sorry|admit)\b' LeanCfgProject/MCFGv4 --include='*.lean'; then
+            echo "Found a proof placeholder in MCFG v4 Lean sources."
+            exit 1
+          fi
