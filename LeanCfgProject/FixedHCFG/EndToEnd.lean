@@ -19,10 +19,7 @@ theorem keptDerives_root_kept
   | terminal hrule htype hkeep => exact hkeep
   | binary hrule hproduct hkeep left right => exact hkeep
 
-/--
-Every trimmed derivation is represented by the concrete reconstruction basis
-extracted from the retained typed states.
--/
+/-- Every trimmed derivation is represented by the concrete reconstruction basis. -/
 theorem keptDerives_to_enrichedBasis_exists
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -58,10 +55,7 @@ theorem keptDerives_to_enrichedBasis_exists
       refine ⟨hkeep, ?_⟩
       exact BasisDerives.binary hRule hLeftBasis hRightBasis
 
-/--
-Conversely, every derivation in the extracted reconstruction basis is a
-trimmed typed derivation after forgetting the subtype wrappers.
--/
+/-- Every extracted-basis derivation is a trimmed typed derivation. -/
 theorem enrichedBasisDerives_to_kept
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -92,10 +86,7 @@ theorem enrichedBasisDerives_to_kept
       subst nZ
       exact KeptDerives.binary hBinary hProduct hXKeep ihLeft ihRight
 
-/--
-The concrete reconstruction basis extracted from retained typed states has
-exactly the trimmed typed language.
--/
+/-- The extracted reconstruction basis has exactly the trimmed typed language. -/
 theorem enrichedBasisLanguage_iff_trimmed
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -132,10 +123,7 @@ theorem enrichedBasisLanguage_iff_trimmed
            rightType := Obs.one }, hKeep⟩
       exact Or.inr ⟨X, ⟨hA, rfl, rfl⟩, hBasis⟩
 
-/--
-Combining the previous theorem with Lemma 4.5(iii), the extracted basis has
-exactly the language of the original reduced SSBNF presentation.
--/
+/-- The extracted basis has exactly the original SSBNF presentation language. -/
 theorem enrichedBasisLanguage_iff_untyped
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -150,10 +138,7 @@ theorem enrichedBasisLanguage_iff_untyped
       (lemma_4_5_iii_trimmed_language
         Obs terminal binary start epsilonStart w)
 
-/--
-Plugging any terminal derivation into a typed occurrence yields a successful
-full typed start derivation of the surrounding word.
--/
+/-- Plugging a terminal derivation into an occurrence yields a full typed start derivation. -/
 theorem typedOccurs_plug_start
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -190,7 +175,7 @@ theorem typedOccurs_plug_start
       refine ⟨S, s, hS, ?_⟩
       simpa [List.append_assoc] using hRoot
 
-/-- Plugging a typed occurrence and then trimming gives a word of the trimmed language. -/
+/-- Plugging a typed occurrence and trimming gives a word of the trimmed language. -/
 theorem typedOccurs_plug_trimmed
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -213,10 +198,7 @@ theorem typedOccurs_plug_trimmed
     Obs terminal binary start hRootOcc hRoot
   exact Or.inr ⟨A, p, hA, hKept⟩
 
-/--
-Lemma 4.7 for the enriched observation interface: every observation word is a
-positive example of the trimmed typed language.
--/
+/-- Lemma 4.7 for the enriched interface: every observation is positive. -/
 theorem enrichedCS_subset_trimmed
     {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
@@ -279,7 +261,9 @@ theorem enrichedCS_subset_trimmed
       (w := chosenOmega Ys ++ chosenOmega Zs)
       Obs terminal binary start epsilonStart
       (chosenContext_spec Xs).1 hDeriv
-    simpa [Xs, Ys, Zs, binaryObservationWord, List.append_assoc] using hPlug
+    change TrimmedTypedStartLanguage Obs terminal binary start epsilonStart
+      (chosenLeftCtx Xs ++ chosenOmega Ys ++ chosenOmega Zs ++ chosenRightCtx Xs)
+    simpa only [List.append_assoc] using hPlug
   · rcases hEps with ⟨rfl, hEpsilon⟩
     exact Or.inl ⟨rfl, hEpsilon⟩
 
@@ -314,9 +298,7 @@ theorem enrichedCS_subset_basisLanguage
     Obs terminal binary start epsilonStart hw
 
 /--
-End-to-end version of Corollary 5.8 for a concrete SSBNF presentation: once
-its finite typed observation set has appeared in a positive text, every later
-learner hypothesis has exactly the original presentation language.
+End-to-end Corollary 5.8 for a concrete SSBNF presentation.
 -/
 theorem corollary_5_8_from_ssbnf
     {N : Type v} {Sigma : Type u}
