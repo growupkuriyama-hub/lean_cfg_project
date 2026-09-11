@@ -41,47 +41,47 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      - name: Build Section 7 finite bounds
-        run: lake build LeanCfgProject.FixedHCFG.LinearBounds
-
-      - name: Build strict-linear spine deletion
-        run: lake build LeanCfgProject.FixedHCFG.LinearSpine
-
-      - name: Build derivation-level Lemmas 7.3--7.6
-        run: lake build LeanCfgProject.FixedHCFG.LinearDerivation
-
-      - name: Build manuscript shortlex bridge for Lemmas 7.5--7.6
-        run: lake build LeanCfgProject.FixedHCFG.LinearShortlex
-
-      - name: Build actual typed-linear refinement bridge
-        run: lake build LeanCfgProject.FixedHCFG.LinearTypedRefinement
-
-      - name: Build Proposition 7.7(ii) rule-slot bound
-        run: lake build LeanCfgProject.FixedHCFG.LinearRuleSlots
-
-      - name: Build strict-linear reachable/productive trimming bridge
-        run: lake build LeanCfgProject.FixedHCFG.LinearTrimmed
-
-      - name: Build strict-linear language and trimming semantics bridge
-        run: lake build LeanCfgProject.FixedHCFG.LinearLanguage
-
-      - name: Build canonical shortlex witnesses on the reduced linear grammar
-        run: lake build LeanCfgProject.FixedHCFG.LinearCanonical
-
-      - name: Build Lemma 7.8 exact reconstruction
-        run: lake build LeanCfgProject.FixedHCFG.LinearReconstruction
-
-      - name: Build actual typed-linear reconstruction-basis extraction
-        run: lake build LeanCfgProject.FixedHCFG.LinearBasisExtraction
-
-      - name: Build Theorem 7.9 polynomial time-and-data envelope
-        run: lake build LeanCfgProject.FixedHCFG.LinearTimeData
+      - name: Build newest actual realised-sample target
+        run: lake build LeanCfgProject.FixedHCFG.LinearActualSample
 
       - name: Build actual typed-linear Theorem 7.9 specialization
         run: lake build LeanCfgProject.FixedHCFG.LinearActualTimeData
 
-      - name: Build actual realised linear sample slots
-        run: lake build LeanCfgProject.FixedHCFG.LinearActualSample
+      - name: Build actual typed-linear reconstruction-basis extraction
+        run: lake build LeanCfgProject.FixedHCFG.LinearBasisExtraction
+
+      - name: Build Lemma 7.8 exact reconstruction
+        run: lake build LeanCfgProject.FixedHCFG.LinearReconstruction
+
+      - name: Build Theorem 7.9 polynomial time-and-data envelope
+        run: lake build LeanCfgProject.FixedHCFG.LinearTimeData
+
+      - name: Build canonical shortlex witnesses on the reduced linear grammar
+        run: lake build LeanCfgProject.FixedHCFG.LinearCanonical
+
+      - name: Build strict-linear language and trimming semantics bridge
+        run: lake build LeanCfgProject.FixedHCFG.LinearLanguage
+
+      - name: Build strict-linear reachable/productive trimming bridge
+        run: lake build LeanCfgProject.FixedHCFG.LinearTrimmed
+
+      - name: Build Proposition 7.7(ii) rule-slot bound
+        run: lake build LeanCfgProject.FixedHCFG.LinearRuleSlots
+
+      - name: Build actual typed-linear refinement bridge
+        run: lake build LeanCfgProject.FixedHCFG.LinearTypedRefinement
+
+      - name: Build manuscript shortlex bridge for Lemmas 7.5--7.6
+        run: lake build LeanCfgProject.FixedHCFG.LinearShortlex
+
+      - name: Build derivation-level Lemmas 7.3--7.6
+        run: lake build LeanCfgProject.FixedHCFG.LinearDerivation
+
+      - name: Build strict-linear spine deletion
+        run: lake build LeanCfgProject.FixedHCFG.LinearSpine
+
+      - name: Build Section 7 finite bounds
+        run: lake build LeanCfgProject.FixedHCFG.LinearBounds
 
       - name: Reject proof placeholders in Section 7 sources
         shell: bash
