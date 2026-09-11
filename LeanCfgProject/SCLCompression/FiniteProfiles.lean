@@ -87,6 +87,7 @@ theorem inTupleDistribution_iff_finiteProfile
       contextImage eta c ∈ FiniteProfile P (tupleImage eta x) := by
   unfold InTupleDistribution FiniteProfile
   rw [hL (plugTupleContext c x), map_plugTupleContext eta c x]
+  rfl
 
 /-- Unsafe syntactic tuple pair from Definition `U_d(T,P)`. -/
 def SyntacticUnsafe
@@ -113,6 +114,130 @@ theorem contextImage_liftContext
     contextImage eta (liftContext eta heta q) = q := by
   funext j
   exact Classical.choose_spec (heta (q j))
+
+/--
+Part (ii) of Lemma `alg:lem:profile`: complete tuple distributions agree
+exactly when the corresponding finite syntactic profiles agree.
+-/
+theorem sameTupleDistribution_iff_finiteProfile_eq
+    {Sigma : Type u} {T : Type v} [Monoid T]
+    (L : Language Sigma) (eta : Word Sigma →* T) (P : Set T)
+    (hL : ∀ w : Word Sigma, w ∈ L ↔ eta w ∈ P)
+    (heta : Function.Surjective eta)
+    {d : Nat} (x y : Tuple (Word Sigma) d) :
+    SameTupleDistribution L x y ↔
+      FiniteProfile P (tupleImage eta x) =
+        FiniteProfile P (tupleImage eta y) := by
+  constructor
+  · intro hsame
+    apply Set.ext
+    intro q
+    have hc : contextImage eta (liftContext eta heta q) = q :=
+      contextImage_liftContext eta heta q
+    constructor
+    · intro hqx
+      have hxprof :
+          contextImage eta (liftContext eta heta q) ∈
+            FiniteProfile P (tupleImage eta x) := by
+        rw [hc]
+        exact hqx
+      have hxmem : InTupleDistribution L x (liftContext eta heta q) :=
+        (inTupleDistribution_iff_finiteProfile L eta P hL x
+          (liftContext eta heta q)).mpr hxprof
+      have hymem : InTupleDistribution L y (liftContext eta heta q) :=
+        (hsame (liftContext eta heta q)).mp hxmem
+      have hyprof :=
+        (inTupleDistribution_iff_finiteProfile L eta P hL y
+          (liftContext eta heta q)).mp hymem
+      rw [hc] at hyprof
+      exact hyprof
+    · intro hqy
+      have hyprof :
+          contextImage eta (liftContext eta heta q) ∈
+            FiniteProfile P (tupleImage eta y) := by
+        rw [hc]
+        exact hqy
+      have hymem : InTupleDistribution L y (liftContext eta heta q) :=
+        (inTupleDistribution_iff_finiteProfile L eta P hL y
+          (liftContext eta heta q)).mpr hyprof
+      have hxmem : InTupleDistribution L x (liftContext eta heta q) :=
+        (hsame (liftContext eta heta q)).mpr hymem
+      have hxprof :=
+        (inTupleDistribution_iff_finiteProfile L eta P hL x
+          (liftContext eta heta q)).mp hxmem
+      rw [hc] at hxprof
+      exact hxprof
+  · intro hprof c
+    constructor
+    · intro hxmem
+      have hxprof :=
+        (inTupleDistribution_iff_finiteProfile L eta P hL x c).mp hxmem
+      apply (inTupleDistribution_iff_finiteProfile L eta P hL y c).mpr
+      rw [← hprof]
+      exact hxprof
+    · intro hymem
+      have hyprof :=
+        (inTupleDistribution_iff_finiteProfile L eta P hL y c).mp hymem
+      apply (inTupleDistribution_iff_finiteProfile L eta P hL x c).mpr
+      rw [hprof]
+      exact hyprof
+
+/--
+Part (iii) of Lemma `alg:lem:profile`: two tuples share an accepting concrete
+context exactly when their finite syntactic profiles intersect.
+-/
+theorem shareTupleContext_iff_finiteProfiles_inter_nonempty
+    {Sigma : Type u} {T : Type v} [Monoid T]
+    (L : Language Sigma) (eta : Word Sigma →* T) (P : Set T)
+    (hL : ∀ w : Word Sigma, w ∈ L ↔ eta w ∈ P)
+    (heta : Function.Surjective eta)
+    {d : Nat} (x y : Tuple (Word Sigma) d) :
+    ShareTupleContext L x y ↔
+      (FiniteProfile P (tupleImage eta x) ∩
+        FiniteProfile P (tupleImage eta y)).Nonempty := by
+  constructor
+  · rintro ⟨c, hxc, hyc⟩
+    refine ⟨contextImage eta c, ?_⟩
+    exact ⟨
+      (inTupleDistribution_iff_finiteProfile L eta P hL x c).mp hxc,
+      (inTupleDistribution_iff_finiteProfile L eta P hL y c).mp hyc⟩
+  · rintro ⟨q, hqx, hqy⟩
+    refine ⟨liftContext eta heta q, ?_, ?_⟩
+    · apply (inTupleDistribution_iff_finiteProfile L eta P hL x
+        (liftContext eta heta q)).mpr
+      rw [contextImage_liftContext eta heta q]
+      exact hqx
+    · apply (inTupleDistribution_iff_finiteProfile L eta P hL y
+        (liftContext eta heta q)).mpr
+      rw [contextImage_liftContext eta heta q]
+      exact hqy
+
+/--
+The semantic unsafe-pair relation is exactly carried to the finite syntactic
+unsafe relation by the componentwise syntactic morphism.
+-/
+theorem semanticUnsafe_iff_syntacticUnsafe
+    {Sigma : Type u} {T : Type v} [Monoid T]
+    (L : Language Sigma) (eta : Word Sigma →* T) (P : Set T)
+    (hL : ∀ w : Word Sigma, w ∈ L ↔ eta w ∈ P)
+    (heta : Function.Surjective eta)
+    (d : Nat) (x y : Tuple (Word Sigma) d) :
+    SemanticUnsafe L d x y ↔
+      SyntacticUnsafe P d (tupleImage eta x) (tupleImage eta y) := by
+  unfold SemanticUnsafe SyntacticUnsafe
+  have hshare :=
+    shareTupleContext_iff_finiteProfiles_inter_nonempty L eta P hL heta x y
+  have hsame :=
+    sameTupleDistribution_iff_finiteProfile_eq L eta P hL heta x y
+  constructor
+  · rintro ⟨hshared, hnotSame⟩
+    refine ⟨hshare.mp hshared, ?_⟩
+    intro hprofiles
+    exact hnotSame (hsame.mpr hprofiles)
+  · rintro ⟨hinter, hprofilesNe⟩
+    refine ⟨hshare.mpr hinter, ?_⟩
+    intro hsameDist
+    exact hprofilesNe (hsame.mp hsameDist)
 
 end SCLCompression
 end LeanCfgProject
