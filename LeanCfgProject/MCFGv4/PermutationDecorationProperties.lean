@@ -200,6 +200,19 @@ theorem permutationDecorate_nondeleting (r : MCFGRule sig α)
   have hused : rv ∈ r.usedVariables := hnd rv.child rv.component
   exact (r.orientedVariables_perm_usedVariables π).mem_iff.mpr hused
 
+/-- The inverse induced orientation sends the element encountered at scan
+position `i` back to that position.  This is the list-level normalization fact
+needed for the nonpermuting part of permutation decoration. -/
+private theorem inducedOrientation_symm_get_val (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (j : Fin r.children.length) (hlin : r.Linear) (hnd : r.Nondeleting)
+    (i : Fin (r.childComponentFinOrder π j).length) :
+    ((r.inducedOrientation π j hlin hnd).symm
+      ((r.childComponentFinOrder π j).get i)).val = i.val := by
+  unfold inducedOrientation
+  dsimp
+  simp [r.childComponentFinOrder_nodup π j hlin]
+
 end MCFGRule
 
 end MCFGv4
