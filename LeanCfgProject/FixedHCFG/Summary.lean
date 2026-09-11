@@ -1,4 +1,4 @@
-import LeanCfgProject.FixedHCFG.EndToEnd
+import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
 namespace FixedHCFG
@@ -7,21 +7,26 @@ namespace FixedHCFG
 Paper-facing aggregate import for the fixed-h TCS formalization.
 
 Current verified chain:
-* Section 4 typed refinement: Lemmas 4.4, 4.5(i)--(iii), 4.6;
-* finite retained-state extraction and finite enriched observation interface;
-* Lemma 4.7-style positivity of all extracted observation words;
-* exact equality between the extracted reconstruction-basis language and the
+* Section 4 typed refinement: Lemmas 4.4, 4.5(i)--(iii), and 4.6;
+* manuscript-faithful shortlex witnesses `omega` and `chi`;
+* the exact Section-4 characteristic sample `CS(G~)`, with no auxiliary anchor
+  family, together with Lemmas 4.7 and 4.8 and the finite reconstruction-basis
+  interface of Theorem 4.12;
+* exact equality between the paper reconstruction-basis language and the
   original SSBNF presentation language;
 * Section 5 learner soundness: Theorem 5.6;
-* reconstruction-basis interface: Lemmas 5.2--5.4 and Theorems 5.5, 5.7;
-* semantic identification from finite observations: Corollary 5.8;
-* end-to-end Corollary 5.8 from a concrete SSBNF presentation through typed
-  extraction to eventual learner-language stabilization.
+* reconstruction: Lemmas 5.2--5.4 and Theorems 5.5 and 5.7;
+* semantic identification in the limit: Corollary 5.8;
+* end-to-end Corollary 5.8 from a concrete SSBNF presentation, using the exact
+  manuscript characteristic sample;
+* Section 6 combinatorial complexity envelope: quadratic factorization
+  enumeration and the algebraic absorption of the displayed construction-cost
+  expression into degree five.
 
-The remaining manuscript-faithful refinement is to replace the enriched
-observation interface by the exact shortlex-minimal `omega`, `chi`, and
-`CS(G~)` of Sections 4.2--4.4.  The end-to-end learning argument itself no
-longer depends on that normalization choice.
+The Section-6 file verifies the theorem-facing combinatorial/arithmetic bound,
+not a low-level cost semantics for trie and radix-sort implementations.  The
+main remaining manuscript blocks are the linear polynomial-time-and-data result
+of Section 7 and the separation/boundary results of Sections 8--10.
 -/
 
 end FixedHCFG
