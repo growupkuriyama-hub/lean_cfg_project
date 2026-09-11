@@ -40,8 +40,8 @@ def permuteTuple {α : Type u} {d : Nat} (σ : Equiv.Perm (Fin d))
 /-- Fill a fixed-sector sentence context with a tuple. -/
 def sectorFill {α : Type u} {d : Nat} {σ : Equiv.Perm (Fin d)}
     (E : SectorContext α d σ) (x : Tuple α d) : Word α :=
-  ((List.ofFn fun i : Fin d =>
-      E.spacers i.castSucc ++ x (σ i)).join) ++
+  (List.ofFn fun i : Fin d =>
+      E.spacers i.castSucc ++ x (σ i)).foldr (· ++ ·) [] ++
     E.spacers (Fin.last d)
 
 /-- Rename holes according to their left-to-right order.  This is the
@@ -98,6 +98,7 @@ theorem canonicalize_distribution {α : Type u} {d : Nat}
     rw [canonicalize_fill]
     exact hD
   · intro hE
+    change sectorFill E (permuteTuple σ x) ∈ L at hE
     let D : SectorContext α d σ := uncanonicalizeContext σ E
     refine ⟨D, ?_, ?_⟩
     · change sectorFill D x ∈ L
