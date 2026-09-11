@@ -1,4 +1,4 @@
-import LeanCfgProject.FixedHCFG.ComplexityBounds
+import LeanCfgProject.FixedHCFG.LinearBounds
 
 namespace LeanCfgProject
 namespace FixedHCFG
@@ -21,12 +21,17 @@ Current verified chain:
   manuscript characteristic sample;
 * Section 6 combinatorial complexity envelope: quadratic factorization
   enumeration and the algebraic absorption of the displayed construction-cost
-  expression into degree five.
+  expression into degree five;
+* Section 7 finite envelopes underlying Proposition 7.7: typed-state and
+  typed-rule `|M|^3` bounds, the `|W|+|R|+1` characteristic-sample bound,
+  the `2|W|` witness-length arithmetic, and the induced total-data bound.
 
 The Section-6 file verifies the theorem-facing combinatorial/arithmetic bound,
-not a low-level cost semantics for trie and radix-sort implementations.  The
-main remaining manuscript blocks are the linear polynomial-time-and-data result
-of Section 7 and the separation/boundary results of Sections 8--10.
+not a low-level cost semantics for trie and radix-sort implementations.  For
+Section 7, the next remaining proof-theoretic block is the strict-linear spine
+cycle-deletion argument of Lemma 7.3 and its derivation-level consequences
+Lemmas 7.5--7.6, followed by the linear exact-reconstruction Lemma 7.8 and
+Theorem 7.9.  Sections 8--10 remain after that.
 -/
 
 end FixedHCFG
