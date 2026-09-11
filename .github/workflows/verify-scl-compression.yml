@@ -31,6 +31,9 @@ jobs:
       - name: Build Safety Interface kernel
         run: lake build LeanCfgProject.SCLCompression.SafetyInterface
 
+      - name: Build fixed-order tuple contexts
+        run: lake build LeanCfgProject.SCLCompression.TupleContexts
+
       - name: Build relational-morphism kernel
         run: lake build LeanCfgProject.SCLCompression.RelationalMorphisms
 
