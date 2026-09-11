@@ -8,6 +8,14 @@ universe u v
 /-- Words are lists over the terminal alphabet. -/
 abbrev Word (Sigma : Type u) := List Sigma
 
+/-- The free-monoid structure on words, with multiplication given by concatenation. -/
+instance wordMonoid (Sigma : Type u) : Monoid (Word Sigma) where
+  one := []
+  mul := List.append
+  one_mul := List.nil_append
+  mul_one := List.append_nil
+  mul_assoc := List.append_assoc
+
 /-- A language over `Sigma`. -/
 abbrev Language (Sigma : Type u) := Set (Word Sigma)
 
