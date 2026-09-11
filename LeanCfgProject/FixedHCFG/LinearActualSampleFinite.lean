@@ -55,17 +55,44 @@ theorem actualLinearAnchorWitness_length_le
 /--
 A realised source-rule slot together with its exact local observation word,
 certified both to belong to `CS_lin(H)` and to satisfy the `2|W|` bound.
-Packaging the branch certificate avoids exposing the dependent RHS-match proof
-to later finite-image arguments.
+The final field records the source-rule shape explicitly.  This keeps dependent
+RHS equality proofs inside the constructor and gives later finite-image proofs
+a non-dependent elimination interface.
 -/
 structure ActualLinearRuleObservation
     {N : Type v} {Sigma : Type u} {P : Type w}
     [LinearOrder Sigma] [WellFoundedLT Sigma]
     (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
-    [Fintype (ActualLinearState Obs G)] where
+    [Fintype (ActualLinearState Obs G)]
+    (s : ActualLinearRuleSlot Obs G) where
   word : Word Sigma
   mem_CS : word ∈ ActualLinearCS Obs G
   length_le : word.length ≤ 2 * Fintype.card (ActualLinearState Obs G)
+  shape :
+    (∃ a : Sigma,
+      G.rhs s.1.1 = LinearRHS.terminal a ∧
+      word =
+        trimLinearLeftCtx (fullTypedLinearGrammar Obs G)
+            (actualLinearSlotParentState Obs G s) ++
+          [a] ++
+          trimLinearRightCtx (fullTypedLinearGrammar Obs G)
+            (actualLinearSlotParentState Obs G s)) ∨
+    (∃ (a : Sigma) (B : N)
+        (hshape : G.rhs s.1.1 = LinearRHS.left a B),
+      word =
+        let F := fullTypedLinearGrammar Obs G
+        let X := actualLinearSlotParentState Obs G s
+        let Y := actualLinearLeftSlotChildState Obs G s a B hshape
+        trimLinearLeftCtx F X ++ [a] ++ trimLinearOmega F Y ++
+          trimLinearRightCtx F X) ∨
+    (∃ (B : N) (a : Sigma)
+        (hshape : G.rhs s.1.1 = LinearRHS.right B a),
+      word =
+        let F := fullTypedLinearGrammar Obs G
+        let X := actualLinearSlotParentState Obs G s
+        let Y := actualLinearRightSlotChildState Obs G s B a hshape
+        trimLinearLeftCtx F X ++ trimLinearOmega F Y ++ [a] ++
+          trimLinearRightCtx F X)
 
 /-- Construct the exact manuscript rule observation attached to a realised slot. -/
 noncomputable def actualLinearRuleObservation
@@ -73,7 +100,7 @@ noncomputable def actualLinearRuleObservation
     [LinearOrder Sigma] [WellFoundedLT Sigma]
     (Obs : Observer Sigma) (G : IndexedSSLNF N Sigma P)
     [Fintype (ActualLinearState Obs G)]
-    (s : ActualLinearRuleSlot Obs G) : ActualLinearRuleObservation Obs G := by
+    (s : ActualLinearRuleSlot Obs G) : ActualLinearRuleObservation Obs G s := by
   let F := fullTypedLinearGrammar Obs G
   let H := ActualLinearGrammar Obs G
   let X := actualLinearSlotParentState Obs G s
@@ -97,7 +124,8 @@ noncomputable def actualLinearRuleObservation
       refine
         { word := trimLinearLeftCtx F X ++ [a] ++ trimLinearRightCtx F X
           mem_CS := Or.inr (Or.inl ⟨X, a, hruleH, rfl⟩)
-          length_le := ?_ }
+          length_le := ?_
+          shape := Or.inl ⟨a, hshape, rfl⟩ }
       have h := linear_rule_witness_length_le_two_states
         (trimLinearLeftCtx F X) ([] : Word Sigma) (trimLinearRightCtx F X) a
         hstate hctx (Nat.zero_le _)
@@ -129,7 +157,8 @@ noncomputable def actualLinearRuleObservation
         { word := trimLinearLeftCtx F X ++ [a] ++ trimLinearOmega F Y ++
             trimLinearRightCtx F X
           mem_CS := Or.inr (Or.inr (Or.inl ⟨X, Y, a, hruleH, rfl⟩))
-          length_le := ?_ }
+          length_le := ?_
+          shape := Or.inr (Or.inl ⟨a, B, hshape, rfl⟩) }
       exact linear_rule_witness_length_le_two_states
         (trimLinearLeftCtx F X) (trimLinearOmega F Y) (trimLinearRightCtx F X) a
         hstate hctx hy
@@ -160,7 +189,8 @@ noncomputable def actualLinearRuleObservation
         { word := trimLinearLeftCtx F X ++ trimLinearOmega F Y ++ [a] ++
             trimLinearRightCtx F X
           mem_CS := Or.inr (Or.inr (Or.inr (Or.inl ⟨X, Y, a, hruleH, rfl⟩)))
-          length_le := ?_ }
+          length_le := ?_
+          shape := Or.inr (Or.inr ⟨B, a, hshape, rfl⟩) }
       exact linear_rule_witness_right_length_le_two_states
         (trimLinearLeftCtx F X) (trimLinearOmega F Y) (trimLinearRightCtx F X) a
         hstate hctx hy
