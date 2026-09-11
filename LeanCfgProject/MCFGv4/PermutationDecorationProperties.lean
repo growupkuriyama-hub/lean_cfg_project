@@ -84,6 +84,14 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
   cases h
   rfl
 
+/-- The inverse of a type-level cast between equal `Fin` types preserves the
+stored natural-number value. -/
+@[simp] private theorem equivCastFin_symm_val {m n : Nat} (h : m = n)
+    (i : Fin n) :
+    ((Equiv.cast (congrArg Fin h)).symm i).val = i.val := by
+  cases h
+  rfl
+
 @[simp] theorem decorateVariable_component_val (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
     (hlin : r.Linear) (hnd : r.Nondeleting)
@@ -209,9 +217,22 @@ private theorem inducedOrientation_symm_get_val (r : MCFGRule sig α)
     (i : Fin (r.childComponentFinOrder π j).length) :
     ((r.inducedOrientation π j hlin hnd).symm
       ((r.childComponentFinOrder π j).get i)).val = i.val := by
+  let l := r.childComponentFinOrder π j
+  have hlen : l.length = sig.arity (r.children.get j) :=
+    r.childComponentFinOrder_length_eq π j hlin hnd
+  have hnodup : l.Nodup := r.childComponentFinOrder_nodup π j hlin
+  have hall : ∀ k : Fin (sig.arity (r.children.get j)), k ∈ l :=
+    fun k => r.mem_childComponentFinOrder π j hnd k
+  have hq :
+      (hnodup.getEquivOfForallMemList l hall).symm (l.get i) = i := by
+    exact (hnodup.getEquivOfForallMemList l hall).symm_apply_apply i
   unfold inducedOrientation
   dsimp
-  simp [r.childComponentFinOrder_nodup π j hlin]
+  change
+    ((Equiv.cast (congrArg Fin hlen.symm)).symm
+      ((hnodup.getEquivOfForallMemList l hall).symm (l.get i))).val = i.val
+  rw [hq]
+  exact equivCastFin_symm_val hlen.symm i
 
 end MCFGRule
 
