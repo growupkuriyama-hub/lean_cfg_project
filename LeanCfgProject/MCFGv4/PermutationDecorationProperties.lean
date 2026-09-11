@@ -74,7 +74,8 @@ private theorem orientedVariables_eq_flatMap (r : MCFGRule sig α)
   induction components with
   | nil => rfl
   | cons component rest ih =>
-      simpa [ih]
+      rw [List.foldr_cons, List.filterMap_append, ih]
+      rfl
 
 /-- The complete variable scan of a decorated rule is exactly the original
 parent-oriented scan with the induced child-variable renaming applied. -/
@@ -86,7 +87,8 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
   simp only [usedVariables, permutationDecorate]
   rw [orientedVariables_eq_flatMap]
   unfold decoratedComponents
-  exact decoratedComponentList_variables r π hlin hnd (r.orientedComponents π)
+  simpa using
+    (decoratedComponentList_variables r π hlin hnd (r.orientedComponents π))
 
 end MCFGRule
 
