@@ -35,7 +35,7 @@ theorem plug_derivation
     (occ : LinearOccursSpine G X sp l r)
     (der : LinearDerives G X w) :
     StrictLinearLanguage G (l ++ w ++ r) := by
-  induction occ with
+  induction occ generalizing w with
   | @start X hstart =>
       exact Or.inr ⟨X, hstart, by simpa using der⟩
   | @left X Y a sp l r parent hrule ih =>
@@ -157,7 +157,7 @@ theorem strict_linear_language_subset_trim
   · rcases hWord with ⟨X, hstart, hder⟩
     have hReach : ∃ l r : Word Sigma, LinearOccurs G X l r :=
       ⟨[], [], [X], LinearOccursSpine.start hstart⟩
-    let XK : StrictLinearKeptState G := ⟨X, ⟨hder, hReach⟩⟩
+    let XK : StrictLinearKeptState G := ⟨X, ⟨⟨w, hder⟩, hReach⟩⟩
     rcases hder with ⟨sp, hd⟩
     have hderK : LinearDerives (trimStrictLinearGrammar G) XK w :=
       lift_linear_derivation_to_trim hd hReach
