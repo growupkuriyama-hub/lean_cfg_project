@@ -9,6 +9,10 @@ on:
       - ".github/workflows/verify-fixed-h-tcs.yml"
   workflow_dispatch:
 
+concurrency:
+  group: fixed-h-core-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
