@@ -48,11 +48,11 @@ jobs:
       - name: Build aggregate fixed-h summary target
         run: lake build LeanCfgProject.FixedHCFG.Summary
 
-      - name: Reject proof placeholders in fixed-h sources
+      - name: Reject proof placeholders in fixed-h Lean sources
         shell: bash
         run: |
           set -euo pipefail
-          if grep -R -n -E '\b(sorry|admit)\b' LeanCfgProject/FixedHCFG; then
-            echo "Found a proof placeholder in LeanCfgProject/FixedHCFG."
+          if find LeanCfgProject/FixedHCFG -name '*.lean' -print0 | xargs -0 grep -n -E '\b(sorry|admit)\b'; then
+            echo "Found a proof placeholder in LeanCfgProject/FixedHCFG Lean sources."
             exit 1
           fi
