@@ -93,6 +93,23 @@ theorem permutationDecorate_usedVariables (r : MCFGRule sig α)
   simp [decorateVariable, decoratedChildIndex, decoratedChildren, decoratedChild,
     permutationDecoratedSignature]
 
+/-- Two rule variables with the same stored child and component values are equal.
+This formulation avoids dependent casts in the component field. -/
+private theorem ruleVariable_ext_val {N' : Type*} {sig' : MCFGSignature N'}
+    {children : List N'} (x y : RuleVariable sig' children)
+    (hchild : x.child.val = y.child.val)
+    (hcomponent : x.component.val = y.component.val) : x = y := by
+  cases x with
+  | mk j k =>
+      cases y with
+      | mk j' k' =>
+          dsimp at hchild hcomponent ⊢
+          have hj : j = j' := Fin.ext hchild
+          subst j'
+          have hk : k = k' := Fin.ext hcomponent
+          subst k'
+          rfl
+
 /-- The child-variable renaming used by permutation decoration is injective. -/
 theorem decorateVariable_injective (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
@@ -120,6 +137,35 @@ theorem decorateVariable_injective (r : MCFGRule sig α)
           subst k'
           rfl
 
+/-- Every child-component variable of the decorated rule has an original
+preimage.  The inverse reindexing uses the forward induced orientation. -/
+theorem decorateVariable_surjective (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting) :
+    Function.Surjective (r.decorateVariable π hlin hnd) := by
+  intro z
+  let j : Fin r.children.length :=
+    Fin.cast (r.decoratedChildren_length π hlin hnd) z.child
+  have hbase :
+      ((r.decoratedChildren π hlin hnd).get z.child).base =
+        r.children.get j := by
+    simpa [j] using
+      (r.decoratedChildren_get_base π hlin hnd z.child)
+  have hArity :
+      (permutationDecoratedSignature sig).arity
+          ((r.decoratedChildren π hlin hnd).get z.child) =
+        sig.arity (r.children.get j) := by
+    rw [permutationDecorated_arity]
+    exact congrArg sig.arity hbase
+  let k0 : Fin (sig.arity (r.children.get j)) := Fin.cast hArity z.component
+  let k : Fin (sig.arity (r.children.get j)) :=
+    r.inducedOrientation π j hlin hnd k0
+  let rv : RuleVariable sig r.children := { child := j, component := k }
+  refine ⟨rv, ?_⟩
+  apply ruleVariable_ext_val
+  · simp [rv, j]
+  · simp [rv, k, k0, j]
+
 /-- Permutation decoration preserves the manuscript's rule-linearity property. -/
 theorem permutationDecorate_linear (r : MCFGRule sig α)
     (π : Equiv.Perm (Fin (sig.arity r.lhs)))
@@ -134,6 +180,20 @@ theorem permutationDecorate_linear (r : MCFGRule sig α)
   exact hnodup.pairwise_of_forall_ne (by
     intro a ha b hb hab
     exact hab)
+
+/-- Permutation decoration preserves nondeletion. -/
+theorem permutationDecorate_nondeleting (r : MCFGRule sig α)
+    (π : Equiv.Perm (Fin (sig.arity r.lhs)))
+    (hlin : r.Linear) (hnd : r.Nondeleting) :
+    (r.permutationDecorate π hlin hnd).Nondeleting := by
+  intro j k
+  rw [r.permutationDecorate_usedVariables π hlin hnd]
+  rcases r.decorateVariable_surjective π hlin hnd
+      ({ child := j, component := k }) with ⟨rv, hrv⟩
+  apply List.mem_map.2
+  refine ⟨rv, ?_, hrv⟩
+  have hused : rv ∈ r.usedVariables := hnd rv.child rv.component
+  exact (r.orientedVariables_perm_usedVariables π).mem_iff.mpr hused
 
 end MCFGRule
 
