@@ -18,7 +18,7 @@ def selectorHom {Sigma : Type u} {M : Type v} [Monoid M]
 
 @[simp] theorem selectorHom_letter {Sigma : Type u} {M : Type v} [Monoid M]
     (g : Sigma → M) (a : Sigma) : selectorHom g [a] = g a := by
-  rfl
+  simp [selectorHom]
 
 /--
 Free-monoid selector lemma from the manuscript: choosing one value in the
@@ -48,7 +48,7 @@ theorem selector_mem_fiber
         change eta ([a] * tail) = eta [a] * eta tail
         exact eta.map_mul [a] tail
       have hsel : selectorHom g (a :: tail) = g a * selectorHom g tail := by
-        rfl
+        simp [selectorHom]
       rw [heta, hsel]
       exact hmul
 
