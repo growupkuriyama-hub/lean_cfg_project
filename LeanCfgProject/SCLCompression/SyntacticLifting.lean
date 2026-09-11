@@ -20,13 +20,13 @@ def PointedSyntacticSeparation
 def leftWrapSyntacticContext
     {T : Type u} [Monoid T] {d : Nat}
     (a : T) (q : SyntacticContext T d) : SyntacticContext T d :=
-  Function.update q 0 (a * q 0)
+  fun j => if j = 0 then a * q j else q j
 
 /-- Multiply the final gap of a syntactic tuple context on the right. -/
 def rightWrapSyntacticContext
     {T : Type u} [Monoid T] {d : Nat}
     (q : SyntacticContext T d) (b : T) : SyntacticContext T d :=
-  Function.update q (Fin.last d) (q (Fin.last d) * b)
+  fun j => if j = Fin.last d then q j * b else q j
 
 /-- Two-sided wrapping of a syntactic tuple context. -/
 def wrapSyntacticContext
@@ -53,14 +53,13 @@ theorem plug_rightWrapSyntacticContext
   unfold plugSyntacticContext rightWrapSyntacticContext
   have hlist :
       List.ofFn (fun i : Fin d =>
-        (Function.update q (Fin.last d) (q (Fin.last d) * b)) i.castSucc * s i) =
+        (if i.castSucc = Fin.last d then q i.castSucc * b else q i.castSucc) * s i) =
       List.ofFn (fun i : Fin d => q i.castSucc * s i) := by
     apply congrArg List.ofFn
     funext i
-    rw [Function.update_noteq]
-    exact Fin.castSucc_ne_last i
+    simp [Fin.castSucc_ne_last]
   rw [hlist]
-  rw [Function.update_same]
+  simp only [if_pos]
   exact foldr_mul_seed_right _ _ _
 
 /-- For positive arity, left wrapping multiplies every tuple substitution on the left. -/
