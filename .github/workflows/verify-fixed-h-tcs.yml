@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build-fixed-h-soundness:
+  build-fixed-h-core:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -24,8 +24,11 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      - name: Build Theorem 5.6 target
+      - name: Build Theorem 5.6 soundness target
         run: lake build LeanCfgProject.FixedHCFG.Soundness
+
+      - name: Build Section 4 typed-refinement target
+        run: lake build LeanCfgProject.FixedHCFG.TypedRefinement
 
       - name: Reject proof placeholders in fixed-h sources
         shell: bash
