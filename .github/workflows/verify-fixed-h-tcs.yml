@@ -30,6 +30,12 @@ jobs:
       - name: Build Section 4 typed-refinement target
         run: lake build LeanCfgProject.FixedHCFG.TypedRefinement
 
+      - name: Build Lemma 4.6 canonical-witness target
+        run: lake build LeanCfgProject.FixedHCFG.CanonicalWitness
+
+      - name: Build Theorems 5.2--5.7 reconstruction target
+        run: lake build LeanCfgProject.FixedHCFG.Reconstruction
+
       - name: Reject proof placeholders in fixed-h sources
         shell: bash
         run: |
