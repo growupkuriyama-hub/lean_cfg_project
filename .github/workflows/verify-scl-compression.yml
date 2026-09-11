@@ -25,8 +25,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Lean
+      - name: Set up Lean only for #3 targets
         uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: true
+          use-github-cache: false
 
       - name: Build Safety Interface kernel
         run: lake build LeanCfgProject.SCLCompression.SafetyInterface
