@@ -26,8 +26,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Lean
+      - name: Set up Lean and Mathlib cache
         uses: leanprover/lean-action@v1
+        with:
+          build: false
+          test: false
+          lint: false
+          use-github-cache: false
+          use-mathlib-cache: true
 
       - name: Build isolated MCFG v4 summary
         run: lake build LeanCfgProject.MCFGv4.Summary
