@@ -60,5 +60,57 @@ theorem toleranceKernel_normality
   intro n hn g
   exact toleranceKernel_conj_mem tau htau hn g
 
+/--
+Binary-context rigidity specialized to a group.  This is the exact local
+consequence of the manuscript's equalizing-context principle used in the proof
+of Lemma `cr:lem:local-central`: coordinatewise related pairs with the same
+empty-context product remain equal after inserting arbitrary fixed group
+factors around and between the two coordinates.
+-/
+def BinaryContextRigid
+    {G : Type u} [Group G] (tau : G → G → Prop) : Prop :=
+  ∀ x₁ x₂ y₁ y₂ : G,
+    tau x₁ y₁ → tau x₂ y₂ → x₁ * x₂ = y₁ * y₂ →
+      ∀ q₀ q₁ q₂ : G,
+        q₀ * x₁ * q₁ * x₂ * q₂ = q₀ * y₁ * q₁ * y₂ * q₂
+
+/--
+Local centrality, elementwise form.  If the binary equalizing-context
+principle holds, every element of the tolerance kernel commutes with every
+group element.
+-/
+theorem toleranceKernel_commutes
+    {G : Type u} [Group G]
+    (tau : G → G → Prop) (htau : IsCompatibleTolerance tau)
+    (hrigid : BinaryContextRigid tau)
+    {n : G} (hn : n ∈ toleranceKernelSubgroup tau htau) (g : G) :
+    n * g = g * n := by
+  have hninv : n⁻¹ ∈ toleranceKernelSubgroup tau htau :=
+    (toleranceKernelSubgroup tau htau).inv_mem hn
+  have hctx := hrigid (1 : G) 1 n n⁻¹ hn hninv (by simp) 1 g g⁻¹
+  have hcommutator : (1 : G) = n * g * n⁻¹ * g⁻¹ := by
+    simpa [mul_assoc] using hctx
+  have hrightg := congrArg (fun z : G => z * g) hcommutator
+  have hconj : g = n * g * n⁻¹ := by
+    simpa [mul_assoc] using hrightg
+  have hrightn := congrArg (fun z : G => z * n) hconj
+  have hswap : g * n = n * g := by
+    simpa [mul_assoc] using hrightn
+  exact hswap.symm
+
+/--
+Local centrality in the subgroup form stated in the manuscript:
+`N_beta ≤ Z(G_beta)`.
+-/
+theorem toleranceKernel_le_center
+    {G : Type u} [Group G]
+    (tau : G → G → Prop) (htau : IsCompatibleTolerance tau)
+    (hrigid : BinaryContextRigid tau) :
+    toleranceKernelSubgroup tau htau ≤ Subgroup.center G := by
+  intro n hn
+  rw [Subgroup.mem_center_iff]
+  intro g
+  exact (toleranceKernel_commutes tau htau hrigid hn g).symm
+
 end SCLCompression
 end LeanCfgProject
