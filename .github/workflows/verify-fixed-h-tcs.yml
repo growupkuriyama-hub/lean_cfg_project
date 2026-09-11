@@ -54,6 +54,9 @@ jobs:
       - name: Build exact manuscript characteristic-sample target
         run: lake build LeanCfgProject.FixedHCFG.PaperCharacteristicSample
 
+      - name: Build Section 6 complexity-envelope target
+        run: lake build LeanCfgProject.FixedHCFG.ComplexityBounds
+
       - name: Build aggregate fixed-h summary target
         run: lake build LeanCfgProject.FixedHCFG.Summary
 
