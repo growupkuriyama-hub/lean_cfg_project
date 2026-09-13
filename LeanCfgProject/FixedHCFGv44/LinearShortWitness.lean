@@ -6,12 +6,15 @@ namespace FixedHCFGv44
 universe u v
 
 /-!
-Manuscript-facing assembly of Lemma 7 (`short canonical witnesses`).
+Manuscript-facing assembly of the short canonical witness lemma.
 
 The cycle-deletion arithmetic and canonical-minimum bridges are already proved
 in `LinearWitnessBounds`.  What remains for the normalization layer is to
 supply the concrete short derivation/reaching-context candidates guaranteed by
 the linear-spine shape.  This structure isolates exactly that obligation.
+
+The mathematical statement is unchanged in manuscript v46; only the paper
+notation for the finite witness set changed from `CS` to `W`.
 -/
 
 /--
@@ -57,9 +60,11 @@ theorem certified_canonicalOmega_length_le
   · rcases C.wrapperTerminal X hWrapper with ⟨a, hRule⟩
     have hDeriv : TypedDerives Obs terminal binary X.1 [a] :=
       keptTerminal_derives X a hRule
-    have hCan := canonicalOmega_length_le_of_derives X hDeriv
-    simp only [List.length_singleton] at hCan
-    omega
+    have hCan : (canonicalOmega X).length ≤ 1 := by
+      simpa only [List.length_singleton] using
+        (canonicalOmega_length_le_of_derives X hDeriv)
+    have hOne : 1 ≤ n := Nat.succ_le_iff.mpr C.positive
+    exact le_trans hCan hOne
   · rcases C.spineYieldCandidate X hWrapper with ⟨z, hDeriv, hLen⟩
     exact le_trans (canonicalOmega_length_le_of_derives X hDeriv) hLen
 
@@ -86,8 +91,8 @@ theorem certified_canonicalChi_length_le
     exact le_trans hCan hShort
 
 /--
-Lemma 7, first two displayed inequalities, packaged exactly in the form used
-by the characteristic-data argument.
+The first two displayed inequalities of the short-canonical-witness lemma,
+packaged exactly in the form used by the characteristic-data argument.
 -/
 theorem short_canonical_witnesses
     {N : Type v} {Sigma : Type u}
@@ -105,9 +110,9 @@ theorem short_canonical_witnesses
   · exact certified_canonicalChi_length_le C
 
 /--
-Consequently every exact canonical characteristic word has length at most
-`4n`.  This is the formal version of the final sentence of the short-witness
-lemma, with an explicit constant rather than asymptotic notation.
+Consequently every exact canonical witness word has length at most `4n`.
+This is the formal version of the final sentence of the short-witness lemma,
+with an explicit constant rather than asymptotic notation.
 -/
 theorem certified_canonicalCS_word_length_le_four_mul
     {N : Type v} {Sigma : Type u}
