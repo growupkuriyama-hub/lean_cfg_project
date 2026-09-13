@@ -31,6 +31,9 @@ jobs:
       - name: Build v47 non-wrapper linear context core
         run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineContextCoreV47
 
+      - name: Build v47 wrapper context bound
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineWrapperContextV47
+
       - name: Build typed v47 linear-spine bridge
         run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineTypedBridge
 
