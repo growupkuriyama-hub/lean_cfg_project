@@ -1,5 +1,4 @@
-import LeanCfgProject.FixedHCFGv44.WitnessSetV47
-import LeanCfgProject.FixedHCFGv44.LinearManuscriptTheoremV47
+import LeanCfgProject.FixedHCFGv44.MainTheoremCoreV47
 import LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47
 
 namespace LeanCfgProject
@@ -14,6 +13,13 @@ The underlying proofs intentionally retain their stable internal names.  This
 file exposes theorem names and the witness-set notation used by the revised
 manuscript, so the formalization can be audited directly against the labels in
 v47 without duplicating any mathematical argument.
+
+The imported manuscript-facing layer also exposes, under their direct v47
+names, `theorem_complete_v47`, `theorem_main_semantic_core_v47`,
+`theorem_poly_build_envelope_v47`, and
+`corollary_poly_update_dichotomy_v47`.  The last two deliberately record the
+formalized combinatorial/runtime envelope rather than claiming a machine-level
+cost semantics for CFG parsing or string-table operations.
 -/
 
 /-- Manuscript Proposition `prop:typed-core`: language preservation and yield typing. -/
