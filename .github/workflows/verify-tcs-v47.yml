@@ -28,14 +28,40 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
+      - name: Build Section 8 finite-monoid obstruction and quotient closure
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47 2>&1 | tee boundary-build.log
+
+      - name: Upload boundary build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boundary-build-log
+          path: boundary-build.log
+
+      - name: Build v47 witness-set notation bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV47
+
+      - name: Build manuscript theorem-label synchronization layer
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.ManuscriptSyncV47 2>&1 | tee manuscript-sync-build.log
+
+      - name: Upload manuscript synchronization build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manuscript-sync-build-log
+          path: manuscript-sync-build.log
+
       - name: Build yield-only refinement core
         run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedCore
 
       - name: Build trimmed yield-only refinement
         run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
-
-      - name: Build v47 witness-set notation bridge
-        run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV47
 
       - name: Build v47 short-witness package
         run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessEndToEndV47
@@ -48,12 +74,6 @@ jobs:
 
       - name: Build manuscript-facing v47 theorem package
         run: lake build LeanCfgProject.FixedHCFGv44.LinearManuscriptTheoremV47
-
-      - name: Build Section 8 finite-monoid obstruction and quotient closure
-        run: lake build LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47
-
-      - name: Build manuscript theorem-label synchronization layer
-        run: lake build LeanCfgProject.FixedHCFGv44.ManuscriptSyncV47
 
       - name: Reject proof placeholders in current v47 sources
         shell: bash
@@ -74,6 +94,6 @@ jobs:
             LeanCfgProject/FixedHCFGv44/ManuscriptSyncV47.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
-            echo "Found a proof placeholder in current TCS v47 Lean sources."
+            echo "Found a proof placeholder in current TCS v47 sources."
             exit 1
           fi
