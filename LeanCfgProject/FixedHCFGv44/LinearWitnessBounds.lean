@@ -82,7 +82,7 @@ theorem binary_typed_rule_slot_card
     (Obs : Observer Sigma) :
     Fintype.card (BinaryTypedRuleSlot Obs P) =
       Fintype.card P * Fintype.card Obs.M ^ 2 := by
-  simp [BinaryTypedRuleSlot, pow_two, mul_assoc]
+  simp [BinaryTypedRuleSlot, pow_two]
 
 /--
 For a direct spine state, the canonical anchor has linear length once the
@@ -127,7 +127,8 @@ theorem wrapper_right_context_length_lt_two_mul
     (hcompletion : completion.length ≤ n) :
     l.length + (completion ++ r).length < 2 * n := by
   simp only [List.length_append]
-  exact wrapper_context_length_lt_two_mul hn hctx hcompletion
+  simpa [Nat.add_assoc] using
+    (wrapper_context_length_lt_two_mul hn hctx hcompletion)
 
 /-- The same wrapper bound with completion placed on the left side. -/
 theorem wrapper_left_context_length_lt_two_mul
