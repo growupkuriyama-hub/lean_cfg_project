@@ -41,6 +41,19 @@ jobs:
           name: boundary-build-log
           path: boundary-build.log
 
+      - name: Build concrete Dyck obstruction
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.DyckObstructionV47 2>&1 | tee dyck-build.log
+
+      - name: Upload Dyck obstruction build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dyck-build-log
+          path: dyck-build.log
+
       - name: Build v47 witness-set notation bridge
         run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV47
 
@@ -119,6 +132,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearBatchTheoremV47.lean
             LeanCfgProject/FixedHCFGv44/LinearManuscriptTheoremV47.lean
             LeanCfgProject/FixedHCFGv44/BoundaryObstructionsV47.lean
+            LeanCfgProject/FixedHCFGv44/DyckObstructionV47.lean
             LeanCfgProject/FixedHCFGv44/ManuscriptSyncV47.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
