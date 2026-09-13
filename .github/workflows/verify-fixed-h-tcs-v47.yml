@@ -31,6 +31,9 @@ jobs:
       - name: Build assembled v47 linear batch theorem
         run: lake build LeanCfgProject.FixedHCFGv44.LinearBatchTheoremV47
 
+      - name: Build manuscript-facing v47 linear theorem
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearManuscriptTheoremV47
+
       - name: Build v47 non-wrapper linear context core
         run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineContextCoreV47
 
@@ -67,6 +70,9 @@ jobs:
       - name: Build canonical v47 witness target
         run: lake build LeanCfgProject.FixedHCFGv44.CanonicalWitness
 
+      - name: Build manuscript W notation bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV47
+
       - name: Build v47 end-to-end witness bridge
         run: lake build LeanCfgProject.FixedHCFGv44.WitnessEndToEnd
 
@@ -90,6 +96,12 @@ jobs:
 
       - name: Build v47 conservative Gold-learning target
         run: lake build LeanCfgProject.FixedHCFGv44.ConservativeLearning
+
+      - name: Build Section 8 obstruction and quotient closure
+        run: lake build LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47
+
+      - name: Build manuscript synchronization layer
+        run: lake build LeanCfgProject.FixedHCFGv44.ManuscriptSyncV47
 
       - name: Reject proof placeholders in v47 verification sources
         shell: bash
