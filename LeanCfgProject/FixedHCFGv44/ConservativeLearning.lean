@@ -94,7 +94,7 @@ theorem seen_subset_conservative
         · exact ih hOld
         · simpa [hNew] using hKeep
       · rw [ConservativeHyp]
-        simp only [hKeep, if_neg]
+        simp only [hKeep]
         exact lemma_sample_consistency Obs (Seen text (n + 1)) hw
 
 /-- Every conservative hypothesis remains sound for a positive target text. -/
@@ -117,7 +117,7 @@ theorem conservative_subset_target
         simp only [hKeep, if_pos]
         exact ih
       · rw [ConservativeHyp]
-        simp only [hKeep, if_neg]
+        simp only [hKeep]
         exact theorem_soundness Obs (Seen text (n + 1))
           (BasisLanguage B) (seen_subset_target hText (n + 1)) hSub
 
@@ -153,7 +153,9 @@ theorem exact_hypothesis_stable
   | zero =>
       simpa using hExact
   | succ k ih =>
-      have hNext := exact_hypothesis_next B text hText (n + k) ih
+      have hnk : n ≤ n + k := Nat.le_add_right n k
+      have ih' : ConservativeHyp Obs text (n + k) = BasisLanguage B := ih hnk
+      have hNext := exact_hypothesis_next B text hText (n + k) ih'
       simpa [Nat.add_assoc] using hNext
 
 /-- Every finite witness set is eventually contained in all later seen sets. -/
@@ -217,9 +219,12 @@ theorem conservative_constant_of_no_trigger
   | succ k ih =>
       have hNk : N ≤ N + k := Nat.le_add_right N k
       have hMem := hNo (N + k) hNk
+      have ih' : ConservativeHyp Obs text (N + k) = ConservativeHyp Obs text N :=
+        ih hNk
+      rw [Nat.add_succ]
       rw [ConservativeHyp]
       simp only [hMem, if_pos]
-      exact ih
+      exact ih'
 
 /--
 If the characteristic witnesses are already contained in the accumulated data,
@@ -238,7 +243,7 @@ theorem rebuild_after_characteristic_cover_is_exact
     ConservativeHyp Obs text (n + 1) = BasisLanguage B := by
   classical
   rw [ConservativeHyp]
-  simp only [hTrigger, if_neg]
+  simp only [hTrigger]
   exact theorem_exact_reconstruction B (Seen text (n + 1))
     hCover (seen_subset_target hText (n + 1)) hSub
 
