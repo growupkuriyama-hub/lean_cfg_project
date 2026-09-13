@@ -36,8 +36,8 @@ theorem canonicalChi_start_empty
   have hLeftLen : (canonicalChi X).1.length = 0 := by omega
   have hRightLen : (canonicalChi X).2.length = 0 := by omega
   constructor
-  · exact (List.length_eq_zero).mp hLeftLen
-  · exact (List.length_eq_zero).mp hRightLen
+  · exact List.eq_nil_of_length_eq_zero hLeftLen
+  · exact List.eq_nil_of_length_eq_zero hRightLen
 
 /-- The manuscript-faithful v44 reconstruction basis. -/
 noncomputable def canonicalReconstructionBasis
