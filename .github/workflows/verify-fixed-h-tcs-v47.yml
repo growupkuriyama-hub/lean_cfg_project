@@ -40,6 +40,9 @@ jobs:
       - name: Build v47 polynomial characteristic-data cardinality
         run: lake build LeanCfgProject.FixedHCFGv44.LinearCharacteristicPolynomialV47
 
+      - name: Build v47 polynomial characteristic-data norm
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearCharacteristicSizeV47
+
       - name: Build typed v47 linear-spine bridge
         run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineTypedBridge
 
