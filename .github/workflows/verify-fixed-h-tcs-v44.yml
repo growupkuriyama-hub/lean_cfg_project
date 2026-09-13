@@ -37,6 +37,9 @@ jobs:
       - name: Build v44 characteristic-data bounds
         run: lake build LeanCfgProject.FixedHCFGv44.CharacteristicDataBounds
 
+      - name: Build assembled v44 short-witness theorem
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearShortWitness
+
       - name: Build canonical v44 reconstruction target
         run: lake build LeanCfgProject.FixedHCFGv44.CanonicalReconstruction
 
