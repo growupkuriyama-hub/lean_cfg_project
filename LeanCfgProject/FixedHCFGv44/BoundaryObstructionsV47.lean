@@ -3,7 +3,7 @@ import LeanCfgProject.FixedHCFGv44.Language
 namespace LeanCfgProject
 namespace FixedHCFGv44
 
-universe u
+universe u v
 
 /-!
 Boundary lemmas from the current TCS v47 manuscript.
@@ -19,9 +19,13 @@ The concrete counter and Dyck corollaries can be layered on top of the first
 lemma without changing the learner development.
 -/
 
-/-- The union over all finite-monoid observers, i.e. the manuscript class `RS`. -/
-def RecognizablySubstitutable {Sigma : Type u} (L : Language Sigma) : Prop :=
-  ∃ Obs : Observer Sigma, HSubstitutable Obs L
+/--
+The manuscript class `RS`, with the universe of the finite observer monoid
+made explicit for Lean.  Since the theorem below is universe-polymorphic, it
+applies to every finite-monoid observer universe.
+-/
+def RecognizablySubstitutableAt {Sigma : Type u} (L : Language Sigma) : Prop :=
+  ∃ Obs : Observer.{u, v} Sigma, HSubstitutable Obs L
 
 /-- Right quotient by one fixed word: `L / z = {w | wz ∈ L}`. -/
 def RightQuotient {Sigma : Type u} (L : Language Sigma) (z : Word Sigma) :
@@ -42,14 +46,15 @@ theorem finite_monoid_obstruction_v47
     (hSeparate : ∀ x : Word Sigma, x ∈ Xi →
       ∀ y : Word Sigma, y ∈ Xi → x ≠ y →
         ShareContext L x y ∧ ¬ SameDistribution L x y) :
-    ¬ RecognizablySubstitutable L := by
+    ¬ RecognizablySubstitutableAt.{u, v} L := by
   intro hRS
   rcases hRS with ⟨Obs, hSub⟩
   have hMaps : Set.MapsTo (obsValue Obs) Xi (Set.univ : Set Obs.M) := by
     intro x hx
     exact Set.mem_univ _
   obtain ⟨x, hx, y, hy, hxy, htype⟩ :=
-    hXi.exists_ne_map_eq_of_mapsTo hMaps (Set.finite_univ : (Set.univ : Set Obs.M).Finite)
+    hXi.exists_ne_map_eq_of_mapsTo hMaps
+      (Set.finite_univ : (Set.univ : Set Obs.M).Finite)
   rcases hSeparate x hx y hy hxy with ⟨hShare, hDifferent⟩
   apply hDifferent
   exact hSub x y (hInternal x hx) (hInternal y hy) htype hShare
@@ -65,22 +70,27 @@ theorem hSubstitutable_rightQuotient_v47
     (hSub : HSubstitutable Obs L) :
     HSubstitutable Obs (RightQuotient L z) := by
   intro x y hx hy htype hShareQ
-  rcases hShareQ with ⟨u, v, hxQ, hyQ⟩
-  have hxL : InDistribution L x u (v ++ z) := by
-    simpa [InDistribution, RightQuotient, List.append_assoc] using hxQ
-  have hyL : InDistribution L y u (v ++ z) := by
-    simpa [InDistribution, RightQuotient, List.append_assoc] using hyQ
+  rcases hShareQ with ⟨a, b, hxQ, hyQ⟩
+  have hxL : InDistribution L x a (b ++ z) := by
+    change (a ++ x ++ b) ++ z ∈ L at hxQ
+    change a ++ x ++ (b ++ z) ∈ L
+    simpa only [List.append_assoc] using hxQ
+  have hyL : InDistribution L y a (b ++ z) := by
+    change (a ++ y ++ b) ++ z ∈ L at hyQ
+    change a ++ y ++ (b ++ z) ∈ L
+    simpa only [List.append_assoc] using hyQ
   have hDistL : SameDistribution L x y :=
-    hSub x y hx hy htype ⟨u, v ++ z, hxL, hyL⟩
+    hSub x y hx hy htype ⟨a, b ++ z, hxL, hyL⟩
   intro s t
-  simpa [InDistribution, RightQuotient, List.append_assoc] using
-    (hDistL s (t ++ z))
+  change (s ++ x ++ t) ++ z ∈ L ↔ (s ++ y ++ t) ++ z ∈ L
+  have h := hDistL s (t ++ z)
+  simpa only [List.append_assoc] using h
 
-/-- The corresponding closure statement for the manuscript union class `RS`. -/
+/-- The corresponding fixed-universe closure statement for the manuscript union class. -/
 theorem recognizablySubstitutable_rightQuotient_v47
     {Sigma : Type u} {L : Language Sigma} (z : Word Sigma)
-    (hRS : RecognizablySubstitutable L) :
-    RecognizablySubstitutable (RightQuotient L z) := by
+    (hRS : RecognizablySubstitutableAt.{u, v} L) :
+    RecognizablySubstitutableAt.{u, v} (RightQuotient L z) := by
   rcases hRS with ⟨Obs, hSub⟩
   exact ⟨Obs, hSubstitutable_rightQuotient_v47 Obs L z hSub⟩
 
