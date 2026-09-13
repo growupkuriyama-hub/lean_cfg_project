@@ -27,11 +27,18 @@ theorem keptTerminalProduction_card_le_v47
           (binary := binary) (start := start)) ≤
       Fintype.card (KeptState Obs terminal binary start) * Fintype.card Sigma := by
   classical
-  apply Fintype.card_le_of_injective
-    (fun p : KeptTerminalProduction (Obs := Obs) (terminal := terminal)
-      (binary := binary) (start := start) => p.1)
-  intro p q hpq
-  exact Subtype.ext hpq
+  calc
+    Fintype.card
+        (KeptTerminalProduction (Obs := Obs) (terminal := terminal)
+          (binary := binary) (start := start)) ≤
+        Fintype.card (KeptState Obs terminal binary start × Sigma) := by
+      apply Fintype.card_le_of_injective
+        (fun p : KeptTerminalProduction (Obs := Obs) (terminal := terminal)
+          (binary := binary) (start := start) => p.1)
+      intro p q hpq
+      exact Subtype.ext hpq
+    _ = Fintype.card (KeptState Obs terminal binary start) * Fintype.card Sigma := by
+      simp
 
 /-- Retained binary productions are a subtype of triples of retained states. -/
 theorem keptBinaryProduction_card_le_v47
