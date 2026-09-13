@@ -26,25 +26,33 @@ theorem canonicalCS_word_length_le_actual_v47
       (start := start) epsilonStart z) :
     z.length ≤ 4 * Fintype.card (KeptState Obs terminal binary start) := by
   rcases short_canonical_witnesses_from_typed_shape_v47 S with ⟨hOmega, hCtx⟩
-  have hn : 0 < Fintype.card (KeptState Obs terminal binary start) := by
-    rcases hz with hAnchor | hTerminal | hBinary | hEps
-    · rcases hAnchor with ⟨X, hX⟩
-      exact Fintype.card_pos_iff.mpr ⟨X⟩
-    · rcases hTerminal with ⟨X, a, hRule, hX⟩
-      exact Fintype.card_pos_iff.mpr ⟨X⟩
-    · rcases hBinary with ⟨X, Y, Z, hRule, hX⟩
-      exact Fintype.card_pos_iff.mpr ⟨X⟩
-    · rcases hEps with ⟨hEmpty, hEpsilon⟩
-      -- In the epsilon-only endpoint there may be no retained non-start state.
-      subst z
-      simp
-  exact canonicalCS_word_length_le_four_mul epsilonStart hn hOmega hCtx hz
+  rcases hz with hAnchor | hTerminal | hBinary | hEps
+  · rcases hAnchor with ⟨X, rfl⟩
+    have ho := hOmega X
+    have hc := hCtx X
+    simp only [canonicalAnchorWord, List.length_append]
+    omega
+  · rcases hTerminal with ⟨X, a, hRule, rfl⟩
+    have hc := hCtx X
+    have hn : 0 < Fintype.card (KeptState Obs terminal binary start) :=
+      Fintype.card_pos_iff.mpr ⟨X⟩
+    simp only [canonicalTerminalObservationWord, List.length_append,
+      List.length_singleton]
+    omega
+  · rcases hBinary with ⟨X, Y, Z, hRule, rfl⟩
+    have hc := hCtx X
+    have hy := hOmega Y
+    have hz' := hOmega Z
+    simp only [canonicalBinaryObservationWord, List.length_append]
+    omega
+  · rcases hEps with ⟨rfl, hEpsilon⟩
+    simp
 
 /--
-For non-epsilon canonical witnesses, the preceding bound composes directly
-with the yield-only state-count estimate `n_t <= |N||M|`.
+The `n_t <= |N||M|` estimate turns the typed-state length bound into the
+manuscript's explicit polynomial envelope in the original state count.
 -/
-theorem canonicalCS_nonempty_word_length_le_original_state_factor_v47
+theorem canonicalCS_word_length_le_original_state_factor_v47
     {N : Type v} {Sigma : Type u}
     [Fintype N] [LinearOrder Sigma] [WellFoundedLT Sigma]
     {Obs : Observer Sigma}
@@ -54,8 +62,7 @@ theorem canonicalCS_nonempty_word_length_le_original_state_factor_v47
     (S : TypedLinearSpineShape Obs terminal binary start)
     {z : Word Sigma}
     (hz : CanonicalCS (Obs := Obs) (terminal := terminal) (binary := binary)
-      (start := start) epsilonStart z)
-    (hzNonempty : z ≠ []) :
+      (start := start) epsilonStart z) :
     z.length ≤ 4 * (Fintype.card N * Fintype.card Obs.M) := by
   have hTyped := canonicalCS_word_length_le_actual_v47 epsilonStart S hz
   have hCard : Fintype.card (KeptState Obs terminal binary start) ≤
