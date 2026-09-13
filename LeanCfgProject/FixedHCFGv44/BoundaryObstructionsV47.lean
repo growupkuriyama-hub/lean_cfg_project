@@ -84,6 +84,7 @@ theorem hSubstitutable_rightQuotient_v47
   intro s t
   change (s ++ x ++ t) ++ z ∈ L ↔ (s ++ y ++ t) ++ z ∈ L
   have h := hDistL s (t ++ z)
+  change s ++ x ++ (t ++ z) ∈ L ↔ s ++ y ++ (t ++ z) ∈ L at h
   simpa only [List.append_assoc] using h
 
 /-- The corresponding fixed-universe closure statement for the manuscript union class. -/
