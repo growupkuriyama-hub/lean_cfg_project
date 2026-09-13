@@ -29,10 +29,13 @@ theorem sum_image_le_sum_nat_v47
   | empty => simp
   | @insert a s ha ih =>
       by_cases hmem : g a ∈ s.image g
-      · simp [Finset.image_insert, ha, hmem]
+      · have hImage : (Finset.insert a s).image g = s.image g := by
+          rw [Finset.image_insert]
+          exact Finset.insert_eq_of_mem hmem
+        rw [hImage, Finset.sum_insert ha]
         omega
-      · simpa [Finset.image_insert, ha, hmem] using
-          Nat.add_le_add_left ih (f (g a))
+      · rw [Finset.image_insert, Finset.sum_insert hmem, Finset.sum_insert ha]
+        exact Nat.add_le_add_left ih (f (g a))
 
 /-- The finite image of all canonical characteristic-data indices. -/
 noncomputable def canonicalCSCoverV47
