@@ -1,0 +1,86 @@
+name: Verify fixed-h TCS v47 Lean formalization
+
+on:
+  push:
+    branches:
+      - tcs-v47-verification
+    paths:
+      - "LeanCfgProject/FixedHCFGv44/**"
+      - ".github/workflows/verify-fixed-h-tcs-v47.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: fixed-h-v47-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-fixed-h-v47:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build typed v47 linear-spine context bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineContextBridge
+
+      - name: Build typed v47 linear-spine bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineTypedBridge
+
+      - name: Build v47 complexity target
+        run: lake build LeanCfgProject.FixedHCFGv44.ComplexityBounds
+
+      - name: Build v47 linear witness bounds
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessBounds
+
+      - name: Build v47 characteristic-data bounds
+        run: lake build LeanCfgProject.FixedHCFGv44.CharacteristicDataBounds
+
+      - name: Build assembled v47 short-witness theorem
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearShortWitness
+
+      - name: Build canonical v47 reconstruction target
+        run: lake build LeanCfgProject.FixedHCFGv44.CanonicalReconstruction
+
+      - name: Build canonical v47 witness target
+        run: lake build LeanCfgProject.FixedHCFGv44.CanonicalWitness
+
+      - name: Build v47 end-to-end witness bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessEndToEnd
+
+      - name: Build v47 witness-extraction target
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessExtraction
+
+      - name: Build v47 sample-consistency target
+        run: lake build LeanCfgProject.FixedHCFGv44.SampleConsistency
+
+      - name: Build v47 soundness target
+        run: lake build LeanCfgProject.FixedHCFGv44.Soundness
+
+      - name: Build v47 yield-only typed core
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedCore
+
+      - name: Build v47 reduced yield-typed refinement
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
+
+      - name: Build v47 finite-witness reconstruction target
+        run: lake build LeanCfgProject.FixedHCFGv44.Reconstruction
+
+      - name: Build v47 conservative Gold-learning target
+        run: lake build LeanCfgProject.FixedHCFGv44.ConservativeLearning
+
+      - name: Reject proof placeholders in v47 verification sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find LeanCfgProject/FixedHCFGv44 -name '*.lean' -print0 | xargs -0 grep -n -E '\b(sorry|admit)\b'; then
+            echo "Found a proof placeholder in fixed-h v47 verification sources."
+            exit 1
+          fi
