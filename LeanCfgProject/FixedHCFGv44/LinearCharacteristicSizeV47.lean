@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib
 import LeanCfgProject.FixedHCFGv44.LinearCharacteristicPolynomialV47
 
 namespace LeanCfgProject
@@ -17,6 +17,23 @@ always contains the optional epsilon slot, so it is a convenient uniform upper
 envelope.  We first bound the norm of that envelope and then inherit the same
 polynomial bound for the exact canonical sample.
 -/
+
+/-- A nonnegative sum over a finite image is bounded by the corresponding sum
+before quotienting duplicate image points.  We state the Nat-specialized form
+here to keep the v47 sample-size proof independent of library theorem names. -/
+theorem sum_image_le_sum_nat_v47
+    {α β : Type*} [DecidableEq β]
+    (s : Finset α) (g : α → β) (f : β → Nat) :
+    (∑ y in s.image g, f y) ≤ ∑ x in s, f (g x) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | @insert a s ha ih =>
+      by_cases hmem : g a ∈ s.image g
+      · simp [Finset.image_insert, ha, hmem]
+        omega
+      · simpa [Finset.image_insert, ha, hmem] using
+          Nat.add_le_add_left ih (f (g a))
 
 /-- The finite image of all canonical characteristic-data indices. -/
 noncomputable def canonicalCSCoverV47
@@ -182,9 +199,11 @@ theorem canonicalCSCoverNorm_le_index_v47
         ∑ i in (Finset.univ : Finset
           (CanonicalCSIndex (Obs := Obs) (terminal := terminal)
             (binary := binary) (start := start))), (f i).length + 1 := by
-      apply Finset.sum_image_le_of_nonneg
-      intro z hz
-      omega
+      exact sum_image_le_sum_nat_v47
+        (Finset.univ : Finset
+          (CanonicalCSIndex (Obs := Obs) (terminal := terminal)
+            (binary := binary) (start := start)))
+        f (fun z : Word Sigma => z.length + 1)
     _ ≤ ∑ _i in (Finset.univ : Finset
           (CanonicalCSIndex (Obs := Obs) (terminal := terminal)
             (binary := binary) (start := start))),
