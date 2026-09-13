@@ -44,6 +44,19 @@ jobs:
       - name: Build v47 witness-set notation bridge
         run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV47
 
+      - name: Build v47 finite-witness completeness theorem
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.CompletenessV47 2>&1 | tee completeness-build.log
+
+      - name: Upload completeness build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: completeness-build-log
+          path: completeness-build.log
+
       - name: Build manuscript theorem-label synchronization layer
         shell: bash
         run: |
@@ -83,6 +96,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/YieldTypedCore.lean
             LeanCfgProject/FixedHCFGv44/YieldTypedTrimmed.lean
             LeanCfgProject/FixedHCFGv44/WitnessSetV47.lean
+            LeanCfgProject/FixedHCFGv44/CompletenessV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
             LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
