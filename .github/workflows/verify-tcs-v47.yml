@@ -1,0 +1,67 @@
+name: Verify TCS v47 yield-only formalization
+
+on:
+  push:
+    branches:
+      - tcs-v47-verification
+    paths:
+      - "LeanCfgProject/FixedHCFGv44/**"
+      - ".github/workflows/verify-tcs-v47.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: tcs-v47-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-v47:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build yield-only refinement core
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedCore
+
+      - name: Build trimmed yield-only refinement
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
+
+      - name: Build v47 short-witness package
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessEndToEndV47
+
+      - name: Build v47 characteristic-data polynomial bound
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearCharacteristicSizeV47
+
+      - name: Build v47 batch theorem assembly
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearBatchTheoremV47
+
+      - name: Build manuscript-facing v47 theorem package
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearManuscriptTheoremV47
+
+      - name: Reject proof placeholders in current v47 sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            LeanCfgProject/FixedHCFGv44/YieldTypedCore.lean
+            LeanCfgProject/FixedHCFGv44/YieldTypedTrimmed.lean
+            LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearCharacteristicPolynomialV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearCharacteristicSizeV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearBatchTheoremV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearManuscriptTheoremV47.lean
+          )
+          if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
+            echo "Found a proof placeholder in current TCS v47 Lean sources."
+            exit 1
+          fi
