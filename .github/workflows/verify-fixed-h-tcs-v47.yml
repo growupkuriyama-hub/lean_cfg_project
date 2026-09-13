@@ -28,8 +28,8 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      - name: Build typed v47 linear-spine context bridge
-        run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineContextBridge
+      - name: Build v47 non-wrapper linear context core
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineContextCoreV47
 
       - name: Build typed v47 linear-spine bridge
         run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineTypedBridge
