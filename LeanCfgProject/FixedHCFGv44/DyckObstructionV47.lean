@@ -125,7 +125,11 @@ theorem dyck1_four_blocks_underflow (i j : Nat) (hij : i < j) :
       dyckRun 0 ((dyckAs i ++ dyckBs j) ++ (dyckAs j ++ dyckBs i)) = none := by
     rw [dyckRun_append, hPrefix]
     simp
-  simpa only [List.append_assoc] using hAll
+  have hAll' :
+      dyckRun 0 (dyckAs i ++ dyckBs j ++ dyckAs j ++ dyckBs i) = none := by
+    simpa only [List.append_assoc] using hAll
+  rw [hAll']
+  simp
 
 /-- The manuscript obstruction factor `b^n a^n`. -/
 def dyckFactor (n : Nat) : Word DyckLetter :=
