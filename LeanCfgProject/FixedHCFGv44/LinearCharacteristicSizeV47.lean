@@ -24,7 +24,7 @@ here to keep the v47 sample-size proof independent of library theorem names. -/
 theorem sum_image_le_sum_nat_v47
     {α β : Type*} [DecidableEq β]
     (s : Finset α) (g : α → β) (f : β → Nat) :
-    (∑ y in s.image g, f y) ≤ ∑ x in s, f (g x) := by
+    (∑ y ∈ s.image g, f y) ≤ ∑ x ∈ s, f (g x) := by
   classical
   induction s using Finset.induction_on with
   | empty => simp
@@ -141,7 +141,7 @@ noncomputable def canonicalCSNormV47
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N}
     (epsilonStart : Prop) : Nat :=
-  ∑ z in canonicalCSFinsetV47 (Obs := Obs) (terminal := terminal)
+  ∑ z ∈ canonicalCSFinsetV47 (Obs := Obs) (terminal := terminal)
       (binary := binary) (start := start) epsilonStart, z.length + 1
 
 /-- Norm of the full finite index-image envelope. -/
@@ -151,7 +151,7 @@ noncomputable def canonicalCSCoverNormV47
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N} : Nat :=
-  ∑ z in canonicalCSCoverV47 (Obs := Obs) (terminal := terminal)
+  ∑ z ∈ canonicalCSCoverV47 (Obs := Obs) (terminal := terminal)
       (binary := binary) (start := start), z.length + 1
 
 /-- Filtering the envelope to the exact sample can only decrease its norm. -/
@@ -193,10 +193,10 @@ theorem canonicalCSCoverNorm_le_index_v47
       (binary := binary) (start := start) → Word Sigma :=
     fun i => canonicalCSIndexWord i
   unfold canonicalCSCoverNormV47 canonicalCSCoverV47
-  change (∑ z in Finset.univ.image f, z.length + 1) ≤ _
+  change (∑ z ∈ Finset.univ.image f, z.length + 1) ≤ _
   calc
-    (∑ z in Finset.univ.image f, z.length + 1) ≤
-        ∑ i in (Finset.univ : Finset
+    (∑ z ∈ Finset.univ.image f, z.length + 1) ≤
+        ∑ i ∈ (Finset.univ : Finset
           (CanonicalCSIndex (Obs := Obs) (terminal := terminal)
             (binary := binary) (start := start))), (f i).length + 1 := by
       exact sum_image_le_sum_nat_v47
@@ -204,7 +204,7 @@ theorem canonicalCSCoverNorm_le_index_v47
           (CanonicalCSIndex (Obs := Obs) (terminal := terminal)
             (binary := binary) (start := start)))
         f (fun z : Word Sigma => z.length + 1)
-    _ ≤ ∑ _i in (Finset.univ : Finset
+    _ ≤ ∑ _i ∈ (Finset.univ : Finset
           (CanonicalCSIndex (Obs := Obs) (terminal := terminal)
             (binary := binary) (start := start))),
           (4 * Fintype.card (KeptState Obs terminal binary start) + 1) := by
