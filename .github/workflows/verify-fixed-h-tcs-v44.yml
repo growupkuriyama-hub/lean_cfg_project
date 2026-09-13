@@ -40,6 +40,9 @@ jobs:
       - name: Build v44 reduced yield-typed refinement
         run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
 
+      - name: Build v44 finite-witness reconstruction target
+        run: lake build LeanCfgProject.FixedHCFGv44.Reconstruction
+
       - name: Reject proof placeholders in v44 Lean sources
         shell: bash
         run: |
