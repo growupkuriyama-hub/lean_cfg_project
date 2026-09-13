@@ -57,6 +57,19 @@ jobs:
           name: completeness-build-log
           path: completeness-build.log
 
+      - name: Build v47 main-theorem semantic core
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.MainTheoremCoreV47 2>&1 | tee main-core-build.log
+
+      - name: Upload main-theorem core build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-core-build-log
+          path: main-core-build.log
+
       - name: Build manuscript theorem-label synchronization layer
         shell: bash
         run: |
@@ -97,6 +110,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/YieldTypedTrimmed.lean
             LeanCfgProject/FixedHCFGv44/WitnessSetV47.lean
             LeanCfgProject/FixedHCFGv44/CompletenessV47.lean
+            LeanCfgProject/FixedHCFGv44/MainTheoremCoreV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
             LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
