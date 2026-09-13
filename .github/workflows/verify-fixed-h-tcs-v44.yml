@@ -28,7 +28,10 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      - name: Build newest canonical v44 reconstruction target
+      - name: Build newest v44 complexity target
+        run: lake build LeanCfgProject.FixedHCFGv44.ComplexityBounds
+
+      - name: Build canonical v44 reconstruction target
         run: lake build LeanCfgProject.FixedHCFGv44.CanonicalReconstruction
 
       - name: Build canonical v44 witness target
