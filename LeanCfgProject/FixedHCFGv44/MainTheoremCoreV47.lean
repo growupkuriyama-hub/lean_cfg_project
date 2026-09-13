@@ -103,10 +103,10 @@ theorem corollary_poly_update_dichotomy_v47
   by_cases hKeep : text n ∈ ConservativeHyp Obs text n
   · left
     rw [ConservativeHyp]
-    simp only [hKeep, if_pos]
+    simp [hKeep]
   · right
     rw [ConservativeHyp]
-    simp only [hKeep, if_neg]
+    simp
 
 end FixedHCFGv44
 end LeanCfgProject
