@@ -60,7 +60,15 @@ theorem factorizationCut_card_le_four_sq {m : Nat} (hm : 1 ≤ m) :
 theorem fourFactorCut_card_le_eight_cube {m : Nat} (hm : 1 ≤ m) :
     Fintype.card (FourFactorCut m) ≤ 8 * m ^ 3 := by
   refine (fourFactorCut_card_le_cube m).trans ?_
-  nlinarith
+  have h2 : m + 1 ≤ 2 * m := by omega
+  have hmul :
+      (m + 1) * (m + 1) * (m + 1) ≤
+        (2 * m) * (2 * m) * (2 * m) :=
+    Nat.mul_le_mul (Nat.mul_le_mul h2 h2) h2
+  calc
+    (m + 1) ^ 3 = (m + 1) * (m + 1) * (m + 1) := by ring
+    _ ≤ (2 * m) * (2 * m) * (2 * m) := hmul
+    _ = 8 * m ^ 3 := by ring
 
 /-- Every power through four is absorbed by the fifth power for `N ≥ 1`. -/
 theorem lower_powers_le_fifth {N : Nat} (hN : 1 ≤ N) :
