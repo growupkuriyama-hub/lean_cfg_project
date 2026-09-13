@@ -28,8 +28,9 @@ theorem theorem_complete_v47
     (K : Language Sigma)
     (hWK : WitnessSetV47 (Obs := Obs) (terminal := terminal)
       (binary := binary) (start := start) epsilonStart ⊆ K) :
-    UntypedStartLanguage terminal binary start epsilonStart ⊆
-      HypLanguage Obs K := by
+    Set.Subset
+      (UntypedStartLanguage terminal binary start epsilonStart)
+      (HypLanguage Obs K) := by
   let B := canonicalReconstructionBasis Obs terminal binary start epsilonStart
   have hCSK : B.CS ⊆ K := by
     simpa [B, canonicalReconstructionBasis, WitnessSetV47] using hWK
