@@ -29,7 +29,7 @@ theorem sum_image_le_sum_nat_v47
   | empty => simp
   | @insert a s ha ih =>
       by_cases hmem : g a ∈ s.image g
-      · have hImage : (Finset.insert a s).image g = s.image g := by
+      · have hImage : (insert a s).image g = s.image g := by
           rw [Finset.image_insert]
           exact Finset.insert_eq_of_mem hmem
         rw [hImage, Finset.sum_insert ha]
