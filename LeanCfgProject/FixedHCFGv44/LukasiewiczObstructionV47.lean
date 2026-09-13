@@ -48,8 +48,8 @@ theorem corollary_lukasiewicz_not_rs_v47 :
     ¬ RecognizablySubstitutableAt.{0, v} LukasiewiczV47 := by
   intro hLuk
   have hQuot :=
-    recognizablySubstitutable_rightQuotient_v47
-      (v := v) [DyckLetter.b] hLuk
+    recognizablySubstitutable_rightQuotient_v47.{0, v}
+      [DyckLetter.b] hLuk
   rw [lukasiewicz_rightQuotient_eq_dyck1] at hQuot
   exact corollary_dyck_not_rs_v47 hQuot
 
