@@ -34,6 +34,9 @@ jobs:
       - name: Build trimmed yield-only refinement
         run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
 
+      - name: Build v47 witness-set notation bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV47
+
       - name: Build v47 short-witness package
         run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessEndToEndV47
 
@@ -49,6 +52,9 @@ jobs:
       - name: Build Section 8 finite-monoid obstruction and quotient closure
         run: lake build LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47
 
+      - name: Build manuscript theorem-label synchronization layer
+        run: lake build LeanCfgProject.FixedHCFGv44.ManuscriptSyncV47
+
       - name: Reject proof placeholders in current v47 sources
         shell: bash
         run: |
@@ -56,6 +62,7 @@ jobs:
           files=(
             LeanCfgProject/FixedHCFGv44/YieldTypedCore.lean
             LeanCfgProject/FixedHCFGv44/YieldTypedTrimmed.lean
+            LeanCfgProject/FixedHCFGv44/WitnessSetV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
             LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
@@ -64,6 +71,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearBatchTheoremV47.lean
             LeanCfgProject/FixedHCFGv44/LinearManuscriptTheoremV47.lean
             LeanCfgProject/FixedHCFGv44/BoundaryObstructionsV47.lean
+            LeanCfgProject/FixedHCFGv44/ManuscriptSyncV47.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in current TCS v47 Lean sources."
