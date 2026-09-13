@@ -34,6 +34,9 @@ jobs:
       - name: Build v44 soundness target
         run: lake build LeanCfgProject.FixedHCFGv44.Soundness
 
+      - name: Build v44 yield-only typed core
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedCore
+
       - name: Reject proof placeholders in v44 Lean sources
         shell: bash
         run: |
