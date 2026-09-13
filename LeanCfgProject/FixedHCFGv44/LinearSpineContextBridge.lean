@@ -31,14 +31,36 @@ theorem spineOccurs_to_typed
       exact keptStart_occurs_empty X hStart
   | @left X Y a sp u v parent hStep ih =>
       rcases hStep with ⟨W, hWrap, hBinary, hTerminal⟩
+      have hParentEq : X.1 =
+          { label := X.1.label,
+            yieldType := Obs.mul W.1.yieldType Y.1.yieldType } := by
+        apply TypedNT.ext
+        · rfl
+        · exact hBinary.2.symm
+      have ih' : TypedOccurs Obs terminal binary start
+          { label := X.1.label,
+            yieldType := Obs.mul W.1.yieldType Y.1.yieldType } u v := by
+        rw [← hParentEq]
+        exact ih
       have hW := keptTerminal_derives W a hTerminal
-      have hOcc := TypedOccurs.right ih hBinary.1 hW
-      simpa [hBinary.2] using hOcc
+      have hOcc := TypedOccurs.right ih' hBinary.1 hW
+      simpa using hOcc
   | @right X Y a sp u v parent hStep ih =>
       rcases hStep with ⟨W, hWrap, hBinary, hTerminal⟩
+      have hParentEq : X.1 =
+          { label := X.1.label,
+            yieldType := Obs.mul Y.1.yieldType W.1.yieldType } := by
+        apply TypedNT.ext
+        · rfl
+        · exact hBinary.2.symm
+      have ih' : TypedOccurs Obs terminal binary start
+          { label := X.1.label,
+            yieldType := Obs.mul Y.1.yieldType W.1.yieldType } u v := by
+        rw [← hParentEq]
+        exact ih
       have hW := keptTerminal_derives W a hTerminal
-      have hOcc := TypedOccurs.left ih hBinary.1 hW
-      simpa [hBinary.2] using hOcc
+      have hOcc := TypedOccurs.left ih' hBinary.1 hW
+      simpa using hOcc
 
 /--
 A typed reaching occurrence of a non-wrapper state contracts to a strict-linear
@@ -217,7 +239,6 @@ theorem canonicalChi_spine_length_le
 /-- A reachable retained wrapper appears as a wrapper child of a retained binary rule. -/
 theorem wrapper_has_spine_parent
     {N : Type v} {Sigma : Type u}
-    [LinearOrder Sigma] [WellFoundedLT Sigma]
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
     {start : StartRules N}
@@ -228,69 +249,86 @@ theorem wrapper_has_spine_parent
       keptBinary P X Y ∧ ¬ S.isWrapper P.1 ∧ ¬ S.isWrapper Y.1) ∨
     (∃ P Y : KeptState Obs terminal binary start,
       keptBinary P Y X ∧ ¬ S.isWrapper P.1 ∧ ¬ S.isWrapper Y.1) := by
-  have hOcc := canonicalChi_spec X
-  have hXDeriv := canonicalOmega_spec X
+  rcases X with ⟨⟨A0, rho0⟩, hKeep⟩
+  rcases hKeep.1 with ⟨z, hDeriv⟩
+  rcases hKeep.2 with ⟨u0, v0, hOcc⟩
   cases hOcc with
   | @start A mu hStart =>
-      exact (S.start_not_wrapper X (by simpa [keptStart] using hStart) hWrap).elim
+      let Xs : KeptState Obs terminal binary start :=
+        ⟨{ label := A, yieldType := mu }, hKeep⟩
+      have hWrap' : S.isWrapper Xs.1 := by simpa [Xs] using hWrap
+      have hNot := S.start_not_wrapper Xs (by simpa [keptStart] using hStart)
+      exact (hNot hWrap').elim
   | @left A B C mu nu u v y parent hrule rightDeriv =>
+      let Xs : KeptState Obs terminal binary start :=
+        ⟨{ label := B, yieldType := mu }, hKeep⟩
       have hParentDeriv : TypedDerives Obs terminal binary
-          { label := A, yieldType := Obs.mul mu nu }
-          (canonicalOmega X ++ y) :=
-        TypedDerives.binary hrule hXDeriv rightDeriv
+          { label := A, yieldType := Obs.mul mu nu } (z ++ y) :=
+        TypedDerives.binary hrule hDeriv rightDeriv
       have hParentKeep : TypedKept Obs terminal binary start
           { label := A, yieldType := Obs.mul mu nu } := by
         constructor
-        · exact ⟨canonicalOmega X ++ y, hParentDeriv⟩
+        · exact ⟨z ++ y, hParentDeriv⟩
         · exact ⟨u, v, parent⟩
       have hSiblingOcc : TypedOccurs Obs terminal binary start
-          { label := C, yieldType := nu }
-          (u ++ canonicalOmega X) v :=
-        TypedOccurs.right parent hrule hXDeriv
+          { label := C, yieldType := nu } (u ++ z) v :=
+        TypedOccurs.right parent hrule hDeriv
       have hSiblingKeep : TypedKept Obs terminal binary start
           { label := C, yieldType := nu } := by
         constructor
         · exact ⟨y, rightDeriv⟩
-        · exact ⟨u ++ canonicalOmega X, v, hSiblingOcc⟩
+        · exact ⟨u ++ z, v, hSiblingOcc⟩
       let P : KeptState Obs terminal binary start :=
         ⟨{ label := A, yieldType := Obs.mul mu nu }, hParentKeep⟩
       let Y : KeptState Obs terminal binary start :=
         ⟨{ label := C, yieldType := nu }, hSiblingKeep⟩
-      have hRule : keptBinary P X Y := by
-        exact ⟨hrule, rfl⟩
-      have hShape := S.binary_shape P X Y hRule
+      have hRule : keptBinary P Xs Y := ⟨hrule, rfl⟩
+      have hShape := S.binary_shape P Xs Y hRule
+      have hWrap' : S.isWrapper Xs.1 := by simpa [Xs] using hWrap
       rcases hShape.2 with hGood | hBad
-      · exact Or.inl ⟨P, Y, hRule, hShape.1, hGood.2⟩
-      · exact (hBad.1 hWrap).elim
+      · have hResult :
+            (∃ P Y : KeptState Obs terminal binary start,
+              keptBinary P Xs Y ∧ ¬ S.isWrapper P.1 ∧ ¬ S.isWrapper Y.1) ∨
+            (∃ P Y : KeptState Obs terminal binary start,
+              keptBinary P Y Xs ∧ ¬ S.isWrapper P.1 ∧ ¬ S.isWrapper Y.1) :=
+          Or.inl ⟨P, Y, hRule, hShape.1, hGood.2⟩
+        simpa [Xs] using hResult
+      · exact (hBad.1 hWrap').elim
   | @right A B C mu nu u v x parent hrule leftDeriv =>
+      let Xs : KeptState Obs terminal binary start :=
+        ⟨{ label := C, yieldType := nu }, hKeep⟩
       have hParentDeriv : TypedDerives Obs terminal binary
-          { label := A, yieldType := Obs.mul mu nu }
-          (x ++ canonicalOmega X) :=
-        TypedDerives.binary hrule leftDeriv hXDeriv
+          { label := A, yieldType := Obs.mul mu nu } (x ++ z) :=
+        TypedDerives.binary hrule leftDeriv hDeriv
       have hParentKeep : TypedKept Obs terminal binary start
           { label := A, yieldType := Obs.mul mu nu } := by
         constructor
-        · exact ⟨x ++ canonicalOmega X, hParentDeriv⟩
+        · exact ⟨x ++ z, hParentDeriv⟩
         · exact ⟨u, v, parent⟩
       have hSiblingOcc : TypedOccurs Obs terminal binary start
-          { label := B, yieldType := mu }
-          u (canonicalOmega X ++ v) :=
-        TypedOccurs.left parent hrule hXDeriv
+          { label := B, yieldType := mu } u (z ++ v) :=
+        TypedOccurs.left parent hrule hDeriv
       have hSiblingKeep : TypedKept Obs terminal binary start
           { label := B, yieldType := mu } := by
         constructor
         · exact ⟨x, leftDeriv⟩
-        · exact ⟨u, canonicalOmega X ++ v, hSiblingOcc⟩
+        · exact ⟨u, z ++ v, hSiblingOcc⟩
       let P : KeptState Obs terminal binary start :=
         ⟨{ label := A, yieldType := Obs.mul mu nu }, hParentKeep⟩
       let Y : KeptState Obs terminal binary start :=
         ⟨{ label := B, yieldType := mu }, hSiblingKeep⟩
-      have hRule : keptBinary P Y X := by
-        exact ⟨hrule, rfl⟩
-      have hShape := S.binary_shape P Y X hRule
+      have hRule : keptBinary P Y Xs := ⟨hrule, rfl⟩
+      have hShape := S.binary_shape P Y Xs hRule
+      have hWrap' : S.isWrapper Xs.1 := by simpa [Xs] using hWrap
       rcases hShape.2 with hBad | hGood
-      · exact (hBad.2 hWrap).elim
-      · exact Or.inr ⟨P, Y, hRule, hShape.1, hGood.1⟩
+      · exact (hBad.2 hWrap').elim
+      · have hResult :
+            (∃ P Y : KeptState Obs terminal binary start,
+              keptBinary P Xs Y ∧ ¬ S.isWrapper P.1 ∧ ¬ S.isWrapper Y.1) ∨
+            (∃ P Y : KeptState Obs terminal binary start,
+              keptBinary P Y Xs ∧ ¬ S.isWrapper P.1 ∧ ¬ S.isWrapper Y.1) :=
+          Or.inr ⟨P, Y, hRule, hShape.1, hGood.1⟩
+        simpa [Xs] using hResult
 
 /-- The second inequality of the v46 short-canonical-witness lemma. -/
 theorem canonicalChi_length_le_two_typed_state_card
@@ -310,9 +348,21 @@ theorem canonicalChi_length_le_two_typed_state_card
     · rcases hLeft with ⟨P, Y, hRule, hPNon, hYNon⟩
       have hPCtx := canonicalChi_spine_length_le S P hPNon
       have hYYield := canonicalOmega_length_le_typed_state_card S Y
+      have hParentEq : P.1 =
+          { label := P.1.label,
+            yieldType := Obs.mul X.1.yieldType Y.1.yieldType } := by
+        apply TypedNT.ext
+        · rfl
+        · exact hRule.2.symm
+      have hParentOcc : TypedOccurs Obs terminal binary start
+          { label := P.1.label,
+            yieldType := Obs.mul X.1.yieldType Y.1.yieldType }
+          (canonicalLeftCtx P) (canonicalRightCtx P) := by
+        rw [← hParentEq]
+        exact canonicalChi_spec P
       have hOccX : TypedOccurs Obs terminal binary start X.1
           (canonicalLeftCtx P) (canonicalOmega Y ++ canonicalRightCtx P) :=
-        TypedOccurs.left (canonicalChi_spec P) hRule.1 (canonicalOmega_spec Y)
+        TypedOccurs.left hParentOcc hRule.1 (canonicalOmega_spec Y)
       have hCan := canonicalChi_total_length_le_of_occurs X hOccX
       have hConstructed :
           (canonicalLeftCtx P).length +
@@ -324,9 +374,21 @@ theorem canonicalChi_length_le_two_typed_state_card
     · rcases hRight with ⟨P, Y, hRule, hPNon, hYNon⟩
       have hPCtx := canonicalChi_spine_length_le S P hPNon
       have hYYield := canonicalOmega_length_le_typed_state_card S Y
+      have hParentEq : P.1 =
+          { label := P.1.label,
+            yieldType := Obs.mul Y.1.yieldType X.1.yieldType } := by
+        apply TypedNT.ext
+        · rfl
+        · exact hRule.2.symm
+      have hParentOcc : TypedOccurs Obs terminal binary start
+          { label := P.1.label,
+            yieldType := Obs.mul Y.1.yieldType X.1.yieldType }
+          (canonicalLeftCtx P) (canonicalRightCtx P) := by
+        rw [← hParentEq]
+        exact canonicalChi_spec P
       have hOccX : TypedOccurs Obs terminal binary start X.1
           (canonicalLeftCtx P ++ canonicalOmega Y) (canonicalRightCtx P) :=
-        TypedOccurs.right (canonicalChi_spec P) hRule.1 (canonicalOmega_spec Y)
+        TypedOccurs.right hParentOcc hRule.1 (canonicalOmega_spec Y)
       have hCan := canonicalChi_total_length_le_of_occurs X hOccX
       have hConstructed :
           (canonicalLeftCtx P ++ canonicalOmega Y).length +
@@ -374,17 +436,27 @@ theorem canonicalCS_word_length_le_from_typed_shape
       (start := start) epsilonStart z) :
     z.length ≤ 4 * Fintype.card (KeptState Obs terminal binary start) := by
   rcases short_canonical_witnesses_from_typed_shape S with ⟨hOmega, hCtx⟩
-  have hn : 0 < Fintype.card (KeptState Obs terminal binary start) := by
-    rcases hz with hAnchor | hTerminal | hBinary | hEps
-    · rcases hAnchor with ⟨X, hX⟩
-      exact Fintype.card_pos_iff.mpr ⟨X⟩
-    · rcases hTerminal with ⟨X, a, hRule, hX⟩
-      exact Fintype.card_pos_iff.mpr ⟨X⟩
-    · rcases hBinary with ⟨X, Y, Z, hRule, hX⟩
-      exact Fintype.card_pos_iff.mpr ⟨X⟩
-    · rcases hEps with ⟨rfl, hEps⟩
-      simp
-  exact canonicalCS_word_length_le_four_mul epsilonStart hn hOmega hCtx hz
+  rcases hz with hAnchor | hTerminal | hBinary | hEps
+  · rcases hAnchor with ⟨X, rfl⟩
+    have ho := hOmega X
+    have hc := hCtx X
+    simp only [canonicalAnchorWord, List.length_append]
+    omega
+  · rcases hTerminal with ⟨X, a, hRule, rfl⟩
+    have hc := hCtx X
+    have hn : 0 < Fintype.card (KeptState Obs terminal binary start) :=
+      Fintype.card_pos_iff.mpr ⟨X⟩
+    simp only [canonicalTerminalObservationWord, List.length_append,
+      List.length_singleton]
+    omega
+  · rcases hBinary with ⟨X, Y, Z, hRule, rfl⟩
+    have hc := hCtx X
+    have hy := hOmega Y
+    have hz' := hOmega Z
+    simp only [canonicalBinaryObservationWord, List.length_append]
+    omega
+  · rcases hEps with ⟨rfl, hEpsilon⟩
+    simp
 
 end FixedHCFGv44
 end LeanCfgProject
