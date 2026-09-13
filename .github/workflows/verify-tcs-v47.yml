@@ -46,6 +46,9 @@ jobs:
       - name: Build manuscript-facing v47 theorem package
         run: lake build LeanCfgProject.FixedHCFGv44.LinearManuscriptTheoremV47
 
+      - name: Build Section 8 finite-monoid obstruction and quotient closure
+        run: lake build LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47
+
       - name: Reject proof placeholders in current v47 sources
         shell: bash
         run: |
@@ -60,6 +63,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearCharacteristicSizeV47.lean
             LeanCfgProject/FixedHCFGv44/LinearBatchTheoremV47.lean
             LeanCfgProject/FixedHCFGv44/LinearManuscriptTheoremV47.lean
+            LeanCfgProject/FixedHCFGv44/BoundaryObstructionsV47.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in current TCS v47 Lean sources."
