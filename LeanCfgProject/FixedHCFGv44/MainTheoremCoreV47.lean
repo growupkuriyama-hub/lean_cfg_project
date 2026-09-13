@@ -100,13 +100,18 @@ theorem corollary_poly_update_dichotomy_v47
     ConservativeHyp Obs text (n + 1) =
       HypLanguage Obs (Seen text (n + 1)) := by
   classical
+  have hStep :
+      ConservativeHyp Obs text (n + 1) =
+        (if text n ∈ ConservativeHyp Obs text n then
+          ConservativeHyp Obs text n
+        else
+          HypLanguage Obs (Seen text (n + 1))) := by
+    rw [ConservativeHyp]
   by_cases hKeep : text n ∈ ConservativeHyp Obs text n
   · left
-    rw [ConservativeHyp]
-    simp [hKeep]
+    rw [hStep, if_pos hKeep]
   · right
-    rw [ConservativeHyp]
-    simp
+    rw [hStep, if_neg hKeep]
 
 end FixedHCFGv44
 end LeanCfgProject
