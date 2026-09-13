@@ -28,7 +28,10 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      - name: Build newest v44 end-to-end witness bridge
+      - name: Build newest canonical v44 witness target
+        run: lake build LeanCfgProject.FixedHCFGv44.CanonicalWitness
+
+      - name: Build v44 end-to-end witness bridge
         run: lake build LeanCfgProject.FixedHCFGv44.WitnessEndToEnd
 
       - name: Build v44 witness-extraction target
