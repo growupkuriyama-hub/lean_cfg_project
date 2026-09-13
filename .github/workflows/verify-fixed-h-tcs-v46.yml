@@ -28,6 +28,9 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
+      - name: Build typed v46 linear-spine bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearSpineTypedBridge
+
       - name: Build v46 complexity target
         run: lake build LeanCfgProject.FixedHCFGv44.ComplexityBounds
 
