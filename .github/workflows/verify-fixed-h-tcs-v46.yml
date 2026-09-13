@@ -1,0 +1,80 @@
+name: Verify fixed-h TCS v46 Lean formalization
+
+on:
+  push:
+    branches:
+      - tcs-v46-verification
+    paths:
+      - "LeanCfgProject/FixedHCFGv44/**"
+      - ".github/workflows/verify-fixed-h-tcs-v46.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: fixed-h-v46-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-fixed-h-v46:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build v46 complexity target
+        run: lake build LeanCfgProject.FixedHCFGv44.ComplexityBounds
+
+      - name: Build v46 linear witness bounds
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessBounds
+
+      - name: Build v46 characteristic-data bounds
+        run: lake build LeanCfgProject.FixedHCFGv44.CharacteristicDataBounds
+
+      - name: Build assembled v46 short-witness theorem
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearShortWitness
+
+      - name: Build canonical v46 reconstruction target
+        run: lake build LeanCfgProject.FixedHCFGv44.CanonicalReconstruction
+
+      - name: Build canonical v46 witness target
+        run: lake build LeanCfgProject.FixedHCFGv44.CanonicalWitness
+
+      - name: Build v46 end-to-end witness bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessEndToEnd
+
+      - name: Build v46 witness-extraction target
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessExtraction
+
+      - name: Build v46 sample-consistency target
+        run: lake build LeanCfgProject.FixedHCFGv44.SampleConsistency
+
+      - name: Build v46 soundness target
+        run: lake build LeanCfgProject.FixedHCFGv44.Soundness
+
+      - name: Build v46 yield-only typed core
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedCore
+
+      - name: Build v46 reduced yield-typed refinement
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
+
+      - name: Build v46 finite-witness reconstruction target
+        run: lake build LeanCfgProject.FixedHCFGv44.Reconstruction
+
+      - name: Build v46 conservative Gold-learning target
+        run: lake build LeanCfgProject.FixedHCFGv44.ConservativeLearning
+
+      - name: Reject proof placeholders in v46 verification sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find LeanCfgProject/FixedHCFGv44 -name '*.lean' -print0 | xargs -0 grep -n -E '\b(sorry|admit)\b'; then
+            echo "Found a proof placeholder in fixed-h v46 verification sources."
+            exit 1
+          fi
