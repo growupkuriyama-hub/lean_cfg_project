@@ -229,8 +229,16 @@ theorem preferredCS_subset_trimmed
     exact typedOccurs_plug_trimmed Obs terminal binary start epsilonStart
       (chosenContext_spec X).1 (keptTerminal_derives X a hRule)
   · rcases hBinary with ⟨X, Y, Z, hRule, rfl⟩
-    exact typedOccurs_plug_trimmed Obs terminal binary start epsilonStart
+    have hPlug := typedOccurs_plug_trimmed
+      (X := X.1)
+      (u := chosenLeftCtx X)
+      (v := chosenRightCtx X)
+      (w := chosenOmega Y ++ chosenOmega Z)
+      Obs terminal binary start epsilonStart
       (chosenContext_spec X).1 (keptBinary_chosen_derives X Y Z hRule)
+    change TrimmedTypedStartLanguage Obs terminal binary start epsilonStart
+      (chosenLeftCtx X ++ chosenOmega Y ++ chosenOmega Z ++ chosenRightCtx X)
+    simpa only [List.append_assoc] using hPlug
   · rcases hEps with ⟨rfl, hEpsilon⟩
     exact Or.inl ⟨rfl, hEpsilon⟩
 
@@ -314,8 +322,8 @@ theorem gold_identification_from_ssbnf
         (binary := binary) (start := start) epsilonStart)
   have hCSTarget : B.CS ⊆ BasisLanguage B := by
     intro z hz
-    have hz' : PreferredCS (Obs := Obs) (terminal := terminal)
-        (binary := binary) (start := start) epsilonStart z := by
+    have hz' : z ∈ PreferredCS (Obs := Obs) (terminal := terminal)
+        (binary := binary) (start := start) epsilonStart := by
       simpa [B, preferredReconstructionBasis] using hz
     have hPos := preferredCS_subset_untyped
       Obs terminal binary start epsilonStart hz'
