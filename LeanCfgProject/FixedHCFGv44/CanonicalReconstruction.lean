@@ -19,40 +19,25 @@ theorem canonicalChi_start_empty
     (X : KeptState Obs terminal binary start)
     (hStart : keptStart X) :
     canonicalLeftCtx X = [] ∧ canonicalRightCtx X = [] := by
-  have hEmpty : ([], []) ∈ CanonicalContextSet X :=
+  have hEmpty : TypedOccurs Obs terminal binary start X.1 [] [] :=
     keptStart_occurs_empty X hStart
-  have hNoLess : ∀ c ∈ CanonicalContextSet X,
-      ¬ ContextCanonicalOrder (Sigma := Sigma) c ([], []) := by
-    intro c hc hlt
-    rcases c with ⟨u, v⟩
-    cases hlt with
-    | left _ _ hlen =>
-        have : u.length + v.length < 0 := by
-          simpa [contextCanonicalKey] using hlen
-        omega
-    | right hlen hpair =>
-        have htotal : u.length + v.length = 0 := by
-          have := hlen
-          simp [contextCanonicalKey] at this
-          omega
-        have huLen : u.length = 0 := by omega
-        have hvLen : v.length = 0 := by omega
-        have hu : u = [] := List.length_eq_zero.mp huLen
-        have hv : v = [] := List.length_eq_zero.mp hvLen
-        subst u
-        subst v
-        cases hpair with
-        | left _ _ huShort =>
-            exact (List.not_shortlex_nil_right huShort).elim
-        | right huEq hvShort =>
-            exact (List.not_shortlex_nil_right hvShort).elim
-  have hPair : canonicalChi X = ([], []) := by
-    unfold canonicalChi
-    exact (contextCanonicalOrder_wf (Sigma := Sigma)).min_eq_of_forall_not_lt
-      hEmpty hNoLess
+  have hMinimal := canonicalChi_minimal X hEmpty
+  have hTotal :
+      (canonicalChi X).1.length + (canonicalChi X).2.length = 0 := by
+    by_contra hne
+    have hpos : 0 < (canonicalChi X).1.length + (canonicalChi X).2.length :=
+      Nat.pos_of_ne_zero hne
+    apply hMinimal
+    change Prod.Lex (fun a b : Nat => a < b)
+      (ContextShortlex (Sigma := Sigma))
+      (contextCanonicalKey ([], []))
+      (contextCanonicalKey (canonicalChi X))
+    exact Prod.Lex.left _ _ hpos
+  have hLeftLen : (canonicalChi X).1.length = 0 := by omega
+  have hRightLen : (canonicalChi X).2.length = 0 := by omega
   constructor
-  · simp [canonicalLeftCtx, hPair]
-  · simp [canonicalRightCtx, hPair]
+  · exact List.length_eq_zero.mp hLeftLen
+  · exact List.length_eq_zero.mp hRightLen
 
 /-- The manuscript-faithful v44 reconstruction basis. -/
 noncomputable def canonicalReconstructionBasis
