@@ -92,6 +92,19 @@ jobs:
           name: clark-v49-build-log
           path: clark-v49-build.log
 
+      - name: Build Clark finite-initial-set inclusion package
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.ClarkCongruentialInitialSetV49 2>&1 | tee clark-initial-v49-build.log
+
+      - name: Upload Clark finite-initial-set build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clark-initial-v49-build-log
+          path: clark-initial-v49-build.log
+
       - name: Build v49 manuscript synchronization layer
         shell: bash
         run: |
@@ -135,6 +148,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/SequentialOneChangeV49.lean
             LeanCfgProject/FixedHCFGv44/MainTheoremCoreV49.lean
             LeanCfgProject/FixedHCFGv44/ClarkCongruentialCoreV49.lean
+            LeanCfgProject/FixedHCFGv44/ClarkCongruentialInitialSetV49.lean
             LeanCfgProject/FixedHCFGv44/ManuscriptSyncV49.lean
             LeanCfgProject/FixedHCFGv44/BoundaryObstructionsV47.lean
             LeanCfgProject/FixedHCFGv44/DyckObstructionV47.lean
