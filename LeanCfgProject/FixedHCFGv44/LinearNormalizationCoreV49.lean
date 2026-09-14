@@ -1,0 +1,230 @@
+import Mathlib.Tactic
+
+namespace LeanCfgProject
+namespace FixedHCFGv44
+
+universe u v
+
+/-!
+Rule-local core of the Appendix A linear-spine normalization in TCS v49.
+
+The manuscript first eliminates non-start epsilon/unit productions and then
+factorizes every surviving linear right-hand side `u B v` into a unique spine.
+Each binary spine step has exactly one terminal-wrapper child and therefore,
+after contracting that wrapper, contributes exactly one terminal on the left
+or on the right of the continuing nonterminal.
+
+This file formalizes that factorization independently of the later typed
+refinement.  It is intentionally a rule-local layer: the remaining work for
+the full `prop:linear-normal` theorem is to package these local chains into an
+arbitrary finite CFG transformation, prove whole-grammar language equivalence,
+trim useless symbols, and attach the polynomial global size/time accounting.
+-/
+
+/-- A contracted wrapper step along a linear-spine derivation. -/
+inductive LinearSpineOp (Sigma : Type u) where
+  | left (a : Sigma)
+  | right (a : Sigma)
+
+/-- Apply one contracted wrapper step to the yield of the continuing child. -/
+def applyLinearSpineOp {Sigma : Type u} :
+    LinearSpineOp Sigma → List Sigma → List Sigma
+  | LinearSpineOp.left a, w => a :: w
+  | LinearSpineOp.right a, w => w ++ [a]
+
+/-- Evaluate a spine program from its outermost step toward its core yield. -/
+def evalLinearSpineOps {Sigma : Type u} :
+    List (LinearSpineOp Sigma) → List Sigma → List Sigma
+  | [], w => w
+  | op :: ops, w =>
+      applyLinearSpineOp op (evalLinearSpineOps ops w)
+
+/-- Evaluation distributes over concatenation of spine programs. -/
+theorem evalLinearSpineOps_append
+    {Sigma : Type u}
+    (xs ys : List (LinearSpineOp Sigma)) (w : List Sigma) :
+    evalLinearSpineOps (xs ++ ys) w =
+      evalLinearSpineOps xs (evalLinearSpineOps ys w) := by
+  induction xs with
+  | nil => rfl
+  | cons op xs ih =>
+      simp [evalLinearSpineOps, ih]
+
+/-- Each contracted binary spine step contributes exactly one terminal. -/
+theorem applyLinearSpineOp_length
+    {Sigma : Type u} (op : LinearSpineOp Sigma) (w : List Sigma) :
+    (applyLinearSpineOp op w).length = w.length + 1 := by
+  cases op <;> simp [applyLinearSpineOp]
+
+/-- A spine program contributes exactly one terminal per step. -/
+theorem evalLinearSpineOps_length
+    {Sigma : Type u} (ops : List (LinearSpineOp Sigma)) (w : List Sigma) :
+    (evalLinearSpineOps ops w).length = ops.length + w.length := by
+  induction ops with
+  | nil => simp [evalLinearSpineOps]
+  | cons op ops ih =>
+      simp [evalLinearSpineOps, applyLinearSpineOp_length, ih, Nat.add_assoc,
+        Nat.add_left_comm, Nat.add_comm]
+
+/-- Left wrapper steps spell the left terminal block in order. -/
+theorem eval_leftLinearSpineOps
+    {Sigma : Type u} (u w : List Sigma) :
+    evalLinearSpineOps (u.map LinearSpineOp.left) w = u ++ w := by
+  induction u with
+  | nil => rfl
+  | cons a u ih =>
+      simp [evalLinearSpineOps, applyLinearSpineOp, ih]
+
+/-- Reversed right wrapper steps spell the right terminal block in order. -/
+theorem eval_reverse_rightLinearSpineOps
+    {Sigma : Type u} (v w : List Sigma) :
+    evalLinearSpineOps (v.reverse.map LinearSpineOp.right) w = w ++ v := by
+  induction v generalizing w with
+  | nil => simp [evalLinearSpineOps]
+  | cons a v ih =>
+      simp [evalLinearSpineOps_append, evalLinearSpineOps,
+        applyLinearSpineOp, ih, List.append_assoc]
+
+/--
+The contracted spine program used for a linear right-hand side `u B v`.
+Right emissions are stored in reverse order because evaluation is nested from
+outside to inside.
+-/
+def contextSpineOps {Sigma : Type u} (u v : List Sigma) :
+    List (LinearSpineOp Sigma) :=
+  u.map LinearSpineOp.left ++ v.reverse.map LinearSpineOp.right
+
+/-- The local wrapper-chain factorization preserves the word `u z v`. -/
+theorem eval_contextSpineOps
+    {Sigma : Type u} (u v z : List Sigma) :
+    evalLinearSpineOps (contextSpineOps u v) z = u ++ z ++ v := by
+  simp [contextSpineOps, evalLinearSpineOps_append,
+    eval_leftLinearSpineOps, eval_reverse_rightLinearSpineOps,
+    List.append_assoc]
+
+/-- The number of binary wrapper steps is exactly `|u|+|v|`. -/
+theorem contextSpineOps_length
+    {Sigma : Type u} (u v : List Sigma) :
+    (contextSpineOps u v).length = u.length + v.length := by
+  simp [contextSpineOps]
+
+/-- A manuscript-style linear rule body with one continuing nonterminal. -/
+structure LinearContextBody (N : Type v) (Sigma : Type u) where
+  left : List Sigma
+  center : N
+  right : List Sigma
+
+namespace LinearContextBody
+
+/-- Yield denoted by `u B v` after supplying a terminal yield for `B`. -/
+def realize {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) (centerYield : N → List Sigma) :
+    List Sigma :=
+  body.left ++ centerYield body.center ++ body.right
+
+/-- Contracted wrapper steps generated by the Appendix A factorization. -/
+def spineOps {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) : List (LinearSpineOp Sigma) :=
+  contextSpineOps body.left body.right
+
+/-- The local normalization preserves the right-hand-side yield. -/
+theorem eval_spineOps
+    {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) (centerYield : N → List Sigma) :
+    evalLinearSpineOps body.spineOps (centerYield body.center) =
+      body.realize centerYield := by
+  simpa [spineOps, realize] using
+    (eval_contextSpineOps body.left body.right (centerYield body.center))
+
+/-- Non-unit condition after the manuscript's unit-elimination phase. -/
+def Nonunit {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) : Prop :=
+  body.left ≠ [] ∨ body.right ≠ []
+
+/-- A non-unit linear body has at least one wrapper/binary spine step. -/
+theorem spineOps_length_pos_of_nonunit
+    {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) (h : body.Nonunit) :
+    0 < body.spineOps.length := by
+  rw [spineOps, contextSpineOps_length]
+  rcases h with hleft | hright
+  · have hp : 0 < body.left.length := List.length_pos.mpr hleft
+    omega
+  · have hp : 0 < body.right.length := List.length_pos.mpr hright
+    omega
+
+/--
+Fresh chain symbols needed by the explicit Appendix A case split.
+For `m+n>0` the construction uses exactly `m+n-1` fresh `R/J` symbols.
+Terminal wrappers `W_a` are shared globally and are not counted here.
+-/
+def freshChainCount {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) : Nat :=
+  body.left.length + body.right.length - 1
+
+/-- Exact local fresh-state count for every non-unit `u B v` rule. -/
+theorem freshChainCount_add_one_eq_spineSteps
+    {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) (h : body.Nonunit) :
+    body.freshChainCount + 1 = body.spineOps.length := by
+  have hpos := body.spineOps_length_pos_of_nonunit h
+  rw [spineOps, contextSpineOps_length] at hpos ⊢
+  simp [freshChainCount]
+  omega
+
+/-- In particular the number of fresh chain symbols is linear in RHS length. -/
+theorem freshChainCount_le_spineSteps
+    {N : Type v} {Sigma : Type u}
+    (body : LinearContextBody N Sigma) :
+    body.freshChainCount ≤ body.spineOps.length := by
+  rw [spineOps, contextSpineOps_length]
+  simp [freshChainCount]
+
+end LinearContextBody
+
+/--
+A nonempty terminal-only right-hand side, represented as `prefix ++ [last]`.
+This is exactly the representation used by the manuscript's
+`Theta_2,...,Theta_m` chain.
+-/
+structure NonemptyTerminalBody (Sigma : Type u) where
+  prefix : List Sigma
+  last : Sigma
+
+namespace NonemptyTerminalBody
+
+/-- The original terminal-only right-hand side. -/
+def word {Sigma : Type u} (body : NonemptyTerminalBody Sigma) : List Sigma :=
+  body.prefix ++ [body.last]
+
+/-- Contracted form of the wrapper chain before its final terminal rule. -/
+def spineOps {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
+    List (LinearSpineOp Sigma) :=
+  body.prefix.map LinearSpineOp.left
+
+/-- The terminal-only factorization preserves the original terminal word. -/
+theorem eval_spineOps
+    {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
+    evalLinearSpineOps body.spineOps [body.last] = body.word := by
+  simp [spineOps, word, eval_leftLinearSpineOps]
+
+/-- The terminal-only branch uses `m-1` fresh `Theta` symbols. -/
+def freshChainCount {Sigma : Type u} (body : NonemptyTerminalBody Sigma) : Nat :=
+  body.prefix.length
+
+/-- Exact form of the Appendix A terminal-only state count. -/
+theorem freshChainCount_eq_word_length_sub_one
+    {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
+    body.freshChainCount = body.word.length - 1 := by
+  simp [freshChainCount, word]
+
+/-- The number of binary wrapper rules in the terminal-only branch is `m-1`. -/
+theorem spineOps_length_eq_freshChainCount
+    {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
+    body.spineOps.length = body.freshChainCount := by
+  simp [spineOps, freshChainCount]
+
+end NonemptyTerminalBody
+
+end FixedHCFGv44
+end LeanCfgProject
