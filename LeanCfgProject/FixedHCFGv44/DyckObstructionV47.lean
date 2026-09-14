@@ -66,7 +66,13 @@ theorem dyckRun_as (d n : Nat) :
   | zero =>
       simp [dyckAs, dyckRun]
   | succ n ih =>
-      simp [dyckAs, dyckRun, ih, Nat.add_assoc]
+      change dyckRun d (List.replicate (n + 1) DyckLetter.a) =
+        some (d + (n + 1))
+      rw [List.replicate_succ]
+      change dyckRun (d + 1) (dyckAs n) = some (d + (n + 1))
+      rw [ih]
+      congr 1
+      omega
 
 /-- Reading at most the available number of `b` symbols lowers the depth. -/
 theorem dyckRun_bs_le (d n : Nat) (h : n ≤ d) :
@@ -79,7 +85,13 @@ theorem dyckRun_bs_le (d n : Nat) (h : n ≤ d) :
       | zero => omega
       | succ d =>
           have h' : n ≤ d := by omega
-          simp [dyckBs, dyckRun, ih d h']
+          change dyckRun (d + 1) (List.replicate (n + 1) DyckLetter.b) =
+            some ((d + 1) - (n + 1))
+          rw [List.replicate_succ]
+          change dyckRun d (dyckBs n) = some ((d + 1) - (n + 1))
+          rw [ih d h']
+          congr 1
+          omega
 
 /-- Too many closing symbols force underflow. -/
 theorem dyckRun_bs_gt (d n : Nat) (h : d < n) :
@@ -89,10 +101,15 @@ theorem dyckRun_bs_gt (d n : Nat) (h : d < n) :
   | succ n ih =>
       cases d with
       | zero =>
-          simp [dyckBs, dyckRun]
+          change dyckRun 0 (List.replicate (n + 1) DyckLetter.b) = none
+          rw [List.replicate_succ]
+          rfl
       | succ d =>
           have h' : d < n := by omega
-          simpa [dyckBs, dyckRun] using ih d h'
+          change dyckRun (d + 1) (List.replicate (n + 1) DyckLetter.b) = none
+          rw [List.replicate_succ]
+          change dyckRun d (dyckBs n) = none
+          exact ih d h'
 
 /-- The four-block word `a^j b^i a^i b^j` is Dyck whenever `i ≤ j`. -/
 theorem dyck1_four_blocks (i j : Nat) (hij : i ≤ j) :
@@ -100,9 +117,13 @@ theorem dyck1_four_blocks (i j : Nat) (hij : i ≤ j) :
   change dyckRun 0 (dyckAs j ++ dyckBs i ++ dyckAs i ++ dyckBs j) = some 0
   calc
     dyckRun 0 (dyckAs j ++ dyckBs i ++ dyckAs i ++ dyckBs j) =
-        dyckRun j (dyckBs i ++ dyckAs i ++ dyckBs j) := by
+        dyckRun 0 (dyckAs j ++ (dyckBs i ++ dyckAs i ++ dyckBs j)) := by
+          simp only [List.append_assoc]
+    _ = dyckRun j (dyckBs i ++ dyckAs i ++ dyckBs j) := by
           rw [dyckRun_append, dyckRun_as]
           simp
+    _ = dyckRun j (dyckBs i ++ (dyckAs i ++ dyckBs j)) := by
+          simp only [List.append_assoc]
     _ = dyckRun (j - i) (dyckAs i ++ dyckBs j) := by
           rw [dyckRun_append, dyckRun_bs_le j i hij]
           simp
@@ -119,8 +140,8 @@ theorem dyck1_four_blocks_underflow (i j : Nat) (hij : i < j) :
     dyckAs i ++ dyckBs j ++ dyckAs j ++ dyckBs i ∉ Dyck1 := by
   change dyckRun 0 (dyckAs i ++ dyckBs j ++ dyckAs j ++ dyckBs i) ≠ some 0
   have hPrefix : dyckRun 0 (dyckAs i ++ dyckBs j) = none := by
-    rw [dyckRun_append, dyckRun_as, dyckRun_bs_gt i j hij]
-    simp
+    rw [dyckRun_append, dyckRun_as]
+    simpa using dyckRun_bs_gt i j hij
   have hAll :
       dyckRun 0 ((dyckAs i ++ dyckBs j) ++ (dyckAs j ++ dyckBs i)) = none := by
     rw [dyckRun_append, hPrefix]
@@ -153,7 +174,8 @@ theorem dyckFactor_internal (n : Nat) (hn : 1 ≤ n) :
 /-- A larger `a^j, b^j` wrapper is a common context for `b^i a^i`. -/
 theorem dyckFactor_in_context (i j : Nat) (hij : i ≤ j) :
     InDistribution Dyck1 (dyckFactor i) (dyckAs j) (dyckBs j) := by
-  simpa [dyckFactor, List.append_assoc] using dyck1_four_blocks i j hij
+  change dyckAs j ++ dyckFactor i ++ dyckBs j ∈ Dyck1
+  simpa only [dyckFactor, List.append_assoc] using dyck1_four_blocks i j hij
 
 /-- For `i < j`, the smaller wrapper separates the two factor distributions. -/
 theorem dyckFactor_not_sameDistribution (i j : Nat) (hij : i < j) :
@@ -164,7 +186,8 @@ theorem dyckFactor_not_sameDistribution (i j : Nat) (hij : i < j) :
     dyckFactor_in_context i i (le_rfl)
   have hj :
       ¬ InDistribution Dyck1 (dyckFactor j) (dyckAs i) (dyckBs i) := by
-    simpa [dyckFactor, List.append_assoc] using
+    change ¬ (dyckAs i ++ dyckFactor j ++ dyckBs i ∈ Dyck1)
+    simpa only [dyckFactor, List.append_assoc] using
       dyck1_four_blocks_underflow i j hij
   exact hj ((hSame (dyckAs i) (dyckBs i)).mp hi)
 
