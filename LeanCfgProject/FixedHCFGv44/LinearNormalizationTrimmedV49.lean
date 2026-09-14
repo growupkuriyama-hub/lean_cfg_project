@@ -64,22 +64,25 @@ theorem linearNormalization_trimmed_language_eq_v49
     (start : N → Prop) (epsilonStart : Prop) :
     ReducedLinearSpineSSBNFLanguage rules start epsilonStart =
       PreparedLinearLanguage rules start epsilonStart := by
-  calc
-    ReducedLinearSpineSSBNFLanguage rules start epsilonStart =
-        GenericUntypedStartLanguage
+  have hTrim := reduced_untyped_language_eq_original
+    (LinearNormTerminal rules)
+    (LinearNormBinary rules)
+    (LinearNormStartRules start)
+    epsilonStart
+  have hTail :
+      GenericUntypedStartLanguage
           (LinearNormTerminal rules)
           (LinearNormBinary rules)
           (LinearNormStartRules start)
-          epsilonStart :=
-      reduced_untyped_language_eq_original
-        (LinearNormTerminal rules)
-        (LinearNormBinary rules)
-        (LinearNormStartRules start)
-        epsilonStart
-    _ = ReifiedLinearSpineSSBNFLanguage rules start epsilonStart := rfl
-    _ = PreparedLinearLanguage rules start epsilonStart :=
-      linearNormalization_reifiedSSBNF_language_eq_v49
-        rules start epsilonStart
+          epsilonStart =
+        PreparedLinearLanguage rules start epsilonStart := by
+    simpa [ReifiedLinearSpineSSBNFLanguage] using
+      (linearNormalization_reifiedSSBNF_language_eq_v49
+        rules start epsilonStart)
+  have h := hTrim.trans hTail
+  simpa [ReducedLinearSpineSSBNFLanguage,
+    TrimmedLinearNormTerminal, TrimmedLinearNormBinary,
+    TrimmedLinearNormStart] using h
 
 /-- Every retained binary rule still has exactly one wrapper child. -/
 theorem trimmedLinearNormBinary_single_spine_shape
