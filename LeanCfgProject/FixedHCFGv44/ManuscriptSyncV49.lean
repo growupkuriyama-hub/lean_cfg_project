@@ -1,6 +1,8 @@
 import LeanCfgProject.FixedHCFGv44.MainTheoremCoreV49
 import LeanCfgProject.FixedHCFGv44.DyckObstructionV47
 import LeanCfgProject.FixedHCFGv44.LukasiewiczObstructionV47
+import LeanCfgProject.FixedHCFGv44.ClarkCongruentialInitialSetV49
+import LeanCfgProject.FixedHCFGv44.ClarkDyckStrictnessV49
 
 namespace LeanCfgProject
 namespace FixedHCFGv44
@@ -21,8 +23,9 @@ mathematics.  In particular it reflects the v49 manuscript order:
   reconstruction sample only after exact reconstruction;
 * the Gold corollary records the explicit at-most-one-later-trigger property.
 
-The Clark congruential comparison proposition is not claimed here; it remains a
-separate formalization target.
+For the Clark comparison proposition, the substantive inclusion construction
+and the Dyck strictness witness are now formalized.  We still avoid claiming a
+standalone general `CONG` class datatype until that packaging is introduced.
 -/
 
 /-- TCS v49 Proposition `prop:typed-core`. -/
@@ -186,6 +189,35 @@ theorem lemma_rs_fixed_quotient_v49
 theorem corollary_lukasiewicz_not_rs_v49 :
     ¬ RecognizablySubstitutableAt.{0, v} LukasiewiczV47 :=
   corollary_lukasiewicz_not_rs_v47
+
+/--
+Manuscript-facing inclusion core of Proposition `prop:clark-congruential-comparison`.
+For a fixed reduced SSBNF presentation, the retained typed start family is
+finite, every retained nonterminal language lies in one syntactic congruence
+class, the optional epsilon component is homogeneous, and the resulting union
+is exactly the target language.
+-/
+theorem proposition_clark_congruential_inclusion_core_v49
+    {N : Type v} {Sigma : Type u}
+    [Finite N] [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : TerminalRules N Sigma) (binary : BinaryRules N)
+    (start : StartRules N) (epsilonStart : Prop)
+    (hSub : HSubstitutable Obs
+      (UntypedStartLanguage terminal binary start epsilonStart)) :=
+  clark_congruential_inclusion_package_v49
+    Obs terminal binary start epsilonStart hSub
+
+/--
+Manuscript-facing strictness core of Proposition
+`prop:clark-congruential-comparison`: the Dyck witness is syntactically
+homogeneous for its one-nonterminal presentation but is not recognizably
+substitutable.
+-/
+theorem proposition_clark_congruential_strictness_core_v49 :
+    SyntacticallyHomogeneousV49 Dyck1 Dyck1 ∧
+      ¬ RecognizablySubstitutableAt.{0, v} Dyck1 :=
+  dyck1_clark_strictness_core_v49
 
 end FixedHCFGv44
 end LeanCfgProject
