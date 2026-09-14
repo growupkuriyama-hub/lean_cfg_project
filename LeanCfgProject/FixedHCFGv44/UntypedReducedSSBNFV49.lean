@@ -108,7 +108,8 @@ theorem reduced_untyped_language_eq_semantic_trim
           trimmed_rules_to_untyped_kept terminal binary start hDeriv⟩
   · intro h
     rcases h with hEps | hNonempty
-    · exact UntypedStartDerives.epsilon hEps.2
+    · rcases hEps with ⟨rfl, hEps⟩
+      exact UntypedStartDerives.epsilon hEps
     · rcases hNonempty with ⟨A, hStart, hDeriv⟩
       have hKeep : UntypedKept terminal binary start A :=
         untyped_kept_root_is_kept terminal binary start hDeriv
@@ -176,9 +177,16 @@ theorem reduced_untyped_rule_contract_v49
       (∀ ⦃A : N⦄,
         TrimmedStartRules terminal binary start A →
           UntypedKept terminal binary start A) := by
-  exact ⟨trimmed_terminal_lhs_kept,
-    trimmed_binary_states_kept,
-    trimmed_start_target_kept⟩
+  refine ⟨?_, ?_, ?_⟩
+  · intro A a h
+    exact trimmed_terminal_lhs_kept
+      (terminal := terminal) (binary := binary) (start := start) h
+  · intro A B C h
+    exact trimmed_binary_states_kept
+      (terminal := terminal) (binary := binary) (start := start) h
+  · intro A h
+    exact trimmed_start_target_kept
+      (terminal := terminal) (binary := binary) (start := start) h
 
 end FixedHCFGv44
 end LeanCfgProject
