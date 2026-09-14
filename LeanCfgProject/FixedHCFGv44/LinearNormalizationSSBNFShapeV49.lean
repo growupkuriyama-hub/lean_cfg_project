@@ -119,7 +119,8 @@ theorem explicitLinearNormStart_iff_untypedStart
     | epsilon h =>
         exact UntypedStartDerives.epsilon h
     | @nonempty A w hrule hder =>
-        exact UntypedStartDerives.nonempty hrule hder
+        exact UntypedStartDerives.nonempty
+          (A := LinearNormNT.old A) hrule hder
   · intro d
     cases d with
     | epsilon h =>
