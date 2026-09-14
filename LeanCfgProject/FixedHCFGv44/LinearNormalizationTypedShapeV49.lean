@@ -30,7 +30,7 @@ theorem isLinearNormWrapper_iff
 
 /-- No retained start target of the normalized source grammar is a wrapper. -/
 theorem sourceNormalizedStart_not_wrapper_v49
-    {N : Type v} {Sigma : Type u}
+    {N : Type v} {Sigma : Type u} [Fintype N]
     {sourceRules : List (SourceLinearRule N Sigma)} {S : N}
     {X : LinearNormNT N Sigma}
     (h : SourceNormalizedStartV49 sourceRules S X) :
@@ -43,7 +43,7 @@ theorem sourceNormalizedStart_not_wrapper_v49
 
 /-- No retained binary rule of the normalized source grammar has a wrapper parent. -/
 theorem sourceNormalizedBinary_parent_not_wrapper_v49
-    {N : Type v} {Sigma : Type u}
+    {N : Type v} {Sigma : Type u} [Fintype N]
     {sourceRules : List (SourceLinearRule N Sigma)} {S : N}
     {X Y Z : LinearNormNT N Sigma}
     (h : SourceNormalizedBinaryV49 sourceRules S X Y Z) :
@@ -57,7 +57,7 @@ The final normalized grammar automatically supplies the typed single-spine
 certificate used by Appendix B and `thm:linear-poly`.
 -/
 def sourceNormalizedTypedLinearSpineShapeV49
-    {N : Type v} {Sigma : Type u}
+    {N : Type v} {Sigma : Type u} [Fintype N]
     (Obs : Observer Sigma)
     (sourceRules : List (SourceLinearRule N Sigma)) (S : N) :
     TypedLinearSpineShape Obs
