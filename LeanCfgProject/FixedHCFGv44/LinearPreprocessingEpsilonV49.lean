@@ -116,9 +116,9 @@ theorem epsilonElimLinearDerives_nonempty
       | omitNullable hrule hnullable hne => exact hne
   | @context A B u v z hrule center ih =>
       intro hEmpty
-      have hParts : u = [] ∧ z = [] ∧ v = [] := by
+      have hParts : (u = [] ∧ z = []) ∧ v = [] := by
         simpa only [List.append_eq_nil_iff] using hEmpty
-      exact ih hParts.2.1
+      exact ih hParts.1.2
 
 /-- Every epsilon-eliminated derivation expands back to a source derivation. -/
 theorem epsilonElim_to_source
