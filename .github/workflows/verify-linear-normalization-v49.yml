@@ -27,11 +27,11 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      - name: Build exact explicit SSBNF normalization
+      - name: Build single-spine SSBNF normalization package
         shell: bash
         run: |
           set -o pipefail
-          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationSSBNFExactV49 2>&1 | tee linear-normalization-focused-v49-build.log
+          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationSSBNFShapeV49 2>&1 | tee linear-normalization-focused-v49-build.log
 
       - name: Upload focused normalization log
         if: always()
@@ -50,6 +50,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearNormalizationPreparedSemanticsV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationSSBNFReificationV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationSSBNFExactV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationSSBNFShapeV49.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in v49 linear-normalization sources."
