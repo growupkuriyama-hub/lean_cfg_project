@@ -163,6 +163,19 @@ jobs:
           name: linear-normalization-semantics-v49-build-log
           path: linear-normalization-semantics-v49-build.log
 
+      - name: Build v49 explicit SSBNF reification
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationSSBNFReificationV49 2>&1 | tee linear-normalization-ssbnf-v49-build.log
+
+      - name: Upload v49 explicit SSBNF reification build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linear-normalization-ssbnf-v49-build-log
+          path: linear-normalization-ssbnf-v49-build.log
+
       - name: Build v49 short-witness dependency package
         run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessEndToEndV47
 
@@ -195,6 +208,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearNormalizationCoreV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationGrammarSizeV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationPreparedSemanticsV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationSSBNFReificationV49.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
             LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
