@@ -29,7 +29,7 @@ theorem rightQuotient_suffixExtension
   · intro hw
     rcases hw with ⟨x, hx, hEq⟩
     have hwx : w = x := by
-      exact List.append_right_cancel hEq
+      exact List.append_left_injective z hEq
     simpa [hwx] using hx
   · intro hw
     exact ⟨w, hw, rfl⟩
