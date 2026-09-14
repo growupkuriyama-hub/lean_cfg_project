@@ -90,7 +90,6 @@ theorem normalizedLocalRuleCount_le_rhsLength
       rw [normalizedLocalRuleCount, LinearContextBody.spineOps,
         contextSpineOps_length]
       simp [rhsLength]
-      omega
   | terminal lhs body =>
       simp [normalizedLocalRuleCount, rhsLength]
 
