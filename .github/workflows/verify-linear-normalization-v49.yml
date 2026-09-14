@@ -1,0 +1,57 @@
+name: Verify TCS v49 linear normalization
+
+on:
+  push:
+    branches:
+      - tcs-v49-verification
+    paths:
+      - "LeanCfgProject/FixedHCFGv44/LinearNormalization*V49.lean"
+      - ".github/workflows/verify-linear-normalization-v49.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: tcs-v49-linear-normalization-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  linear-normalization-v49:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build exact explicit SSBNF normalization
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationSSBNFExactV49 2>&1 | tee linear-normalization-focused-v49-build.log
+
+      - name: Upload focused normalization log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linear-normalization-focused-v49-build-log
+          path: linear-normalization-focused-v49-build.log
+
+      - name: Reject proof placeholders in normalization layer
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationCoreV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationGrammarSizeV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationPreparedSemanticsV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationSSBNFReificationV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationSSBNFExactV49.lean
+          )
+          if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
+            echo "Found a proof placeholder in v49 linear-normalization sources."
+            exit 1
+          fi
