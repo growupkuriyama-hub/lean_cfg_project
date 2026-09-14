@@ -149,7 +149,8 @@ theorem untyped_trimming_language_iff
   constructor
   · intro h
     rcases h with hEps | hNonempty
-    · exact UntypedStartDerives.epsilon hEps.2
+    · rcases hEps with ⟨rfl, hEps⟩
+      exact UntypedStartDerives.epsilon hEps
     · rcases hNonempty with ⟨A, hStart, hDeriv⟩
       exact UntypedStartDerives.nonempty hStart
         (untyped_kept_to_full terminal binary start hDeriv)
