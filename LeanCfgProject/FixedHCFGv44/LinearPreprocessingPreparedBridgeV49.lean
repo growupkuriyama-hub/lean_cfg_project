@@ -68,7 +68,8 @@ theorem exists_nonemptyTerminalBody_of_ne_nil
           { initial := a :: body.initial
             finalSymbol := body.finalSymbol }
         refine ⟨newBody, ?_⟩
-        simp [newBody, NonemptyTerminalBody.word, hbody]
+        change a :: body.word = a :: t
+        rw [hbody]
 
 /--
 Every derivation after unit elimination is represented by any exact prepared
