@@ -80,35 +80,36 @@ theorem preparedRulesFromSourceAt_rhs_le_twice
           · by_cases hne : u ++ v ≠ []
             · simp [preparedRulesFromSourceAt, hreach, hnonunit, hnullable, hne,
                 preparedTotalRhsLength, PreparedLinearRule.rhsLength,
-                nonemptyTerminalBodyOf_word]
-              omega
+                SourceLinearRule.rhsLength, nonemptyTerminalBodyOf_word] <;> omega
             · simp [preparedRulesFromSourceAt, hreach, hnonunit, hnullable, hne,
-                preparedTotalRhsLength, PreparedLinearRule.rhsLength]
-              omega
+                preparedTotalRhsLength, PreparedLinearRule.rhsLength,
+                SourceLinearRule.rhsLength] <;> omega
           · simp [preparedRulesFromSourceAt, hreach, hnonunit, hnullable,
-              preparedTotalRhsLength, PreparedLinearRule.rhsLength]
-            omega
+              preparedTotalRhsLength, PreparedLinearRule.rhsLength,
+              SourceLinearRule.rhsLength] <;> omega
         · by_cases hnullable : SourceNullable allRules C
           · by_cases hne : u ++ v ≠ []
             · simp [preparedRulesFromSourceAt, hreach, hnonunit, hnullable, hne,
                 preparedTotalRhsLength, PreparedLinearRule.rhsLength,
-                nonemptyTerminalBodyOf_word]
-              omega
+                SourceLinearRule.rhsLength, nonemptyTerminalBodyOf_word] <;> omega
             · simp [preparedRulesFromSourceAt, hreach, hnonunit, hnullable, hne,
-                preparedTotalRhsLength, PreparedLinearRule.rhsLength]
-              omega
+                preparedTotalRhsLength, PreparedLinearRule.rhsLength,
+                SourceLinearRule.rhsLength] <;> omega
           · simp [preparedRulesFromSourceAt, hreach, hnonunit, hnullable,
-              preparedTotalRhsLength, PreparedLinearRule.rhsLength]
-            omega
-      · simp [preparedRulesFromSourceAt, hreach, preparedTotalRhsLength]
+              preparedTotalRhsLength, PreparedLinearRule.rhsLength,
+              SourceLinearRule.rhsLength] <;> omega
+      · simp [preparedRulesFromSourceAt, hreach, preparedTotalRhsLength,
+          SourceLinearRule.rhsLength]
   | terminal B w =>
       by_cases hreach : LinearUnitReach allRules A B
       · by_cases hne : w ≠ []
         · simp [preparedRulesFromSourceAt, hreach, hne, preparedTotalRhsLength,
-            PreparedLinearRule.rhsLength, nonemptyTerminalBodyOf_word]
-          omega
-        · simp [preparedRulesFromSourceAt, hreach, hne, preparedTotalRhsLength]
-      · simp [preparedRulesFromSourceAt, hreach, preparedTotalRhsLength]
+            PreparedLinearRule.rhsLength, SourceLinearRule.rhsLength,
+            nonemptyTerminalBodyOf_word] <;> omega
+        · simp [preparedRulesFromSourceAt, hreach, hne, preparedTotalRhsLength,
+            SourceLinearRule.rhsLength]
+      · simp [preparedRulesFromSourceAt, hreach, preparedTotalRhsLength,
+          SourceLinearRule.rhsLength]
 
 /-- Prepared RHS length is additive over list append. -/
 theorem preparedTotalRhsLength_append
@@ -177,7 +178,7 @@ theorem preparedRulesMany_length_le
           As.flatMap fun B =>
             allRules.flatMap (preparedRulesFromSourceAt allRules B)).length ≤
           2 * ((A :: As).length * allRules.length)
-      simp only [List.length_append, List.length_cons]
+      simp only [List.length_append, List.length_cons, Nat.add_mul, one_mul]
       have hOne := preparedRulesScan_length_le allRules allRules A
       omega
 
@@ -199,7 +200,7 @@ theorem preparedRulesMany_rhs_le
               allRules.flatMap (preparedRulesFromSourceAt allRules B)) ≤
           2 * ((A :: As).length * sourceTotalRhsLength allRules)
       rw [preparedTotalRhsLength_append]
-      simp only [List.length_cons]
+      simp only [List.length_cons, Nat.add_mul, one_mul]
       have hOne := preparedRulesScan_rhs_le allRules allRules A
       omega
 
@@ -258,8 +259,11 @@ theorem enumerated_preparedGrammarSize_le_sourcePolynomial_v49
       Fintype.card N + Fintype.card Sigma + 1 ≤ s := by
     dsimp [s, sourceLinearGrammarSize]
     omega
-  dsimp [sourceLinearNormalizationPolynomial]
-  simp only [preparedGrammarSize]
+  change
+    Fintype.card N + Fintype.card Sigma +
+        (enumeratePreparedLinearRules sourceRules).length +
+        preparedTotalRhsLength (enumeratePreparedLinearRules sourceRules) + 1 ≤
+      4 * (s * s) + s
   omega
 
 /-- Both untrimmed normalized symbol/rule budgets satisfy the same source polynomial. -/
