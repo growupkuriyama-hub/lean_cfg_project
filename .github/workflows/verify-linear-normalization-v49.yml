@@ -7,6 +7,7 @@ on:
     paths:
       - "LeanCfgProject/FixedHCFGv44/LinearNormalization*V49.lean"
       - "LeanCfgProject/FixedHCFGv44/LinearRetainedCardBridgeV49.lean"
+      - "LeanCfgProject/FixedHCFGv44/LinearCharacteristicRetainedV49.lean"
       - "LeanCfgProject/FixedHCFGv44/LinearPreprocessing*V49.lean"
       - "LeanCfgProject/FixedHCFGv44/Untyped*V49.lean"
       - ".github/workflows/verify-linear-normalization-v49.yml"
@@ -47,6 +48,12 @@ jobs:
         run: |
           set -o pipefail
           lake build LeanCfgProject.FixedHCFGv44.LinearRetainedCardBridgeV49 2>&1 | tee linear-retained-card-v49-build.log
+
+      - name: Build retained-state characteristic-data polynomial bound
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearCharacteristicRetainedV49 2>&1 | tee linear-characteristic-retained-v49-build.log
 
       - name: Build finite active normalized state support
         shell: bash
@@ -93,6 +100,7 @@ jobs:
             linear-normalization-manuscript-v49-build.log
             linear-normalization-typed-shape-v49-build.log
             linear-retained-card-v49-build.log
+            linear-characteristic-retained-v49-build.log
             linear-normalization-active-states-v49-build.log
             linear-normalization-tight-budget-v49-build.log
             linear-normalization-reachable-budget-v49-build.log
@@ -125,6 +133,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearNormalizationManuscriptV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationTypedShapeV49.lean
             LeanCfgProject/FixedHCFGv44/LinearRetainedCardBridgeV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearCharacteristicRetainedV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationActiveStatesV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationTightBudgetV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationReachableBudgetV49.lean
