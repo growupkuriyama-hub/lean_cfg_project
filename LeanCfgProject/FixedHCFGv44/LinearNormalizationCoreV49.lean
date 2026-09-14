@@ -63,7 +63,7 @@ theorem evalLinearSpineOps_length
   induction ops with
   | nil => simp [evalLinearSpineOps]
   | cons op ops ih =>
-      simp [evalLinearSpineOps, applyLinearSpineOp_length, ih, Nat.add_assoc,
+      simp [evalLinearSpineOps, applyLinearSpineOp_length, ih,
         Nat.add_left_comm, Nat.add_comm]
 
 /-- Left wrapper steps spell the left terminal block in order. -/
@@ -78,12 +78,12 @@ theorem eval_leftLinearSpineOps
 /-- Reversed right wrapper steps spell the right terminal block in order. -/
 theorem eval_reverse_rightLinearSpineOps
     {Sigma : Type u} (v w : List Sigma) :
-    evalLinearSpineOps (v.reverse.map LinearSpineOp.right) w = w ++ v := by
+    evalLinearSpineOps ((v.map LinearSpineOp.right).reverse) w = w ++ v := by
   induction v generalizing w with
   | nil => simp [evalLinearSpineOps]
   | cons a v ih =>
-      simp [evalLinearSpineOps_append, evalLinearSpineOps,
-        applyLinearSpineOp, ih, List.append_assoc]
+      rw [List.map_cons, List.reverse_cons, evalLinearSpineOps_append]
+      simp [evalLinearSpineOps, applyLinearSpineOp, ih, List.append_assoc]
 
 /--
 The contracted spine program used for a linear right-hand side `u B v`.
@@ -92,15 +92,15 @@ outside to inside.
 -/
 def contextSpineOps {Sigma : Type u} (u v : List Sigma) :
     List (LinearSpineOp Sigma) :=
-  u.map LinearSpineOp.left ++ v.reverse.map LinearSpineOp.right
+  u.map LinearSpineOp.left ++ (v.map LinearSpineOp.right).reverse
 
 /-- The local wrapper-chain factorization preserves the word `u z v`. -/
 theorem eval_contextSpineOps
     {Sigma : Type u} (u v z : List Sigma) :
     evalLinearSpineOps (contextSpineOps u v) z = u ++ z ++ v := by
-  simp [contextSpineOps, evalLinearSpineOps_append,
-    eval_leftLinearSpineOps, eval_reverse_rightLinearSpineOps,
-    List.append_assoc]
+  rw [contextSpineOps, evalLinearSpineOps_append,
+    eval_reverse_rightLinearSpineOps, eval_leftLinearSpineOps]
+  simp [List.append_assoc]
 
 /-- The number of binary wrapper steps is exactly `|u|+|v|`. -/
 theorem contextSpineOps_length
@@ -148,10 +148,12 @@ theorem spineOps_length_pos_of_nonunit
     0 < body.spineOps.length := by
   rw [spineOps, contextSpineOps_length]
   rcases h with hleft | hright
-  · have hp : 0 < body.left.length := List.length_pos.mpr hleft
-    omega
-  · have hp : 0 < body.right.length := List.length_pos.mpr hright
-    omega
+  · cases hEq : body.left with
+    | nil => exact (hleft hEq).elim
+    | cons a t => simp [hEq]
+  · cases hEq : body.right with
+    | nil => exact (hright hEq).elim
+    | cons a t => simp [hEq]
 
 /--
 Fresh chain symbols needed by the explicit Appendix A case split.
@@ -183,19 +185,19 @@ theorem freshChainCount_le_spineSteps
 end LinearContextBody
 
 /--
-A nonempty terminal-only right-hand side, represented as `prefix ++ [last]`.
+A nonempty terminal-only right-hand side, represented as `prefix ++ [finalSymbol]`.
 This is exactly the representation used by the manuscript's
 `Theta_2,...,Theta_m` chain.
 -/
 structure NonemptyTerminalBody (Sigma : Type u) where
   prefix : List Sigma
-  last : Sigma
+  finalSymbol : Sigma
 
 namespace NonemptyTerminalBody
 
 /-- The original terminal-only right-hand side. -/
 def word {Sigma : Type u} (body : NonemptyTerminalBody Sigma) : List Sigma :=
-  body.prefix ++ [body.last]
+  body.prefix ++ [body.finalSymbol]
 
 /-- Contracted form of the wrapper chain before its final terminal rule. -/
 def spineOps {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
@@ -205,8 +207,9 @@ def spineOps {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
 /-- The terminal-only factorization preserves the original terminal word. -/
 theorem eval_spineOps
     {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
-    evalLinearSpineOps body.spineOps [body.last] = body.word := by
-  simp [spineOps, word, eval_leftLinearSpineOps]
+    evalLinearSpineOps body.spineOps [body.finalSymbol] = body.word := by
+  simpa [spineOps, word] using
+    (eval_leftLinearSpineOps body.prefix [body.finalSymbol])
 
 /-- The terminal-only branch uses `m-1` fresh `Theta` symbols. -/
 def freshChainCount {Sigma : Type u} (body : NonemptyTerminalBody Sigma) : Nat :=
