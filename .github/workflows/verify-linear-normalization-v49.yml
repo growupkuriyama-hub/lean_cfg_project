@@ -6,6 +6,7 @@ on:
       - tcs-v49-verification
     paths:
       - "LeanCfgProject/FixedHCFGv44/LinearNormalization*V49.lean"
+      - "LeanCfgProject/FixedHCFGv44/LinearPreprocessing*V49.lean"
       - "LeanCfgProject/FixedHCFGv44/Untyped*V49.lean"
       - ".github/workflows/verify-linear-normalization-v49.yml"
   workflow_dispatch:
@@ -34,12 +35,20 @@ jobs:
           set -o pipefail
           lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationTrimmedV49 2>&1 | tee linear-normalization-focused-v49-build.log
 
+      - name: Build source start-separation and epsilon-elimination layer
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearPreprocessingEpsilonV49 2>&1 | tee linear-preprocessing-epsilon-v49-build.log
+
       - name: Upload focused normalization log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: linear-normalization-focused-v49-build-log
-          path: linear-normalization-focused-v49-build.log
+          path: |
+            linear-normalization-focused-v49-build.log
+            linear-preprocessing-epsilon-v49-build.log
 
       - name: Reject proof placeholders in normalization layer
         shell: bash
@@ -56,6 +65,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/UntypedTrimmingV49.lean
             LeanCfgProject/FixedHCFGv44/UntypedReducedSSBNFV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationTrimmedV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearPreprocessingEpsilonV49.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in v49 linear-normalization sources."
