@@ -36,7 +36,7 @@ theorem typedDerives_internal_v49
       simp [Internal]
   | @binary A B C mu nu x y hrule left right ihLeft ihRight =>
       intro hNil
-      have hx : x = [] := (List.append_eq_nil.mp hNil).1
+      have hx : x = [] := (List.append_eq_nil_iff.mp hNil).1
       exact ihLeft hx
 
 /--
