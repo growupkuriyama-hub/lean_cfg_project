@@ -3,6 +3,7 @@ import LeanCfgProject.FixedHCFGv44.DyckObstructionV47
 import LeanCfgProject.FixedHCFGv44.LukasiewiczObstructionV47
 import LeanCfgProject.FixedHCFGv44.ClarkCongruentialInitialSetV49
 import LeanCfgProject.FixedHCFGv44.ClarkDyckStrictnessV49
+import LeanCfgProject.FixedHCFGv44.LinearNormalizationManuscriptV49
 
 namespace LeanCfgProject
 namespace FixedHCFGv44
@@ -21,7 +22,11 @@ mathematics.  In particular it reflects the v49 manuscript order:
 * yield-only target typing is introduced only for completeness;
 * `W(\widetilde G)` is first a finite witness set, becoming a characteristic
   reconstruction sample only after exact reconstruction;
-* the Gold corollary records the explicit at-most-one-later-trigger property.
+* the Gold corollary records the explicit at-most-one-later-trigger property;
+* Appendix A now exposes a source-linear-CFG to reduced single-spine SSBNF
+  certificate with exact language preservation and a polynomial output-size
+  bound.  Machine-level polynomial running time remains outside that
+  certificate.
 
 For the Clark comparison proposition, the substantive inclusion construction
 and the Dyck strictness witness are now formalized.  We still avoid claiming a
@@ -125,6 +130,19 @@ theorem corollary_ilt_one_change_v49
       n = m :=
   theorem_gold_one_change_core_v49
     Obs terminal binary start epsilonStart hSub text hText n0 hCover
+
+/--
+TCS v49 Proposition `prop:linear-normal`: manuscript-facing certificate for
+all semantic, structural, reducedness, and polynomial output-size clauses.
+The paper's polynomial-time construction claim is intentionally not encoded as
+an executable/machine-cost theorem here.
+-/
+theorem proposition_linear_normal_core_v49
+    {N : Type v} {Sigma : Type u}
+    [Fintype N] [Fintype Sigma]
+    (sourceRules : List (SourceLinearRule N Sigma)) (S : N) :
+    LinearNormalizationCertificateV49 sourceRules S :=
+  proposition_linear_normal_semantic_size_v49 sourceRules S
 
 /-- TCS v49 Theorem `thm:linear-poly`, using the v49 witness-set name. -/
 theorem theorem_linear_poly_v49
