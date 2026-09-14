@@ -1,0 +1,139 @@
+name: Verify TCS v49 formalization
+
+on:
+  push:
+    branches:
+      - tcs-v49-verification
+    paths:
+      - "LeanCfgProject/FixedHCFGv44/**"
+      - ".github/workflows/verify-tcs-v49.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: tcs-v49-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-v49:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build Section 8 finite-monoid obstruction and quotient closure
+        run: lake build LeanCfgProject.FixedHCFGv44.BoundaryObstructionsV47
+
+      - name: Build concrete Dyck obstruction
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.DyckObstructionV47 2>&1 | tee dyck-v49-build.log
+
+      - name: Upload Dyck build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dyck-v49-build-log
+          path: dyck-v49-build.log
+
+      - name: Build Lukasiewicz quotient obstruction
+        run: lake build LeanCfgProject.FixedHCFGv44.LukasiewiczObstructionV47
+
+      - name: Build v49 witness-set notation bridge
+        run: lake build LeanCfgProject.FixedHCFGv44.WitnessSetV49
+
+      - name: Build v49 finite-witness completeness theorem
+        run: lake build LeanCfgProject.FixedHCFGv44.CompletenessV49
+
+      - name: Build v49 one-change Gold refinement
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.SequentialOneChangeV49 2>&1 | tee one-change-v49-build.log
+
+      - name: Upload one-change build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: one-change-v49-build-log
+          path: one-change-v49-build.log
+
+      - name: Build v49 main-theorem semantic core
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.MainTheoremCoreV49 2>&1 | tee main-v49-build.log
+
+      - name: Upload v49 main-core build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-v49-build-log
+          path: main-v49-build.log
+
+      - name: Build v49 manuscript synchronization layer
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.ManuscriptSyncV49 2>&1 | tee manuscript-v49-build.log
+
+      - name: Upload v49 manuscript synchronization log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manuscript-v49-build-log
+          path: manuscript-v49-build.log
+
+      - name: Build yield-only refinement core
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedCore
+
+      - name: Build trimmed yield-only refinement
+        run: lake build LeanCfgProject.FixedHCFGv44.YieldTypedTrimmed
+
+      - name: Build v49 short-witness dependency package
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessEndToEndV47
+
+      - name: Build v49 characteristic-data polynomial bound
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearCharacteristicSizeV47
+
+      - name: Build v49 linear batch theorem assembly
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearBatchTheoremV47
+
+      - name: Build manuscript-facing linear theorem package
+        run: lake build LeanCfgProject.FixedHCFGv44.LinearManuscriptTheoremV47
+
+      - name: Reject proof placeholders in current v49 synchronization sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            LeanCfgProject/FixedHCFGv44/YieldTypedCore.lean
+            LeanCfgProject/FixedHCFGv44/YieldTypedTrimmed.lean
+            LeanCfgProject/FixedHCFGv44/WitnessSetV49.lean
+            LeanCfgProject/FixedHCFGv44/CompletenessV49.lean
+            LeanCfgProject/FixedHCFGv44/SequentialOneChangeV49.lean
+            LeanCfgProject/FixedHCFGv44/MainTheoremCoreV49.lean
+            LeanCfgProject/FixedHCFGv44/ManuscriptSyncV49.lean
+            LeanCfgProject/FixedHCFGv44/BoundaryObstructionsV47.lean
+            LeanCfgProject/FixedHCFGv44/DyckObstructionV47.lean
+            LeanCfgProject/FixedHCFGv44/LukasiewiczObstructionV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearCharacteristicPolynomialV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearCharacteristicSizeV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearBatchTheoremV47.lean
+            LeanCfgProject/FixedHCFGv44/LinearManuscriptTheoremV47.lean
+          )
+          if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
+            echo "Found a proof placeholder in current TCS v49 sources."
+            exit 1
+          fi
