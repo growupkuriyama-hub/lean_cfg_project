@@ -26,22 +26,25 @@ theorem dyckRun_shift_success
     dyckRun (d + k) w = some (e + k) := by
   induction w generalizing d e with
   | nil =>
-      simp [dyckRun] at h ⊢
-      omega
+      have hde : d = e := by
+        simpa [dyckRun] using h
+      simpa [dyckRun, hde]
   | cons c w ih =>
       cases c with
       | a =>
-          simp only [dyckRun] at h ⊢
+          change dyckRun (d + 1) w = some e at h
+          change dyckRun (d + k + 1) w = some (e + k)
           have h' := ih (d := d + 1) (e := e) h
-          convert h' using 1 <;> omega
+          simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using h'
       | b =>
           cases d with
           | zero =>
               simp [dyckRun] at h
           | succ d =>
-              simp only [dyckRun] at h
-              have h' := ih (d := d) (e := e) h
-              simpa [Nat.succ_add] using h'
+              change dyckRun d w = some e at h
+              rw [Nat.succ_add]
+              change dyckRun (d + k) w = some (e + k)
+              exact ih (d := d) (e := e) h
 
 /-- A balanced Dyck word is neutral when scanned from any initial depth. -/
 theorem dyck1_run_from_depth
@@ -69,20 +72,24 @@ theorem dyck1_balanced_replacement
   | none =>
       simp [hp] at hpxq'
   | some d =>
+      rw [hp] at hpxq'
+      simp only [Option.bind_some] at hpxq'
       have hxD : dyckRun d x = some d := dyck1_run_from_depth d hx
       have hyD : dyckRun d y = some d := dyck1_run_from_depth d hy
-      have hq : dyckRun d q = some 0 := by
-        simpa [dyckRun_append, hxD] using hpxq'
+      rw [dyckRun_append, hxD] at hpxq'
+      simp only [Option.bind_some] at hpxq'
+      have hq : dyckRun d q = some 0 := hpxq'
       have hpyq : dyckRun 0 (p ++ (y ++ q)) = some 0 := by
         rw [dyckRun_append, hp]
-        simp [dyckRun_append, hyD, hq]
+        simp only [Option.bind_some]
+        rw [dyckRun_append, hyD]
+        simpa using hq
       simpa only [List.append_assoc] using hpyq
 
 /-- All balanced Dyck words lie in one syntactic congruence class of `D_1`. -/
 theorem dyck1_syntacticallyHomogeneous_v49 :
     SyntacticallyHomogeneousV49 Dyck1 Dyck1 := by
-  intro x hx y hy
-  intro p q
+  intro x hx y hy p q
   constructor
   · intro hpxq
     exact dyck1_balanced_replacement hx hy hpxq
