@@ -20,7 +20,7 @@ rebuilds the finite-index/norm argument assuming finiteness only of
 
 /-- A local finite structure for retained terminal productions needs only the
 retained-state type and the terminal alphabet to be finite. -/
-noncomputable def keptTerminalProductionFintypeRetainedV49
+@[reducible] noncomputable def keptTerminalProductionFintypeRetainedV49
     {N : Type v} {Sigma : Type u}
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
@@ -33,7 +33,7 @@ noncomputable def keptTerminalProductionFintypeRetainedV49
 
 /-- A local finite structure for retained binary productions needs only the
 retained-state type to be finite. -/
-noncomputable def keptBinaryProductionFintypeRetainedV49
+@[reducible] noncomputable def keptBinaryProductionFintypeRetainedV49
     {N : Type v} {Sigma : Type u}
     {Obs : Observer Sigma}
     {terminal : TerminalRules N Sigma} {binary : BinaryRules N}
@@ -60,11 +60,18 @@ theorem keptTerminalProduction_card_le_retained_v49
   classical
   letI := keptTerminalProductionFintypeRetainedV49
     (Obs := Obs) (terminal := terminal) (binary := binary) (start := start)
-  apply Fintype.card_le_of_injective
-    (fun p : KeptTerminalProduction (Obs := Obs) (terminal := terminal)
-      (binary := binary) (start := start) => p.1)
-  intro p q hpq
-  exact Subtype.ext hpq
+  calc
+    Fintype.card
+        (KeptTerminalProduction (Obs := Obs) (terminal := terminal)
+          (binary := binary) (start := start)) ≤
+        Fintype.card (KeptState Obs terminal binary start × Sigma) := by
+      apply Fintype.card_le_of_injective
+        (fun p : KeptTerminalProduction (Obs := Obs) (terminal := terminal)
+          (binary := binary) (start := start) => p.1)
+      intro p q hpq
+      exact Subtype.ext hpq
+    _ = Fintype.card (KeptState Obs terminal binary start) * Fintype.card Sigma := by
+      simp
 
 /-- Retained binary productions inject into triples of retained states. -/
 theorem keptBinaryProduction_card_le_retained_v49
