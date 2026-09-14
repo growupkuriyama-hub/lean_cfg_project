@@ -106,7 +106,7 @@ theorem normalizationFreshLabelsV49_length
   | nil => simp [normalizationFreshLabelsV49, normalizationFreshStateCount]
   | cons r rs ih =>
       simp [normalizationFreshLabelsV49, normalizationFreshStateCount,
-        preparedFreshLabelsV49_length, ih]
+        preparedFreshLabelsV49_length]
 
 /-- All old source labels, embedded in the normalized nonterminal type. -/
 noncomputable def linearNormOldLabelsV49
@@ -134,8 +134,9 @@ noncomputable def linearNormFreshLabelsFinsetV49
 noncomputable def linearNormTightLabelsV49
     {N : Type v} {Sigma : Type u} [Fintype N] [Fintype Sigma]
     (rules : List (PreparedLinearRule N Sigma)) :
-    Finset (LinearNormNT N Sigma) :=
-  linearNormOldLabelsV49 ∪ linearNormWrapperLabelsV49 ∪
+    Finset (LinearNormNT N Sigma) := by
+  classical
+  exact linearNormOldLabelsV49 ∪ linearNormWrapperLabelsV49 ∪
     linearNormFreshLabelsFinsetV49 rules
 
 /-- The fresh-label support is bounded by the summed fresh-state count. -/
