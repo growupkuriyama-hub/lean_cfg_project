@@ -35,6 +35,12 @@ jobs:
           set -o pipefail
           lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationEndToEndV49 2>&1 | tee linear-normalization-focused-v49-build.log
 
+      - name: Build source-size polynomial normalization package
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationSourceSizeV49 2>&1 | tee linear-normalization-source-size-v49-build.log
+
       - name: Build source preprocessing and finite prepared enumeration
         shell: bash
         run: |
@@ -48,6 +54,7 @@ jobs:
           name: linear-normalization-focused-v49-build-log
           path: |
             linear-normalization-focused-v49-build.log
+            linear-normalization-source-size-v49-build.log
             linear-preprocessing-v49-build.log
 
       - name: Reject proof placeholders in normalization layer
@@ -71,6 +78,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearPreprocessingPreparedAdequacyV49.lean
             LeanCfgProject/FixedHCFGv44/LinearPreprocessingPreparedEnumerationV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationEndToEndV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationSourceSizeV49.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in v49 linear-normalization sources."
