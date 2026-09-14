@@ -100,10 +100,14 @@ theorem typedInitialSet_finite_v49
     fun X => (X.1.label, X.1.yieldType)
   have hEncode : Function.Injective encode := by
     intro X Y hXY
-    apply Subtype.ext
-    apply TypedNT.ext
-    · exact congrArg Prod.fst hXY
-    · exact congrArg Prod.snd hXY
+    rcases X with ⟨⟨xl, xt⟩, hX⟩
+    rcases Y with ⟨⟨yl, yt⟩, hY⟩
+    change (xl, xt) = (yl, yt) at hXY
+    have hl : xl = yl := congrArg Prod.fst hXY
+    have ht : xt = yt := congrArg Prod.snd hXY
+    subst yl
+    subst yt
+    rfl
   letI : Finite (KeptState Obs terminal binary start) :=
     Finite.of_injective encode hEncode
   exact Set.toFinite _
