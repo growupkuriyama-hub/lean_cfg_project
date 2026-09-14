@@ -10,12 +10,12 @@ universe u v
 Finite active-state bridge for the explicit v49 Appendix A normalization.
 
 `LinearNormNT` is intentionally an extensional ambient type: a stage constructor
-can carry an arbitrary list of remaining spine operations.  Hence the ambient
-type is infinite even for a finite source grammar.  Reachable normalized stages,
-however, have bounded remaining programs.  This file records that bound in a
+can carry an arbitrary list of remaining spine operations. Hence the ambient
+type is infinite even for a finite source grammar. Reachable normalized stages,
+however, have bounded remaining programs. This file records that bound in a
 finite active-label set, proves that every retained yield-typed state lies over
-that set, and obtains the `Fintype` instance needed by Appendix B from the finite
-retained state space itself.
+that set, and obtains the `Fintype` needed by Appendix B from the finite retained
+state space itself.
 -/
 
 /-- All spine-operation lists of length at most `n`, explicitly enumerated. -/
@@ -52,7 +52,7 @@ theorem mem_linearSpineOpsUpToV49_iff
               simp [linearSpineOpsUpToV49, ih]
 
 /--
-Finite ambient support for every reachable normalized label.  Old symbols and
+Finite ambient support for every reachable normalized label. Old symbols and
 wrappers are globally finite; stage programs are truncated at the total
 prepared RHS length; terminal endpoints are indexed by the finite prepared
 rule list.
@@ -96,7 +96,7 @@ noncomputable def linearNormActiveLabelsV49
   classical
   simp [linearNormActiveLabelsV49, hr]
 
-/-- Membership of a stage label is exactly rule membership plus the global length bound. -/
+/-- Membership of a stage label is rule membership plus the global length bound. -/
 theorem linearNorm_stage_mem_activeLabels_iff_v49
     {N : Type v} {Sigma : Type u} [Fintype N] [Fintype Sigma]
     (rules : List (PreparedLinearRule N Sigma))
@@ -117,11 +117,11 @@ theorem preparedRule_rhsLength_le_total_of_mem_v49
   | nil =>
       simp at hr
   | cons q qs ih =>
-      simp only [List.mem_cons] at hr
-      simp [preparedTotalRhsLength]
-      rcases hr with rfl | hr
-      · omega
-      · have h := ih hr
+      rcases List.mem_cons.mp hr with hqr | hr'
+      · subst r
+        simp [preparedTotalRhsLength]
+      · have h := ih hr'
+        change r.rhsLength ≤ q.rhsLength + preparedTotalRhsLength qs
         omega
 
 /-- A context spine is no longer than its prepared RHS encoding. -/
@@ -162,10 +162,7 @@ theorem linearNorm_entry_mem_activeLabels_v49
   | cons op rest =>
       exact (linearNorm_stage_mem_activeLabels_iff_v49 rules _ _).2 ⟨hr, hlen⟩
 
-/--
-If the parent of an explicit normalized binary rule is active, both children
-are active as well.
--/
+/-- If a normalized binary parent is active, both children are active. -/
 theorem linearNormBinary_children_active_v49
     {N : Type v} {Sigma : Type u} [Fintype N] [Fintype Sigma]
     {rules : List (PreparedLinearRule N Sigma)}
@@ -209,16 +206,20 @@ theorem linearNormBinary_children_active_v49
       have hParent :=
         (linearNorm_stage_mem_activeLabels_iff_v49 rules
           r (LinearSpineOp.left a :: rest)).1 hX
+      have hLen := hParent.2
       have hRest : rest.length ≤ preparedTotalRhsLength rules := by
-        simpa using Nat.le_of_succ_le_succ hParent.2
+        simp only [List.length_cons] at hLen
+        omega
       exact ⟨linearNorm_wrap_mem_activeLabels_v49 rules a,
         linearNorm_entry_mem_activeLabels_v49 rules hrule rest hRest⟩
   | @stageRight r a rest hrule =>
       have hParent :=
         (linearNorm_stage_mem_activeLabels_iff_v49 rules
           r (LinearSpineOp.right a :: rest)).1 hX
+      have hLen := hParent.2
       have hRest : rest.length ≤ preparedTotalRhsLength rules := by
-        simpa using Nat.le_of_succ_le_succ hParent.2
+        simp only [List.length_cons] at hLen
+        omega
       exact ⟨linearNorm_entry_mem_activeLabels_v49 rules hrule rest hRest,
         linearNorm_wrap_mem_activeLabels_v49 rules a⟩
 
@@ -274,7 +275,7 @@ noncomputable def linearNormActiveTypedNTFinsetV49
     (Finset.univ : Finset Obs.M)).image
       (fun p => { label := p.1, yieldType := p.2 })
 
-/-- A typed state belongs to the typed active support whenever its label is active. -/
+/-- A typed state is active whenever its underlying label is active. -/
 theorem typedNT_mem_activeTypedNTFinset_v49
     {N : Type v} {Sigma : Type u} [Fintype N] [Fintype Sigma]
     (Obs : Observer Sigma) (rules : List (PreparedLinearRule N Sigma))
@@ -305,8 +306,9 @@ theorem keptStateToActiveTypedV49_injective
     (rules : List (PreparedLinearRule N Sigma)) (start : N → Prop) :
     Function.Injective (keptStateToActiveTypedV49 Obs rules start) := by
   intro X Y h
-  apply Subtype.ext
-  exact congrArg Subtype.val h
+  have hval : X.1 = Y.1 := by
+    exact congrArg (fun Z => Z.1) h
+  exact Subtype.ext hval
 
 /--
 The retained yield-typed state type of every finite trimmed normalized grammar
@@ -329,7 +331,7 @@ noncomputable def trimmedLinearNormKeptStateFintypeV49
     Finite.of_injective f (keptStateToActiveTypedV49_injective Obs rules start)
   exact Fintype.ofFinite _
 
-/-- Source-normalization specialization of the retained-state `Fintype` construction. -/
+/-- Source-normalization specialization of the retained-state finite structure. -/
 noncomputable def sourceNormalizedKeptStateFintypeV49
     {N : Type v} {Sigma : Type u} [Fintype N] [Fintype Sigma]
     (Obs : Observer Sigma)
@@ -348,9 +350,21 @@ noncomputable def sourceNormalizedKeptStateFintypeV49
   exact trimmedLinearNormKeptStateFintypeV49 Obs
     (enumeratePreparedLinearRules sourceRules) (SourceSeparatedStart S)
 
+/-- Cardinality of the actually retained typed state space of the source normalization. -/
+noncomputable def sourceNormalizedRetainedCardV49
+    {N : Type v} {Sigma : Type u} [Fintype N] [Fintype Sigma]
+    (Obs : Observer Sigma)
+    (sourceRules : List (SourceLinearRule N Sigma)) (S : N) : Nat :=
+  @Fintype.card
+    (KeptState Obs
+      (SourceNormalizedTerminalV49 sourceRules S)
+      (SourceNormalizedBinaryV49 sourceRules S)
+      (SourceNormalizedStartV49 sourceRules S))
+    (sourceNormalizedKeptStateFintypeV49 Obs sourceRules S)
+
 /--
-Appendix B's short-witness inequalities now apply directly to the explicit
-source normalization, with no ambient-finiteness assumption on `LinearNormNT`.
+Appendix B's short-witness inequalities apply directly to the explicit source
+normalization, with no ambient-finiteness assumption on `LinearNormNT`.
 -/
 theorem sourceNormalized_short_canonical_witnesses_v49
     {N : Type v} {Sigma : Type u}
@@ -361,13 +375,15 @@ theorem sourceNormalized_short_canonical_witnesses_v49
     let binary := SourceNormalizedBinaryV49 sourceRules S
     let start := SourceNormalizedStartV49 sourceRules S
     (∀ X : KeptState Obs terminal binary start,
-      (canonicalOmega X).length ≤ Fintype.card (KeptState Obs terminal binary start)) ∧
+      (canonicalOmega X).length ≤
+        sourceNormalizedRetainedCardV49 Obs sourceRules S) ∧
     (∀ X : KeptState Obs terminal binary start,
       (canonicalLeftCtx X).length + (canonicalRightCtx X).length ≤
-        2 * Fintype.card (KeptState Obs terminal binary start)) := by
+        2 * sourceNormalizedRetainedCardV49 Obs sourceRules S) := by
   letI := sourceNormalizedKeptStateFintypeV49 Obs sourceRules S
-  exact short_canonical_witnesses_from_retained_finite_shape_v49
-    (sourceNormalizedTypedLinearSpineShapeV49 Obs sourceRules S)
+  simpa [sourceNormalizedRetainedCardV49] using
+    (short_canonical_witnesses_from_retained_finite_shape_v49
+      (sourceNormalizedTypedLinearSpineShapeV49 Obs sourceRules S))
 
 end FixedHCFGv44
 end LeanCfgProject
