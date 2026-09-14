@@ -64,25 +64,33 @@ theorem linearNormalization_trimmed_language_eq_v49
     (start : N → Prop) (epsilonStart : Prop) :
     ReducedLinearSpineSSBNFLanguage rules start epsilonStart =
       PreparedLinearLanguage rules start epsilonStart := by
-  have hTrim := reduced_untyped_language_eq_original
+  ext w
+  change
+    ReducedUntypedStartLanguage
+        (LinearNormTerminal rules)
+        (LinearNormBinary rules)
+        (LinearNormStartRules start)
+        epsilonStart w ↔
+      PreparedLinearLanguage rules start epsilonStart w
+  rw [reduced_untyped_language_eq_original
     (LinearNormTerminal rules)
     (LinearNormBinary rules)
     (LinearNormStartRules start)
-    epsilonStart
-  have hTail :
-      GenericUntypedStartLanguage
-          (LinearNormTerminal rules)
-          (LinearNormBinary rules)
-          (LinearNormStartRules start)
-          epsilonStart =
-        PreparedLinearLanguage rules start epsilonStart := by
-    simpa [ReifiedLinearSpineSSBNFLanguage] using
-      (linearNormalization_reifiedSSBNF_language_eq_v49
-        rules start epsilonStart)
-  have h := hTrim.trans hTail
-  simpa [ReducedLinearSpineSSBNFLanguage,
-    TrimmedLinearNormTerminal, TrimmedLinearNormBinary,
-    TrimmedLinearNormStart] using h
+    epsilonStart]
+  change
+    UntypedStartDerives
+        (LinearNormTerminal rules)
+        (LinearNormBinary rules)
+        (LinearNormStartRules start)
+        epsilonStart w ↔
+      PreparedLinearLanguage rules start epsilonStart w
+  rw [← explicitLinearNormStart_iff_untypedStart
+    rules start epsilonStart w]
+  change
+    ExplicitLinearNormLanguage rules start epsilonStart w ↔
+      PreparedLinearLanguage rules start epsilonStart w
+  rw [linearNormalization_explicitSSBNF_language_eq_v49
+    rules start epsilonStart]
 
 /-- Every retained binary rule still has exactly one wrapper child. -/
 theorem trimmedLinearNormBinary_single_spine_shape
