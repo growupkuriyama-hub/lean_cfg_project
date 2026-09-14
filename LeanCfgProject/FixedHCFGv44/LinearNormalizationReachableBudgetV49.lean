@@ -52,6 +52,13 @@ theorem linearNormEntriesV49_length
   | nil => simp [linearNormEntriesV49]
   | cons op rest ih => simp [linearNormEntriesV49, ih]
 
+/-- The current entry is always the head of its own suffix-entry list. -/
+@[simp] theorem linearNormEntriesV49_entry_mem
+    {N : Type v} {Sigma : Type u}
+    (r : PreparedLinearRule N Sigma) (ops : List (LinearSpineOp Sigma)) :
+    LinearNormNT.entry r ops ∈ linearNormEntriesV49 r ops := by
+  cases ops <;> simp [linearNormEntriesV49]
+
 /-- The next entry after a stage entry remains in the same suffix-entry list. -/
 theorem linearNormEntriesV49_stage_successor
     {N : Type v} {Sigma : Type u}
@@ -63,15 +70,18 @@ theorem linearNormEntriesV49_stage_successor
     LinearNormNT.entry r rest ∈ linearNormEntriesV49 q ops := by
   induction ops with
   | nil =>
-      simp [linearNormEntriesV49, LinearNormNT.entry, LinearNormNT.ruleCore] at hmem
+      cases q <;>
+        simp [linearNormEntriesV49, LinearNormNT.entry,
+          LinearNormNT.ruleCore] at hmem
   | cons head tail ih =>
       simp only [linearNormEntriesV49, List.mem_cons] at hmem ⊢
       rcases hmem with hEq | hTail
       · have hEntry :
-          LinearNormNT.entry q (head :: tail) = LinearNormNT.stage q (head :: tail) := rfl
+          LinearNormNT.entry q (head :: tail) =
+            LinearNormNT.stage q (head :: tail) := rfl
         rw [hEntry] at hEq
         cases hEq
-        exact Or.inr (by simp [linearNormEntriesV49])
+        exact Or.inr (linearNormEntriesV49_entry_mem q tail)
       · exact Or.inr (ih hTail)
 
 /-- Concatenation of all rule-local suffix-entry lists. -/
@@ -120,7 +130,8 @@ theorem linearNorm_rule_continuation_mem_global_v49
     LinearNormNT.entry r rest ∈ normalizationReachableEntriesV49 rules := by
   apply linearNormEntriesV49_subset_global hr
   rw [hops]
-  simp [linearNormEntriesV49]
+  simp only [linearNormEntriesV49, List.mem_cons]
+  exact Or.inr (linearNormEntriesV49_entry_mem r rest)
 
 /-- Finite quotient of the reachable suffix-entry list. -/
 noncomputable def linearNormReachableEntriesFinsetV49
@@ -196,25 +207,23 @@ theorem linearNormBinary_children_reachable_v49
       exact ⟨linearNorm_wrap_mem_reachableLabels_v49 rules a,
         linearNorm_globalEntry_mem_reachableLabels_v49 rules hCont⟩
   | @stageLeft r a rest hrule =>
-      have hStageEntries : LinearNormNT.stage r (LinearSpineOp.left a :: rest) ∈
-          normalizationReachableEntriesV49 rules := by
+      have hStageEntries :
+          LinearNormNT.stage r (LinearSpineOp.left a :: rest) ∈
+            normalizationReachableEntriesV49 rules := by
         classical
-        have : LinearNormNT.stage r (LinearSpineOp.left a :: rest) ∉
-            linearNormOldLabelsV49 (N := N) (Sigma := Sigma) := by
-          simp [linearNormOldLabelsV49]
-        have : LinearNormNT.stage r (LinearSpineOp.left a :: rest) ∉
-            linearNormWrapperLabelsV49 (N := N) (Sigma := Sigma) := by
-          simp [linearNormWrapperLabelsV49]
-        simpa [linearNormReachableLabelsV49, linearNormReachableEntriesFinsetV49,
+        simpa [linearNormReachableLabelsV49,
+          linearNormReachableEntriesFinsetV49,
           linearNormOldLabelsV49, linearNormWrapperLabelsV49] using hX
       have hCont := normalizationReachableEntriesV49_stage_successor hStageEntries
       exact ⟨linearNorm_wrap_mem_reachableLabels_v49 rules a,
         linearNorm_globalEntry_mem_reachableLabels_v49 rules hCont⟩
   | @stageRight r a rest hrule =>
-      have hStageEntries : LinearNormNT.stage r (LinearSpineOp.right a :: rest) ∈
-          normalizationReachableEntriesV49 rules := by
+      have hStageEntries :
+          LinearNormNT.stage r (LinearSpineOp.right a :: rest) ∈
+            normalizationReachableEntriesV49 rules := by
         classical
-        simpa [linearNormReachableLabelsV49, linearNormReachableEntriesFinsetV49,
+        simpa [linearNormReachableLabelsV49,
+          linearNormReachableEntriesFinsetV49,
           linearNormOldLabelsV49, linearNormWrapperLabelsV49] using hX
       have hCont := normalizationReachableEntriesV49_stage_successor hStageEntries
       exact ⟨linearNorm_globalEntry_mem_reachableLabels_v49 rules hCont,
@@ -279,9 +288,12 @@ theorem normalizationReachableEntriesV49_length_le
   | nil => simp [normalizationReachableEntriesV49, preparedTotalRhsLength]
   | cons r rs ih =>
       have hLocal := preparedSpineOpsV49_length_le_rhsLength r
-      simp only [normalizationReachableEntriesV49, List.flatMap_cons,
-        List.length_append, linearNormEntriesV49_length, List.length_cons,
-        preparedTotalRhsLength, List.map_cons, List.sum_cons]
+      change
+        (linearNormEntriesV49 r (preparedSpineOpsV49 r)).length +
+            (normalizationReachableEntriesV49 rs).length ≤
+          (rs.length + 1) +
+            (r.rhsLength + preparedTotalRhsLength rs)
+      rw [linearNormEntriesV49_length]
       omega
 
 /-- Reachable normalized labels are linearly bounded by the prepared grammar size. -/
@@ -334,8 +346,9 @@ theorem typedKept_mem_reachableTypedFinset_v49
       (TrimmedLinearNormStart rules start)) :
     X.1 ∈ linearNormReachableTypedFinsetV49 Obs rules := by
   classical
-  rcases X.1 with ⟨label, mu⟩
-  have hLabel := trimmedLinearNorm_typedKept_label_reachable_v49 Obs X.property
+  rcases X with ⟨⟨label, mu⟩, hKeep⟩
+  have hLabel : label ∈ linearNormReachableLabelsV49 rules :=
+    trimmedLinearNorm_typedKept_label_reachable_v49 Obs hKeep
   simp [linearNormReachableTypedFinsetV49, hLabel]
 
 /-- Inject retained typed states into the polynomial typed support. -/
@@ -357,8 +370,8 @@ theorem keptStateToReachableTypedV49_injective
     (rules : List (PreparedLinearRule N Sigma)) (start : N → Prop) :
     Function.Injective (keptStateToReachableTypedV49 Obs rules start) := by
   intro X Y h
-  apply Subtype.ext
-  exact congrArg Subtype.val h
+  have hval : X.1 = Y.1 := congrArg Subtype.val h
+  exact Subtype.ext hval
 
 /-- The typed support has at most `labels * |M|` elements. -/
 theorem linearNormReachableTypedFinsetV49_card_le
