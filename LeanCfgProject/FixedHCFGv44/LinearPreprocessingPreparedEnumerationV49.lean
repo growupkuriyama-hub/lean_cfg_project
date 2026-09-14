@@ -32,7 +32,8 @@ theorem terminalBodyOfCons_word
   | nil =>
       simp [terminalBodyOfCons, NonemptyTerminalBody.word]
   | cons b t ih =>
-      simp [terminalBodyOfCons, NonemptyTerminalBody.word, ih]
+      simpa [terminalBodyOfCons, NonemptyTerminalBody.word] using
+        congrArg (List.cons a) (ih b)
 
 /-- Canonical body attached to an arbitrary word together with a nonemptiness proof. -/
 def nonemptyTerminalBodyOf
