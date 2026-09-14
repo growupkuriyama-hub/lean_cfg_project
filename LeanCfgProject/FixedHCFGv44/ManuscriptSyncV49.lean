@@ -204,7 +204,19 @@ theorem proposition_clark_congruential_inclusion_core_v49
     (terminal : TerminalRules N Sigma) (binary : BinaryRules N)
     (start : StartRules N) (epsilonStart : Prop)
     (hSub : HSubstitutable Obs
-      (UntypedStartLanguage terminal binary start epsilonStart)) :=
+      (UntypedStartLanguage terminal binary start epsilonStart)) :
+    (TypedInitialSetV49 Obs terminal binary start).Finite ∧
+    (∀ X : KeptState Obs terminal binary start,
+      SyntacticallyHomogeneousV49
+        (UntypedStartLanguage terminal binary start epsilonStart)
+        (KeptStateLanguageV49 Obs terminal binary start X)) ∧
+    SyntacticallyHomogeneousV49
+      (UntypedStartLanguage terminal binary start epsilonStart)
+      (EpsilonOnlyV49 : Language Sigma) ∧
+    (fun w : Word Sigma =>
+      TypedInitialUnionV49 Obs terminal binary start w ∨
+        (w ∈ EpsilonOnlyV49 ∧ epsilonStart)) =
+      UntypedStartLanguage terminal binary start epsilonStart :=
   clark_congruential_inclusion_package_v49
     Obs terminal binary start epsilonStart hSub
 
