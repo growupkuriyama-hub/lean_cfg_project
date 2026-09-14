@@ -35,6 +35,12 @@ jobs:
           set -o pipefail
           lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationManuscriptV49 2>&1 | tee linear-normalization-manuscript-v49-build.log
 
+      - name: Build typed linear-spine bridge from normalized grammar
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationTypedShapeV49 2>&1 | tee linear-normalization-typed-shape-v49-build.log
+
       - name: Build end-to-end reduced single-spine normalization package
         shell: bash
         run: |
@@ -60,6 +66,7 @@ jobs:
           name: linear-normalization-focused-v49-build-log
           path: |
             linear-normalization-manuscript-v49-build.log
+            linear-normalization-typed-shape-v49-build.log
             linear-normalization-focused-v49-build.log
             linear-normalization-source-size-v49-build.log
             linear-preprocessing-v49-build.log
@@ -87,6 +94,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LinearNormalizationEndToEndV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationSourceSizeV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationManuscriptV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationTypedShapeV49.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in v49 linear-normalization sources."
