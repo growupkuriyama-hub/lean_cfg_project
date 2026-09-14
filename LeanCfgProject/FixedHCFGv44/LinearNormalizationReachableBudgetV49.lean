@@ -80,8 +80,11 @@ theorem linearNormEntriesV49_stage_successor
           LinearNormNT.entry q (head :: tail) =
             LinearNormNT.stage q (head :: tail) := rfl
         rw [hEntry] at hEq
+        have hMemTail :
+            LinearNormNT.entry q tail ∈ linearNormEntriesV49 q tail :=
+          linearNormEntriesV49_entry_mem q tail
         cases hEq
-        exact Or.inr (linearNormEntriesV49_entry_mem q tail)
+        exact Or.inr hMemTail
       · exact Or.inr (ih hTail)
 
 /-- Concatenation of all rule-local suffix-entry lists. -/
@@ -288,12 +291,9 @@ theorem normalizationReachableEntriesV49_length_le
   | nil => simp [normalizationReachableEntriesV49, preparedTotalRhsLength]
   | cons r rs ih =>
       have hLocal := preparedSpineOpsV49_length_le_rhsLength r
-      change
-        (linearNormEntriesV49 r (preparedSpineOpsV49 r)).length +
-            (normalizationReachableEntriesV49 rs).length ≤
-          (rs.length + 1) +
-            (r.rhsLength + preparedTotalRhsLength rs)
-      rw [linearNormEntriesV49_length]
+      simp only [normalizationReachableEntriesV49, List.flatMap_cons,
+        List.length_append, linearNormEntriesV49_length, List.length_cons,
+        preparedTotalRhsLength, List.map_cons, List.sum_cons] at ih ⊢
       omega
 
 /-- Reachable normalized labels are linearly bounded by the prepared grammar size. -/
@@ -370,8 +370,13 @@ theorem keptStateToReachableTypedV49_injective
     (rules : List (PreparedLinearRule N Sigma)) (start : N → Prop) :
     Function.Injective (keptStateToReachableTypedV49 Obs rules start) := by
   intro X Y h
-  have hval : X.1 = Y.1 := congrArg Subtype.val h
-  exact Subtype.ext hval
+  have hval :
+      (keptStateToReachableTypedV49 Obs rules start X).1 =
+        (keptStateToReachableTypedV49 Obs rules start Y).1 :=
+    congrArg
+      (fun Z : ↥(linearNormReachableTypedFinsetV49 Obs rules) => Z.1) h
+  apply Subtype.ext
+  simpa [keptStateToReachableTypedV49] using hval
 
 /-- The typed support has at most `labels * |M|` elements. -/
 theorem linearNormReachableTypedFinsetV49_card_le
