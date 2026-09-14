@@ -64,9 +64,11 @@ theorem exists_nonemptyTerminalBody_of_ne_nil
         refine ⟨{ initial := [], finalSymbol := a }, ?_⟩
         simp [NonemptyTerminalBody.word]
       · rcases ih ht with ⟨body, hbody⟩
-        refine ⟨{ initial := a :: body.initial,
-          finalSymbol := body.finalSymbol }, ?_⟩
-        simp [NonemptyTerminalBody.word, hbody]
+        let newBody : NonemptyTerminalBody Sigma :=
+          { initial := a :: body.initial
+            finalSymbol := body.finalSymbol }
+        refine ⟨newBody, ?_⟩
+        simp [newBody, NonemptyTerminalBody.word, hbody]
 
 /--
 Every derivation after unit elimination is represented by any exact prepared
@@ -96,8 +98,10 @@ theorem unitElim_to_prepared_of_exact
       | @context A D B u v reach hsrc hnonunit =>
           let body : LinearContextBody N Sigma :=
             { left := u, center := B, right := v }
-          have hmem : PreparedLinearRule.context A body hnonunit ∈ prepared := by
-            apply (hExact (PreparedLinearRule.context A body hnonunit)).2
+          have hBodyNonunit : body.Nonunit := by
+            simpa [body, LinearContextBody.Nonunit] using hnonunit
+          have hmem : PreparedLinearRule.context A body hBodyNonunit ∈ prepared := by
+            apply (hExact (PreparedLinearRule.context A body hBodyNonunit)).2
             change UnitElimLinearRule sourceRules
               (SourceLinearRule.context A u B v)
             exact UnitElimLinearRule.context reach hsrc hnonunit
@@ -190,7 +194,8 @@ theorem prepared_separated_language_eq_source_of_exact_v49
     | epsilon hNullable =>
         exact hNullable
     | @nonempty A w hStart hDeriv =>
-        have hAS : A = S := hStart
+        have hAS : A = S := by
+          simpa [SourceSeparatedStart] using hStart
         subst A
         exact epsilonElim_to_source
           (unitElim_to_epsilonElim
@@ -203,7 +208,8 @@ theorem prepared_separated_language_eq_source_of_exact_v49
         source_nonempty_to_epsilonElim h hw
       have hUnit : UnitElimLinearDerives sourceRules S w :=
         epsilonElim_to_unitElim hEps
-      exact PreparedLinearStartDerives.nonempty rfl
+      exact PreparedLinearStartDerives.nonempty
+        (A := S) (by rfl)
         (unitElim_to_prepared_of_exact hExact hUnit)
 
 end FixedHCFGv44
