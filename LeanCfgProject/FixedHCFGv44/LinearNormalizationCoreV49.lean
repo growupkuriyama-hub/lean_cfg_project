@@ -150,10 +150,10 @@ theorem spineOps_length_pos_of_nonunit
   rcases h with hleft | hright
   · cases hEq : body.left with
     | nil => exact (hleft hEq).elim
-    | cons a t => simp [hEq]
+    | cons a t => simp
   · cases hEq : body.right with
     | nil => exact (hright hEq).elim
-    | cons a t => simp [hEq]
+    | cons a t => simp
 
 /--
 Fresh chain symbols needed by the explicit Appendix A case split.
@@ -185,35 +185,35 @@ theorem freshChainCount_le_spineSteps
 end LinearContextBody
 
 /--
-A nonempty terminal-only right-hand side, represented as `prefix ++ [finalSymbol]`.
+A nonempty terminal-only right-hand side, represented as `initial ++ [finalSymbol]`.
 This is exactly the representation used by the manuscript's
 `Theta_2,...,Theta_m` chain.
 -/
 structure NonemptyTerminalBody (Sigma : Type u) where
-  prefix : List Sigma
+  initial : List Sigma
   finalSymbol : Sigma
 
 namespace NonemptyTerminalBody
 
 /-- The original terminal-only right-hand side. -/
 def word {Sigma : Type u} (body : NonemptyTerminalBody Sigma) : List Sigma :=
-  body.prefix ++ [body.finalSymbol]
+  body.initial ++ [body.finalSymbol]
 
 /-- Contracted form of the wrapper chain before its final terminal rule. -/
 def spineOps {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
     List (LinearSpineOp Sigma) :=
-  body.prefix.map LinearSpineOp.left
+  body.initial.map LinearSpineOp.left
 
 /-- The terminal-only factorization preserves the original terminal word. -/
 theorem eval_spineOps
     {Sigma : Type u} (body : NonemptyTerminalBody Sigma) :
     evalLinearSpineOps body.spineOps [body.finalSymbol] = body.word := by
   simpa [spineOps, word] using
-    (eval_leftLinearSpineOps body.prefix [body.finalSymbol])
+    (eval_leftLinearSpineOps body.initial [body.finalSymbol])
 
 /-- The terminal-only branch uses `m-1` fresh `Theta` symbols. -/
 def freshChainCount {Sigma : Type u} (body : NonemptyTerminalBody Sigma) : Nat :=
-  body.prefix.length
+  body.initial.length
 
 /-- Exact form of the Appendix A terminal-only state count. -/
 theorem freshChainCount_eq_word_length_sub_one
