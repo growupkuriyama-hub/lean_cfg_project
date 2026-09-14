@@ -150,6 +150,19 @@ jobs:
           name: linear-normalization-size-v49-build-log
           path: linear-normalization-size-v49-build.log
 
+      - name: Build v49 prepared-grammar normalization semantics
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.LinearNormalizationPreparedSemanticsV49 2>&1 | tee linear-normalization-semantics-v49-build.log
+
+      - name: Upload v49 prepared-grammar semantics build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linear-normalization-semantics-v49-build-log
+          path: linear-normalization-semantics-v49-build.log
+
       - name: Build v49 short-witness dependency package
         run: lake build LeanCfgProject.FixedHCFGv44.LinearWitnessEndToEndV47
 
@@ -181,6 +194,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/LukasiewiczObstructionV47.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationCoreV49.lean
             LeanCfgProject/FixedHCFGv44/LinearNormalizationGrammarSizeV49.lean
+            LeanCfgProject/FixedHCFGv44/LinearNormalizationPreparedSemanticsV49.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineContextCoreV47.lean
             LeanCfgProject/FixedHCFGv44/LinearSpineWrapperContextV47.lean
             LeanCfgProject/FixedHCFGv44/LinearWitnessEndToEndV47.lean
