@@ -43,6 +43,9 @@ jobs:
       - name: Build exact v60 canonical choices
         run: lake build LeanCfgProject.FixedHCFG.V60CanonicalChoices
 
+      - name: Build exact v60 canonical length bounds
+        run: lake build LeanCfgProject.FixedHCFG.V60CanonicalBounds
+
       - name: Build exact v60 canonical reconstruction basis
         run: lake build LeanCfgProject.FixedHCFG.V60CanonicalBasis
 
