@@ -6,6 +6,7 @@ on:
       - tcs-v49-verification
     paths:
       - "LeanCfgProject/FixedHCFGv44/Clark*V49.lean"
+      - "LeanCfgProject/FixedHCFGv44/DyckFirstReturnV49.lean"
       - ".github/workflows/verify-clark-congruential-v49.yml"
   workflow_dispatch:
 
@@ -43,6 +44,12 @@ jobs:
       - name: Build Dyck strictness semantic core
         run: lake build LeanCfgProject.FixedHCFGv44.ClarkDyckStrictnessV49
 
+      - name: Build Dyck recursive-equation helpers
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.DyckFirstReturnV49 2>&1 | tee dyck-first-return-v49-build.log
+
       - name: Build Dyck helper congruence package
         shell: bash
         run: |
@@ -56,6 +63,7 @@ jobs:
           name: clark-congruential-v49-build-log
           path: |
             clark-presentation-v49-build.log
+            dyck-first-return-v49-build.log
             clark-dyck-grammar-v49-build.log
 
       - name: Reject proof placeholders in Clark v49 package
@@ -67,6 +75,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/ClarkCongruentialInitialSetV49.lean
             LeanCfgProject/FixedHCFGv44/ClarkCongruentialPresentationV49.lean
             LeanCfgProject/FixedHCFGv44/ClarkDyckStrictnessV49.lean
+            LeanCfgProject/FixedHCFGv44/DyckFirstReturnV49.lean
             LeanCfgProject/FixedHCFGv44/ClarkDyckGrammarV49.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
