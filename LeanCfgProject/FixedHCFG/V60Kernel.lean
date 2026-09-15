@@ -128,8 +128,9 @@ theorem v60_derives_sound
           _ = Obs.value (x ++ y) := (Obs.value_append x y).symm
       have hwne : w₁ ++ w₂ ≠ [] := by
         intro hnil
-        have hleftNil : w₁ = [] := (List.append_eq_nil.mp hnil).1
-        exact hw₁ne hleftNil
+        cases w₁ with
+        | nil => exact hw₁ne rfl
+        | cons a as => simp at hnil
       exact ⟨hword, htype, hwne⟩
 
 /-- Theorem `soundness` of v60 for the exact nonempty-factor kernel. -/
