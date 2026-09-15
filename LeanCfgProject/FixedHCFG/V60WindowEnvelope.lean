@@ -97,7 +97,7 @@ theorem v60_window_witness_length_bound
   have h := v60CanonicalWitnessSet_word_length_le
     epsilonStart B (Nt * B) hOmega hCtx hz
   dsimp [B] at h ⊢
-  omega
+  simpa [Nat.add_mul] using h
 
 end FixedHCFG
 end LeanCfgProject
