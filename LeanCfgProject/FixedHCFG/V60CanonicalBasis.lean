@@ -17,16 +17,17 @@ theorem v60_occurs_plug_full
     (Obs : Observer Sigma)
     (terminal : V60TerminalRules N Sigma)
     (binary : V60BinaryRules N) (start : V60StartRules N)
+    (epsilonStart : Prop)
     {X : V60TypedNT N Obs} {u v w : Word Sigma}
     (hOcc : V60TypedOccurs Obs terminal binary start X u v)
     (hDeriv : V60YieldTypedDerives Obs terminal binary X w) :
-    V60FullTypedStartLanguage Obs terminal binary start False
+    V60FullTypedStartLanguage Obs terminal binary start epsilonStart
       (u ++ w ++ v) := by
   induction hOcc generalizing w with
   | @start A p hStart =>
-      simpa using
-        (Or.inr ⟨A, p, hStart, hDeriv⟩ :
-          V60FullTypedStartLanguage Obs terminal binary start False w)
+      unfold V60FullTypedStartLanguage
+      simp only [List.nil_append, List.append_nil]
+      exact Or.inr ⟨A, p, hStart, hDeriv⟩
   | @left A B C p q r u v y parent hrule hproduct rightDeriv ih =>
       have hParentDeriv : V60YieldTypedDerives Obs terminal binary
           { label := A, yieldType := p } (w ++ y) :=
@@ -218,7 +219,7 @@ theorem v60_canonical_witness_subset_untyped
   intro z hz
   rcases hz with hAnchor | hTerminal | hBinary | hEps
   · rcases hAnchor with ⟨X, rfl⟩
-    have hFull := v60_occurs_plug_full Obs terminal binary start
+    have hFull := v60_occurs_plug_full Obs terminal binary start epsilonStart
       (v60CanonicalChi_spec X) (v60CanonicalOmega_spec X)
     exact (v60_full_typed_language_iff_untyped
       Obs terminal binary start epsilonStart (v60CanonicalAnchorWord X)).mp
@@ -226,7 +227,7 @@ theorem v60_canonical_witness_subset_untyped
   · rcases hTerminal with ⟨X, a, hRule, rfl⟩
     have hDeriv : V60YieldTypedDerives Obs terminal binary X.1 [a] :=
       V60YieldTypedDerives.terminal hRule.1 hRule.2
-    have hFull := v60_occurs_plug_full Obs terminal binary start
+    have hFull := v60_occurs_plug_full Obs terminal binary start epsilonStart
       (v60CanonicalChi_spec X) hDeriv
     exact (v60_full_typed_language_iff_untyped
       Obs terminal binary start epsilonStart (v60CanonicalTerminalWord X a)).mp
@@ -236,7 +237,7 @@ theorem v60_canonical_witness_subset_untyped
         (v60CanonicalOmega Y ++ v60CanonicalOmega Z) :=
       V60YieldTypedDerives.binary hRule.1 hRule.2
         (v60CanonicalOmega_spec Y) (v60CanonicalOmega_spec Z)
-    have hFull := v60_occurs_plug_full Obs terminal binary start
+    have hFull := v60_occurs_plug_full Obs terminal binary start epsilonStart
       (v60CanonicalChi_spec X) hDeriv
     exact (v60_full_typed_language_iff_untyped
       Obs terminal binary start epsilonStart
