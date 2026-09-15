@@ -157,7 +157,9 @@ theorem v60_exact_persists
   induction d with
   | zero => simpa using hExact
   | succ d ih =>
-      have hstep := v60_exact_is_absorbing Obs L text hText (n + d) ih
+      have ihExact : V60ConservativeHypothesis Obs text (n + d) = L :=
+        ih (Nat.le_add_right n d)
+      have hstep := v60_exact_is_absorbing Obs L text hText (n + d) ihExact
       simpa [Nat.add_assoc] using hstep
 
 /--
