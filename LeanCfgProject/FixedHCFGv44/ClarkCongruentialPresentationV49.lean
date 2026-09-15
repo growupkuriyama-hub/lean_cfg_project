@@ -87,10 +87,11 @@ theorem clarkTyped_derives_iff_kept_v49
         apply UntypedDerives.terminal
         exact ⟨hrule, rfl, hkeep⟩
     | @binary A B C mu nu x y hrule hkeep left right ihLeft ihRight =>
-        apply UntypedDerives.binary
-        · exact ⟨hrule, rfl, hkeep⟩
-        · exact ihLeft
-        · exact ihRight
+        refine UntypedDerives.binary
+          (A := { label := A, yieldType := Obs.mul mu nu })
+          (B := { label := B, yieldType := mu })
+          (C := { label := C, yieldType := nu }) ?_ ihLeft ihRight
+        exact ⟨hrule, rfl, hkeep⟩
 
 /-- The start language of the constructed ordinary grammar is exactly the
 reduced typed-refinement language. -/
@@ -163,7 +164,7 @@ and every nonterminal language is contained in one syntactic congruence class
 of `L`. -/
 structure CongruentialSSBNFPresentationV49
     {Sigma : Type u} (L : Language Sigma) where
-  Q : Type (max u v)
+  Q : Type v
   finiteQ : Finite Q
   terminal : TerminalRules Q Sigma
   binary : BinaryRules Q
@@ -189,7 +190,7 @@ theorem clark_congruential_presentation_v49
     (start : StartRules N) (epsilonStart : Prop)
     (hSub : HSubstitutable Obs
       (UntypedStartLanguage terminal binary start epsilonStart)) :
-    CongruentialLanguageV49.{u, max u v}
+    CongruentialLanguageV49
       (UntypedStartLanguage terminal binary start epsilonStart) := by
   let encode : TypedNT N Obs → N × Obs.M :=
     fun X => (X.label, X.yieldType)
@@ -240,7 +241,7 @@ theorem proposition_clark_congruential_inclusion_v49
     (start : StartRules N) (epsilonStart : Prop)
     (hSub : HSubstitutable Obs
       (UntypedStartLanguage terminal binary start epsilonStart)) :
-    CongruentialLanguageV49.{u, max u v}
+    CongruentialLanguageV49
       (UntypedStartLanguage terminal binary start epsilonStart) :=
   clark_congruential_presentation_v49
     Obs terminal binary start epsilonStart hSub
