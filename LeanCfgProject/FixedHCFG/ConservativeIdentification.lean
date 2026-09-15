@@ -80,8 +80,9 @@ noncomputable def ConservativeHypothesis
     {Sigma : Type u} (Obs : Observer Sigma) (text : Nat → Word Sigma) :
     Nat → Language Sigma
   | 0 => fun _ => False
-  | n + 1 =>
-      if ConservativeHypothesis Obs text n (text n) then
+  | n + 1 => by
+      classical
+      exact if ConservativeHypothesis Obs text n (text n) then
         ConservativeHypothesis Obs text n
       else
         BatchLanguage Obs (PrefixSample text n)
@@ -160,7 +161,7 @@ theorem conservative_rebuild_exact_after_characteristic
     ext w
     exact theorem_5_7_exact_reconstruction B (PrefixSample text n)
       hCS hKL hSub w
-  simp only [ConservativeRebuildsAt] at hmiss
+  unfold ConservativeRebuildsAt at hmiss
   simp [ConservativeHypothesis, hmiss, hExact]
 
 /-- Once the conservative hypothesis is exact, it is absorbing on a positive text. -/
