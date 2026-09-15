@@ -1,5 +1,5 @@
 import LeanCfgProject.FixedHCFG.V60EndToEnd
-import LeanCfgProject.FixedHCFG.V60WitnessBounds
+import LeanCfgProject.FixedHCFG.V60WindowEnvelope
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -15,7 +15,8 @@ The imported exact-v60 chain contains:
 * the concrete finite characteristic witness set;
 * exact finite-sample reconstruction;
 * conservative Gold identification;
-* generic canonical witness-length transfer lemmas.
+* canonical yield/context minimality and witness-length transfer lemmas;
+* the exact arithmetic envelope of the fixed-window witness bound.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
