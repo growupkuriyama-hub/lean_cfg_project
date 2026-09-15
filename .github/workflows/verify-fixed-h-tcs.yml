@@ -28,6 +28,11 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
+      # Keep the actively developed marked-leaf infrastructure first so CI
+      # returns elaboration feedback before replaying the full exact-v60 chain.
+      - name: Build exact v60 derivation-tree infrastructure
+        run: lake build LeanCfgProject.FixedHCFG.V60DerivationTree
+
       - name: Build exact v60 nonempty-factor kernel
         run: lake build LeanCfgProject.FixedHCFG.V60Kernel
 
