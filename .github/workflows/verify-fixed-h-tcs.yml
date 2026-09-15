@@ -43,6 +43,9 @@ jobs:
       - name: Build exact v60 canonical choices
         run: lake build LeanCfgProject.FixedHCFG.V60CanonicalChoices
 
+      - name: Build exact v60 canonical reconstruction basis
+        run: lake build LeanCfgProject.FixedHCFG.V60CanonicalBasis
+
       - name: Build exact v60 yield-only reconstruction
         run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
 
@@ -51,6 +54,9 @@ jobs:
 
       - name: Build exact v60 Gold convergence
         run: lake build LeanCfgProject.FixedHCFG.V60Gold
+
+      - name: Build exact v60 end-to-end theorem
+        run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
       - name: Build legacy Theorem 5.6 soundness target
         run: lake build LeanCfgProject.FixedHCFG.Soundness
