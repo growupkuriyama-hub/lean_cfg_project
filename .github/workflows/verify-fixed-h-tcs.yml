@@ -55,6 +55,9 @@ jobs:
       - name: Build exact v60 fixed-window envelope
         run: lake build LeanCfgProject.FixedHCFG.V60WindowEnvelope
 
+      - name: Build exact v60 fixed-window yield bridge
+        run: lake build LeanCfgProject.FixedHCFG.V60WindowYieldBridge
+
       - name: Build exact v60 canonical reconstruction basis
         run: lake build LeanCfgProject.FixedHCFG.V60CanonicalBasis
 
