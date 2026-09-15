@@ -43,12 +43,20 @@ jobs:
       - name: Build Dyck strictness semantic core
         run: lake build LeanCfgProject.FixedHCFGv44.ClarkDyckStrictnessV49
 
+      - name: Build Dyck helper congruence package
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.ClarkDyckGrammarV49 2>&1 | tee clark-dyck-grammar-v49-build.log
+
       - name: Upload Clark build log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: clark-congruential-v49-build-log
-          path: clark-presentation-v49-build.log
+          path: |
+            clark-presentation-v49-build.log
+            clark-dyck-grammar-v49-build.log
 
       - name: Reject proof placeholders in Clark v49 package
         shell: bash
@@ -59,6 +67,7 @@ jobs:
             LeanCfgProject/FixedHCFGv44/ClarkCongruentialInitialSetV49.lean
             LeanCfgProject/FixedHCFGv44/ClarkCongruentialPresentationV49.lean
             LeanCfgProject/FixedHCFGv44/ClarkDyckStrictnessV49.lean
+            LeanCfgProject/FixedHCFGv44/ClarkDyckGrammarV49.lean
           )
           if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
             echo "Found a proof placeholder in the Clark v49 package."
