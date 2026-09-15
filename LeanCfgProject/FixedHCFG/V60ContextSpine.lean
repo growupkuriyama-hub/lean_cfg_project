@@ -92,7 +92,7 @@ theorem exists_canonical_spine_of_typed_occurs
       (u' v' : Word Sigma),
       V60CanonicalOccursSpine Obs terminal binary start
         (⟨X, hKeep⟩ : V60KeptState Obs terminal binary start) sp u' v' := by
-  induction hOcc generalizing hKeep with
+  induction hOcc with
   | @start A p hStart =>
       let X0 : V60KeptState Obs terminal binary start :=
         ⟨{ label := A, yieldType := p }, hKeep⟩
@@ -182,15 +182,16 @@ theorem prefix_of_mem_spine
         subst Z
         exact ⟨sp.concat Y, u, v60CanonicalOmega Z0 ++ v,
           V60CanonicalOccursSpine.left parent hrule, le_rfl⟩
-  | @right X Y0 Z sp u v parent hrule ih =>
+  | @right X Y0 Z0 sp u v parent hrule ih =>
       rw [List.concat_eq_append] at hZ
       rcases List.mem_append.mp hZ with hZ | hZZ
       · obtain ⟨sp', u', v', hpre, hlen⟩ := ih hZ
         refine ⟨sp', u', v', hpre, ?_⟩
         simp only [List.length_concat]
         omega
-      · have hEq : Z = Z := List.mem_singleton.mp hZZ
-        exact ⟨sp.concat Z, u ++ v60CanonicalOmega Y0, v,
+      · have hEq : Z = Z0 := List.mem_singleton.mp hZZ
+        subst Z
+        exact ⟨sp.concat Z0, u ++ v60CanonicalOmega Y0, v,
           V60CanonicalOccursSpine.right parent hrule, le_rfl⟩
 
 /-- A repeated retained typed state can be deleted from a canonical spine. -/
@@ -256,6 +257,7 @@ theorem exists_nodup_spine
       (u' v' : Word Sigma),
       V60CanonicalOccursSpine Obs terminal binary start X sp' u' v' ∧
         sp'.Nodup := by
+  classical
   let P : Nat → Prop := fun n =>
     ∃ (sp' : List (V60KeptState Obs terminal binary start))
       (u' v' : Word Sigma),
@@ -304,6 +306,16 @@ theorem context_length_le_spine_mul
 
 end V60CanonicalOccursSpine
 
+/-- Retained v60 typed states are finite whenever the base nonterminal type is finite. -/
+noncomputable instance v60KeptStateFintype
+    {N : Type v} {Sigma : Type u}
+    {Obs : Observer Sigma}
+    {terminal : V60TerminalRules N Sigma}
+    {binary : V60BinaryRules N} {start : V60StartRules N}
+    [Finite N] :
+    Fintype (V60KeptState Obs terminal binary start) :=
+  Fintype.ofFinite _
+
 /--
 Generic finite-state form of the shortest dependency-path argument: a uniform
 canonical-yield bound `B` gives every retained typed state a successful context
@@ -324,8 +336,6 @@ theorem v60_exists_short_context_of_canonical_yield_bound
       V60TypedOccurs Obs terminal binary start X.1 u v ∧
         u.length + v.length ≤
           Fintype.card (V60KeptState Obs terminal binary start) * B := by
-  letI : Fintype (V60KeptState Obs terminal binary start) :=
-    Fintype.ofFinite _
   rcases X.property.2 with ⟨u0, v0, hOcc⟩
   obtain ⟨sp0, u1, v1, d0⟩ :=
     V60CanonicalOccursSpine.exists_canonical_spine_of_typed_occurs
