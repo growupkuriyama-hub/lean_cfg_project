@@ -31,25 +31,28 @@ jobs:
       - name: Build exact v60 nonempty-factor kernel
         run: lake build LeanCfgProject.FixedHCFG.V60Kernel
 
-      - name: Build Theorem 5.6 soundness target
+      - name: Build exact v60 yield-only reconstruction
+        run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
+
+      - name: Build legacy Theorem 5.6 soundness target
         run: lake build LeanCfgProject.FixedHCFG.Soundness
 
-      - name: Build Section 4 typed-refinement target
+      - name: Build legacy Section 4 typed-refinement target
         run: lake build LeanCfgProject.FixedHCFG.TypedRefinement
 
-      - name: Build Lemma 4.5(iii) trimmed-language target
+      - name: Build legacy trimmed-language target
         run: lake build LeanCfgProject.FixedHCFG.TrimmedLanguage
 
-      - name: Build Lemma 4.6 canonical-witness target
+      - name: Build legacy canonical-witness target
         run: lake build LeanCfgProject.FixedHCFG.CanonicalWitness
 
-      - name: Build Theorems 5.2--5.7 reconstruction target
+      - name: Build legacy reconstruction target
         run: lake build LeanCfgProject.FixedHCFG.Reconstruction
 
-      - name: Build Corollary 5.8 identification target
+      - name: Build legacy identification target
         run: lake build LeanCfgProject.FixedHCFG.Identification
 
-      - name: Build v60 conservative sequential learner target
+      - name: Build conservative compatibility target
         run: lake build LeanCfgProject.FixedHCFG.ConservativeIdentification
 
       - name: Build enriched Section 4 extraction bridge
