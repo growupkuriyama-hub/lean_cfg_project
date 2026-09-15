@@ -37,6 +37,9 @@ jobs:
       - name: Build exact v60 conservative identification
         run: lake build LeanCfgProject.FixedHCFG.V60Identification
 
+      - name: Build exact v60 Gold convergence
+        run: lake build LeanCfgProject.FixedHCFG.V60Gold
+
       - name: Build legacy Theorem 5.6 soundness target
         run: lake build LeanCfgProject.FixedHCFG.Soundness
 
