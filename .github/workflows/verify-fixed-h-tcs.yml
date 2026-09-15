@@ -37,6 +37,9 @@ jobs:
       - name: Build exact v60 trimmed yield-only refinement
         run: lake build LeanCfgProject.FixedHCFG.V60TrimmedRefinement
 
+      - name: Build v60 extraction bridge
+        run: lake build LeanCfgProject.FixedHCFG.V60Extraction
+
       - name: Build exact v60 yield-only reconstruction
         run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
 
