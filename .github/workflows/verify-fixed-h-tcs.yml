@@ -31,6 +31,9 @@ jobs:
       - name: Build exact v60 nonempty-factor kernel
         run: lake build LeanCfgProject.FixedHCFG.V60Kernel
 
+      - name: Build exact v60 yield-only typed refinement
+        run: lake build LeanCfgProject.FixedHCFG.V60TypedRefinement
+
       - name: Build exact v60 yield-only reconstruction
         run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
 
