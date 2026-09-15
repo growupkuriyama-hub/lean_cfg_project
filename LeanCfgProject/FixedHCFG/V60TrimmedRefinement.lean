@@ -13,7 +13,10 @@ derivation.  This realizes the manuscript's trim without introducing the old
 left/right monoid annotations.
 -/
 
-/-- A yield-typed state occurring with concrete terminal context in a successful start derivation. -/
+/--
+A yield-typed state occurring with concrete terminal context in a successful
+start derivation.
+-/
 inductive V60TypedOccurs {N : Type v} {Sigma : Type u}
     (Obs : Observer Sigma)
     (terminal : V60TerminalRules N Sigma)
@@ -124,7 +127,7 @@ theorem v60_typed_derivation_to_kept
     (hKeep : V60TypedKept Obs terminal binary start X)
     (d : V60YieldTypedDerives Obs terminal binary X w) :
     V60KeptDerives Obs terminal binary start ⟨X, hKeep⟩ w := by
-  induction d generalizing hKeep with
+  induction d with
   | @terminal A a p hrule htype =>
       exact V60KeptDerives.terminal ⟨hrule, htype⟩
   | @binary A B C p q r x y hrule hproduct left right ihLeft ihRight =>
