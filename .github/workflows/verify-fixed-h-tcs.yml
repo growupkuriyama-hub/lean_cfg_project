@@ -28,6 +28,9 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
+      - name: Build exact v60 nonempty-factor kernel
+        run: lake build LeanCfgProject.FixedHCFG.V60Kernel
+
       - name: Build Theorem 5.6 soundness target
         run: lake build LeanCfgProject.FixedHCFG.Soundness
 
