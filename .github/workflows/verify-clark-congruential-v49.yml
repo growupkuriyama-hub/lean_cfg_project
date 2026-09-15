@@ -1,0 +1,66 @@
+name: Verify TCS v49 Clark congruential package
+
+on:
+  push:
+    branches:
+      - tcs-v49-verification
+    paths:
+      - "LeanCfgProject/FixedHCFGv44/Clark*V49.lean"
+      - ".github/workflows/verify-clark-congruential-v49.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: tcs-v49-clark-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  clark-congruential-v49:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build Clark typed-state semantic core
+        run: lake build LeanCfgProject.FixedHCFGv44.ClarkCongruentialCoreV49
+
+      - name: Build Clark finite-initial-set package
+        run: lake build LeanCfgProject.FixedHCFGv44.ClarkCongruentialInitialSetV49
+
+      - name: Build actual finite congruential SSBNF presentation
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LeanCfgProject.FixedHCFGv44.ClarkCongruentialPresentationV49 2>&1 | tee clark-presentation-v49-build.log
+
+      - name: Build Dyck strictness semantic core
+        run: lake build LeanCfgProject.FixedHCFGv44.ClarkDyckStrictnessV49
+
+      - name: Upload Clark build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clark-congruential-v49-build-log
+          path: clark-presentation-v49-build.log
+
+      - name: Reject proof placeholders in Clark v49 package
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            LeanCfgProject/FixedHCFGv44/ClarkCongruentialCoreV49.lean
+            LeanCfgProject/FixedHCFGv44/ClarkCongruentialInitialSetV49.lean
+            LeanCfgProject/FixedHCFGv44/ClarkCongruentialPresentationV49.lean
+            LeanCfgProject/FixedHCFGv44/ClarkDyckStrictnessV49.lean
+          )
+          if grep -n -E '\b(sorry|admit)\b' "${files[@]}"; then
+            echo "Found a proof placeholder in the Clark v49 package."
+            exit 1
+          fi
