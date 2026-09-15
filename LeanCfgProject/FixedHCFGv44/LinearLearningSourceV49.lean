@@ -158,21 +158,14 @@ theorem sourceNormalized_exact_reconstruction_v49
         (SourceNullable sourceRules S)) := by
     rw [hLang]
     exact hSub
-  calc
-    HypLanguage Obs K =
-        UntypedStartLanguage
-          (SourceNormalizedTerminalV49 sourceRules S)
-          (SourceNormalizedBinaryV49 sourceRules S)
-          (SourceNormalizedStartV49 sourceRules S)
-          (SourceNullable sourceRules S) :=
-      canonical_exact_reconstruction_from_ssbnf
-        Obs
-        (SourceNormalizedTerminalV49 sourceRules S)
-        (SourceNormalizedBinaryV49 sourceRules S)
-        (SourceNormalizedStartV49 sourceRules S)
-        (SourceNullable sourceRules S)
-        K hCSK hKL' hSub'
-    _ = SourceLinearLanguage sourceRules S := hLang
+  rw [← hLang]
+  exact canonical_exact_reconstruction_from_ssbnf
+    Obs
+    (SourceNormalizedTerminalV49 sourceRules S)
+    (SourceNormalizedBinaryV49 sourceRules S)
+    (SourceNormalizedStartV49 sourceRules S)
+    (SourceNullable sourceRules S)
+    K hCSK hKL' hSub'
 
 /-- Conservative Gold identification for the source linear grammar.  The proof
 uses the exact retained-state finite characteristic set rather than ambient
@@ -201,19 +194,17 @@ theorem sourceNormalized_gold_identification_v49
     simpa [terminal, binary, start, epsilonStart] using
       sourceNormalized_untyped_language_eq_source_v49 sourceRules S
   have hBasisLang : BasisLanguage B = SourceLinearLanguage sourceRules S := by
-    calc
-      BasisLanguage B = UntypedStartLanguage terminal binary start epsilonStart := by
-        simpa [B] using canonicalBasisLanguage_eq_untyped
-          Obs terminal binary start epsilonStart
-      _ = SourceLinearLanguage sourceRules S := hLangNorm
+    rw [← hLangNorm]
+    simpa [B] using canonicalBasisLanguage_eq_untyped
+      Obs terminal binary start epsilonStart
   have hFinite : B.CS.Finite := by
     simpa [B, canonicalReconstructionBasis, terminal, binary, start, epsilonStart] using
       sourceNormalized_canonicalCS_finite_v49 Obs sourceRules S
   have hCSTarget : B.CS ⊆ BasisLanguage B := by
     intro z hz
-    have hz' : CanonicalCS
+    have hz' : z ∈ CanonicalCS
         (Obs := Obs) (terminal := terminal) (binary := binary)
-        (start := start) epsilonStart z := by
+        (start := start) epsilonStart := by
       simpa [B, canonicalReconstructionBasis] using hz
     have hPos := canonicalCS_subset_untyped
       Obs terminal binary start epsilonStart hz'
@@ -230,9 +221,8 @@ theorem sourceNormalized_gold_identification_v49
     B hFinite hCSTarget hSub' text hText'
   refine ⟨N₀, ?_⟩
   intro n hn
-  calc
-    ConservativeHyp Obs text n = BasisLanguage B := hN₀ n hn
-    _ = SourceLinearLanguage sourceRules S := hBasisLang
+  rw [← hBasisLang]
+  exact hN₀ n hn
 
 /-- Manuscript-facing source-level package for the v49 linear-subclass theorem. -/
 structure SourceLinearLearningCertificateV49
