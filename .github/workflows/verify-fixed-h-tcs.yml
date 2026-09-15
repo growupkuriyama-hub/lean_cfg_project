@@ -34,6 +34,9 @@ jobs:
       - name: Build exact v60 yield-only reconstruction
         run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
 
+      - name: Build exact v60 conservative identification
+        run: lake build LeanCfgProject.FixedHCFG.V60Identification
+
       - name: Build legacy Theorem 5.6 soundness target
         run: lake build LeanCfgProject.FixedHCFG.Soundness
 
