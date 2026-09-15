@@ -40,6 +40,9 @@ jobs:
       - name: Build v60 extraction bridge
         run: lake build LeanCfgProject.FixedHCFG.V60Extraction
 
+      - name: Build exact v60 canonical choices
+        run: lake build LeanCfgProject.FixedHCFG.V60CanonicalChoices
+
       - name: Build exact v60 yield-only reconstruction
         run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
 
