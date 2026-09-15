@@ -3,7 +3,7 @@ import LeanCfgProject.FixedHCFGv44.ClarkCongruentialInitialSetV49
 namespace LeanCfgProject
 namespace FixedHCFGv44
 
-universe u v
+universe u v w
 
 /-!
 Actual grammar-object packaging for the inclusion half of TCS v49 Proposition
@@ -88,9 +88,9 @@ theorem clarkTyped_derives_iff_kept_v49
         exact ⟨hrule, rfl, hkeep⟩
     | @binary A B C mu nu x y hrule hkeep left right ihLeft ihRight =>
         refine UntypedDerives.binary
-          (A := { label := A, yieldType := Obs.mul mu nu })
-          (B := { label := B, yieldType := mu })
-          (C := { label := C, yieldType := nu }) ?_ ihLeft ihRight
+          (A := (⟨A, Obs.mul mu nu⟩ : TypedNT N Obs))
+          (B := (⟨B, mu⟩ : TypedNT N Obs))
+          (C := (⟨C, nu⟩ : TypedNT N Obs)) ?_ ihLeft ihRight
         exact ⟨hrule, rfl, hkeep⟩
 
 /-- The start language of the constructed ordinary grammar is exactly the
@@ -185,12 +185,12 @@ presentation of every fixed-`h` substitutable CFL already given in SSBNF form. -
 theorem clark_congruential_presentation_v49
     {N : Type v} {Sigma : Type u}
     [Finite N] [LinearOrder Sigma] [WellFoundedLT Sigma]
-    (Obs : Observer Sigma)
+    (Obs : Observer.{u, w} Sigma)
     (terminal : TerminalRules N Sigma) (binary : BinaryRules N)
     (start : StartRules N) (epsilonStart : Prop)
     (hSub : HSubstitutable Obs
       (UntypedStartLanguage terminal binary start epsilonStart)) :
-    CongruentialLanguageV49
+    CongruentialLanguageV49.{u, max v w}
       (UntypedStartLanguage terminal binary start epsilonStart) := by
   let encode : TypedNT N Obs → N × Obs.M :=
     fun X => (X.label, X.yieldType)
@@ -236,12 +236,12 @@ theorem clark_congruential_presentation_v49
 theorem proposition_clark_congruential_inclusion_v49
     {N : Type v} {Sigma : Type u}
     [Finite N] [LinearOrder Sigma] [WellFoundedLT Sigma]
-    (Obs : Observer Sigma)
+    (Obs : Observer.{u, w} Sigma)
     (terminal : TerminalRules N Sigma) (binary : BinaryRules N)
     (start : StartRules N) (epsilonStart : Prop)
     (hSub : HSubstitutable Obs
       (UntypedStartLanguage terminal binary start epsilonStart)) :
-    CongruentialLanguageV49
+    CongruentialLanguageV49.{u, max v w}
       (UntypedStartLanguage terminal binary start epsilonStart) :=
   clark_congruential_presentation_v49
     Obs terminal binary start epsilonStart hSub
