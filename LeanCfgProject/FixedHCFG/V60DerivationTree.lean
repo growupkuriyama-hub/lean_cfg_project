@@ -155,7 +155,7 @@ theorem yield_plug {A H : N}
     V60DerivationTree.yield (plug ctx t) =
       leftWord ctx ++ V60DerivationTree.yield t ++ rightWord ctx := by
   induction ctx with
-  | hole A => rfl
+  | hole A => simp [plug, leftWord, rightWord]
   | left A B C H hrule sub rightTree ih =>
       simp [plug, V60DerivationTree.yield, leftWord, rightWord, ih,
         List.append_assoc]
