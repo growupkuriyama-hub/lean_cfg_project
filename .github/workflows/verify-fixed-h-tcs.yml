@@ -49,6 +49,9 @@ jobs:
       - name: Build exact v60 canonical witness bounds
         run: lake build LeanCfgProject.FixedHCFG.V60WitnessBounds
 
+      - name: Build exact v60 finite dependency spine
+        run: lake build LeanCfgProject.FixedHCFG.V60ContextSpine
+
       - name: Build exact v60 fixed-window envelope
         run: lake build LeanCfgProject.FixedHCFG.V60WindowEnvelope
 
