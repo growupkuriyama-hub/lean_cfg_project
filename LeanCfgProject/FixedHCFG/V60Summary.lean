@@ -1,5 +1,5 @@
 import LeanCfgProject.FixedHCFG.V60EndToEnd
-import LeanCfgProject.FixedHCFG.V60WindowEnvelope
+import LeanCfgProject.FixedHCFG.V60DerivationTree
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -16,7 +16,10 @@ The imported exact-v60 chain contains:
 * exact finite-sample reconstruction;
 * conservative Gold identification;
 * canonical yield/context minimality and witness-length transfer lemmas;
-* the exact arithmetic envelope of the fixed-window witness bound.
+* a finite dependency-spine proof of the fixed-window context bound;
+* the positive/zero-window typed-yield bridge isolating marked-leaf compression;
+* concrete SSBNF derivation trees and one-hole replacement contexts for that
+  remaining marked-leaf/cycle-deletion proof.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
