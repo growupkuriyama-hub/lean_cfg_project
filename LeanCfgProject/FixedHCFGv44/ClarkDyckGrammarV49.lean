@@ -28,14 +28,18 @@ theorem dyck1_fixed_context_sameDistribution_v49
   intro p q
   constructor
   · intro h
+    change p ++ (l ++ x ++ r) ++ q ∈ Dyck1 at h
     have h' : (p ++ l) ++ x ++ (r ++ q) ∈ Dyck1 := by
       simpa only [List.append_assoc] using h
     have hrep := dyck1_balanced_replacement hx hy h'
+    change p ++ (l ++ y ++ r) ++ q ∈ Dyck1
     simpa only [List.append_assoc] using hrep
   · intro h
+    change p ++ (l ++ y ++ r) ++ q ∈ Dyck1 at h
     have h' : (p ++ l) ++ y ++ (r ++ q) ∈ Dyck1 := by
       simpa only [List.append_assoc] using h
     have hrep := dyck1_balanced_replacement hy hx h'
+    change p ++ (l ++ x ++ r) ++ q ∈ Dyck1
     simpa only [List.append_assoc] using hrep
 
 /-- Transitivity of two-sided syntactic-distribution equality. -/
