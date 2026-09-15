@@ -34,6 +34,9 @@ jobs:
       - name: Build exact v60 yield-only typed refinement
         run: lake build LeanCfgProject.FixedHCFG.V60TypedRefinement
 
+      - name: Build exact v60 trimmed yield-only refinement
+        run: lake build LeanCfgProject.FixedHCFG.V60TrimmedRefinement
+
       - name: Build exact v60 yield-only reconstruction
         run: lake build LeanCfgProject.FixedHCFG.V60Reconstruction
 
