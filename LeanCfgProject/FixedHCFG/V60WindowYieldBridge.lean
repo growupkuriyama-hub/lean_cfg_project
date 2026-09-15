@@ -101,7 +101,9 @@ theorem v60_window_typed_yield_candidate_of_boundary_compression
   by_cases hShort : w.length < k + l
   · refine ⟨w, d, ?_⟩
     have hB : k + l ≤ V60WindowYieldBound (k + l) N tau := by
-      simp [V60WindowYieldBound, hr]
+      unfold V60WindowYieldBound
+      rw [if_neg hr]
+      omega
     exact le_trans (Nat.le_of_lt hShort) hB
   · have hLong : k + l ≤ w.length := Nat.le_of_not_gt hShort
     have dUntyped : V60UntypedDerives terminal binary A w :=
