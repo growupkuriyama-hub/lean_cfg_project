@@ -63,6 +63,9 @@ jobs:
       - name: Build v61 normalization end point
         run: lake build LeanCfgProject.FixedHCFG.V61NormalizationEndToEnd
 
+      - name: Build v61 right-binarization block builder
+        run: lake build LeanCfgProject.FixedHCFG.V61RightBinarization
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
