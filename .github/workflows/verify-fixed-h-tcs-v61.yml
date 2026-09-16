@@ -1,0 +1,49 @@
+name: Verify fixed-h TCS v61 baseline
+
+on:
+  push:
+    branches:
+      - tcs-fixed-h-v61-baseline
+    paths:
+      - "LeanCfgProject/FixedHCFG/V61*.lean"
+      - ".github/workflows/verify-fixed-h-tcs-v61.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: fixed-h-v61-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-v61-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Build exact v61 baseline wrappers
+        run: lake build LeanCfgProject.FixedHCFG.V61Baseline
+
+      - name: Build v61 nullable normalization infrastructure
+        run: lake build LeanCfgProject.FixedHCFG.V61NullableDerivation
+
+      - name: Recheck exact reconstruction dependency
+        run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
+
+      - name: Recheck fixed-window typed-yield bridge
+        run: lake build LeanCfgProject.FixedHCFG.V60WindowYieldBridge
+
+      - name: Reject proof placeholders in v61 sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find LeanCfgProject/FixedHCFG -name 'V61*.lean' -print0 | xargs -0 grep -n -E '\b(sorry|admit)\b'; then
+            echo "Found a proof placeholder in v61 Lean sources."
+            exit 1
+          fi
