@@ -39,6 +39,9 @@ jobs:
       - name: Build exact v60 sibling shortening
         run: lake build LeanCfgProject.FixedHCFG.V60SiblingShortening
 
+      - name: Build exact v60 cycle-free derivation spines
+        run: lake build LeanCfgProject.FixedHCFG.V60DerivationSpine
+
       - name: Build exact v60 marked-skeleton counting
         run: lake build LeanCfgProject.FixedHCFG.V60MarkedSkeleton
 
