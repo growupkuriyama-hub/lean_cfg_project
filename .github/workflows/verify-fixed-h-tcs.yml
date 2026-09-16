@@ -36,6 +36,9 @@ jobs:
       - name: Build exact v60 marked-skeleton counting
         run: lake build LeanCfgProject.FixedHCFG.V60MarkedSkeleton
 
+      - name: Build exact v60 window compression bridge
+        run: lake build LeanCfgProject.FixedHCFG.V60WindowCompression
+
       - name: Build exact v60 nonempty-factor kernel
         run: lake build LeanCfgProject.FixedHCFG.V60Kernel
 
