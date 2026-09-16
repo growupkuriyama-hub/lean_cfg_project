@@ -75,7 +75,9 @@ theorem terminalLeafCount_pos_of_yield_ne_nil {A : N}
     (t : V61NullableDerivationTree epsilon terminal binary A)
     (h : yield t ≠ []) :
     0 < terminalLeafCount t := by
-  have hlen : 0 < (yield t).length := List.length_pos.mpr h
+  have hlen_ne : (yield t).length ≠ 0 := by
+    simpa using h
+  have hlen : 0 < (yield t).length := Nat.pos_of_ne_zero hlen_ne
   rw [yield_length_eq_terminalLeafCount] at hlen
   exact hlen
 
