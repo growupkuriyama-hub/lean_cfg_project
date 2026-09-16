@@ -48,6 +48,15 @@ jobs:
       - name: Build exact v60 boundary decomposition
         run: lake build LeanCfgProject.FixedHCFG.V60BoundaryDecomposition
 
+      - name: Build exact v60 marked support
+        run: lake build LeanCfgProject.FixedHCFG.V60MarkedSupport
+
+      - name: Build exact v60 single-marked chain compression
+        run: lake build LeanCfgProject.FixedHCFG.V60SingleMarkedChain
+
+      - name: Build exact v60 recursive marked pruning length bound
+        run: lake build LeanCfgProject.FixedHCFG.V60MarkedPruningLength
+
       - name: Build exact v60 marked-skeleton counting
         run: lake build LeanCfgProject.FixedHCFG.V60MarkedSkeleton
 
