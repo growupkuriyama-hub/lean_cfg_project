@@ -36,6 +36,9 @@ jobs:
       - name: Build exact v60 window shortcut preservation
         run: lake build LeanCfgProject.FixedHCFG.V60WindowShortcut
 
+      - name: Build exact v60 sibling shortening
+        run: lake build LeanCfgProject.FixedHCFG.V60SiblingShortening
+
       - name: Build exact v60 marked-skeleton counting
         run: lake build LeanCfgProject.FixedHCFG.V60MarkedSkeleton
 
