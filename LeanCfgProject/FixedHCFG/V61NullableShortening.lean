@@ -213,7 +213,7 @@ theorem v61_exists_short_nonempty_tree
     rw [V61NullableDerivationContext.yield_plug]
     simp only [leaf, V61NullableDerivationTree.yield, List.length_append,
       List.length_singleton]
-    unfold short at hMat
+    unfold short at hMat ⊢
     unfold V61NullableDerivationContext.terminalMaterialLength at hMat
     omega
 
