@@ -57,6 +57,9 @@ jobs:
       - name: Build v61 structured binarization blocks
         run: lake build LeanCfgProject.FixedHCFG.V61BinarizationBlocks
 
+      - name: Build v61 raw CFG size bookkeeping
+        run: lake build LeanCfgProject.FixedHCFG.V61RawGrammarSize
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
