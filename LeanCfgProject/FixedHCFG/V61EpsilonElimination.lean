@@ -70,7 +70,8 @@ theorem v61_eps_free_yield_ne_nil
         simpa [V61NullableDerivationTree.yield, List.length_append] using
           congrArg List.length hnil
       have hleft0 : (V61NullableDerivationTree.yield left).length = 0 := by omega
-      exact ihLeft (List.length_eq_zero.mp hleft0)
+      apply ihLeft
+      simpa using hleft0
 
 /-- Forward simulation: every nonempty source derivation survives epsilon elimination. -/
 theorem v61_epsilon_elim_forward
