@@ -60,6 +60,9 @@ jobs:
       - name: Build v61 raw CFG size bookkeeping
         run: lake build LeanCfgProject.FixedHCFG.V61RawGrammarSize
 
+      - name: Build v61 normalization end point
+        run: lake build LeanCfgProject.FixedHCFG.V61NormalizationEndToEnd
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
