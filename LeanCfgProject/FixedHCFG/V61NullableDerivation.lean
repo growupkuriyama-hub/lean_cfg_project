@@ -167,7 +167,7 @@ theorem yield_plug {A H : N}
   induction ctx with
   | hole A => simp [plug, leftWord, rightWord]
   | unit A B H hrule sub ih =>
-      simpa [plug, V61NullableDerivationTree.yield, leftWord, rightWord] using ih
+      simpa [plug, V61NullableDerivationTree.yield, leftWord, rightWord] using ih t
   | left A B C H hrule sub rightTree ih =>
       simp [plug, V61NullableDerivationTree.yield, leftWord, rightWord,
         ih, List.append_assoc]
