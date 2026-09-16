@@ -170,6 +170,123 @@ def depth {A H : N} :
   | .left _ _ _ _ _ sub _ => depth sub + 1
   | .right _ _ _ _ _ _ sub => depth sub + 1
 
+/--
+Composition of one-hole derivation contexts.  This is the formal operation
+behind cutting a repeated-label segment out of a marked unary spine: an outer
+context ending at `B` may be continued by an inner context from `B` to `C`.
+-/
+def comp {A B C : N}
+    (outer : V60DerivationContext terminal binary A B)
+    (inner : V60DerivationContext terminal binary B C) :
+    V60DerivationContext terminal binary A C :=
+  match outer with
+  | .hole _ => inner
+  | .left A B D H hrule sub rightTree =>
+      .left A B D C hrule (comp sub inner) rightTree
+  | .right A B D H hrule leftTree sub =>
+      .right A B D C hrule leftTree (comp sub inner)
+
+/-- Context composition agrees with two successive plugging operations. -/
+theorem plug_comp {A B C : N}
+    (outer : V60DerivationContext terminal binary A B)
+    (inner : V60DerivationContext terminal binary B C)
+    (t : V60DerivationTree terminal binary C) :
+    plug (comp outer inner) t = plug outer (plug inner t) := by
+  induction outer with
+  | hole A => rfl
+  | left A B D H hrule sub rightTree ih =>
+      simp [comp, plug, ih]
+  | right A B D H hrule leftTree sub ih =>
+      simp [comp, plug, ih]
+
+/-- Left terminal material of a composite context is concatenated outside-in. -/
+theorem leftWord_comp {A B C : N}
+    (outer : V60DerivationContext terminal binary A B)
+    (inner : V60DerivationContext terminal binary B C) :
+    leftWord (comp outer inner) = leftWord outer ++ leftWord inner := by
+  induction outer with
+  | hole A => simp [comp, leftWord]
+  | left A B D H hrule sub rightTree ih =>
+      simp [comp, leftWord, ih]
+  | right A B D H hrule leftTree sub ih =>
+      simp [comp, leftWord, ih, List.append_assoc]
+
+/-- Right terminal material of a composite context is concatenated inside-out. -/
+theorem rightWord_comp {A B C : N}
+    (outer : V60DerivationContext terminal binary A B)
+    (inner : V60DerivationContext terminal binary B C) :
+    rightWord (comp outer inner) = rightWord inner ++ rightWord outer := by
+  induction outer with
+  | hole A => simp [comp, rightWord]
+  | left A B D H hrule sub rightTree ih =>
+      simp [comp, rightWord, ih, List.append_assoc]
+  | right A B D H hrule leftTree sub ih =>
+      simp [comp, rightWord, ih]
+
+/-- Root-to-hole depths add under context composition. -/
+theorem depth_comp {A B C : N}
+    (outer : V60DerivationContext terminal binary A B)
+    (inner : V60DerivationContext terminal binary B C) :
+    depth (comp outer inner) = depth outer + depth inner := by
+  induction outer with
+  | hole A => simp [comp, depth]
+  | left A B D H hrule sub rightTree ih =>
+      simp [comp, depth, ih, Nat.add_assoc]
+  | right A B D H hrule leftTree sub ih =>
+      simp [comp, depth, ih, Nat.add_assoc]
+
+/--
+Normal form for a repeated-label segment.  If `cycle : X ⟶ X`, all terminal
+material deleted by shortcutting the cycle is exposed explicitly as
+`leftWord cycle` and `rightWord cycle`.
+-/
+theorem yield_plug_comp_cycle {R X : N}
+    (outer : V60DerivationContext terminal binary R X)
+    (cycle : V60DerivationContext terminal binary X X)
+    (t : V60DerivationTree terminal binary X) :
+    V60DerivationTree.yield (plug (comp outer cycle) t) =
+      leftWord outer ++ leftWord cycle ++ V60DerivationTree.yield t ++
+        rightWord cycle ++ rightWord outer := by
+  rw [yield_plug]
+  rw [leftWord_comp, rightWord_comp]
+  simp [List.append_assoc]
+
+/-- The shortened tree obtained by deleting the repeated-label segment. -/
+def shortcut {R X : N}
+    (outer : V60DerivationContext terminal binary R X)
+    (t : V60DerivationTree terminal binary X) :
+    V60DerivationTree terminal binary R :=
+  plug outer t
+
+/-- The shortcut remains a valid SSBNF derivation from the same root label. -/
+theorem shortcut_toUntypedDerives {R X : N}
+    (outer : V60DerivationContext terminal binary R X)
+    (t : V60DerivationTree terminal binary X) :
+    V60UntypedDerives terminal binary R
+      (V60DerivationTree.yield (shortcut outer t)) := by
+  exact V60DerivationTree.toUntypedDerives (shortcut outer t)
+
+/-- Frontier normal form after deleting the repeated-label segment. -/
+theorem yield_shortcut {R X : N}
+    (outer : V60DerivationContext terminal binary R X)
+    (t : V60DerivationTree terminal binary X) :
+    V60DerivationTree.yield (shortcut outer t) =
+      leftWord outer ++ V60DerivationTree.yield t ++ rightWord outer := by
+  exact yield_plug outer t
+
+/--
+A nontrivial repeated-label context is genuinely removed: the marked-spine
+root-to-hole depth strictly decreases.  This supplies the terminating measure
+for iterative repeated-label shortcutting.
+-/
+theorem shortcut_depth_lt_of_cycle {R X : N}
+    (outer : V60DerivationContext terminal binary R X)
+    (cycle : V60DerivationContext terminal binary X X)
+    (hcycle : 0 < depth cycle) :
+    depth outer < depth (comp outer cycle) := by
+  rw [depth_comp]
+  omega
+
 end V60DerivationContext
 
 end FixedHCFG
