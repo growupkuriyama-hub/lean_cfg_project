@@ -120,9 +120,9 @@ theorem v60_window_boundary_eq_replace_middle
       (l₁ := w.take k)
       (l₂ := newMiddle ++ v60WindowSuffix l w) hk
     have hself : (w.take k).take k = w.take k := by
-      rw [← hkLen]
-      exact List.take_length
-    exact (hnew.trans hself).symm
+      apply List.take_of_length_le
+      omega
+    simpa [List.append_assoc] using (hnew.trans hself).symm
   · have hrLen := v60_suffix_right_length k l w hLong
     have hl : l ≤ (v60WindowSuffix l w).length := by omega
     have hnew := v60WindowSuffix_append_of_le
@@ -130,10 +130,12 @@ theorem v60_window_boundary_eq_replace_middle
     have hself :
         v60WindowSuffix l (v60WindowSuffix l w) =
           v60WindowSuffix l w := by
-      unfold v60WindowSuffix
+      change (v60WindowSuffix l w).drop
+        ((v60WindowSuffix l w).length - l) =
+          v60WindowSuffix l w
       rw [hrLen]
       simp
-    exact (hnew.trans hself).symm
+    simpa [List.append_assoc] using (hnew.trans hself).symm
 
 /-- Length of a word obtained by replacing only the unprotected middle. -/
 theorem v60_replace_middle_length
