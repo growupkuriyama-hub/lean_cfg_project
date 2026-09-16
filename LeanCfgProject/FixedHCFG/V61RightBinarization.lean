@@ -1,0 +1,132 @@
+import LeanCfgProject.FixedHCFG.V61NormalizationEndToEnd
+
+namespace LeanCfgProject
+namespace FixedHCFG
+
+universe u v w
+
+/-!
+A constructive right-binarization lemma for Appendix A of TCS revision v61.
+
+The preceding `V61BlockDerivation` file records the invariant that every
+intermediate symbol represents a contiguous block of an original right-hand
+side.  Here we prove that the standard right-associated binarization pattern
+actually builds such a block derivation from singleton atom leaves.
+-/
+
+namespace V61RightBinarization
+
+variable {N0 : Type v} {NB : Type w} {Sigma : Type u}
+variable {epsilon : V61EpsilonRules NB}
+variable {terminal : V60TerminalRules NB Sigma}
+variable {unit : V61UnitRules NB}
+variable {binary : V60BinaryRules NB}
+variable {embed : N0 → NB}
+variable {sourceTree : ∀ A : N0,
+  V61NullableDerivationTree epsilon terminal unit binary (embed A)}
+
+/--
+Terminal isolation and embedding of source nonterminals provide a singleton
+block derivation for every source atom.
+-/
+theorem atom_leaf_block
+    (leaf : V61SourceAtom N0 Sigma → NB)
+    (hNonterminal : ∀ A : N0,
+      leaf (V61SourceAtom.nonterminal A) = embed A)
+    (hTerminal : ∀ a : Sigma,
+      terminal (leaf (V61SourceAtom.terminal a)) a)
+    (a : V61SourceAtom N0 Sigma) :
+    V61BlockDerivation epsilon terminal unit binary embed sourceTree
+      (leaf a) [a] := by
+  cases a with
+  | nonterminal A =>
+      rw [hNonterminal A]
+      exact .source A
+  | terminal a =>
+      exact .term (leaf (V61SourceAtom.terminal a)) a (hTerminal a)
+
+/--
+Generic right-associated chain.  `node xs` is the nonterminal assigned to the
+contiguous block `xs`; a block of length at least two splits into its first
+atom and its remaining suffix.  This exactly matches the usual binarization
+chain for one original right-hand side.
+-/
+theorem right_chain_block
+    (leaf : V61SourceAtom N0 Sigma → NB)
+    (node : List (V61SourceAtom N0 Sigma) → NB)
+    (hLeaf : ∀ a : V61SourceAtom N0 Sigma,
+      V61BlockDerivation epsilon terminal unit binary embed sourceTree
+        (leaf a) [a])
+    (hEmpty : epsilon (node []))
+    (hSingleton : ∀ a : V61SourceAtom N0 Sigma,
+      unit (node [a]) (leaf a))
+    (hCons : ∀ (a b : V61SourceAtom N0 Sigma)
+        (rest : List (V61SourceAtom N0 Sigma)),
+      binary (node (a :: b :: rest)) (leaf a) (node (b :: rest)))
+    (atoms : List (V61SourceAtom N0 Sigma)) :
+    V61BlockDerivation epsilon terminal unit binary embed sourceTree
+      (node atoms) atoms := by
+  induction atoms with
+  | nil =>
+      exact .eps (node []) hEmpty
+  | cons a rest ih =>
+      cases rest with
+      | nil =>
+          exact .stepUnit (hSingleton a) (hLeaf a)
+      | cons b rest =>
+          exact .combine (hCons a b rest) (hLeaf a) ih
+
+/--
+Right-binarization block invariant obtained directly from the concrete
+terminal-isolation leaf rules.  This is the form intended for the forthcoming
+raw-production normalization constructor.
+-/
+theorem right_chain_block_of_isolated_atoms
+    (leaf : V61SourceAtom N0 Sigma → NB)
+    (node : List (V61SourceAtom N0 Sigma) → NB)
+    (hNonterminal : ∀ A : N0,
+      leaf (V61SourceAtom.nonterminal A) = embed A)
+    (hTerminal : ∀ a : Sigma,
+      terminal (leaf (V61SourceAtom.terminal a)) a)
+    (hEmpty : epsilon (node []))
+    (hSingleton : ∀ a : V61SourceAtom N0 Sigma,
+      unit (node [a]) (leaf a))
+    (hCons : ∀ (a b : V61SourceAtom N0 Sigma)
+        (rest : List (V61SourceAtom N0 Sigma)),
+      binary (node (a :: b :: rest)) (leaf a) (node (b :: rest)))
+    (atoms : List (V61SourceAtom N0 Sigma)) :
+    V61BlockDerivation epsilon terminal unit binary embed sourceTree
+      (node atoms) atoms := by
+  apply right_chain_block leaf node
+  · exact atom_leaf_block leaf hNonterminal hTerminal
+  · exact hEmpty
+  · exact hSingleton
+  · exact hCons
+
+/--
+Every suffix-node in a right-associated chain therefore carries the expected
+contiguous suffix block, not merely the full production root.
+-/
+theorem suffix_block_of_right_chain
+    (leaf : V61SourceAtom N0 Sigma → NB)
+    (node : List (V61SourceAtom N0 Sigma) → NB)
+    (hNonterminal : ∀ A : N0,
+      leaf (V61SourceAtom.nonterminal A) = embed A)
+    (hTerminal : ∀ a : Sigma,
+      terminal (leaf (V61SourceAtom.terminal a)) a)
+    (hEmpty : epsilon (node []))
+    (hSingleton : ∀ a : V61SourceAtom N0 Sigma,
+      unit (node [a]) (leaf a))
+    (hCons : ∀ (a b : V61SourceAtom N0 Sigma)
+        (rest : List (V61SourceAtom N0 Sigma)),
+      binary (node (a :: b :: rest)) (leaf a) (node (b :: rest)))
+    (prefix suffix : List (V61SourceAtom N0 Sigma)) :
+    V61BlockDerivation epsilon terminal unit binary embed sourceTree
+      (node suffix) suffix := by
+  exact right_chain_block_of_isolated_atoms
+    leaf node hNonterminal hTerminal hEmpty hSingleton hCons suffix
+
+end V61RightBinarization
+
+end FixedHCFG
+end LeanCfgProject
