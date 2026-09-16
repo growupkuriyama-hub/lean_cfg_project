@@ -231,9 +231,9 @@ theorem depth_comp {A B C : N}
   induction outer with
   | hole A => simp [comp, depth]
   | left A B D H hrule sub rightTree ih =>
-      simp [comp, depth, ih, Nat.add_assoc]
+      simp [comp, depth, ih, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
   | right A B D H hrule leftTree sub ih =>
-      simp [comp, depth, ih, Nat.add_assoc]
+      simp [comp, depth, ih, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
 /--
 Normal form for a repeated-label segment.  If `cycle : X ⟶ X`, all terminal
