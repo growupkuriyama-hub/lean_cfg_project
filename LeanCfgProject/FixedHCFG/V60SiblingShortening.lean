@@ -200,9 +200,8 @@ theorem terminalMaterialLength_shortenSiblingsByThickness_le
     (fun {A} t =>
       v60ThicknessShortTree
         (terminal := terminal) (binary := binary) tau hThickness t)
-  · intro A t
-    exact v60ThicknessShortTree_length_le tau hThickness t
-  · exact ctx
+  intro A t
+  exact v60ThicknessShortTree_length_le tau hThickness t
 
 end V60DerivationContext
 
