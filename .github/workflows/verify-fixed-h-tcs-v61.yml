@@ -66,6 +66,9 @@ jobs:
       - name: Build v61 right-binarization block builder
         run: lake build LeanCfgProject.FixedHCFG.V61RightBinarization
 
+      - name: Build v61 carrier coverage bridge
+        run: lake build LeanCfgProject.FixedHCFG.V61CarrierCoverage
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
