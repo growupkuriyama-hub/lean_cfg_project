@@ -119,12 +119,21 @@ theorem v60_window_boundary_eq_replace_middle
     have hnew := List.take_append_of_le_length
       (l₁ := w.take k)
       (l₂ := newMiddle ++ v60WindowSuffix l w) hk
-    simpa [List.append_assoc] using hnew.symm
+    have hself : (w.take k).take k = w.take k := by
+      rw [← hkLen]
+      exact List.take_length
+    exact (hnew.trans hself).symm
   · have hrLen := v60_suffix_right_length k l w hLong
     have hl : l ≤ (v60WindowSuffix l w).length := by omega
     have hnew := v60WindowSuffix_append_of_le
       l (w.take k ++ newMiddle) (v60WindowSuffix l w) hl
-    simpa [List.append_assoc] using hnew.symm
+    have hself :
+        v60WindowSuffix l (v60WindowSuffix l w) =
+          v60WindowSuffix l w := by
+      unfold v60WindowSuffix
+      rw [hrLen]
+      simp
+    exact (hnew.trans hself).symm
 
 /-- Length of a word obtained by replacing only the unprotected middle. -/
 theorem v60_replace_middle_length
@@ -136,7 +145,6 @@ theorem v60_replace_middle_length
   rw [List.length_append, List.length_append,
     v60_take_left_length k l w hLong,
     v60_suffix_right_length k l w hLong]
-  omega
 
 end FixedHCFG
 end LeanCfgProject
