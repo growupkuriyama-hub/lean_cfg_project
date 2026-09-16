@@ -40,14 +40,14 @@ theorem v60_compress_prefix_around_core
     (tau : Nat)
     (hThickness : V60BaseThicknessBound terminal binary tau)
     {R A : N}
-    (prefix : V60DerivationContext terminal binary R A)
+    (ctxPrefix : V60DerivationContext terminal binary R A)
     (core : V60DerivationTree terminal binary A) :
     ∃ ctx' : V60DerivationContext terminal binary R A,
       (V60DerivationTree.yield
         (V60DerivationContext.plug ctx' core)).length ≤
         (V60DerivationTree.yield core).length + Fintype.card N * tau := by
   obtain ⟨ctxSimple, hDepth⟩ :=
-    V60DerivationSpine.exists_context_with_depth_succ_le_card prefix
+    V60DerivationSpine.exists_context_with_depth_succ_le_card ctxPrefix
   let ctx' :=
     V60DerivationContext.shortenSiblingsByThickness
       tau hThickness ctxSimple
@@ -78,11 +78,11 @@ variable {terminal : V60TerminalRules N Sigma}
 variable {binary : V60BinaryRules N}
 
 /--
-Recursive marked-tree pruning with an accumulated unary-chain prefix.
+Recursive marked-tree pruning with an accumulated unary-chain context.
 
-The prefix begins at some outer root `R` and ends at the root of the current
+The context begins at some outer root `R` and ends at the root of the current
 marked support.  Unary support nodes merely extend it.  At a marked branch or
-leaf, the whole prefix is cycle-shortened and sibling-shortened in one shot.
+leaf, the whole context is cycle-shortened and sibling-shortened in one shot.
 -/
 theorem prune_with_prefix_length_bound
     [Fintype N]
@@ -91,7 +91,7 @@ theorem prune_with_prefix_length_bound
     {A : N} {t : V60DerivationTree terminal binary A}
     {marks : List Bool} {shape : V60MarkedSupportShape}
     (h : V60MarkedSupport terminal binary t marks shape) :
-    ∀ {R : N} (prefix : V60DerivationContext terminal binary R A),
+    ∀ {R : N} (ctxPrefix : V60DerivationContext terminal binary R A),
       ∃ t' : V60DerivationTree terminal binary R,
         (V60DerivationTree.yield t').length ≤
           V60MarkedSupportShape.markedLeaves shape +
@@ -99,10 +99,10 @@ theorem prune_with_prefix_length_bound
               Fintype.card N * tau := by
   induction h with
   | terminal A a hrule =>
-      intro R prefix
+      intro R ctxPrefix
       let core := V60DerivationTree.terminal A a hrule
       obtain ⟨ctx', hBound⟩ :=
-        v60_compress_prefix_around_core tau hThickness prefix core
+        v60_compress_prefix_around_core tau hThickness ctxPrefix core
       refine ⟨V60DerivationContext.plug ctx' core, ?_⟩
       simpa [core, V60DerivationTree.yield,
         V60MarkedSupportShape.markedLeaves,
@@ -110,31 +110,31 @@ theorem prune_with_prefix_length_bound
         Nat.mul_assoc] using hBound
   | @unaryLeft A B C hrule left right marksLeft marksRight shapeLeft
       hLeft hRightZero ih =>
-      intro R prefix
+      intro R ctxPrefix
       let step : V60DerivationContext terminal binary A B :=
         V60DerivationContext.left A B C B hrule
           (V60DerivationContext.hole B) right
-      let prefix' : V60DerivationContext terminal binary R B :=
-        V60DerivationContext.comp prefix step
-      obtain ⟨t', hBound⟩ := ih prefix'
+      let ctxNext : V60DerivationContext terminal binary R B :=
+        V60DerivationContext.comp ctxPrefix step
+      obtain ⟨t', hBound⟩ := ih ctxNext
       refine ⟨t', ?_⟩
       simpa [V60MarkedSupportShape.markedLeaves,
         V60MarkedSupportShape.suppressedBlockCount] using hBound
   | @unaryRight A B C hrule left right marksLeft marksRight shapeRight
       hLeftZero hRight ih =>
-      intro R prefix
+      intro R ctxPrefix
       let step : V60DerivationContext terminal binary A C :=
         V60DerivationContext.right A B C C hrule left
           (V60DerivationContext.hole C)
-      let prefix' : V60DerivationContext terminal binary R C :=
-        V60DerivationContext.comp prefix step
-      obtain ⟨t', hBound⟩ := ih prefix'
+      let ctxNext : V60DerivationContext terminal binary R C :=
+        V60DerivationContext.comp ctxPrefix step
+      obtain ⟨t', hBound⟩ := ih ctxNext
       refine ⟨t', ?_⟩
       simpa [V60MarkedSupportShape.markedLeaves,
         V60MarkedSupportShape.suppressedBlockCount] using hBound
   | @branch A B C hrule left right marksLeft marksRight shapeLeft shapeRight
       hLeft hRight ihLeft ihRight =>
-      intro R prefix
+      intro R ctxPrefix
       obtain ⟨left', hLeftBound⟩ :=
         ihLeft (V60DerivationContext.hole B)
       obtain ⟨right', hRightBound⟩ :=
@@ -142,7 +142,7 @@ theorem prune_with_prefix_length_bound
       let core : V60DerivationTree terminal binary A :=
         V60DerivationTree.binary A B C hrule left' right'
       obtain ⟨ctx', hPrefixBound⟩ :=
-        v60_compress_prefix_around_core tau hThickness prefix core
+        v60_compress_prefix_around_core tau hThickness ctxPrefix core
       refine ⟨V60DerivationContext.plug ctx' core, ?_⟩
       calc
         (V60DerivationTree.yield
