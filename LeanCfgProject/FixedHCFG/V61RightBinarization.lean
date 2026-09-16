@@ -126,10 +126,12 @@ def right_suffix_block
     V61BlockDerivation epsilon terminal unit binary embed sourceTree
       (node atoms) atoms := by
   cases atoms with
-  | nil => omega
+  | nil =>
+      simp at hTwo
   | cons a rest =>
       cases rest with
-      | nil => omega
+      | nil =>
+          simp at hTwo
       | cons b rest =>
           cases rest with
           | nil =>
