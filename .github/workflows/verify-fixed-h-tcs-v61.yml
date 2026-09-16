@@ -36,6 +36,9 @@ jobs:
       - name: Build v61 cycle-free nullable spines
         run: lake build LeanCfgProject.FixedHCFG.V61NullableSpine
 
+      - name: Build v61 nullable thickness shortening
+        run: lake build LeanCfgProject.FixedHCFG.V61NullableShortening
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
