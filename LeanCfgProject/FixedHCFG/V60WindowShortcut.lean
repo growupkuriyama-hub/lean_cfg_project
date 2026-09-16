@@ -56,7 +56,7 @@ theorem v60_window_boundary_eq_of_middle_deletion
         (l₁ := p) (l₂ := dl ++ m ++ dr ++ s) hk
       have hnew := List.take_append_of_le_length
         (l₁ := p) (l₂ := m ++ s) hk
-      exact hold.trans hnew.symm
+      simpa [List.append_assoc] using hold.trans hnew.symm
     · have hold := List.take_append_of_le_length
         (l₁ := p ++ m) (l₂ := dr ++ s) hk
       have hnew := List.take_append_of_le_length
