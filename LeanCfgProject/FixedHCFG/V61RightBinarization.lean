@@ -29,7 +29,7 @@ variable {sourceTree : ∀ A : N0,
 Terminal isolation and embedding of source nonterminals provide a singleton
 block derivation for every source atom.
 -/
-theorem atom_leaf_block
+def atom_leaf_block
     (leaf : V61SourceAtom N0 Sigma → NB)
     (hNonterminal : ∀ A : N0,
       leaf (V61SourceAtom.nonterminal A) = embed A)
@@ -51,7 +51,7 @@ contiguous block `xs`; a block of length at least two splits into its first
 atom and its remaining suffix.  This exactly matches the usual binarization
 chain for one original right-hand side.
 -/
-theorem right_chain_block
+def right_chain_block
     (leaf : V61SourceAtom N0 Sigma → NB)
     (node : List (V61SourceAtom N0 Sigma) → NB)
     (hLeaf : ∀ a : V61SourceAtom N0 Sigma,
@@ -81,7 +81,7 @@ Right-binarization block invariant obtained directly from the concrete
 terminal-isolation leaf rules.  This is the form intended for the forthcoming
 raw-production normalization constructor.
 -/
-theorem right_chain_block_of_isolated_atoms
+def right_chain_block_of_isolated_atoms
     (leaf : V61SourceAtom N0 Sigma → NB)
     (node : List (V61SourceAtom N0 Sigma) → NB)
     (hNonterminal : ∀ A : N0,
@@ -107,7 +107,7 @@ theorem right_chain_block_of_isolated_atoms
 Every suffix-node in a right-associated chain therefore carries the expected
 contiguous suffix block, not merely the full production root.
 -/
-theorem suffix_block_of_right_chain
+def suffix_block_of_right_chain
     (leaf : V61SourceAtom N0 Sigma → NB)
     (node : List (V61SourceAtom N0 Sigma) → NB)
     (hNonterminal : ∀ A : N0,
@@ -120,7 +120,7 @@ theorem suffix_block_of_right_chain
     (hCons : ∀ (a b : V61SourceAtom N0 Sigma)
         (rest : List (V61SourceAtom N0 Sigma)),
       binary (node (a :: b :: rest)) (leaf a) (node (b :: rest)))
-    (prefix suffix : List (V61SourceAtom N0 Sigma)) :
+    (suffix : List (V61SourceAtom N0 Sigma)) :
     V61BlockDerivation epsilon terminal unit binary embed sourceTree
       (node suffix) suffix := by
   exact right_chain_block_of_isolated_atoms
