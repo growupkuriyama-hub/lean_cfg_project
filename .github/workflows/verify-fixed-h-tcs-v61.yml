@@ -54,6 +54,9 @@ jobs:
       - name: Build v61 normalization size bounds
         run: lake build LeanCfgProject.FixedHCFG.V61NormalizationSize
 
+      - name: Build v61 structured binarization blocks
+        run: lake build LeanCfgProject.FixedHCFG.V61BinarizationBlocks
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
