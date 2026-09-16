@@ -159,7 +159,10 @@ theorem exists_of_aligned_pos
       | cons b xs =>
           have hxsLen : xs.length = 0 := by
             simpa [V60DerivationTree.leafCount] using hAlign
-          have hxs : xs = [] := List.length_eq_zero.mp hxsLen
+          have hxs : xs = [] := by
+            cases xs with
+            | nil => rfl
+            | cons x xs => simp at hxsLen
           subst xs
           cases b with
           | false => simp [v60MarkCount] at hPos
