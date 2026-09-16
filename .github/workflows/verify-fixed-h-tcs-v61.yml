@@ -48,6 +48,9 @@ jobs:
       - name: Build v61 post-unit SSBNF thickness bridge
         run: lake build LeanCfgProject.FixedHCFG.V61PostUnitBridge
 
+      - name: Build v61 binarization thickness certificate
+        run: lake build LeanCfgProject.FixedHCFG.V61BinarizationThickness
+
       - name: Recheck exact reconstruction dependency
         run: lake build LeanCfgProject.FixedHCFG.V60EndToEnd
 
