@@ -104,8 +104,70 @@ def right_chain_block_of_isolated_atoms
   · exact hCons
 
 /--
-Every suffix-node in a right-associated chain therefore carries the expected
-contiguous suffix block, not merely the full production root.
+Count-compatible suffix-chain builder.  Standard right binarization needs a
+fresh chain symbol only for suffixes of length at least two.  The length-two
+suffix closes directly with two atom leaves, and longer suffixes recurse on the
+proper tail.  Thus no artificial empty or singleton chain symbols are needed.
+-/
+def right_suffix_block
+    (leaf : V61SourceAtom N0 Sigma → NB)
+    (node : List (V61SourceAtom N0 Sigma) → NB)
+    (hLeaf : ∀ a : V61SourceAtom N0 Sigma,
+      V61BlockDerivation epsilon terminal unit binary embed sourceTree
+        (leaf a) [a])
+    (hPair : ∀ a b : V61SourceAtom N0 Sigma,
+      binary (node [a, b]) (leaf a) (leaf b))
+    (hLong : ∀ (a b c : V61SourceAtom N0 Sigma)
+        (rest : List (V61SourceAtom N0 Sigma)),
+      binary (node (a :: b :: c :: rest))
+        (leaf a) (node (b :: c :: rest)))
+    (atoms : List (V61SourceAtom N0 Sigma))
+    (hTwo : 2 ≤ atoms.length) :
+    V61BlockDerivation epsilon terminal unit binary embed sourceTree
+      (node atoms) atoms := by
+  cases atoms with
+  | nil => omega
+  | cons a rest =>
+      cases rest with
+      | nil => omega
+      | cons b rest =>
+          cases rest with
+          | nil =>
+              exact .combine (hPair a b) (hLeaf a) (hLeaf b)
+          | cons c rest =>
+              exact .combine (hLong a b c rest) (hLeaf a)
+                (right_suffix_block leaf node hLeaf hPair hLong
+                  (b :: c :: rest) (by simp))
+termination_by atoms.length
+
+/--
+Concrete terminal-isolation version of `right_suffix_block`.
+-/
+def right_suffix_block_of_isolated_atoms
+    (leaf : V61SourceAtom N0 Sigma → NB)
+    (node : List (V61SourceAtom N0 Sigma) → NB)
+    (hNonterminal : ∀ A : N0,
+      leaf (V61SourceAtom.nonterminal A) = embed A)
+    (hTerminal : ∀ a : Sigma,
+      terminal (leaf (V61SourceAtom.terminal a)) a)
+    (hPair : ∀ a b : V61SourceAtom N0 Sigma,
+      binary (node [a, b]) (leaf a) (leaf b))
+    (hLong : ∀ (a b c : V61SourceAtom N0 Sigma)
+        (rest : List (V61SourceAtom N0 Sigma)),
+      binary (node (a :: b :: c :: rest))
+        (leaf a) (node (b :: c :: rest)))
+    (atoms : List (V61SourceAtom N0 Sigma))
+    (hTwo : 2 ≤ atoms.length) :
+    V61BlockDerivation epsilon terminal unit binary embed sourceTree
+      (node atoms) atoms := by
+  exact right_suffix_block leaf node
+    (atom_leaf_block leaf hNonterminal hTerminal)
+    hPair hLong atoms hTwo
+
+/--
+Every suffix-node in the older unrestricted right-associated chain therefore
+carries the expected contiguous suffix block, not merely the full production
+root.
 -/
 def suffix_block_of_right_chain
     (leaf : V61SourceAtom N0 Sigma → NB)
