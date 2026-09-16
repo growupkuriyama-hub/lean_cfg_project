@@ -28,7 +28,12 @@ theorem v61_source_block_cost_append
   | nil =>
       simp [v61SourceBlockCost]
   | cons a rest ih =>
-      simp [v61SourceBlockCost, ih, Nat.add_assoc]
+      change v61SourceAtomCost shortLen a +
+          v61SourceBlockCost shortLen (rest ++ ys) =
+        (v61SourceAtomCost shortLen a + v61SourceBlockCost shortLen rest) +
+          v61SourceBlockCost shortLen ys
+      rw [ih]
+      simp [Nat.add_assoc]
 
 /--
 A derivation annotated by the contiguous source block represented at its root.
