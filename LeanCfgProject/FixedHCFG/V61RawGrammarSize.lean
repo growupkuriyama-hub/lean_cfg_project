@@ -42,9 +42,11 @@ theorem v61_terminal_occurrences_le_length
   | cons a rest ih =>
       cases a with
       | nonterminal A =>
-          simp [v61TerminalOccurrences, ih]
+          simp only [v61TerminalOccurrences, List.length_cons]
+          exact le_trans ih (Nat.le_succ rest.length)
       | terminal a =>
-          simp [v61TerminalOccurrences, ih]
+          simp only [v61TerminalOccurrences, List.length_cons]
+          simpa [Nat.add_comm] using Nat.add_le_add_left ih 1
 
 /-- Number of fresh binary-chain symbols needed by a right-associated binarization. -/
 def v61BinarizationChainCount (rhsLength : Nat) : Nat := rhsLength - 2
