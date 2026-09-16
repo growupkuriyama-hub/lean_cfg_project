@@ -1,5 +1,5 @@
 import LeanCfgProject.FixedHCFG.V60EndToEnd
-import LeanCfgProject.FixedHCFG.V60MarkedSkeleton
+import LeanCfgProject.FixedHCFG.V60WindowCompression
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -20,7 +20,10 @@ The imported exact-v60 chain contains:
 * the positive/zero-window typed-yield bridge isolating marked-leaf compression;
 * concrete SSBNF derivation trees and one-hole replacement contexts;
 * the exact suppressed marked-skeleton count `(2r-1)N` once unary chains have
-  been made label-simple by the manuscript's repeated-label shortcut.
+  been made label-simple by the manuscript's repeated-label shortcut;
+* the compression-certificate bridge converting that count and the raw
+  boundary-piece estimate into the displayed `r+(2r-1)N tau` yield bound and
+  hence the exact `(N_t+2)B+1` canonical witness bound.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
