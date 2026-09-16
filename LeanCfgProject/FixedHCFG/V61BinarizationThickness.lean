@@ -43,7 +43,7 @@ theorem v61_source_atom_cost_le
   | nonterminal A =>
       exact le_trans (hShort A) (Nat.le_succ tauR)
   | terminal a =>
-      omega
+      simp [v61SourceAtomCost]
 
 /-- Cost of a contiguous source block after short witnesses are substituted. -/
 def v61SourceBlockCost
@@ -70,7 +70,7 @@ theorem v61_source_block_cost_le_length_mul
             (tauR + 1) + rest.length * (tauR + 1) :=
           Nat.add_le_add ha ih
         _ = Nat.succ rest.length * (tauR + 1) := by
-          simp [Nat.succ_mul, Nat.add_comm]
+          simp [Nat.succ_eq_add_one, Nat.add_mul, Nat.add_comm]
 
 /-- The manuscript's `O(n)` block-length hypothesis gives the desired bound. -/
 theorem v61_source_block_cost_le
