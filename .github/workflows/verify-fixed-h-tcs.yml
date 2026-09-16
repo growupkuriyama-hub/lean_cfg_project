@@ -45,6 +45,9 @@ jobs:
       - name: Build exact v60 boundary leaf marks
         run: lake build LeanCfgProject.FixedHCFG.V60BoundaryMarks
 
+      - name: Build exact v60 boundary decomposition
+        run: lake build LeanCfgProject.FixedHCFG.V60BoundaryDecomposition
+
       - name: Build exact v60 marked-skeleton counting
         run: lake build LeanCfgProject.FixedHCFG.V60MarkedSkeleton
 
