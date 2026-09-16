@@ -36,7 +36,7 @@ theorem v61_terminal_atoms_length
       | nonterminal A =>
           simp [v61TerminalAtoms, v61TerminalOccurrences, ih]
       | terminal a =>
-          simp [v61TerminalAtoms, v61TerminalOccurrences, ih]
+          simp [v61TerminalAtoms, v61TerminalOccurrences, ih, Nat.add_comm]
 
 /--
 Proper suffixes that receive fresh symbols in standard right binarization.
@@ -105,7 +105,7 @@ theorem v61_length_lt_of_mem_proper_chain_suffixes
               rcases h with rfl | h
               · simp
               · have hlt := ih h
-                simp only [List.length_cons]
+                simp only [List.length_cons] at hlt ⊢
                 omega
 
 /-- One chain-slot entry keeps the source production occurrence and its suffix. -/
