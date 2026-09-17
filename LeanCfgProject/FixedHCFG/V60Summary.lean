@@ -10,6 +10,7 @@ import LeanCfgProject.FixedHCFG.V60AlignedMarkedPruning
 import LeanCfgProject.FixedHCFG.V60WindowCompressionConstructive
 import LeanCfgProject.FixedHCFG.V62ThicknessNormalization
 import LeanCfgProject.FixedHCFG.V62WindowSampleBounds
+import LeanCfgProject.FixedHCFG.V62WindowThickData
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -56,7 +57,10 @@ The imported exact-v60 chain contains:
   `1+|V_B| tau_B` estimate and the complete fixed-window witness envelope remain
   polynomial under polynomial SSBNF size/thickness bounds;
 * the actual retained typed-state bound `N_t <= N |M|`, used to eliminate the
-  last abstract typed-state-count premise from the normalization transfer.
+  last abstract typed-state-count premise from the normalization transfer;
+* the canonical witness-set cardinality and encoded-size bounds, combined with
+  the constructive positive/zero window witness bounds into an explicit
+  polynomial encoded-data envelope for reduced SSBNF grammars.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
