@@ -76,8 +76,8 @@ theorem v62_project_fresh_produces
       simp [List.map_append, v62LiftCFGRule,
         v62ProjectFreshSymbol, v62ProjectFreshNT]
     · rw [hv]
-      simp [List.map_append, v62LiftCFGRule,
-        v62ProjectFreshSymbol, v62ProjectFreshNT]
+      simp only [List.map_append, v62LiftCFGRule]
+      rw [v62_project_lift_word g q.output]
   · have hrEq : r = v62FreshStartRule g := by simpa using hFresh
     subst r
     left
@@ -111,7 +111,9 @@ theorem v62_fresh_productive_projects
   refine ⟨w, ?_⟩
   unfold V62CFGDerivesWordFrom at hw ⊢
   have hp := v62_project_fresh_derives hw
-  simpa [v62ProjectFreshSymbol, v62ProjectFreshNT] using hp
+  rw [v62_project_terminal_word g w] at hp
+  simpa only [List.map_cons, List.map_nil,
+    v62ProjectFreshSymbol, v62ProjectFreshNT] using hp
 
 /-- No terminal word is introduced by fresh-start separation. -/
 theorem v62_fresh_start_language_subset
@@ -120,7 +122,9 @@ theorem v62_fresh_start_language_subset
   intro w hw
   rw [ContextFreeGrammar.mem_language_iff] at hw ⊢
   have hp := v62_project_fresh_derives hw
-  simpa [v62ProjectFreshSymbol, v62ProjectFreshNT] using hp
+  rw [v62_project_terminal_word g w] at hp
+  simpa only [List.map_cons, List.map_nil,
+    v62ProjectFreshSymbol, v62ProjectFreshNT] using hp
 
 /-- Fresh-start separation preserves the generated language exactly. -/
 theorem v62_fresh_start_language_eq
