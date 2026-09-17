@@ -115,7 +115,6 @@ theorem v62_terminal_isolation_invariant
     · simp only [v62IsolateRule, v62IsolateOutput, hlong, if_true]
       exact v62_terminal_not_mem_isolate_long q.output a
     · simp [v62IsolateRule, v62IsolateOutput, hlong] at hlen
-      omega
   · rcases Finset.mem_image.mp hHelper with ⟨b, hb, hbr⟩
     subst r
     simp [v62TerminalHelperRule] at hlen
@@ -231,7 +230,7 @@ theorem v62_terminal_isolation_language_subset
         w.map (@Symbol.terminal T g.NT) := by
     induction w with
     | nil => rfl
-    | cons a w ih => simp [v62ProjectIsolatedSymbol, ih]
+    | cons a w ih => simp [v62ProjectIsolatedSymbol]
   rw [hterm] at hp
   exact hp
 
