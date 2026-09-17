@@ -7,6 +7,7 @@ import LeanCfgProject.FixedHCFG.V60MarkedShortcut
 import LeanCfgProject.FixedHCFG.V60MarkedContextPruning
 import LeanCfgProject.FixedHCFG.V60MarkedContextShortening
 import LeanCfgProject.FixedHCFG.V60AlignedMarkedPruning
+import LeanCfgProject.FixedHCFG.V60WindowCompressionConstructive
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -45,7 +46,9 @@ The imported exact-v60 chain contains:
 * simultaneous chain normalization and sibling shortening, yielding a
   duplicate-free marked chain with the quantitative `|N|*tau` context charge;
 * aligned recursive marked-support pruning carrying that semantics through the
-  full suppressed support tree while proving the same quantitative length bound.
+  full suppressed support tree while proving the same quantitative length bound;
+* constructive positive-window compression from base thickness alone, removing
+  the former external structural-certificate premise from the witness bound.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
