@@ -106,7 +106,7 @@ theorem shortenSiblings_markedReplacement
           rightTree (shorten rightTree)
         · simp
         · simp
-      have hApp := V60MarkedWordReplacement.append ih hRight
+      have hApp := V60MarkedWordReplacement.append (ih hCore) hRight
       simpa [V60MarkedContextFrontier, plug, shortenSiblings,
         V60DerivationTree.yield] using hApp
   | right A B C H hrule leftTree sub ih =>
@@ -120,7 +120,7 @@ theorem shortenSiblings_markedReplacement
           leftTree (shorten leftTree)
         · simp
         · simp
-      have hApp := V60MarkedWordReplacement.append hLeft ih
+      have hApp := V60MarkedWordReplacement.append hLeft (ih hCore)
       simpa [V60MarkedContextFrontier, plug, shortenSiblings,
         V60DerivationTree.yield] using hApp
 
