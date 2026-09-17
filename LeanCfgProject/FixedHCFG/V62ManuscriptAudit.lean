@@ -24,7 +24,11 @@ Current v62 correspondence:
 * Theorem `soundness`               -> strong R1--R4 invariant + R5;
 * Theorem `complete`                -> finite canonical witness simulation;
 * Theorem `reconstruction-fixed-h`  -> exact finite-sample reconstruction;
-* Corollary `ilt`                   -> at most one later rebuild and Gold convergence.
+* Corollary `ilt`                   -> at most one later rebuild and Gold convergence;
+* Lemma `window-typed-yield`        -> constructive fixed-window typed-yield
+  bounds from base thickness, including the separate zero-window endpoint;
+* Lemma `window-context`            -> constructive canonical context and
+  characteristic-witness bounds from those yield bounds.
 -/
 
 /-- v62 Proposition `typed-core`, yield invariant. -/
@@ -163,6 +167,131 @@ theorem v62_end_to_end_gold_identification
         V60UntypedStartLanguage terminal binary start epsilonStart := by
   exact v60_end_to_end_gold_identification
     Obs terminal binary start epsilonStart hSub text hText
+
+/--
+v62 Lemma `window-typed-yield`, positive-window case.  The former structural
+certificate premise has been eliminated: base SSBNF thickness plus fixed-window
+observer compatibility construct the bounded typed yield directly.
+-/
+theorem v62_window_typed_yield_positive
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (k l tau : Nat)
+    (hr : k + l ≠ 0)
+    (hObserver : V60WindowObserverCompatible Obs k l)
+    (hThickness : V60BaseThicknessBound terminal binary tau) :
+    ∀ X : V60KeptState Obs terminal binary start,
+      ∃ z : Word Sigma,
+        V60YieldTypedDerives Obs terminal binary X.1 z ∧
+          z.length ≤
+            V60WindowYieldBound (k + l) (Fintype.card N) tau := by
+  exact v60_window_typed_yield_candidate_from_thickness
+    Obs terminal binary start k l tau hr hObserver hThickness
+
+/-- v62 Lemma `window-typed-yield`, endpoint `(k,l)=(0,0)`. -/
+theorem v62_window_typed_yield_zero
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (tau : Nat)
+    (hObserver : V60NonemptyObserverTrivial Obs)
+    (hThickness : V60BaseThicknessBound terminal binary tau) :
+    ∀ X : V60KeptState Obs terminal binary start,
+      ∃ z : Word Sigma,
+        V60YieldTypedDerives Obs terminal binary X.1 z ∧ z.length ≤ tau := by
+  simpa [V60WindowYieldBound] using
+    (v60_window_zero_typed_yield_candidate
+      Obs terminal binary start (Fintype.card N) tau hObserver hThickness)
+
+/-- v62 Lemma `window-context`, positive-window canonical-context bound. -/
+theorem v62_window_context_bound_positive
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (k l tau : Nat)
+    (hr : k + l ≠ 0)
+    (hObserver : V60WindowObserverCompatible Obs k l)
+    (hThickness : V60BaseThicknessBound terminal binary tau) :
+    ∀ X : V60KeptState Obs terminal binary start,
+      (v60CanonicalLeftCtx X).length +
+        (v60CanonicalRightCtx X).length ≤
+          Fintype.card (V60KeptState Obs terminal binary start) *
+            V60WindowYieldBound (k + l) (Fintype.card N) tau := by
+  exact v60_window_canonical_context_bound_from_thickness
+    Obs terminal binary start k l tau hr hObserver hThickness
+
+/-- v62 Lemma `window-context`, zero-window canonical-context bound. -/
+theorem v62_window_context_bound_zero
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (tau : Nat)
+    (hObserver : V60NonemptyObserverTrivial Obs)
+    (hThickness : V60BaseThicknessBound terminal binary tau) :
+    ∀ X : V60KeptState Obs terminal binary start,
+      (v60CanonicalLeftCtx X).length +
+        (v60CanonicalRightCtx X).length ≤
+          Fintype.card (V60KeptState Obs terminal binary start) * tau := by
+  have hYield := v60_window_zero_typed_yield_candidate
+    Obs terminal binary start (Fintype.card N) tau hObserver hThickness
+  simpa [V60WindowYieldBound] using
+    (v60_window_canonical_context_bound_from_yields
+      Obs terminal binary start 0 (Fintype.card N) tau hYield)
+
+/-- v62 Lemma `window-context`, positive-window characteristic-witness bound. -/
+theorem v62_window_witness_bound_positive
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (epsilonStart : Prop)
+    (k l tau : Nat)
+    (hr : k + l ≠ 0)
+    (hObserver : V60WindowObserverCompatible Obs k l)
+    (hThickness : V60BaseThicknessBound terminal binary tau)
+    {z : Word Sigma}
+    (hz : V60CanonicalWitnessSet (Obs := Obs) (terminal := terminal)
+      (binary := binary) (start := start) epsilonStart z) :
+    z.length ≤
+      (Fintype.card (V60KeptState Obs terminal binary start) + 2) *
+        V60WindowYieldBound (k + l) (Fintype.card N) tau + 1 := by
+  exact v60_window_witness_bound_from_thickness
+    Obs terminal binary start epsilonStart
+    k l tau hr hObserver hThickness hz
+
+/-- v62 Lemma `window-context`, zero-window characteristic-witness bound. -/
+theorem v62_window_witness_bound_zero
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (epsilonStart : Prop)
+    (tau : Nat)
+    (hObserver : V60NonemptyObserverTrivial Obs)
+    (hThickness : V60BaseThicknessBound terminal binary tau)
+    {z : Word Sigma}
+    (hz : V60CanonicalWitnessSet (Obs := Obs) (terminal := terminal)
+      (binary := binary) (start := start) epsilonStart z) :
+    z.length ≤
+      (Fintype.card (V60KeptState Obs terminal binary start) + 2) * tau + 1 := by
+  exact v60_window_zero_witness_bound
+    Obs terminal binary start epsilonStart
+    (Fintype.card N) tau hObserver hThickness hz
 
 end FixedHCFG
 end LeanCfgProject
