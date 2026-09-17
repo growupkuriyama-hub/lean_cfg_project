@@ -3,6 +3,7 @@ import LeanCfgProject.FixedHCFG.V60WindowCompression
 import LeanCfgProject.FixedHCFG.V60AlignedMarkedSupport
 import LeanCfgProject.FixedHCFG.V60MarkedWordReplacement
 import LeanCfgProject.FixedHCFG.V60MarkedContext
+import LeanCfgProject.FixedHCFG.V60MarkedShortcut
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -33,7 +34,9 @@ The imported exact-v60 chain contains:
   changing only `false` material implies the exact first-`k`/last-`l` window
   equality and retains at least `k+l` terminals;
 * marked one-hole context semantics proving that thickness-shortening every
-  off-path sibling preserves the protected marked frontier.
+  off-path sibling preserves the protected marked frontier;
+* a marked repeated-label shortcut theorem showing that deleting a repeated
+  context segment preserves every protected terminal and its order.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
