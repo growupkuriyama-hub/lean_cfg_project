@@ -58,13 +58,14 @@ theorem eq_replicate_false_of_markCount_zero
     (hZero : v60MarkCount marks = 0) :
     marks = List.replicate marks.length false := by
   induction marks with
-  | nil => simp
+  | nil => rfl
   | cons b xs ih =>
       cases b with
       | false =>
           simp only [v60MarkCount_cons_false] at hZero
-          have hxs := ih hZero
-          simp [hxs, List.replicate_succ]
+          have hxs : xs = List.replicate xs.length false := ih hZero
+          rw [List.length_cons, List.replicate_succ]
+          exact congrArg (List.cons false) hxs
       | true =>
           simp only [v60MarkCount_cons_true] at hZero
           omega
@@ -97,9 +98,11 @@ theorem replicate_false_to_nil
     V60MarkedWordReplacement (List.replicate n false) src [] := by
   induction n generalizing src with
   | zero =>
-      have hSrc : src = [] := List.length_eq_zero.mp hLen
-      subst src
-      exact V60MarkedWordReplacement.nil
+      cases src with
+      | nil =>
+          exact V60MarkedWordReplacement.nil
+      | cons a xs =>
+          simp at hLen
   | succ n ih =>
       cases src with
       | nil => simp at hLen
