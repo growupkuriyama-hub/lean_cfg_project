@@ -93,7 +93,7 @@ theorem plug_markedReplacement
           rightTree rightTree
         · simp
         · simp
-      have hApp := V60MarkedWordReplacement.append ih hRight
+      have hApp := V60MarkedWordReplacement.append (ih hCore) hRight
       simpa [V60MarkedContextFrontier, plug, V60DerivationTree.yield] using hApp
   | right A B C H hrule leftTree sub ih =>
       have hLeft :
@@ -106,7 +106,7 @@ theorem plug_markedReplacement
           leftTree leftTree
         · simp
         · simp
-      have hApp := V60MarkedWordReplacement.append hLeft ih
+      have hApp := V60MarkedWordReplacement.append hLeft (ih hCore)
       simpa [V60MarkedContextFrontier, plug, V60DerivationTree.yield] using hApp
 
 /--
