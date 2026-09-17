@@ -70,6 +70,59 @@ theorem v60_window_untyped_compression_from_thickness
     exact hConcrete
 
 /--
+Exact constructive positive-window form of manuscript Lemma
+`window-typed-yield`: every productive kept typed state has a same-type yield
+within the displayed `B_{k,l}(G)` bound, assuming only base thickness.
+-/
+theorem v60_window_typed_yield_candidate_from_thickness
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (k l tau : Nat)
+    (hr : k + l ≠ 0)
+    (hObserver : V60WindowObserverCompatible Obs k l)
+    (hThickness : V60BaseThicknessBound terminal binary tau) :
+    ∀ X : V60KeptState Obs terminal binary start,
+      ∃ z : Word Sigma,
+        V60YieldTypedDerives Obs terminal binary X.1 z ∧
+          z.length ≤
+            V60WindowYieldBound (k + l) (Fintype.card N) tau := by
+  exact v60_window_typed_yield_candidate_of_boundary_compression
+    Obs terminal binary start k l (Fintype.card N) tau hr hObserver
+    (v60_window_untyped_compression_from_thickness
+      terminal binary k l tau hr hThickness)
+
+/--
+Constructive positive-window form of the context half of manuscript Lemma
+`window-context`.  The finite dependency-spine argument now consumes the
+constructive typed-yield theorem directly, so no context-existence premise is
+left either.
+-/
+theorem v60_window_canonical_context_bound_from_thickness
+    {N : Type v} {Sigma : Type u}
+    [Fintype N]
+    [LinearOrder Sigma] [WellFoundedLT Sigma]
+    (Obs : Observer Sigma)
+    (terminal : V60TerminalRules N Sigma)
+    (binary : V60BinaryRules N) (start : V60StartRules N)
+    (k l tau : Nat)
+    (hr : k + l ≠ 0)
+    (hObserver : V60WindowObserverCompatible Obs k l)
+    (hThickness : V60BaseThicknessBound terminal binary tau) :
+    ∀ X : V60KeptState Obs terminal binary start,
+      (v60CanonicalLeftCtx X).length +
+        (v60CanonicalRightCtx X).length ≤
+          Fintype.card (V60KeptState Obs terminal binary start) *
+            V60WindowYieldBound (k + l) (Fintype.card N) tau := by
+  exact v60_window_canonical_context_bound_from_yields
+    Obs terminal binary start
+    (k + l) (Fintype.card N) tau
+    (v60_window_typed_yield_candidate_from_thickness
+      Obs terminal binary start k l tau hr hObserver hThickness)
+
+/--
 Manuscript-facing positive-window canonical-witness bound with the previous
 structural certificate premise eliminated.  The only grammar-side hypothesis
 is the base thickness bound used in the paper.
@@ -92,11 +145,11 @@ theorem v60_window_witness_bound_from_thickness
     z.length ≤
       (Fintype.card (V60KeptState Obs terminal binary start) + 2) *
         V60WindowYieldBound (k + l) (Fintype.card N) tau + 1 := by
-  exact v60_window_witness_bound_of_boundary_compression
+  exact v60_window_witness_length_bound_from_yields
     Obs terminal binary start epsilonStart
-    k l (Fintype.card N) tau hr hObserver
-    (v60_window_untyped_compression_from_thickness
-      terminal binary k l tau hr hThickness)
+    (k + l) (Fintype.card N) tau
+    (v60_window_typed_yield_candidate_from_thickness
+      Obs terminal binary start k l tau hr hObserver hThickness)
     hz
 
 end FixedHCFG
