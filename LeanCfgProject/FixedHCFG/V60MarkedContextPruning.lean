@@ -141,6 +141,41 @@ theorem depth_succ_le_card_of_nodup_targetLabels
   rw [List.length_cons, targetLabels_length] at hLen
   omega
 
+/--
+One repeated occurrence of the root label can be deleted even when the hole
+core has already been transformed.  The surviving suffix is strictly shallower,
+its path labels came from the original context, and the entire operation is one
+marked-word replacement rather than a transitive composition of replacements.
+-/
+theorem delete_repeated_root_prefix_markedReplacement
+    {R H : N}
+    (ctx : V60DerivationContext terminal binary R H)
+    (hRepeat : R ∈ targetLabels ctx)
+    {holeMarks : List Bool}
+    {oldCore newCore : V60DerivationTree terminal binary H}
+    (hCore : V60MarkedWordReplacement holeMarks
+      (V60DerivationTree.yield oldCore)
+      (V60DerivationTree.yield newCore)) :
+    ∃ suffix : V60DerivationContext terminal binary R H,
+      depth suffix < depth ctx ∧
+      V60MarkedWordReplacement
+        (V60MarkedContextFrontier ctx holeMarks)
+        (V60DerivationTree.yield (plug ctx oldCore))
+        (V60DerivationTree.yield (plug suffix newCore)) ∧
+      ∀ Z, Z ∈ targetLabels suffix → Z ∈ targetLabels ctx := by
+  obtain ⟨prefix, suffix, hSplit, hPrefixPos⟩ :=
+    split_at_target_mem ctx hRepeat
+  refine ⟨suffix, ?_, ?_, ?_⟩
+  · rw [hSplit, depth_comp]
+    omega
+  · have hSuffix := plug_markedReplacement suffix hCore
+    have hDelete := delete_markedReplacement_of_core prefix hSuffix
+    rw [hSplit, v60MarkedContextFrontier_comp]
+    simpa [plug_comp] using hDelete
+  · intro Z hZ
+    rw [hSplit, targetLabels_comp]
+    exact List.mem_append.mpr (Or.inr hZ)
+
 end V60DerivationContext
 
 end FixedHCFG
