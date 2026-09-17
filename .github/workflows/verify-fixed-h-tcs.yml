@@ -49,6 +49,9 @@ jobs:
       - name: Build v62 executable long-rule binarization
         run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationBinary
 
+      - name: Build v62 binarization forward simulation
+        run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationBinaryForward
+
       # Keep the actively developed marked-leaf infrastructure early as well.
       - name: Build exact v60 derivation-tree infrastructure
         run: lake build LeanCfgProject.FixedHCFG.V60DerivationTree
