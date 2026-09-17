@@ -11,6 +11,7 @@ import LeanCfgProject.FixedHCFG.V60WindowCompressionConstructive
 import LeanCfgProject.FixedHCFG.V62ThicknessNormalization
 import LeanCfgProject.FixedHCFG.V62WindowSampleBounds
 import LeanCfgProject.FixedHCFG.V62WindowThickData
+import LeanCfgProject.FixedHCFG.V62WindowTheoremAudit
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -60,7 +61,10 @@ The imported exact-v60 chain contains:
   last abstract typed-state-count premise from the normalization transfer;
 * the canonical witness-set cardinality and encoded-size bounds, combined with
   the constructive positive/zero window witness bounds into an explicit
-  polynomial encoded-data envelope for reduced SSBNF grammars.
+  polynomial encoded-data envelope for reduced SSBNF grammars;
+* manuscript-facing aliases for Theorem `window-thick` and the quantitative
+  part of Corollary `window-transfer`, while keeping the still-unformalized
+  arbitrary-CFG normalization algorithm explicitly separate.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
