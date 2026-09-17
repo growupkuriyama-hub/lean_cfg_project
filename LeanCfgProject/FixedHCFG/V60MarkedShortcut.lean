@@ -156,6 +156,52 @@ theorem delete_markedReplacement
       simpa [V60MarkedContextFrontier, plug, V60DerivationTree.yield] using hApp
 
 /--
+Delete the surrounding context while simultaneously replacing the distinguished
+core.  This strengthened form is what allows nested cycle deletion to be
+composed without a separate transitivity theorem for marked replacements.
+-/
+theorem delete_markedReplacement_of_core
+    {N : Type v} {Sigma : Type u}
+    {terminal : V60TerminalRules N Sigma}
+    {binary : V60BinaryRules N}
+    {A H : N}
+    (ctx : V60DerivationContext terminal binary A H)
+    {holeMarks : List Bool}
+    {oldCore newCore : V60DerivationTree terminal binary H}
+    (hCore : V60MarkedWordReplacement holeMarks
+      (V60DerivationTree.yield oldCore)
+      (V60DerivationTree.yield newCore)) :
+    V60MarkedWordReplacement
+      (V60MarkedContextFrontier ctx holeMarks)
+      (V60DerivationTree.yield (plug ctx oldCore))
+      (V60DerivationTree.yield newCore) := by
+  induction ctx generalizing oldCore newCore with
+  | hole A =>
+      simpa [V60MarkedContextFrontier, plug] using hCore
+  | left A B C H hrule sub rightTree ih =>
+      have hSub := ih hCore
+      have hRightLen :
+          (V60DerivationTree.yield rightTree).length =
+            V60DerivationTree.leafCount rightTree :=
+        V60DerivationTree.yield_length_eq_leafCount rightTree
+      have hRight :=
+        V60MarkedWordReplacement.replicate_false_to_nil
+          (V60DerivationTree.leafCount rightTree) hRightLen
+      have hApp := V60MarkedWordReplacement.append hSub hRight
+      simpa [V60MarkedContextFrontier, plug, V60DerivationTree.yield] using hApp
+  | right A B C H hrule leftTree sub ih =>
+      have hSub := ih hCore
+      have hLeftLen :
+          (V60DerivationTree.yield leftTree).length =
+            V60DerivationTree.leafCount leftTree :=
+        V60DerivationTree.yield_length_eq_leafCount leftTree
+      have hLeft :=
+        V60MarkedWordReplacement.replicate_false_to_nil
+          (V60DerivationTree.leafCount leftTree) hLeftLen
+      have hApp := V60MarkedWordReplacement.append hLeft hSub
+      simpa [V60MarkedContextFrontier, plug, V60DerivationTree.yield] using hApp
+
+/--
 Deleting a repeated-label cycle is a marked-word replacement from the original
 root yield to the shortcut yield.  This is the formal local step used by the
 manuscript's repeated-label pruning procedure.
