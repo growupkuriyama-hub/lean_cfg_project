@@ -29,10 +29,13 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
 
-      # Keep the currently active v62 normalization target first so CI returns
+      # Keep the currently active v62 normalization targets first so CI returns
       # elaboration feedback before replaying the full exact-v60 chain.
       - name: Build v62 executable CFG normalization start
         run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationStart
+
+      - name: Build v62 fresh-start reverse simulation
+        run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationProjection
 
       # Keep the actively developed marked-leaf infrastructure early as well.
       - name: Build exact v60 derivation-tree infrastructure
