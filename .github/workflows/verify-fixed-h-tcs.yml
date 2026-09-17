@@ -37,6 +37,9 @@ jobs:
       - name: Build v62 fresh-start reverse simulation
         run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationProjection
 
+      - name: Build v62 terminal-isolation normalization
+        run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationTerminal
+
       # Keep the actively developed marked-leaf infrastructure early as well.
       - name: Build exact v60 derivation-tree infrastructure
         run: lake build LeanCfgProject.FixedHCFG.V60DerivationTree
