@@ -13,6 +13,13 @@ terminal occurring in the finite rule set.  In RHSs of length at least two,
 terminal symbols are replaced by their helper nonterminals.  Singleton
 terminal productions are left unchanged.
 
+Mathlib's `ContextFreeGrammar` deliberately fixes its nonterminal universe to
+`Type`.  Since this executable stage reuses terminal symbols themselves as
+helper-nonterminal names, we therefore state the grammar-level construction
+for a small alphabet `T : Type`.  This is the representation relevant to the
+finite alphabets of the manuscript; a universe-polymorphic alphabet can first
+be replaced by a small equivalent finite alphabet if ever needed.
+
 This file establishes the transformed grammar, its terminal-isolation
 invariant, a linear rule-count envelope in terms of the number of terminals
 occurring in the old rules, and the reverse simulation showing that no new
@@ -68,7 +75,7 @@ def v62TerminalHelperRule {T N : Type*} (a : T) :
     output := [Symbol.terminal a] }
 
 /-- The executable terminal-isolation grammar. -/
-@[reducible] noncomputable def v62TerminalIsolationGrammar {T : Type*}
+@[reducible] noncomputable def v62TerminalIsolationGrammar {T : Type}
     (g : ContextFreeGrammar T) : ContextFreeGrammar T := by
   classical
   exact
@@ -93,7 +100,7 @@ def V62CFGTerminalsIsolated {T : Type*} (g : ContextFreeGrammar T) : Prop :=
 
 /-- The executable transformation satisfies the terminal-isolation invariant. -/
 theorem v62_terminal_isolation_invariant
-    {T : Type*} (g : ContextFreeGrammar T) :
+    {T : Type} (g : ContextFreeGrammar T) :
     V62CFGTerminalsIsolated (v62TerminalIsolationGrammar g) := by
   classical
   unfold V62CFGTerminalsIsolated
@@ -115,7 +122,7 @@ theorem v62_terminal_isolation_invariant
 
 /-- Terminal isolation adds at most one helper rule per occurring terminal. -/
 theorem v62_terminal_isolation_rule_card_le
-    {T : Type*} (g : ContextFreeGrammar T) :
+    {T : Type} (g : ContextFreeGrammar T) :
     (v62TerminalIsolationGrammar g).rules.card ≤
       g.rules.card + (v62GrammarTerminals g).card := by
   classical
@@ -126,25 +133,25 @@ theorem v62_terminal_isolation_rule_card_le
     (Nat.add_le_add Finset.card_image_le Finset.card_image_le)
 
 /-- Project helper nonterminals back to the terminals they stand for. -/
-def v62ProjectIsolatedSymbol {T : Type*} (g : ContextFreeGrammar T) :
+def v62ProjectIsolatedSymbol {T : Type} (g : ContextFreeGrammar T) :
     Symbol T (Sum g.NT T) → Symbol T g.NT
   | .terminal a => .terminal a
   | .nonterminal (Sum.inl A) => .nonterminal A
   | .nonterminal (Sum.inr a) => .terminal a
 
 @[simp] theorem v62_project_terminal_lift_symbol
-    {T : Type*} (g : ContextFreeGrammar T) (x : Symbol T g.NT) :
+    {T : Type} (g : ContextFreeGrammar T) (x : Symbol T g.NT) :
     v62ProjectIsolatedSymbol g (v62TerminalLiftSymbol x) = x := by
   cases x <;> rfl
 
 @[simp] theorem v62_project_isolate_long_symbol
-    {T : Type*} (g : ContextFreeGrammar T) (x : Symbol T g.NT) :
+    {T : Type} (g : ContextFreeGrammar T) (x : Symbol T g.NT) :
     v62ProjectIsolatedSymbol g (v62IsolateLongSymbol x) = x := by
   cases x <;> rfl
 
 /-- Projection of an isolated RHS is the original RHS in both length cases. -/
 @[simp] theorem v62_project_isolated_output
-    {T : Type*} (g : ContextFreeGrammar T) (u : List (Symbol T g.NT)) :
+    {T : Type} (g : ContextFreeGrammar T) (u : List (Symbol T g.NT)) :
     (v62IsolateOutput u).map (v62ProjectIsolatedSymbol g) = u := by
   by_cases hlong : 2 ≤ u.length
   · simp [v62IsolateOutput, hlong, List.map_map, Function.comp_def]
@@ -155,7 +162,7 @@ One terminal-isolation step projects either to an identity helper step or to
 one genuine step of the old grammar.
 -/
 theorem v62_project_terminal_isolation_produces
-    {T : Type*} {g : ContextFreeGrammar T}
+    {T : Type} {g : ContextFreeGrammar T}
     {u v : List (Symbol T (Sum g.NT T))}
     (h : (v62TerminalIsolationGrammar g).Produces u v) :
     u.map (v62ProjectIsolatedSymbol g) =
@@ -193,7 +200,7 @@ theorem v62_project_terminal_isolation_produces
 
 /-- Every terminal-isolation derivation projects to an old derivation. -/
 theorem v62_project_terminal_isolation_derives
-    {T : Type*} {g : ContextFreeGrammar T}
+    {T : Type} {g : ContextFreeGrammar T}
     {u v : List (Symbol T (Sum g.NT T))}
     (h : (v62TerminalIsolationGrammar g).Derives u v) :
     g.Derives
@@ -208,7 +215,7 @@ theorem v62_project_terminal_isolation_derives
 
 /-- Terminal isolation cannot introduce a new generated terminal word. -/
 theorem v62_terminal_isolation_language_subset
-    {T : Type*} (g : ContextFreeGrammar T) :
+    {T : Type} (g : ContextFreeGrammar T) :
     ∀ w : List T,
       w ∈ (v62TerminalIsolationGrammar g).language → w ∈ g.language := by
   intro w hw
