@@ -100,7 +100,8 @@ theorem prune_with_prefix_length_bound
   induction h with
   | terminal A a hrule =>
       intro R ctxPrefix
-      let core := V60DerivationTree.terminal A a hrule
+      let core : V60DerivationTree terminal binary A :=
+        V60DerivationTree.terminal A a hrule
       obtain ⟨ctx', hBound⟩ :=
         v60_compress_prefix_around_core tau hThickness ctxPrefix core
       refine ⟨V60DerivationContext.plug ctx' core, ?_⟩
