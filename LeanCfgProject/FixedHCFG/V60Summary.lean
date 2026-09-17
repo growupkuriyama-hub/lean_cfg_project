@@ -14,6 +14,8 @@ import LeanCfgProject.FixedHCFG.V62WindowThickData
 import LeanCfgProject.FixedHCFG.V62WindowTheoremAudit
 import LeanCfgProject.FixedHCFG.V62CFGNormalizationStart
 import LeanCfgProject.FixedHCFG.V62CFGNormalizationProjection
+import LeanCfgProject.FixedHCFG.V62CFGNormalizationTerminalThickness
+import LeanCfgProject.FixedHCFG.V62CFGNormalizationBinaryForward
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -66,12 +68,17 @@ The imported exact-v60 chain contains:
   polynomial encoded-data envelope for reduced SSBNF grammars;
 * manuscript-facing aliases for Theorem `window-thick` and the quantitative
   part of Corollary `window-transfer`;
-* the first executable step of Proposition `thick-ssbnf-normal`, using
-  mathlib's concrete CFG semantics: a fresh separated start symbol, lifted old
-  rules and derivations, a `+1` rule-count bound, reverse projection of every
-  new derivation, exact language equality, and preservation of the thickness
-  upper bound.  Terminal isolation, binarization, nullable/unit elimination
-  and trim remain separate normalization stages.
+* executable progress on Proposition `thick-ssbnf-normal` using mathlib's
+  concrete CFG semantics.  Fresh-start separation is complete through exact
+  language equality, a `+1` rule-count bound, and preservation of the thickness
+  upper bound.  Terminal isolation is also complete semantically: long/mixed
+  RHS terminals are represented by helper nonterminals, the isolation
+  invariant and rule-count envelope hold, both language inclusions are proved,
+  and the thickness bound becomes at most `tau+1`.  The following long-rule
+  binarization is now executable and compiler-checked through the structural
+  RHS-length-at-most-two invariant and the forward simulation of every old
+  derivation.  Reverse binarization, its size/thickness accounting, then
+  nullable/unit elimination and trim remain separate normalization stages.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
