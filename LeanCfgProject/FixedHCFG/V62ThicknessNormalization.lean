@@ -47,8 +47,10 @@ theorem v62_short_nonempty_yield_polynomial_envelope
       nB * tauB ≤
         (cV * (n + 1)) * (cT * (n + 1) * (tau + 1)) :=
     Nat.mul_le_mul hVB hTauB
-  have hBase : 1 ≤ (n + 1) ^ 2 * (tau + 1) := by
+  have hBaseNe : (n + 1) ^ 2 * (tau + 1) ≠ 0 := by
     positivity
+  have hBase : 1 ≤ (n + 1) ^ 2 * (tau + 1) :=
+    Nat.one_le_iff_ne_zero.mpr hBaseNe
   calc
     1 + nB * tauB ≤
         (n + 1) ^ 2 * (tau + 1) +
