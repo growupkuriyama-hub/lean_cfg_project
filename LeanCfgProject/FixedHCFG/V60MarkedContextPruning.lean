@@ -68,16 +68,16 @@ theorem comp_assoc {A B C D : N}
       simp [comp, ih]
 
 /--
-Every label appearing after the root determines a positive-depth prefix ending
-at that label and a suffix continuing to the original hole.
+Every label appearing after the root determines a positive-depth initial segment
+ending at that label and a suffix continuing to the original hole.
 -/
 theorem split_at_target_mem
     {A H Z : N}
     (ctx : V60DerivationContext terminal binary A H)
     (hZ : Z ∈ targetLabels ctx) :
-    ∃ (prefix : V60DerivationContext terminal binary A Z)
+    ∃ (preCtx : V60DerivationContext terminal binary A Z)
       (suffix : V60DerivationContext terminal binary Z H),
-      ctx = comp prefix suffix ∧ 0 < depth prefix := by
+      ctx = comp preCtx suffix ∧ 0 < depth preCtx := by
   induction ctx with
   | hole A =>
       simp [targetLabels] at hZ
@@ -85,32 +85,32 @@ theorem split_at_target_mem
       simp only [targetLabels, List.mem_cons] at hZ
       rcases hZ with hEq | hMem
       · subst Z
-        let prefix : V60DerivationContext terminal binary A B :=
+        let preCtx : V60DerivationContext terminal binary A B :=
           .left A B C B hrule (.hole B) rightTree
-        refine ⟨prefix, sub, ?_, ?_⟩
-        · simp [prefix, comp]
-        · simp [prefix, depth]
+        refine ⟨preCtx, sub, ?_, ?_⟩
+        · simp [preCtx, comp]
+        · simp [preCtx, depth]
       · obtain ⟨pre, suf, hSplit, hPos⟩ := ih hMem
-        let prefix : V60DerivationContext terminal binary A Z :=
+        let preCtx : V60DerivationContext terminal binary A Z :=
           .left A B C Z hrule pre rightTree
-        refine ⟨prefix, suf, ?_, ?_⟩
-        · simp [prefix, comp, hSplit]
-        · simp [prefix, depth]
+        refine ⟨preCtx, suf, ?_, ?_⟩
+        · simp [preCtx, comp, hSplit]
+        · simp [preCtx, depth]
   | right A B C H hrule leftTree sub ih =>
       simp only [targetLabels, List.mem_cons] at hZ
       rcases hZ with hEq | hMem
       · subst Z
-        let prefix : V60DerivationContext terminal binary A C :=
+        let preCtx : V60DerivationContext terminal binary A C :=
           .right A B C C hrule leftTree (.hole C)
-        refine ⟨prefix, sub, ?_, ?_⟩
-        · simp [prefix, comp]
-        · simp [prefix, depth]
+        refine ⟨preCtx, sub, ?_, ?_⟩
+        · simp [preCtx, comp]
+        · simp [preCtx, depth]
       · obtain ⟨pre, suf, hSplit, hPos⟩ := ih hMem
-        let prefix : V60DerivationContext terminal binary A Z :=
+        let preCtx : V60DerivationContext terminal binary A Z :=
           .right A B C Z hrule leftTree pre
-        refine ⟨prefix, suf, ?_, ?_⟩
-        · simp [prefix, comp, hSplit]
-        · simp [prefix, depth]
+        refine ⟨preCtx, suf, ?_, ?_⟩
+        · simp [preCtx, comp, hSplit]
+        · simp [preCtx, depth]
 
 /-- Sibling shortening distributes over context composition. -/
 theorem shortenSiblings_comp
@@ -163,13 +163,13 @@ theorem delete_repeated_root_prefix_markedReplacement
         (V60DerivationTree.yield (plug ctx oldCore))
         (V60DerivationTree.yield (plug suffix newCore)) ∧
       ∀ Z, Z ∈ targetLabels suffix → Z ∈ targetLabels ctx := by
-  obtain ⟨prefix, suffix, hSplit, hPrefixPos⟩ :=
+  obtain ⟨preCtx, suffix, hSplit, hPrePos⟩ :=
     split_at_target_mem ctx hRepeat
   refine ⟨suffix, ?_, ?_, ?_⟩
   · rw [hSplit, depth_comp]
     omega
   · have hSuffix := plug_markedReplacement suffix hCore
-    have hDelete := delete_markedReplacement_of_core prefix hSuffix
+    have hDelete := delete_markedReplacement_of_core preCtx hSuffix
     rw [hSplit, v60MarkedContextFrontier_comp]
     simpa [plug_comp] using hDelete
   · intro Z hZ
