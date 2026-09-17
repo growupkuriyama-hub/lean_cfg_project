@@ -5,6 +5,7 @@ import LeanCfgProject.FixedHCFG.V60MarkedWordReplacement
 import LeanCfgProject.FixedHCFG.V60MarkedContext
 import LeanCfgProject.FixedHCFG.V60MarkedShortcut
 import LeanCfgProject.FixedHCFG.V60MarkedContextPruning
+import LeanCfgProject.FixedHCFG.V60MarkedContextShortening
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -39,7 +40,9 @@ The imported exact-v60 chain contains:
 * a marked repeated-label shortcut theorem showing that deleting a repeated
   context segment preserves every protected terminal and its order;
 * root-oriented context splitting and target-label bookkeeping for iterating
-  repeated-label deletion while retaining the same marked-frontier semantics.
+  repeated-label deletion while retaining the same marked-frontier semantics;
+* simultaneous chain normalization and sibling shortening, yielding a
+  duplicate-free marked chain with the quantitative `|N|*tau` context charge.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
