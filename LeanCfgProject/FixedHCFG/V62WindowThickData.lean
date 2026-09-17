@@ -112,7 +112,7 @@ theorem v62_window_thick_data_positive
     (binary : V60BinaryRules N) (start : V60StartRules N)
     (epsilonStart : Prop)
     (k l tau : Nat)
-    (hr : k + l != 0)
+    (hr : k + l ≠ 0)
     (hObserver : V60WindowObserverCompatible Obs k l)
     (hThickness : V60BaseThicknessBound terminal binary tau) :
     V62EncodedSampleSize
