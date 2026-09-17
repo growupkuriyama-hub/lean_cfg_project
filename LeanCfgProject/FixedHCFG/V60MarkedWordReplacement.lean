@@ -52,6 +52,89 @@ theorem markCount_le_target_length
       simp only [v60MarkCount_cons_false, List.length_append]
       omega
 
+/-- Mark count zero means that every annotation entry is literally `false`. -/
+theorem eq_replicate_false_of_markCount_zero
+    (marks : List Bool)
+    (hZero : v60MarkCount marks = 0) :
+    marks = List.replicate marks.length false := by
+  induction marks with
+  | nil => simp
+  | cons b xs ih =>
+      cases b with
+      | false =>
+          simp only [v60MarkCount_cons_false] at hZero
+          have hxs := ih hZero
+          simp [hxs, List.replicate_succ]
+      | true =>
+          simp only [v60MarkCount_cons_true] at hZero
+          omega
+
+/-- Marked replacements compose horizontally along concatenation. -/
+theorem append
+    {Sigma : Type u}
+    {marksLeft marksRight : List Bool}
+    {srcLeft srcRight dstLeft dstRight : Word Sigma}
+    (hLeft : V60MarkedWordReplacement marksLeft srcLeft dstLeft)
+    (hRight : V60MarkedWordReplacement marksRight srcRight dstRight) :
+    V60MarkedWordReplacement
+      (marksLeft ++ marksRight)
+      (srcLeft ++ srcRight)
+      (dstLeft ++ dstRight) := by
+  induction hLeft with
+  | nil =>
+      simpa using hRight
+  | keep h ih =>
+      simpa [List.append_assoc] using V60MarkedWordReplacement.keep ih
+  | replace chunk h ih =>
+      simpa [List.append_assoc] using
+        V60MarkedWordReplacement.replace chunk ih
+
+/-- Any all-false annotated source can be deleted completely. -/
+theorem replicate_false_to_nil
+    {Sigma : Type u}
+    (n : Nat) {src : Word Sigma}
+    (hLen : src.length = n) :
+    V60MarkedWordReplacement (List.replicate n false) src [] := by
+  induction n generalizing src with
+  | zero =>
+      have hSrc : src = [] := List.length_eq_zero.mp hLen
+      subst src
+      exact V60MarkedWordReplacement.nil
+  | succ n ih =>
+      cases src with
+      | nil => simp at hLen
+      | cons a xs =>
+          have hTail : xs.length = n := by
+            simpa using hLen
+          have hNil := ih hTail
+          have hStep :
+              V60MarkedWordReplacement
+                (false :: List.replicate n false) (a :: xs) [] := by
+            simpa using V60MarkedWordReplacement.replace [] hNil
+          simpa [List.replicate_succ] using hStep
+
+/-- A nonempty all-false source interval can be replaced by an arbitrary chunk. -/
+theorem replicate_false_to_any_of_pos
+    {Sigma : Type u}
+    (n : Nat) {src dst : Word Sigma}
+    (hLen : src.length = n)
+    (hPos : 0 < n) :
+    V60MarkedWordReplacement (List.replicate n false) src dst := by
+  cases n with
+  | zero => omega
+  | succ n =>
+      cases src with
+      | nil => simp at hLen
+      | cons a xs =>
+          have hTail : xs.length = n := by
+            simpa using hLen
+          have hNil := replicate_false_to_nil n hTail
+          have hStep :
+              V60MarkedWordReplacement
+                (false :: List.replicate n false) (a :: xs) dst := by
+            simpa using V60MarkedWordReplacement.replace dst hNil
+          simpa [List.replicate_succ] using hStep
+
 /-- An all-protected word cannot change. -/
 theorem eq_of_replicate_true
     {Sigma : Type u} (n : Nat) {src dst : Word Sigma}
