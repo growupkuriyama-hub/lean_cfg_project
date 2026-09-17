@@ -36,7 +36,8 @@ theorem v60_marked_replacement_refl_of_aligned
           have hIH := ih w hTail
           cases b with
           | false =>
-              have hStep := V60MarkedWordReplacement.replace [a] hIH
+              have hStep :=
+                V60MarkedWordReplacement.replace (a := a) [a] hIH
               simpa using hStep
           | true =>
               exact V60MarkedWordReplacement.keep hIH
@@ -132,7 +133,7 @@ theorem delete_markedReplacement
       rw [V60DerivationTree.yield_length_eq_leafCount]
       exact hAlign
   | left A B C H hrule sub rightTree ih =>
-      have hSub := ih hAlign
+      have hSub := ih core hAlign
       have hRightLen :
           (V60DerivationTree.yield rightTree).length =
             V60DerivationTree.leafCount rightTree :=
@@ -143,7 +144,7 @@ theorem delete_markedReplacement
       have hApp := V60MarkedWordReplacement.append hSub hRight
       simpa [V60MarkedContextFrontier, plug, V60DerivationTree.yield] using hApp
   | right A B C H hrule leftTree sub ih =>
-      have hSub := ih hAlign
+      have hSub := ih core hAlign
       have hLeftLen :
           (V60DerivationTree.yield leftTree).length =
             V60DerivationTree.leafCount leftTree :=
