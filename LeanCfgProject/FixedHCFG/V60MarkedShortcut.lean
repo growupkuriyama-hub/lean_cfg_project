@@ -175,7 +175,7 @@ theorem delete_markedReplacement_of_core
       (V60MarkedContextFrontier ctx holeMarks)
       (V60DerivationTree.yield (plug ctx oldCore))
       (V60DerivationTree.yield newCore) := by
-  induction ctx generalizing oldCore newCore with
+  induction ctx with
   | hole A =>
       simpa [V60MarkedContextFrontier, plug] using hCore
   | left A B C H hrule sub rightTree ih =>
