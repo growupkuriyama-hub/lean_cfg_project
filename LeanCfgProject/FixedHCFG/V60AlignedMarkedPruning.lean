@@ -84,11 +84,22 @@ theorem prune_with_prefix_marked_bound
       let ctxNext : V60DerivationContext terminal binary R B :=
         V60DerivationContext.comp ctxPrefix step
       obtain ⟨t', hMarked, hBound⟩ := ih ctxNext
+      have hFrontier :
+          V60MarkedContextFrontier ctxNext marksLeft =
+            V60MarkedContextFrontier ctxPrefix (marksLeft ++ marksRight) := by
+        dsimp [ctxNext]
+        rw [v60MarkedContextFrontier_comp]
+        simp [step, V60MarkedContextFrontier, hRightMarks]
+      have hPlug :
+          V60DerivationContext.plug ctxNext left =
+            V60DerivationContext.plug ctxPrefix
+              (V60DerivationTree.binary A B C hrule left right) := by
+        dsimp [ctxNext]
+        rw [V60DerivationContext.plug_comp]
+        simp [step, V60DerivationContext.plug]
       refine ⟨t', ?_, ?_⟩
-      · simpa [ctxNext, step, hRightMarks,
-          V60DerivationContext.comp, V60DerivationContext.plug,
-          V60MarkedContextFrontier,
-          V60DerivationTree.yield] using hMarked
+      · rw [hFrontier, hPlug] at hMarked
+        exact hMarked
       · simpa [V60MarkedSupportShape.markedLeaves,
           V60MarkedSupportShape.suppressedBlockCount] using hBound
   | @unaryRight A B C hrule left right marksLeft marksRight shapeRight
@@ -107,11 +118,22 @@ theorem prune_with_prefix_marked_bound
       let ctxNext : V60DerivationContext terminal binary R C :=
         V60DerivationContext.comp ctxPrefix step
       obtain ⟨t', hMarked, hBound⟩ := ih ctxNext
+      have hFrontier :
+          V60MarkedContextFrontier ctxNext marksRight =
+            V60MarkedContextFrontier ctxPrefix (marksLeft ++ marksRight) := by
+        dsimp [ctxNext]
+        rw [v60MarkedContextFrontier_comp]
+        simp [step, V60MarkedContextFrontier, hLeftMarks]
+      have hPlug :
+          V60DerivationContext.plug ctxNext right =
+            V60DerivationContext.plug ctxPrefix
+              (V60DerivationTree.binary A B C hrule left right) := by
+        dsimp [ctxNext]
+        rw [V60DerivationContext.plug_comp]
+        simp [step, V60DerivationContext.plug]
       refine ⟨t', ?_, ?_⟩
-      · simpa [ctxNext, step, hLeftMarks,
-          V60DerivationContext.comp, V60DerivationContext.plug,
-          V60MarkedContextFrontier,
-          V60DerivationTree.yield] using hMarked
+      · rw [hFrontier, hPlug] at hMarked
+        exact hMarked
       · simpa [V60MarkedSupportShape.markedLeaves,
           V60MarkedSupportShape.suppressedBlockCount] using hBound
   | @branch A B C hrule left right marksLeft marksRight shapeLeft shapeRight
