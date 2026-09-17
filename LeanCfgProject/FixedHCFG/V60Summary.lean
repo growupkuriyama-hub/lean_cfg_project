@@ -8,13 +8,15 @@ import LeanCfgProject.FixedHCFG.V60MarkedContextPruning
 import LeanCfgProject.FixedHCFG.V60MarkedContextShortening
 import LeanCfgProject.FixedHCFG.V60AlignedMarkedPruning
 import LeanCfgProject.FixedHCFG.V60WindowCompressionConstructive
+import LeanCfgProject.FixedHCFG.V62ThicknessNormalization
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
 namespace FixedHCFG
 
 /-!
-Aggregate build target for the manuscript-faithful v60 fixed-h development.
+Aggregate build target for the manuscript-faithful v60 fixed-h development,
+plus the v62 quantitative transfer audit layered on top of it.
 
 The imported exact-v60 chain contains:
 * nonempty-factor batch kernel and soundness;
@@ -48,7 +50,10 @@ The imported exact-v60 chain contains:
 * aligned recursive marked-support pruning carrying that semantics through the
   full suppressed support tree while proving the same quantitative length bound;
 * constructive positive-window compression from base thickness alone, removing
-  the former external structural-certificate premise from the witness bound.
+  the former external structural-certificate premise from the witness bound;
+* the v62 normalization-transfer arithmetic showing that the appendix's
+  `1+|V_B| tau_B` estimate and the complete fixed-window witness envelope remain
+  polynomial under polynomial SSBNF size/thickness bounds.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
