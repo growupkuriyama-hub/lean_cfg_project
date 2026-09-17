@@ -138,8 +138,9 @@ theorem v62_canonical_witness_ncard_le_slot_envelope
     _ <= Fintype.card
         (V62CanonicalWitnessSlot
           (V60KeptState Obs terminal binary start) Sigma) := by
-      rw [← Nat.card_coe_set_eq, ← Nat.card_eq_fintype_card]
-      exact Nat.card_range_le encode
+      letI : Fintype (Set.range encode) := hRangeFinite.fintype
+      rw [← Set.fintypeCard_eq_ncard (Set.range encode)]
+      exact Fintype.card_range_le encode
     _ = V62WindowWitnessCountEnvelope
         (Fintype.card (V60KeptState Obs terminal binary start))
         (Fintype.card Sigma) :=
@@ -148,7 +149,7 @@ theorem v62_canonical_witness_ncard_le_slot_envelope
 /-- Encoded size convention used in Theorem `window-thick`. -/
 noncomputable def V62EncodedSampleSize
     {Sigma : Type u} (S : Set (Word Sigma)) (hS : S.Finite) : Nat :=
-  ∑ z ∈ hS.toFinset, z.length + 1
+  ∑ z ∈ hS.toFinset, (z.length + 1)
 
 /--
 A finite sample with at most `C` words, each of length at most `L`, has encoded
@@ -166,14 +167,14 @@ theorem v62_encoded_sample_size_le
     have hzS : z ∈ S := by simpa using hz
     exact Nat.add_le_add_right (hLen z hzS) 1
   have hSum :
-      (∑ z ∈ hS.toFinset, z.length + 1) <=
+      (∑ z ∈ hS.toFinset, (z.length + 1)) <=
         hS.toFinset.card * (L + 1) := by
     simpa [Nat.nsmul_eq_mul] using
       (Finset.sum_le_card_nsmul hS.toFinset
         (fun z => z.length + 1) (L + 1) hPoint)
   unfold V62EncodedSampleSize
   calc
-    (∑ z ∈ hS.toFinset, z.length + 1)
+    (∑ z ∈ hS.toFinset, (z.length + 1))
         <= hS.toFinset.card * (L + 1) := hSum
     _ = S.ncard * (L + 1) := by
       rw [Set.ncard_eq_toFinset_card S hS]
