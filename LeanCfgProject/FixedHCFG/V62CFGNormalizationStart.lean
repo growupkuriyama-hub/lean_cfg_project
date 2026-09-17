@@ -69,8 +69,10 @@ def v62FreshStartRule {T : Type*} (g : ContextFreeGrammar T) :
 /--
 The first normalization stage: all old nonterminals become `some A`, while
 `none` is a fresh start symbol occurring only on the left of the added rule.
+The definition is reducible so its nonterminal type is definitionally visible
+as `Option g.NT` in the simulation lemmas below.
 -/
-noncomputable def v62FreshStartGrammar {T : Type*}
+@[reducible] noncomputable def v62FreshStartGrammar {T : Type*}
     (g : ContextFreeGrammar T) : ContextFreeGrammar T := by
   classical
   exact
