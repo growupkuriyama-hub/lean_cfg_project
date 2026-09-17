@@ -114,7 +114,7 @@ theorem markedLeaves_eq_markCount
   exact V60MarkedSupport.markedLeaves_eq_markCount (toMarkedSupport h)
 
 /--
-Every aligned annotation with at least one mark admits an aligned support.
+Every aligned annotation with at least one mark has an aligned support.
 This is the same construction as `V60MarkedSupport.exists_of_aligned_pos`, but
 it retains alignment of the zero-mark sibling at every unary support node.
 -/
@@ -191,7 +191,7 @@ theorem exists_of_aligned_pos
           exact V60AlignedMarkedSupport.branch
             hrule left right hLeft hRight
 
-/-- Boundary marks therefore admit an aligned concrete support. -/
+/-- Boundary marks therefore have an aligned concrete support. -/
 theorem exists_boundary_support
     (k l : Nat) {A : N}
     (t : V60DerivationTree terminal binary A)
