@@ -1,6 +1,7 @@
 import LeanCfgProject.FixedHCFG.V60EndToEnd
 import LeanCfgProject.FixedHCFG.V60WindowCompression
 import LeanCfgProject.FixedHCFG.V60AlignedMarkedSupport
+import LeanCfgProject.FixedHCFG.V60MarkedWordReplacement
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -26,7 +27,10 @@ The imported exact-v60 chain contains:
   boundary-piece estimate into the displayed `r+(2r-1)N tau` yield bound and
   hence the exact `(N_t+2)B+1` canonical witness bound;
 * an alignment-strengthened marked-support layer retaining the zero-mark
-  sibling alignment needed for the remaining boundary-preservation proof.
+  sibling alignment needed for the remaining boundary-preservation proof;
+* marked-word replacement semantics showing that preserving `true` leaves and
+  changing only `false` material implies the exact first-`k`/last-`l` window
+  equality and retains at least `k+l` terminals.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
