@@ -9,6 +9,7 @@ import LeanCfgProject.FixedHCFG.V60MarkedContextShortening
 import LeanCfgProject.FixedHCFG.V60AlignedMarkedPruning
 import LeanCfgProject.FixedHCFG.V60WindowCompressionConstructive
 import LeanCfgProject.FixedHCFG.V62ThicknessNormalization
+import LeanCfgProject.FixedHCFG.V62WindowSampleBounds
 import LeanCfgProject.FixedHCFG.ComplexityBounds
 
 namespace LeanCfgProject
@@ -53,7 +54,9 @@ The imported exact-v60 chain contains:
   the former external structural-certificate premise from the witness bound;
 * the v62 normalization-transfer arithmetic showing that the appendix's
   `1+|V_B| tau_B` estimate and the complete fixed-window witness envelope remain
-  polynomial under polynomial SSBNF size/thickness bounds.
+  polynomial under polynomial SSBNF size/thickness bounds;
+* the actual retained typed-state bound `N_t <= N |M|`, used to eliminate the
+  last abstract typed-state-count premise from the normalization transfer.
 
 `ComplexityBounds` is imported only for the Section-6 arithmetic envelope; its
 older learner-facing modules remain explicitly labelled legacy elsewhere.
