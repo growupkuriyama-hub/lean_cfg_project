@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.BinarizationKernel
+import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.SSBNFNormalizationSemanticKernel
 import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
 
@@ -151,6 +152,82 @@ theorem proposition74_quantitative_package
   · exact proposition74_thickness_facade
       G surv final cV c₁ n τR τB
       hVcard hτB hNonemptyB hsurv
+
+
+/--
+The Appendix A root-to-leaf shortcut is now internal: a uniform terminal-yield
+bound for the binary grammar B implies the shortest-nonempty bound required by
+the latter half of Proposition 7.4.
+-/
+theorem proposition74_thickness_from_yieldBound
+    [Fintype N] [DecidableEq N]
+    (G : BinaryNullableGrammar N α)
+    {Nsurv Nfinal : Type u}
+    (surv : Nsurv → N)
+    (final : Nfinal → Nsurv)
+    (cV c₁ n τR τB : Nat)
+    (hV : Fintype.card N ≤ cV * n)
+    (hτB : τB ≤ binarizedThicknessEnvelope c₁ n τR)
+    (hYieldB :
+      YieldBound
+        (fun A => {w | BinaryNullableDerives G A w})
+        τB)
+    (hsurv :
+      AllHaveNonemptyYield
+        (fun A : Nsurv =>
+          {w | EpsilonFreeDerives G (surv A) w})) :
+    YieldBound
+      (fun A : Nfinal =>
+        {w | UnitFreeDerives G (surv (final A)) w})
+      (ssbnfThicknessEnvelope cV c₁ n τR) := by
+  have hNonemptyB :
+      NonemptyYieldBound
+        (fun A => {w | BinaryNullableDerives G A w})
+        (nullableNonemptyEnvelope (Fintype.card N) τB) :=
+    nonemptyYieldBound_of_yieldBound G τB hYieldB
+  exact
+    proposition74_thickness_facade
+      G surv final cV c₁ n τR τB
+      hV hτB hNonemptyB hsurv
+
+/--
+Paper-facing quantitative package with the cycle-shortening assumption fully
+discharged.  The only thickness input from the front end is the ordinary
+uniform terminal-yield bound on B.
+-/
+theorem proposition74_quantitative_package_from_yieldBound
+    [Fintype N] [DecidableEq N]
+    (G : BinaryNullableGrammar N α)
+    {Nsurv Nfinal : Type u}
+    (surv : Nsurv → N)
+    (final : Nfinal → Nsurv)
+    (cV cP cT c₁ n τR τB v p t : Nat)
+    (hVcard : Fintype.card N ≤ cV * n)
+    (hτB : τB ≤ binarizedThicknessEnvelope c₁ n τR)
+    (hYieldB :
+      YieldBound
+        (fun A => {w | BinaryNullableDerives G A w})
+        τB)
+    (hsurv :
+      AllHaveNonemptyYield
+        (fun A : Nsurv =>
+          {w | EpsilonFreeDerives G (surv A) w}))
+    (hv : v ≤ cV * n)
+    (hp : p ≤ cP * n)
+    (ht : t ≤ cT * n) :
+    v * (t + 3 * p) ≤
+        (cV * (cT + 3 * cP)) * n^2
+    ∧
+    YieldBound
+      (fun A : Nfinal =>
+        {w | UnitFreeDerives G (surv (final A)) w})
+      (ssbnfThicknessEnvelope cV c₁ n τR) := by
+  constructor
+  · exact proposition74_rule_count_facade hv hp ht
+  · exact
+      proposition74_thickness_from_yieldBound
+        G surv final cV c₁ n τR τB
+        hVcard hτB hYieldB hsurv
 
 end Proposition74Facade
 
