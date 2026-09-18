@@ -99,6 +99,7 @@ theorem chainExpansion_sum_le
     chains.sum ≤ V * N := by
   have hsum :
       chains.sum ≤ chains.length * N := by
+    clear hcount
     induction chains with
     | nil =>
         simp
@@ -107,11 +108,13 @@ theorem chainExpansion_sum_le
         have ht : ∀ c ∈ t, c ≤ N := by
           intro c hc
           exact heach c (by simp [hc])
-        have htcount : t.length ≤ V := by
-          omega
-        have hi := ih htcount ht
+        have hi := ih ht
         simp only [List.sum_cons, List.length_cons]
-        omega
+        calc
+          a + t.sum ≤ N + t.length * N :=
+            Nat.add_le_add ha hi
+          _ = (t.length + 1) * N := by
+            ring
   exact le_trans hsum (Nat.mul_le_mul_right N hcount)
 
 /--
