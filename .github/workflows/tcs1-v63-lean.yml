@@ -25,6 +25,9 @@ jobs:
       - name: Check fixed-h substitutability kernel
         run: lake build LeanCfgProject.TCS1.FixedHSubstitutability
 
+      - name: Check yield-typed refinement core
+        run: lake build LeanCfgProject.TCS1.YieldTypedRefinementCore
+
       - name: Reject sorry in TCS1
         run: |
           if grep -R -nE '\bsorry\b' LeanCfgProject/TCS1 --include="*.lean"; then
