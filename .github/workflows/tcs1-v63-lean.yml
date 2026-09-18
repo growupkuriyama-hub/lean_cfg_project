@@ -34,6 +34,9 @@ jobs:
       - name: Check canonical-witness completeness
         run: lake build LeanCfgProject.TCS1.CanonicalWitnessCompleteness
 
+      - name: Check conservative Gold kernel
+        run: lake build LeanCfgProject.TCS1.ConservativeGoldKernel
+
       - name: Reject sorry in TCS1
         run: |
           if grep -R -nE '\bsorry\b' LeanCfgProject/TCS1 --include="*.lean"; then
