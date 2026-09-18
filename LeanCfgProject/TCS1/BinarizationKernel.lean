@@ -125,7 +125,10 @@ theorem final_binary_pair_iff
       rcases hv with ⟨vB, tail, hvEq, hvB, htail⟩
       have htailNil : tail = [] := htail
       subst tail
-      simpa using hvEq ▸ hvB
+      have hvEq' : v = vB := by
+        simpa using hvEq
+      rw [hvEq']
+      exact hvB
     exact ⟨u, v, hw, hu, hv'⟩
   · intro h
     rcases h with ⟨u, v, hw, hu, hv⟩
