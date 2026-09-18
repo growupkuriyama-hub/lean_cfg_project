@@ -49,6 +49,14 @@ def v62BinarizeProjectWord {T N : Type*}
       r.output.drop (i + 1) := by
   rfl
 
+@[simp] theorem v62_binarize_project_helper_nonterminal
+    {T N : Type*} (r : ContextFreeRule T N) (i : Nat) :
+    v62BinarizeProjectSymbol
+        (Symbol.nonterminal (Sum.inr (r, i)) :
+          Symbol T (Sum N (ContextFreeRule T N × Nat))) =
+      r.output.drop (i + 1) := by
+  rfl
+
 @[simp] theorem v62_binarize_project_lift_word
     {T N : Type*} (u : List (Symbol T N)) :
     v62BinarizeProjectWord (u.map v62BinarizeLiftSymbol) = u := by
@@ -107,8 +115,7 @@ theorem v62_binarize_tail_rule_projects_eq
           | nil =>
               simp [v62BinarizeTailRules] at hq
               subst q
-              change r.output.drop (i + 1) = [x, y]
-              exact hu
+              simpa [v62BinarizeProjectWord] using hu
           | cons z zs =>
               simp only [v62BinarizeTailRules, List.mem_cons] at hq
               have hnext :
@@ -121,10 +128,7 @@ theorem v62_binarize_tail_rule_projects_eq
                   _ = y :: z :: zs := by rfl
               rcases hq with hq | hq
               · subst q
-                change
-                  r.output.drop (i + 1) =
-                    [x] ++ r.output.drop ((i + 1) + 1)
-                rw [hu, hnext]
+                simpa [v62BinarizeProjectWord, hnext] using hu
               · exact ih (i := i + 1) hnext hq
 
 end FixedHCFG
