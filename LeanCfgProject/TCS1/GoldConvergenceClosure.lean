@@ -44,7 +44,7 @@ theorem hyp_constant_of_no_change
         R.hyp (n₀ + (k + 1)) = R.hyp ((n₀ + k) + 1) := by
           rw [Nat.add_succ]
         _ = R.hyp (n₀ + k) := hnochange (n₀ + k) hk
-        _ = R.hyp n₀ := ih
+        _ = R.hyp n₀ := ih hk
 
 /--
 Abstract version of the manuscript's no-rebuild argument.
