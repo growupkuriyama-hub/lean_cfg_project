@@ -74,6 +74,9 @@ jobs:
       - name: Check binary unit elimination semantics
         run: lake build LeanCfgProject.TCS1.BinaryUnitElimination
 
+      - name: Check SSBNF normalization semantic kernel
+        run: lake build LeanCfgProject.TCS1.SSBNFNormalizationSemanticKernel
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
