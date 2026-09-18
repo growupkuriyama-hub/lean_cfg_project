@@ -151,6 +151,119 @@ def omittedCount
       omittedCount left + omittedCount right
 
 /--
+Number of marked leaves preceding each omitted sibling subtree.
+
+The offset counts marked leaves before the current kernel.  This positional
+invariant is the convenient way to express the first-k / last-l boundary fact:
+for a genuine fixed-window marking, every omitted sibling occurs after exactly
+k marked leaves.
+-/
+def omissionRanksAux
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    (offset : Nat) :
+    {A : N} →
+    MarkedBoundaryKernel terminalRule binaryRule A →
+    List Nat
+  | _, marked _ _ => []
+  | _, unaryLeft _ child _ _ =>
+      omissionRanksAux offset child ++
+        [offset + markedLeafCount child]
+  | _, unaryRight _ _ _ child =>
+      offset :: omissionRanksAux offset child
+  | _, branch _ left right =>
+      omissionRanksAux offset left ++
+        omissionRanksAux
+          (offset + markedLeafCount left) right
+
+/-- Omission ranks for the whole marked kernel. -/
+def omissionRanks
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    List Nat :=
+  omissionRanksAux 0 K
+
+/-- There is one omission rank for every omitted sibling subtree. -/
+theorem omissionRanksAux_length
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (offset : Nat)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    (omissionRanksAux offset K).length =
+      omittedCount K := by
+  induction K generalizing offset with
+  | marked =>
+      simp [omissionRanksAux, omittedCount]
+  | unaryLeft hbin child siblingWord sibling ih =>
+      simp [omissionRanksAux, omittedCount,
+        ih offset]
+  | unaryRight hbin siblingWord sibling child ih =>
+      simp [omissionRanksAux, omittedCount,
+        ih offset]
+  | branch hbin left right ihL ihR =>
+      simp [omissionRanksAux, omittedCount,
+        ihL offset,
+        ihR (offset + markedLeafCount left)]
+
+@[simp] theorem omissionRanks_length
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    (omissionRanks K).length = omittedCount K := by
+  exact omissionRanksAux_length
+    terminalRule binaryRule 0 K
+
+/-- Every omitted subtree lies in the same marked-leaf gap k. -/
+def AllOmissionsAt
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat) : Prop :=
+  ∀ j ∈ omissionRanks K, j = k
+
+/--
+A compact skeleton word: marked terminals are `some a`, while each omitted
+sibling subtree is represented by one `none` placeholder.
+-/
+def boundaryTemplate
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop} :
+    {A : N} →
+    MarkedBoundaryKernel terminalRule binaryRule A →
+    List (Option α)
+  | _, marked a _ => [some a]
+  | _, unaryLeft _ child _ _ =>
+      boundaryTemplate child ++ [none]
+  | _, unaryRight _ _ _ child =>
+      none :: boundaryTemplate child
+  | _, branch _ left right =>
+      boundaryTemplate left ++ boundaryTemplate right
+
+/-- Filtering out omission placeholders recovers the marked terminal word. -/
+theorem boundaryTemplate_filterMap
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    (boundaryTemplate K).filterMap id =
+      markedWord K := by
+  induction K with
+  | marked a hterm =>
+      simp [boundaryTemplate, markedWord]
+  | unaryLeft hbin child siblingWord sibling ih =>
+      simp [boundaryTemplate, markedWord, ih]
+  | unaryRight hbin siblingWord sibling child ih =>
+      simp [boundaryTemplate, markedWord, ih]
+  | branch hbin left right ihL ihR =>
+      simp [boundaryTemplate, markedWord,
+        ihL, ihR]
+
+/--
 Lengths of maximal one-child chains.
 
 The accumulator is the length of the chain entering the current kernel.
