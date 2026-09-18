@@ -394,6 +394,44 @@ theorem reachingSpine_nodup_context_exists
       spine' hnodup heach'
 
 /--
+Semantic reaching-context theorem in the form used by Lemma 7.2.
+
+Given any structurally reaching spine and any derivation from the target, cycle
+shortening produces another terminal context whose total length is at most
+|V|*B and into which the target derivation can be plugged successfully.
+-/
+theorem reachingSpine_short_context_for_derivation
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X : N}
+    {left right w : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (B : Nat)
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (heach : ∀ s ∈ siblings, s ≤ B)
+    (dX :
+      UntypedDerives terminalRule binaryRule X w) :
+    ∃ left' right' : Word α,
+      UntypedDerives terminalRule binaryRule
+        A (left' ++ w ++ right')
+      ∧
+      left'.length + right'.length ≤
+        Fintype.card N * B := by
+  obtain ⟨left', right', path', siblings',
+      spine', hnodup, heach', hlen⟩ :=
+    reachingSpine_nodup_context_exists
+      terminalRule binaryRule B spine heach
+  exact
+    ⟨left', right',
+      reachingSpine_plug
+        terminalRule binaryRule spine' dX,
+      hlen⟩
+
+/--
 Paper-facing version with an external bound Nt on the number of typed
 nonterminals.
 -/
