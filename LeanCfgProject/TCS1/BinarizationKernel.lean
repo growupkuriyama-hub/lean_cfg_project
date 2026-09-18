@@ -84,7 +84,9 @@ theorem ntSequence_two_iff_binaryPair
     have hvEq' : v = vC := by
       simpa using hvEq
     subst v
-    exact ⟨u, vC, hw, hu, hvC⟩
+    have hw' : w = u ++ vC := by
+      simpa using hw
+    exact ⟨u, vC, hw', hu, hvC⟩
   · intro h
     rcases h with ⟨u, v, hw, hu, hv⟩
     refine ⟨u, v, hw, hu, ?_⟩
