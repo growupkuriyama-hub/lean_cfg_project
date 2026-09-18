@@ -106,6 +106,10 @@ def startChildReachingContext
   right := []
   plug := by
     intro z d
+    change
+      ReducedTypedStartDerives
+        H terminalRule binaryRule startRule epsilonStart Active
+        ([] ++ z ++ [])
     simpa using
       (ReducedTypedStartDerives.nonempty hstart hactive d)
 
