@@ -107,7 +107,9 @@ theorem chainExpansion_sum_le
         have ht : ∀ c ∈ t, c ≤ N := by
           intro c hc
           exact heach c (by simp [hc])
-        have hi := ih ht
+        have htcount : t.length ≤ V := by
+          omega
+        have hi := ih htcount ht
         simp only [List.sum_cons, List.length_cons]
         omega
   exact le_trans hsum (Nat.mul_le_mul_right N hcount)
