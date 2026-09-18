@@ -53,6 +53,9 @@ jobs:
       - name: Check SSBNF normalization combinatorics
         run: lake build LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
 
+      - name: Check fixed-window characteristic-data bounds
+        run: lake build LeanCfgProject.TCS1.FixedWindowCharacteristicDataBounds
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
