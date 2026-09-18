@@ -31,6 +31,9 @@ jobs:
       - name: Check reconstruction soundness
         run: lake build LeanCfgProject.TCS1.ReconstructionSoundness
 
+      - name: Check canonical-witness completeness
+        run: lake build LeanCfgProject.TCS1.CanonicalWitnessCompleteness
+
       - name: Reject sorry in TCS1
         run: |
           if grep -R -nE '\bsorry\b' LeanCfgProject/TCS1 --include="*.lean"; then
