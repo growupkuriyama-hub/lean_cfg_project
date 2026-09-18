@@ -56,10 +56,12 @@ theorem sequenceLeastLanguage_closed
     apply hL A
     right
     refine ⟨rhs, hG, ?_⟩
-    exact
-      ntSequenceRealizes_mono
-        (fun B u hu => hu L hL)
-        hreal
+    have hsub :
+        ∀ B,
+          SequenceLeastLanguage G B ⊆ L B := by
+      intro B u hu
+      exact hu L hL
+    exact ntSequenceRealizes_mono hsub hreal
 
 /--
 Any explicit binary derivation belongs to every closed interpretation of the
@@ -122,10 +124,9 @@ theorem binaryDerivationLanguage_sequenceClosed
       · rcases hunit with ⟨B, rfl⟩
         rcases hreal with ⟨u, v, hw, hu, hv⟩
         have hvNil : v = [] := hv
-        subst v
         have hwU : w = u := by
-          simpa using hw
-        subst w
+          simpa [hvNil] using hw
+        rw [hwU]
         exact BinaryNullableDerives.unit hG hu
       · rcases hbinary with ⟨B, C, rfl⟩
         have hp :
