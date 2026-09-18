@@ -9,6 +9,7 @@ import LeanCfgProject.TCS1.GoldConvergenceClosure
 
 import LeanCfgProject.TCS1.SSBNFThicknessBounds
 import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
+import LeanCfgProject.TCS1.FrontEndSizeCombinatorics
 import LeanCfgProject.TCS1.FixedWindowCharacteristicDataBounds
 import LeanCfgProject.TCS1.FixedWindowTreeCombinatorics
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
