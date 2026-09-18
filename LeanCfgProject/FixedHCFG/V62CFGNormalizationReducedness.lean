@@ -83,7 +83,7 @@ theorem v62_terminal_isolation_rhs_nonterminals_productive
     have hproj :
         v62ProjectIsolatedSymbol g (Symbol.nonterminal A) ∈ r.output := by
       rw [← v62_project_isolated_output g r.output]
-      exact List.mem_map_of_mem (v62ProjectIsolatedSymbol g) hA
+      exact List.mem_map_of_mem hA
     cases A with
     | inl B =>
         rcases hAll B with ⟨w, hw⟩
