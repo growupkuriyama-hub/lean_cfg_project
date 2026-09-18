@@ -1,0 +1,44 @@
+name: TCS1 v66 Lean CI
+
+concurrency:
+  group: tcs1-v66-lean-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - tcs1-v66-lean
+  workflow_dispatch:
+
+jobs:
+  check-tcs1-v66:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Lean and Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+          build: false
+          test: false
+          lint: false
+
+      - name: Build integrated TCS1 v66 facade
+        run: lake build LeanCfgProject.TCS1.All
+
+      - name: Reject sorry in TCS1
+        run: |
+          if grep -R -nE '\bsorry\b' LeanCfgProject/TCS1 --include="*.lean"; then
+            echo "::error::sorry found in TCS1 Lean files"
+            exit 1
+          fi
+
+      - name: Reject project-level axiom in TCS1
+        run: |
+          if grep -R -nE '^[[:space:]]*axiom\b' LeanCfgProject/TCS1 --include="*.lean"; then
+            echo "::error::axiom found in TCS1 Lean files"
+            exit 1
+          fi

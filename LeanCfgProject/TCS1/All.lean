@@ -29,7 +29,7 @@ import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
 /-!
-# TCS #1 v65 Lean verification facade
+# TCS #1 v66 Lean verification facade
 
 This module imports every theorem-facing kernel maintained for the current
 TCS #1 working baseline. Building this one target is the fast integration
@@ -40,8 +40,8 @@ inside the TCS1 namespace.
 namespace LeanCfgProject
 namespace TCS1
 
-/-- Marker theorem for the integrated v65 verification facade. -/
-theorem v65_facade_loaded : True :=
+/-- Marker theorem for the integrated v66 verification facade. -/
+theorem v66_facade_loaded : True :=
   True.intro
 
 end TCS1
