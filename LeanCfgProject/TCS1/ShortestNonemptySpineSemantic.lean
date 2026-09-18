@@ -221,6 +221,182 @@ theorem boundedSpine_of_nonemptyDerivation
         · exact hsib s hs
 
 /--
+If a nonterminal label occurs on a repetition-free distinguished spine, the
+subspine beginning at that occurrence is itself a valid repetition-free
+spine. Bounds on recorded off-path siblings are inherited.
+-/
+theorem subspine_of_mem_of_nodup
+    (G : BinaryNullableGrammar N α)
+    (τB : Nat)
+    {A X : N} {w : List α}
+    {path : List N} {siblings : List Nat}
+    (d : NonemptySpineDerives G A w path siblings)
+    (hnodup : path.Nodup)
+    (hsib : ∀ s ∈ siblings, s ≤ τB)
+    (hmem : X ∈ path) :
+    ∃ w' path' siblings',
+      NonemptySpineDerives G X w' path' siblings'
+      ∧ path'.Nodup
+      ∧ (∀ s ∈ siblings', s ≤ τB) := by
+  induction d generalizing X with
+  | @terminal A a h =>
+      simp only [List.mem_singleton] at hmem
+      subst X
+      exact
+        ⟨[a], [A], [],
+          NonemptySpineDerives.terminal h,
+          by simp,
+          by simp⟩
+  | @unit A B w path siblings h d ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      rcases hmem with hXA | hXtail
+      · subst X
+        exact
+          ⟨w, A :: path, siblings,
+            NonemptySpineDerives.unit h d,
+            ⟨hnodup.1, hnodup.2⟩,
+            hsib⟩
+      · exact ih hnodup.2 hsib hXtail
+  | @binaryLeft A B C wB wC path siblings h dB dC ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      have hsibTail : ∀ s ∈ siblings, s ≤ τB := by
+        intro s hs
+        exact hsib s (List.mem_cons_of_mem _ hs)
+      rcases hmem with hXA | hXtail
+      · subst X
+        exact
+          ⟨wB ++ wC, A :: path, wC.length :: siblings,
+            NonemptySpineDerives.binaryLeft h dB dC,
+            ⟨hnodup.1, hnodup.2⟩,
+            hsib⟩
+      · exact ih hnodup.2 hsibTail hXtail
+  | @binaryRight A B C wB wC path siblings h dB dC ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      have hsibTail : ∀ s ∈ siblings, s ≤ τB := by
+        intro s hs
+        exact hsib s (List.mem_cons_of_mem _ hs)
+      rcases hmem with hXA | hXtail
+      · subst X
+        exact
+          ⟨wB ++ wC, A :: path, wB.length :: siblings,
+            NonemptySpineDerives.binaryRight h dB dC,
+            ⟨hnodup.1, hnodup.2⟩,
+            hsib⟩
+      · exact ih hnodup.2 hsibTail hXtail
+
+/--
+Cycle-shortening normalization for a bounded distinguished spine.
+
+The recursive child spine is normalized first. If the current root label
+already occurs in that normalized child path, the derivation jumps directly
+to that lower occurrence; otherwise the current rule is reattached. This is
+the formal version of the manuscript's "shortcut repeated nonterminal labels"
+argument.
+-/
+theorem normalize_boundedSpine_to_nodup
+    (G : BinaryNullableGrammar N α)
+    (τB : Nat)
+    {A : N} {w : List α}
+    {path : List N} {siblings : List Nat}
+    (d : NonemptySpineDerives G A w path siblings)
+    (hsib : ∀ s ∈ siblings, s ≤ τB) :
+    ∃ w' path' siblings',
+      NonemptySpineDerives G A w' path' siblings'
+      ∧ path'.Nodup
+      ∧ (∀ s ∈ siblings', s ≤ τB) := by
+  induction d with
+  | @terminal A a h =>
+      exact
+        ⟨[a], [A], [],
+          NonemptySpineDerives.terminal h,
+          by simp,
+          by simp⟩
+
+  | @unit A B w path siblings h d ih =>
+      obtain ⟨w', path', siblings', hspine, hnodup, hsib'⟩ :=
+        ih hsib
+      by_cases hmem : A ∈ path'
+      · exact
+          subspine_of_mem_of_nodup
+            G τB hspine hnodup hsib' hmem
+      · exact
+          ⟨w', A :: path', siblings',
+            NonemptySpineDerives.unit h hspine,
+            (by simpa [List.nodup_cons, hmem] using hnodup),
+            hsib'⟩
+
+  | @binaryLeft A B C wB wC path siblings h dB dC ih =>
+      have hhead : wC.length ≤ τB :=
+        hsib wC.length (List.mem_cons_self ..)
+      have hsibTail : ∀ s ∈ siblings, s ≤ τB := by
+        intro s hs
+        exact hsib s (List.mem_cons_of_mem _ hs)
+      obtain ⟨w', path', siblings', hspine, hnodup, hsib'⟩ :=
+        ih hsibTail
+      by_cases hmem : A ∈ path'
+      · exact
+          subspine_of_mem_of_nodup
+            G τB hspine hnodup hsib' hmem
+      · refine
+          ⟨w' ++ wC, A :: path', wC.length :: siblings',
+            NonemptySpineDerives.binaryLeft h hspine dC,
+            ?_,
+            ?_⟩
+        · exact List.nodup_cons.mpr ⟨hmem, hnodup⟩
+        · intro s hs
+          simp only [List.mem_cons] at hs
+          rcases hs with rfl | hs
+          · exact hhead
+          · exact hsib' s hs
+
+  | @binaryRight A B C wB wC path siblings h dB dC ih =>
+      have hhead : wB.length ≤ τB :=
+        hsib wB.length (List.mem_cons_self ..)
+      have hsibTail : ∀ s ∈ siblings, s ≤ τB := by
+        intro s hs
+        exact hsib s (List.mem_cons_of_mem _ hs)
+      obtain ⟨w', path', siblings', hspine, hnodup, hsib'⟩ :=
+        ih hsibTail
+      by_cases hmem : A ∈ path'
+      · exact
+          subspine_of_mem_of_nodup
+            G τB hspine hnodup hsib' hmem
+      · refine
+          ⟨wB ++ w', A :: path', wB.length :: siblings',
+            NonemptySpineDerives.binaryRight h dB hspine,
+            ?_,
+            ?_⟩
+        · exact List.nodup_cons.mpr ⟨hmem, hnodup⟩
+        · intro s hs
+          simp only [List.mem_cons] at hs
+          rcases hs with rfl | hs
+          · exact hhead
+          · exact hsib' s hs
+
+/--
+A uniform short-yield bound supplies the full cycle-shortcut property needed
+by the Appendix A shortest-nonempty-yield argument.
+-/
+theorem nodupBoundedSpineProperty_of_yieldBound
+    (G : BinaryNullableGrammar N α)
+    (τB : Nat)
+    (hshort :
+      YieldBound
+        (fun A => {w | BinaryNullableDerives G A w})
+        τB) :
+    NodupBoundedSpineProperty G τB := by
+  intro A hExists
+  obtain ⟨w, hw, hne⟩ := hExists
+  obtain ⟨w₀, path₀, siblings₀, hspine₀, hsib₀⟩ :=
+    boundedSpine_of_nonemptyDerivation G τB hshort hw hne
+  exact
+    normalize_boundedSpine_to_nodup
+      G τB hspine₀ hsib₀
+
+/--
 The exact remaining shortcut property: every nonempty-productive state has a
 bounded-sibling distinguished spine with no repeated nonterminal label.
 -/
@@ -269,6 +445,28 @@ theorem nonemptyYieldBound_of_nodupBoundedSpines
   unfold nullableNonemptyEnvelope
   rw [hlen]
   exact hbound
+
+
+/--
+Fully discharged semantic shortest-nonempty-yield bound from a uniform
+short-yield bound: the cycle-shortening hypothesis is no longer external.
+-/
+theorem nonemptyYieldBound_of_yieldBound
+    [Fintype N] [DecidableEq N]
+    (G : BinaryNullableGrammar N α)
+    (τB : Nat)
+    (hshort :
+      YieldBound
+        (fun A => {w | BinaryNullableDerives G A w})
+        τB) :
+    NonemptyYieldBound
+      (fun A => {w | BinaryNullableDerives G A w})
+      (nullableNonemptyEnvelope (Fintype.card N) τB) := by
+  exact
+    nonemptyYieldBound_of_nodupBoundedSpines
+      G τB
+      (nodupBoundedSpineProperty_of_yieldBound
+        G τB hshort)
 
 end ShortestNonemptySpineSemantic
 
