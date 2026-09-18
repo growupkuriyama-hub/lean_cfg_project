@@ -34,8 +34,8 @@ theorem v62_binarize_tail_rules_length_le
           | nil => simp [v62BinarizeTailRules]
           | cons z zs =>
               have hrec := ih (i := i + 1)
-              simp only [v62BinarizeTailRules, List.length_cons]
-              omega
+              simpa only [v62BinarizeTailRules, List.length_cons] using
+                Nat.succ_le_succ hrec
 
 /-- One old production creates at most `|RHS|+1` binary-stage productions. -/
 theorem v62_binarize_rules_for_length_le
@@ -52,8 +52,11 @@ theorem v62_binarize_rules_for_length_le
           | cons z zs =>
               have htail :=
                 v62_binarize_tail_rules_length_le r 0 (y :: z :: zs)
-              simp only [v62BinarizeRulesFor, h0, List.length_cons]
-              omega
+              have hstrong :
+                  (v62BinarizeRulesFor r).length ≤ r.output.length := by
+                simpa only [v62BinarizeRulesFor, h0, List.length_cons] using
+                  Nat.succ_le_succ htail
+              exact hstrong.trans (by omega)
 
 /-- Total old RHS-symbol count plus one rule slot per old production. -/
 noncomputable def V62CFGBinarizationRuleEnvelope {T : Type*}
