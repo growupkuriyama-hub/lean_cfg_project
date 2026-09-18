@@ -199,8 +199,11 @@ theorem v62_start_unit_rule_card_le
     _ ≤ g.rules.card +
         (v62GrammarNonterminals g).card * g.rules.card := by
       apply Nat.add_le_add_left
-      exact Nat.mul_le_mul_right g.rules.card
-        (Finset.card_erase_le _ _)
+      have hcard :
+          ((v62GrammarNonterminals g).erase g.initial).card ≤
+            (v62GrammarNonterminals g).card :=
+        Finset.card_erase_le
+      exact Nat.mul_le_mul_right g.rules.card hcard
     _ = (v62GrammarNonterminals g).card * g.rules.card +
         g.rules.card := by omega
 
