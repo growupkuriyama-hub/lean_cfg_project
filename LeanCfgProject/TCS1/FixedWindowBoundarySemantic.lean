@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.FixedWindowTreeCombinatorics
+import LeanCfgProject.TCS1.FixedWindowSummarySemantic
 
 /-!
 # TCS #1 v68: fixed-window boundary-preservation semantic kernel
@@ -98,6 +99,21 @@ def BoundaryTyping
       H.h (p ++ m₁ ++ q) =
         H.h (p ++ m₂ ++ q)
 
+/--
+The concrete fixed-window summary contract from Proposition 3.2 supplies the
+abstract BoundaryTyping property needed below whenever k+l>0.
+-/
+theorem boundaryTyping_of_respectsFixedWindowSummary
+    (H : FixedFiniteMonoidHom α M)
+    {k l : Nat}
+    (hr : 0 < k + l)
+    (hrespect : RespectsFixedWindowSummary H k l) :
+    BoundaryTyping H k l := by
+  intro p q hp hq m₁ m₂
+  exact
+    boundary_type_eq_of_respectsFixedWindowSummary
+      H hr hrespect p q m₁ m₂ hp hq
+
 /-- Replacing the middle blocks preserves the fixed boundary type. -/
 theorem boundaryAssembly_type_eq
     (H : FixedFiniteMonoidHom α M)
@@ -178,6 +194,36 @@ theorem boundaryAssembly_typed_lift
     untypedDerives_lift
       H terminalRule binaryRule d
   simpa [htype] using hd
+
+/--
+Direct fixed-window version of the typed-lifting theorem, with the abstract
+BoundaryTyping hypothesis discharged by the h_{k,l} summary contract.
+-/
+theorem boundaryAssembly_typed_lift_of_fixedWindowSummary
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {k l : Nat}
+    (hr : 0 < k + l)
+    (hrespect : RespectsFixedWindowSummary H k l)
+    (p q middle : Word α)
+    (blocks : List (Word α))
+    (hp : p.length = k)
+    (hq : q.length = l)
+    {A : N}
+    {μ : M}
+    (href : H.h (p ++ middle ++ q) = μ)
+    (d :
+      UntypedDerives terminalRule binaryRule A
+        (boundaryAssembly p q blocks)) :
+    TypedDerives H terminalRule binaryRule
+      (A, μ) (boundaryAssembly p q blocks) := by
+  exact
+    boundaryAssembly_typed_lift
+      H terminalRule binaryRule
+      (boundaryTyping_of_respectsFixedWindowSummary
+        H hr hrespect)
+      p q middle blocks hp hq href d
 
 /-- Sum of actual replacement-block lengths under a uniform block bound. -/
 theorem concatBlocks_length_le
