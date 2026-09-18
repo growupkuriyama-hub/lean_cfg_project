@@ -120,6 +120,50 @@ theorem markWithMask_yield
       simp [markWithMask, LeafMarkedTree.yield,
         BinaryDerivationTree.yield, ihL, ihR]
 
+/-- For an exactly aligned mask, the leaf Boolean sequence is the mask itself. -/
+theorem leafMarks_markWithMask
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (T : BinaryDerivationTree terminalRule binaryRule A)
+    (mask : List Bool)
+    (hlen :
+      mask.length =
+        BinaryDerivationTree.leafCount T) :
+    LeafMarkedTree.leafMarks (markWithMask T mask) = mask := by
+  induction T generalizing mask with
+  | terminal a hterm =>
+      cases mask with
+      | nil =>
+          simp [BinaryDerivationTree.leafCount] at hlen
+      | cons b bs =>
+          have hbs : bs = [] := by
+            apply List.length_eq_zero.mp
+            simpa [BinaryDerivationTree.leafCount] using
+              Nat.succ.inj hlen
+          subst bs
+          simp [markWithMask, LeafMarkedTree.leafMarks]
+  | binary hbin left right ihL ihR =>
+      have hleft :
+          (mask.take
+              (BinaryDerivationTree.leafCount left)).length =
+            BinaryDerivationTree.leafCount left := by
+        have hle :
+            BinaryDerivationTree.leafCount left ≤ mask.length := by
+          simp only [BinaryDerivationTree.leafCount] at hlen
+          omega
+        simp [List.length_take, hle]
+      have hright :
+          (mask.drop
+              (BinaryDerivationTree.leafCount left)).length =
+            BinaryDerivationTree.leafCount right := by
+        simp only [BinaryDerivationTree.leafCount] at hlen
+        simp [List.length_drop, hlen]
+      simp only [markWithMask, LeafMarkedTree.leafMarks]
+      rw [ihL _ hleft, ihR _ hright]
+      exact List.take_append_drop
+        (BinaryDerivationTree.leafCount left) mask
+
 /--
 For an exactly aligned mask, the marked terminal word is exactly the
 mask-selected terminal yield.
@@ -183,11 +227,63 @@ theorem markWithMask_markedWord
         omega
       simp [hle]
 
+@[simp] theorem trueCount_replicate_true
+    (n : Nat) :
+    LeafMarkedTree.trueCount (List.replicate n true) = n := by
+  induction n with
+  | zero =>
+      simp [LeafMarkedTree.trueCount]
+  | succ n ih =>
+      simp [LeafMarkedTree.trueCount, ih]
+
+@[simp] theorem trueCount_replicate_false
+    (n : Nat) :
+    LeafMarkedTree.trueCount (List.replicate n false) = 0 := by
+  induction n with
+  | zero =>
+      simp [LeafMarkedTree.trueCount]
+  | succ n ih =>
+      simp [LeafMarkedTree.trueCount, ih]
+
+@[simp] theorem falseRanksAux_replicate_true
+    (offset n : Nat) :
+    LeafMarkedTree.falseRanksAux offset
+        (List.replicate n true) =
+      [] := by
+  induction n generalizing offset with
+  | zero =>
+      simp [LeafMarkedTree.falseRanksAux]
+  | succ n ih =>
+      simp [LeafMarkedTree.falseRanksAux, ih]
+
+@[simp] theorem falseRanksAux_replicate_false
+    (offset n : Nat) :
+    LeafMarkedTree.falseRanksAux offset
+        (List.replicate n false) =
+      List.replicate n offset := by
+  induction n with
+  | zero =>
+      simp [LeafMarkedTree.falseRanksAux]
+  | succ n ih =>
+      simp [LeafMarkedTree.falseRanksAux, ih]
+
 /-- Boolean mask marking the first k and last l leaves among n leaves. -/
 def boundaryMask (k l n : Nat) : List Bool :=
   List.replicate k true ++
     List.replicate (n - k - l) false ++
     List.replicate l true
+
+/-- Every false boundary-mask entry occurs after exactly k true entries. -/
+theorem falseRanksAux_boundaryMask
+    (offset k l n : Nat) :
+    LeafMarkedTree.falseRanksAux offset
+        (boundaryMask k l n) =
+      List.replicate (n - k - l) (offset + k) := by
+  unfold boundaryMask
+  rw [← List.append_assoc]
+  rw [LeafMarkedTree.falseRanksAux_append]
+  rw [LeafMarkedTree.falseRanksAux_append]
+  simp [Nat.add_assoc]
 
 /-- The boundary mask has the expected total length when k+l <= n. -/
 theorem boundaryMask_length
@@ -304,6 +400,51 @@ theorem boundary_selected_length
   omega
 
 /--
+For the aligned boundary marking, every unmarked leaf lies after exactly k
+marked leaves.
+-/
+theorem boundary_markedTree_all_unmarked_at
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (T : BinaryDerivationTree terminalRule binaryRule A)
+    (k l : Nat)
+    (hfit :
+      k + l ≤
+        BinaryDerivationTree.leafCount T) :
+    ∀ j ∈
+      LeafMarkedTree.unmarkedRanksAux 0
+        (markWithMask T
+          (boundaryMask k l
+            (BinaryDerivationTree.leafCount T))),
+      j = k := by
+  let mask :=
+    boundaryMask k l
+      (BinaryDerivationTree.leafCount T)
+  have hmask :
+      mask.length =
+        BinaryDerivationTree.leafCount T := by
+    dsimp [mask]
+    exact boundaryMask_length hfit
+  have hranks :
+      LeafMarkedTree.unmarkedRanksAux 0
+          (markWithMask T mask)
+        =
+      List.replicate
+        (BinaryDerivationTree.leafCount T - k - l) k := by
+    rw [LeafMarkedTree.unmarkedRanksAux_eq_falseRanksAux
+      terminalRule binaryRule]
+    rw [leafMarks_markWithMask
+      terminalRule binaryRule T mask hmask]
+    dsimp [mask]
+    simpa using
+      falseRanksAux_boundaryMask 0 k l
+        (BinaryDerivationTree.leafCount T)
+  intro j hj
+  rw [hranks] at hj
+  simpa using hj
+
+/--
 Tree-surgery input for Lemma 7.1.
 
 From any successful derivation whose yield has at least k+l terminals, with
@@ -377,6 +518,100 @@ theorem exists_fixedWindow_boundary_kernel
       terminalRule binaryRule T mask, hT]
   · rw [hWord, hmarkedWord]
   · rw [hCount, hmarkedCount]
+
+
+/--
+Rank-aware fixed-window boundary kernel.
+
+Besides the three basic boundary facts, every omitted sibling subtree occurs
+in the single central gap after the first k marked leaves.  This positional
+invariant is what is needed to show that arbitrary same-root short
+replacements preserve the prefix/suffix summary.
+-/
+theorem exists_fixedWindow_boundary_kernel_ranked
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    {w : Word α}
+    (d : UntypedDerives terminalRule binaryRule A w)
+    (k l : Nat)
+    (hr : 0 < k + l)
+    (hfit : k + l ≤ w.length) :
+    ∃ K : MarkedBoundaryKernel terminalRule binaryRule A,
+      MarkedBoundaryKernel.originalYield K = w
+      ∧
+      MarkedBoundaryKernel.markedWord K =
+        w.take k ++ w.drop (w.length - l)
+      ∧
+      MarkedBoundaryKernel.markedLeafCount K = k + l
+      ∧
+      MarkedBoundaryKernel.AllOmissionsAt K k := by
+  obtain ⟨T, hT⟩ :=
+    BinaryDerivationTree.exists_of_derivation
+      terminalRule binaryRule d
+  let mask := boundaryMask k l w.length
+  let MT := markWithMask T mask
+
+  have hleaf :
+      BinaryDerivationTree.leafCount T = w.length := by
+    rw [← BinaryDerivationTree.yield_length
+      terminalRule binaryRule T, hT]
+
+  have hmaskLen :
+      mask.length =
+        BinaryDerivationTree.leafCount T := by
+    dsimp [mask]
+    rw [boundaryMask_length hfit, hleaf]
+
+  have hmarkedWord :
+      LeafMarkedTree.markedWord MT =
+        w.take k ++ w.drop (w.length - l) := by
+    dsimp [MT]
+    rw [markWithMask_markedWord
+      terminalRule binaryRule T mask hmaskLen]
+    rw [hT]
+    exact selectByMask_boundaryMask w k l hfit
+
+  have hmarkedCount :
+      LeafMarkedTree.markedCount MT = k + l := by
+    have hlen :=
+      LeafMarkedTree.markedWord_length
+        terminalRule binaryRule MT
+    rw [hmarkedWord,
+      boundary_selected_length w k l hfit] at hlen
+    exact hlen.symm
+
+  have hpos :
+      0 < LeafMarkedTree.markedCount MT := by
+    rw [hmarkedCount]
+    exact hr
+
+  have hfitT :
+      k + l ≤ BinaryDerivationTree.leafCount T := by
+    rw [hleaf]
+    exact hfit
+
+  have hAllUnmarked :
+      ∀ j ∈ LeafMarkedTree.unmarkedRanksAux 0 MT,
+        j = k := by
+    dsimp [MT, mask]
+    exact boundary_markedTree_all_unmarked_at
+      terminalRule binaryRule T k l hfitT
+
+  obtain ⟨K, hYield, hWord, hCount, hRankSubset⟩ :=
+    LeafMarkedTree.exists_pruned_kernel_with_rank_subset
+      terminalRule binaryRule MT hpos 0
+
+  refine ⟨K, ?_, ?_, ?_, ?_⟩
+  · rw [hYield]
+    dsimp [MT]
+    rw [markWithMask_yield
+      terminalRule binaryRule T mask, hT]
+  · rw [hWord, hmarkedWord]
+  · rw [hCount, hmarkedCount]
+  · intro j hj
+    exact hAllUnmarked j
+      (hRankSubset j hj)
 
 end FixedWindowBoundaryMarking
 
