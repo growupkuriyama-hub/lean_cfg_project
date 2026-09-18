@@ -37,6 +37,12 @@ section WitnessSetConstruction
 variable {α : Type u}
 variable {M : Type v} [Monoid M] [Fintype M]
 variable {N : Type w}
+variable {H : FixedFiniteMonoidHom α M}
+variable {terminalRule : N → α → Prop}
+variable {binaryRule : N → N → N → Prop}
+variable {startRule : N → Prop}
+variable {epsilonStart : Prop}
+variable {Active : N × M → Prop}
 
 /--
 Canonical productive/reaching choices supplied by a reduced typed grammar.
@@ -218,7 +224,8 @@ theorem canonicalWitnessWords_subset_target
         ReducedTypedDerives H terminalRule binaryRule Active
           (A, μ * ν) (C.omega (B, μ) ++ C.omega (Cn, ν)) :=
       ReducedTypedDerives.binary hbin hA dB dC
-    exact C.reaches (A, μ * ν) hA dParent
+    simpa only [List.append_assoc] using
+      C.reaches (A, μ * ν) hA dParent
   · exact ReducedTypedStartDerives.epsilon heps
 
 /--
