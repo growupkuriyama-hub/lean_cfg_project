@@ -93,7 +93,10 @@ theorem frontEnd_active_short_witness
       have hmul :
           1 * thicknessBar τR ≤ n * thicknessBar τR :=
         Nat.mul_le_mul_right (thicknessBar τR) hOne
-      simpa using le_trans hlen hmul
+      have hbar :
+          thicknessBar τR ≤ n * thicknessBar τR := by
+        simpa using hmul
+      exact le_trans hlen hbar
   | suffix xs =>
       exact suffix_short_witness_of_length_le
         (isolatedInterpretation L)
