@@ -27,21 +27,26 @@ theorem mixedSymbolsDerive_to_rhsRealizes
     {pieces : List (List α)}
     (d : MixedSymbolsDerive R rhs pieces) :
     RhsRealizes (MixedNonterminalLanguage R) rhs pieces.flatten := by
-  induction d with
+  cases d with
   | nil =>
       rfl
-  | @terminal a rhs pieces tail ih =>
+  | @terminal a rhs pieces tail =>
+      have ih :=
+        mixedSymbolsDerive_to_rhsRealizes tail
       change ∃ t, ([a] :: pieces).flatten = a :: t ∧
         RhsRealizes (MixedNonterminalLanguage R) rhs t
       refine ⟨pieces.flatten, ?_, ih⟩
       simp
-  | @nonterminal A rhs w pieces head tail ih =>
+  | @nonterminal A rhs w pieces head tail =>
+      have ih :=
+        mixedSymbolsDerive_to_rhsRealizes tail
       change ∃ u v, (w :: pieces).flatten = u ++ v ∧
         u ∈ MixedNonterminalLanguage R A ∧
         RhsRealizes (MixedNonterminalLanguage R) rhs v
       refine ⟨w, pieces.flatten, ?_, ?_, ih⟩
       · simp
       · exact head
+termination_by d
 
 /--
 Conversely, every semantic RHS realization can be represented by aligned
