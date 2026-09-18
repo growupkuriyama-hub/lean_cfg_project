@@ -230,6 +230,137 @@ theorem reachingSubspine_of_mem_of_nodup
       · exact ih hnodup.2 htail hYtail
 
 /--
+For every reaching spine, the number of binary steps plus the target vertex is
+exactly the path length.
+-/
+theorem reachingSpine_siblings_length_add_one_eq_path
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings) :
+    siblings.length + 1 = path.length := by
+  induction spine with
+  | hole =>
+      simp
+  | binaryLeft hbin child sibling ih =>
+      simp only [List.length_cons]
+      omega
+  | binaryRight hbin sibling child ih =>
+      simp only [List.length_cons]
+      omega
+
+/--
+Unbounded suffix extraction.  This is the structural version used when only
+cycle elimination is needed, without carrying a numerical sibling bound.
+-/
+theorem reachingSubspine_of_mem_of_nodup_unbounded
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X Y : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (hnodup : path.Nodup)
+    (hmem : Y ∈ path) :
+    ∃ left' right' path' siblings',
+      ReachingSpine terminalRule binaryRule
+        Y X left' right' path' siblings'
+      ∧ path'.Nodup := by
+  induction spine generalizing Y with
+  | @hole A =>
+      simp only [List.mem_singleton] at hmem
+      subst Y
+      exact
+        ⟨[], [], [A], [],
+          ReachingSpine.hole,
+          by simp⟩
+  | @binaryLeft A B C X left right z path siblings
+      hbin child sibling ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      rcases hmem with hYA | hYtail
+      · subst Y
+        exact
+          ⟨left, right ++ z, A :: path, z.length :: siblings,
+            ReachingSpine.binaryLeft hbin child sibling,
+            (by rw [List.nodup_cons]; exact hnodup)⟩
+      · exact ih hnodup.2 hYtail
+  | @binaryRight A B C X left right y path siblings
+      hbin sibling child ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      rcases hmem with hYA | hYtail
+      · subst Y
+        exact
+          ⟨y ++ left, right, A :: path, y.length :: siblings,
+            ReachingSpine.binaryRight hbin sibling child,
+            (by rw [List.nodup_cons]; exact hnodup)⟩
+      · exact ih hnodup.2 hYtail
+
+/--
+Every reaching spine can be cycle-shortened to a repetition-free path, with
+no quantitative hypothesis on sibling yields.
+-/
+theorem normalize_reachingSpine_to_nodup_unbounded
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings) :
+    ∃ left' right' path' siblings',
+      ReachingSpine terminalRule binaryRule
+        A X left' right' path' siblings'
+      ∧ path'.Nodup := by
+  induction spine with
+  | @hole A =>
+      exact
+        ⟨[], [], [A], [],
+          ReachingSpine.hole,
+          by simp⟩
+
+  | @binaryLeft A B C X left right z path siblings
+      hbin child sibling ih =>
+      obtain ⟨left', right', path', siblings',
+          child', hnodup⟩ := ih
+      by_cases hmem : A ∈ path'
+      · exact
+          reachingSubspine_of_mem_of_nodup_unbounded
+            terminalRule binaryRule
+            child' hnodup hmem
+      · exact
+          ⟨left', right' ++ z, A :: path',
+            z.length :: siblings',
+            ReachingSpine.binaryLeft hbin child' sibling,
+            (by rw [List.nodup_cons]; exact ⟨hmem, hnodup⟩)⟩
+
+  | @binaryRight A B C X left right y path siblings
+      hbin sibling child ih =>
+      obtain ⟨left', right', path', siblings',
+          child', hnodup⟩ := ih
+      by_cases hmem : A ∈ path'
+      · exact
+          reachingSubspine_of_mem_of_nodup_unbounded
+            terminalRule binaryRule
+            child' hnodup hmem
+      · exact
+          ⟨y ++ left', right', A :: path',
+            y.length :: siblings',
+            ReachingSpine.binaryRight hbin sibling child',
+            (by rw [List.nodup_cons]; exact ⟨hmem, hnodup⟩)⟩
+
+/--
 Cycle-shortening normalization for reaching spines.
 
 Normalize the child spine first. If the current root label already occurs
