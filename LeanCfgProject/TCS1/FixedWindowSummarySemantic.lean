@@ -116,7 +116,7 @@ theorem fixedWindowThreshold_eq_sum_of_pos
     (hr : 0 < k + l) :
     fixedWindowThreshold k l = k + l := by
   unfold fixedWindowThreshold
-  exact max_eq_right (Nat.succ_le_iff.mpr hr)
+  exact Nat.max_eq_right (Nat.succ_le_iff.mpr hr)
 
 /--
 Two words assembled with the same length-k prefix and length-l suffix have the
