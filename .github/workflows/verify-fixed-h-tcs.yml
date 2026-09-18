@@ -85,6 +85,9 @@ jobs:
       - name: Build v62 unit-elimination reverse semantics
         run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationUnitReverse
 
+      - name: Build v62 start-preserving unit elimination
+        run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationUnitStart
+
       - name: Build v62 concrete CFG-size envelope
         run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationSize
 
