@@ -37,6 +37,7 @@ import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
 import LeanCfgProject.TCS1.SSBNFNormalizationSemanticKernel
 import LeanCfgProject.TCS1.UnitFreeProductiveTrim
+import LeanCfgProject.TCS1.UnitFreeReachableTrim
 import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
