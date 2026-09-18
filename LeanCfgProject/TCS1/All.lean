@@ -17,7 +17,6 @@ import LeanCfgProject.TCS1.FixedWindowContextPathBound
 import LeanCfgProject.TCS1.TerminalIsolationKernel
 import LeanCfgProject.TCS1.LeastClosedCFGLanguage
 import LeanCfgProject.TCS1.GeneralCFGDerivation
-import LeanCfgProject.TCS1.GeneralCFGDerivationBridge
 import LeanCfgProject.TCS1.BinarizationKernel
 import LeanCfgProject.TCS1.BinarizationLeastClosed
 import LeanCfgProject.TCS1.FrontEndThicknessKernel
