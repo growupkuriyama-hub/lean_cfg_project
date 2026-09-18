@@ -25,7 +25,7 @@ import LeanCfgProject.TCS1.FixedWindowTransferKernel
 
 This module imports every theorem-facing kernel maintained for the current
 TCS #1 working baseline. Building this one target is the fast integration
-check; CI separately rejects `sorry` and project-level `axiom` declarations
+check; CI separately rejects placeholder proofs and project-level axiom declarations
 inside the TCS1 namespace.
 -/
 
