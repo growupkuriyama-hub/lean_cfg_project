@@ -58,6 +58,9 @@ jobs:
       - name: Build v62 binarization reverse projection
         run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationBinaryProjection
 
+      - name: Build v62 binarization reverse semantics
+        run: lake build LeanCfgProject.FixedHCFG.V62CFGNormalizationBinaryReverse
+
       # Keep the actively developed marked-leaf infrastructure early as well.
       - name: Build exact v60 derivation-tree infrastructure
         run: lake build LeanCfgProject.FixedHCFG.V60DerivationTree
