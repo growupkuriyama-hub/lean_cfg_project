@@ -17,6 +17,7 @@ import LeanCfgProject.TCS1.FixedWindowBoundarySemantic
 import LeanCfgProject.TCS1.MarkedBoundaryKernel
 import LeanCfgProject.TCS1.MarkedBoundaryNormalization
 import LeanCfgProject.TCS1.MarkedBoundarySelection
+import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.FiniteSupportSpineBound
