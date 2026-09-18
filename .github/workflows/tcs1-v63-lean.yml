@@ -59,6 +59,9 @@ jobs:
       - name: Check fixed-window tree combinatorics
         run: lake build LeanCfgProject.TCS1.FixedWindowTreeCombinatorics
 
+      - name: Check normalization language-bound transfer
+        run: lake build LeanCfgProject.TCS1.NormalizationLanguageBounds
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
