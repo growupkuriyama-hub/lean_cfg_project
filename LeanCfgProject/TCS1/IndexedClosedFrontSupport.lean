@@ -116,8 +116,8 @@ theorem indexedClosedFrontSupport_occurrence_tail_mem
       (G.rhs o.1).drop (o.2.1 + 1) =
         C :: rest
     rw [← List.tail_drop]
-    rw [hsuf]
-    rfl
+    have htail := congrArg List.tail hsuf
+    simpa [occurrenceSuffix] using htail
   rw [← hsuf']
   exact indexedClosedFrontSupport_suffix_mem G o'
 
