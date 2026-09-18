@@ -102,8 +102,9 @@ abbrev GenerousFrontState
     (G : IndexedMixedCFG N α P) :
     Fintype.card (GenerousFrontState G) =
       Fintype.card N + 2 * G.totalRhsLength := by
-  simp [GenerousFrontState, Nat.two_mul,
-    Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
+  rw [Fintype.card_sum, Fintype.card_sum]
+  rw [productionOccurrence_card G]
+  omega
 
 /--
 Map the generous finite universe into the ambient semantic front-end state
@@ -141,7 +142,12 @@ theorem indexedFrontSupport_card_le
         (Finset.univ : Finset (GenerousFrontState G)).card := by
     unfold indexedFrontSupport
     exact Finset.card_image_le
-  simpa using himage
+  calc
+    (indexedFrontSupport G).card
+        ≤ Fintype.card (GenerousFrontState G) := by
+          simpa using himage
+    _ = Fintype.card N + 2 * G.totalRhsLength :=
+      generousFrontState_card G
 
 /--
 A convenient grammar-size scale for the finite indexed presentation.
