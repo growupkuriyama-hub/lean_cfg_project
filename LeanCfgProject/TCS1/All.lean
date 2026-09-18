@@ -15,6 +15,7 @@ import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.FixedWindowContextPathBound
 
 import LeanCfgProject.TCS1.TerminalIsolationKernel
+import LeanCfgProject.TCS1.BinarizationKernel
 import LeanCfgProject.TCS1.NormalizationLanguageBounds
 import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
