@@ -72,17 +72,6 @@ structure ReducedWitnessChoices
       Active (A, μ) →
       left (A, μ) = [] ∧ right (A, μ) = []
 
-/-- Productivity immediately gives nonempty canonical yields. -/
-theorem ReducedWitnessChoices.omega_ne
-    (C :
-      ReducedWitnessChoices
-        H terminalRule binaryRule startRule epsilonStart Active)
-    (X : N × M)
-    (hX : Active X) :
-    C.omega X ≠ [] := by
-  exact hypDerives_nonempty_of_reduced
-    (C.omegaDerives X hX)
-
 /--
 Small helper: reduced typed derivations are nonerasing, because terminal
 leaves contribute one symbol and binary nodes concatenate two nonempty yields.
@@ -100,17 +89,6 @@ theorem reducedTypedDerives_nonempty
       simp
   | binary _ _ _ _ ihB _ihC =>
       exact append_ne_nil_of_left_ne_nil ihB
-
-/-- Alias used before the main construction. -/
-theorem hypDerives_nonempty_of_reduced
-    (H : FixedFiniteMonoidHom α M := by assumption)
-    {terminalRule : N → α → Prop}
-    {binaryRule : N → N → N → Prop}
-    {Active : N × M → Prop}
-    {X : N × M} {z : Word α}
-    (d : ReducedTypedDerives H terminalRule binaryRule Active X z) :
-    z ≠ [] :=
-  reducedTypedDerives_nonempty H terminalRule binaryRule Active d
 
 /--
 The explicit witness language W(tilde G).  It consists exactly of the four
