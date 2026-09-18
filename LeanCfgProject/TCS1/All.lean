@@ -12,6 +12,7 @@ import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
 import LeanCfgProject.TCS1.FrontEndSizeCombinatorics
 import LeanCfgProject.TCS1.FixedWindowCharacteristicDataBounds
 import LeanCfgProject.TCS1.FixedWindowTreeCombinatorics
+import LeanCfgProject.TCS1.FixedWindowBoundarySemantic
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.FiniteSupportSpineBound
@@ -43,10 +44,10 @@ import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
 /-!
-# TCS #1 v66 Lean verification facade
+# TCS #1 v68 Lean verification facade
 
 This module imports every theorem-facing kernel maintained for the current
-TCS #1 working baseline. Building this one target is the fast integration
+TCS #1 v68 working baseline. Building this one target is the fast integration
 check; CI separately rejects placeholder proofs and project-level axiom declarations
 inside the TCS1 namespace.
 -/
@@ -54,8 +55,12 @@ inside the TCS1 namespace.
 namespace LeanCfgProject
 namespace TCS1
 
-/-- Marker theorem for the integrated v66 verification facade. -/
+/-- Compatibility marker for the integrated v66 verification facade. -/
 theorem v66_facade_loaded : True :=
+  True.intro
+
+/-- Marker theorem for the integrated v68 verification facade. -/
+theorem v68_facade_loaded : True :=
   True.intro
 
 end TCS1
