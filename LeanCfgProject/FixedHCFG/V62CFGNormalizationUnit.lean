@@ -126,7 +126,10 @@ theorem v62_unit_elimination_rule_card_le
     _ ≤ ∑ _A ∈ v62GrammarNonterminals g, g.rules.card := by
       apply Finset.sum_le_sum
       intro A hA
-      exact Finset.card_image_le.trans Finset.card_filter_le
+      exact Finset.card_image_le.trans
+        (Finset.card_filter_le g.rules
+          (fun r => ¬ V62CFGIsUnitRule r ∧
+            V62CFGUnitReach g A r.input))
     _ = (v62GrammarNonterminals g).card * g.rules.card := by
       simp [Nat.mul_comm]
 
