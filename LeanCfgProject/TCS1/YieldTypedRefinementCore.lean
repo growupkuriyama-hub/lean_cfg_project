@@ -113,6 +113,21 @@ theorem untypedDerives_lift
 Yield invariant from Proposition 5.2:
 a typed non-start derivation indexed by mu can derive only words of h-type mu.
 -/
+theorem typedDerives_yield_type_general
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {X : N × M}
+    {w : Word α}
+    (d : TypedDerives H terminalRule binaryRule X w) :
+    H.h w = X.2 := by
+  induction d with
+  | terminal _hterm =>
+      rfl
+  | @binary A B C μ ν wB wC _hbin _dB _dC ihB ihC =>
+      rw [H.map_append wB wC, ihB, ihC]
+
+/-- Specialized form of the yield invariant for a named typed symbol. -/
 theorem typedDerives_yield_type
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
@@ -122,11 +137,7 @@ theorem typedDerives_yield_type
     {w : Word α}
     (d : TypedDerives H terminalRule binaryRule (A, μ) w) :
     H.h w = μ := by
-  induction d with
-  | terminal _hterm =>
-      rfl
-  | @binary A B C μ ν wB wC _hbin _dB _dC ihB ihC =>
-      rw [H.map_append wB wC, ihB, ihC]
+  exact typedDerives_yield_type_general H terminalRule binaryRule d
 
 /--
 The untyped derivation relation is exactly the projection of the full
