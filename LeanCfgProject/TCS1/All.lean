@@ -20,6 +20,7 @@ import LeanCfgProject.TCS1.LeastClosedCFGLanguage
 import LeanCfgProject.TCS1.GeneralCFGDerivation
 import LeanCfgProject.TCS1.BinarizationKernel
 import LeanCfgProject.TCS1.BinarizationLeastClosed
+import LeanCfgProject.TCS1.SequenceBinaryGrammarBridge
 import LeanCfgProject.TCS1.TerminalIsolationBinarizationBridge
 import LeanCfgProject.TCS1.FrontEndThicknessKernel
 import LeanCfgProject.TCS1.NormalizationLanguageBounds
