@@ -77,6 +77,9 @@ jobs:
       - name: Check SSBNF normalization semantic kernel
         run: lake build LeanCfgProject.TCS1.SSBNFNormalizationSemanticKernel
 
+      - name: Check fixed-window transfer kernel
+        run: lake build LeanCfgProject.TCS1.FixedWindowTransferKernel
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
