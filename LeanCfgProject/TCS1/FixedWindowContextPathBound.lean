@@ -84,7 +84,8 @@ theorem anchor_witness_length_le_common
   calc
     context + yieldLen
       ≤ Nt * B + B := Nat.add_le_add hctx hyield
-    _ ≤ (Nt + 2) * B + 1 := by omega
+    _ ≤ Nt * B + 2 * B + 1 := by omega
+    _ = (Nt + 2) * B + 1 := by ring
 
 /--
 Terminal-rule witness: reaching context plus one terminal symbol.
@@ -96,7 +97,8 @@ theorem terminal_witness_length_le_common
   calc
     context + 1
       ≤ Nt * B + 1 := Nat.add_le_add_right hctx 1
-    _ ≤ (Nt + 2) * B + 1 := by omega
+    _ ≤ Nt * B + 2 * B + 1 := by omega
+    _ = (Nt + 2) * B + 1 := by ring
 
 /--
 Binary-rule witness: reaching context plus two canonical typed yields.
@@ -111,7 +113,8 @@ theorem binary_witness_length_le_common
     context + leftYield + rightYield
       ≤ Nt * B + B + B := by
         omega
-    _ ≤ (Nt + 2) * B + 1 := by omega
+    _ ≤ Nt * B + 2 * B + 1 := by omega
+    _ = (Nt + 2) * B + 1 := by ring
 
 /--
 All three canonical witness families fit the same envelope used in the paper.
