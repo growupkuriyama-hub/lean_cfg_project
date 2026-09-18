@@ -98,12 +98,12 @@ theorem v62_nullable_variant_derives_old
                                 hC'.append_left [Symbol.nonterminal B]
                             simp [hout, hB, hC] at hq
                             rcases hq with rfl | rfl | rfl
-                            · exact hfirst
+                            · simpa [hout] using hfirst
                             · exact hfirst.trans hdropB
                             · exact hfirst.trans hdropC
                           · simp [hout, hB, hC] at hq
                             rcases hq with rfl | rfl
-                            · exact hfirst
+                            · simpa [hout] using hfirst
                             · exact hfirst.trans hdropB
                         · by_cases hC : V62CFGNullable g C
                           · have hC' :
@@ -117,11 +117,11 @@ theorem v62_nullable_variant_derives_old
                                 hC'.append_left [Symbol.nonterminal B]
                             simp [hout, hB, hC] at hq
                             rcases hq with rfl | rfl
-                            · exact hfirst
+                            · simpa [hout] using hfirst
                             · exact hfirst.trans hdropC
                           · simp [hout, hB, hC] at hq
                             subst q
-                            exact hfirst
+                            simpa [hout] using hfirst
 
 /-- Every installed transformed rule is derivable in the old grammar. -/
 theorem v62_nullable_elimination_rule_derives_old
