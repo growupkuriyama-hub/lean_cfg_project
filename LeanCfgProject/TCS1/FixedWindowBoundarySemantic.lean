@@ -261,63 +261,6 @@ theorem fixedWindow_short_typed_yield_unique
   · exact heq
   · simpa [heq] using d
 
-/--
-Long-word semantic completion of Lemma 7.1.
-
-Once the marked-tree surgery has supplied a derivable boundary assembly, a
-bound on the number of retained replacement blocks, and a uniform bound tau
-on every replacement yield, the fixed-window type and the manuscript length
-bound follow automatically.
--/
-theorem fixedWindow_long_typed_yield_of_reconstruction
-    (H : FixedFiniteMonoidHom α M)
-    (terminalRule : N → α → Prop)
-    (binaryRule : N → N → N → Prop)
-    {k l : Nat}
-    (hr : 0 < k + l)
-    (hrespect : RespectsFixedWindowSummary H k l)
-    (p q middle : Word α)
-    (blocks : List (Word α))
-    (hp : p.length = k)
-    (hq : q.length = l)
-    {A : N}
-    {μ : M}
-    (href : H.h (p ++ middle ++ q) = μ)
-    (d :
-      UntypedDerives terminalRule binaryRule A
-        (boundaryAssembly p q blocks))
-    (N τ retained : Nat)
-    (hcount : blocks.length ≤ retained)
-    (hretained :
-      retained ≤ (2 * (k + l) - 1) * N)
-    (heach : ∀ b ∈ blocks, b.length ≤ τ) :
-    ∃ w' : Word α,
-      TypedDerives H terminalRule binaryRule
-        (A, μ) w'
-      ∧
-      w'.length ≤
-        (k + l) + (2 * (k + l) - 1) * N * τ := by
-  let w' : Word α :=
-    boundaryAssembly p q blocks
-  have htyped :
-      TypedDerives H terminalRule binaryRule
-        (A, μ) w' := by
-    dsimp [w']
-    exact
-      boundaryAssembly_typed_lift_of_fixedWindowSummary
-        H terminalRule binaryRule
-        hr hrespect
-        p q middle blocks hp hq href d
-  have hlen :
-      w'.length ≤
-        (k + l) + (2 * (k + l) - 1) * N * τ := by
-    dsimp [w']
-    exact
-      boundaryAssembly_fixedWindow_kl_length_le
-        p q blocks k l N τ retained
-        hp hq hcount hretained heach
-  exact ⟨w', htyped, hlen⟩
-
 /-- Sum of actual replacement-block lengths under a uniform block bound. -/
 theorem concatBlocks_length_le
     (blocks : List (Word α))
@@ -401,6 +344,64 @@ theorem boundaryAssembly_fixedWindow_kl_length_le
   · exact hcount
   · exact hretained
   · exact heach
+
+/--
+Long-word semantic completion of Lemma 7.1.
+
+Once the marked-tree surgery has supplied a derivable boundary assembly, a
+bound on the number of retained replacement blocks, and a uniform bound tau
+on every replacement yield, the fixed-window type and the manuscript length
+bound follow automatically.
+-/
+theorem fixedWindow_long_typed_yield_of_reconstruction
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {k l : Nat}
+    (hr : 0 < k + l)
+    (hrespect : RespectsFixedWindowSummary H k l)
+    (p q middle : Word α)
+    (blocks : List (Word α))
+    (hp : p.length = k)
+    (hq : q.length = l)
+    {A : N}
+    {μ : M}
+    (href : H.h (p ++ middle ++ q) = μ)
+    (d :
+      UntypedDerives terminalRule binaryRule A
+        (boundaryAssembly p q blocks))
+    (N τ retained : Nat)
+    (hcount : blocks.length ≤ retained)
+    (hretained :
+      retained ≤ (2 * (k + l) - 1) * N)
+    (heach : ∀ b ∈ blocks, b.length ≤ τ) :
+    ∃ w' : Word α,
+      TypedDerives H terminalRule binaryRule
+        (A, μ) w'
+      ∧
+      w'.length ≤
+        (k + l) + (2 * (k + l) - 1) * N * τ := by
+  let w' : Word α :=
+    boundaryAssembly p q blocks
+  have htyped :
+      TypedDerives H terminalRule binaryRule
+        (A, μ) w' := by
+    dsimp [w']
+    exact
+      boundaryAssembly_typed_lift_of_fixedWindowSummary
+        H terminalRule binaryRule
+        hr hrespect
+        p q middle blocks hp hq href d
+  have hlen :
+      w'.length ≤
+        (k + l) + (2 * (k + l) - 1) * N * τ := by
+    dsimp [w']
+    exact
+      boundaryAssembly_fixedWindow_kl_length_le
+        p q blocks k l N τ retained
+        hp hq hcount hretained heach
+  exact ⟨w', htyped, hlen⟩
+
 
 end FixedWindowBoundarySemantic
 
