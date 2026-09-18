@@ -285,6 +285,17 @@ theorem falseRanksAux_boundaryMask
   rw [LeafMarkedTree.falseRanksAux_append]
   simp [Nat.add_assoc]
 
+/-- The boundary mask contains exactly k+l marked positions. -/
+theorem boundaryMask_trueCount
+    (k l n : Nat) :
+    LeafMarkedTree.trueCount (boundaryMask k l n) =
+      k + l := by
+  unfold boundaryMask
+  rw [← List.append_assoc]
+  rw [LeafMarkedTree.trueCount_append]
+  rw [LeafMarkedTree.trueCount_append]
+  simp
+
 /-- The boundary mask has the expected total length when k+l <= n. -/
 theorem boundaryMask_length
     {k l n : Nat}
