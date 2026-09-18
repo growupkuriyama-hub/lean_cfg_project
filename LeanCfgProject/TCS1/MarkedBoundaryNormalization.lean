@@ -334,7 +334,7 @@ theorem normalizedHead_attach_bound
         (1 +
           (2 * MarkedBoundaryKernel.markedLeafCount K - 2)) *
             Fintype.card N := by
-              rw [Nat.add_mul]
+              simp [Nat.add_mul]
       _ =
         (2 * MarkedBoundaryKernel.markedLeafCount K - 1) *
           Fintype.card N := by
@@ -477,7 +477,6 @@ theorem exists_normalizedHeadData
         dsimp [base, MarkedBoundaryBase.omittedBelow]
         have hsum :=
           Nat.add_le_add hleftBound hrightBound
-        rw [hleftMarks, hrightMarks] at hsum
         have hcoeff :
             (2 * MarkedBoundaryKernel.markedLeafCount left - 1) +
               (2 * MarkedBoundaryKernel.markedLeafCount right - 1)
