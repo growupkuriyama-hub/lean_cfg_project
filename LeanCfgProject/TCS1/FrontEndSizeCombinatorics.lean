@@ -55,14 +55,14 @@ def totalRhsLength
     [DecidableEq P]
     (rules : Finset P)
     (rhs : P → List X) : Nat :=
-  ∑ r in rules, (rhs r).length
+  ∑ r ∈ rules, (rhs r).length
 
 /-- Total number of fresh suffix states, counted with production provenance. -/
 def totalFreshBinarizationStates
     [DecidableEq P]
     (rules : Finset P)
     (rhs : P → List X) : Nat :=
-  ∑ r in rules,
+  ∑ r ∈ rules,
     freshBinarizationStateCount (rhs r).length
 
 /-- Total number of structural rules after right-associated binarization. -/
@@ -70,7 +70,7 @@ def totalBinarizedStructuralRules
     [DecidableEq P]
     (rules : Finset P)
     (rhs : P → List X) : Nat :=
-  ∑ r in rules,
+  ∑ r ∈ rules,
     binarizedStructuralRuleCount (rhs r).length
 
 /-- Summed fresh-state count is at most total RHS length. -/
@@ -97,20 +97,20 @@ theorem totalBinarizedStructuralRules_le
       rules.card + totalRhsLength rules rhs := by
   unfold totalBinarizedStructuralRules totalRhsLength
   calc
-    (∑ r in rules,
+    (∑ r ∈ rules,
       binarizedStructuralRuleCount (rhs r).length)
       ≤
-    ∑ r in rules, ((rhs r).length + 1) := by
+    ∑ r ∈ rules, ((rhs r).length + 1) := by
       apply Finset.sum_le_sum
       intro r hr
       exact
         binarizedStructuralRuleCount_le_succ
           (rhs r).length
     _ =
-      (∑ r in rules, (rhs r).length) + rules.card := by
+      (∑ r ∈ rules, (rhs r).length) + rules.card := by
         simp [Finset.sum_add_distrib, Nat.add_comm]
     _ =
-      rules.card + (∑ r in rules, (rhs r).length) := by
+      rules.card + (∑ r ∈ rules, (rhs r).length) := by
         omega
 
 /--
