@@ -24,7 +24,7 @@ This is the exact semantic/quantitative bridge used in Proposition
 namespace LeanCfgProject
 namespace TCS1
 
-universe u v w
+universe u v
 
 section SSBNFNormalizationSemanticKernel
 
@@ -37,8 +37,8 @@ quadratic envelope.
 -/
 theorem binary_epsilon_unit_trim_preserve_bound
     (G : BinaryNullableGrammar N α)
-    {Nsurv : Type w}
-    {Nfinal : Type w}
+    {Nsurv : Type u}
+    {Nfinal : Type u}
     (surv : Nsurv → N)
     (final : Nfinal → Nsurv)
     {b : Nat}
@@ -55,7 +55,7 @@ theorem binary_epsilon_unit_trim_preserve_bound
         {w | UnitFreeDerives G (surv (final A)) w})
       b := by
   apply epsilon_unit_trim_preserve_bound
-    (L := fun A => {w | BinaryNullableDerives G A w})
+    (LB := fun A => {w | BinaryNullableDerives G A w})
     (Leps := fun A => {w | EpsilonFreeDerives G A w})
     (Lunit := fun A => {w | UnitFreeDerives G A w})
     surv final hB
@@ -74,8 +74,8 @@ shortest-yield estimate proved for the binarized grammar.
 -/
 theorem binary_epsilon_unit_trim_preserve_ssbnfEnvelope
     (G : BinaryNullableGrammar N α)
-    {Nsurv : Type w}
-    {Nfinal : Type w}
+    {Nsurv : Type u}
+    {Nfinal : Type u}
     (surv : Nsurv → N)
     (final : Nfinal → Nsurv)
     (cV c₁ n τR : Nat)
@@ -114,7 +114,7 @@ automatically productive by a nonempty terminal word.
 -/
 theorem unitFree_allHaveNonempty_of_productive
     (G : BinaryNullableGrammar N α)
-    {N' : Type w}
+    {N' : Type u}
     (embed : N' → N)
     (hprod :
       ∀ A : N',
