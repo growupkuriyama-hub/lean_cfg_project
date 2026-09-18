@@ -67,6 +67,109 @@ theorem indexed_isolatedStructural_long_has_source
   | wrapper a =>
       simp_all
 
+
+/--
+The linear indexed support is closed under every unit and binary child edge of
+the actual front-end binary grammar.
+-/
+theorem indexedClosedFrontSupport_ruleClosed
+    [Fintype N] [Fintype α] [Fintype P]
+    [DecidableEq N] [DecidableEq α]
+    (G : IndexedMixedCFG N α P) :
+    BinaryGrammarSupportedOn
+      (frontEndBinaryGrammar G.toMixedRules)
+      (indexedClosedFrontSupport G) := by
+  constructor
+  · intro A B hA hunit
+    change
+      BinarizedStructuralRule
+        (isolatedSequenceGrammar G.toMixedRules)
+        A [B] at hunit
+    cases hunit with
+    | @source X rhs hsrc =>
+        cases rhs with
+        | nil =>
+            simp [topBinarizedRhs] at *
+        | cons R rest =>
+            cases rest with
+            | nil =>
+                exact
+                  indexedClosedFrontSupport_old_mem G R
+            | cons S tail =>
+                cases tail <;>
+                  simp [topBinarizedRhs] at *
+    | suffixUnit R =>
+        exact indexedClosedFrontSupport_old_mem G R
+
+  · intro A B C hA hbin
+    change
+      BinarizedStructuralRule
+        (isolatedSequenceGrammar G.toMixedRules)
+        A [B, C] at hbin
+    cases hbin with
+    | @source X rhs hsrc =>
+        cases rhs with
+        | nil =>
+            simp [topBinarizedRhs] at *
+        | cons R rest =>
+            cases rest with
+            | nil =>
+                simp [topBinarizedRhs] at *
+            | cons S tail =>
+                cases tail with
+                | nil =>
+                    exact
+                      ⟨indexedClosedFrontSupport_old_mem G R,
+                       indexedClosedFrontSupport_old_mem G S⟩
+                | cons T more =>
+                    obtain ⟨p, hp⟩ :=
+                      indexed_isolatedStructural_long_has_source
+                        G X R S T more hsrc
+                    have hOne :
+                        1 < (G.rhs p).length := by
+                      rw [hp]
+                      simp
+                    have hTail :
+                        BinarizedState.suffix (S :: T :: more) ∈
+                          indexedClosedFrontSupport G := by
+                      have hd :=
+                        indexedClosedFrontSupport_drop_mem
+                          G p 1 hOne
+                      simpa [hp] using hd
+                    exact
+                      ⟨indexedClosedFrontSupport_old_mem G R,
+                       hTail⟩
+    | suffixBinary R S =>
+        exact
+          ⟨indexedClosedFrontSupport_old_mem G R,
+           indexedClosedFrontSupport_old_mem G S⟩
+    | suffixLong R S T rest =>
+        have hTail :
+            BinarizedState.suffix (S :: T :: rest) ∈
+              indexedClosedFrontSupport G :=
+          indexedClosedFrontSupport_suffix_tail_mem
+            G R S (T :: rest) hA
+        exact
+          ⟨indexedClosedFrontSupport_old_mem G R,
+           hTail⟩
+
+/--
+The indexed support, together with a uniform source-RHS length bound, is a
+complete front-end support certificate.
+-/
+def indexedFrontSupportCertificate
+    [Fintype N] [Fintype α] [Fintype P]
+    [DecidableEq N] [DecidableEq α]
+    (G : IndexedMixedCFG N α P)
+    (n : Nat)
+    (hRhs : ∀ p, (G.rhs p).length ≤ n) :
+    FrontEndSupportCertificate
+      G.toMixedRules n where
+  support := indexedClosedFrontSupport G
+  closed := indexedClosedFrontSupport_ruleClosed G
+  active :=
+    indexedClosedFrontSupport_active G n hRhs
+
 end IndexedFrontRuleClosure
 
 end TCS1
