@@ -166,6 +166,161 @@ theorem reachingSpine_siblings_length_le_path
       exact Nat.succ_le_succ ih
 
 /--
+If a label occurs on a repetition-free reaching spine, the suffix beginning
+at that occurrence is itself a repetition-free reaching spine to the same
+target. Uniform sibling-length bounds are inherited.
+-/
+theorem reachingSubspine_of_mem_of_nodup
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (B : Nat)
+    {A X Y : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (hnodup : path.Nodup)
+    (heach : ∀ s ∈ siblings, s ≤ B)
+    (hmem : Y ∈ path) :
+    ∃ left' right' path' siblings',
+      ReachingSpine terminalRule binaryRule
+        Y X left' right' path' siblings'
+      ∧ path'.Nodup
+      ∧ (∀ s ∈ siblings', s ≤ B) := by
+  induction spine generalizing Y with
+  | @hole A =>
+      simp only [List.mem_singleton] at hmem
+      subst Y
+      exact
+        ⟨[], [], [A], [],
+          ReachingSpine.hole,
+          by simp,
+          by simp⟩
+  | @binaryLeft A B C X left right z path siblings
+      hbin child sibling ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      have htail : ∀ s ∈ siblings, s ≤ B := by
+        intro s hs
+        exact heach s (List.mem_cons_of_mem _ hs)
+      rcases hmem with hYA | hYtail
+      · subst Y
+        exact
+          ⟨left, right ++ z, A :: path, z.length :: siblings,
+            ReachingSpine.binaryLeft hbin child sibling,
+            (by rw [List.nodup_cons]; exact hnodup),
+            heach⟩
+      · exact ih hnodup.2 htail hYtail
+  | @binaryRight A B C X left right y path siblings
+      hbin sibling child ih =>
+      rw [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      have htail : ∀ s ∈ siblings, s ≤ B := by
+        intro s hs
+        exact heach s (List.mem_cons_of_mem _ hs)
+      rcases hmem with hYA | hYtail
+      · subst Y
+        exact
+          ⟨y ++ left, right, A :: path, y.length :: siblings,
+            ReachingSpine.binaryRight hbin sibling child,
+            (by rw [List.nodup_cons]; exact hnodup),
+            heach⟩
+      · exact ih hnodup.2 htail hYtail
+
+/--
+Cycle-shortening normalization for reaching spines.
+
+Normalize the child spine first. If the current root label already occurs
+below, jump directly to that lower occurrence; otherwise reattach the current
+binary step. This is the semantic version of the manuscript's
+"choose a shortest path, hence no typed symbol repeats" argument.
+-/
+theorem normalize_reachingSpine_to_nodup
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (B : Nat)
+    {A X : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (heach : ∀ s ∈ siblings, s ≤ B) :
+    ∃ left' right' path' siblings',
+      ReachingSpine terminalRule binaryRule
+        A X left' right' path' siblings'
+      ∧ path'.Nodup
+      ∧ (∀ s ∈ siblings', s ≤ B) := by
+  induction spine with
+  | @hole A =>
+      exact
+        ⟨[], [], [A], [],
+          ReachingSpine.hole,
+          by simp,
+          by simp⟩
+
+  | @binaryLeft A B C X left right z path siblings
+      hbin child sibling ih =>
+      have hhead : z.length ≤ B :=
+        heach z.length (List.mem_cons_self ..)
+      have htail : ∀ s ∈ siblings, s ≤ B := by
+        intro s hs
+        exact heach s (List.mem_cons_of_mem _ hs)
+      obtain ⟨left', right', path', siblings',
+          child', hnodup, heach'⟩ :=
+        ih htail
+      by_cases hmem : A ∈ path'
+      · exact
+          reachingSubspine_of_mem_of_nodup
+            terminalRule binaryRule B
+            child' hnodup heach' hmem
+      · refine
+          ⟨left', right' ++ z, A :: path',
+            z.length :: siblings',
+            ReachingSpine.binaryLeft hbin child' sibling,
+            ?_,
+            ?_⟩
+        · rw [List.nodup_cons]
+          exact ⟨hmem, hnodup⟩
+        · intro s hs
+          simp only [List.mem_cons] at hs
+          rcases hs with rfl | hs
+          · exact hhead
+          · exact heach' s hs
+
+  | @binaryRight A B C X left right y path siblings
+      hbin sibling child ih =>
+      have hhead : y.length ≤ B :=
+        heach y.length (List.mem_cons_self ..)
+      have htail : ∀ s ∈ siblings, s ≤ B := by
+        intro s hs
+        exact heach s (List.mem_cons_of_mem _ hs)
+      obtain ⟨left', right', path', siblings',
+          child', hnodup, heach'⟩ :=
+        ih htail
+      by_cases hmem : A ∈ path'
+      · exact
+          reachingSubspine_of_mem_of_nodup
+            terminalRule binaryRule B
+            child' hnodup heach' hmem
+      · refine
+          ⟨y ++ left', right', A :: path',
+            y.length :: siblings',
+            ReachingSpine.binaryRight hbin sibling child',
+            ?_,
+            ?_⟩
+        · rw [List.nodup_cons]
+          exact ⟨hmem, hnodup⟩
+        · intro s hs
+          simp only [List.mem_cons] at hs
+          rcases hs with rfl | hs
+          · exact hhead
+          · exact heach' s hs
+
+/--
 Parameterized semantic form of the dependency-path context bound used by
 Lemma 7.2.
 -/
