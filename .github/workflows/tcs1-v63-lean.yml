@@ -65,6 +65,9 @@ jobs:
       - name: Check shortest nonempty path bound
         run: lake build LeanCfgProject.TCS1.ShortestNonemptyPathBound
 
+      - name: Check fixed-window context path bound
+        run: lake build LeanCfgProject.TCS1.FixedWindowContextPathBound
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
