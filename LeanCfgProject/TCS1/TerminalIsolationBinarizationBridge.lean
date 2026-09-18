@@ -31,6 +31,17 @@ variable {α : Type v}
     isolateSymbol (N := N) (α := α) true s = Sum.inl s := by
   cases s <;> rfl
 
+/-- Pointwise wrapping commutes with mapping over a whole mixed RHS. -/
+@[simp] theorem map_isolateSymbol_true_eq_map_inl
+    (xs : List (MixedSymbol N α)) :
+    xs.map (isolateSymbol (N := N) (α := α) true) =
+      xs.map Sum.inl := by
+  induction xs with
+  | nil =>
+      rfl
+  | cons s rest ih =>
+      simp [ih]
+
 /--
 A right-hand side consisting only of nonterminal symbols realizes exactly the
 same words as the corresponding NTSequenceRealizes sequence.
@@ -113,19 +124,19 @@ theorem isolated_ruleStep_eq_sequence
                           L [Sum.inl B] w).1
                           (by
                             simpa [isolateRhs,
-                              isolateSymbol_true_eq_inl] using hreal)
+                              map_isolateSymbol_true_eq_map_inl] using hreal)
             | cons s₂ tail =>
                 right
                 refine ⟨s :: s₂ :: tail, ?_, ?_⟩
                 · simpa [isolatedSequenceGrammar, isolateRhs,
-                    isolateSymbol_true_eq_inl] using
+                    map_isolateSymbol_true_eq_map_inl] using
                     (IsolatedRule.original hR)
                 · exact
                     (rhsRealizes_map_nonterminals_iff
                       L (s :: s₂ :: tail) w).1
                       (by
                         simpa [isolateRhs,
-                          isolateSymbol_true_eq_inl] using hreal)
+                          map_isolateSymbol_true_eq_map_inl] using hreal)
   · intro hw
     rcases hw with hterm | hstruct
     · rcases hterm with ⟨a, hrule, rfl⟩
