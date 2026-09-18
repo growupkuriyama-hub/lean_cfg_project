@@ -26,20 +26,20 @@ theorem mixedSymbolsDerive_to_rhsRealizes
     {rhs : List (MixedSymbol N α)}
     {pieces : List (List α)}
     (d : MixedSymbolsDerive R rhs pieces) :
-    RhsRealizes (MixedNonterminalLanguage R) rhs pieces.join := by
+    RhsRealizes (MixedNonterminalLanguage R) rhs pieces.flatten := by
   induction d with
   | nil =>
       rfl
   | @terminal a rhs pieces tail ih =>
-      change ∃ t, ([a] :: pieces).join = a :: t ∧
+      change ∃ t, ([a] :: pieces).flatten = a :: t ∧
         RhsRealizes (MixedNonterminalLanguage R) rhs t
-      refine ⟨pieces.join, ?_, ih⟩
+      refine ⟨pieces.flatten, ?_, ih⟩
       simp
   | @nonterminal A rhs w pieces head tail ih =>
-      change ∃ u v, (w :: pieces).join = u ++ v ∧
+      change ∃ u v, (w :: pieces).flatten = u ++ v ∧
         u ∈ MixedNonterminalLanguage R A ∧
         RhsRealizes (MixedNonterminalLanguage R) rhs v
-      refine ⟨w, pieces.join, ?_, ?_, ih⟩
+      refine ⟨w, pieces.flatten, ?_, ?_, ih⟩
       · simp
       · exact head
 
@@ -54,7 +54,7 @@ theorem rhsRealizes_to_mixedSymbolsDerive
     (h : RhsRealizes (MixedNonterminalLanguage R) rhs w) :
     ∃ pieces,
       MixedSymbolsDerive R rhs pieces ∧
-      pieces.join = w := by
+      pieces.flatten = w := by
   induction rhs generalizing w with
   | nil =>
       change w = [] at h
