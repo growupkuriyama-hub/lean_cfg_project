@@ -110,7 +110,7 @@ theorem v62_nullable_variant_output_ne_nil
         | nil =>
             simp [h] at hq
             subst q
-            simp
+            exact h0
         | cons y ys =>
             cases ys with
             | nil =>
