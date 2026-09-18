@@ -443,7 +443,12 @@ theorem exists_pruned_kernel_with_rank_subset
                   (markedWord right).length = 0 := by
                 rw [markedWord_length
                   terminalRule binaryRule right, hRzero]
-              exact List.length_eq_zero.mp hlen
+              cases hword : markedWord right with
+              | nil =>
+                  exact hword
+              | cons a xs =>
+                  rw [hword] at hlen
+                  simp at hlen
             simp [MarkedBoundaryKernel.markedWord,
               markedWord, hWordL, hWordR]
           · simp [MarkedBoundaryKernel.markedLeafCount,
@@ -483,7 +488,12 @@ theorem exists_pruned_kernel_with_rank_subset
                 (markedWord left).length = 0 := by
               rw [markedWord_length
                 terminalRule binaryRule left, hLzero]
-            exact List.length_eq_zero.mp hlen
+            cases hword : markedWord left with
+              | nil =>
+                  exact hword
+              | cons a xs =>
+                  rw [hword] at hlen
+                  simp at hlen
           simp [MarkedBoundaryKernel.markedWord,
             markedWord, hWordL, hWordR]
         · simp [MarkedBoundaryKernel.markedLeafCount,
@@ -499,7 +509,11 @@ theorem exists_pruned_kernel_with_rank_subset
                 terminalRule binaryRule
                 offset left hLzero
           · right
-            simpa [hLzero] using hRankR j hj
+            have hj' :
+                j ∈ MarkedBoundaryKernel.omissionRanksAux
+                  (offset + markedCount left) KR := by
+              simpa [hLzero] using hj
+            exact hRankR j hj'
 
 /--
 Prune an arbitrary nonempty leaf marking to the union of root-to-marked-leaf
@@ -565,7 +579,12 @@ theorem exists_pruned_kernel
                   (markedWord right).length = 0 := by
                 rw [markedWord_length
                   terminalRule binaryRule right, hRzero]
-              exact List.length_eq_zero.mp hlen
+              cases hword : markedWord right with
+              | nil =>
+                  exact hword
+              | cons a xs =>
+                  rw [hword] at hlen
+                  simp at hlen
             simp [MarkedBoundaryKernel.markedWord,
               markedWord, hWordL, hWordR]
           · simp [MarkedBoundaryKernel.markedLeafCount,
@@ -591,7 +610,12 @@ theorem exists_pruned_kernel
                 (markedWord left).length = 0 := by
               rw [markedWord_length
                 terminalRule binaryRule left, hLzero]
-            exact List.length_eq_zero.mp hlen
+            cases hword : markedWord left with
+              | nil =>
+                  exact hword
+              | cons a xs =>
+                  rw [hword] at hlen
+                  simp at hlen
           simp [MarkedBoundaryKernel.markedWord,
             markedWord, hWordL, hWordR]
         · simp [MarkedBoundaryKernel.markedLeafCount,
