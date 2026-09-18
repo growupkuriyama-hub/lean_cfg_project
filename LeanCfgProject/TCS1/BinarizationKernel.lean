@@ -56,6 +56,7 @@ def BinaryPairRealizes
 inductive BinarizedState (N : Type u)
   | old : N → BinarizedState N
   | suffix : List N → BinarizedState N
+deriving DecidableEq
 
 /-- Semantic interpretation of old and fresh suffix states. -/
 def binarizedInterpretation
