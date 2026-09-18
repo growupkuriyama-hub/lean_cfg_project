@@ -66,6 +66,47 @@ def binarizedInterpretation
       {w | NTSequenceRealizes L xs w}
 
 /--
+A two-symbol nonterminal sequence is exactly one binary concatenation step.
+-/
+theorem ntSequence_two_iff_binaryPair
+    {X : Type u}
+    (L : X → Set (List α))
+    (B C : X)
+    (w : List α) :
+    NTSequenceRealizes L [B, C] w ↔
+      BinaryPairRealizes L B C w := by
+  constructor
+  · intro h
+    rcases h with ⟨u, v, hw, hu, hv⟩
+    rcases hv with ⟨vC, tail, hvEq, hvC, htail⟩
+    have htailNil : tail = [] := htail
+    subst tail
+    have hvEq' : v = vC := by
+      simpa using hvEq
+    subst v
+    exact ⟨u, vC, hw, hu, hvC⟩
+  · intro h
+    rcases h with ⟨u, v, hw, hu, hv⟩
+    refine ⟨u, v, hw, hu, ?_⟩
+    exact ⟨v, [], by simp, hv, rfl⟩
+
+/-- Sequence realization is monotone in the interpretation of nonterminals. -/
+theorem ntSequenceRealizes_mono
+    {X : Type u}
+    {L₁ L₂ : X → Set (List α)}
+    (hsub : ∀ A, L₁ A ⊆ L₂ A)
+    {xs : List X}
+    {w : List α}
+    (h : NTSequenceRealizes L₁ xs w) :
+    NTSequenceRealizes L₂ xs w := by
+  induction xs generalizing w with
+  | nil =>
+      exact h
+  | cons A rest ih =>
+      rcases h with ⟨u, v, hw, hu, hv⟩
+      exact ⟨u, v, hw, hsub A hu, ih hv⟩
+
+/--
 The first binary split of a long RHS is semantically exact.
 -/
 theorem first_binary_split_iff
