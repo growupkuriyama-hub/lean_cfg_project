@@ -46,7 +46,8 @@ theorem mixedSymbolsDerive_to_rhsRealizes
       refine ⟨w, pieces.flatten, ?_, ?_, ih⟩
       · simp
       · exact head
-termination_by sizeOf d
+termination_by rhs.length
+decreasing_by simp
 
 /--
 Conversely, every semantic RHS realization can be represented by aligned
