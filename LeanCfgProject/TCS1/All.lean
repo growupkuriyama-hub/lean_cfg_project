@@ -18,6 +18,7 @@ import LeanCfgProject.TCS1.TerminalIsolationKernel
 import LeanCfgProject.TCS1.GeneralCFGDerivation
 import LeanCfgProject.TCS1.GeneralCFGDerivationBridge
 import LeanCfgProject.TCS1.BinarizationKernel
+import LeanCfgProject.TCS1.FrontEndThicknessKernel
 import LeanCfgProject.TCS1.NormalizationLanguageBounds
 import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
