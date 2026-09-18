@@ -138,11 +138,19 @@ theorem indexedFiniteFrontEnd_card_le_scale
           (indexedNormalizationSupportCertificate G).support)
       ≤
     G.normalizationScale := by
-  change
-    (indexedClosedFrontSupport G).card ≤
-      G.normalizationScale
-  exact
-    indexedClosedFrontSupport_card_le_normalizationScale G
+  calc
+    Fintype.card
+        (SupportedState
+          (indexedNormalizationSupportCertificate G).support)
+      =
+    (indexedNormalizationSupportCertificate G).support.card :=
+      supportedState_card
+        (indexedNormalizationSupportCertificate G).support
+    _ =
+    (indexedClosedFrontSupport G).card := by
+      rfl
+    _ ≤ G.normalizationScale :=
+      indexedClosedFrontSupport_card_le_normalizationScale G
 
 /--
 Direct paper-facing thickness theorem from a finite indexed source CFG.
@@ -157,7 +165,7 @@ theorem indexed_proposition74_thickness
       YieldBound
         (fun A => LeastClosedLanguage G.toMixedRules A)
         τR)
-    {Nsurv Nfinal : Type (max u v w)}
+    {Nsurv Nfinal : Type (max u v)}
     (surv :
       Nsurv →
         SupportedState
