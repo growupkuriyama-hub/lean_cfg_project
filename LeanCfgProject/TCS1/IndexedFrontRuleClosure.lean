@@ -132,16 +132,22 @@ theorem indexed_isolatedStructural_long_has_source
             cases s <;>
               simp [isolateRhs, isolateSymbol] at hout
         | cons s₂ tail₂ =>
+            let f :
+                MixedSymbol N α →
+                  MixedSymbol (N ⊕ α) α :=
+              fun x => Sum.inl x
             have hmaps :
-                (B :: C :: D :: rest).map Sum.inl =
-                  (s :: s₂ :: tail₂).map Sum.inl := by
-              simpa [isolateRhs,
+                (B :: C :: D :: rest).map f =
+                  (s :: s₂ :: tail₂).map f := by
+              simpa [f, isolateRhs,
                 map_isolateSymbol_true_eq_map_inl] using hout
+            have hf : Function.Injective f := by
+              intro x y hxy
+              exact Sum.inl.inj hxy
             have hlist :
                 B :: C :: D :: rest =
                   s :: s₂ :: tail₂ :=
-              (List.map_inj_right
-                (fun _ _ hEq => Sum.inl.inj hEq)).1 hmaps
+              (List.map_inj_right hf).1 hmaps
             exact ⟨p, hRhs.trans hlist.symm⟩
   · rcases hwrapper with ⟨a, hX, hout⟩
     simp at hout
