@@ -14,6 +14,7 @@ import LeanCfgProject.TCS1.FixedWindowCharacteristicDataBounds
 import LeanCfgProject.TCS1.FixedWindowTreeCombinatorics
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
+import LeanCfgProject.TCS1.FiniteSupportSpineBound
 import LeanCfgProject.TCS1.FixedWindowContextPathBound
 
 import LeanCfgProject.TCS1.TerminalIsolationKernel
