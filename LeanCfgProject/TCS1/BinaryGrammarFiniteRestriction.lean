@@ -82,7 +82,7 @@ theorem ambientDerives_to_restricted
       (restrictBinaryGrammar G support)
       (⟨A, hA⟩ : SupportedState support)
       w := by
-  induction d generalizing hA with
+  induction d with
   | @terminal A a h =>
       exact BinaryNullableDerives.terminal h
   | @epsilon A h =>
@@ -90,14 +90,25 @@ theorem ambientDerives_to_restricted
   | @unit A B w h d ih =>
       have hB : B ∈ support :=
         hclosed.unitChild hA h
+      let A' : SupportedState support := ⟨A, hA⟩
+      let B' : SupportedState support := ⟨B, hB⟩
+      have h' :
+          (restrictBinaryGrammar G support).unitRule A' B' := by
+        exact h
       exact
-        BinaryNullableDerives.unit h
+        BinaryNullableDerives.unit h'
           (ih hB)
   | @binary A B C wB wC h dB dC ihB ihC =>
       have hBC :=
         hclosed.binaryChildren hA h
+      let A' : SupportedState support := ⟨A, hA⟩
+      let B' : SupportedState support := ⟨B, hBC.1⟩
+      let C' : SupportedState support := ⟨C, hBC.2⟩
+      have h' :
+          (restrictBinaryGrammar G support).binaryRule A' B' C' := by
+        exact h
       exact
-        BinaryNullableDerives.binary h
+        BinaryNullableDerives.binary h'
           (ihB hBC.1)
           (ihC hBC.2)
 
