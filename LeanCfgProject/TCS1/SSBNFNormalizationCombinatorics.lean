@@ -45,14 +45,34 @@ Candidate variants of a binary right-hand side B C after deleting nullable
 children.  The original binary rule is always kept; a unit variant is added
 for each nullable child.
 -/
+def leftNullableVariant
+    [DecidableEq N]
+    (nullable : N → Bool)
+    (B C : N) :
+    Finset (BinaryNullableVariant N) :=
+  if nullable B = true then
+    {BinaryNullableVariant.dropLeft C}
+  else
+    ∅
+
+def rightNullableVariant
+    [DecidableEq N]
+    (nullable : N → Bool)
+    (B C : N) :
+    Finset (BinaryNullableVariant N) :=
+  if nullable C = true then
+    {BinaryNullableVariant.dropRight B}
+  else
+    ∅
+
 def binaryNullableVariants
     [DecidableEq N]
     (nullable : N → Bool)
     (B C : N) :
     Finset (BinaryNullableVariant N) :=
   insert (BinaryNullableVariant.keep B C)
-    ((if nullable B then {BinaryNullableVariant.dropLeft C} else ∅) ∪
-     (if nullable C then {BinaryNullableVariant.dropRight B} else ∅))
+    (leftNullableVariant nullable B C ∪
+     rightNullableVariant nullable B C)
 
 /-- One binary rule produces at most three nonempty variants. -/
 theorem binaryNullableVariants_card_le_three
@@ -60,28 +80,17 @@ theorem binaryNullableVariants_card_le_three
     (nullable : N → Bool)
     (B C : N) :
     (binaryNullableVariants nullable B C).card ≤ 3 := by
-  classical
-  unfold binaryNullableVariants
-  calc
-    (insert (BinaryNullableVariant.keep B C)
-      ((if nullable B then {BinaryNullableVariant.dropLeft C} else ∅) ∪
-       (if nullable C then {BinaryNullableVariant.dropRight B} else ∅))).card
-      ≤ 1 +
-        (((if nullable B then {BinaryNullableVariant.dropLeft C} else ∅) ∪
-          (if nullable C then {BinaryNullableVariant.dropRight B} else ∅))).card := by
-        exact Finset.card_insert_le _ _
-    _ ≤ 1 +
-        (if nullable B then {BinaryNullableVariant.dropLeft C} else ∅).card +
-        (if nullable C then {BinaryNullableVariant.dropRight B} else ∅).card := by
-        omega
-    _ ≤ 3 := by
-        by_cases hB : nullable B
-        · by_cases hC : nullable C
-          · simp [hB, hC]
-          · simp [hB, hC]
-        · by_cases hC : nullable C
-          · simp [hB, hC]
-          · simp [hB, hC]
+  by_cases hB : nullable B = true
+  · by_cases hC : nullable C = true
+    · simp [binaryNullableVariants, leftNullableVariant,
+        rightNullableVariant, hB, hC]
+    · simp [binaryNullableVariants, leftNullableVariant,
+        rightNullableVariant, hB, hC]
+  · by_cases hC : nullable C = true
+    · simp [binaryNullableVariants, leftNullableVariant,
+        rightNullableVariant, hB, hC]
+    · simp [binaryNullableVariants, leftNullableVariant,
+        rightNullableVariant, hB, hC]
 
 /--
 Summed with multiplicity, epsilon elimination contributes at most three
