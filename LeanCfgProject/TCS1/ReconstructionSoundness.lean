@@ -106,7 +106,7 @@ theorem observed_self_derives
     {x u v : Word α}
     (hobs : Observed K x u v) :
     HypDerives H K x u v x := by
-  induction x using List.rec with
+  induction x generalizing u v with
   | nil =>
       exact False.elim (hobs.1 rfl)
   | cons a xs ih =>
@@ -121,11 +121,11 @@ theorem observed_self_derives
           have hleft : Observed K [a] u (y ++ v) := by
             constructor
             · simp
-            · simpa only [List.append_assoc] using hobs.2
+            · simpa [y, List.append_assoc] using hobs.2
           have hright : Observed K y (u ++ [a]) v := by
             constructor
             · exact hy_ne
-            · simpa only [List.append_assoc] using hobs.2
+            · simpa [y, List.append_assoc] using hobs.2
           have dleft : HypDerives H K [a] u (y ++ v) [a] :=
             HypDerives.r4 hleft
           have dright : HypDerives H K y (u ++ [a]) v y := by
@@ -196,8 +196,10 @@ theorem hypDerives_soundnessInvariant
         rw [← hdist]
         exact hctx_x
       constructor
-      · change u ++ (w₁ ++ w₂) ++ v ∈ L
-        simpa only [List.append_assoc] using hctx_w₁
+      · have hmem : u ++ w₁ ++ (w₂ ++ v) ∈ L := by
+          change u ++ w₁ ++ (w₂ ++ v) ∈ L at hctx_w₁
+          exact hctx_w₁
+        simpa only [List.append_assoc] using hmem
       · calc
           H.h (w₁ ++ w₂) = H.h w₁ * H.h w₂ :=
             H.map_append w₁ w₂
