@@ -60,6 +60,7 @@ def v62BinarizeProjectWord {T N : Type*}
           v62BinarizeProjectWord (xs.map v62BinarizeLiftSymbol) =
         x :: xs
       rw [v62_binarize_project_lift_symbol, ih]
+      rfl
 
 @[simp] theorem v62_binarize_project_terminal_word
     {T N : Type*} (w : List T) :
@@ -79,6 +80,7 @@ def v62BinarizeProjectWord {T N : Type*}
               (Sum N (ContextFreeRule T N × Nat)))) =
         Symbol.terminal a :: w.map (@Symbol.terminal T N)
       rw [v62_binarize_project_terminal_symbol, ih]
+      rfl
 
 /--
 Every helper-chain rule is invisible under suffix expansion, provided the local
@@ -105,7 +107,8 @@ theorem v62_binarize_tail_rule_projects_eq
           | nil =>
               simp [v62BinarizeTailRules] at hq
               subst q
-              simp [v62BinarizeProjectWord, hu]
+              change r.output.drop (i + 1) = [x, y]
+              exact hu
           | cons z zs =>
               simp only [v62BinarizeTailRules, List.mem_cons] at hq
               have hnext :
@@ -118,7 +121,10 @@ theorem v62_binarize_tail_rule_projects_eq
                   _ = y :: z :: zs := by rfl
               rcases hq with hq | hq
               · subst q
-                simp [v62BinarizeProjectWord, hu, hnext]
+                change
+                  r.output.drop (i + 1) =
+                    [x] ++ r.output.drop ((i + 1) + 1)
+                rw [hu, hnext]
               · exact ih (i := i + 1) hnext hq
 
 end FixedHCFG
