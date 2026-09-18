@@ -105,7 +105,8 @@ theorem nonemptySpine_word_ne_nil
   | binaryLeft _ _ _ ih =>
       exact append_ne_nil_of_left_ne_nil ih
   | binaryRight _ _ _ ih =>
-      exact append_ne_nil_of_right_ne_nil _ ih
+      intro hnil
+      exact ih (List.append_eq_nil.mp hnil).2
 
 /--
 The selected terminal contributes exactly one symbol and every binary spine
