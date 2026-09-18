@@ -1,12 +1,3 @@
-/-!
-# TCS #1 v65 Lean verification facade
-
-This module imports every theorem-facing kernel maintained for the current
-TCS #1 working baseline.  Building this one target is the fast integration
-check; CI separately rejects `sorry` and project-level `axiom` declarations
-inside the TCS1 namespace.
--/
-
 import LeanCfgProject.TCS1.FixedHSubstitutability
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.ReconstructionSoundness
@@ -28,6 +19,15 @@ import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
 import LeanCfgProject.TCS1.SSBNFNormalizationSemanticKernel
 import LeanCfgProject.TCS1.FixedWindowTransferKernel
+
+/-!
+# TCS #1 v65 Lean verification facade
+
+This module imports every theorem-facing kernel maintained for the current
+TCS #1 working baseline. Building this one target is the fast integration
+check; CI separately rejects `sorry` and project-level `axiom` declarations
+inside the TCS1 namespace.
+-/
 
 namespace LeanCfgProject
 namespace TCS1
