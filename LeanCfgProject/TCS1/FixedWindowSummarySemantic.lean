@@ -67,6 +67,48 @@ def RespectsFixedWindowSummary
     H.h x = H.h y
 
 /--
+Conversely, a typing reflects the fixed-window summary when equality of types
+forces equality of the tagged short/long summary.  The concrete h_{k,l} of
+Proposition 3.2 satisfies both directions.
+-/
+def ReflectsFixedWindowSummary
+    (H : FixedFiniteMonoidHom α M)
+    (k l : Nat) : Prop :=
+  ∀ x y : Word α,
+    H.h x = H.h y →
+    SameFixedWindowSummary k l x y
+
+/-- Short-summary equality remembers the short word exactly. -/
+theorem sameFixedWindowSummary_short_left_eq
+    {k l : Nat}
+    {x y : Word α}
+    (hx : x.length < fixedWindowThreshold k l)
+    (hsame : SameFixedWindowSummary k l x y) :
+    y = x := by
+  rcases hsame with hshort | hlong
+  · exact hshort.2
+  · have hcontra :
+        fixedWindowThreshold k l ≤ x.length :=
+      hlong.1
+    omega
+
+/--
+Hence, under a summary-reflecting typing, a short reference word is the unique
+word of its type.  This is the short-word branch of Lemma 7.1.
+-/
+theorem short_word_unique_of_type
+    (H : FixedFiniteMonoidHom α M)
+    {k l : Nat}
+    (hreflect : ReflectsFixedWindowSummary H k l)
+    {x y : Word α}
+    (hx : x.length < fixedWindowThreshold k l)
+    (htype : H.h x = H.h y) :
+    y = x := by
+  exact
+    sameFixedWindowSummary_short_left_eq
+      hx (hreflect x y htype)
+
+/--
 When r=k+l is positive, the threshold max(1,r) is exactly r.
 -/
 theorem fixedWindowThreshold_eq_sum_of_pos
