@@ -47,6 +47,9 @@ jobs:
       - name: Check reducedness witness choices
         run: lake build LeanCfgProject.TCS1.ReducednessWitnessChoices
 
+      - name: Check Section 7 thickness arithmetic
+        run: lake build LeanCfgProject.TCS1.SSBNFThicknessBounds
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
