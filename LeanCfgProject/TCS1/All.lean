@@ -18,6 +18,7 @@ import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.FiniteSupportSpineBound
 import LeanCfgProject.TCS1.BinaryGrammarFiniteRestriction
 import LeanCfgProject.TCS1.FixedWindowContextPathBound
+import LeanCfgProject.TCS1.FixedWindowContextSemantic
 
 import LeanCfgProject.TCS1.TerminalIsolationKernel
 import LeanCfgProject.TCS1.LeastClosedCFGLanguage
