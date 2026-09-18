@@ -28,6 +28,9 @@ jobs:
       - name: Check yield-typed refinement core
         run: lake build LeanCfgProject.TCS1.YieldTypedRefinementCore
 
+      - name: Check reconstruction soundness
+        run: lake build LeanCfgProject.TCS1.ReconstructionSoundness
+
       - name: Reject sorry in TCS1
         run: |
           if grep -R -nE '\bsorry\b' LeanCfgProject/TCS1 --include="*.lean"; then
