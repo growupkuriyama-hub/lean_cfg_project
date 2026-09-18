@@ -62,6 +62,9 @@ jobs:
       - name: Check normalization language-bound transfer
         run: lake build LeanCfgProject.TCS1.NormalizationLanguageBounds
 
+      - name: Check shortest nonempty path bound
+        run: lake build LeanCfgProject.TCS1.ShortestNonemptyPathBound
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
