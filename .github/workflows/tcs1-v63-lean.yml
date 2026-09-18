@@ -71,6 +71,9 @@ jobs:
       - name: Check binary epsilon elimination semantics
         run: lake build LeanCfgProject.TCS1.BinaryEpsilonElimination
 
+      - name: Check binary unit elimination semantics
+        run: lake build LeanCfgProject.TCS1.BinaryUnitElimination
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
