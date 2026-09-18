@@ -68,6 +68,9 @@ jobs:
       - name: Check fixed-window context path bound
         run: lake build LeanCfgProject.TCS1.FixedWindowContextPathBound
 
+      - name: Check binary epsilon elimination semantics
+        run: lake build LeanCfgProject.TCS1.BinaryEpsilonElimination
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
