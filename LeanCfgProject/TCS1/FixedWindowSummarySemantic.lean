@@ -55,19 +55,6 @@ def SameFixedWindowSummary
      x = p ++ m₁ ++ q ∧
      y = p ++ m₂ ++ q)
 
-/-- Every word has the same fixed-window summary as itself. -/
-theorem sameFixedWindowSummary_refl
-    (k l : Nat)
-    (x : Word α) :
-    SameFixedWindowSummary k l x x := by
-  by_cases hshort : x.length < fixedWindowThreshold k l
-  · exact Or.inl ⟨hshort, rfl⟩
-  · have hlong : fixedWindowThreshold k l ≤ x.length :=
-      Nat.le_of_not_gt hshort
-    exact Or.inr
-      ⟨hlong, hlong, [], [], x, x,
-        rfl, rfl, by simp, by simp⟩
-
 /--
 A fixed finite-monoid typing respects the window summary when summary equality
 implies equality of monoid types.
