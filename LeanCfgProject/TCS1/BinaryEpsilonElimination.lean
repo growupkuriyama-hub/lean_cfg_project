@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.ReconstructionSoundness
+import LeanCfgProject.TCS1.NormalizationLanguageBounds
 
 /-!
 # TCS #1: semantic correctness of binary-first non-start epsilon elimination
@@ -189,10 +190,10 @@ theorem epsilonFreeDerives_to_binaryNullable
       cases h with
       | original horig =>
           exact BinaryNullableDerives.unit horig ih
-      | @dropLeft A B C hbin hnull =>
+      | dropLeft hbin hnull =>
           simpa using
             (BinaryNullableDerives.binary hbin hnull ih)
-      | @dropRight A B C hbin hnull =>
+      | dropRight hbin hnull =>
           simpa using
             (BinaryNullableDerives.binary hbin ih hnull)
 
