@@ -35,7 +35,7 @@ inductive MixedDerives
       {pieces : List (List α)}
       (hR : R A rhs)
       (hpieces : MixedSymbolsDerive R rhs pieces) :
-      MixedDerives R A pieces.join
+      MixedDerives R A pieces.flatten
 
 /-- Aligned successful derivations of all symbols in one right-hand side. -/
 inductive MixedSymbolsDerive
