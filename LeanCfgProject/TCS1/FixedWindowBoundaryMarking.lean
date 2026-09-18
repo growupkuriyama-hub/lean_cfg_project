@@ -165,17 +165,7 @@ theorem markWithMask_markedWord
             BinaryDerivationTree.leafCount right := by
         simp only [BinaryDerivationTree.leafCount] at hlen
         simp [List.length_drop, hlen]
-      rw [show
-        LeafMarkedTree.markedWord (markWithMask T mask) =
-          LeafMarkedTree.markedWord
-              (markWithMask left
-                (mask.take
-                  (BinaryDerivationTree.leafCount left))) ++
-            LeafMarkedTree.markedWord
-              (markWithMask right
-                (mask.drop
-                  (BinaryDerivationTree.leafCount left))) by
-          rfl]
+      simp only [markWithMask, LeafMarkedTree.markedWord]
       rw [ihL _ hleft, ihR _ hright]
       have hyieldLeft :
           (BinaryDerivationTree.yield left).length =
