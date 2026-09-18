@@ -50,6 +50,9 @@ jobs:
       - name: Check Section 7 thickness arithmetic
         run: lake build LeanCfgProject.TCS1.SSBNFThicknessBounds
 
+      - name: Check SSBNF normalization combinatorics
+        run: lake build LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
+
       - name: Check Gold convergence closure
         run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
 
