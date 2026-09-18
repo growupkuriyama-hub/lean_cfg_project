@@ -198,11 +198,14 @@ theorem omissionRanksAux_length
   | marked =>
       simp [omissionRanksAux, omittedCount]
   | unaryLeft hbin child siblingWord sibling ih =>
-      simp [omissionRanksAux, omittedCount,
-        ih offset]
+      simp only [omissionRanksAux, List.length_append,
+        List.length_singleton, omittedCount]
+      rw [ih offset]
+      omega
   | unaryRight hbin siblingWord sibling child ih =>
-      simp [omissionRanksAux, omittedCount,
-        ih offset]
+      simp only [omissionRanksAux, List.length_cons, omittedCount]
+      rw [ih offset]
+      omega
   | branch hbin left right ihL ihR =>
       simp [omissionRanksAux, omittedCount,
         ihL offset,
@@ -243,25 +246,6 @@ def boundaryTemplate
       none :: boundaryTemplate child
   | _, branch _ left right =>
       boundaryTemplate left ++ boundaryTemplate right
-
-/-- Filtering out omission placeholders recovers the marked terminal word. -/
-theorem boundaryTemplate_filterMap
-    (terminalRule : N → α → Prop)
-    (binaryRule : N → N → N → Prop)
-    {A : N}
-    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
-    (boundaryTemplate K).filterMap id =
-      markedWord K := by
-  induction K with
-  | marked a hterm =>
-      simp [boundaryTemplate, markedWord]
-  | unaryLeft hbin child siblingWord sibling ih =>
-      simp [boundaryTemplate, markedWord, ih]
-  | unaryRight hbin siblingWord sibling child ih =>
-      simp [boundaryTemplate, markedWord, ih]
-  | branch hbin left right ihL ihR =>
-      simp [boundaryTemplate, markedWord,
-        ihL, ihR]
 
 /--
 Lengths of maximal one-child chains.
