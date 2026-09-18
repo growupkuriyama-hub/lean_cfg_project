@@ -30,6 +30,7 @@ import LeanCfgProject.TCS1.FrontEndBinaryThickness
 import LeanCfgProject.TCS1.FrontEndFiniteSupportFacade
 import LeanCfgProject.TCS1.FiniteCFGEncoding
 import LeanCfgProject.TCS1.IndexedClosedFrontSupport
+import LeanCfgProject.TCS1.IndexedFrontRuleClosure
 import LeanCfgProject.TCS1.NormalizationLanguageBounds
 import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
