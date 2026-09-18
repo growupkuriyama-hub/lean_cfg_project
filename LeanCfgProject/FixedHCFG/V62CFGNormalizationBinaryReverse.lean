@@ -93,7 +93,8 @@ theorem v62_project_binarized_produces
       refine ⟨r, hr, ?_⟩
       apply v62_binarize_project_rewrites_old hrew
       · rfl
-      · exact v62_binarize_project_lift_word r.output
+      · simpa [h0] using
+          (v62_binarize_project_lift_word r.output)
   | cons x xs =>
       cases xs with
       | nil =>
@@ -103,7 +104,8 @@ theorem v62_project_binarized_produces
           refine ⟨r, hr, ?_⟩
           apply v62_binarize_project_rewrites_old hrew
           · rfl
-          · exact v62_binarize_project_lift_word r.output
+          · simpa [h0] using
+          (v62_binarize_project_lift_word r.output)
       | cons y ys =>
           cases ys with
           | nil =>
@@ -113,7 +115,8 @@ theorem v62_project_binarized_produces
               refine ⟨r, hr, ?_⟩
               apply v62_binarize_project_rewrites_old hrew
               · rfl
-              · exact v62_binarize_project_lift_word r.output
+              · simpa [h0] using
+          (v62_binarize_project_lift_word r.output)
           | cons z zs =>
               simp only [v62BinarizeRulesFor, h0, List.mem_cons] at hlist
               rcases hlist with hfirst | htail
@@ -125,9 +128,9 @@ theorem v62_project_binarized_produces
                 · simpa [v62BinarizeProjectWord, h0]
               · left
                 apply v62_binarize_project_rewrites_eq hrew
-                apply v62_binarize_tail_rule_projects_eq
-                · simpa [h0]
-                · exact htail
+                exact v62_binarize_tail_rule_projects_eq
+                  (r := r) (i := 0) (u := y :: z :: zs) (q := q)
+                  (by simpa [h0]) htail
 
 /-- Every binarized derivation projects to an old derivation. -/
 theorem v62_project_binarized_derives
