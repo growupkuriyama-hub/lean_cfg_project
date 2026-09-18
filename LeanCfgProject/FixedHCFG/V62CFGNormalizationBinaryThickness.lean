@@ -110,7 +110,8 @@ theorem v62_short_word_from_sentential_of_productive_members
           · have h := hs.append_left [Symbol.terminal a]
             simpa using h
           · calc
-              (a :: ws).length = 1 + ws.length := by simp
+              (a :: ws).length = 1 + ws.length := by
+                simp [Nat.add_comm]
               _ ≤ 1 + xs.length * max tau 1 :=
                 Nat.add_le_add_left hslen 1
               _ ≤ max tau 1 + xs.length * max tau 1 := by
