@@ -1,0 +1,24 @@
+name: TCS1 v68 Lean
+
+on:
+  push:
+    branches:
+      - tcs1-v68-lean
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Build TCS1 v68 facade
+        uses: leanprover/lean-action@v1
+        with:
+          build-args: "LeanCfgProject/TCS1/All.lean:o"
