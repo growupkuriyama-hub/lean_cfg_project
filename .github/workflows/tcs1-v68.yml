@@ -1,6 +1,9 @@
 name: TCS1 v68 Lean
 
 on:
+  push:
+    branches:
+      - tcs1-v68-lean
   pull_request:
     branches:
       - tcs1-v68-ci-base
