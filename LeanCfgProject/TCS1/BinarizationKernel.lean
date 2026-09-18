@@ -109,6 +109,43 @@ theorem ntSequenceRealizes_mono
       exact ⟨u, v, hw, hsub A hu, ih hv⟩
 
 /--
+Binary concatenation on two embedded old states is definitionally the source
+binary concatenation, made explicit for downstream rewriting.
+-/
+theorem binaryPair_old_iff
+    (L : N → Set (List α))
+    (B C : N)
+    (w : List α) :
+    BinaryPairRealizes
+        (binarizedInterpretation L)
+        (BinarizedState.old B)
+        (BinarizedState.old C)
+        w
+      ↔
+    BinaryPairRealizes L B C w := by
+  simp [BinaryPairRealizes, binarizedInterpretation]
+
+/--
+A sequence of embedded old states realizes exactly the same terminal words as
+the corresponding source-state sequence.
+-/
+theorem ntSequence_old_map_iff
+    (L : N → Set (List α))
+    (xs : List N)
+    (w : List α) :
+    NTSequenceRealizes
+        (binarizedInterpretation L)
+        (xs.map BinarizedState.old)
+        w
+      ↔
+    NTSequenceRealizes L xs w := by
+  induction xs generalizing w with
+  | nil =>
+      simp [NTSequenceRealizes]
+  | cons A rest ih =>
+      simp [NTSequenceRealizes, binarizedInterpretation, ih]
+
+/--
 The first binary split of a long RHS is semantically exact.
 -/
 theorem first_binary_split_iff

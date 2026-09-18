@@ -131,8 +131,8 @@ theorem topBinarizedRhs_realizes_iff
   | cons B rest =>
       cases rest with
       | nil =>
-          simp [topBinarizedRhs, NTSequenceRealizes,
-            binarizedInterpretation]
+          simpa [topBinarizedRhs] using
+            (ntSequence_old_map_iff L [B] w).symm
       | cons C rest₂ =>
           cases rest₂ with
           | nil =>
@@ -147,7 +147,7 @@ theorem topBinarizedRhs_realizes_iff
                     (BinarizedState.old B)
                     (BinarizedState.old C)
                     w).2
-                    (by simpa [binarizedInterpretation] using hp)
+                    ((binaryPair_old_iff L B C w).2 hp)
               · intro h
                 have hp :
                     BinaryPairRealizes
@@ -162,7 +162,7 @@ theorem topBinarizedRhs_realizes_iff
                     w).1 h
                 exact
                   (ntSequence_two_iff_binaryPair L B C w).2
-                    (by simpa [binarizedInterpretation] using hp)
+                    ((binaryPair_old_iff L B C w).1 hp)
           | cons D tail =>
               calc
                 NTSequenceRealizes L (B :: C :: D :: tail) w
@@ -216,9 +216,11 @@ theorem binarizedInterpretation_sequenceClosed
     | suffixEmpty =>
         exact hreal
     | suffixUnit B =>
-        simpa [binarizedInterpretation] using hreal
+        exact
+          (ntSequence_old_map_iff L [B] w).1 hreal
     | suffixBinary B C =>
-        simpa [binarizedInterpretation] using hreal
+        exact
+          (ntSequence_old_map_iff L [B, C] w).1 hreal
     | suffixLong B C D rest =>
         have hp :
             BinaryPairRealizes
@@ -233,6 +235,23 @@ theorem binarizedInterpretation_sequenceClosed
             w).1 hreal
         exact
           (first_binary_split_iff L B C (D :: rest) w).2 hp
+
+/--
+Embedding old states into an arbitrary binary interpretation is exactly the
+same as realizing the source sequence in its restriction.
+-/
+theorem ntSequence_old_restrict_iff
+    (Q : BinarizedState N → Set (List α))
+    (xs : List N)
+    (w : List α) :
+    NTSequenceRealizes Q (xs.map BinarizedState.old) w
+      ↔
+    NTSequenceRealizes (restrictBinarized Q) xs w := by
+  induction xs generalizing w with
+  | nil =>
+      simp [NTSequenceRealizes]
+  | cons A rest ih =>
+      simp [NTSequenceRealizes, restrictBinarized, ih]
 
 /--
 Every canonical suffix-language word belongs to the corresponding state of
@@ -271,8 +290,8 @@ theorem binarizedInterpretation_restrict_subset
                 ⟨[BinarizedState.old B],
                   BinarizedStructuralRule.suffixUnit B,
                   ?_⟩
-              simpa [restrictBinarized,
-                binarizedInterpretation] using hw
+              exact
+                (ntSequence_old_restrict_iff Q [B] w).2 hw
           | cons C rest₂ =>
               cases rest₂ with
               | nil =>
@@ -284,8 +303,8 @@ theorem binarizedInterpretation_restrict_subset
                        BinarizedState.old C],
                       BinarizedStructuralRule.suffixBinary B C,
                       ?_⟩
-                  simpa [restrictBinarized,
-                    binarizedInterpretation] using hw
+                  exact
+                    (ntSequence_old_restrict_iff Q [B, C] w).2 hw
               | cons D tail =>
                   intro w hw
                   have hp :
