@@ -106,10 +106,8 @@ def startChildReachingContext
   right := []
   plug := by
     intro z d
-    change
-      ReducedTypedLanguage
-        H terminalRule binaryRule startRule epsilonStart Active z
-    exact ReducedTypedStartDerives.nonempty hstart hactive d
+    simpa using
+      (ReducedTypedStartDerives.nonempty hstart hactive d)
 
 /--
 For an inactive pair there can be no reduced typed derivation, so an arbitrary
