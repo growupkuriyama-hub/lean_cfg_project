@@ -105,7 +105,7 @@ theorem stable_from_exact
         R.keep_if_generated (n + k) hgen
       calc
         R.hyp (n + (k + 1)) = R.hyp (n + k + 1) := by
-          congr 2 <;> omega
+          rw [Nat.add_succ]
         _ = R.hyp (n + k) := hkeep
         _ = R.hyp n := ih
 
