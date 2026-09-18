@@ -1,5 +1,9 @@
 name: TCS1 v63 Lean CI
 
+concurrency:
+  group: tcs1-v63-lean-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
