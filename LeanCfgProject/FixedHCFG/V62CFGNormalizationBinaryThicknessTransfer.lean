@@ -34,6 +34,21 @@ theorem v62_binarized_old_productive
   rw [v62_binarize_project_terminal_word] at hp
   simpa [v62BinarizeProjectWord, v62BinarizeProjectSymbol] using hp
 
+/-- Old terminal-word derivations survive long-rule binarization. -/
+theorem v62_binarization_preserves_old_word_derivation
+    {T : Type} {g : ContextFreeGrammar T}
+    {A : g.NT} {w : List T}
+    (h : V62CFGDerivesWordFrom g A w) :
+    V62CFGDerivesWordFrom (v62BinarizedGrammar g) (Sum.inl A) w := by
+  unfold V62CFGDerivesWordFrom at h ⊢
+  have hsim := v62_binarization_simulates_derives h
+  change (v62BinarizedGrammar g).Derives
+    [Symbol.nonterminal (Sum.inl A)]
+    (w.map (@Symbol.terminal T
+      (Sum g.NT (ContextFreeRule T g.NT × Nat))))
+  rw [← v62_binarize_lift_terminal_word (g := g) w]
+  simpa only [List.map_cons, List.map_nil, v62BinarizeLiftSymbol] using hsim
+
 /--
 A productive helper has a short terminal witness controlled by the maximum old
 RHS length and the old thickness bound.
@@ -66,6 +81,7 @@ theorem v62_binarized_helper_short_witness
   have hall := htail.trans hsim
   refine ⟨w, ?_, ?_⟩
   · unfold V62CFGDerivesWordFrom
+    rw [← v62_binarize_lift_terminal_word (g := g) w]
     simpa [v62BinarizeHelperSymbol] using hall
   · have hdrop :
         (r.output.drop (i + 1)).length ≤ r.output.length := by
