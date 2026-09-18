@@ -224,6 +224,12 @@ theorem canonicalWitnessWords_subset_target
         ReducedTypedDerives H terminalRule binaryRule Active
           (A, μ * ν) (C.omega (B, μ) ++ C.omega (Cn, ν)) :=
       ReducedTypedDerives.binary hbin hA dB dC
+    change
+      ReducedTypedLanguage
+        H terminalRule binaryRule startRule epsilonStart Active
+        (C.left (A, μ * ν) ++
+          C.omega (B, μ) ++ C.omega (Cn, ν) ++
+          C.right (A, μ * ν))
     simpa only [List.append_assoc] using
       C.reaches (A, μ * ν) hA dParent
   · exact ReducedTypedStartDerives.epsilon heps
