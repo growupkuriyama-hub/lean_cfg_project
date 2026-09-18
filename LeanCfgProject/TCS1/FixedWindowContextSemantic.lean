@@ -356,6 +356,44 @@ theorem reachingSpine_context_length_le
   exact hsum
 
 /--
+Any reaching spine whose off-path siblings are uniformly B-bounded can be
+cycle-shortened to a repetition-free reaching spine with a concrete context
+of length at most |V|*B.  Thus the shortest-path step of Lemma 7.2 is no
+longer an external combinatorial assumption once a reaching spine exists.
+-/
+theorem reachingSpine_nodup_context_exists
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (B : Nat)
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (heach : ∀ s ∈ siblings, s ≤ B) :
+    ∃ left' right' path' siblings',
+      ReachingSpine terminalRule binaryRule
+        A X left' right' path' siblings'
+      ∧ path'.Nodup
+      ∧ (∀ s ∈ siblings', s ≤ B)
+      ∧ left'.length + right'.length ≤
+          Fintype.card N * B := by
+  obtain ⟨left', right', path', siblings',
+      spine', hnodup, heach'⟩ :=
+    normalize_reachingSpine_to_nodup
+      terminalRule binaryRule B spine heach
+  refine
+    ⟨left', right', path', siblings',
+      spine', hnodup, heach', ?_⟩
+  exact
+    reachingSpine_context_length_le
+      terminalRule binaryRule B
+      spine' hnodup heach'
+
+/--
 Paper-facing version with an external bound Nt on the number of typed
 nonterminals.
 -/
