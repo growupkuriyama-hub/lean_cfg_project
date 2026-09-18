@@ -154,7 +154,7 @@ theorem boundaryAssembly_has_reference_type
   have hsingle :
       boundaryAssembly p q [middle] =
         p ++ middle ++ q := by
-    simp [boundaryAssembly, concatBlocks, Nat.add_assoc]
+    simp [boundaryAssembly, concatBlocks]
   rw [hsingle] at hsame
   exact hsame.trans href
 
