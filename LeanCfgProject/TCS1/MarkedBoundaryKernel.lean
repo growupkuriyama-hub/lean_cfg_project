@@ -347,108 +347,92 @@ theorem omittedCount_le_of_segment_bound
   simpa using hsum
 
 /--
-Rebuild the kernel after choosing one replacement terminal word for every
-possible omitted sibling root.
--/
-def rebuildWord
-    {terminalRule : N → α → Prop}
-    {binaryRule : N → N → N → Prop}
-    (shortWord : N → Word α) :
-    {A : N} →
-    MarkedBoundaryKernel terminalRule binaryRule A →
-    Word α
-  | _, marked a _ => [a]
-  | _, @unaryLeft _ _ _ _ B C _ child _ _ =>
-      rebuildWord shortWord child ++ shortWord C
-  | _, @unaryRight _ _ _ _ B _ _ _ child =>
-      shortWord B ++ rebuildWord shortWord child
-  | _, branch _ left right =>
-      rebuildWord shortWord left ++ rebuildWord shortWord right
+Replace every omitted sibling subtree by an arbitrary short terminal yield of
+the same root.  The result is a genuine derivation, and its length is bounded
+by one terminal per marked leaf plus at most tau per omitted sibling.
 
-/-- Replacing omitted siblings by any same-root terminal derivations is valid. -/
-theorem rebuildWord_derives
+This theorem is existential rather than computational because Lemma 7.1 only
+needs existence of a short reconstructed derivation.
+-/
+theorem exists_rebuilt_short_yield
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
-    (shortWord : N → Word α)
+    (τ : Nat)
     (hshort :
       ∀ X : N,
-        UntypedDerives terminalRule binaryRule
-          X (shortWord X))
+        ∃ w : Word α,
+          UntypedDerives terminalRule binaryRule X w
+          ∧ w.length ≤ τ)
     {A : N}
     (K : MarkedBoundaryKernel terminalRule binaryRule A) :
-    UntypedDerives terminalRule binaryRule
-      A (rebuildWord shortWord K) := by
+    ∃ w : Word α,
+      UntypedDerives terminalRule binaryRule A w
+      ∧
+      w.length ≤
+        markedLeafCount K + omittedCount K * τ := by
   induction K with
   | marked a hterm =>
-      exact UntypedDerives.terminal hterm
-  | @unaryLeft A B C hbin child siblingWord sibling ih =>
-      exact UntypedDerives.binary hbin ih (hshort C)
-  | @unaryRight A B C hbin siblingWord sibling child ih =>
-      exact UntypedDerives.binary hbin (hshort B) ih
-  | branch hbin left right ihL ihR =>
-      exact UntypedDerives.binary hbin ihL ihR
+      exact
+        ⟨[a],
+          UntypedDerives.terminal hterm,
+          by simp [markedLeafCount, omittedCount]⟩
 
-/--
-Length of a rebuilt yield: one terminal per marked leaf plus at most tau for
-every omitted sibling subtree.
--/
-theorem rebuildWord_length_le
-    (terminalRule : N → α → Prop)
-    (binaryRule : N → N → N → Prop)
-    (shortWord : N → Word α)
-    (τ : Nat)
-    (hshortLen : ∀ X : N, (shortWord X).length ≤ τ)
-    {A : N}
-    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
-    (rebuildWord shortWord K).length ≤
-      markedLeafCount K + omittedCount K * τ := by
-  induction K with
-  | marked a hterm =>
-      simp [rebuildWord, markedLeafCount, omittedCount]
   | @unaryLeft A B C hbin child siblingWord sibling ih =>
-      have hC := hshortLen C
-      simp only [rebuildWord, List.length_append,
-        markedLeafCount, omittedCount]
+      obtain ⟨wB, dB, hB⟩ := ih
+      obtain ⟨wC, dC, hC⟩ := hshort C
+      refine
+        ⟨wB ++ wC,
+          UntypedDerives.binary hbin dB dC,
+          ?_⟩
+      simp only [List.length_append, markedLeafCount, omittedCount]
       calc
-        (rebuildWord shortWord child).length +
-            (shortWord C).length
-          ≤
-        (markedLeafCount child +
-            omittedCount child * τ) + τ :=
-          Nat.add_le_add ih hC
+        wB.length + wC.length
+            ≤
+          (markedLeafCount child +
+              omittedCount child * τ) + τ :=
+            Nat.add_le_add hB hC
         _ =
-        markedLeafCount child +
-          (1 + omittedCount child) * τ := by
-            ring
+          markedLeafCount child +
+            (1 + omittedCount child) * τ := by
+              ring
+
   | @unaryRight A B C hbin siblingWord sibling child ih =>
-      have hB := hshortLen B
-      simp only [rebuildWord, List.length_append,
-        markedLeafCount, omittedCount]
+      obtain ⟨wB, dB, hB⟩ := hshort B
+      obtain ⟨wC, dC, hC⟩ := ih
+      refine
+        ⟨wB ++ wC,
+          UntypedDerives.binary hbin dB dC,
+          ?_⟩
+      simp only [List.length_append, markedLeafCount, omittedCount]
       calc
-        (shortWord B).length +
-            (rebuildWord shortWord child).length
-          ≤
-        τ + (markedLeafCount child +
-            omittedCount child * τ) :=
-          Nat.add_le_add hB ih
+        wB.length + wC.length
+            ≤
+          τ + (markedLeafCount child +
+              omittedCount child * τ) :=
+            Nat.add_le_add hB hC
         _ =
-        markedLeafCount child +
-          (1 + omittedCount child) * τ := by
-            ring
+          markedLeafCount child +
+            (1 + omittedCount child) * τ := by
+              ring
+
   | branch hbin left right ihL ihR =>
-      simp only [rebuildWord, List.length_append,
-        markedLeafCount, omittedCount]
+      obtain ⟨wL, dL, hL⟩ := ihL
+      obtain ⟨wR, dR, hR⟩ := ihR
+      refine
+        ⟨wL ++ wR,
+          UntypedDerives.binary hbin dL dR,
+          ?_⟩
+      simp only [List.length_append, markedLeafCount, omittedCount]
       calc
-        (rebuildWord shortWord left).length +
-            (rebuildWord shortWord right).length
-          ≤
-        (markedLeafCount left + omittedCount left * τ) +
-          (markedLeafCount right + omittedCount right * τ) :=
-            Nat.add_le_add ihL ihR
+        wL.length + wR.length
+            ≤
+          (markedLeafCount left + omittedCount left * τ) +
+            (markedLeafCount right + omittedCount right * τ) :=
+              Nat.add_le_add hL hR
         _ =
-        markedLeafCount left + markedLeafCount right +
-          (omittedCount left + omittedCount right) * τ := by
-            ring
+          markedLeafCount left + markedLeafCount right +
+            (omittedCount left + omittedCount right) * τ := by
+              ring
 
 /--
 Paper-facing long-case length theorem.
@@ -457,22 +441,28 @@ Once cycle shortening establishes that every unary segment has length at most
 Nbound, replacing each omitted sibling by a tau-short terminal yield gives the
 exact Lemma 7.1 numerical envelope.
 -/
-theorem rebuildWord_fixedWindow_length_le
+theorem exists_rebuilt_fixedWindow_yield
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
-    (shortWord : N → Word α)
     (τ Nbound r : Nat)
-    (hshortLen : ∀ X : N, (shortWord X).length ≤ τ)
+    (hshort :
+      ∀ X : N,
+        ∃ w : Word α,
+          UntypedDerives terminalRule binaryRule X w
+          ∧ w.length ≤ τ)
     {A : N}
     (K : MarkedBoundaryKernel terminalRule binaryRule A)
     (hr : markedLeafCount K = r)
     (hseg :
       ∀ c ∈ segmentLengths K, c ≤ Nbound) :
-    (rebuildWord shortWord K).length ≤
-      r + (2 * r - 1) * Nbound * τ := by
-  have hbase :=
-    rebuildWord_length_le
-      terminalRule binaryRule shortWord τ hshortLen K
+    ∃ w : Word α,
+      UntypedDerives terminalRule binaryRule A w
+      ∧
+      w.length ≤
+        r + (2 * r - 1) * Nbound * τ := by
+  obtain ⟨w, d, hlen⟩ :=
+    exists_rebuilt_short_yield
+      terminalRule binaryRule τ hshort K
   have homit :
       omittedCount K ≤
         (2 * markedLeafCount K - 1) * Nbound :=
@@ -482,8 +472,9 @@ theorem rebuildWord_fixedWindow_length_le
       omittedCount K * τ ≤
         ((2 * markedLeafCount K - 1) * Nbound) * τ :=
     Nat.mul_le_mul_right τ homit
-  rw [hr] at hbase hmul
-  exact le_trans hbase
+  rw [hr] at hlen hmul
+  refine ⟨w, d, ?_⟩
+  exact le_trans hlen
     (Nat.add_le_add_left hmul r)
 
 end MarkedBoundaryKernel
