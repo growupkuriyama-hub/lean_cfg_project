@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - tcs1-v68-lean
+  pull_request:
+    branches:
+      - tcs1-v66-lean
+    paths:
+      - "LeanCfgProject/TCS1/**"
+      - ".github/workflows/tcs1-v68.yml"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - "lake-manifest.json"
   workflow_dispatch:
 
 permissions:
