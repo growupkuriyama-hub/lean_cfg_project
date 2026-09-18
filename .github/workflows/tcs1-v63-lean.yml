@@ -40,6 +40,9 @@ jobs:
       - name: Check witness-set construction
         run: lake build LeanCfgProject.TCS1.WitnessSetConstruction
 
+      - name: Check Gold convergence closure
+        run: lake build LeanCfgProject.TCS1.GoldConvergenceClosure
+
       - name: Reject sorry in TCS1
         run: |
           if grep -R -nE '\bsorry\b' LeanCfgProject/TCS1 --include="*.lean"; then
