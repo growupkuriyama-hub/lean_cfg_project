@@ -255,7 +255,7 @@ theorem subspine_of_mem_of_nodup
         exact
           ⟨w, A :: path, siblings,
             NonemptySpineDerives.unit h d,
-            ⟨hnodup.1, hnodup.2⟩,
+            (by rw [List.nodup_cons]; exact hnodup),
             hsib⟩
       · exact ih hnodup.2 hsib hXtail
   | @binaryLeft A B C wB wC path siblings h dB dC ih =>
@@ -269,7 +269,7 @@ theorem subspine_of_mem_of_nodup
         exact
           ⟨wB ++ wC, A :: path, wC.length :: siblings,
             NonemptySpineDerives.binaryLeft h dB dC,
-            ⟨hnodup.1, hnodup.2⟩,
+            (by rw [List.nodup_cons]; exact hnodup),
             hsib⟩
       · exact ih hnodup.2 hsibTail hXtail
   | @binaryRight A B C wB wC path siblings h dB dC ih =>
@@ -283,7 +283,7 @@ theorem subspine_of_mem_of_nodup
         exact
           ⟨wB ++ wC, A :: path, wB.length :: siblings,
             NonemptySpineDerives.binaryRight h dB dC,
-            ⟨hnodup.1, hnodup.2⟩,
+            (by rw [List.nodup_cons]; exact hnodup),
             hsib⟩
       · exact ih hnodup.2 hsibTail hXtail
 
@@ -345,7 +345,8 @@ theorem normalize_boundedSpine_to_nodup
             NonemptySpineDerives.binaryLeft h hspine dC,
             ?_,
             ?_⟩
-        · exact List.nodup_cons.mpr ⟨hmem, hnodup⟩
+        · rw [List.nodup_cons]
+          exact ⟨hmem, hnodup⟩
         · intro s hs
           simp only [List.mem_cons] at hs
           rcases hs with rfl | hs
@@ -369,12 +370,27 @@ theorem normalize_boundedSpine_to_nodup
             NonemptySpineDerives.binaryRight h dB hspine,
             ?_,
             ?_⟩
-        · exact List.nodup_cons.mpr ⟨hmem, hnodup⟩
+        · rw [List.nodup_cons]
+          exact ⟨hmem, hnodup⟩
         · intro s hs
           simp only [List.mem_cons] at hs
           rcases hs with rfl | hs
           · exact hhead
           · exact hsib' s hs
+
+/--
+The exact remaining shortcut property: every nonempty-productive state has a
+bounded-sibling distinguished spine with no repeated nonterminal label.
+-/
+def NodupBoundedSpineProperty
+    (G : BinaryNullableGrammar N α)
+    (τB : Nat) : Prop :=
+  ∀ A,
+    (∃ w, BinaryNullableDerives G A w ∧ w ≠ []) →
+    ∃ w path siblings,
+      NonemptySpineDerives G A w path siblings
+      ∧ path.Nodup
+      ∧ (∀ s ∈ siblings, s ≤ τB)
 
 /--
 A uniform short-yield bound supplies the full cycle-shortcut property needed
@@ -395,20 +411,6 @@ theorem nodupBoundedSpineProperty_of_yieldBound
   exact
     normalize_boundedSpine_to_nodup
       G τB hspine₀ hsib₀
-
-/--
-The exact remaining shortcut property: every nonempty-productive state has a
-bounded-sibling distinguished spine with no repeated nonterminal label.
--/
-def NodupBoundedSpineProperty
-    (G : BinaryNullableGrammar N α)
-    (τB : Nat) : Prop :=
-  ∀ A,
-    (∃ w, BinaryNullableDerives G A w ∧ w ≠ []) →
-    ∃ w path siblings,
-      NonemptySpineDerives G A w path siblings
-      ∧ path.Nodup
-      ∧ (∀ s ∈ siblings, s ≤ τB)
 
 /--
 Once the cycle-shortcut property is supplied, the semantic shortest-nonempty
