@@ -32,7 +32,8 @@ theorem v62_rhs_nonterminal_card_le_length
   | cons x xs ih =>
       cases x with
       | terminal a =>
-          simpa [v62NonterminalOfSymbol] using ih
+          simpa [v62NonterminalOfSymbol] using
+            ih.trans (Nat.le_succ xs.length)
       | nonterminal A =>
           calc
             ((Symbol.nonterminal A :: xs).filterMap
@@ -46,7 +47,7 @@ theorem v62_rhs_nonterminal_card_le_length
 
 /-- One production mentions at most one plus its RHS length many nonterminals. -/
 theorem v62_rule_nonterminal_card_le
-    {T N : Type*} [DecidableEq N] (r : ContextFreeRule T N) :
+    {T N : Type*} (r : ContextFreeRule T N) :
     (v62RuleNonterminals r).card ≤ r.output.length + 1 := by
   classical
   unfold v62RuleNonterminals
