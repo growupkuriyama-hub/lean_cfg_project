@@ -52,7 +52,7 @@ theorem reconstructionSampleNorm_insert_le
   by_cases hw : w ∈ K
   · simp [reconstructionSampleNorm, hw]
   · simp [reconstructionSampleNorm, hw,
-      Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
+      Nat.add_assoc, Nat.add_comm]
 
 /-- The text-prefix norm is monotone by one stage. -/
 theorem positiveDataPrefixNorm_le_succ
@@ -61,7 +61,6 @@ theorem positiveDataPrefixNorm_le_succ
     positiveDataPrefixNorm datum n ≤
       positiveDataPrefixNorm datum (n + 1) := by
   simp [positiveDataPrefixNorm]
-  omega
 
 /--
 The accumulated set K_n never has larger encoding than the text prefix from
