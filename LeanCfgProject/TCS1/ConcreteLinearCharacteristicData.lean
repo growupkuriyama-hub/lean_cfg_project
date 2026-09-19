@@ -133,7 +133,8 @@ theorem concreteTypedActive_linear_characteristic_package
       ReducedTypedLanguage
           H terminalRule binaryRule startRule epsilonStart Active := by
             simpa [concreteLinearCanonicalSample, Active, R, C,
-              linearCanonicalSample_of_reducedness] using hpack.1
+              linearCanonicalSample_of_reducedness,
+              concreteTypedActive_minimalChoices] using hpack.1
       _ =
       UntypedStartLanguage
           terminalRule binaryRule startRule epsilonStart := by
@@ -141,7 +142,8 @@ theorem concreteTypedActive_linear_characteristic_package
               (concreteTypedActive_language_eq_untyped
                 H terminalRule binaryRule startRule epsilonStart)
   · simpa [concreteLinearCanonicalSample, Active, R, C,
-      linearCanonicalSample_of_reducedness] using hpack.2
+      linearCanonicalSample_of_reducedness,
+      concreteTypedActive_minimalChoices] using hpack.2
 
 /--
 Concrete conservative identification of a linear-spine target from positive
