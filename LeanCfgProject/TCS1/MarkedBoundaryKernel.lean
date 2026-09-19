@@ -229,6 +229,122 @@ def AllOmissionsAt
     (k : Nat) : Prop :=
   ∀ j ∈ omissionRanks K, j = k
 
+/-- Offset-aware form of the single-gap omission invariant. -/
+def AllOmissionsAtAux
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A : N}
+    (offset : Nat)
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat) : Prop :=
+  ∀ j ∈ omissionRanksAux offset K, j = k
+
+/-- The public zero-offset invariant is exactly the auxiliary form at zero. -/
+theorem allOmissionsAt_iff_aux_zero
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat) :
+    AllOmissionsAt K k ↔ AllOmissionsAtAux 0 K k := by
+  rfl
+
+/-- Decompose the gap invariant through a retained-left unary node. -/
+theorem allOmissionsAtAux_unaryLeft_iff
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A B C : N}
+    (hbin : binaryRule A B C)
+    (child : MarkedBoundaryKernel terminalRule binaryRule B)
+    (siblingWord : Word α)
+    (sibling :
+      UntypedDerives terminalRule binaryRule C siblingWord)
+    (offset k : Nat) :
+    AllOmissionsAtAux offset
+        (MarkedBoundaryKernel.unaryLeft
+          hbin child siblingWord sibling) k
+      ↔
+    AllOmissionsAtAux offset child k
+      ∧ offset + markedLeafCount child = k := by
+  constructor
+  · intro h
+    constructor
+    · intro j hj
+      exact h j
+        (List.mem_append_left _ hj)
+    · exact h (offset + markedLeafCount child)
+        (by
+          simp [omissionRanksAux])
+  · rintro ⟨hchild, hlast⟩ j hj
+    simp only [omissionRanksAux,
+      List.mem_append, List.mem_singleton] at hj
+    rcases hj with hj | hj
+    · exact hchild j hj
+    · simpa [hj] using hlast
+
+/-- Decompose the gap invariant through a retained-right unary node. -/
+theorem allOmissionsAtAux_unaryRight_iff
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A B C : N}
+    (hbin : binaryRule A B C)
+    (siblingWord : Word α)
+    (sibling :
+      UntypedDerives terminalRule binaryRule B siblingWord)
+    (child : MarkedBoundaryKernel terminalRule binaryRule C)
+    (offset k : Nat) :
+    AllOmissionsAtAux offset
+        (MarkedBoundaryKernel.unaryRight
+          hbin siblingWord sibling child) k
+      ↔
+    offset = k ∧ AllOmissionsAtAux offset child k := by
+  constructor
+  · intro h
+    constructor
+    · exact h offset (by simp [omissionRanksAux])
+    · intro j hj
+      exact h j
+        (by
+          simp [omissionRanksAux, hj])
+  · rintro ⟨hoffset, hchild⟩ j hj
+    simp only [omissionRanksAux, List.mem_cons] at hj
+    rcases hj with hj | hj
+    · simpa [hj] using hoffset
+    · exact hchild j hj
+
+/-- Decompose the gap invariant across a genuine branching node. -/
+theorem allOmissionsAtAux_branch_iff
+    {terminalRule : N → α → Prop}
+    {binaryRule : N → N → N → Prop}
+    {A B C : N}
+    (hbin : binaryRule A B C)
+    (left : MarkedBoundaryKernel terminalRule binaryRule B)
+    (right : MarkedBoundaryKernel terminalRule binaryRule C)
+    (offset k : Nat) :
+    AllOmissionsAtAux offset
+        (MarkedBoundaryKernel.branch hbin left right) k
+      ↔
+    AllOmissionsAtAux offset left k
+      ∧
+    AllOmissionsAtAux
+      (offset + markedLeafCount left) right k := by
+  constructor
+  · intro h
+    constructor
+    · intro j hj
+      exact h j
+        (List.mem_append_left _ hj)
+    · intro j hj
+      exact h j
+        (List.mem_append_right _
+          (by simpa [omissionRanksAux] using hj))
+  · rintro ⟨hleft, hright⟩ j hj
+    simp only [omissionRanksAux, List.mem_append] at hj
+    rcases hj with hj | hj
+    · exact hleft j hj
+    · exact hright j hj
+
+
 /--
 A compact skeleton word: marked terminals are `some a`, while each omitted
 sibling subtree is represented by one `none` placeholder.
