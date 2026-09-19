@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
 import LeanCfgProject.TCS1.ConcreteTypedTrimLanguage
+import LeanCfgProject.TCS1.LinearTypedShapeBridge
 
 /-!
 # TCS #1: concrete linear characteristic data
@@ -223,6 +224,128 @@ theorem concreteTypedActive_linear_conservativeGold_identification
       (concreteLinearCanonicalSample
         H terminalRule binaryRule startRule epsilonStart)
       hchar hsub
+      datum hpositive hcoverage
+
+
+/--
+Paper-facing linear characteristic-data theorem from an untyped linear-spine
+SSBNF grammar.
+
+This is the interface produced by Proposition (linear-spine SSBNF
+normalization): the wrapper predicate and linear-spine shape live entirely on
+the untyped normalized grammar.  Yield typing and productive/reachable
+trimming preserve that shape automatically.
+-/
+theorem concreteLinear_characteristic_package_of_untyped_shape
+    [DecidableEq α]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Wrapper : N → Prop)
+    (shape :
+      UntypedLinearSpineShape
+        terminalRule binaryRule Wrapper)
+    (hsub :
+      FixedHSubstitutable H
+        (UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart)) :
+    BatchLanguage H
+        (concreteLinearCanonicalSample
+          H terminalRule binaryRule startRule epsilonStart)
+      =
+    UntypedStartLanguage
+      terminalRule binaryRule startRule epsilonStart
+    ∧
+    (∑ word ∈
+      concreteLinearCanonicalSample
+        H terminalRule binaryRule startRule epsilonStart,
+      (word.length + 1))
+      ≤
+    linearCharacteristicEnvelope
+      (Fintype.card M)
+      (Fintype.card N)
+      (@Fintype.card
+        (UntypedTerminalRuleIndex terminalRule)
+        (Fintype.ofFinite _))
+      (@Fintype.card
+        (UntypedBinaryRuleIndex binaryRule)
+        (Fintype.ofFinite _)) := by
+  have typedShape :=
+    concreteTypedActive_linearSpineShape_of_untyped
+      H terminalRule binaryRule startRule Wrapper shape
+  exact
+    concreteTypedActive_linear_characteristic_package
+      H terminalRule binaryRule startRule epsilonStart
+      (typedWrapper (M := M) Wrapper)
+      typedShape hsub
+
+/--
+Concrete conservative identification from an untyped linear-spine SSBNF
+presentation.  No typed shape, trimming, reducedness, reachability, or
+canonical-choice certificate appears in the statement.
+-/
+theorem concreteLinear_conservativeGold_identification_of_untyped_shape
+    [DecidableEq α]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Wrapper : N → Prop)
+    (shape :
+      UntypedLinearSpineShape
+        terminalRule binaryRule Wrapper)
+    (hsub :
+      FixedHSubstitutable H
+        (UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart))
+    (datum : Nat → Word α)
+    (hpositive :
+      ∀ n,
+        datum n ∈
+          UntypedStartLanguage
+            terminalRule binaryRule startRule epsilonStart)
+    (hcoverage :
+      ∀ word,
+        word ∈
+          UntypedStartLanguage
+            terminalRule binaryRule startRule epsilonStart →
+        ∃ n,
+          word ∈ concreteAccumulatedSample datum n) :
+    ∃ n₀,
+      (BatchLanguage H
+          (concreteConservativeHypothesis H datum n₀)
+          =
+        UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart
+        ∧
+        ∀ j,
+          concreteConservativeHypothesis H datum (n₀ + j) =
+            concreteConservativeHypothesis H datum n₀)
+      ∨
+      (∃ n,
+        n₀ ≤ n ∧
+        concreteConservativeHypothesis H datum (n + 1) ≠
+          concreteConservativeHypothesis H datum n ∧
+        BatchLanguage H
+          (concreteConservativeHypothesis H datum (n + 1))
+          =
+        UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart
+        ∧
+        ∀ j,
+          concreteConservativeHypothesis H datum ((n + 1) + j) =
+            concreteConservativeHypothesis H datum (n + 1)) := by
+  have typedShape :=
+    concreteTypedActive_linearSpineShape_of_untyped
+      H terminalRule binaryRule startRule Wrapper shape
+  exact
+    concreteTypedActive_linear_conservativeGold_identification
+      H terminalRule binaryRule startRule epsilonStart
+      (typedWrapper (M := M) Wrapper)
+      typedShape hsub
       datum hpositive hcoverage
 
 end ConcreteLinearCharacteristicData
