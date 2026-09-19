@@ -121,6 +121,79 @@ theorem reconstructionFactorPairSlot_card_le_fourth
   rw [reconstructionFactorPairSlot_card_eq]
   exact reconstructionFactorPairCount_le_fourth K
 
+/-- One finite index type covering all generous R1--R5 candidate families. -/
+abbrev ReconstructionRuleCandidateSpace
+    (K : Finset (Word α)) :=
+  Sum
+    (ReconstructionSampleWord K)
+    (Sum
+      (ReconstructionFactorSlot K)
+      (Sum
+        (ReconstructionSplitSlot K)
+        (Sum
+          (ReconstructionFactorPairSlot K)
+          (ReconstructionFactorPairSlot K))))
+
+/-- The sample-word summand has exactly |K| indices. -/
+@[simp] theorem reconstructionSampleWord_card_eq
+    (K : Finset (Word α)) :
+    Fintype.card (ReconstructionSampleWord K) = K.card := by
+  classical
+  simpa [ReconstructionSampleWord] using
+    (Fintype.card_coe K)
+
+/--
+The aggregate candidate space has exactly the paper-facing generous count:
+one start candidate per sample word, one factor slot, one split slot, and two
+copies of the paired-factor space for R2 and R3.
+-/
+theorem reconstructionRuleCandidateSpace_card_eq
+    (K : Finset (Word α)) :
+    Fintype.card (ReconstructionRuleCandidateSpace K)
+      =
+    K.card +
+      reconstructionFactorSlotCount K +
+      reconstructionSplitSlotCount K +
+      2 *
+        (reconstructionFactorSlotCount K *
+          reconstructionFactorSlotCount K) := by
+  classical
+  simp only [ReconstructionRuleCandidateSpace,
+    Fintype.card_sum,
+    reconstructionSampleWord_card_eq,
+    reconstructionFactorSlot_card_eq,
+    reconstructionSplitSlot_card_eq,
+    reconstructionFactorPairSlot_card_eq]
+  omega
+
+/--
+The actual finite index space that can be scanned to generate all rules is
+quartically bounded by the explicit reconstruction candidate envelope.
+-/
+theorem reconstructionRuleCandidateSpace_card_le_envelope
+    (K : Finset (Word α)) :
+    Fintype.card (ReconstructionRuleCandidateSpace K)
+      ≤
+    reconstructionRuleCandidateEnvelope
+      (reconstructionSampleNorm K) := by
+  rw [reconstructionRuleCandidateSpace_card_eq]
+  exact reconstruction_rule_candidates_le K
+
+/--
+Consequently the total finite candidate space admits a single quartic
+polynomial majorant.
+-/
+theorem reconstructionRuleCandidateSpace_card_le_fourth
+    (K : Finset (Word α)) :
+    Fintype.card (ReconstructionRuleCandidateSpace K)
+      ≤
+    5 * (reconstructionSampleNorm K + 1) ^ 4 := by
+  exact le_trans
+    (reconstructionRuleCandidateSpace_card_le_envelope K)
+    (reconstructionRuleCandidateEnvelope_le
+      (reconstructionSampleNorm K))
+
+
 end ReconstructionFiniteCandidateSpaces
 
 end TCS1
