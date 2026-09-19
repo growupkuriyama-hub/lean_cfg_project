@@ -60,9 +60,11 @@ theorem reconstructionFactorSlot_card_eq
     ReconstructionSampleWord,
     Fintype.card_sigma,
     Fintype.card_prod,
-    Fintype.card_fin,
-    Finset.sum_attach]
-  simpa [reconstructionFactorSlotCount, pow_two]
+    Fintype.card_fin]
+  rw [Finset.sum_attach K
+    (fun w : Word α =>
+      (w.length + 1) * (w.length + 1))]
+  simp [reconstructionFactorSlotCount, pow_two]
 
 /-- Exact cardinality of the three-cut candidate space. -/
 theorem reconstructionSplitSlot_card_eq
@@ -74,9 +76,12 @@ theorem reconstructionSplitSlot_card_eq
     ReconstructionSampleWord,
     Fintype.card_sigma,
     Fintype.card_prod,
-    Fintype.card_fin,
-    Finset.sum_attach]
-  simpa [reconstructionSplitSlotCount,
+    Fintype.card_fin]
+  rw [Finset.sum_attach K
+    (fun w : Word α =>
+      (w.length + 1) *
+        ((w.length + 1) * (w.length + 1)))]
+  simp [reconstructionSplitSlotCount,
     pow_succ, Nat.mul_assoc]
 
 /-- Exact cardinality of the factor-pair candidate space. -/
@@ -86,9 +91,9 @@ theorem reconstructionFactorPairSlot_card_eq
       reconstructionFactorSlotCount K *
         reconstructionFactorSlotCount K := by
   classical
-  rw [Fintype.card_prod,
-    reconstructionFactorSlot_card_eq,
-    reconstructionFactorSlot_card_eq]
+  rw [Fintype.card_prod]
+  rw [reconstructionFactorSlot_card_eq]
+  rw [reconstructionFactorSlot_card_eq]
 
 /-- The actual two-cut finite space is quadratically bounded by ||K||. -/
 theorem reconstructionFactorSlot_card_le_sq
