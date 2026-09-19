@@ -304,8 +304,11 @@ theorem template_no_omissions_of_gap_lt_offset
             ih (offset + 1) hlt' htail
           constructor
           · simpa [templateOmissionCount] using hzero
-          · rw [hshape]
-            rfl
+          · change
+              Option.some a :: t =
+                Option.some a ::
+                  (templateMarkedWord t).map Option.some
+            exact congrArg (List.cons (Option.some a)) hshape
 
 /--
 A template whose every omission has marked-rank k has one central omission
@@ -352,7 +355,8 @@ theorem template_central_shape_aux
           have htail :=
             ih offset (by omega) htailHi htailGap
           simp [templateMarkedWord,
-            templateOmissionCount, hk, htail]
+            templateOmissionCount, hk] at htail ⊢
+          exact htail
 
       | some a =>
           have htailGap :
@@ -370,7 +374,8 @@ theorem template_central_shape_aux
               template_no_omissions_of_gap_lt_offset
                 t (offset + 1) k hlt htailGap
             simp [templateMarkedWord,
-              templateOmissionCount, hk, hzero, hshape]
+              templateOmissionCount, hk, hzero] at ⊢
+            exact hshape
           · have hlo' : offset + 1 ≤ k := by
               omega
             have hhi' :
@@ -383,7 +388,8 @@ theorem template_central_shape_aux
                   Nat.succ (k - (offset + 1)) := by
               omega
             simp [templateMarkedWord,
-              templateOmissionCount, hdiff, htail]
+              templateOmissionCount, hdiff] at ⊢
+            exact htail
 
 /--
 Kernel-facing central-template theorem.
@@ -545,19 +551,22 @@ theorem boundaryExpansion_word_unique
     (e₁ : BoundaryExpansion template blocks w₁)
     (e₂ : BoundaryExpansion template blocks w₂) :
     w₁ = w₂ := by
-  induction e₁ with
+  induction e₁ generalizing w₂ with
   | nil =>
       cases e₂
       rfl
   | @some a template blocks w tail ih =>
       cases e₂ with
       | some tail₂ =>
-          congr 1
-          exact ih tail₂
+          exact
+            congrArg (List.cons a)
+              (ih tail₂)
   | @none template blocks w block tail ih =>
       cases e₂ with
       | none tail₂ =>
-          rw [ih tail₂]
+          exact
+            congrArg (fun x => block ++ x)
+              (ih tail₂)
 
 /--
 A gap-certified kernel expansion is exactly a boundary assembly of the marked
