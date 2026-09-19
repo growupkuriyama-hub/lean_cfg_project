@@ -53,6 +53,7 @@ import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.LinearSpineBounds
 import LeanCfgProject.TCS1.LinearSpineSemantic
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
+import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
 import LeanCfgProject.TCS1.LinearCanonicalWitnessBounds
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.FiniteSupportSpineBound
