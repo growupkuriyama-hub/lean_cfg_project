@@ -554,6 +554,93 @@ theorem boundaryExpansion_word_unique
           rw [ih tail₂]
 
 /--
+A gap-certified kernel expansion is exactly a boundary assembly of the marked
+prefix, the ordered replacement blocks, and the marked suffix.
+-/
+theorem boundaryExpansion_eq_boundaryAssembly_of_allOmissionsAt
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat)
+    (hk :
+      k ≤ MarkedBoundaryKernel.markedLeafCount K)
+    (hgap :
+      MarkedBoundaryKernel.AllOmissionsAt K k)
+    (blocks : List (Word α))
+    (w' : Word α)
+    (hexpand :
+      BoundaryExpansion
+        (MarkedBoundaryKernel.boundaryTemplate K)
+        blocks w')
+    (hcount :
+      blocks.length =
+        MarkedBoundaryKernel.omittedCount K) :
+    w' =
+      boundaryAssembly
+        ((MarkedBoundaryKernel.markedWord K).take k)
+        ((MarkedBoundaryKernel.markedWord K).drop k)
+        blocks := by
+  have hshape :=
+    boundaryTemplate_central_shape
+      terminalRule binaryRule K k hk hgap
+  rw [← hcount] at hshape
+  rw [hshape] at hexpand
+  exact
+    boundaryExpansion_word_unique
+      hexpand
+      (boundaryExpansion_central
+        ((MarkedBoundaryKernel.markedWord K).take k)
+        ((MarkedBoundaryKernel.markedWord K).drop k)
+        blocks)
+
+/--
+Short replacement reconstruction in the canonical central boundary-assembly
+form.
+-/
+theorem exists_rebuilt_short_boundaryAssembly
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (τ : Nat)
+    (hshort :
+      ∀ X : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule X z
+          ∧ z.length ≤ τ)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat)
+    (hk :
+      k ≤ MarkedBoundaryKernel.markedLeafCount K)
+    (hgap :
+      MarkedBoundaryKernel.AllOmissionsAt K k) :
+    ∃ blocks : List (Word α),
+      UntypedDerives terminalRule binaryRule A
+        (boundaryAssembly
+          ((MarkedBoundaryKernel.markedWord K).take k)
+          ((MarkedBoundaryKernel.markedWord K).drop k)
+          blocks)
+      ∧
+      blocks.length =
+        MarkedBoundaryKernel.omittedCount K
+      ∧
+      (∀ block ∈ blocks, block.length ≤ τ) := by
+  obtain ⟨blocks, w', hexpand, d', hcount, hlen⟩ :=
+    exists_rebuilt_short_expansion
+      terminalRule binaryRule τ hshort K
+  have hw :
+      w' =
+        boundaryAssembly
+          ((MarkedBoundaryKernel.markedWord K).take k)
+          ((MarkedBoundaryKernel.markedWord K).drop k)
+          blocks :=
+    boundaryExpansion_eq_boundaryAssembly_of_allOmissionsAt
+      terminalRule binaryRule K k hk hgap
+      blocks w' hexpand hcount
+  refine ⟨blocks, ?_, hcount, hlen⟩
+  simpa [hw] using d'
+
+/--
 Every marked-boundary kernel admits a tau-short block expansion whenever every
 nonterminal has a tau-short terminal yield.
 -/
