@@ -404,6 +404,64 @@ theorem concrete_rebuild_output_le_prefix_degreeFive
       (le_trans hdeg
         (reconstruction_degreeFive_mono hnorm))
 
+
+
+/--
+Paper-facing size certificate for one conservative learner update.
+
+At the step processing datum (n+1), the next word encoding, the current
+hypothesis reconstruction envelope, a triggered rebuild envelope, and even a
+direct linear-cost scan of every reconstruction candidate are all polynomially
+bounded by the encoded positive-data prefix through stage n+1.
+
+The only ingredient of Corollary (poly-update) not represented here is the
+standard algorithmic theorem that CFG membership is polynomial in grammar and
+input size.
+-/
+theorem concreteConservative_update_size_certificate
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    (datum (n + 1)).length + 1 ≤
+        positiveDataPrefixNorm datum (n + 1)
+    ∧
+    reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm
+          (concreteConservativeHypothesis H datum n))
+      ≤
+        5 * (positiveDataPrefixNorm datum (n + 1) + 1) ^ 5
+    ∧
+    reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm
+          (concreteAccumulatedSample datum (n + 1)))
+      ≤
+        5 * (positiveDataPrefixNorm datum (n + 1) + 1) ^ 5
+    ∧
+    Fintype.card
+        (ReconstructionRuleCandidateSpace
+          (concreteAccumulatedSample datum (n + 1)))
+        *
+      (positiveDataPrefixNorm datum (n + 1) + 1)
+      ≤
+        5 * (positiveDataPrefixNorm datum (n + 1) + 1) ^ 5 := by
+  constructor
+  · exact nextDatum_encoding_le_prefix datum n
+  constructor
+  · have hcur :=
+      concreteCurrentHypothesis_outputEnvelope_le_prefix_degreeFive
+        H datum n
+    exact
+      le_trans hcur
+        (reconstruction_degreeFive_mono
+          (positiveDataPrefixNorm_le_succ datum n))
+  constructor
+  · exact
+      concreteAccumulated_outputEnvelope_le_prefix_degreeFive
+        datum (n + 1)
+  · exact
+      concreteAccumulated_directCandidateScan_le_prefix_degreeFive
+        datum (n + 1)
+
 end ConcreteLearnerComplexity
 
 end TCS1
