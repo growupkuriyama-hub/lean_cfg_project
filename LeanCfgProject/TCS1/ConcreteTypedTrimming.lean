@@ -213,13 +213,13 @@ theorem concreteTypedActive_reachingContext_exists
 
   | @left A B C μ ν hparent hbin hprodB hprodC ih =>
       obtain ⟨parentContext⟩ := ih
-      obtain ⟨wC, dCFull⟩ := hprodC
       let hC :
           ConcreteTypedActive
             H terminalRule binaryRule startRule
             (C, ν) :=
         ProductiveTypedReachable.right
           hparent hbin hprodB hprodC
+      obtain ⟨wC, dCFull⟩ := hprodC
       have dCReduced :
           ReducedTypedDerives
             H terminalRule binaryRule
@@ -245,13 +245,13 @@ theorem concreteTypedActive_reachingContext_exists
 
   | @right A B C μ ν hparent hbin hprodB hprodC ih =>
       obtain ⟨parentContext⟩ := ih
-      obtain ⟨wB, dBFull⟩ := hprodB
       let hB :
           ConcreteTypedActive
             H terminalRule binaryRule startRule
             (B, μ) :=
         ProductiveTypedReachable.left
           hparent hbin hprodB hprodC
+      obtain ⟨wB, dBFull⟩ := hprodB
       have dBReduced :
           ReducedTypedDerives
             H terminalRule binaryRule
