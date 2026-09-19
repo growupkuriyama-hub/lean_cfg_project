@@ -223,20 +223,29 @@ noncomputable def minimalReducedWitnessChoices_of_reducedness
         (binaryRule := binaryRule) (startRule := startRule)
         (epsilonStart := epsilonStart) (Active := Active)
         A μ hstart hactive
+    have hminRaw :=
+      minimumReachingContext_length_le
+        R (A, μ) hactive C0
     have hmin :
         (minimumReachingContext R (A, μ) hactive).left.length +
             (minimumReachingContext R (A, μ) hactive).right.length ≤ 0 := by
-      simpa [C0] using
-        (minimumReachingContext_length_le
-          R (A, μ) hactive C0)
+      change
+        (minimumReachingContext R (A, μ) hactive).left.length +
+            (minimumReachingContext R (A, μ) hactive).right.length ≤ 0
+        at hminRaw
+      exact hminRaw
+    have hleftLen :
+        (minimumReachingContext R (A, μ) hactive).left.length = 0 := by
+      omega
+    have hrightLen :
+        (minimumReachingContext R (A, μ) hactive).right.length = 0 := by
+      omega
     have hleft :
         (minimumReachingContext R (A, μ) hactive).left = [] := by
-      apply List.length_eq_zero.mp
-      omega
+      simpa using hleftLen
     have hright :
         (minimumReachingContext R (A, μ) hactive).right = [] := by
-      apply List.length_eq_zero.mp
-      omega
+      simpa using hrightLen
     simp only [minimumContext, dif_pos hactive]
     exact ⟨hleft, hright⟩
 
