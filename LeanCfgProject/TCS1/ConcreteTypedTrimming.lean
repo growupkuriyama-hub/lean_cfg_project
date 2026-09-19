@@ -176,14 +176,15 @@ theorem concreteTypedActive_trimClosure
         H terminalRule binaryRule startRule)
 
 /--
-Concrete productive/reachable activity supplies an actual terminal reaching
-context, without any prior witness-choice package.
+Concrete productive/reachable activity supplies the existence of a terminal
+reaching context, without any prior witness-choice package.
 
-The proof follows the reachability certificate.  At each binary edge the
-off-path sibling is expanded by any productive typed yield carried by that
-certificate, restricted to the active grammar by the trim-closure theorem.
+The statement is proposition-valued (`Nonempty`) so that induction on the
+proposition-valued reachability certificate is legitimate.  At each binary
+edge the off-path sibling is expanded by a productive typed yield carried by
+that certificate, then restricted to the active grammar.
 -/
-noncomputable def concreteTypedActive_reachingContext
+theorem concreteTypedActive_reachingContext_exists
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
@@ -193,23 +194,25 @@ noncomputable def concreteTypedActive_reachingContext
     (hX :
       ConcreteTypedActive
         H terminalRule binaryRule startRule X) :
-    TerminalReachingContext
-      H terminalRule binaryRule startRule epsilonStart
-      (ConcreteTypedActive
-        H terminalRule binaryRule startRule)
-      X := by
+    Nonempty
+      (TerminalReachingContext
+        H terminalRule binaryRule startRule epsilonStart
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule)
+        X) := by
   let trim :=
     concreteTypedActive_trimClosure
       H terminalRule binaryRule startRule
   induction hX with
   | @start A μ hstart hprod =>
       exact
-        startChildReachingContext
+        ⟨startChildReachingContext
           A μ hstart
           (ProductiveTypedReachable.start
-            hstart hprod)
+            hstart hprod)⟩
 
   | @left A B C μ ν hparent hbin hprodB hprodC ih =>
+      obtain ⟨parentContext⟩ := ih
       obtain ⟨wC, dCFull⟩ := hprodC
       let hC :
           ConcreteTypedActive
@@ -225,9 +228,9 @@ noncomputable def concreteTypedActive_reachingContext
             (C, ν) wC :=
         trim.restrict hC dCFull
       refine
-        { left := ih.left
-          right := wC ++ ih.right
-          plug := ?_ }
+        ⟨{ left := parentContext.left
+           right := wC ++ parentContext.right
+           plug := ?_ }⟩
       intro z dB
       have dParent :
           ReducedTypedDerives
@@ -237,10 +240,11 @@ noncomputable def concreteTypedActive_reachingContext
             (A, μ * ν) (z ++ wC) :=
         ReducedTypedDerives.binary
           hbin hparent dB dCReduced
-      have hp := ih.plug dParent
+      have hp := parentContext.plug dParent
       simpa only [List.append_assoc] using hp
 
   | @right A B C μ ν hparent hbin hprodB hprodC ih =>
+      obtain ⟨parentContext⟩ := ih
       obtain ⟨wB, dBFull⟩ := hprodB
       let hB :
           ConcreteTypedActive
@@ -256,9 +260,9 @@ noncomputable def concreteTypedActive_reachingContext
             (B, μ) wB :=
         trim.restrict hB dBFull
       refine
-        { left := ih.left ++ wB
-          right := ih.right
-          plug := ?_ }
+        ⟨{ left := parentContext.left ++ wB
+           right := parentContext.right
+           plug := ?_ }⟩
       intro z dC
       have dParent :
           ReducedTypedDerives
@@ -268,7 +272,7 @@ noncomputable def concreteTypedActive_reachingContext
             (A, μ * ν) (wB ++ z) :=
         ReducedTypedDerives.binary
           hbin hparent dBReduced dC
-      have hp := ih.plug dParent
+      have hp := parentContext.plug dParent
       simpa only [List.append_assoc] using hp
 
 /--
@@ -307,9 +311,9 @@ theorem concreteTypedActive_qualitativeReducedness
          derives := dReduced }⟩
   · intro X hX
     exact
-      ⟨concreteTypedActive_reachingContext
+      concreteTypedActive_reachingContext_exists
         H terminalRule binaryRule startRule epsilonStart
-        hX⟩
+        hX
 
 /--
 Concrete productive/reachable activity implies reachability in the active
