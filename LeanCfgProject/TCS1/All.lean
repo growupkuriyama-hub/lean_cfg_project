@@ -19,6 +19,7 @@ import LeanCfgProject.TCS1.FixedWindowSummarySemantic
 import LeanCfgProject.TCS1.FixedWindowConcreteSummary
 import LeanCfgProject.TCS1.FixedWindowConcreteMonoid
 import LeanCfgProject.TCS1.FixedWindowClassicalSubstitutability
+import LeanCfgProject.TCS1.FixedWindowConcreteCharacteristicData
 import LeanCfgProject.TCS1.FixedWindowBoundarySemantic
 import LeanCfgProject.TCS1.MarkedBoundaryKernel
 import LeanCfgProject.TCS1.MarkedBoundaryNormalization
