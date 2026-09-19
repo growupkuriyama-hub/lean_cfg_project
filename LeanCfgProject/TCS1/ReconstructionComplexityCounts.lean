@@ -223,6 +223,34 @@ def reconstructionOutputEncodingEnvelope
     (n : Nat) : Nat :=
   reconstructionRuleCandidateEnvelope n * (n + 1)
 
+/-- The quartic candidate expression has a simple uniform polynomial bound. -/
+theorem reconstructionRuleCandidateEnvelope_le
+    (n : Nat) :
+    reconstructionRuleCandidateEnvelope n ≤
+      5 * (n + 1) ^ 4 := by
+  unfold reconstructionRuleCandidateEnvelope
+  nlinarith [Nat.zero_le n]
+
+/--
+The explicit direct-output envelope is bounded by a single degree-five
+polynomial.  This is a literal polynomial majorant for the manuscript's
+O(n_K^5) statement.
+-/
+theorem reconstructionOutputEncodingEnvelope_le_degreeFive
+    (n : Nat) :
+    reconstructionOutputEncodingEnvelope n ≤
+      5 * (n + 1) ^ 5 := by
+  unfold reconstructionOutputEncodingEnvelope
+  have h :=
+    Nat.mul_le_mul_right
+      (n + 1)
+      (reconstructionRuleCandidateEnvelope_le n)
+  calc
+    reconstructionRuleCandidateEnvelope n * (n + 1)
+        ≤ (5 * (n + 1) ^ 4) * (n + 1) := h
+    _ = 5 * (n + 1) ^ 5 := by
+      ring
+
 /--
 Arithmetic form of the manuscript's O(n_K^5) output-size statement.
 
