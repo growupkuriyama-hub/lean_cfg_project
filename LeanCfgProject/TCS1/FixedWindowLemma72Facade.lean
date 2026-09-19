@@ -125,7 +125,6 @@ theorem canonicalWitnessWords_length_le_common
       binary_witness_length_le_common
         hctx hωB hωC
   · simp
-    omega
 
 /--
 Fixed-window specialization of the common witness envelope.
