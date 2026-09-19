@@ -58,7 +58,7 @@ theorem typedDerives_restrict_of_localClosure
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
     (Active : N × M → Prop)
-    (local :
+    (hlocal :
       SuccessfulTypedTrimLocalClosure
         H terminalRule binaryRule Active)
     {X : N × M}
@@ -78,7 +78,7 @@ theorem typedDerives_restrict_of_localClosure
       hbin dB dC ihB ihC =>
       intro hactive
       obtain ⟨hB, hC⟩ :=
-        local.binary_children
+        hlocal.binary_children
           hbin hactive dB dC
       exact
         ReducedTypedDerives.binary
@@ -92,7 +92,7 @@ theorem successfulTypedTrimClosure_of_localClosure
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
     (Active : N × M → Prop)
-    (local :
+    (hlocal :
       SuccessfulTypedTrimLocalClosure
         H terminalRule binaryRule Active) :
     SuccessfulTypedTrimClosure
@@ -102,7 +102,7 @@ theorem successfulTypedTrimClosure_of_localClosure
     exact
       typedDerives_restrict_of_localClosure
         H terminalRule binaryRule Active
-        local d hactive
+        hlocal d hactive
 
 end SuccessfulTypedTrimClosureBridge
 
