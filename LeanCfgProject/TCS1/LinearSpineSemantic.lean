@@ -117,13 +117,9 @@ theorem linearYieldSpine_length_eq_path
   | terminal hterm =>
       simp
   | binaryLeft hbin child hsibling ih =>
-      simp only [List.length_append, List.length_singleton,
-        List.length_cons]
-      omega
+      simpa [List.length_append, ih, Nat.add_comm]
   | binaryRight hbin hsibling child ih =>
-      simp only [List.length_append, List.length_singleton,
-        List.length_cons]
-      omega
+      simpa [List.length_append, ih, Nat.add_comm]
 
 /--
 A suffix beginning at any symbol on a repetition-free linear yield spine is
@@ -446,8 +442,10 @@ theorem linearReachingSpine_replace_siblings
           hshort B hBnW sibling
         refine
           ⟨y', [], [y'.length],
-            ReachingSpine.binaryRight
-              hbin dy' ReachingSpine.hole,
+            (by
+              simpa using
+                (ReachingSpine.binaryRight
+                  hbin dy' ReachingSpine.hole)),
             ?_, ?_⟩
         · intro h
           simp
