@@ -72,29 +72,31 @@ theorem markedBoundaryBase_toKernel_preserves_gap
 /--
 Attach a gap-certified unary head above a gap-certified base.
 
-Besides the ordinary count/word identities, the resulting marked-boundary
-kernel keeps every omission in the same global gap k.
+The explicit `marks` parameter keeps the base independent of the spine
+during induction; `hbaseMarks` identifies it with the number of marked leaves
+carried by the base.
 -/
 theorem exists_attachGapHead
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
-    (offset k : Nat)
+    (offset marks k : Nat)
     {A X : N}
     {left right : Word α}
     {path : List N}
     {siblings : List Nat}
-    (base :
-      MarkedBoundaryBase terminalRule binaryRule X)
     (spine :
       GapReachingSpine terminalRule binaryRule
-        offset (MarkedBoundaryBase.markedLeafCount base) k
+        offset marks k
         A X left right path siblings)
+    (base :
+      MarkedBoundaryBase terminalRule binaryRule X)
+    (hbaseMarks :
+      MarkedBoundaryBase.markedLeafCount base = marks)
     (hbase :
       MarkedBoundaryBaseAllOmissionsAtAux
         terminalRule binaryRule offset k base) :
     ∃ K : MarkedBoundaryKernel terminalRule binaryRule A,
-      MarkedBoundaryKernel.markedLeafCount K =
-        MarkedBoundaryBase.markedLeafCount base
+      MarkedBoundaryKernel.markedLeafCount K = marks
       ∧
       MarkedBoundaryKernel.omittedCount K =
         siblings.length +
@@ -109,12 +111,13 @@ theorem exists_attachGapHead
   | hole =>
       refine
         ⟨MarkedBoundaryBase.toKernel base,
-          MarkedBoundaryBase.toKernel_markedLeafCount
-            terminalRule binaryRule base,
-          ?_,
+          ?_, ?_,
           MarkedBoundaryBase.toKernel_markedWord
             terminalRule binaryRule base,
           ?_⟩
+      · rw [MarkedBoundaryBase.toKernel_markedLeafCount
+          terminalRule binaryRule base]
+        exact hbaseMarks
       · simpa using
           MarkedBoundaryBase.toKernel_omittedCount
             terminalRule binaryRule base
@@ -125,7 +128,7 @@ theorem exists_attachGapHead
   | @binaryLeft A B C X left right z path siblings
       hbin child sibling hgap ih =>
       obtain ⟨K, hmarks, homit, hword, hKgap⟩ :=
-        ih base hbase
+        ih base hbaseMarks hbase
       refine
         ⟨MarkedBoundaryKernel.unaryLeft
             hbin K z sibling,
@@ -148,7 +151,7 @@ theorem exists_attachGapHead
   | @binaryRight A B C X left right y path siblings
       hbin sibling child hgap ih =>
       obtain ⟨K, hmarks, homit, hword, hKgap⟩ :=
-        ih base hbase
+        ih base hbaseMarks hbase
       refine
         ⟨MarkedBoundaryKernel.unaryRight
             hbin y sibling K,
