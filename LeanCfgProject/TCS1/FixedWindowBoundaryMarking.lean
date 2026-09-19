@@ -50,10 +50,11 @@ theorem selectByMask_append_aligned
       selectByMask m₁ u ++ selectByMask m₂ v := by
   induction u generalizing m₁ with
   | nil =>
-      have hm : m₁ = [] :=
-        List.length_eq_zero.mp (by simpa using hlen)
-      subst m₁
-      simp [selectByMask]
+      cases m₁ with
+      | nil =>
+          simp [selectByMask]
+      | cons b bs =>
+          simp at hlen
   | cons a u ih =>
       cases m₁ with
       | nil =>
@@ -69,18 +70,26 @@ theorem selectByMask_append_aligned
     selectByMask (List.replicate w.length true) w = w := by
   induction w with
   | nil =>
-      simp [selectByMask]
+      rfl
   | cons a w ih =>
-      simp [selectByMask, ih]
+      change
+        selectByMask (true :: List.replicate w.length true)
+          (a :: w) = a :: w
+      simp only [selectByMask]
+      rw [ih]
 
 @[simp] theorem selectByMask_replicate_false
     (w : Word α) :
     selectByMask (List.replicate w.length false) w = [] := by
   induction w with
   | nil =>
-      simp [selectByMask]
+      rfl
   | cons a w ih =>
-      simp [selectByMask, ih]
+      change
+        selectByMask (false :: List.replicate w.length false)
+          (a :: w) = []
+      simp only [selectByMask]
+      exact ih
 
 /--
 Mark the leaves of an explicit derivation tree by a Boolean list.  Extra mask
@@ -137,12 +146,11 @@ theorem leafMarks_markWithMask
       | nil =>
           simp [BinaryDerivationTree.leafCount] at hlen
       | cons b bs =>
-          have hbs : bs = [] := by
-            apply List.length_eq_zero.mp
-            simpa [BinaryDerivationTree.leafCount] using
-              Nat.succ.inj hlen
-          subst bs
-          simp [markWithMask, LeafMarkedTree.leafMarks]
+          cases bs with
+          | nil =>
+              simp [markWithMask, LeafMarkedTree.leafMarks]
+          | cons c cs =>
+              simp [BinaryDerivationTree.leafCount] at hlen
   | binary hbin left right ihL ihR =>
       have hleft :
           (mask.take
@@ -185,14 +193,13 @@ theorem markWithMask_markedWord
       | nil =>
           simp [BinaryDerivationTree.leafCount] at hlen
       | cons b bs =>
-          have hbs : bs = [] := by
-            apply List.length_eq_zero.mp
-            simpa [BinaryDerivationTree.leafCount] using
-              Nat.succ.inj hlen
-          subst bs
-          cases b <;>
-            simp [markWithMask, LeafMarkedTree.markedWord,
-              selectByMask]
+          cases bs with
+          | nil =>
+              cases b <;>
+                simp [markWithMask, LeafMarkedTree.markedWord,
+                  BinaryDerivationTree.yield, selectByMask]
+          | cons c cs =>
+              simp [BinaryDerivationTree.leafCount] at hlen
   | binary hbin left right ihL ihR =>
       have hleft :
           (mask.take
@@ -218,32 +225,42 @@ theorem markWithMask_markedWord
           terminalRule binaryRule left
       rw [BinaryDerivationTree.yield]
       symm
-      apply selectByMask_append_aligned
-      rw [List.length_take]
-      rw [hyieldLeft]
-      have hle :
-          BinaryDerivationTree.leafCount left ≤ mask.length := by
-        simp only [BinaryDerivationTree.leafCount] at hlen
-        omega
-      simp [hle]
+      rw [← List.take_append_drop
+        (BinaryDerivationTree.leafCount left) mask]
+      exact
+        selectByMask_append_aligned
+          (mask.take (BinaryDerivationTree.leafCount left))
+          (mask.drop (BinaryDerivationTree.leafCount left))
+          (BinaryDerivationTree.yield left)
+          (BinaryDerivationTree.yield right)
+          (by rw [hleft, hyieldLeft])
 
 @[simp] theorem trueCount_replicate_true
     (n : Nat) :
     LeafMarkedTree.trueCount (List.replicate n true) = n := by
   induction n with
   | zero =>
-      simp [LeafMarkedTree.trueCount]
+      rfl
   | succ n ih =>
-      simp [LeafMarkedTree.trueCount, ih]
+      change
+        LeafMarkedTree.trueCount
+          (true :: List.replicate n true) = Nat.succ n
+      simp only [LeafMarkedTree.trueCount]
+      rw [ih]
+      omega
 
 @[simp] theorem trueCount_replicate_false
     (n : Nat) :
     LeafMarkedTree.trueCount (List.replicate n false) = 0 := by
   induction n with
   | zero =>
-      simp [LeafMarkedTree.trueCount]
+      rfl
   | succ n ih =>
-      simp [LeafMarkedTree.trueCount, ih]
+      change
+        LeafMarkedTree.trueCount
+          (false :: List.replicate n false) = 0
+      simp only [LeafMarkedTree.trueCount]
+      exact ih
 
 @[simp] theorem falseRanksAux_replicate_true
     (offset n : Nat) :
@@ -252,9 +269,12 @@ theorem markWithMask_markedWord
       [] := by
   induction n generalizing offset with
   | zero =>
-      simp [LeafMarkedTree.falseRanksAux]
+      rfl
   | succ n ih =>
-      simp [LeafMarkedTree.falseRanksAux, ih]
+      change
+        LeafMarkedTree.falseRanksAux
+          (offset + 1) (List.replicate n true) = []
+      exact ih (offset + 1)
 
 @[simp] theorem falseRanksAux_replicate_false
     (offset n : Nat) :
@@ -263,9 +283,15 @@ theorem markWithMask_markedWord
       List.replicate n offset := by
   induction n with
   | zero =>
-      simp [LeafMarkedTree.falseRanksAux]
+      rfl
   | succ n ih =>
-      simp [LeafMarkedTree.falseRanksAux, ih]
+      change
+        offset ::
+          LeafMarkedTree.falseRanksAux offset
+            (List.replicate n false)
+          =
+        offset :: List.replicate n offset
+      rw [ih]
 
 /-- Boolean mask marking the first k and last l leaves among n leaves. -/
 def boundaryMask (k l n : Nat) : List Bool :=
@@ -280,7 +306,6 @@ theorem falseRanksAux_boundaryMask
         (boundaryMask k l n) =
       List.replicate (n - k - l) (offset + k) := by
   unfold boundaryMask
-  rw [← List.append_assoc]
   rw [LeafMarkedTree.falseRanksAux_append]
   rw [LeafMarkedTree.falseRanksAux_append]
   simp [Nat.add_assoc]
@@ -291,7 +316,6 @@ theorem boundaryMask_trueCount
     LeafMarkedTree.trueCount (boundaryMask k l n) =
       k + l := by
   unfold boundaryMask
-  rw [← List.append_assoc]
   rw [LeafMarkedTree.trueCount_append]
   rw [LeafMarkedTree.trueCount_append]
   simp
@@ -316,24 +340,20 @@ theorem selectByMask_boundaryMask
         (boundaryMask k l w.length) w
       =
     w.take k ++ w.drop (w.length - l) := by
-  let n := w.length
-  let m := n - k - l
-  let u := w.take k
+  let m := w.length - k - l
+  let p := w.take k
   let rest := w.drop k
   let mid := rest.take m
   let q := rest.drop m
 
-  have hk : k ≤ n := by
-    dsimp [n]
+  have hk : k ≤ w.length := by
     omega
-  have hu : u.length = k := by
-    dsimp [u]
+  have hp : p.length = k := by
+    dsimp [p]
     simp [List.length_take, hk]
-
-  have hrestLen : rest.length = n - k := by
-    dsimp [rest, n]
+  have hrestLen : rest.length = w.length - k := by
+    dsimp [rest]
     simp [List.length_drop]
-
   have hmle : m ≤ rest.length := by
     dsimp [m]
     rw [hrestLen]
@@ -341,59 +361,87 @@ theorem selectByMask_boundaryMask
   have hmid : mid.length = m := by
     dsimp [mid]
     simp [List.length_take, hmle]
-
-  have hqLen : q.length = l := by
-    dsimp [q]
-    rw [List.length_drop, hrestLen]
-    dsimp [m]
-    omega
-
-  have hw :
-      w = u ++ mid ++ q := by
-    have h₁ : w = u ++ rest := by
-      dsimp [u, rest]
+  have hw : w = p ++ (mid ++ q) := by
+    have h₁ : w = p ++ rest := by
+      dsimp [p, rest]
       exact (List.take_append_drop k w).symm
     have h₂ : rest = mid ++ q := by
       dsimp [mid, q]
       exact (List.take_append_drop m rest).symm
     rw [h₁, h₂, List.append_assoc]
-
   have hmask :
-      boundaryMask k l n =
+      boundaryMask k l w.length =
         List.replicate k true ++
           (List.replicate m false ++
             List.replicate l true) := by
-    dsimp [boundaryMask, m]
+    unfold boundaryMask
+    dsimp [m]
     simp [List.append_assoc]
 
-  rw [show w = u ++ (mid ++ q) by
-        rw [hw, List.append_assoc]]
-  rw [show boundaryMask k l w.length =
-      List.replicate k true ++
-        (List.replicate m false ++
-          List.replicate l true) by
-        simpa [n] using hmask]
-  rw [selectByMask_append_aligned
-      (List.replicate k true)
-      (List.replicate m false ++
-        List.replicate l true)
-      u (mid ++ q) (by simp [hu])]
-  rw [selectByMask_replicate_true]
-  rw [selectByMask_append_aligned
-      (List.replicate m false)
-      (List.replicate l true)
-      mid q (by simp [hmid])]
-  rw [selectByMask_replicate_false,
-      selectByMask_replicate_true]
-  simp only [List.nil_append]
+  have hsel :
+      selectByMask
+          (boundaryMask k l w.length) w =
+        p ++ q := by
+    calc
+      selectByMask
+          (boundaryMask k l w.length) w
+          =
+        selectByMask
+          (List.replicate k true ++
+            (List.replicate m false ++
+              List.replicate l true))
+          (p ++ (mid ++ q)) := by
+            rw [hmask, hw]
+      _ =
+        selectByMask (List.replicate k true) p ++
+          selectByMask
+            (List.replicate m false ++
+              List.replicate l true)
+            (mid ++ q) :=
+          selectByMask_append_aligned
+            (List.replicate k true)
+            (List.replicate m false ++
+              List.replicate l true)
+            p (mid ++ q)
+            (by simp [hp])
+      _ =
+        p ++
+          (selectByMask (List.replicate m false) mid ++
+            selectByMask (List.replicate l true) q) := by
+          rw [selectByMask_replicate_true]
+          rw [selectByMask_append_aligned
+            (List.replicate m false)
+            (List.replicate l true)
+            mid q
+            (by simp [hmid])]
+      _ = p ++ q := by
+          rw [selectByMask_replicate_false]
+          have hqLen : q.length = l := by
+            dsimp [q]
+            rw [List.length_drop, hrestLen]
+            dsimp [m]
+            omega
+          have hqTrue :
+              selectByMask (List.replicate l true) q = q := by
+            rw [← hqLen]
+            exact selectByMask_replicate_true q
+          rw [hqTrue]
+          simp
 
-  have hdrop :
+  have hq :
       q = w.drop (w.length - l) := by
-    dsimp [q, rest, m, n]
+    dsimp [q, rest, m]
     rw [List.drop_drop]
     congr 1
     omega
-  rw [hdrop]
+
+  calc
+    selectByMask
+        (boundaryMask k l w.length) w
+        = p ++ q := hsel
+    _ = w.take k ++ w.drop (w.length - l) := by
+        dsimp [p]
+        rw [hq]
 
 /--
 The selected boundary word has exactly k+l letters.
@@ -453,7 +501,8 @@ theorem boundary_markedTree_all_unmarked_at
         (BinaryDerivationTree.leafCount T)
   intro j hj
   rw [hranks] at hj
-  simpa using hj
+  simp only [List.mem_replicate] at hj
+  exact hj.2
 
 /--
 Tree-surgery input for Lemma 7.1.
@@ -606,8 +655,9 @@ theorem exists_fixedWindow_boundary_kernel_ranked
       ∀ j ∈ LeafMarkedTree.unmarkedRanksAux 0 MT,
         j = k := by
     dsimp [MT, mask]
-    exact boundary_markedTree_all_unmarked_at
-      terminalRule binaryRule T k l hfitT
+    simpa [hleaf] using
+      (boundary_markedTree_all_unmarked_at
+        terminalRule binaryRule T k l hfitT)
 
   obtain ⟨K, hYield, hWord, hCount, hRankSubset⟩ :=
     LeafMarkedTree.exists_pruned_kernel_with_rank_subset
