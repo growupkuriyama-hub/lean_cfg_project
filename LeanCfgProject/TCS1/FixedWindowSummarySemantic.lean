@@ -108,6 +108,36 @@ theorem short_word_unique_of_type
     sameFixedWindowSummary_short_left_eq
       hx (hreflect x y htype)
 
+/-- At the (0,0) window, any two nonempty words have the same summary. -/
+theorem zero_words_sameFixedWindowSummary
+    {x y : Word α}
+    (hx : 0 < x.length)
+    (hy : 0 < y.length) :
+    SameFixedWindowSummary 0 0 x y := by
+  right
+  refine ⟨?_, ?_, [], [], x, y, by simp, by simp, ?_, ?_⟩
+  · simp [fixedWindowThreshold]
+    exact hx
+  · simp [fixedWindowThreshold]
+    exact hy
+  · simp
+  · simp
+
+/--
+Hence any typing that respects the (0,0) fixed-window summary is constant on
+the nonempty words, exactly as used in the r=0 branch of Lemma 7.1.
+-/
+theorem zero_type_eq_of_respectsFixedWindowSummary
+    (H : FixedFiniteMonoidHom α M)
+    (hrespect : RespectsFixedWindowSummary H 0 0)
+    {x y : Word α}
+    (hx : 0 < x.length)
+    (hy : 0 < y.length) :
+    H.h x = H.h y := by
+  exact
+    hrespect x y
+      (zero_words_sameFixedWindowSummary hx hy)
+
 /--
 When r=k+l is positive, the threshold max(1,r) is exactly r.
 -/
