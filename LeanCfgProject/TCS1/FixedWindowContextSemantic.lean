@@ -121,6 +121,64 @@ theorem reachingSpine_plug
         UntypedDerives.binary hbin sibling dC
       simpa only [List.append_assoc] using dA
 
+/--
+Compose two reaching spines through their common intermediate symbol.
+
+If the outer spine reaches Y with context (left₁,right₁) and the inner spine
+reaches X from Y with context (left₂,right₂), the composite context is
+(left₁ ++ left₂, right₂ ++ right₁).  The precise path and sibling lists are
+existential because only their existence is needed when extending a
+dependency path one edge at a time.
+-/
+theorem exists_reachingSpine_compose
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A Y X : N}
+    {left₁ right₁ left₂ right₂ : Word α}
+    {path₁ path₂ : List N}
+    {siblings₁ siblings₂ : List Nat}
+    (outer :
+      ReachingSpine terminalRule binaryRule
+        A Y left₁ right₁ path₁ siblings₁)
+    (inner :
+      ReachingSpine terminalRule binaryRule
+        Y X left₂ right₂ path₂ siblings₂) :
+    ∃ path siblings,
+      ReachingSpine terminalRule binaryRule
+        A X
+        (left₁ ++ left₂)
+        (right₂ ++ right₁)
+        path siblings := by
+  induction outer with
+  | hole =>
+      exact
+        ⟨path₂, siblings₂, by
+          simpa using inner⟩
+
+  | @binaryLeft A B C Y left right z path siblings
+      hbin child sibling ih =>
+      obtain ⟨path', siblings', composed⟩ := ih inner
+      refine
+        ⟨A :: path', z.length :: siblings',
+          ?_⟩
+      have step :=
+        ReachingSpine.binaryLeft
+          hbin composed sibling
+      simpa only [List.nil_append, List.append_nil,
+        List.append_assoc] using step
+
+  | @binaryRight A B C Y left right y path siblings
+      hbin sibling child ih =>
+      obtain ⟨path', siblings', composed⟩ := ih inner
+      refine
+        ⟨A :: path', y.length :: siblings',
+          ?_⟩
+      have step :=
+        ReachingSpine.binaryRight
+          hbin sibling composed
+      simpa only [List.nil_append, List.append_nil,
+        List.append_assoc] using step
+
 /-- The terminal context consists exactly of the off-path sibling yields. -/
 theorem reachingSpine_context_length_eq
     (terminalRule : N → α → Prop)
@@ -361,6 +419,79 @@ theorem normalize_reachingSpine_to_nodup_unbounded
             (by rw [List.nodup_cons]; exact ⟨hmem, hnodup⟩)⟩
 
 /--
+Replace every off-path sibling of a reaching spine by an arbitrary shorter
+yield of the same sibling nonterminal.
+
+The dependency path itself is unchanged.  This is the semantic step used in
+Lemma 7.2 before cycle-shortening the path: each sibling is replaced by a
+bounded canonical typed yield.
+-/
+theorem reachingSpine_replace_siblings_by_bounded_yields
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (B : Nat)
+    {A X : N}
+    {left right : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (hshort :
+      ∀ (Y : N) {z₀ : Word α},
+        UntypedDerives terminalRule binaryRule Y z₀ →
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule Y z
+          ∧ z.length ≤ B) :
+    ∃ left' right' siblings',
+      ReachingSpine terminalRule binaryRule
+        A X left' right' path siblings'
+      ∧
+      (∀ s ∈ siblings', s ≤ B) := by
+  induction spine with
+  | @hole A =>
+      exact
+        ⟨[], [], [],
+          ReachingSpine.hole,
+          by simp⟩
+
+  | @binaryLeft A B C X left right z path siblings
+      hbin child sibling ih =>
+      obtain ⟨left', right', siblings',
+          child', hbounded⟩ := ih
+      obtain ⟨z', dz', hz'⟩ :=
+        hshort C sibling
+      refine
+        ⟨left', right' ++ z',
+          z'.length :: siblings',
+          ReachingSpine.binaryLeft
+            hbin child' dz',
+          ?_⟩
+      intro s hs
+      simp only [List.mem_cons] at hs
+      rcases hs with rfl | hs
+      · exact hz'
+      · exact hbounded s hs
+
+  | @binaryRight A B C X left right y path siblings
+      hbin sibling child ih =>
+      obtain ⟨left', right', siblings',
+          child', hbounded⟩ := ih
+      obtain ⟨y', dy', hy'⟩ :=
+        hshort B sibling
+      refine
+        ⟨y' ++ left', right',
+          y'.length :: siblings',
+          ReachingSpine.binaryRight
+            hbin dy' child',
+          ?_⟩
+      intro s hs
+      simp only [List.mem_cons] at hs
+      rcases hs with rfl | hs
+      · exact hy'
+      · exact hbounded s hs
+
+/--
 Cycle-shortening normalization for reaching spines.
 
 Normalize the child spine first. If the current root label already occurs
@@ -561,6 +692,46 @@ theorem reachingSpine_short_context_for_derivation
       reachingSpine_plug
         terminalRule binaryRule spine' dX,
       hlen⟩
+
+/--
+Any structural reaching spine can therefore be converted into a short
+terminal context as soon as every productive sibling nonterminal admits a
+B-bounded yield.
+-/
+theorem reachingSpine_short_context_from_productive_bound
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X : N}
+    {left right w : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (B : Nat)
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (hshort :
+      ∀ (Y : N) {z₀ : Word α},
+        UntypedDerives terminalRule binaryRule Y z₀ →
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule Y z
+          ∧ z.length ≤ B)
+    (dX :
+      UntypedDerives terminalRule binaryRule X w) :
+    ∃ left' right' : Word α,
+      UntypedDerives terminalRule binaryRule
+        A (left' ++ w ++ right')
+      ∧
+      left'.length + right'.length ≤
+        Fintype.card N * B := by
+  obtain ⟨left₁, right₁, siblings₁,
+      spine₁, hbounded⟩ :=
+    reachingSpine_replace_siblings_by_bounded_yields
+      terminalRule binaryRule B spine hshort
+  exact
+    reachingSpine_short_context_for_derivation
+      terminalRule binaryRule B
+      spine₁ hbounded dX
 
 /--
 Paper-facing version with an external bound Nt on the number of typed

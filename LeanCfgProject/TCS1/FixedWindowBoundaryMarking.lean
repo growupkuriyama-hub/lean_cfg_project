@@ -468,6 +468,93 @@ theorem boundary_selected_length
   rw [List.length_drop]
   omega
 
+/-- Taking exactly the length of a left concatenand recovers it. -/
+theorem take_append_of_prefix_length
+    (p q : Word α)
+    (k : Nat)
+    (hp : p.length = k) :
+    (p ++ q).take k = p := by
+  subst k
+  induction p with
+  | nil =>
+      rfl
+  | cons a p ih =>
+      simp [ih]
+
+/-- Dropping exactly the length of a left concatenand removes it. -/
+theorem drop_append_of_prefix_length
+    (p q : Word α)
+    (k : Nat)
+    (hp : p.length = k) :
+    (p ++ q).drop k = q := by
+  subst k
+  induction p with
+  | nil =>
+      rfl
+  | cons a p ih =>
+      simp [ih]
+
+/-- Length of the fixed-window prefix. -/
+theorem fixedWindow_prefix_length
+    (w : Word α)
+    (k l : Nat)
+    (hfit : k + l ≤ w.length) :
+    (w.take k).length = k := by
+  have hk : k ≤ w.length := by
+    omega
+  simp [List.length_take, hk]
+
+/-- Length of the fixed-window suffix. -/
+theorem fixedWindow_suffix_length
+    (w : Word α)
+    (k l : Nat)
+    (hfit : k + l ≤ w.length) :
+    (w.drop (w.length - l)).length = l := by
+  rw [List.length_drop]
+  omega
+
+/--
+Every long-enough word decomposes into its length-k prefix, an arbitrary
+middle, and its length-l suffix.
+-/
+theorem exists_fixedWindow_middle
+    (w : Word α)
+    (k l : Nat)
+    (hfit : k + l ≤ w.length) :
+    ∃ middle : Word α,
+      w =
+        w.take k ++ middle ++
+          w.drop (w.length - l) := by
+  let rest := w.drop k
+  let middle := rest.take (w.length - k - l)
+  let q := rest.drop (w.length - k - l)
+  have h₁ :
+      w = w.take k ++ rest := by
+    dsimp [rest]
+    exact (List.take_append_drop k w).symm
+  have h₂ :
+      rest = middle ++ q := by
+    dsimp [middle, q]
+    exact
+      (List.take_append_drop
+        (w.length - k - l) rest).symm
+  have hq :
+      q = w.drop (w.length - l) := by
+    dsimp [q, rest]
+    rw [List.drop_drop]
+    congr 1
+    omega
+  refine ⟨middle, ?_⟩
+  calc
+    w = w.take k ++ rest := h₁
+    _ = w.take k ++ (middle ++ q) := by
+      rw [h₂]
+    _ = w.take k ++ middle ++ q := by
+      rw [List.append_assoc]
+    _ = w.take k ++ middle ++
+          w.drop (w.length - l) := by
+      rw [hq]
+
 /--
 For the aligned boundary marking, every unmarked leaf lies after exactly k
 marked leaves.

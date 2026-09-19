@@ -29,6 +29,8 @@ complexity-transfer corollary.
 namespace LeanCfgProject
 namespace TCS1
 
+universe u
+
 section FixedWindowCharacteristicDataBounds
 
 /-- Bound on the number of non-start typed nonterminals. -/
@@ -55,7 +57,7 @@ If a finite sample has at most W words and every word has length at most L,
 then its encoded norm is at most W*(L+1).
 -/
 theorem sampleNorm_le_of_card_and_length
-    {α : Type}
+    {α : Type u}
     [DecidableEq α]
     (K : Finset (List α))
     (W L : Nat)
@@ -106,7 +108,7 @@ General encoded-size estimate: combine the witness-count estimate with the
 fixed-window length bound.
 -/
 theorem fixedWindow_sampleNorm_bound
-    {α : Type}
+    {α : Type u}
     [DecidableEq α]
     (K : Finset (List α))
     {m r N t b τG Nt tTyped bTyped : Nat}
