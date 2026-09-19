@@ -166,7 +166,14 @@ theorem take_map_some
       | zero =>
           rfl
       | succ n =>
-          simp [ih]
+          change
+            Option.some a ::
+                (w.map Option.some).take n =
+              Option.some a ::
+                (w.take n).map Option.some
+          exact
+            congrArg (List.cons (Option.some a))
+              (ih n)
 
 /-- Dropping commutes with marking every terminal by `some`. -/
 theorem drop_map_some
@@ -182,7 +189,10 @@ theorem drop_map_some
       | zero =>
           rfl
       | succ n =>
-          simp [ih]
+          change
+            (w.map Option.some).drop n =
+              (w.drop n).map Option.some
+          exact ih n
 
 /-- The kernel template contains one marked entry per marked leaf. -/
 theorem boundaryTemplate_markedCount
@@ -447,7 +457,7 @@ theorem template_central_shape_aux
             simp [templateMarkedWord,
               templateOmissionCount, hdiff] at ⊢
             rw [take_map_some, drop_map_some]
-            exact htail
+            simpa only [List.append_assoc] using htail
 
 /--
 Kernel-facing central-template theorem.
