@@ -259,6 +259,172 @@ theorem boundaryTemplate_omissionRanksAux
         (offset + MarkedBoundaryKernel.markedLeafCount left)]
       rfl
 
+/--
+If the unique omission gap lies strictly before the incoming offset, the
+template has no omissions at all.
+-/
+theorem template_no_omissions_of_gap_lt_offset
+    (t : List (Option α))
+    (offset k : Nat)
+    (hlt : k < offset)
+    (hgap :
+      ∀ j ∈ templateOmissionRanksAux offset t,
+        j = k) :
+    templateOmissionCount t = 0
+      ∧ t = (templateMarkedWord t).map Option.some := by
+  induction t generalizing offset with
+  | nil =>
+      exact ⟨rfl, rfl⟩
+  | cons x t ih =>
+      cases x with
+      | none =>
+          have hEq : offset = k :=
+            hgap offset
+              (by
+                simp [templateOmissionRanksAux])
+          omega
+      | some a =>
+          have htail :
+              ∀ j ∈
+                templateOmissionRanksAux (offset + 1) t,
+                j = k := by
+            intro j hj
+            exact hgap j
+              (by
+                simpa [templateOmissionRanksAux] using hj)
+          have hlt' : k < offset + 1 := by
+            omega
+          obtain ⟨hzero, hshape⟩ :=
+            ih (offset + 1) hlt' htail
+          constructor
+          · simpa [templateOmissionCount] using hzero
+          · simpa [templateMarkedWord, hshape]
+
+/--
+A template whose every omission has marked-rank k has one central omission
+run.  The marked terminals before and after that run are exactly the first
+and remaining marked terminals.
+-/
+theorem template_central_shape_aux
+    (t : List (Option α))
+    (offset k : Nat)
+    (hlo : offset ≤ k)
+    (hhi : k ≤ offset + templateMarkedCount t)
+    (hgap :
+      ∀ j ∈ templateOmissionRanksAux offset t,
+        j = k) :
+    t =
+      (templateMarkedWord t).take (k - offset) |>.map Option.some ++
+        List.replicate
+          (templateOmissionCount t) Option.none ++
+        ((templateMarkedWord t).drop (k - offset)).map Option.some := by
+  induction t generalizing offset with
+  | nil =>
+      have hk : k = offset := by
+        simp [templateMarkedCount] at hhi
+        omega
+      simp [templateMarkedWord, templateOmissionCount, hk]
+
+  | cons x t ih =>
+      cases x with
+      | none =>
+          have hk : offset = k :=
+            hgap offset
+              (by
+                simp [templateOmissionRanksAux])
+          have htailGap :
+              ∀ j ∈ templateOmissionRanksAux offset t,
+                j = k := by
+            intro j hj
+            exact hgap j
+              (by
+                simp [templateOmissionRanksAux, hj])
+          have htailHi :
+              k ≤ offset + templateMarkedCount t := by
+            simpa [templateMarkedCount] using hhi
+          have htail :=
+            ih offset (by omega) htailHi htailGap
+          simp [templateMarkedWord,
+            templateOmissionCount, hk, htail]
+
+      | some a =>
+          have htailGap :
+              ∀ j ∈
+                templateOmissionRanksAux (offset + 1) t,
+                j = k := by
+            intro j hj
+            exact hgap j
+              (by
+                simpa [templateOmissionRanksAux] using hj)
+          by_cases hk : offset = k
+          · have hlt : k < offset + 1 := by
+              omega
+            obtain ⟨hzero, hshape⟩ :=
+              template_no_omissions_of_gap_lt_offset
+                t (offset + 1) k hlt htailGap
+            simp [templateMarkedWord,
+              templateOmissionCount, hk, hzero, hshape]
+          · have hlo' : offset + 1 ≤ k := by
+              omega
+            have hhi' :
+                k ≤ offset + 1 + templateMarkedCount t := by
+              simpa [templateMarkedCount, Nat.add_assoc] using hhi
+            have htail :=
+              ih (offset + 1) hlo' hhi' htailGap
+            have hdiff :
+                k - offset =
+                  Nat.succ (k - (offset + 1)) := by
+              omega
+            simp [templateMarkedWord,
+              templateOmissionCount, hdiff, htail]
+
+/--
+Kernel-facing central-template theorem.
+
+If every omitted sibling lies after exactly k marked leaves and k is within
+the marked-leaf range, then the kernel template is a marked prefix, one run of
+omission placeholders, and a marked suffix.
+-/
+theorem boundaryTemplate_central_shape
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat)
+    (hk :
+      k ≤ MarkedBoundaryKernel.markedLeafCount K)
+    (hgap :
+      MarkedBoundaryKernel.AllOmissionsAt K k) :
+    MarkedBoundaryKernel.boundaryTemplate K =
+      ((MarkedBoundaryKernel.markedWord K).take k).map Option.some ++
+        List.replicate
+          (MarkedBoundaryKernel.omittedCount K) Option.none ++
+        ((MarkedBoundaryKernel.markedWord K).drop k).map Option.some := by
+  have hgapTemplate :
+      ∀ j ∈ templateOmissionRanksAux 0
+          (MarkedBoundaryKernel.boundaryTemplate K),
+        j = k := by
+    intro j hj
+    apply hgap j
+    rw [← boundaryTemplate_omissionRanksAux
+      terminalRule binaryRule 0 K]
+    exact hj
+  have hshape :=
+    template_central_shape_aux
+      (MarkedBoundaryKernel.boundaryTemplate K)
+      0 k
+      (Nat.zero_le k)
+      (by
+        rw [boundaryTemplate_markedCount
+          terminalRule binaryRule K]
+        simpa using hk)
+      hgapTemplate
+  rw [boundaryTemplate_markedWord
+    terminalRule binaryRule K] at hshape
+  rw [boundaryTemplate_omissionCount
+    terminalRule binaryRule K] at hshape
+  simpa using hshape
+
 /-- Concatenate two independent template expansions. -/
 theorem boundaryExpansion_append
     {t₁ t₂ : List (Option α)}
