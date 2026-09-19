@@ -67,8 +67,8 @@ theorem concreteAccumulatedSample_mono
           Finset.Subset.trans
             (ih hm)
             (Finset.subset_insert
-              (concreteAccumulatedSample datum n)
-              (datum (n + 1)))
+              (datum (n + 1))
+              (concreteAccumulatedSample datum n))
       · have hmEq : m = n + 1 := by omega
         subst m
         exact Finset.Subset.rfl
@@ -80,16 +80,17 @@ finite sample used by the reconstruction operator.
 noncomputable def concreteConservativeHypothesis
     (H : FixedFiniteMonoidHom α M)
     (datum : Nat → Word α) :
-    Nat → Finset (Word α)
-  | 0 => ∅
-  | n + 1 =>
-      if datum (n + 1) ∈
-          BatchLanguage H
-            (concreteConservativeHypothesis H datum n)
-      then
-        concreteConservativeHypothesis H datum n
-      else
-        concreteAccumulatedSample datum (n + 1)
+    Nat → Finset (Word α) := by
+  classical
+  exact fun n =>
+    Nat.rec
+      (∅ : Finset (Word α))
+      (fun m current =>
+        if datum (m + 1) ∈ BatchLanguage H current then
+          current
+        else
+          concreteAccumulatedSample datum (m + 1))
+      n
 
 /-- Generated data cause a literal keep step. -/
 theorem concreteConservativeHypothesis_keep
