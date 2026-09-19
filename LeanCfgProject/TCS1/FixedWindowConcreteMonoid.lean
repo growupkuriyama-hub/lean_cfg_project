@@ -27,27 +27,7 @@ theorem take_append_take_right
     (x y : Word α) (n : Nat) :
     (x ++ y.take n).take n =
       (x ++ y).take n := by
-  induction x generalizing n with
-  | nil =>
-      simp [List.take_take]
-  | cons a x ih =>
-      cases n with
-      | zero =>
-          rfl
-      | succ n =>
-          simp only [List.cons_append, List.take_succ_cons]
-          calc
-            (x ++ y.take (n + 1)).take n
-                =
-              (x ++ (y.take (n + 1)).take n).take n := by
-                symm
-                exact ih (y.take (n + 1)) n
-            _ =
-              (x ++ y.take n).take n := by
-                simp [List.take_take]
-            _ =
-              (x ++ y).take n :=
-                ih y n
+  simp [List.take_append, List.take_take, Nat.sub_le]
 
 /-- The last n letters of x++y only need the last n letters of x. -/
 theorem rtake_append_rtake_left
@@ -107,8 +87,9 @@ def fixedWindowRawMul
         (prefixVectorOfLe
           (sx.2.toList ++ z.1.toList) k
           (by
+            have hp : z.1.toList.length = k :=
+              z.1.2
             simp only [List.length_append]
-            rw [z.1.2]
             omega),
          z.2)
   | Sum.inr z, Sum.inl sy =>
@@ -117,8 +98,9 @@ def fixedWindowRawMul
          suffixVectorOfLe
           (z.2.toList ++ sy.2.toList) l
           (by
+            have hq : z.2.toList.length = l :=
+              z.2.2
             simp only [List.length_append]
-            rw [z.2.2]
             omega))
   | Sum.inr z, Sum.inr z' =>
       Sum.inr (z.1, z'.2)
