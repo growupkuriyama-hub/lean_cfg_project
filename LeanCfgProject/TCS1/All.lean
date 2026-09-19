@@ -62,6 +62,7 @@ import LeanCfgProject.TCS1.IndexedFrontRuleClosure
 import LeanCfgProject.TCS1.IndexedNormalizationFacade
 import LeanCfgProject.TCS1.EpsilonFreeProductiveTrim
 import LeanCfgProject.TCS1.IndexedConcreteSSBNFNormalization
+import LeanCfgProject.TCS1.IndexedNormalizationLanguage
 import LeanCfgProject.TCS1.NormalizationLanguageBounds
 import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
