@@ -60,11 +60,12 @@ theorem mem_concreteFixedWindowCanonicalSample_length_le
           k l) :
     word.length ≤
       fixedWindowWitnessLengthEnvelope
-        (Fintype.card
+        (@Fintype.card
           (ActiveTypedSymbol
             (ConcreteTypedActive
               (fixedWindowMonoidHom (α := α) k l)
-              terminalRule binaryRule startRule)))
+              terminalRule binaryRule startRule))
+          (Fintype.ofFinite _))
         (k + l) (Fintype.card N) τ := by
   classical
   letI :
@@ -106,8 +107,12 @@ theorem concreteFixedWindowCanonicalSample_norm_le
       (Fintype.card (FixedWindowMonoid α k l))
       (k + l)
       (Fintype.card N)
-      (Fintype.card (UntypedTerminalRuleIndex terminalRule))
-      (Fintype.card (UntypedBinaryRuleIndex binaryRule))
+      (@Fintype.card
+        (UntypedTerminalRuleIndex terminalRule)
+        (Fintype.ofFinite _))
+      (@Fintype.card
+        (UntypedBinaryRuleIndex binaryRule)
+        (Fintype.ofFinite _))
       τ := by
   classical
   let H :=
@@ -213,8 +218,12 @@ theorem concreteFixedWindowCanonicalSample_package
         (Fintype.card (FixedWindowMonoid α k l))
         (k + l)
         (Fintype.card N)
-        (Fintype.card (UntypedTerminalRuleIndex terminalRule))
-        (Fintype.card (UntypedBinaryRuleIndex binaryRule))
+        (@Fintype.card
+        (UntypedTerminalRuleIndex terminalRule)
+        (Fintype.ofFinite _))
+        (@Fintype.card
+        (UntypedBinaryRuleIndex binaryRule)
+        (Fintype.ofFinite _))
         τ := by
   constructor
   · exact
