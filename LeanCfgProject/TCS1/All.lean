@@ -27,6 +27,7 @@ import LeanCfgProject.TCS1.SuccessfulTypedTrimClosureBridge
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowReducedContextFacade
 import LeanCfgProject.TCS1.ActiveTypedReachabilityBridge
+import LeanCfgProject.TCS1.ConcreteTypedTrimming
 import LeanCfgProject.TCS1.ReducedTypedRuleBridge
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
