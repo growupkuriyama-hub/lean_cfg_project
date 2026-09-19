@@ -468,6 +468,32 @@ theorem boundary_selected_length
   rw [List.length_drop]
   omega
 
+/-- Taking exactly the length of a left concatenand recovers it. -/
+theorem take_append_of_prefix_length
+    (p q : Word α)
+    (k : Nat)
+    (hp : p.length = k) :
+    (p ++ q).take k = p := by
+  subst k
+  induction p with
+  | nil =>
+      rfl
+  | cons a p ih =>
+      simp [ih]
+
+/-- Dropping exactly the length of a left concatenand removes it. -/
+theorem drop_append_of_prefix_length
+    (p q : Word α)
+    (k : Nat)
+    (hp : p.length = k) :
+    (p ++ q).drop k = q := by
+  subst k
+  induction p with
+  | nil =>
+      rfl
+  | cons a p ih =>
+      simp [ih]
+
 /-- Length of the fixed-window prefix. -/
 theorem fixedWindow_prefix_length
     (w : Word α)
