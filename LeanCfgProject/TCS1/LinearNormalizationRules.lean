@@ -87,7 +87,7 @@ def linearStepParent
     (p : P)
     (i : Fin (G.rhs p).toPlan.steps.length) :
     LinearConstructedState G :=
-  if hzero : i.1 = 0 then
+  if _hzero : i.1 = 0 then
     linearOldState G (G.lhs p)
   else
     linearAuxState G p
@@ -112,7 +112,7 @@ def linearStepContinuation
   | .terminal _ =>
       linearAuxState G p i
   | .core B =>
-      if hnext :
+      if _hnext :
           i.1 + 1 < (G.rhs p).toPlan.steps.length then
         linearAuxState G p i
       else
