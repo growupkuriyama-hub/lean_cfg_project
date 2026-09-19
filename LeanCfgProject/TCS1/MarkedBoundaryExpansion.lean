@@ -60,6 +60,141 @@ inductive BoundaryExpansion :
         (block :: blocks)
         (block ++ w)
 
+/-- Number of marked terminals in a boundary template. -/
+def templateMarkedCount : List (Option α) → Nat
+  | [] => 0
+  | Option.some _ :: t => 1 + templateMarkedCount t
+  | Option.none :: t => templateMarkedCount t
+
+/-- Number of omission placeholders in a boundary template. -/
+def templateOmissionCount : List (Option α) → Nat
+  | [] => 0
+  | Option.some _ :: t => templateOmissionCount t
+  | Option.none :: t => 1 + templateOmissionCount t
+
+/-- Marked terminals of a template, in left-to-right order. -/
+def templateMarkedWord : List (Option α) → Word α
+  | [] => []
+  | Option.some a :: t => a :: templateMarkedWord t
+  | Option.none :: t => templateMarkedWord t
+
+/-- Marked-leaf ranks of the omission placeholders. -/
+def templateOmissionRanksAux : Nat → List (Option α) → List Nat
+  | _, [] => []
+  | offset, Option.some _ :: t =>
+      templateOmissionRanksAux (offset + 1) t
+  | offset, Option.none :: t =>
+      offset :: templateOmissionRanksAux offset t
+
+/-- The kernel template contains one marked entry per marked leaf. -/
+theorem boundaryTemplate_markedCount
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    templateMarkedCount
+        (MarkedBoundaryKernel.boundaryTemplate K) =
+      MarkedBoundaryKernel.markedLeafCount K := by
+  induction K with
+  | marked =>
+      rfl
+  | unaryLeft hbin child siblingWord sibling ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateMarkedCount, ih,
+        MarkedBoundaryKernel.markedLeafCount]
+  | unaryRight hbin siblingWord sibling child ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateMarkedCount, ih,
+        MarkedBoundaryKernel.markedLeafCount]
+  | branch hbin left right ihL ihR =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateMarkedCount, ihL, ihR,
+        MarkedBoundaryKernel.markedLeafCount]
+
+/-- The kernel template contains one placeholder per omitted sibling. -/
+theorem boundaryTemplate_omissionCount
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    templateOmissionCount
+        (MarkedBoundaryKernel.boundaryTemplate K) =
+      MarkedBoundaryKernel.omittedCount K := by
+  induction K with
+  | marked =>
+      rfl
+  | unaryLeft hbin child siblingWord sibling ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionCount, ih,
+        MarkedBoundaryKernel.omittedCount]
+  | unaryRight hbin siblingWord sibling child ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionCount, ih,
+        MarkedBoundaryKernel.omittedCount]
+  | branch hbin left right ihL ihR =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionCount, ihL, ihR,
+        MarkedBoundaryKernel.omittedCount]
+
+/-- Filtering the template placeholders recovers the marked terminal word. -/
+theorem boundaryTemplate_markedWord
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    templateMarkedWord
+        (MarkedBoundaryKernel.boundaryTemplate K) =
+      MarkedBoundaryKernel.markedWord K := by
+  induction K with
+  | marked =>
+      rfl
+  | unaryLeft hbin child siblingWord sibling ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateMarkedWord, ih,
+        MarkedBoundaryKernel.markedWord]
+  | unaryRight hbin siblingWord sibling child ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateMarkedWord, ih,
+        MarkedBoundaryKernel.markedWord]
+  | branch hbin left right ihL ihR =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateMarkedWord, ihL, ihR,
+        MarkedBoundaryKernel.markedWord]
+
+/-- Template omission ranks coincide with the structural kernel ranks. -/
+theorem boundaryTemplate_omissionRanksAux
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (offset : Nat)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) :
+    templateOmissionRanksAux offset
+        (MarkedBoundaryKernel.boundaryTemplate K) =
+      MarkedBoundaryKernel.omissionRanksAux offset K := by
+  induction K generalizing offset with
+  | marked =>
+      rfl
+  | unaryLeft hbin child siblingWord sibling ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionRanksAux,
+        MarkedBoundaryKernel.omissionRanksAux,
+        ih offset]
+  | unaryRight hbin siblingWord sibling child ih =>
+      simp [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionRanksAux,
+        MarkedBoundaryKernel.omissionRanksAux,
+        ih offset]
+  | branch hbin left right ihL ihR =>
+      simp only [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionRanksAux,
+        MarkedBoundaryKernel.omissionRanksAux,
+        List.append_eq, List.nil_eq]
+      rw [ihL offset]
+      rw [boundaryTemplate_markedCount
+        terminalRule binaryRule left]
+      rw [ihR
+        (offset + MarkedBoundaryKernel.markedLeafCount left)]
+
 /-- Concatenate two independent template expansions. -/
 theorem boundaryExpansion_append
     {t₁ t₂ : List (Option α)}
