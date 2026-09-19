@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.WitnessSetConstruction
 import LeanCfgProject.TCS1.ReducedTypedRuleBridge
+import LeanCfgProject.TCS1.FixedWindowCharacteristicDataBounds
 
 /-!
 # TCS #1 v68: cardinality of the canonical witness set
@@ -295,6 +296,109 @@ theorem canonicalWitnessFinset_card_le_families
   simp only [CanonicalWitnessIndex, Fintype.card_sum,
     Fintype.card_unit] at h
   omega
+
+/--
+The actual canonical witness finset satisfies the fixed-window encoded-size
+envelope as soon as its words satisfy the Lemma 7.2 length bound.
+
+Here the abstract arithmetic parameters of
+`fixedWindow_sampleNorm_bound` are instantiated by the genuine active typed
+symbols and production-index types.
+-/
+theorem canonicalWitnessFinset_fixedWindow_sampleNorm_bound
+    [Fintype α] [DecidableEq α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    [Fintype (ActiveTypedSymbol Active)]
+    [Fintype (ActiveTypedTerminalIndex H terminalRule Active)]
+    [Fintype (ActiveTypedBinaryIndex binaryRule Active)]
+    [Fintype (UntypedTerminalRuleIndex terminalRule)]
+    [Fintype (UntypedBinaryRuleIndex binaryRule)]
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (r τG : Nat)
+    (hlen :
+      ∀ w ∈
+        canonicalWitnessFinset
+          H terminalRule binaryRule startRule epsilonStart Active C,
+        w.length ≤
+          fixedWindowWitnessLengthEnvelope
+            (Fintype.card (ActiveTypedSymbol Active))
+            r (Fintype.card N) τG) :
+    (∑ w ∈
+      canonicalWitnessFinset
+        H terminalRule binaryRule startRule epsilonStart Active C,
+      (w.length + 1)) ≤
+    fixedWindowCharacteristicEnvelope
+      (Fintype.card M)
+      r
+      (Fintype.card N)
+      (Fintype.card (UntypedTerminalRuleIndex terminalRule))
+      (Fintype.card (UntypedBinaryRuleIndex binaryRule))
+      τG := by
+  let K :=
+    canonicalWitnessFinset
+      H terminalRule binaryRule startRule epsilonStart Active C
+
+  have hNt :
+      Fintype.card (ActiveTypedSymbol Active) ≤
+        Fintype.card N * Fintype.card M :=
+    activeTypedSymbol_card_le Active
+
+  have ht :
+      Fintype.card
+          (ActiveTypedTerminalIndex H terminalRule Active) ≤
+        Fintype.card
+          (UntypedTerminalRuleIndex terminalRule) :=
+    activeTypedTerminalIndex_card_le
+      H terminalRule Active
+
+  have hb :
+      Fintype.card
+          (ActiveTypedBinaryIndex binaryRule Active) ≤
+        Fintype.card
+          (UntypedBinaryRuleIndex binaryRule) *
+            (Fintype.card M)^2 :=
+    activeTypedBinaryIndex_card_le
+      binaryRule Active
+
+  have hcard :
+      K.card ≤
+        Fintype.card (ActiveTypedSymbol Active) +
+          Fintype.card
+            (ActiveTypedTerminalIndex H terminalRule Active) +
+          Fintype.card
+            (ActiveTypedBinaryIndex binaryRule Active) +
+          1 := by
+    dsimp [K]
+    exact
+      canonicalWitnessFinset_card_le_families
+        H terminalRule binaryRule startRule epsilonStart Active C
+
+  apply
+    fixedWindow_sampleNorm_bound
+      K
+      (m := Fintype.card M)
+      (r := r)
+      (N := Fintype.card N)
+      (t := Fintype.card
+        (UntypedTerminalRuleIndex terminalRule))
+      (b := Fintype.card
+        (UntypedBinaryRuleIndex binaryRule))
+      (τG := τG)
+      (Nt := Fintype.card (ActiveTypedSymbol Active))
+      (tTyped := Fintype.card
+        (ActiveTypedTerminalIndex H terminalRule Active))
+      (bTyped := Fintype.card
+        (ActiveTypedBinaryIndex binaryRule Active))
+      hNt ht hb hcard
+  intro w hw
+  exact hlen w hw
 
 end CanonicalWitnessCounting
 
