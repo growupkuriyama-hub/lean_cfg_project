@@ -1,5 +1,5 @@
 import LeanCfgProject.TCS1.ConcreteConservativeLearner
-import LeanCfgProject.TCS1.ReconstructionComplexityCounts
+import LeanCfgProject.TCS1.ReconstructionFiniteCandidateSpaces
 
 /-!
 # TCS #1: complexity bookkeeping along the concrete conservative run
@@ -125,6 +125,133 @@ theorem concreteConservativeHypothesis_norm_le_prefix
         exact
           concreteAccumulatedSample_norm_le_prefix
             datum (n + 1)
+
+/--
+The quadratic cache majorant is monotone in the sample-size parameter.
+-/
+theorem reconstruction_degreeTwo_mono
+    {a b : Nat}
+    (hab : a ≤ b) :
+    (a + 1) ^ 2 ≤ (b + 1) ^ 2 := by
+  exact
+    Nat.pow_le_pow_left
+      (Nat.add_le_add_right hab 1) 2
+
+/--
+The quartic candidate-space majorant is monotone in the sample-size parameter.
+-/
+theorem reconstruction_degreeFour_mono
+    {a b : Nat}
+    (hab : a ≤ b) :
+    5 * (a + 1) ^ 4 ≤
+      5 * (b + 1) ^ 4 := by
+  apply Nat.mul_le_mul_left
+  exact
+    Nat.pow_le_pow_left
+      (Nat.add_le_add_right hab 1) 4
+
+/--
+The actual finite rule-candidate space at stage n is quartically bounded by
+the encoded positive-data prefix seen by that stage.
+-/
+theorem concreteAccumulated_candidateSpace_card_le_prefix_fourth
+    (datum : Nat → Word α)
+    (n : Nat) :
+    Fintype.card
+        (ReconstructionRuleCandidateSpace
+          (concreteAccumulatedSample datum n))
+      ≤
+    5 * (positiveDataPrefixNorm datum n + 1) ^ 4 := by
+  have hcandidate :
+      Fintype.card
+          (ReconstructionRuleCandidateSpace
+            (concreteAccumulatedSample datum n))
+        ≤
+      5 *
+        (reconstructionSampleNorm
+            (concreteAccumulatedSample datum n) + 1) ^ 4 :=
+    reconstructionRuleCandidateSpace_card_le_fourth
+      (concreteAccumulatedSample datum n)
+  have hnorm :
+      reconstructionSampleNorm
+          (concreteAccumulatedSample datum n)
+        ≤
+      positiveDataPrefixNorm datum n :=
+    concreteAccumulatedSample_norm_le_prefix datum n
+  exact
+    le_trans hcandidate
+      (reconstruction_degreeFour_mono hnorm)
+
+/--
+The substring/type cache candidate space is quadratically bounded by the
+encoded data prefix.
+-/
+theorem concreteAccumulated_factorCache_card_le_prefix_sq
+    (datum : Nat → Word α)
+    (n : Nat) :
+    Fintype.card
+        (ReconstructionFactorSlot
+          (concreteAccumulatedSample datum n))
+      ≤
+    (positiveDataPrefixNorm datum n + 1) ^ 2 := by
+  have hslot :
+      Fintype.card
+          (ReconstructionFactorSlot
+            (concreteAccumulatedSample datum n))
+        ≤
+      (reconstructionSampleNorm
+          (concreteAccumulatedSample datum n)) ^ 2 :=
+    reconstructionFactorSlot_card_le_sq
+      (concreteAccumulatedSample datum n)
+  have hnorm :
+      reconstructionSampleNorm
+          (concreteAccumulatedSample datum n)
+        ≤
+      positiveDataPrefixNorm datum n :=
+    concreteAccumulatedSample_norm_le_prefix datum n
+  have hpow :
+      (reconstructionSampleNorm
+          (concreteAccumulatedSample datum n)) ^ 2
+        ≤
+      (positiveDataPrefixNorm datum n + 1) ^ 2 := by
+    exact Nat.pow_le_pow_left
+      (le_trans hnorm (Nat.le_add_right _ _)) 2
+  exact le_trans hslot hpow
+
+/--
+Even when every candidate comparison is charged a full linear direct-encoding
+cost, scanning the complete finite reconstruction candidate space is bounded
+by the same degree-five polynomial in the data prefix.
+-/
+theorem concreteAccumulated_directCandidateScan_le_prefix_degreeFive
+    (datum : Nat → Word α)
+    (n : Nat) :
+    Fintype.card
+        (ReconstructionRuleCandidateSpace
+          (concreteAccumulatedSample datum n))
+        *
+      (positiveDataPrefixNorm datum n + 1)
+      ≤
+    5 * (positiveDataPrefixNorm datum n + 1) ^ 5 := by
+  have hcard :=
+    concreteAccumulated_candidateSpace_card_le_prefix_fourth
+      datum n
+  have hmul :=
+    Nat.mul_le_mul_right
+      (positiveDataPrefixNorm datum n + 1)
+      hcard
+  calc
+    Fintype.card
+        (ReconstructionRuleCandidateSpace
+          (concreteAccumulatedSample datum n))
+        *
+      (positiveDataPrefixNorm datum n + 1)
+      ≤
+    (5 * (positiveDataPrefixNorm datum n + 1) ^ 4) *
+      (positiveDataPrefixNorm datum n + 1) := hmul
+    _ =
+      5 * (positiveDataPrefixNorm datum n + 1) ^ 5 := by
+        ring
 
 /--
 The degree-five reconstruction majorant is monotone in the sample-size
