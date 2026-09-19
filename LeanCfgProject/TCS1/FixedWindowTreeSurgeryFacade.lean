@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.MarkedBoundaryNormalization
 import LeanCfgProject.TCS1.MarkedBoundaryGapNormalization
+import LeanCfgProject.TCS1.MarkedBoundaryExpansion
 
 /-!
 # TCS #1 v68: fixed-window tree-surgery facade
@@ -25,7 +26,7 @@ h_{k,l}-typed symbol.
 namespace LeanCfgProject
 namespace TCS1
 
-universe u v
+universe u v w
 
 section FixedWindowTreeSurgeryFacade
 
@@ -149,6 +150,120 @@ theorem exists_fixedWindow_shortened_reconstruction
     (Nat.add_le_add_left hmul (k + l))
 
 end FixedWindowTreeSurgeryFacade
+
+section FixedWindowTypedLongCompletion
+
+variable {N : Type u}
+variable {α : Type v}
+variable {M : Type w} [Monoid M] [Fintype M]
+
+/--
+Full typed long-word branch of Lemma 7.1.
+
+The first/last boundary marking, gap-preserving cycle shortening, explicit
+short sibling replacement, fixed-window type preservation, and the exact
+length envelope are composed in one theorem.
+-/
+theorem exists_fixedWindow_long_typed_yield
+    [Fintype N] [DecidableEq N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    {w₀ : Word α}
+    (d₀ :
+      UntypedDerives terminalRule binaryRule A w₀)
+    {μ : M}
+    (href : H.h w₀ = μ)
+    (k l : Nat)
+    (hr : 0 < k + l)
+    (hfit : k + l ≤ w₀.length)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ X : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule X z
+          ∧ z.length ≤ τ) :
+    ∃ w' : Word α,
+      TypedDerives H terminalRule binaryRule
+        (A, μ) w'
+      ∧
+      w'.length ≤
+        (k + l) +
+          (2 * (k + l) - 1) *
+            Fintype.card N * τ := by
+  obtain ⟨K', hMarked, hMarks, hOmit, hGap⟩ :=
+    exists_fixedWindow_cycle_shortened_kernel_ranked
+      terminalRule binaryRule d₀ k l hr hfit
+
+  have hk :
+      k ≤ MarkedBoundaryKernel.markedLeafCount K' := by
+    rw [hMarks]
+    omega
+
+  obtain ⟨blocks, dAssembly, hCount, hEach⟩ :=
+    exists_rebuilt_short_boundaryAssembly
+      terminalRule binaryRule τ hshort
+      K' k hk hGap
+
+  let p : Word α := w₀.take k
+  let q : Word α := w₀.drop (w₀.length - l)
+
+  have hp : p.length = k := by
+    dsimp [p]
+    exact fixedWindow_prefix_length w₀ k l hfit
+
+  have hq : q.length = l := by
+    dsimp [q]
+    exact fixedWindow_suffix_length w₀ k l hfit
+
+  have hTake :
+      (MarkedBoundaryKernel.markedWord K').take k = p := by
+    rw [hMarked]
+    dsimp [p, q]
+    exact
+      take_append_of_prefix_length
+        (w₀.take k)
+        (w₀.drop (w₀.length - l))
+        k
+        (fixedWindow_prefix_length w₀ k l hfit)
+
+  have hDrop :
+      (MarkedBoundaryKernel.markedWord K').drop k = q := by
+    rw [hMarked]
+    dsimp [p, q]
+    exact
+      drop_append_of_prefix_length
+        (w₀.take k)
+        (w₀.drop (w₀.length - l))
+        k
+        (fixedWindow_prefix_length w₀ k l hfit)
+
+  rw [hTake, hDrop] at dAssembly
+
+  obtain ⟨middle, hDecomp⟩ :=
+    exists_fixedWindow_middle w₀ k l hfit
+
+  have href' :
+      H.h (p ++ middle ++ q) = μ := by
+    rw [← hDecomp]
+    exact href
+
+  exact
+    fixedWindow_long_typed_yield_of_reconstruction
+      H terminalRule binaryRule
+      hr hrespect
+      p q middle blocks hp hq href'
+      dAssembly
+      (Fintype.card N) τ
+      (MarkedBoundaryKernel.omittedCount K')
+      (le_of_eq hCount)
+      hOmit
+      hEach
+
+end FixedWindowTypedLongCompletion
 
 end TCS1
 end LeanCfgProject
