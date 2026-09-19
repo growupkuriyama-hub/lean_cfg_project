@@ -1,4 +1,4 @@
-import LeanCfgProject.TCS1.BinaryUnitElimination
+import LeanCfgProject.TCS1.UnitFreeProductiveTrim
 
 /-!
 # TCS #1 v69: concrete productive family after epsilon elimination
