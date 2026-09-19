@@ -358,6 +358,76 @@ theorem canonicalWitnessWords_length_le_fixedWindow
       Nt (fixedWindowTypedYieldBound r Ncount τG)
       bounds hword
 
+/--
+Paper-facing conditional completion of Lemma 7.2.
+
+The only remaining semantic input is the existence, for every active typed
+symbol, of some terminal reaching context of the displayed Nt*B length.
+Canonical context minimality then transfers that bound, Lemma 7.1 supplies
+the canonical yield bound, and every actual witness word satisfies the common
+envelope.
+-/
+theorem canonicalWitnessWords_length_le_fixedWindow_of_context_alternatives
+    [Fintype N] [DecidableEq N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (minimal :
+      CanonicalChoiceMinimality
+        H terminalRule binaryRule startRule epsilonStart Active C)
+    (trim :
+      SuccessfulTypedTrimClosure
+        H terminalRule binaryRule Active)
+    (k l Nt : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    (hcontext :
+      ∀ X : N × M,
+        Active X →
+        ∃ left right : Word α,
+          (∀ {z : Word α},
+            ReducedTypedDerives
+              H terminalRule binaryRule Active X z →
+            ReducedTypedLanguage
+              H terminalRule binaryRule startRule epsilonStart Active
+              (left ++ z ++ right))
+          ∧
+          left.length + right.length ≤
+            Nt *
+              fixedWindowTypedYieldBound
+                (k + l) (Fintype.card N) τ)
+    {word : Word α}
+    (hword :
+      word ∈
+        CanonicalWitnessWords
+          H terminalRule binaryRule startRule epsilonStart Active C) :
+    word.length ≤
+      fixedWindowWitnessLengthEnvelope
+        Nt (k + l) (Fintype.card N) τ := by
+  have bounds :=
+    canonicalYieldContextBounds_fixedWindow_of_context_alternatives
+      H terminalRule binaryRule startRule epsilonStart
+      Active C minimal trim
+      k l Nt hrespect τ hshort hcontext
+  exact
+    canonicalWitnessWords_length_le_fixedWindow
+      H terminalRule binaryRule startRule epsilonStart
+      Active C
+      Nt (k + l) (Fintype.card N) τ
+      bounds hword
+
 end FixedWindowLemma72Facade
 
 end TCS1
