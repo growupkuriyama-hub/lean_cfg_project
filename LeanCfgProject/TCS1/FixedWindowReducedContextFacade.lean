@@ -137,6 +137,7 @@ most `Nt * B_{k,l}(G)`, where `Nt` is the number of active typed symbols.
 -/
 theorem exists_fixedWindow_reduced_short_reaching_context
     [Fintype N]
+    [Fintype (ActiveTypedSymbol Active)]
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
@@ -174,8 +175,6 @@ theorem exists_fixedWindow_reduced_short_reaching_context
             (k + l) (Fintype.card N) τ := by
   classical
   letI : DecidableEq N := Classical.decEq N
-  letI : Fintype (ActiveTypedSymbol Active) :=
-    Fintype.ofFinite _
   letI : DecidableEq (ActiveTypedSymbol Active) :=
     Classical.decEq _
 
@@ -259,6 +258,7 @@ Lemma 7.1, and canonical minimality.
 -/
 theorem canonicalYieldContextBounds_fixedWindow_of_structural_reachability
     [Fintype N]
+    [Fintype (ActiveTypedSymbol Active)]
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
@@ -293,8 +293,6 @@ theorem canonicalYieldContextBounds_fixedWindow_of_structural_reachability
         (k + l) (Fintype.card N) τ) := by
   classical
   letI : DecidableEq N := Classical.decEq N
-  letI : Fintype (ActiveTypedSymbol Active) :=
-    Fintype.ofFinite _
 
   apply
     canonicalYieldContextBounds_fixedWindow_of_context_alternatives
