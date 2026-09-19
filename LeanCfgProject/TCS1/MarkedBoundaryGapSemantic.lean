@@ -164,15 +164,13 @@ theorem reachingSubspine_preserves_allOmissionsAt
       ReachingSpineAllOmissionsAt
         offset marks k spine)
     (hmem : Y ∈ path) :
-    ∃ left' right' path' siblings',
-      ReachingSpine terminalRule binaryRule
-        Y X left' right' path' siblings'
-      ∧ path'.Nodup
+    ∃ left' right' path' siblings'
+        (spine' :
+          ReachingSpine terminalRule binaryRule
+            Y X left' right' path' siblings'),
+      path'.Nodup
       ∧ ReachingSpineAllOmissionsAt
-          offset marks k
-          (show ReachingSpine terminalRule binaryRule
-            Y X left' right' path' siblings' from by
-              assumption) := by
+          offset marks k spine' := by
   induction spine generalizing Y with
   | @hole A =>
       simp only [List.mem_singleton] at hmem
@@ -240,15 +238,13 @@ theorem normalize_reachingSpine_preserves_allOmissionsAt
     (hgap :
       ReachingSpineAllOmissionsAt
         offset marks k spine) :
-    ∃ left' right' path' siblings',
-      ReachingSpine terminalRule binaryRule
-        A X left' right' path' siblings'
-      ∧ path'.Nodup
+    ∃ left' right' path' siblings'
+        (spine' :
+          ReachingSpine terminalRule binaryRule
+            A X left' right' path' siblings'),
+      path'.Nodup
       ∧ ReachingSpineAllOmissionsAt
-          offset marks k
-          (show ReachingSpine terminalRule binaryRule
-            A X left' right' path' siblings' from by
-              assumption) := by
+          offset marks k spine' := by
   induction spine with
   | @hole A =>
       refine ⟨[], [], [A], [], ReachingSpine.hole, by simp, ?_⟩
