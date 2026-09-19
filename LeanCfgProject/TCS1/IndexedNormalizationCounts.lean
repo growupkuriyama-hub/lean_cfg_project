@@ -160,6 +160,7 @@ theorem indexedReducedSSBNF_terminalRule_card_le_grammarSizeEnvelope
   let Nf :=
     ReducedUnitFreeState
       (indexedFiniteFrontEndGrammar G) start
+  letI : Fintype Nf := Fintype.ofFinite _
   have hraw :
       (@Fintype.card
         (UntypedTerminalRuleIndex
@@ -204,6 +205,7 @@ theorem indexedReducedSSBNF_binaryRule_card_le_grammarSizeEnvelope
   let Nf :=
     ReducedUnitFreeState
       (indexedFiniteFrontEndGrammar G) start
+  letI : Fintype Nf := Fintype.ofFinite _
   have hraw :
       (@Fintype.card
         (UntypedBinaryRuleIndex
