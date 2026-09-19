@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.MarkedBoundaryGapNormalization
+import LeanCfgProject.TCS1.FixedWindowBoundarySemantic
 
 /-!
 # TCS #1 v68: expansion witnesses for marked-boundary reconstruction
