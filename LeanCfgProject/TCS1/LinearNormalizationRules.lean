@@ -405,6 +405,89 @@ theorem linearConstructedState_card_le_scale
   unfold PreparedLinearIndexedCFG.encodingScale
   omega
 
+
+/-- Source productions whose normalized plan has a terminal endpoint. -/
+abbrev LinearEndpointTerminalIndex
+    [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :=
+  {p : P //
+    ∃ a : α,
+      (G.rhs p).toPlan.endpoint =
+        LinearPlanEndpoint.terminal a}
+
+/-- One index per concrete terminal rule family member. -/
+abbrev LinearConstructedTerminalRuleIndex
+    [Fintype α] [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :=
+  α ⊕ LinearEndpointTerminalIndex G
+
+/-- One index per concrete binary rule. -/
+abbrev LinearConstructedBinaryRuleIndex
+    [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :=
+  LinearPlanAuxIndex G
+
+/-- Endpoint terminal-rule indices are a subtype of the source productions. -/
+theorem linearEndpointTerminalIndex_card_le
+    [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    Fintype.card (LinearEndpointTerminalIndex G) ≤
+      Fintype.card P := by
+  exact Fintype.card_subtype_le _
+
+/-- Concrete terminal-rule index count is at most wrappers plus source rules. -/
+theorem linearConstructedTerminalRuleIndex_card_le
+    [Fintype α] [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    Fintype.card (LinearConstructedTerminalRuleIndex G) ≤
+      Fintype.card α + Fintype.card P := by
+  rw [Fintype.card_sum]
+  exact Nat.add_le_add_left
+    (linearEndpointTerminalIndex_card_le G)
+    (Fintype.card α)
+
+/-- Concrete binary-rule index count is exactly the planned-step count. -/
+@[simp] theorem linearConstructedBinaryRuleIndex_card
+    [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    Fintype.card (LinearConstructedBinaryRuleIndex G) =
+      G.totalPlanSteps := by
+  exact linearPlanAuxIndex_card G
+
+/-- The concrete normalized rule-index count is bounded by the source scale. -/
+theorem linearConstructedRuleIndex_card_le_scale
+    [Fintype N] [Fintype α] [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    Fintype.card (LinearConstructedTerminalRuleIndex G) +
+        Fintype.card (LinearConstructedBinaryRuleIndex G)
+      ≤
+    G.encodingScale := by
+  have ht :=
+    linearConstructedTerminalRuleIndex_card_le G
+  have hb :=
+    preparedLinear_totalPlanSteps_le_totalSourceLength G
+  rw [linearConstructedBinaryRuleIndex_card]
+  unfold PreparedLinearIndexedCFG.encodingScale
+  omega
+
+/--
+The actual constructed state and rule index spaces together are at most twice
+the prepared encoding scale.
+-/
+theorem linearConstructed_combined_size_le_twice_scale
+    [Fintype N] [Fintype α] [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    Fintype.card (LinearConstructedState G) +
+      (Fintype.card (LinearConstructedTerminalRuleIndex G) +
+       Fintype.card (LinearConstructedBinaryRuleIndex G))
+      ≤
+    2 * G.encodingScale := by
+  have hs :=
+    linearConstructedState_card_le_scale G
+  have hr :=
+    linearConstructedRuleIndex_card_le_scale G
+  omega
+
 end LinearNormalizationRules
 
 end TCS1
