@@ -28,6 +28,17 @@ variable {P : Type w}
 variable [Fintype N] [Fintype α] [Fintype P]
 variable [DecidableEq N] [DecidableEq α]
 
+/-- The indexed normalization scale is automatically positive once a source
+start nonterminal has been chosen. -/
+theorem indexedNormalizationScale_pos_of_start
+    (G : IndexedMixedCFG N α P)
+    (A : N) :
+    0 < G.normalizationScale := by
+  have hN : 0 < Fintype.card N :=
+    Fintype.card_pos_iff.mpr ⟨A⟩
+  unfold IndexedMixedCFG.normalizationScale
+  omega
+
 /--
 End-to-end identification by the concrete conservative learner under the
 paper's fixed-h substitutability hypothesis.
@@ -40,7 +51,6 @@ theorem indexedFixedWindow_concreteGold_identification
         u ∈ LeastClosedLanguage G.toMixedRules A ∧
         u ≠ [])
     (τR k l : Nat)
-    (hn : 0 < G.normalizationScale)
     (hsource :
       YieldBound
         (fun B => LeastClosedLanguage G.toMixedRules B)
@@ -78,7 +88,9 @@ theorem indexedFixedWindow_concreteGold_identification
             R.hyp (n + 1)) := by
   have hpack :=
     indexedFixedWindowSection7_package
-      G A hprod τR k l hn hsource hsub
+      G A hprod τR k l
+      (indexedNormalizationScale_pos_of_start G A)
+      hsource hsub
   exact
     concreteConservative_gold_identification
       (fixedWindowMonoidHom (α := α) k l)
@@ -99,7 +111,6 @@ theorem indexedClassicalFixedWindow_concreteGold_identification
         u ∈ LeastClosedLanguage G.toMixedRules A ∧
         u ≠ [])
     (τR k l : Nat)
-    (hn : 0 < G.normalizationScale)
     (hsource :
       YieldBound
         (fun B => LeastClosedLanguage G.toMixedRules B)
@@ -145,7 +156,9 @@ theorem indexedClassicalFixedWindow_concreteGold_identification
       hwin
   exact
     indexedFixedWindow_concreteGold_identification
-      G A hprod τR k l hn hsource hsub
+      G A hprod τR k l
+      (indexedNormalizationScale_pos_of_start G A)
+      hsource hsub
       datum hpositive hcoverage
 
 /-- Fully concrete learner at the explicit (0,0) endpoint. -/
@@ -157,7 +170,6 @@ theorem indexedZeroWindow_concreteGold_identification
         u ∈ LeastClosedLanguage G.toMixedRules A ∧
         u ≠ [])
     (τR : Nat)
-    (hn : 0 < G.normalizationScale)
     (hsource :
       YieldBound
         (fun B => LeastClosedLanguage G.toMixedRules B)
@@ -201,7 +213,7 @@ theorem indexedZeroWindow_concreteGold_identification
       (LeastClosedLanguage G.toMixedRules A)).2 hzero
   exact
     indexedFixedWindow_concreteGold_identification
-      G A hprod τR 0 0 hn hsource hsub
+      G A hprod τR 0 0 hsource hsub
       datum hpositive hcoverage
 
 end IndexedConcreteGoldLearner
