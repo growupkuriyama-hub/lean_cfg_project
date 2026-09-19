@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.SuccessfulTypedTrimClosureBridge
 import LeanCfgProject.TCS1.ActiveTypedReachabilityBridge
 import LeanCfgProject.TCS1.ReducednessWitnessChoices
+import LeanCfgProject.TCS1.MinimalReducedWitnessChoices
 
 /-!
 # TCS #1 v68: concrete productive/reachable trimming of the typed refinement
@@ -544,6 +545,94 @@ theorem concreteTypedActive_canonicalWitnessWords_length_le_fixedWindow
         H terminalRule binaryRule startRule)
       H terminalRule binaryRule startRule epsilonStart
       choices minimal trim reach
+      k l hrespect τ hshort hword
+
+/--
+Minimum-length canonical choices for the concrete productive/reachable typed
+trim.
+-/
+noncomputable def concreteTypedActive_minimalChoices
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop) :
+    ReducedWitnessChoices
+      H terminalRule binaryRule startRule epsilonStart
+      (ConcreteTypedActive
+        H terminalRule binaryRule startRule) :=
+  minimalReducedWitnessChoices_of_reducedness
+    (concreteTypedActive_qualitativeReducedness
+      H terminalRule binaryRule startRule epsilonStart)
+
+/-- The concrete canonical choices satisfy the length-minimality interface. -/
+theorem concreteTypedActive_minimalChoices_minimality
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop) :
+    CanonicalChoiceMinimality
+      H terminalRule binaryRule startRule epsilonStart
+      (ConcreteTypedActive
+        H terminalRule binaryRule startRule)
+      (concreteTypedActive_minimalChoices
+        H terminalRule binaryRule startRule epsilonStart) := by
+  exact
+    minimalReducedWitnessChoices_minimality
+      (concreteTypedActive_qualitativeReducedness
+        H terminalRule binaryRule startRule epsilonStart)
+
+/--
+Paper-facing Lemma 7.2 bound with both trimming and canonical minimal choices
+constructed internally.
+
+No abstract trimming, structural-reachability, or minimality certificate
+remains in the statement.
+-/
+theorem concreteTypedActive_minimalCanonicalWitnessWords_length_le_fixedWindow
+    [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    [Fintype
+      (ActiveTypedSymbol
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    {word : Word α}
+    (hword :
+      word ∈
+        CanonicalWitnessWords
+          H terminalRule binaryRule startRule epsilonStart
+          (ConcreteTypedActive
+            H terminalRule binaryRule startRule)
+          (concreteTypedActive_minimalChoices
+            H terminalRule binaryRule startRule epsilonStart)) :
+    word.length ≤
+      fixedWindowWitnessLengthEnvelope
+        (Fintype.card
+          (ActiveTypedSymbol
+            (ConcreteTypedActive
+              H terminalRule binaryRule startRule)))
+        (k + l) (Fintype.card N) τ := by
+  exact
+    concreteTypedActive_canonicalWitnessWords_length_le_fixedWindow
+      H terminalRule binaryRule startRule epsilonStart
+      (concreteTypedActive_minimalChoices
+        H terminalRule binaryRule startRule epsilonStart)
+      (concreteTypedActive_minimalChoices_minimality
+        H terminalRule binaryRule startRule epsilonStart)
       k l hrespect τ hshort hword
 
 end ConcreteTypedTrimming
