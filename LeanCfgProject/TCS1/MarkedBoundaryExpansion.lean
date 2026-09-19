@@ -75,6 +75,11 @@ theorem boundaryExpansion_append
   | @some a template blocks w tail ih =>
       simpa using BoundaryExpansion.some ih
   | @none template blocks w block tail ih =>
+      change
+        BoundaryExpansion
+          (Option.none :: (template ++ t₂))
+          (block :: (blocks ++ b₂))
+          ((block ++ w) ++ w₂)
       simpa only [List.append_assoc] using
         BoundaryExpansion.none (block := block) ih
 
@@ -147,6 +152,7 @@ theorem exists_rebuilt_short_expansion
           List.length_singleton,
           MarkedBoundaryKernel.omittedCount]
         rw [hcount]
+        omega
       · intro block hmem
         simp only [List.mem_append, List.mem_singleton] at hmem
         rcases hmem with hmem | hmem
@@ -163,7 +169,10 @@ theorem exists_rebuilt_short_expansion
           UntypedDerives.binary hbin dY dChild,
           ?_, ?_⟩
       · exact BoundaryExpansion.none hexpand
-      · simp [MarkedBoundaryKernel.omittedCount, hcount]
+      · simp only [List.length_cons,
+          MarkedBoundaryKernel.omittedCount]
+        rw [hcount]
+        omega
       · intro block hmem
         simp only [List.mem_cons] at hmem
         rcases hmem with hmem | hmem
