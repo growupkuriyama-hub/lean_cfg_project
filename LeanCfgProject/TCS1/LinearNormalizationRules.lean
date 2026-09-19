@@ -118,25 +118,6 @@ def linearStepContinuation
       else
         linearOldState G B
 
-/--
-State carrying the endpoint terminal rule of a terminal-only plan.
-
-When there are no binary steps this is the original source lhs. Otherwise it
-is the auxiliary state allocated to the final binary step.
--/
-def linearTerminalEndpointState
-    (G : PreparedLinearIndexedCFG N α P)
-    (p : P) :
-    LinearConstructedState G :=
-  match hsteps : (G.rhs p).toPlan.steps with
-  | [] =>
-      linearOldState G (G.lhs p)
-  | step :: rest =>
-      linearAuxState G p
-        ⟨rest.length, by
-          rw [hsteps]
-          simp⟩
-
 /-- Terminal rules of the concretely factorized non-start grammar. -/
 inductive LinearConstructedTerminalRule
     (G : PreparedLinearIndexedCFG N α P) :
@@ -145,13 +126,26 @@ inductive LinearConstructedTerminalRule
       (a : α) :
       LinearConstructedTerminalRule G
         (linearWrapperState G a) a
-  | endpoint
+  | sourceEndpoint
       (p : P) (a : α)
       (hend :
         (G.rhs p).toPlan.endpoint =
-          LinearPlanEndpoint.terminal a) :
+          LinearPlanEndpoint.terminal a)
+      (hsteps :
+        (G.rhs p).toPlan.steps = []) :
       LinearConstructedTerminalRule G
-        (linearTerminalEndpointState G p) a
+        (linearOldState G (G.lhs p)) a
+  | auxEndpoint
+      (p : P) (a : α)
+      (i : Fin (G.rhs p).toPlan.steps.length)
+      (hend :
+        (G.rhs p).toPlan.endpoint =
+          LinearPlanEndpoint.terminal a)
+      (hlast :
+        i.1 + 1 =
+          (G.rhs p).toPlan.steps.length) :
+      LinearConstructedTerminalRule G
+        (linearAuxState G p i) a
 
 /-- Binary rules: exactly one rule for each planned terminal-emitting step. -/
 inductive LinearConstructedBinaryRule
