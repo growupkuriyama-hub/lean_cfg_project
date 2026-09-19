@@ -445,7 +445,7 @@ theorem exists_pruned_kernel_with_rank_subset
                   terminalRule binaryRule right, hRzero]
               cases hword : markedWord right with
               | nil =>
-                  exact hword
+                  rfl
               | cons a xs =>
                   rw [hword] at hlen
                   simp at hlen
@@ -490,7 +490,7 @@ theorem exists_pruned_kernel_with_rank_subset
                 terminalRule binaryRule left, hLzero]
             cases hword : markedWord left with
               | nil =>
-                  exact hword
+                  rfl
               | cons a xs =>
                   rw [hword] at hlen
                   simp at hlen
@@ -502,8 +502,9 @@ theorem exists_pruned_kernel_with_rank_subset
           simp only [MarkedBoundaryKernel.omissionRanksAux,
             List.mem_cons] at hj
           simp only [unmarkedRanksAux, List.mem_append]
-          rcases hj with rfl | hj
+          rcases hj with hj0 | hj
           · left
+            rw [hj0]
             exact
               offset_mem_unmarkedRanksAux_of_markedCount_zero
                 terminalRule binaryRule
@@ -581,7 +582,7 @@ theorem exists_pruned_kernel
                   terminalRule binaryRule right, hRzero]
               cases hword : markedWord right with
               | nil =>
-                  exact hword
+                  rfl
               | cons a xs =>
                   rw [hword] at hlen
                   simp at hlen
@@ -612,7 +613,7 @@ theorem exists_pruned_kernel
                 terminalRule binaryRule left, hLzero]
             cases hword : markedWord left with
               | nil =>
-                  exact hword
+                  rfl
               | cons a xs =>
                   rw [hword] at hlen
                   simp at hlen
