@@ -84,8 +84,13 @@ theorem singletonEpsilon_fixedHSubstitutable
   have hxlen : x.length = 0 := by
     simp only [List.length_append] at hlen
     omega
-  exact False.elim
-    (hx (List.length_eq_zero.mp hxlen))
+  have hx0 : x = [] := by
+    cases x with
+    | nil =>
+        rfl
+    | cons a xs =>
+        simp at hxlen
+  exact False.elim (hx hx0)
 
 /-- {lambda} has the one-word characteristic sample {lambda}. -/
 theorem singletonEpsilon_characteristic
