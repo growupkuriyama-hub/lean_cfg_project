@@ -293,6 +293,100 @@ theorem boundaryExpansion_single_none
         BoundaryExpansion ([] : List (Option α))
           ([] : List (Word α)) ([] : Word α)))
 
+/-- A word of marked terminals expands without replacement blocks. -/
+theorem boundaryExpansion_markedWord
+    (w : Word α) :
+    BoundaryExpansion
+      (w.map Option.some) [] w := by
+  induction w with
+  | nil =>
+      exact BoundaryExpansion.nil
+  | cons a w ih =>
+      exact BoundaryExpansion.some ih
+
+/-- A run of omission placeholders expands to the concatenation of its blocks. -/
+theorem boundaryExpansion_omissionRun
+    (blocks : List (Word α)) :
+    BoundaryExpansion
+      (List.replicate blocks.length Option.none)
+      blocks
+      (concatBlocks blocks) := by
+  induction blocks with
+  | nil =>
+      exact BoundaryExpansion.nil
+  | cons block blocks ih =>
+      change
+        BoundaryExpansion
+          (Option.none ::
+            List.replicate blocks.length Option.none)
+          (block :: blocks)
+          (block ++ concatBlocks blocks)
+      exact BoundaryExpansion.none ih
+
+/-- Canonical expansion with one central replacement gap. -/
+theorem boundaryExpansion_central
+    (p q : Word α)
+    (blocks : List (Word α)) :
+    BoundaryExpansion
+      (p.map Option.some ++
+        List.replicate blocks.length Option.none ++
+        q.map Option.some)
+      blocks
+      (boundaryAssembly p q blocks) := by
+  have eP :
+      BoundaryExpansion
+        (p.map Option.some) [] p :=
+    boundaryExpansion_markedWord p
+  have eM :
+      BoundaryExpansion
+        (List.replicate blocks.length Option.none)
+        blocks (concatBlocks blocks) :=
+    boundaryExpansion_omissionRun blocks
+  have eQ :
+      BoundaryExpansion
+        (q.map Option.some) [] q :=
+    boundaryExpansion_markedWord q
+  have ePM :
+      BoundaryExpansion
+        (p.map Option.some ++
+          List.replicate blocks.length Option.none)
+        blocks
+        (p ++ concatBlocks blocks) :=
+    boundaryExpansion_append eP eM
+  have ePMQ :
+      BoundaryExpansion
+        ((p.map Option.some ++
+            List.replicate blocks.length Option.none) ++
+          q.map Option.some)
+        blocks
+        ((p ++ concatBlocks blocks) ++ q) :=
+    boundaryExpansion_append ePM eQ
+  simpa [boundaryAssembly, List.append_assoc] using ePMQ
+
+/-- For fixed template and replacement blocks, the expanded word is unique. -/
+theorem boundaryExpansion_word_unique
+    {template : List (Option α)}
+    {blocks : List (Word α)}
+    {w₁ w₂ : Word α}
+    (e₁ : BoundaryExpansion template blocks w₁)
+    (e₂ : BoundaryExpansion template blocks w₂) :
+    w₁ = w₂ := by
+  induction e₁ with
+  | nil =>
+      cases e₂
+      rfl
+  | @some a template blocks w tail ih =>
+      cases e₂ with
+      | some tail₂ =>
+          simp only
+          congr
+          exact ih tail₂
+  | @none template blocks w block tail ih =>
+      cases e₂ with
+      | none tail₂ =>
+          simp only
+          rw [ih tail₂]
+
 /--
 Every marked-boundary kernel admits a tau-short block expansion whenever every
 nonterminal has a tau-short terminal yield.
