@@ -252,9 +252,13 @@ theorem concreteFixedWindowCanonicalSample_norm_le_ssbnf
           ∧ z.length ≤ τ)
     (hN : Fintype.card N ≤ g)
     (ht :
-      Fintype.card (UntypedTerminalRuleIndex terminalRule) ≤ g)
+      (@Fintype.card
+        (UntypedTerminalRuleIndex terminalRule)
+        (Fintype.ofFinite _)) ≤ g)
     (hb :
-      Fintype.card (UntypedBinaryRuleIndex binaryRule) ≤ g)
+      (@Fintype.card
+        (UntypedBinaryRuleIndex binaryRule)
+        (Fintype.ofFinite _)) ≤ g)
     (hg : g ≤ gBound)
     (hτ :
       τ ≤ ssbnfThicknessEnvelope cV c₁ n τR) :
