@@ -79,6 +79,39 @@ theorem indexedReducedSSBNF_shortWitness
         X z).2 hz,
       hlen⟩
 
+/-- Canonical fixed-window sample of the actual indexed normalized grammar. -/
+noncomputable def indexedFixedWindowCanonicalSample
+    (G : IndexedMixedCFG N α P)
+    (A : N)
+    (hprod :
+      ∃ u : Word α,
+        u ∈ LeastClosedLanguage G.toMixedRules A ∧
+        u ≠ [])
+    (k l : Nat) :
+    Finset (Word α) :=
+  @concreteFixedWindowCanonicalSample
+    α
+    (ReducedUnitFreeState
+      (indexedFiniteFrontEndGrammar G)
+      (indexedProductiveUnitFreeState_of_nonempty
+        G A hprod))
+    (inferInstance : Fintype α)
+    (Fintype.ofFinite _)
+    (reducedSSBNFTerminalRule
+      (indexedFiniteFrontEndGrammar G)
+      (indexedProductiveUnitFreeState_of_nonempty
+        G A hprod))
+    (reducedSSBNFBinaryRule
+      (indexedFiniteFrontEndGrammar G)
+      (indexedProductiveUnitFreeState_of_nonempty
+        G A hprod))
+    (reducedSSBNFStartRule
+      (indexedFiniteFrontEndGrammar G)
+      (indexedProductiveUnitFreeState_of_nonempty
+        G A hprod))
+    ([] ∈ LeastClosedLanguage G.toMixedRules A)
+    k l
+
 /--
 End-to-end paper-facing theorem for fixed-h substitutability.
 
@@ -106,40 +139,14 @@ theorem indexedFixedWindowSection7_package
         (LeastClosedLanguage G.toMixedRules A)) :
     BatchLanguage
         (fixedWindowMonoidHom (α := α) k l)
-        (concreteFixedWindowCanonicalSample
-          (reducedSSBNFTerminalRule
-            (indexedFiniteFrontEndGrammar G)
-            (indexedProductiveUnitFreeState_of_nonempty
-              G A hprod))
-          (reducedSSBNFBinaryRule
-            (indexedFiniteFrontEndGrammar G)
-            (indexedProductiveUnitFreeState_of_nonempty
-              G A hprod))
-          (reducedSSBNFStartRule
-            (indexedFiniteFrontEndGrammar G)
-            (indexedProductiveUnitFreeState_of_nonempty
-              G A hprod))
-          ([] ∈ LeastClosedLanguage G.toMixedRules A)
-          k l)
+        (indexedFixedWindowCanonicalSample
+          G A hprod k l)
       =
     LeastClosedLanguage G.toMixedRules A
     ∧
     (∑ word ∈
-      concreteFixedWindowCanonicalSample
-        (reducedSSBNFTerminalRule
-          (indexedFiniteFrontEndGrammar G)
-          (indexedProductiveUnitFreeState_of_nonempty
-            G A hprod))
-        (reducedSSBNFBinaryRule
-          (indexedFiniteFrontEndGrammar G)
-          (indexedProductiveUnitFreeState_of_nonempty
-            G A hprod))
-        (reducedSSBNFStartRule
-          (indexedFiniteFrontEndGrammar G)
-          (indexedProductiveUnitFreeState_of_nonempty
-            G A hprod))
-        ([] ∈ LeastClosedLanguage G.toMixedRules A)
-        k l,
+      indexedFixedWindowCanonicalSample
+        G A hprod k l,
       (word.length + 1))
       ≤
     fixedWindowGrammarSizeEnvelope
@@ -260,7 +267,7 @@ theorem indexedFixedWindowSection7_package
       (le_refl _)
 
   rw [hlang] at hpack
-  simpa [Nf, start] using hpack
+  simpa [indexedFixedWindowCanonicalSample, Nf, start] using hpack
 
 end IndexedSection7Bridge
 
