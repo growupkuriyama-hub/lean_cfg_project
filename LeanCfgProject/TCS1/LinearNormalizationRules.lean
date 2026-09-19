@@ -488,6 +488,28 @@ theorem linearConstructed_combined_size_le_twice_scale
     linearConstructedRuleIndex_card_le_scale G
   omega
 
+
+/--
+Structural and size conclusions of the appendix construction, packaged
+together for the concrete prepared grammar.
+-/
+theorem linearConstructed_shape_and_size
+    [Fintype N] [Fintype α] [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    UntypedLinearSpineShape
+      (LinearConstructedTerminalRule G)
+      (LinearConstructedBinaryRule G)
+      (LinearConstructedWrapper G)
+    ∧
+    Fintype.card (LinearConstructedState G) +
+      (Fintype.card (LinearConstructedTerminalRuleIndex G) +
+       Fintype.card (LinearConstructedBinaryRuleIndex G))
+      ≤
+    2 * G.encodingScale := by
+  exact
+    ⟨linearConstructed_untypedLinearSpineShape G,
+      linearConstructed_combined_size_le_twice_scale G⟩
+
 end LinearNormalizationRules
 
 end TCS1
