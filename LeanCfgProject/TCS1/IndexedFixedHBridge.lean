@@ -191,6 +191,120 @@ theorem indexedFixedH_concreteGold_identification
       hsub
       datum hpositive hcoverage
 
+
+/--
+Full source-level Gold theorem for every nonempty target language.
+
+The earlier source bridge chooses a non-start symbol with a nonempty terminal
+yield.  If no such word exists, nonemptiness forces the source language to be
+exactly {lambda}, which is handled by the separately verified endpoint.
+Thus the nonempty-target statement now matches the paper's text convention
+without an extra productivity-side condition in its interface.
+-/
+theorem indexedFixedH_concreteGold_identification_nonempty
+    (H : FixedFiniteMonoidHom α M)
+    (G : IndexedMixedCFG N α P)
+    (A : N)
+    (hnonempty :
+      ∃ w : Word α,
+        w ∈ LeastClosedLanguage G.toMixedRules A)
+    (hsub :
+      FixedHSubstitutable H
+        (LeastClosedLanguage G.toMixedRules A))
+    (datum : Nat → Word α)
+    (hpositive :
+      ∀ n,
+        datum n ∈ LeastClosedLanguage G.toMixedRules A)
+    (hcoverage :
+      ∀ word,
+        word ∈ LeastClosedLanguage G.toMixedRules A →
+        ∃ n,
+          word ∈ concreteAccumulatedSample datum n) :
+    ∃ n₀,
+      (BatchLanguage H
+          (concreteConservativeHypothesis H datum n₀)
+          =
+        LeastClosedLanguage G.toMixedRules A
+        ∧
+        ∀ j,
+          concreteConservativeHypothesis H datum (n₀ + j) =
+            concreteConservativeHypothesis H datum n₀)
+      ∨
+      (∃ n,
+        n₀ ≤ n ∧
+        concreteConservativeHypothesis H datum (n + 1) ≠
+          concreteConservativeHypothesis H datum n ∧
+        BatchLanguage H
+          (concreteConservativeHypothesis H datum (n + 1))
+          =
+        LeastClosedLanguage G.toMixedRules A
+        ∧
+        ∀ j,
+          concreteConservativeHypothesis H datum ((n + 1) + j) =
+            concreteConservativeHypothesis H datum (n + 1)) := by
+  classical
+  by_cases hprod :
+      ∃ u : Word α,
+        u ∈ LeastClosedLanguage G.toMixedRules A ∧
+        u ≠ []
+  · exact
+      concreteConservative_gold_identification_explicit
+        H
+        (LeastClosedLanguage G.toMixedRules A)
+        (indexedFixedHCanonicalSample H G A hprod)
+        (indexedFixedHCanonicalSample_characteristic
+          H G A hprod hsub)
+        hsub
+        datum hpositive hcoverage
+  · have hL :
+        LeastClosedLanguage G.toMixedRules A
+          =
+        ({[]} : Set (Word α)) := by
+      apply Set.ext
+      intro w
+      constructor
+      · intro hw
+        have hw0 : w = [] := by
+          by_contra hne
+          exact hprod ⟨w, hw, hne⟩
+        simpa [hw0]
+      · intro hw
+        have hw0 : w = [] := by
+          simpa using hw
+        subst w
+        obtain ⟨z, hz⟩ := hnonempty
+        have hz0 : z = [] := by
+          by_contra hzne
+          exact hprod ⟨z, hz, hzne⟩
+        simpa [hz0] using hz
+
+    have hpositive' :
+        ∀ n, datum n ∈ ({[]} : Set (Word α)) := by
+      intro n
+      rw [← hL]
+      exact hpositive n
+
+    have hcoverage' :
+        ∀ word,
+          word ∈ ({[]} : Set (Word α)) →
+          ∃ n,
+            word ∈ concreteAccumulatedSample datum n := by
+      intro word hw
+      apply hcoverage word
+      rw [hL]
+      exact hw
+
+    have heps :=
+      concreteConservative_gold_identification_explicit
+        H
+        ({[]} : Set (Word α))
+        ({[]} : Finset (Word α))
+        (singletonEpsilon_characteristic H)
+        (singletonEpsilon_fixedHSubstitutable H)
+        datum hpositive' hcoverage'
+
+    simpa [hL] using heps
+
 end IndexedFixedHBridge
 
 end TCS1
