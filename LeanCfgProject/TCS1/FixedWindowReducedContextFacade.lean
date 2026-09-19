@@ -137,13 +137,13 @@ most `Nt * B_{k,l}(G)`, where `Nt` is the number of active typed symbols.
 -/
 theorem exists_fixedWindow_reduced_short_reaching_context
     [Fintype N]
+    (Active : N × M → Prop)
     [Fintype (ActiveTypedSymbol Active)]
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
     (startRule : N → Prop)
     (epsilonStart : Prop)
-    (Active : N × M → Prop)
     (trim :
       SuccessfulTypedTrimClosure
         H terminalRule binaryRule Active)
@@ -219,7 +219,7 @@ theorem exists_fixedWindow_reduced_short_reaching_context
       (ActiveTypedBinaryRule binaryRule Active)
       B spine₁ heach₁
 
-  refine ⟨left', right', ?_, hlen⟩
+  refine ⟨left', right', ?_, ?_⟩
   intro z dX
   have dXActiveRaw :=
     reducedTypedDerives_to_activeUntypedDerives
@@ -251,6 +251,7 @@ theorem exists_fixedWindow_reduced_short_reaching_context
   exact
     ReducedTypedStartDerives.nonempty
       hstart R.2 dRootReduced
+  · simpa [B] using hlen
 
 /--
 Quantitative data package for Lemma 7.2 obtained from structural reachability,
@@ -258,13 +259,13 @@ Lemma 7.1, and canonical minimality.
 -/
 theorem canonicalYieldContextBounds_fixedWindow_of_structural_reachability
     [Fintype N]
+    (Active : N × M → Prop)
     [Fintype (ActiveTypedSymbol Active)]
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
     (startRule : N → Prop)
     (epsilonStart : Prop)
-    (Active : N × M → Prop)
     (C :
       ReducedWitnessChoices
         H terminalRule binaryRule startRule epsilonStart Active)
@@ -304,8 +305,8 @@ theorem canonicalYieldContextBounds_fixedWindow_of_structural_reachability
   intro X hX
   exact
     exists_fixedWindow_reduced_short_reaching_context
-      H terminalRule binaryRule startRule epsilonStart
-      Active trim reach
+      Active H terminalRule binaryRule startRule epsilonStart
+      trim reach
       k l hrespect τ hshort X hX
 
 end FixedWindowReducedContextFacade
