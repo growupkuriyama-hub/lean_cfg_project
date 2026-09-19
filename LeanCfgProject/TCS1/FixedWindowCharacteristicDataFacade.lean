@@ -227,6 +227,118 @@ theorem fixedWindowMinimalCanonicalSample_norm_le_grammarSize
         hN ht hb)
 
 /--
+Transfer the actual canonical sample bound through arbitrary grammar-size and
+thickness envelopes supplied by normalization.
+-/
+theorem fixedWindowMinimalCanonicalSample_norm_le_transfer
+    [Fintype α] [DecidableEq α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    [Fintype
+      (ActiveTypedSymbol
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedTerminalIndex H terminalRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedBinaryIndex binaryRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype (UntypedTerminalRuleIndex terminalRule)]
+    [Fintype (UntypedBinaryRuleIndex binaryRule)]
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ g gBound τBound : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    (hN : Fintype.card N ≤ g)
+    (ht :
+      Fintype.card (UntypedTerminalRuleIndex terminalRule) ≤ g)
+    (hb :
+      Fintype.card (UntypedBinaryRuleIndex binaryRule) ≤ g)
+    (hg : g ≤ gBound)
+    (hτ : τ ≤ τBound) :
+    (∑ word ∈
+      fixedWindowMinimalCanonicalSample
+        H terminalRule binaryRule startRule epsilonStart,
+      (word.length + 1)) ≤
+    fixedWindowGrammarSizeEnvelope
+      (Fintype.card M) (k + l) gBound τBound := by
+  have h0 :=
+    fixedWindowMinimalCanonicalSample_norm_le_grammarSize
+      H terminalRule binaryRule startRule epsilonStart
+      k l hrespect τ g hshort hN ht hb
+  exact
+    le_trans h0
+      (fixedWindow_complexity_transfer hg hτ)
+
+/--
+Appendix-A specialization: substitute the explicit SSBNF thickness envelope
+directly into the actual canonical-sample estimate.
+-/
+theorem fixedWindowMinimalCanonicalSample_norm_le_ssbnf
+    [Fintype α] [DecidableEq α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    [Fintype
+      (ActiveTypedSymbol
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedTerminalIndex H terminalRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedBinaryIndex binaryRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype (UntypedTerminalRuleIndex terminalRule)]
+    [Fintype (UntypedBinaryRuleIndex binaryRule)]
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ g gBound cV c₁ n τR : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    (hN : Fintype.card N ≤ g)
+    (ht :
+      Fintype.card (UntypedTerminalRuleIndex terminalRule) ≤ g)
+    (hb :
+      Fintype.card (UntypedBinaryRuleIndex binaryRule) ≤ g)
+    (hg : g ≤ gBound)
+    (hτ :
+      τ ≤ ssbnfThicknessEnvelope cV c₁ n τR) :
+    (∑ word ∈
+      fixedWindowMinimalCanonicalSample
+        H terminalRule binaryRule startRule epsilonStart,
+      (word.length + 1)) ≤
+    fixedWindowGrammarSizeEnvelope
+      (Fintype.card M) (k + l) gBound
+      (ssbnfThicknessEnvelope cV c₁ n τR) := by
+  exact
+    fixedWindowMinimalCanonicalSample_norm_le_transfer
+      H terminalRule binaryRule startRule epsilonStart
+      k l hrespect
+      τ g gBound
+      (ssbnfThicknessEnvelope cV c₁ n τR)
+      hshort hN ht hb hg hτ
+
+/--
 The concrete minimum-length canonical sample is characteristic for the reduced
 typed target whenever that target is fixed-H substitutable.
 -/
