@@ -55,6 +55,7 @@ import LeanCfgProject.TCS1.LinearSpineSemantic
 import LeanCfgProject.TCS1.LinearTypedShapeBridge
 import LeanCfgProject.TCS1.LinearNormalizationSize
 import LeanCfgProject.TCS1.LinearNormalizationPlan
+import LeanCfgProject.TCS1.LinearNormalizationRules
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
 import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
 import LeanCfgProject.TCS1.ConcreteLinearCharacteristicData
