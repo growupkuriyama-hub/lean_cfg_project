@@ -156,9 +156,7 @@ theorem indexedClassicalFixedWindow_concreteGold_identification
       hwin
   exact
     indexedFixedWindow_concreteGold_identification
-      G A hprod τR k l
-      (indexedNormalizationScale_pos_of_start G A)
-      hsource hsub
+      G A hprod τR k l hsource hsub
       datum hpositive hcoverage
 
 /-- Fully concrete learner at the explicit (0,0) endpoint. -/
