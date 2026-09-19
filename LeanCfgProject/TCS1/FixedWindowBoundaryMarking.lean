@@ -225,15 +225,16 @@ theorem markWithMask_markedWord
           terminalRule binaryRule left
       rw [BinaryDerivationTree.yield]
       symm
-      rw [← List.take_append_drop
-        (BinaryDerivationTree.leafCount left) mask]
-      exact
+      have hsplit :=
         selectByMask_append_aligned
           (mask.take (BinaryDerivationTree.leafCount left))
           (mask.drop (BinaryDerivationTree.leafCount left))
           (BinaryDerivationTree.yield left)
           (BinaryDerivationTree.yield right)
           (by rw [hleft, hyieldLeft])
+      rw [List.take_append_drop
+        (BinaryDerivationTree.leafCount left) mask] at hsplit
+      exact hsplit
 
 @[simp] theorem trueCount_replicate_true
     (n : Nat) :
@@ -368,7 +369,9 @@ theorem selectByMask_boundaryMask
     have h₂ : rest = mid ++ q := by
       dsimp [mid, q]
       exact (List.take_append_drop m rest).symm
-    rw [h₁, h₂, List.append_assoc]
+    calc
+      w = p ++ rest := h₁
+      _ = p ++ (mid ++ q) := by rw [h₂]
   have hmask :
       boundaryMask k l w.length =
         List.replicate k true ++
@@ -408,14 +411,21 @@ theorem selectByMask_boundaryMask
         p ++
           (selectByMask (List.replicate m false) mid ++
             selectByMask (List.replicate l true) q) := by
-          rw [selectByMask_replicate_true]
+          have hpTrue :
+              selectByMask (List.replicate k true) p = p := by
+            rw [← hp]
+            exact selectByMask_replicate_true p
+          rw [hpTrue]
           rw [selectByMask_append_aligned
             (List.replicate m false)
             (List.replicate l true)
             mid q
             (by simp [hmid])]
       _ = p ++ q := by
-          rw [selectByMask_replicate_false]
+          have hmidFalse :
+              selectByMask (List.replicate m false) mid = [] := by
+            rw [← hmid]
+            exact selectByMask_replicate_false mid
           have hqLen : q.length = l := by
             dsimp [q]
             rw [List.length_drop, hrestLen]
@@ -425,7 +435,7 @@ theorem selectByMask_boundaryMask
               selectByMask (List.replicate l true) q = q := by
             rw [← hqLen]
             exact selectByMask_replicate_true q
-          rw [hqTrue]
+          rw [hmidFalse, hqTrue]
           simp
 
   have hq :
