@@ -24,6 +24,8 @@ import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.FixedWindowTreeSurgeryFacade
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
+import LeanCfgProject.TCS1.FixedWindowReducedContextFacade
+import LeanCfgProject.TCS1.ReducedTypedRuleBridge
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.FiniteSupportSpineBound
