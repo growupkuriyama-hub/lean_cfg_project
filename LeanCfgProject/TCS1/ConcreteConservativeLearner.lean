@@ -73,6 +73,45 @@ theorem concreteAccumulatedSample_mono
         subst m
         exact Finset.Subset.rfl
 
+/-- One conservative update of the current hypothesis code. -/
+noncomputable def concreteConservativeUpdate
+    (H : FixedFiniteMonoidHom α M)
+    (current accumulated : Finset (Word α))
+    (word : Word α) :
+    Finset (Word α) := by
+  classical
+  exact
+    if word ∈ BatchLanguage H current then
+      current
+    else
+      accumulated
+
+/-- A generated datum leaves the current hypothesis code unchanged. -/
+theorem concreteConservativeUpdate_keep
+    (H : FixedFiniteMonoidHom α M)
+    (current accumulated : Finset (Word α))
+    (word : Word α)
+    (hgen : word ∈ BatchLanguage H current) :
+    concreteConservativeUpdate
+        H current accumulated word
+      =
+    current := by
+  classical
+  simp [concreteConservativeUpdate, hgen]
+
+/-- A missing datum replaces the hypothesis code by the accumulated sample. -/
+theorem concreteConservativeUpdate_rebuild
+    (H : FixedFiniteMonoidHom α M)
+    (current accumulated : Finset (Word α))
+    (word : Word α)
+    (hmiss : word ∉ BatchLanguage H current) :
+    concreteConservativeUpdate
+        H current accumulated word
+      =
+    accumulated := by
+  classical
+  simp [concreteConservativeUpdate, hmiss]
+
 /--
 The actual conservative hypothesis sequence.  The hypothesis object is the
 finite sample used by the reconstruction operator.
@@ -80,17 +119,14 @@ finite sample used by the reconstruction operator.
 noncomputable def concreteConservativeHypothesis
     (H : FixedFiniteMonoidHom α M)
     (datum : Nat → Word α) :
-    Nat → Finset (Word α) := by
-  classical
-  exact fun n =>
-    Nat.rec
-      (∅ : Finset (Word α))
-      (fun m current =>
-        if datum (m + 1) ∈ BatchLanguage H current then
-          current
-        else
-          concreteAccumulatedSample datum (m + 1))
-      n
+    Nat → Finset (Word α)
+  | 0 => ∅
+  | n + 1 =>
+      concreteConservativeUpdate
+        H
+        (concreteConservativeHypothesis H datum n)
+        (concreteAccumulatedSample datum (n + 1))
+        (datum (n + 1))
 
 /-- Generated data cause a literal keep step. -/
 theorem concreteConservativeHypothesis_keep
@@ -103,8 +139,21 @@ theorem concreteConservativeHypothesis_keep
           (concreteConservativeHypothesis H datum n)) :
     concreteConservativeHypothesis H datum (n + 1) =
       concreteConservativeHypothesis H datum n := by
-  classical
-  simp [concreteConservativeHypothesis, hgen]
+  change
+    concreteConservativeUpdate
+        H
+        (concreteConservativeHypothesis H datum n)
+        (concreteAccumulatedSample datum (n + 1))
+        (datum (n + 1))
+      =
+    concreteConservativeHypothesis H datum n
+  exact
+    concreteConservativeUpdate_keep
+      H
+      (concreteConservativeHypothesis H datum n)
+      (concreteAccumulatedSample datum (n + 1))
+      (datum (n + 1))
+      hgen
 
 /-- Missing data cause rebuilding from the entire accumulated sample. -/
 theorem concreteConservativeHypothesis_rebuild
@@ -117,8 +166,21 @@ theorem concreteConservativeHypothesis_rebuild
           (concreteConservativeHypothesis H datum n)) :
     concreteConservativeHypothesis H datum (n + 1) =
       concreteAccumulatedSample datum (n + 1) := by
-  classical
-  simp [concreteConservativeHypothesis, hmiss]
+  change
+    concreteConservativeUpdate
+        H
+        (concreteConservativeHypothesis H datum n)
+        (concreteAccumulatedSample datum (n + 1))
+        (datum (n + 1))
+      =
+    concreteAccumulatedSample datum (n + 1)
+  exact
+    concreteConservativeUpdate_rebuild
+      H
+      (concreteConservativeHypothesis H datum n)
+      (concreteAccumulatedSample datum (n + 1))
+      (datum (n + 1))
+      hmiss
 
 /-- The empty initial reconstruction is sound for every target language. -/
 theorem emptyBatchLanguage_subset
