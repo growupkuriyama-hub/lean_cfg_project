@@ -123,7 +123,8 @@ theorem linearStepContinuation_mem_iff_residual
   | terminal a =>
       simp [linearStepContinuation,
         LinearConstructedInterpretation,
-        LinearPlanResidualLanguage, hend]
+        LinearPlanResidualLanguage,
+        linearAuxState, hend]
   | core B =>
       by_cases hnext :
           i.1 + 1 < (G.rhs p).toPlan.steps.length
@@ -138,7 +139,7 @@ theorem linearStepContinuation_mem_iff_residual
         simp [linearStepContinuation,
           LinearConstructedInterpretation,
           LinearPlanResidualLanguage,
-          hend, hnext, heq]
+          linearOldState, hend, hnext, heq]
 
 /--
 Away from the first step, a planned step parent denotes the residual language
@@ -162,7 +163,8 @@ theorem linearStepParent_mem_iff_residual
       i.1 - 1 + 1 = i.1 := by
     omega
   simp [linearStepParent, hpos,
-    LinearConstructedInterpretation, hidx]
+    LinearConstructedInterpretation,
+    linearAuxState, hidx]
 
 /--
 The canonical residual interpretation is closed under all concrete factorized
@@ -239,7 +241,8 @@ theorem linearConstructedInterpretation_closed
                     (applyLinearSpineSteps_drop_get
                       (G.rhs p).toPlan.steps i endpointWord).symm
         by_cases hzero : i.1 = 0
-        · change left ++ right ∈ L (G.lhs p)
+        · rw [linearStepParent_zero G p i hzero]
+          change left ++ right ∈ L (G.lhs p)
           apply hsource p (left ++ right)
           refine ⟨endpointWord, hendpoint, ?_⟩
           simpa [hzero] using hstep
@@ -282,7 +285,8 @@ theorem linearConstructedInterpretation_closed
                     (applyLinearSpineSteps_drop_get
                       (G.rhs p).toPlan.steps i endpointWord).symm
         by_cases hzero : i.1 = 0
-        · change left ++ right ∈ L (G.lhs p)
+        · rw [linearStepParent_zero G p i hzero]
+          change left ++ right ∈ L (G.lhs p)
           apply hsource p (left ++ right)
           refine ⟨endpointWord, hendpoint, ?_⟩
           simpa [hzero] using hstep
