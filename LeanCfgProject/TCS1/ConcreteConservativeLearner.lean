@@ -305,6 +305,48 @@ theorem concreteConservative_gold_identification
         H L datum hpositive)
       hcoverage
 
+
+/--
+Projection-free form of the concrete Gold theorem.
+
+This states convergence directly in terms of the finite hypothesis code and
+its reconstructed language, so the conclusion no longer depends on proof
+fields stored in `AccumulatedConservativeRun`.
+-/
+theorem concreteConservative_gold_identification_explicit
+    (H : FixedFiniteMonoidHom α M)
+    (L : Set (Word α))
+    (C : Finset (Word α))
+    (hchar : BatchLanguage H C = L)
+    (hsub : FixedHSubstitutable H L)
+    (datum : Nat → Word α)
+    (hpositive : ∀ n, datum n ∈ L)
+    (hcoverage :
+      ∀ w, w ∈ L →
+        ∃ n, w ∈ concreteAccumulatedSample datum n) :
+    ∃ n₀,
+      (BatchLanguage H
+          (concreteConservativeHypothesis H datum n₀) = L
+        ∧
+        ∀ j,
+          concreteConservativeHypothesis H datum (n₀ + j) =
+            concreteConservativeHypothesis H datum n₀)
+      ∨
+      (∃ n,
+        n₀ ≤ n ∧
+        concreteConservativeHypothesis H datum (n + 1) ≠
+          concreteConservativeHypothesis H datum n ∧
+        BatchLanguage H
+          (concreteConservativeHypothesis H datum (n + 1)) = L
+        ∧
+        ∀ j,
+          concreteConservativeHypothesis H datum ((n + 1) + j) =
+            concreteConservativeHypothesis H datum (n + 1)) := by
+  have h :=
+    concreteConservative_gold_identification
+      H L C hchar hsub datum hpositive hcoverage
+  simpa [concreteAccumulatedConservativeRun] using h
+
 end ConcreteConservativeLearner
 
 end TCS1
