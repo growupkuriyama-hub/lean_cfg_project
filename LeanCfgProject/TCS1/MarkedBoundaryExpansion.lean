@@ -93,7 +93,7 @@ def templateOmissionRanksAux : Nat → List (Option α) → List Nat
       templateMarkedCount t₁ + templateMarkedCount t₂ := by
   induction t₁ with
   | nil =>
-      rfl
+      simp [templateMarkedCount]
   | cons x t ih =>
       cases x with
       | none =>
@@ -107,7 +107,7 @@ def templateOmissionRanksAux : Nat → List (Option α) → List Nat
       templateOmissionCount t₁ + templateOmissionCount t₂ := by
   induction t₁ with
   | nil =>
-      rfl
+      simp [templateOmissionCount]
   | cons x t ih =>
       cases x with
       | none =>
@@ -190,9 +190,12 @@ theorem boundaryTemplate_omissionCount
   | marked =>
       rfl
   | unaryLeft hbin child siblingWord sibling ih =>
-      simp [MarkedBoundaryKernel.boundaryTemplate,
-        templateOmissionCount, ih,
+      simp only [MarkedBoundaryKernel.boundaryTemplate,
+        templateOmissionCount_append,
+        templateOmissionCount,
         MarkedBoundaryKernel.omittedCount]
+      rw [ih]
+      omega
   | unaryRight hbin siblingWord sibling child ih =>
       simp [MarkedBoundaryKernel.boundaryTemplate,
         templateOmissionCount, ih,
@@ -241,15 +244,17 @@ theorem boundaryTemplate_omissionRanksAux
   | marked =>
       rfl
   | unaryLeft hbin child siblingWord sibling ih =>
-      simp [MarkedBoundaryKernel.boundaryTemplate,
-        templateOmissionRanksAux,
-        MarkedBoundaryKernel.omissionRanksAux,
-        ih offset]
+      rw [MarkedBoundaryKernel.boundaryTemplate]
+      rw [templateOmissionRanksAux_append]
+      rw [ih offset]
+      rw [boundaryTemplate_markedCount
+        terminalRule binaryRule child]
+      rfl
   | unaryRight hbin siblingWord sibling child ih =>
-      simp [MarkedBoundaryKernel.boundaryTemplate,
+      simp only [MarkedBoundaryKernel.boundaryTemplate,
         templateOmissionRanksAux,
-        MarkedBoundaryKernel.omissionRanksAux,
-        ih offset]
+        MarkedBoundaryKernel.omissionRanksAux]
+      rw [ih offset]
   | branch hbin left right ihL ihR =>
       rw [MarkedBoundaryKernel.boundaryTemplate]
       rw [templateOmissionRanksAux_append]
@@ -299,7 +304,8 @@ theorem template_no_omissions_of_gap_lt_offset
             ih (offset + 1) hlt' htail
           constructor
           · simpa [templateOmissionCount] using hzero
-          · simpa [templateMarkedWord, hshape]
+          · rw [hshape]
+            rfl
 
 /--
 A template whose every omission has marked-rank k has one central omission
@@ -315,7 +321,7 @@ theorem template_central_shape_aux
       ∀ j ∈ templateOmissionRanksAux offset t,
         j = k) :
     t =
-      (templateMarkedWord t).take (k - offset) |>.map Option.some ++
+      ((templateMarkedWord t).take (k - offset)).map Option.some ++
         List.replicate
           (templateOmissionCount t) Option.none ++
         ((templateMarkedWord t).drop (k - offset)).map Option.some := by
@@ -407,6 +413,7 @@ theorem boundaryTemplate_central_shape
         j = k := by
     intro j hj
     apply hgap j
+    unfold MarkedBoundaryKernel.omissionRanks
     rw [← boundaryTemplate_omissionRanksAux
       terminalRule binaryRule 0 K]
     exact hj
@@ -526,8 +533,8 @@ theorem boundaryExpansion_central
             List.replicate blocks.length Option.none) ++
           q.map Option.some)
         blocks
-        ((p ++ concatBlocks blocks) ++ q) :=
-    boundaryExpansion_append ePM eQ
+        ((p ++ concatBlocks blocks) ++ q) := by
+    simpa using boundaryExpansion_append ePM eQ
   simpa [boundaryAssembly, List.append_assoc] using ePMQ
 
 /-- For fixed template and replacement blocks, the expanded word is unique. -/
@@ -545,13 +552,11 @@ theorem boundaryExpansion_word_unique
   | @some a template blocks w tail ih =>
       cases e₂ with
       | some tail₂ =>
-          simp only
-          congr
+          congr 1
           exact ih tail₂
   | @none template blocks w block tail ih =>
       cases e₂ with
       | none tail₂ =>
-          simp only
           rw [ih tail₂]
 
 /--
