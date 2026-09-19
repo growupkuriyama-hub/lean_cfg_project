@@ -121,6 +121,64 @@ theorem reachingSpine_plug
         UntypedDerives.binary hbin sibling dC
       simpa only [List.append_assoc] using dA
 
+/--
+Compose two reaching spines through their common intermediate symbol.
+
+If the outer spine reaches Y with context (left₁,right₁) and the inner spine
+reaches X from Y with context (left₂,right₂), the composite context is
+(left₁ ++ left₂, right₂ ++ right₁).  The precise path and sibling lists are
+existential because only their existence is needed when extending a
+dependency path one edge at a time.
+-/
+theorem exists_reachingSpine_compose
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A Y X : N}
+    {left₁ right₁ left₂ right₂ : Word α}
+    {path₁ path₂ : List N}
+    {siblings₁ siblings₂ : List Nat}
+    (outer :
+      ReachingSpine terminalRule binaryRule
+        A Y left₁ right₁ path₁ siblings₁)
+    (inner :
+      ReachingSpine terminalRule binaryRule
+        Y X left₂ right₂ path₂ siblings₂) :
+    ∃ path siblings,
+      ReachingSpine terminalRule binaryRule
+        A X
+        (left₁ ++ left₂)
+        (right₂ ++ right₁)
+        path siblings := by
+  induction outer with
+  | hole =>
+      exact
+        ⟨path₂, siblings₂, by
+          simpa using inner⟩
+
+  | @binaryLeft A B C Y left right z path siblings
+      hbin child sibling ih =>
+      obtain ⟨path', siblings', composed⟩ := ih inner
+      refine
+        ⟨A :: path', z.length :: siblings',
+          ?_⟩
+      have step :=
+        ReachingSpine.binaryLeft
+          hbin composed sibling
+      simpa only [List.nil_append, List.append_nil,
+        List.append_assoc] using step
+
+  | @binaryRight A B C Y left right y path siblings
+      hbin sibling child ih =>
+      obtain ⟨path', siblings', composed⟩ := ih inner
+      refine
+        ⟨A :: path', y.length :: siblings',
+          ?_⟩
+      have step :=
+        ReachingSpine.binaryRight
+          hbin sibling composed
+      simpa only [List.nil_append, List.append_nil,
+        List.append_assoc] using step
+
 /-- The terminal context consists exactly of the off-path sibling yields. -/
 theorem reachingSpine_context_length_eq
     (terminalRule : N → α → Prop)
