@@ -118,6 +118,57 @@ def linearStepContinuation
       else
         linearOldState G B
 
+
+@[simp] theorem linearStepParent_zero
+    (G : PreparedLinearIndexedCFG N α P)
+    (p : P)
+    (i : Fin (G.rhs p).toPlan.steps.length)
+    (hzero : i.1 = 0) :
+    linearStepParent G p i =
+      linearOldState G (G.lhs p) := by
+  simp [linearStepParent, hzero]
+
+/--
+At every nonfinal position, the current continuing child is literally the
+parent state of the next planned step.
+-/
+theorem linearStepContinuation_eq_nextParent
+    (G : PreparedLinearIndexedCFG N α P)
+    (p : P)
+    (i : Fin (G.rhs p).toPlan.steps.length)
+    (hnext :
+      i.1 + 1 < (G.rhs p).toPlan.steps.length) :
+    linearStepContinuation G p i =
+      linearStepParent G p
+        ⟨i.1 + 1, hnext⟩ := by
+  have hne : i.1 + 1 ≠ 0 := by
+    omega
+  cases hend : (G.rhs p).toPlan.endpoint with
+  | terminal a =>
+      simp [linearStepContinuation, linearStepParent,
+        hend, hnext, hne]
+  | core B =>
+      simp [linearStepContinuation, linearStepParent,
+        hend, hnext, hne]
+
+/-- At a final core-ending step, the continuation is the old core symbol. -/
+theorem linearStepContinuation_eq_core_of_last
+    (G : PreparedLinearIndexedCFG N α P)
+    (p : P)
+    (i : Fin (G.rhs p).toPlan.steps.length)
+    (B : N)
+    (hend :
+      (G.rhs p).toPlan.endpoint =
+        LinearPlanEndpoint.core B)
+    (hlast :
+      i.1 + 1 =
+        (G.rhs p).toPlan.steps.length) :
+    linearStepContinuation G p i =
+      linearOldState G B := by
+  unfold linearStepContinuation
+  rw [hend]
+  simp [hlast]
+
 /-- Terminal rules of the concretely factorized non-start grammar. -/
 inductive LinearConstructedTerminalRule
     (G : PreparedLinearIndexedCFG N α P) :
