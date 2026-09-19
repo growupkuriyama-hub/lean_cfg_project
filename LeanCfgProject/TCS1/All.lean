@@ -16,6 +16,7 @@ import LeanCfgProject.TCS1.FixedWindowSummarySemantic
 import LeanCfgProject.TCS1.FixedWindowBoundarySemantic
 import LeanCfgProject.TCS1.MarkedBoundaryKernel
 import LeanCfgProject.TCS1.MarkedBoundaryNormalization
+import LeanCfgProject.TCS1.MarkedBoundaryGapSemantic
 import LeanCfgProject.TCS1.MarkedBoundarySelection
 import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.FixedWindowTreeSurgeryFacade
