@@ -60,7 +60,7 @@ theorem finset_sum_sq_le_sq_sum
   | empty =>
       simp
   | @insert a s ha ih =>
-      simp [ha] at ih ⊢
+      simp [ha, pow_two] at ih ⊢
       nlinarith
 
 /-- Sum of cubes is bounded by the cube of the sum over naturals. -/
@@ -75,7 +75,7 @@ theorem finset_sum_cube_le_cube_sum
   | empty =>
       simp
   | @insert a s ha ih =>
-      simp [ha] at ih ⊢
+      simp [ha, pow_succ] at ih ⊢
       nlinarith
 
 /-- The number of distinct sample words is at most the encoded sample norm. -/
