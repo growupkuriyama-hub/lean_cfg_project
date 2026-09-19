@@ -57,6 +57,25 @@ inductive ReducedTypedDerives
       ReducedTypedDerives H terminalRule binaryRule Active
         (A, μ * ν) (wB ++ wC)
 
+/-- Forget trimming certificates and recover a full typed derivation. -/
+theorem reducedTypedDerives_to_typedDerives
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (Active : N × M → Prop)
+    {X : N × M}
+    {word : Word α}
+    (d :
+      ReducedTypedDerives
+        H terminalRule binaryRule Active X word) :
+    TypedDerives H terminalRule binaryRule X word := by
+  induction d with
+  | terminal hterm hactive =>
+      exact TypedDerives.terminal hterm
+  | @binary A B C μ ν wB wC
+      hbin hactive dB dC ihB ihC =>
+      exact TypedDerives.binary hbin ihB ihC
+
 /-- Every reduced typed derivation is rooted at an active symbol. -/
 theorem reducedTypedDerives_active
     (H : FixedFiniteMonoidHom α M)
