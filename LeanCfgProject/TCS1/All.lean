@@ -9,6 +9,7 @@ import LeanCfgProject.TCS1.CanonicalWitnessCounting
 import LeanCfgProject.TCS1.ReducednessWitnessChoices
 import LeanCfgProject.TCS1.MinimalReducedWitnessChoices
 import LeanCfgProject.TCS1.GoldConvergenceClosure
+import LeanCfgProject.TCS1.GoldCharacteristicBridge
 
 import LeanCfgProject.TCS1.SSBNFThicknessBounds
 import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
