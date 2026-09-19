@@ -88,15 +88,18 @@ theorem finset_sum_cube_le_cube_sum
   | empty =>
       simp
   | @insert a s ha ih =>
-      simp only [Finset.sum_insert, ha, not_false_eq_true,
-        pow_succ, pow_zero, Nat.mul_one] at ih ⊢
+      simp [ha, pow_succ] at ih ⊢
       let A := f a
       let S := ∑ x ∈ s, f x
       let Q := ∑ x ∈ s, f x * f x * f x
+      change A * A * A + Q ≤
+        (A + S) * (A + S) * (A + S)
+      have ih' : Q ≤ S * S * S := by
+        simpa [Q, S, Nat.mul_assoc] using ih
       have hbase :
           A * A * A + Q ≤
-            A * A * A + S * S * S := by
-        exact Nat.add_le_add_left ih (A * A * A)
+            A * A * A + S * S * S :=
+        Nat.add_le_add_left ih' (A * A * A)
       have hcross :
           A * A * A + S * S * S ≤
             A * A * A + S * S * S +
