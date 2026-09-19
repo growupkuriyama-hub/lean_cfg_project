@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.WitnessSetConstruction
 import LeanCfgProject.TCS1.FixedWindowContextPathBound
+import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 
 /-!
 # TCS #1 v68: paper-facing arithmetic facade for Lemma 7.2
@@ -125,6 +126,113 @@ theorem canonicalYieldContextBounds_of_bounded_alternatives
     obtain ⟨z, dz, hz⟩ := hyield X hX
     exact le_trans
       (minimal.omega_minimal X hX z dz) hz
+  · intro X hX
+    obtain ⟨left, right, hreach, hlen⟩ :=
+      hcontext X hX
+    exact le_trans
+      (minimal.context_minimal X hX left right hreach)
+      hlen
+
+/--
+Lemma 7.1 supplies the canonical-yield half of the quantitative data needed
+for Lemma 7.2.
+-/
+theorem canonicalOmega_length_le_fixedWindow
+    [Fintype N] [DecidableEq N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (minimal :
+      CanonicalChoiceMinimality
+        H terminalRule binaryRule startRule epsilonStart Active C)
+    (trim :
+      SuccessfulTypedTrimClosure
+        H terminalRule binaryRule Active)
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ) :
+    ∀ X : N × M,
+      Active X →
+      (C.omega X).length ≤
+        fixedWindowTypedYieldBound
+          (k + l) (Fintype.card N) τ := by
+  intro X hX
+  exact
+    fixedWindow_reduced_minimal_typed_yield_length_le
+      H terminalRule binaryRule Active trim
+      (C.omegaDerives X hX)
+      (minimal.omega_minimal X hX)
+      k l hrespect τ hshort
+
+/--
+Once bounded alternative reaching contexts are available, Lemma 7.1 plus
+canonical minimality gives the complete quantitative data package used in the
+witness-length proof.
+-/
+theorem canonicalYieldContextBounds_fixedWindow_of_context_alternatives
+    [Fintype N] [DecidableEq N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (minimal :
+      CanonicalChoiceMinimality
+        H terminalRule binaryRule startRule epsilonStart Active C)
+    (trim :
+      SuccessfulTypedTrimClosure
+        H terminalRule binaryRule Active)
+    (k l Nt : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    (hcontext :
+      ∀ X : N × M,
+        Active X →
+        ∃ left right : Word α,
+          (∀ {z : Word α},
+            ReducedTypedDerives
+              H terminalRule binaryRule Active X z →
+            ReducedTypedLanguage
+              H terminalRule binaryRule startRule epsilonStart Active
+              (left ++ z ++ right))
+          ∧
+          left.length + right.length ≤
+            Nt *
+              fixedWindowTypedYieldBound
+                (k + l) (Fintype.card N) τ) :
+    CanonicalYieldContextBounds
+      H terminalRule binaryRule startRule epsilonStart Active C
+      Nt
+      (fixedWindowTypedYieldBound
+        (k + l) (Fintype.card N) τ) := by
+  constructor
+  · exact
+      canonicalOmega_length_le_fixedWindow
+        H terminalRule binaryRule startRule epsilonStart
+        Active C minimal trim
+        k l hrespect τ hshort
   · intro X hX
     obtain ⟨left, right, hreach, hlen⟩ :=
       hcontext X hX
