@@ -152,6 +152,38 @@ theorem templateOmissionRanksAux_append
           congr 2
           omega
 
+/-- Taking commutes with marking every terminal by `some`. -/
+theorem take_map_some
+    (w : Word α)
+    (n : Nat) :
+    (w.map Option.some).take n =
+      (w.take n).map Option.some := by
+  induction w generalizing n with
+  | nil =>
+      simp
+  | cons a w ih =>
+      cases n with
+      | zero =>
+          rfl
+      | succ n =>
+          simp [ih]
+
+/-- Dropping commutes with marking every terminal by `some`. -/
+theorem drop_map_some
+    (w : Word α)
+    (n : Nat) :
+    (w.map Option.some).drop n =
+      (w.drop n).map Option.some := by
+  induction w generalizing n with
+  | nil =>
+      simp
+  | cons a w ih =>
+      cases n with
+      | zero =>
+          rfl
+      | succ n =>
+          simp [ih]
+
 /-- The kernel template contains one marked entry per marked leaf. -/
 theorem boundaryTemplate_markedCount
     (terminalRule : N → α → Prop)
@@ -367,17 +399,21 @@ theorem template_central_shape_aux
             List.nil_append, List.drop_zero]
           have hrep :
               List.replicate
-                  (1 + templateOmissionCount t) Option.none =
-                Option.none ::
+                  (1 + templateOmissionCount t)
+                  (Option.none : Option α) =
+                (Option.none : Option α) ::
                   List.replicate
-                    (templateOmissionCount t) Option.none := by
+                    (templateOmissionCount t)
+                    (Option.none : Option α) := by
             rw [show
               1 + templateOmissionCount t =
                 Nat.succ (templateOmissionCount t) by omega]
             rfl
           rw [hrep]
           exact
-            congrArg (List.cons Option.none) htail'
+            congrArg
+              (List.cons (Option.none : Option α))
+              htail'
 
       | some a =>
           have htailGap :
@@ -410,8 +446,8 @@ theorem template_central_shape_aux
               omega
             simp [templateMarkedWord,
               templateOmissionCount, hdiff] at ⊢
-            simpa only [List.take_map, List.drop_map]
-              using htail
+            rw [take_map_some, drop_map_some]
+            exact htail
 
 /--
 Kernel-facing central-template theorem.
