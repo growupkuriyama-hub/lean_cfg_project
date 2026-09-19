@@ -93,12 +93,14 @@ theorem preparedLinearLanguage_closed
   intro p word hreal
   cases hRhs : G.rhs p with
   | terminals head tail =>
+      rw [hRhs] at hreal
       change word = head :: tail at hreal
       rw [hreal]
       exact
         PreparedLinearDerives.terminals
           p head tail hRhs
   | around left core right hnonunit =>
+      rw [hRhs] at hreal
       change ∃ z,
         PreparedLinearDerives G core z ∧
         word = left ++ z ++ right at hreal
