@@ -102,7 +102,7 @@ theorem reducedSSBNF_untypedStartDerives_iff_separated
   constructor
   · intro d
     cases d with
-    | @nonempty A word hstart hder =>
+    | @nonempty A _ hstart hder =>
         have hA :
             A = reducedUnitFreeStart G start :=
           hstart
@@ -111,9 +111,9 @@ theorem reducedSSBNF_untypedStartDerives_iff_separated
             BinaryNullableDerives
               (reducedUnitFreeGrammar G start)
               (reducedUnitFreeStart G start)
-              word :=
+              w :=
           (reducedSSBNF_untypedDerives_iff
-            G start (reducedUnitFreeStart G start) word).1 hder
+            G start (reducedUnitFreeStart G start) w).1 hder
         exact
           reducedStartDerives_to_separatedStart
             G start keepEmpty hred
