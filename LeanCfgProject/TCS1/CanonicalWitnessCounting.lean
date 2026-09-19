@@ -27,6 +27,17 @@ variable {α : Type u}
 variable {M : Type v} [Monoid M] [Fintype M]
 variable {N : Type w}
 
+/-- Untyped terminal productions of the underlying SSBNF grammar. -/
+abbrev UntypedTerminalRuleIndex
+    (terminalRule : N → α → Prop) :=
+  {p : N × α // terminalRule p.1 p.2}
+
+/-- Untyped binary productions of the underlying SSBNF grammar. -/
+abbrev UntypedBinaryRuleIndex
+    (binaryRule : N → N → N → Prop) :=
+  {p : N × N × N //
+    binaryRule p.1 p.2.1 p.2.2}
+
 /-- Active typed terminal productions, counted once each. -/
 abbrev ActiveTypedTerminalIndex
     (H : FixedFiniteMonoidHom α M)
@@ -86,6 +97,75 @@ def canonicalWitnessIndexWord
         C.right (p.1.1.1, p.1.2.1 * p.1.2.2)
   | Sum.inr (Sum.inr (Sum.inr _)) =>
       []
+
+/-- Active typed symbols are a subset of the full N-by-M product. -/
+theorem activeTypedSymbol_card_le
+    [Fintype N]
+    (Active : N × M → Prop)
+    [Fintype (ActiveTypedSymbol Active)] :
+    Fintype.card (ActiveTypedSymbol Active) ≤
+      Fintype.card N * Fintype.card M := by
+  have h :=
+    Fintype.card_le_of_injective
+      (fun X : ActiveTypedSymbol Active => X.1)
+      Subtype.val_injective
+  simpa using h
+
+/-- Typed terminal productions inject into underlying terminal productions. -/
+theorem activeTypedTerminalIndex_card_le
+    [Fintype N] [Fintype α]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (Active : N × M → Prop)
+    [Fintype (ActiveTypedTerminalIndex H terminalRule Active)]
+    [Fintype (UntypedTerminalRuleIndex terminalRule)] :
+    Fintype.card
+        (ActiveTypedTerminalIndex H terminalRule Active) ≤
+      Fintype.card
+        (UntypedTerminalRuleIndex terminalRule) := by
+  let forget :
+      ActiveTypedTerminalIndex H terminalRule Active →
+        UntypedTerminalRuleIndex terminalRule :=
+    fun p => ⟨p.1, p.2.1⟩
+  have hinj : Function.Injective forget := by
+    intro x y h
+    apply Subtype.ext
+    exact congrArg Subtype.val h
+  exact
+    Fintype.card_le_of_injective forget hinj
+
+/--
+Typed binary productions inject into an underlying binary production together
+with the two child monoid types.
+-/
+theorem activeTypedBinaryIndex_card_le
+    [Fintype N]
+    (binaryRule : N → N → N → Prop)
+    (Active : N × M → Prop)
+    [Fintype (ActiveTypedBinaryIndex binaryRule Active)]
+    [Fintype (UntypedBinaryRuleIndex binaryRule)] :
+    Fintype.card
+        (ActiveTypedBinaryIndex binaryRule Active) ≤
+      Fintype.card
+          (UntypedBinaryRuleIndex binaryRule) *
+        (Fintype.card M)^2 := by
+  let forget :
+      ActiveTypedBinaryIndex binaryRule Active →
+        UntypedBinaryRuleIndex binaryRule × (M × M) :=
+    fun p =>
+      (⟨p.1.1, p.2.1⟩, p.1.2)
+  have hinj : Function.Injective forget := by
+    intro x y h
+    apply Subtype.ext
+    exact
+      congrArg
+        (fun z :
+          UntypedBinaryRuleIndex binaryRule × (M × M) =>
+            (z.1.1, z.2))
+        h
+  have hcard :=
+    Fintype.card_le_of_injective forget hinj
+  simpa [pow_two] using hcard
 
 /--
 Every actual canonical witness word is the image of one family index.
