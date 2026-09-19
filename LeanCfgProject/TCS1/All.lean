@@ -23,6 +23,7 @@ import LeanCfgProject.TCS1.MarkedBoundarySelection
 import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.FixedWindowTreeSurgeryFacade
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
+import LeanCfgProject.TCS1.SuccessfulTypedTrimClosureBridge
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowReducedContextFacade
 import LeanCfgProject.TCS1.ReducedTypedRuleBridge
