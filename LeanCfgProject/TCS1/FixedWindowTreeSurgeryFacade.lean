@@ -2,6 +2,7 @@ import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.MarkedBoundaryNormalization
 import LeanCfgProject.TCS1.MarkedBoundaryGapNormalization
 import LeanCfgProject.TCS1.MarkedBoundaryExpansion
+import LeanCfgProject.TCS1.SSBNFThicknessBounds
 
 /-!
 # TCS #1 v68: fixed-window tree-surgery facade
@@ -264,6 +265,148 @@ theorem exists_fixedWindow_long_typed_yield
       hEach
 
 end FixedWindowTypedLongCompletion
+
+section FixedWindowLemma71Facade
+
+variable {N : Type u}
+variable {α : Type v}
+variable {M : Type w} [Monoid M] [Fintype M]
+
+/--
+Existential form of Lemma 7.1 for one productive typed non-start symbol.
+
+The bound is exactly the manuscript quantity
+`B_{k,l}(G)=tau` at r=0 and
+`r+(2r-1)|N|tau` at r>0.
+-/
+theorem exists_fixedWindow_bounded_typed_yield
+    [Fintype N] [DecidableEq N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    {μ : M}
+    {w₀ : Word α}
+    (d₀ :
+      TypedDerives H terminalRule binaryRule
+        (A, μ) w₀)
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ X : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule X z
+          ∧ z.length ≤ τ) :
+    ∃ w' : Word α,
+      TypedDerives H terminalRule binaryRule
+        (A, μ) w'
+      ∧
+      w'.length ≤
+        fixedWindowTypedYieldBound
+          (k + l) (Fintype.card N) τ := by
+  by_cases hr0 : k + l = 0
+  · have hk : k = 0 := by omega
+    have hl : l = 0 := by omega
+    subst k
+    subst l
+    obtain ⟨z, dz, hz⟩ := hshort A
+    have hwpos :
+        0 < w₀.length :=
+      typedDerives_length_pos
+        H terminalRule binaryRule d₀
+    have hzpos :
+        0 < z.length :=
+      untypedDerives_length_pos
+        terminalRule binaryRule dz
+    have hsame :
+        H.h z = H.h w₀ :=
+      zero_type_eq_of_respectsFixedWindowSummary
+        H hrespect hzpos hwpos
+    have href :
+        H.h w₀ = μ :=
+      typedDerives_yield_type
+        H terminalRule binaryRule d₀
+    have htype :
+        H.h z = μ :=
+      hsame.trans href
+    have dzTyped :
+        TypedDerives H terminalRule binaryRule
+          (A, μ) z := by
+      have dzLift :=
+        untypedDerives_lift
+          H terminalRule binaryRule dz
+      simpa [htype] using dzLift
+    refine ⟨z, dzTyped, ?_⟩
+    simpa using hz
+
+  · have hr : 0 < k + l := by
+      omega
+    by_cases hshortRef : w₀.length < k + l
+    · refine ⟨w₀, d₀, ?_⟩
+      rw [fixedWindowTypedYieldBound_of_pos hr]
+      omega
+    · have hfit : k + l ≤ w₀.length := by
+        omega
+      have dUntyped :
+          UntypedDerives terminalRule binaryRule A w₀ :=
+        typedDerives_erase
+          H terminalRule binaryRule d₀
+      have href :
+          H.h w₀ = μ :=
+        typedDerives_yield_type
+          H terminalRule binaryRule d₀
+      obtain ⟨w', d', hlen⟩ :=
+        exists_fixedWindow_long_typed_yield
+          H terminalRule binaryRule
+          dUntyped href
+          k l hr hfit hrespect τ hshort
+      refine ⟨w', d', ?_⟩
+      rw [fixedWindowTypedYieldBound_of_pos hr]
+      exact hlen
+
+/--
+Paper-facing length statement for a canonical minimal typed yield.
+
+Any length-minimal typed yield—and therefore in particular the manuscript's
+shortlex-minimal `omega(X)`—is bounded by `B_{k,l}(G)`.
+-/
+theorem fixedWindow_minimal_typed_yield_length_le
+    [Fintype N] [DecidableEq N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    {μ : M}
+    {omega : Word α}
+    (dOmega :
+      TypedDerives H terminalRule binaryRule
+        (A, μ) omega)
+    (hminimal :
+      ∀ z : Word α,
+        TypedDerives H terminalRule binaryRule
+          (A, μ) z →
+        omega.length ≤ z.length)
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ X : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule X z
+          ∧ z.length ≤ τ) :
+    omega.length ≤
+      fixedWindowTypedYieldBound
+        (k + l) (Fintype.card N) τ := by
+  obtain ⟨z, dz, hz⟩ :=
+    exists_fixedWindow_bounded_typed_yield
+      H terminalRule binaryRule
+      dOmega k l hrespect τ hshort
+  exact le_trans (hminimal z dz) hz
+
+end FixedWindowLemma71Facade
 
 end TCS1
 end LeanCfgProject
