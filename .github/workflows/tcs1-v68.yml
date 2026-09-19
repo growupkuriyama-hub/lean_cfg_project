@@ -3,7 +3,7 @@ name: TCS1 v68 Lean
 on:
   pull_request:
     branches:
-      - tcs1-v68-ci-anchor
+      - tcs1-v68-ci-anchor*
     paths:
       - "LeanCfgProject/TCS1/**"
       - ".github/workflows/tcs1-v68.yml"
