@@ -11,6 +11,7 @@ import LeanCfgProject.TCS1.MinimalReducedWitnessChoices
 import LeanCfgProject.TCS1.GoldConvergenceClosure
 import LeanCfgProject.TCS1.GoldCharacteristicBridge
 import LeanCfgProject.TCS1.ConcreteConservativeLearner
+import LeanCfgProject.TCS1.TrivialTargetEndpoints
 import LeanCfgProject.TCS1.IndexedGoldBridge
 import LeanCfgProject.TCS1.IndexedConcreteGoldLearner
 
