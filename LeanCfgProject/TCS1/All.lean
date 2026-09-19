@@ -12,6 +12,7 @@ import LeanCfgProject.TCS1.GoldConvergenceClosure
 import LeanCfgProject.TCS1.GoldCharacteristicBridge
 import LeanCfgProject.TCS1.ConcreteConservativeLearner
 import LeanCfgProject.TCS1.IndexedGoldBridge
+import LeanCfgProject.TCS1.IndexedConcreteGoldLearner
 
 import LeanCfgProject.TCS1.SSBNFThicknessBounds
 import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
