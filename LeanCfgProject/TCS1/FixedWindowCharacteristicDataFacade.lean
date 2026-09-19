@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.ConcreteTypedTrimming
+import LeanCfgProject.TCS1.ConcreteTypedTrimLanguage
 import LeanCfgProject.TCS1.CanonicalWitnessCounting
 
 /-!
@@ -204,6 +205,48 @@ theorem fixedWindowMinimalCanonicalSample_characteristic
       hsub
 
 /--
+Paper-facing characteristicity statement against the underlying untyped
+start-separated target language.
+-/
+theorem fixedWindowMinimalCanonicalSample_characteristic_untyped
+    [Fintype α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (hsub :
+      FixedHSubstitutable H
+        (UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart)) :
+    BatchLanguage H
+        (fixedWindowMinimalCanonicalSample
+          H terminalRule binaryRule startRule epsilonStart)
+      =
+    UntypedStartLanguage
+      terminalRule binaryRule startRule epsilonStart := by
+  have hsubReduced :=
+    concreteTypedActive_fixedHSubstitutable
+      H terminalRule binaryRule startRule epsilonStart hsub
+  calc
+    BatchLanguage H
+        (fixedWindowMinimalCanonicalSample
+          H terminalRule binaryRule startRule epsilonStart)
+      =
+        ReducedTypedLanguage
+          H terminalRule binaryRule startRule epsilonStart
+          (ConcreteTypedActive
+            H terminalRule binaryRule startRule) :=
+      fixedWindowMinimalCanonicalSample_characteristic
+        H terminalRule binaryRule startRule epsilonStart
+        hsubReduced
+    _ =
+        UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart :=
+      concreteTypedActive_language_eq_untyped
+        H terminalRule binaryRule startRule epsilonStart
+
+/--
 Combined characteristic-data package for the fixed-window quantitative
 section: exact reconstruction and the explicit encoded-size envelope.
 -/
@@ -266,6 +309,72 @@ theorem fixedWindowMinimalCanonicalSample_package
   constructor
   · exact
       fixedWindowMinimalCanonicalSample_characteristic
+        H terminalRule binaryRule startRule epsilonStart hsub
+  · exact
+      fixedWindowMinimalCanonicalSample_norm_le
+        H terminalRule binaryRule startRule epsilonStart
+        k l hrespect τ hshort
+
+/--
+Combined Section 7 package directly against the underlying untyped target:
+the minimum-length canonical sample reconstructs the target exactly and obeys
+the explicit fixed-window characteristic-data envelope.
+-/
+theorem fixedWindowMinimalCanonicalSample_untyped_package
+    [Fintype α] [DecidableEq α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    [Fintype
+      (ActiveTypedSymbol
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedTerminalIndex H terminalRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedBinaryIndex binaryRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype (UntypedTerminalRuleIndex terminalRule)]
+    [Fintype (UntypedBinaryRuleIndex binaryRule)]
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    (hsub :
+      FixedHSubstitutable H
+        (UntypedStartLanguage
+          terminalRule binaryRule startRule epsilonStart)) :
+    BatchLanguage H
+        (fixedWindowMinimalCanonicalSample
+          H terminalRule binaryRule startRule epsilonStart)
+      =
+      UntypedStartLanguage
+        terminalRule binaryRule startRule epsilonStart
+    ∧
+    (∑ word ∈
+      fixedWindowMinimalCanonicalSample
+        H terminalRule binaryRule startRule epsilonStart,
+      (word.length + 1)) ≤
+      fixedWindowCharacteristicEnvelope
+        (Fintype.card M)
+        (k + l)
+        (Fintype.card N)
+        (Fintype.card (UntypedTerminalRuleIndex terminalRule))
+        (Fintype.card (UntypedBinaryRuleIndex binaryRule))
+        τ := by
+  constructor
+  · exact
+      fixedWindowMinimalCanonicalSample_characteristic_untyped
         H terminalRule binaryRule startRule epsilonStart hsub
   · exact
       fixedWindowMinimalCanonicalSample_norm_le
