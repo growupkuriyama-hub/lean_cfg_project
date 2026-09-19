@@ -277,7 +277,6 @@ theorem nextDatum_encoding_le_prefix
     (datum (n + 1)).length + 1 ≤
       positiveDataPrefixNorm datum (n + 1) := by
   simp [positiveDataPrefixNorm]
-  omega
 
 /--
 The reconstruction-output envelope attached to the accumulated rebuild sample
