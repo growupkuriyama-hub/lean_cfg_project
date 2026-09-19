@@ -1,9 +1,6 @@
 name: TCS1 v68 Lean
 
 on:
-  push:
-    branches:
-      - tcs1-v68-lean
   pull_request:
     branches:
       - tcs1-v68-ci-anchor
@@ -17,6 +14,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: tcs1-v68-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
