@@ -66,6 +66,44 @@ theorem exists_fixedWindow_cycle_shortened_kernel
     exact hOmit
 
 /--
+Boundary selection followed by gap-preserving cycle shortening.
+
+In addition to the numerical bound, every omitted sibling remains in the
+single central gap after the first k marked leaves.
+-/
+theorem exists_fixedWindow_cycle_shortened_kernel_ranked
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    {w : Word α}
+    (d : UntypedDerives terminalRule binaryRule A w)
+    (k l : Nat)
+    (hr : 0 < k + l)
+    (hfit : k + l ≤ w.length) :
+    ∃ K' : MarkedBoundaryKernel terminalRule binaryRule A,
+      MarkedBoundaryKernel.markedWord K' =
+        w.take k ++ w.drop (w.length - l)
+      ∧
+      MarkedBoundaryKernel.markedLeafCount K' = k + l
+      ∧
+      MarkedBoundaryKernel.omittedCount K' ≤
+        (2 * (k + l) - 1) * Fintype.card N
+      ∧
+      MarkedBoundaryKernel.AllOmissionsAt K' k := by
+  obtain ⟨K, hYield, hWord, hCount, hGap⟩ :=
+    exists_fixedWindow_boundary_kernel_ranked
+      terminalRule binaryRule d k l hr hfit
+  obtain ⟨K', hCount', hWord', hOmit, hGap'⟩ :=
+    exists_cycle_shortened_kernel_preserving_allOmissionsAt
+      terminalRule binaryRule K k hGap
+  refine ⟨K', ?_, ?_, ?_, hGap'⟩
+  · rw [hWord', hWord]
+  · rw [hCount', hCount]
+  · rw [hCount] at hOmit
+    exact hOmit
+
+/--
 Untyped long-word reconstruction with the exact Lemma 7.1 numerical bound.
 
 This closes the combinatorial/derivational part of the long case.  The
