@@ -212,7 +212,9 @@ theorem canonicalWitnessFinset_card_le_families
   have h :=
     canonicalWitnessFinset_card_le_index
       H terminalRule binaryRule startRule epsilonStart Active C
-  simpa [CanonicalWitnessIndex] using h
+  simp only [CanonicalWitnessIndex, Fintype.card_sum,
+    Fintype.card_unit] at h
+  omega
 
 end CanonicalWitnessCounting
 
