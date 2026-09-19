@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
 import LeanCfgProject.TCS1.MarkedBoundaryNormalization
+import LeanCfgProject.TCS1.MarkedBoundaryGapNormalization
 
 /-!
 # TCS #1 v68: fixed-window tree-surgery facade
