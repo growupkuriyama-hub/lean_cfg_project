@@ -169,6 +169,151 @@ theorem exists_attachGapHead
             hbin y sibling K offset k).2
         exact ⟨hgap, hKgap⟩
 
+/--
+Gap-aware normalized head/base decomposition.
+
+The unary head has already been cycle-shortened to a repetition-free path.
+Both the head and the base carry the same global central-gap invariant.
+-/
+structure GapNormalizedHeadData
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (offset k : Nat)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A) where
+  target : N
+  left : Word α
+  right : Word α
+  path : List N
+  siblings : List Nat
+  base :
+    MarkedBoundaryBase terminalRule binaryRule target
+  spine :
+    GapReachingSpine terminalRule binaryRule
+      offset (MarkedBoundaryBase.markedLeafCount base) k
+      A target left right path siblings
+  path_nodup : path.Nodup
+  marks_eq :
+    MarkedBoundaryBase.markedLeafCount base =
+      MarkedBoundaryKernel.markedLeafCount K
+  word_eq :
+    MarkedBoundaryBase.markedWord base =
+      MarkedBoundaryKernel.markedWord K
+  base_gap :
+    MarkedBoundaryBaseAllOmissionsAtAux
+      terminalRule binaryRule offset k base
+  tail_bound :
+    MarkedBoundaryBase.omittedBelow base ≤
+      (2 * MarkedBoundaryKernel.markedLeafCount K - 2) *
+        Fintype.card N
+
+/-- A gap-aware normalized unary head contains at most |N| omissions. -/
+theorem gapNormalizedHead_siblings_le_card
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (offset k : Nat)
+    {A : N}
+    {K : MarkedBoundaryKernel terminalRule binaryRule A}
+    (D :
+      GapNormalizedHeadData
+        terminalRule binaryRule offset k K) :
+    D.siblings.length ≤ Fintype.card N := by
+  have hpath :
+      D.path.length ≤ Fintype.card N :=
+    dependency_path_vertices_le
+      D.path D.path_nodup
+  have hstep :
+      D.siblings.length + 1 = D.path.length :=
+    gapReachingSpine_siblings_length_add_one_eq_path
+      terminalRule binaryRule
+      offset
+      (MarkedBoundaryBase.markedLeafCount D.base)
+      k D.spine
+  omega
+
+/--
+Attach gap-aware normalized head data.
+
+The result simultaneously preserves the marked word, satisfies the manuscript
+omitted-sibling bound, and retains the central-gap invariant.
+-/
+theorem gapNormalizedHead_attach_bound
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (offset k : Nat)
+    {A : N}
+    {K : MarkedBoundaryKernel terminalRule binaryRule A}
+    (D :
+      GapNormalizedHeadData
+        terminalRule binaryRule offset k K) :
+    ∃ K' : MarkedBoundaryKernel terminalRule binaryRule A,
+      MarkedBoundaryKernel.markedLeafCount K' =
+        MarkedBoundaryKernel.markedLeafCount K
+      ∧
+      MarkedBoundaryKernel.markedWord K' =
+        MarkedBoundaryKernel.markedWord K
+      ∧
+      MarkedBoundaryKernel.omittedCount K' ≤
+        (2 * MarkedBoundaryKernel.markedLeafCount K - 1) *
+          Fintype.card N
+      ∧
+      MarkedBoundaryKernel.AllOmissionsAtAux
+        offset K' k := by
+  obtain ⟨K', hmarks, homit, hword, hgap⟩ :=
+    exists_attachGapHead
+      terminalRule binaryRule
+      offset
+      (MarkedBoundaryBase.markedLeafCount D.base)
+      k D.spine D.base rfl D.base_gap
+  have hhead :
+      D.siblings.length ≤ Fintype.card N :=
+    gapNormalizedHead_siblings_le_card
+      terminalRule binaryRule offset k D
+  have hsum :
+      D.siblings.length +
+          MarkedBoundaryBase.omittedBelow D.base
+        ≤
+      Fintype.card N +
+        (2 * MarkedBoundaryKernel.markedLeafCount K - 2) *
+          Fintype.card N :=
+    Nat.add_le_add hhead D.tail_bound
+  have hpos :
+      0 < MarkedBoundaryKernel.markedLeafCount K :=
+    MarkedBoundaryKernel.markedLeafCount_pos
+      terminalRule binaryRule K
+  have hcoeff :
+      1 + (2 * MarkedBoundaryKernel.markedLeafCount K - 2) =
+        2 * MarkedBoundaryKernel.markedLeafCount K - 1 := by
+    omega
+  have hfactor :
+      Fintype.card N +
+          (2 * MarkedBoundaryKernel.markedLeafCount K - 2) *
+            Fintype.card N
+        =
+      (2 * MarkedBoundaryKernel.markedLeafCount K - 1) *
+        Fintype.card N := by
+    calc
+      Fintype.card N +
+          (2 * MarkedBoundaryKernel.markedLeafCount K - 2) *
+            Fintype.card N
+          =
+        (1 +
+          (2 * MarkedBoundaryKernel.markedLeafCount K - 2)) *
+            Fintype.card N := by
+              simp [Nat.add_mul]
+      _ =
+        (2 * MarkedBoundaryKernel.markedLeafCount K - 1) *
+          Fintype.card N := by
+            rw [hcoeff]
+  refine ⟨K', ?_, ?_, ?_, hgap⟩
+  · rw [hmarks, D.marks_eq]
+  · rw [hword, D.word_eq]
+  · rw [homit]
+    exact le_trans hsum (le_of_eq hfactor)
+
 end MarkedBoundaryGapNormalization
 
 end TCS1
