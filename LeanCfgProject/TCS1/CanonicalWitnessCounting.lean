@@ -131,7 +131,12 @@ theorem activeTypedTerminalIndex_card_le
   have hinj : Function.Injective forget := by
     intro x y h
     apply Subtype.ext
-    exact congrArg Subtype.val h
+    have hv :
+        (forget x).1 = (forget y).1 :=
+      congrArg
+        (fun z : UntypedTerminalRuleIndex terminalRule => z.1)
+        h
+    simpa [forget] using hv
   exact
     Fintype.card_le_of_injective forget hinj
 
