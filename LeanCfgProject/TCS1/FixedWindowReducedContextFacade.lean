@@ -309,6 +309,68 @@ theorem canonicalYieldContextBounds_fixedWindow_of_structural_reachability
       trim reach
       k l hrespect τ hshort X hX
 
+/--
+Full paper-facing witness-length conclusion of Lemma 7.2 from structural
+reachability.
+
+Combining the active-symbol reaching-context construction with canonical
+minimality gives the common bound for every actual word in
+`CanonicalWitnessWords`.
+-/
+theorem canonicalWitnessWords_length_le_fixedWindow_of_structural_reachability
+    [Fintype N]
+    (Active : N × M → Prop)
+    [Fintype (ActiveTypedSymbol Active)]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (minimal :
+      CanonicalChoiceMinimality
+        H terminalRule binaryRule startRule epsilonStart Active C)
+    (trim :
+      SuccessfulTypedTrimClosure
+        H terminalRule binaryRule Active)
+    (reach :
+      ActiveTypedStructuralReachability
+        H terminalRule binaryRule startRule Active)
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    {word : Word α}
+    (hword :
+      word ∈
+        CanonicalWitnessWords
+          H terminalRule binaryRule startRule epsilonStart Active C) :
+    word.length ≤
+      fixedWindowWitnessLengthEnvelope
+        (Fintype.card (ActiveTypedSymbol Active))
+        (k + l) (Fintype.card N) τ := by
+  classical
+  letI : DecidableEq N := Classical.decEq N
+  have bounds :=
+    canonicalYieldContextBounds_fixedWindow_of_structural_reachability
+      Active H terminalRule binaryRule startRule epsilonStart
+      C minimal trim reach
+      k l hrespect τ hshort
+  exact
+    canonicalWitnessWords_length_le_fixedWindow
+      H terminalRule binaryRule startRule epsilonStart
+      Active C
+      (Fintype.card (ActiveTypedSymbol Active))
+      (k + l) (Fintype.card N) τ
+      bounds hword
+
 end FixedWindowReducedContextFacade
 
 end TCS1
