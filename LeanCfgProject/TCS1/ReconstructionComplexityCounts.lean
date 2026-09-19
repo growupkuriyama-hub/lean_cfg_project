@@ -60,8 +60,21 @@ theorem finset_sum_sq_le_sq_sum
   | empty =>
       simp
   | @insert a s ha ih =>
-      simp [ha, pow_two] at ih ⊢
-      nlinarith
+      simp only [Finset.sum_insert, ha, not_false_eq_true,
+        pow_two] at ih ⊢
+      let A := f a
+      let S := ∑ x ∈ s, f x
+      let Q := ∑ x ∈ s, f x * f x
+      have hbase : A * A + Q ≤ A * A + S * S := by
+        exact Nat.add_le_add_left ih (A * A)
+      have hcross :
+          A * A + S * S ≤
+            A * A + S * S + 2 * (A * S) := by
+        omega
+      calc
+        A * A + Q ≤ A * A + S * S := hbase
+        _ ≤ A * A + S * S + 2 * (A * S) := hcross
+        _ = (A + S) * (A + S) := by ring
 
 /-- Sum of cubes is bounded by the cube of the sum over naturals. -/
 theorem finset_sum_cube_le_cube_sum
@@ -75,8 +88,28 @@ theorem finset_sum_cube_le_cube_sum
   | empty =>
       simp
   | @insert a s ha ih =>
-      simp [ha, pow_succ] at ih ⊢
-      nlinarith
+      simp only [Finset.sum_insert, ha, not_false_eq_true,
+        pow_succ, pow_zero, Nat.mul_one] at ih ⊢
+      let A := f a
+      let S := ∑ x ∈ s, f x
+      let Q := ∑ x ∈ s, f x * f x * f x
+      have hbase :
+          A * A * A + Q ≤
+            A * A * A + S * S * S := by
+        exact Nat.add_le_add_left ih (A * A * A)
+      have hcross :
+          A * A * A + S * S * S ≤
+            A * A * A + S * S * S +
+              3 * (A * A * S) +
+              3 * (A * S * S) := by
+        omega
+      calc
+        A * A * A + Q
+            ≤ A * A * A + S * S * S := hbase
+        _ ≤ A * A * A + S * S * S +
+              3 * (A * A * S) +
+              3 * (A * S * S) := hcross
+        _ = (A + S) * (A + S) * (A + S) := by ring
 
 /-- The number of distinct sample words is at most the encoded sample norm. -/
 theorem reconstructionSample_card_le_norm
