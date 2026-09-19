@@ -354,9 +354,30 @@ theorem template_central_shape_aux
             simpa [templateMarkedCount] using hhi
           have htail :=
             ih offset (by omega) htailHi htailGap
-          simp [templateMarkedWord,
-            templateOmissionCount, hk] at htail ⊢
-          exact htail
+          have htail' :
+              t =
+                List.replicate
+                    (templateOmissionCount t) Option.none ++
+                  (templateMarkedWord t).map Option.some := by
+            simpa [hk] using htail
+          rw [hk]
+          simp only [templateMarkedWord,
+            templateOmissionCount, Nat.sub_self,
+            List.take_zero, List.map_nil,
+            List.nil_append, List.drop_zero]
+          have hrep :
+              List.replicate
+                  (1 + templateOmissionCount t) Option.none =
+                Option.none ::
+                  List.replicate
+                    (templateOmissionCount t) Option.none := by
+            rw [show
+              1 + templateOmissionCount t =
+                Nat.succ (templateOmissionCount t) by omega]
+            rfl
+          rw [hrep]
+          exact
+            congrArg (List.cons Option.none) htail'
 
       | some a =>
           have htailGap :
@@ -389,7 +410,8 @@ theorem template_central_shape_aux
               omega
             simp [templateMarkedWord,
               templateOmissionCount, hdiff] at ⊢
-            exact htail
+            simpa only [List.take_map, List.drop_map]
+              using htail
 
 /--
 Kernel-facing central-template theorem.
