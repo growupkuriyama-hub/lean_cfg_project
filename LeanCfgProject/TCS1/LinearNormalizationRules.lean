@@ -415,6 +415,13 @@ abbrev LinearEndpointTerminalIndex
       (G.rhs p).toPlan.endpoint =
         LinearPlanEndpoint.terminal a}
 
+
+noncomputable instance linearEndpointTerminalIndexFintype
+    [Fintype P]
+    (G : PreparedLinearIndexedCFG N α P) :
+    Fintype (LinearEndpointTerminalIndex G) :=
+  Fintype.ofFinite _
+
 /-- One index per concrete terminal rule family member. -/
 abbrev LinearConstructedTerminalRuleIndex
     [Fintype α] [Fintype P]
