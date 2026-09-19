@@ -86,6 +86,71 @@ def templateOmissionRanksAux : Nat → List (Option α) → List Nat
   | offset, Option.none :: t =>
       offset :: templateOmissionRanksAux offset t
 
+@[simp] theorem templateMarkedCount_append
+    (t₁ t₂ : List (Option α)) :
+    templateMarkedCount (t₁ ++ t₂) =
+      templateMarkedCount t₁ + templateMarkedCount t₂ := by
+  induction t₁ with
+  | nil =>
+      rfl
+  | cons x t ih =>
+      cases x with
+      | none =>
+          simp [templateMarkedCount, ih]
+      | some a =>
+          simp [templateMarkedCount, ih, Nat.add_assoc]
+
+@[simp] theorem templateOmissionCount_append
+    (t₁ t₂ : List (Option α)) :
+    templateOmissionCount (t₁ ++ t₂) =
+      templateOmissionCount t₁ + templateOmissionCount t₂ := by
+  induction t₁ with
+  | nil =>
+      rfl
+  | cons x t ih =>
+      cases x with
+      | none =>
+          simp [templateOmissionCount, ih, Nat.add_assoc]
+      | some a =>
+          simp [templateOmissionCount, ih]
+
+@[simp] theorem templateMarkedWord_append
+    (t₁ t₂ : List (Option α)) :
+    templateMarkedWord (t₁ ++ t₂) =
+      templateMarkedWord t₁ ++ templateMarkedWord t₂ := by
+  induction t₁ with
+  | nil =>
+      rfl
+  | cons x t ih =>
+      cases x with
+      | none =>
+          simp [templateMarkedWord, ih]
+      | some a =>
+          simp [templateMarkedWord, ih]
+
+theorem templateOmissionRanksAux_append
+    (offset : Nat)
+    (t₁ t₂ : List (Option α)) :
+    templateOmissionRanksAux offset (t₁ ++ t₂) =
+      templateOmissionRanksAux offset t₁ ++
+        templateOmissionRanksAux
+          (offset + templateMarkedCount t₁) t₂ := by
+  induction t₁ generalizing offset with
+  | nil =>
+      simp [templateOmissionRanksAux, templateMarkedCount]
+  | cons x t ih =>
+      cases x with
+      | none =>
+          simp [templateOmissionRanksAux,
+            templateMarkedCount, ih offset]
+      | some a =>
+          simp only [List.cons_append,
+            templateOmissionRanksAux,
+            templateMarkedCount]
+          rw [ih (offset + 1)]
+          congr 2
+          omega
+
 /-- The kernel template contains one marked entry per marked leaf. -/
 theorem boundaryTemplate_markedCount
     (terminalRule : N → α → Prop)
@@ -185,15 +250,14 @@ theorem boundaryTemplate_omissionRanksAux
         MarkedBoundaryKernel.omissionRanksAux,
         ih offset]
   | branch hbin left right ihL ihR =>
-      simp only [MarkedBoundaryKernel.boundaryTemplate,
-        templateOmissionRanksAux,
-        MarkedBoundaryKernel.omissionRanksAux,
-        List.append_eq, List.nil_eq]
+      rw [MarkedBoundaryKernel.boundaryTemplate]
+      rw [templateOmissionRanksAux_append]
       rw [ihL offset]
       rw [boundaryTemplate_markedCount
         terminalRule binaryRule left]
       rw [ihR
         (offset + MarkedBoundaryKernel.markedLeafCount left)]
+      rfl
 
 /-- Concatenate two independent template expansions. -/
 theorem boundaryExpansion_append
