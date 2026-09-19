@@ -63,10 +63,10 @@ theorem reconstructionFactorSlot_card_eq
     Fintype.card_fin]
   unfold reconstructionFactorSlotCount
   rw [← Finset.attach_eq_univ]
-  exact
-    Finset.sum_attach K
+  simpa [pow_two] using
+    (Finset.sum_attach K
       (fun w : Word α =>
-        (w.length + 1) * (w.length + 1))
+        (w.length + 1) * (w.length + 1)))
 
 /-- Exact cardinality of the three-cut candidate space. -/
 theorem reconstructionSplitSlot_card_eq
