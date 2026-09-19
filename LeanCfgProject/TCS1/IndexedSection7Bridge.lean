@@ -269,6 +269,105 @@ theorem indexedFixedWindowSection7_package
   rw [hlang] at hpack
   simpa [indexedFixedWindowCanonicalSample, Nf, start] using hpack
 
+
+/-- End-to-end source theorem under classical Yoshinaka (k,l)-substitutability. -/
+theorem indexedClassicalFixedWindowSection7_package
+    (G : IndexedMixedCFG N α P)
+    (A : N)
+    (hprod :
+      ∃ u : Word α,
+        u ∈ LeastClosedLanguage G.toMixedRules A ∧
+        u ≠ [])
+    (τR k l : Nat)
+    (hn : 0 < G.normalizationScale)
+    (hsource :
+      YieldBound
+        (fun B => LeastClosedLanguage G.toMixedRules B)
+        τR)
+    (hwin :
+      FixedWindowSubstitutable
+        k l
+        (LeastClosedLanguage G.toMixedRules A)) :
+    BatchLanguage
+        (fixedWindowMonoidHom (α := α) k l)
+        (indexedFixedWindowCanonicalSample
+          G A hprod k l)
+      =
+    LeastClosedLanguage G.toMixedRules A
+    ∧
+    (∑ word ∈
+      indexedFixedWindowCanonicalSample
+        G A hprod k l,
+      (word.length + 1))
+      ≤
+    fixedWindowGrammarSizeEnvelope
+      (Fintype.card (FixedWindowMonoid α k l))
+      (k + l)
+      (indexedSSBNFGrammarSizeEnvelope G.normalizationScale)
+      (ssbnfThicknessEnvelope
+        1 1 G.normalizationScale τR) := by
+  have hsub :
+      FixedHSubstitutable
+        (fixedWindowMonoidHom (α := α) k l)
+        (LeastClosedLanguage G.toMixedRules A) :=
+    fixedHSubstitutable_of_fixedWindowSubstitutable
+      k l
+      (LeastClosedLanguage G.toMixedRules A)
+      hwin
+  exact
+    indexedFixedWindowSection7_package
+      G A hprod τR k l hn hsource hsub
+
+/--
+The complete indexed-source theorem includes the (0,0) endpoint literally.
+Its source-language assumption is ordinary substitutability on nonempty
+internal factors.
+-/
+theorem indexedZeroWindowSection7_package
+    (G : IndexedMixedCFG N α P)
+    (A : N)
+    (hprod :
+      ∃ u : Word α,
+        u ∈ LeastClosedLanguage G.toMixedRules A ∧
+        u ≠ [])
+    (τR : Nat)
+    (hn : 0 < G.normalizationScale)
+    (hsource :
+      YieldBound
+        (fun B => LeastClosedLanguage G.toMixedRules B)
+        τR)
+    (hzero :
+      NonemptyFactorSubstitutable
+        (LeastClosedLanguage G.toMixedRules A)) :
+    BatchLanguage
+        (fixedWindowMonoidHom (α := α) 0 0)
+        (indexedFixedWindowCanonicalSample
+          G A hprod 0 0)
+      =
+    LeastClosedLanguage G.toMixedRules A
+    ∧
+    (∑ word ∈
+      indexedFixedWindowCanonicalSample
+        G A hprod 0 0,
+      (word.length + 1))
+      ≤
+    fixedWindowGrammarSizeEnvelope
+      (Fintype.card (FixedWindowMonoid α 0 0))
+      0
+      (indexedSSBNFGrammarSizeEnvelope G.normalizationScale)
+      (ssbnfThicknessEnvelope
+        1 1 G.normalizationScale τR) := by
+  have hsub :
+      FixedHSubstitutable
+        (fixedWindowMonoidHom (α := α) 0 0)
+        (LeastClosedLanguage G.toMixedRules A) :=
+    (fixedHSubstitutable_zeroWindow_iff_nonemptyFactorSubstitutable
+      (α := α)
+      (LeastClosedLanguage G.toMixedRules A)).2 hzero
+  exact
+    indexedFixedWindowSection7_package
+      G A hprod τR 0 0 hn hsource hsub
+
 end IndexedSection7Bridge
 
 end TCS1
