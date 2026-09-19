@@ -88,7 +88,7 @@ theorem indexedFiniteFrontEnd_old_language_iff_source
 A source nonterminal with one nonempty word gives a productive state after
 epsilon and unit elimination.
 -/
-def indexedProductiveUnitFreeState_of_nonempty
+noncomputable def indexedProductiveUnitFreeState_of_nonempty
     (G : IndexedMixedCFG N α P)
     (A : N)
     (hprod :
@@ -97,7 +97,13 @@ def indexedProductiveUnitFreeState_of_nonempty
         w ≠ []) :
     ProductiveUnitFreeState
       (indexedFiniteFrontEndGrammar G) := by
-  rcases hprod with ⟨w, hw, hne⟩
+  classical
+  let w : Word α := Classical.choose hprod
+  have hw :
+      w ∈ LeastClosedLanguage G.toMixedRules A :=
+    (Classical.choose_spec hprod).1
+  have hne : w ≠ [] :=
+    (Classical.choose_spec hprod).2
   refine
     ⟨indexedFiniteFrontEndOldState G A, ?_⟩
   have hB :
@@ -170,14 +176,16 @@ theorem indexedSeparatedStart_language_iff_source
       have hB :
           BinaryNullableDerives B start.1 w :=
         epsilonFreeDerives_to_binaryNullable B hE
-      change
-        BinaryNullableDerives
-          (indexedFiniteFrontEndGrammar G)
-          (indexedFiniteFrontEndOldState G A)
-          w at hB
+      have hB' :
+          BinaryNullableDerives
+            (indexedFiniteFrontEndGrammar G)
+            (indexedFiniteFrontEndOldState G A)
+            w := by
+        simpa [B, start,
+          indexedProductiveUnitFreeState_of_nonempty] using hB
       exact
         (indexedFiniteFrontEnd_old_language_iff_source
-          G A w).1 hB
+          G A w).1 hB'
   · intro hw
     by_cases hnil : w = []
     · exact Or.inl ⟨hnil, hnil ▸ hw⟩
@@ -204,8 +212,8 @@ theorem indexedSeparatedStart_language_iff_source
             w :=
         epsilonFreeDerives_to_unitFree
           (indexedFiniteFrontEndGrammar G) hE
-      change UnitFreeDerives B start.1 w
-      exact hU
+      simpa [B, start,
+        indexedProductiveUnitFreeState_of_nonempty] using hU
 
 
 /--
