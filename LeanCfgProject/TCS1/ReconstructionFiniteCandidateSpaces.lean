@@ -61,9 +61,12 @@ theorem reconstructionFactorSlot_card_eq
     Fintype.card_sigma,
     Fintype.card_prod,
     Fintype.card_fin]
+  unfold reconstructionFactorSlotCount
   rw [← Finset.attach_eq_univ]
-  rw [← Finset.sum_attach]
-  simp [reconstructionFactorSlotCount, pow_two]
+  exact
+    Finset.sum_attach K
+      (fun w : Word α =>
+        (w.length + 1) * (w.length + 1))
 
 /-- Exact cardinality of the three-cut candidate space. -/
 theorem reconstructionSplitSlot_card_eq
@@ -76,10 +79,13 @@ theorem reconstructionSplitSlot_card_eq
     Fintype.card_sigma,
     Fintype.card_prod,
     Fintype.card_fin]
+  unfold reconstructionSplitSlotCount
   rw [← Finset.attach_eq_univ]
-  rw [← Finset.sum_attach]
-  simp [reconstructionSplitSlotCount,
-    pow_succ, Nat.mul_assoc]
+  simpa [pow_succ, Nat.mul_assoc] using
+    (Finset.sum_attach K
+      (fun w : Word α =>
+        (w.length + 1) *
+          ((w.length + 1) * (w.length + 1))))
 
 /-- Exact cardinality of the factor-pair candidate space. -/
 theorem reconstructionFactorPairSlot_card_eq
