@@ -89,11 +89,44 @@ def rightLinearSteps
     xs ++ word := by
   induction xs with
   | nil =>
-      rfl
+      simp [leftLinearSteps, applyLinearSpineSteps]
   | cons a rest ih =>
-      simp [leftLinearSteps,
+      have hcons :=
+        congrArg (List.cons a) ih
+      simpa [leftLinearSteps,
         applyLinearSpineSteps,
-        LinearSpineStep.apply, ih]
+        LinearSpineStep.apply] using hcons
+
+/-- Executing concatenated plan fragments is sequential composition. -/
+theorem applyLinearSpineSteps_append
+    (xs ys : List (LinearSpineStep α))
+    (word : List α) :
+    applyLinearSpineSteps (xs ++ ys) word =
+      applyLinearSpineSteps xs
+        (applyLinearSpineSteps ys word) := by
+  induction xs with
+  | nil =>
+      rfl
+  | cons step rest ih =>
+      simp [applyLinearSpineSteps, ih]
+
+/-- Right-oriented steps in direct list order append the reversed list. -/
+theorem apply_rightMappedLinearSteps
+    (xs : List α)
+    (word : List α) :
+    applyLinearSpineSteps
+        (xs.map (fun a =>
+          { side := LinearSpineSide.right,
+            terminal := a })) word
+      =
+    word ++ xs.reverse := by
+  induction xs with
+  | nil =>
+      simp [applyLinearSpineSteps]
+  | cons a rest ih =>
+      simp [applyLinearSpineSteps,
+        LinearSpineStep.apply, ih,
+        List.append_assoc]
 
 /--
 Executing reversed right-wrapper steps restores the original right-context
@@ -106,15 +139,9 @@ order in the generated terminal word.
         (rightLinearSteps xs) word
       =
     word ++ xs := by
-  induction xs using List.reverseRecOn with
-  | nil =>
-      rfl
-  | append_singleton xs a ih =>
-      simp [rightLinearSteps,
-        applyLinearSpineSteps,
-        LinearSpineStep.apply, ih,
-        List.map_append, List.reverse_append,
-        List.append_assoc]
+  unfold rightLinearSteps
+  rw [apply_rightMappedLinearSteps]
+  simp
 
 /-- The exact top-down spine plan for a rule u B v. -/
 def aroundLinearSteps
@@ -133,14 +160,11 @@ theorem apply_aroundLinearSteps
         (aroundLinearSteps left right) word
       =
     left ++ word ++ right := by
-  induction left with
-  | nil =>
-      simp [aroundLinearSteps]
-  | cons a rest ih =>
-      simp [aroundLinearSteps, leftLinearSteps,
-        applyLinearSpineSteps,
-        LinearSpineStep.apply,
-        List.append_assoc]
+  unfold aroundLinearSteps
+  rw [applyLinearSpineSteps_append]
+  rw [apply_rightLinearSteps]
+  rw [apply_leftLinearSteps]
+  simp [List.append_assoc]
 
 @[simp] theorem leftLinearSteps_length
     (xs : List α) :
@@ -189,9 +213,12 @@ theorem terminalLinearPlan_apply
   | nil =>
       simp [terminalLinearPlan, applyLinearSpineSteps]
   | cons next rest ih =>
-      simp [terminalLinearPlan,
+      have htail := ih next
+      have hcons :=
+        congrArg (List.cons head) htail
+      simpa [terminalLinearPlan,
         applyLinearSpineSteps,
-        LinearSpineStep.apply, ih]
+        LinearSpineStep.apply] using hcons
 
 /-- The terminal-only plan has exactly m-1 binary spine steps. -/
 theorem terminalLinearPlan_steps_length
@@ -281,25 +308,47 @@ theorem preparedLinearRhs_realizes_iff_plan
   | terminals head tail =>
       constructor
       · intro hword
+        change word = head :: tail at hword
         refine
           ⟨[(terminalLinearPlan head tail).2],
             rfl, ?_⟩
+        change word =
+          applyLinearSpineSteps
+            (terminalLinearPlan head tail).1
+            [(terminalLinearPlan head tail).2]
         rw [terminalLinearPlan_apply]
         exact hword
       · rintro ⟨endpointWord, hend, hword⟩
         change endpointWord =
           [(terminalLinearPlan head tail).2] at hend
-        rw [hend] at hword
-        rw [terminalLinearPlan_apply] at hword
+        change word =
+          applyLinearSpineSteps
+            (terminalLinearPlan head tail).1
+            endpointWord at hword
+        rw [hend, terminalLinearPlan_apply] at hword
+        change word = head :: tail
         exact hword
   | around left core right nonunit =>
       constructor
-      · rintro ⟨z, hz, rfl⟩
-        exact
-          ⟨z, hz,
-            (apply_aroundLinearSteps
-              left right z).symm⟩
+      · intro hsource
+        change ∃ z,
+          z ∈ L core ∧
+          word = left ++ z ++ right at hsource
+        rcases hsource with ⟨z, hz, hword⟩
+        refine ⟨z, hz, ?_⟩
+        change word =
+          applyLinearSpineSteps
+            (aroundLinearSteps left right) z
+        rw [apply_aroundLinearSteps]
+        exact hword
       · rintro ⟨z, hz, hword⟩
+        change z ∈ L core at hz
+        change word =
+          applyLinearSpineSteps
+            (aroundLinearSteps left right) z at hword
+        change ∃ z,
+          z ∈ L core ∧
+          word = left ++ z ++ right
         refine ⟨z, hz, ?_⟩
         rw [apply_aroundLinearSteps] at hword
         exact hword
