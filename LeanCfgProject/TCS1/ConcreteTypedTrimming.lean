@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.SuccessfulTypedTrimClosureBridge
 import LeanCfgProject.TCS1.ActiveTypedReachabilityBridge
+import LeanCfgProject.TCS1.ReducednessWitnessChoices
 
 /-!
 # TCS #1 v68: concrete productive/reachable trimming of the typed refinement
@@ -173,6 +174,142 @@ theorem concreteTypedActive_trimClosure
         H terminalRule binaryRule startRule)
       (concreteTypedActive_localClosure
         H terminalRule binaryRule startRule)
+
+/--
+Concrete productive/reachable activity supplies an actual terminal reaching
+context, without any prior witness-choice package.
+
+The proof follows the reachability certificate.  At each binary edge the
+off-path sibling is expanded by any productive typed yield carried by that
+certificate, restricted to the active grammar by the trim-closure theorem.
+-/
+noncomputable def concreteTypedActive_reachingContext
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    {X : N × M}
+    (hX :
+      ConcreteTypedActive
+        H terminalRule binaryRule startRule X) :
+    TerminalReachingContext
+      H terminalRule binaryRule startRule epsilonStart
+      (ConcreteTypedActive
+        H terminalRule binaryRule startRule)
+      X := by
+  let trim :=
+    concreteTypedActive_trimClosure
+      H terminalRule binaryRule startRule
+  induction hX with
+  | @start A μ hstart hprod =>
+      exact
+        startChildReachingContext
+          A μ hstart
+          (ProductiveTypedReachable.start
+            hstart hprod)
+
+  | @left A B C μ ν hparent hbin hprodB hprodC ih =>
+      obtain ⟨wC, dCFull⟩ := hprodC
+      let hC :
+          ConcreteTypedActive
+            H terminalRule binaryRule startRule
+            (C, ν) :=
+        ProductiveTypedReachable.right
+          hparent hbin hprodB hprodC
+      have dCReduced :
+          ReducedTypedDerives
+            H terminalRule binaryRule
+            (ConcreteTypedActive
+              H terminalRule binaryRule startRule)
+            (C, ν) wC :=
+        trim.restrict hC dCFull
+      refine
+        { left := ih.left
+          right := wC ++ ih.right
+          plug := ?_ }
+      intro z dB
+      have dParent :
+          ReducedTypedDerives
+            H terminalRule binaryRule
+            (ConcreteTypedActive
+              H terminalRule binaryRule startRule)
+            (A, μ * ν) (z ++ wC) :=
+        ReducedTypedDerives.binary
+          hbin hparent dB dCReduced
+      have hp := ih.plug dParent
+      simpa only [List.append_assoc] using hp
+
+  | @right A B C μ ν hparent hbin hprodB hprodC ih =>
+      obtain ⟨wB, dBFull⟩ := hprodB
+      let hB :
+          ConcreteTypedActive
+            H terminalRule binaryRule startRule
+            (B, μ) :=
+        ProductiveTypedReachable.left
+          hparent hbin hprodB hprodC
+      have dBReduced :
+          ReducedTypedDerives
+            H terminalRule binaryRule
+            (ConcreteTypedActive
+              H terminalRule binaryRule startRule)
+            (B, μ) wB :=
+        trim.restrict hB dBFull
+      refine
+        { left := ih.left ++ wB
+          right := ih.right
+          plug := ?_ }
+      intro z dC
+      have dParent :
+          ReducedTypedDerives
+            H terminalRule binaryRule
+            (ConcreteTypedActive
+              H terminalRule binaryRule startRule)
+            (A, μ * ν) (wB ++ z) :=
+        ReducedTypedDerives.binary
+          hbin hparent dBReduced dC
+      have hp := ih.plug dParent
+      simpa only [List.append_assoc] using hp
+
+/--
+The concrete productive/reachable trim is qualitatively reduced: every active
+typed symbol has a reduced productive yield and a terminal reaching context.
+-/
+theorem concreteTypedActive_qualitativeReducedness
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop) :
+    QualitativeReducedness
+      H terminalRule binaryRule startRule epsilonStart
+      (ConcreteTypedActive
+        H terminalRule binaryRule startRule) := by
+  let trim :=
+    concreteTypedActive_trimClosure
+      H terminalRule binaryRule startRule
+  refine
+    { productive := ?_
+      reachable := ?_ }
+  · intro X hX
+    obtain ⟨word, dFull⟩ :=
+      concreteTypedActive_productive
+        H terminalRule binaryRule startRule hX
+    have dReduced :
+        ReducedTypedDerives
+          H terminalRule binaryRule
+          (ConcreteTypedActive
+            H terminalRule binaryRule startRule)
+          X word :=
+      trim.restrict hX dFull
+    exact
+      ⟨{ word := word
+         derives := dReduced }⟩
+  · intro X hX
+    exact
+      ⟨concreteTypedActive_reachingContext
+        H terminalRule binaryRule startRule epsilonStart
+        hX⟩
 
 /--
 Concrete productive/reachable activity implies reachability in the active
