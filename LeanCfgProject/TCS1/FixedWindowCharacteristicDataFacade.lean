@@ -170,6 +170,63 @@ theorem fixedWindowMinimalCanonicalSample_norm_le
       k l hrespect τ hshort hword
 
 /--
+Coarser grammar-size form of the encoded-sample estimate.
+
+If one natural number g bounds the underlying non-start symbols and both
+production families, the actual canonical sample is bounded by the paper's
+single-parameter grammar-size envelope.
+-/
+theorem fixedWindowMinimalCanonicalSample_norm_le_grammarSize
+    [Fintype α] [DecidableEq α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    [Fintype
+      (ActiveTypedSymbol
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedTerminalIndex H terminalRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype
+      (ActiveTypedBinaryIndex binaryRule
+        (ConcreteTypedActive
+          H terminalRule binaryRule startRule))]
+    [Fintype (UntypedTerminalRuleIndex terminalRule)]
+    [Fintype (UntypedBinaryRuleIndex binaryRule)]
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ g : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    (hN : Fintype.card N ≤ g)
+    (ht :
+      Fintype.card (UntypedTerminalRuleIndex terminalRule) ≤ g)
+    (hb :
+      Fintype.card (UntypedBinaryRuleIndex binaryRule) ≤ g) :
+    (∑ word ∈
+      fixedWindowMinimalCanonicalSample
+        H terminalRule binaryRule startRule epsilonStart,
+      (word.length + 1)) ≤
+    fixedWindowGrammarSizeEnvelope
+      (Fintype.card M) (k + l) g τ := by
+  have h0 :=
+    fixedWindowMinimalCanonicalSample_norm_le
+      H terminalRule binaryRule startRule epsilonStart
+      k l hrespect τ hshort
+  exact
+    le_trans h0
+      (fixedWindowCharacteristicEnvelope_le_grammarSize
+        hN ht hb)
+
+/--
 The concrete minimum-length canonical sample is characteristic for the reduced
 typed target whenever that target is fixed-H substitutable.
 -/
