@@ -334,6 +334,72 @@ theorem concreteTypedActive_structuralReachability
       (concreteTypedActive_all_reachable
         H terminalRule binaryRule startRule)
 
+/--
+For the concrete productive/reachable trim, the representation-level trimming
+and reachability obligations disappear completely.
+
+Thus canonical minimality, the fixed-window summary contract, and the
+underlying thickness witness bound imply the Lemma 7.2 common bound for every
+actual canonical witness word.
+-/
+theorem concreteTypedActive_canonicalWitnessWords_length_le_fixedWindow
+    [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active :=
+      ConcreteTypedActive
+        H terminalRule binaryRule startRule)
+    [Fintype (ActiveTypedSymbol Active)]
+    (choices :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (minimal :
+      CanonicalChoiceMinimality
+        H terminalRule binaryRule startRule epsilonStart
+        Active choices)
+    (k l : Nat)
+    (hrespect :
+      RespectsFixedWindowSummary H k l)
+    (τ : Nat)
+    (hshort :
+      ∀ A : N,
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule A z
+          ∧ z.length ≤ τ)
+    {word : Word α}
+    (hword :
+      word ∈
+        CanonicalWitnessWords
+          H terminalRule binaryRule startRule epsilonStart
+          Active choices) :
+    word.length ≤
+      fixedWindowWitnessLengthEnvelope
+        (Fintype.card (ActiveTypedSymbol Active))
+        (k + l) (Fintype.card N) τ := by
+  classical
+  letI : DecidableEq N := Classical.decEq N
+  have trim :
+      SuccessfulTypedTrimClosure
+        H terminalRule binaryRule Active := by
+    simpa [Active] using
+      concreteTypedActive_trimClosure
+        H terminalRule binaryRule startRule
+  have reach :
+      ActiveTypedStructuralReachability
+        H terminalRule binaryRule startRule Active := by
+    simpa [Active] using
+      concreteTypedActive_structuralReachability
+        H terminalRule binaryRule startRule epsilonStart
+        choices
+  exact
+    canonicalWitnessWords_length_le_fixedWindow_of_structural_reachability
+      Active H terminalRule binaryRule startRule epsilonStart
+      choices minimal trim reach
+      k l hrespect τ hshort hword
+
 end ConcreteTypedTrimming
 
 end TCS1
