@@ -314,6 +314,303 @@ theorem gapNormalizedHead_attach_bound
   · rw [homit]
     exact le_trans hsum (le_of_eq hfactor)
 
+/--
+Every gap-certified marked-boundary kernel admits a cycle-shortened
+gap-certified head/base decomposition.
+-/
+theorem exists_gapNormalizedHeadData
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (offset k : Nat)
+    (hgap :
+      MarkedBoundaryKernel.AllOmissionsAtAux
+        offset K k) :
+    Nonempty
+      (GapNormalizedHeadData
+        terminalRule binaryRule offset k K) := by
+  induction K generalizing offset k with
+  | @marked A a hterm =>
+      refine ⟨{
+        target := A
+        left := []
+        right := []
+        path := [A]
+        siblings := []
+        base := MarkedBoundaryBase.marked a hterm
+        spine := GapReachingSpine.hole
+        path_nodup := by simp
+        marks_eq := by
+          simp [MarkedBoundaryBase.markedLeafCount,
+            MarkedBoundaryKernel.markedLeafCount]
+        word_eq := by
+          simp [MarkedBoundaryBase.markedWord,
+            MarkedBoundaryKernel.markedWord]
+        base_gap := by
+          trivial
+        tail_bound := by
+          simp [MarkedBoundaryBase.omittedBelow,
+            MarkedBoundaryKernel.markedLeafCount]
+      }⟩
+
+  | @unaryLeft A B C hbin child siblingWord sibling ih =>
+      obtain ⟨hchildGap, hlast⟩ :=
+        (MarkedBoundaryKernel.allOmissionsAtAux_unaryLeft_iff
+          hbin child siblingWord sibling offset k).1 hgap
+      obtain ⟨D⟩ :=
+        ih offset k hchildGap
+      have hlastBase :
+          offset + MarkedBoundaryBase.markedLeafCount D.base = k := by
+        rw [D.marks_eq]
+        exact hlast
+      let preSpine :
+          GapReachingSpine terminalRule binaryRule
+            offset
+            (MarkedBoundaryBase.markedLeafCount D.base)
+            k
+            A D.target
+            D.left (D.right ++ siblingWord)
+            (A :: D.path)
+            (siblingWord.length :: D.siblings) :=
+        GapReachingSpine.binaryLeft
+          hbin D.spine sibling hlastBase
+      obtain ⟨left', right', path', siblings',
+          spine', hnodup'⟩ :=
+        normalize_gapReachingSpine_to_nodup
+          terminalRule binaryRule
+          offset
+          (MarkedBoundaryBase.markedLeafCount D.base)
+          k preSpine
+      refine ⟨{
+        target := D.target
+        left := left'
+        right := right'
+        path := path'
+        siblings := siblings'
+        base := D.base
+        spine := spine'
+        path_nodup := hnodup'
+        marks_eq := by
+          simpa [MarkedBoundaryKernel.markedLeafCount]
+            using D.marks_eq
+        word_eq := by
+          simpa [MarkedBoundaryKernel.markedWord]
+            using D.word_eq
+        base_gap := D.base_gap
+        tail_bound := by
+          simpa [MarkedBoundaryKernel.markedLeafCount]
+            using D.tail_bound
+      }⟩
+
+  | @unaryRight A B C hbin siblingWord sibling child ih =>
+      obtain ⟨hfirst, hchildGap⟩ :=
+        (MarkedBoundaryKernel.allOmissionsAtAux_unaryRight_iff
+          hbin siblingWord sibling child offset k).1 hgap
+      obtain ⟨D⟩ :=
+        ih offset k hchildGap
+      let preSpine :
+          GapReachingSpine terminalRule binaryRule
+            offset
+            (MarkedBoundaryBase.markedLeafCount D.base)
+            k
+            A D.target
+            (siblingWord ++ D.left) D.right
+            (A :: D.path)
+            (siblingWord.length :: D.siblings) :=
+        GapReachingSpine.binaryRight
+          hbin sibling D.spine hfirst
+      obtain ⟨left', right', path', siblings',
+          spine', hnodup'⟩ :=
+        normalize_gapReachingSpine_to_nodup
+          terminalRule binaryRule
+          offset
+          (MarkedBoundaryBase.markedLeafCount D.base)
+          k preSpine
+      refine ⟨{
+        target := D.target
+        left := left'
+        right := right'
+        path := path'
+        siblings := siblings'
+        base := D.base
+        spine := spine'
+        path_nodup := hnodup'
+        marks_eq := by
+          simpa [MarkedBoundaryKernel.markedLeafCount]
+            using D.marks_eq
+        word_eq := by
+          simpa [MarkedBoundaryKernel.markedWord]
+            using D.word_eq
+        base_gap := D.base_gap
+        tail_bound := by
+          simpa [MarkedBoundaryKernel.markedLeafCount]
+            using D.tail_bound
+      }⟩
+
+  | @branch A B C hbin left right ihL ihR =>
+      obtain ⟨hleftGap, hrightGap⟩ :=
+        (MarkedBoundaryKernel.allOmissionsAtAux_branch_iff
+          hbin left right offset k).1 hgap
+      obtain ⟨DL⟩ :=
+        ihL offset k hleftGap
+      obtain ⟨DR⟩ :=
+        ihR
+          (offset + MarkedBoundaryKernel.markedLeafCount left)
+          k hrightGap
+      obtain ⟨left', hleftMarks, hleftWord,
+          hleftBound, hleftGap'⟩ :=
+        gapNormalizedHead_attach_bound
+          terminalRule binaryRule offset k DL
+      obtain ⟨right', hrightMarks, hrightWord,
+          hrightBound, hrightGap'⟩ :=
+        gapNormalizedHead_attach_bound
+          terminalRule binaryRule
+          (offset + MarkedBoundaryKernel.markedLeafCount left)
+          k DR
+      let base :
+          MarkedBoundaryBase terminalRule binaryRule A :=
+        MarkedBoundaryBase.branch hbin left' right'
+      have hrightGap'' :
+          MarkedBoundaryKernel.AllOmissionsAtAux
+            (offset +
+              MarkedBoundaryKernel.markedLeafCount left')
+            right' k := by
+        rw [hleftMarks]
+        exact hrightGap'
+      have hbaseGap :
+          MarkedBoundaryBaseAllOmissionsAtAux
+            terminalRule binaryRule offset k base := by
+        dsimp [base, MarkedBoundaryBaseAllOmissionsAtAux]
+        exact ⟨hleftGap', hrightGap''⟩
+      have hleftPos :
+          0 < MarkedBoundaryKernel.markedLeafCount left :=
+        MarkedBoundaryKernel.markedLeafCount_pos
+          terminalRule binaryRule left
+      have hrightPos :
+          0 < MarkedBoundaryKernel.markedLeafCount right :=
+        MarkedBoundaryKernel.markedLeafCount_pos
+          terminalRule binaryRule right
+      have htail :
+          MarkedBoundaryBase.omittedBelow base ≤
+            (2 * MarkedBoundaryKernel.markedLeafCount
+                  (MarkedBoundaryKernel.branch hbin left right) - 2) *
+              Fintype.card N := by
+        dsimp [base, MarkedBoundaryBase.omittedBelow]
+        have hsum :=
+          Nat.add_le_add hleftBound hrightBound
+        have hcoeff :
+            (2 * MarkedBoundaryKernel.markedLeafCount left - 1) +
+              (2 * MarkedBoundaryKernel.markedLeafCount right - 1)
+              =
+            2 *
+                (MarkedBoundaryKernel.markedLeafCount left +
+                  MarkedBoundaryKernel.markedLeafCount right) -
+              2 := by
+          omega
+        have hfactor :
+            (2 * MarkedBoundaryKernel.markedLeafCount left - 1) *
+                Fintype.card N +
+              (2 * MarkedBoundaryKernel.markedLeafCount right - 1) *
+                Fintype.card N
+              =
+            (2 *
+                (MarkedBoundaryKernel.markedLeafCount left +
+                  MarkedBoundaryKernel.markedLeafCount right) -
+              2) * Fintype.card N := by
+          rw [← Nat.add_mul, hcoeff]
+        rw [hfactor] at hsum
+        simpa [MarkedBoundaryKernel.markedLeafCount] using hsum
+      refine ⟨{
+        target := A
+        left := []
+        right := []
+        path := [A]
+        siblings := []
+        base := base
+        spine := GapReachingSpine.hole
+        path_nodup := by simp
+        marks_eq := by
+          dsimp [base, MarkedBoundaryBase.markedLeafCount]
+          rw [hleftMarks, hrightMarks]
+          simp [MarkedBoundaryKernel.markedLeafCount]
+        word_eq := by
+          dsimp [base, MarkedBoundaryBase.markedWord]
+          rw [hleftWord, hrightWord]
+          simp [MarkedBoundaryKernel.markedWord]
+        base_gap := hbaseGap
+        tail_bound := htail
+      }⟩
+
+/--
+Cycle-shortening theorem with the central-gap invariant preserved.
+-/
+theorem exists_cycle_shortened_kernel_preserving_gap
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (offset k : Nat)
+    (hgap :
+      MarkedBoundaryKernel.AllOmissionsAtAux
+        offset K k) :
+    ∃ K' : MarkedBoundaryKernel terminalRule binaryRule A,
+      MarkedBoundaryKernel.markedLeafCount K' =
+        MarkedBoundaryKernel.markedLeafCount K
+      ∧
+      MarkedBoundaryKernel.markedWord K' =
+        MarkedBoundaryKernel.markedWord K
+      ∧
+      MarkedBoundaryKernel.omittedCount K' ≤
+        (2 * MarkedBoundaryKernel.markedLeafCount K - 1) *
+          Fintype.card N
+      ∧
+      MarkedBoundaryKernel.AllOmissionsAtAux
+        offset K' k := by
+  obtain ⟨D⟩ :=
+    exists_gapNormalizedHeadData
+      terminalRule binaryRule K offset k hgap
+  exact
+    gapNormalizedHead_attach_bound
+      terminalRule binaryRule offset k D
+
+/-- Zero-offset public version using `AllOmissionsAt`. -/
+theorem exists_cycle_shortened_kernel_preserving_allOmissionsAt
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    (K : MarkedBoundaryKernel terminalRule binaryRule A)
+    (k : Nat)
+    (hgap :
+      MarkedBoundaryKernel.AllOmissionsAt K k) :
+    ∃ K' : MarkedBoundaryKernel terminalRule binaryRule A,
+      MarkedBoundaryKernel.markedLeafCount K' =
+        MarkedBoundaryKernel.markedLeafCount K
+      ∧
+      MarkedBoundaryKernel.markedWord K' =
+        MarkedBoundaryKernel.markedWord K
+      ∧
+      MarkedBoundaryKernel.omittedCount K' ≤
+        (2 * MarkedBoundaryKernel.markedLeafCount K - 1) *
+          Fintype.card N
+      ∧
+      MarkedBoundaryKernel.AllOmissionsAt K' k := by
+  have haux :
+      MarkedBoundaryKernel.AllOmissionsAtAux
+        0 K k :=
+    (MarkedBoundaryKernel.allOmissionsAt_iff_aux_zero
+      K k).1 hgap
+  obtain ⟨K', hmarks, hword, hbound, haux'⟩ :=
+    exists_cycle_shortened_kernel_preserving_gap
+      terminalRule binaryRule K 0 k haux
+  exact
+    ⟨K', hmarks, hword, hbound,
+      (MarkedBoundaryKernel.allOmissionsAt_iff_aux_zero
+        K' k).2 haux'⟩
+
 end MarkedBoundaryGapNormalization
 
 end TCS1
