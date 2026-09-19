@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.IndexedConcreteSSBNFNormalization
+import LeanCfgProject.TCS1.SeparatedStartUntypedBridge
 
 /-!
 # TCS #1 v69: exact start-language preservation for indexed normalization
@@ -205,6 +206,90 @@ theorem indexedSeparatedStart_language_iff_source
           (indexedFiniteFrontEndGrammar G) hE
       change UnitFreeDerives B start.1 w
       exact hU
+
+
+/--
+The final learner-style start-separated SSBNF presentation has exactly the
+original source-start language.  This is the direct semantic bridge from
+Appendix A to the hypotheses used by the Section 7 fixed-window learner.
+-/
+theorem indexedReducedSSBNF_untypedStartLanguage_eq_source
+    (G : IndexedMixedCFG N α P)
+    (A : N)
+    (hprod :
+      ∃ u : Word α,
+        u ∈ LeastClosedLanguage G.toMixedRules A ∧
+        u ≠ []) :
+    UntypedStartLanguage
+        (reducedSSBNFTerminalRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        (reducedSSBNFBinaryRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        (reducedSSBNFStartRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        ([] ∈ LeastClosedLanguage G.toMixedRules A)
+      =
+    LeastClosedLanguage G.toMixedRules A := by
+  apply Set.ext
+  intro w
+  change
+    UntypedStartDerives
+        (reducedSSBNFTerminalRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        (reducedSSBNFBinaryRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        (reducedSSBNFStartRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        ([] ∈ LeastClosedLanguage G.toMixedRules A)
+        w
+      ↔
+    w ∈ LeastClosedLanguage G.toMixedRules A
+  calc
+    UntypedStartDerives
+        (reducedSSBNFTerminalRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        (reducedSSBNFBinaryRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        (reducedSSBNFStartRule
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod))
+        ([] ∈ LeastClosedLanguage G.toMixedRules A)
+        w
+      ↔
+    BinaryNullableDerives
+        (separatedStartGrammar
+          (indexedFiniteFrontEndGrammar G)
+          (indexedProductiveUnitFreeState_of_nonempty
+            G A hprod)
+          ([] ∈ LeastClosedLanguage G.toMixedRules A))
+        none w :=
+      reducedSSBNF_untypedStartDerives_iff_separated
+        (indexedFiniteFrontEndGrammar G)
+        (indexedProductiveUnitFreeState_of_nonempty
+          G A hprod)
+        ([] ∈ LeastClosedLanguage G.toMixedRules A)
+        w
+    _ ↔
+      w ∈ LeastClosedLanguage G.toMixedRules A :=
+      indexedSeparatedStart_language_iff_source
+        G A hprod w
 
 end IndexedNormalizationLanguage
 
