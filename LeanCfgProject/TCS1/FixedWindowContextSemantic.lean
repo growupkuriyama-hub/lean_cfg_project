@@ -434,46 +434,6 @@ theorem reachingSpine_replace_siblings_by_bounded_yields
       · exact hbounded s hs
 
 /--
-Any structural reaching spine can therefore be converted into a short
-terminal context as soon as every productive sibling nonterminal admits a
-B-bounded yield.
--/
-theorem reachingSpine_short_context_from_productive_bound
-    [Fintype N] [DecidableEq N]
-    (terminalRule : N → α → Prop)
-    (binaryRule : N → N → N → Prop)
-    {A X : N}
-    {left right w : Word α}
-    {path : List N}
-    {siblings : List Nat}
-    (B : Nat)
-    (spine :
-      ReachingSpine terminalRule binaryRule
-        A X left right path siblings)
-    (hshort :
-      ∀ (Y : N) {z₀ : Word α},
-        UntypedDerives terminalRule binaryRule Y z₀ →
-        ∃ z : Word α,
-          UntypedDerives terminalRule binaryRule Y z
-          ∧ z.length ≤ B)
-    (dX :
-      UntypedDerives terminalRule binaryRule X w) :
-    ∃ left' right' : Word α,
-      UntypedDerives terminalRule binaryRule
-        A (left' ++ w ++ right')
-      ∧
-      left'.length + right'.length ≤
-        Fintype.card N * B := by
-  obtain ⟨left₁, right₁, siblings₁,
-      spine₁, hbounded⟩ :=
-    reachingSpine_replace_siblings_by_bounded_yields
-      terminalRule binaryRule B spine hshort
-  exact
-    reachingSpine_short_context_for_derivation
-      terminalRule binaryRule B
-      spine₁ hbounded dX
-
-/--
 Cycle-shortening normalization for reaching spines.
 
 Normalize the child spine first. If the current root label already occurs
@@ -674,6 +634,46 @@ theorem reachingSpine_short_context_for_derivation
       reachingSpine_plug
         terminalRule binaryRule spine' dX,
       hlen⟩
+
+/--
+Any structural reaching spine can therefore be converted into a short
+terminal context as soon as every productive sibling nonterminal admits a
+B-bounded yield.
+-/
+theorem reachingSpine_short_context_from_productive_bound
+    [Fintype N] [DecidableEq N]
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A X : N}
+    {left right w : Word α}
+    {path : List N}
+    {siblings : List Nat}
+    (B : Nat)
+    (spine :
+      ReachingSpine terminalRule binaryRule
+        A X left right path siblings)
+    (hshort :
+      ∀ (Y : N) {z₀ : Word α},
+        UntypedDerives terminalRule binaryRule Y z₀ →
+        ∃ z : Word α,
+          UntypedDerives terminalRule binaryRule Y z
+          ∧ z.length ≤ B)
+    (dX :
+      UntypedDerives terminalRule binaryRule X w) :
+    ∃ left' right' : Word α,
+      UntypedDerives terminalRule binaryRule
+        A (left' ++ w ++ right')
+      ∧
+      left'.length + right'.length ≤
+        Fintype.card N * B := by
+  obtain ⟨left₁, right₁, siblings₁,
+      spine₁, hbounded⟩ :=
+    reachingSpine_replace_siblings_by_bounded_yields
+      terminalRule binaryRule B spine hshort
+  exact
+    reachingSpine_short_context_for_derivation
+      terminalRule binaryRule B
+      spine₁ hbounded dX
 
 /--
 Paper-facing version with an external bound Nt on the number of typed
