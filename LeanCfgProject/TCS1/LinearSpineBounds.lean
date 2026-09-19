@@ -48,7 +48,7 @@ structure LinearYieldSpineCertificate
 /--
 A terminal reaching context for a spine symbol.
 
-prefix ++ [target] lists the typed spine symbols visited from the non-start
+stem ++ [target] lists the typed spine symbols visited from the non-start
 child of the initial rule through the distinguished occurrence. Each
 preceding step emits exactly one wrapper terminal into the surrounding
 context.
@@ -56,10 +56,10 @@ context.
 structure LinearSpineContextCertificate
     (target : T)
     (left right : Word α) where
-  prefix : List T
-  nodup : (prefix ++ [target]).Nodup
+  stem : List T
+  nodup : (stem ++ [target]).Nodup
   context_length_eq :
-    left.length + right.length = prefix.length
+    left.length + right.length = stem.length
 
 /--
 A terminal reaching context for a fresh wrapper symbol.
@@ -72,29 +72,29 @@ structure LinearWrapperContextCertificate
     [Fintype T]
     (parent : T)
     (left right : Word α) where
-  prefix : List T
-  nodup : (prefix ++ [parent]).Nodup
+  stem : List T
+  nodup : (stem ++ [parent]).Nodup
   childYieldLength : Nat
   childYield_le :
     childYieldLength ≤ Fintype.card T
   context_length_le :
     left.length + right.length ≤
-      prefix.length + childYieldLength
+      stem.length + childYieldLength
 
 /--
 A repetition-free nonempty spine has strictly fewer preceding steps than
 available typed non-start symbols.
 -/
-theorem linearSpine_prefix_length_lt_card
+theorem linearSpine_stem_length_lt_card
     [Fintype T] [DecidableEq T]
     (target : T)
-    (prefix : List T)
-    (hnodup : (prefix ++ [target]).Nodup) :
-    prefix.length < Fintype.card T := by
+    (stem : List T)
+    (hnodup : (stem ++ [target]).Nodup) :
+    stem.length < Fintype.card T := by
   have hpath :
-      (prefix ++ [target]).length ≤ Fintype.card T :=
+      (stem ++ [target]).length ≤ Fintype.card T :=
     nodup_path_length_le_card
-      (prefix ++ [target]) hnodup
+      (stem ++ [target]) hnodup
   simp only [List.length_append, List.length_singleton] at hpath
   omega
 
@@ -124,8 +124,8 @@ theorem linearSpineContext_length_lt_card
     left.length + right.length < Fintype.card T := by
   rw [C.context_length_eq]
   exact
-    linearSpine_prefix_length_lt_card
-      target C.prefix C.nodup
+    linearSpine_stem_length_lt_card
+      target C.stem C.nodup
 
 /--
 In particular, the spine-symbol context obeys the paper-facing common bound
@@ -154,10 +154,10 @@ theorem linearWrapperContext_length_lt_twice_card
     (C : LinearWrapperContextCertificate parent left right) :
     left.length + right.length <
       2 * Fintype.card T := by
-  have hprefix :
-      C.prefix.length < Fintype.card T :=
-    linearSpine_prefix_length_lt_card
-      parent C.prefix C.nodup
+  have hstem :
+      C.stem.length < Fintype.card T :=
+    linearSpine_stem_length_lt_card
+      parent C.stem C.nodup
   have hctx := C.context_length_le
   have hchild := C.childYield_le
   omega
