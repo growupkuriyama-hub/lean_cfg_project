@@ -5,6 +5,7 @@ import LeanCfgProject.TCS1.CanonicalWitnessCompleteness
 import LeanCfgProject.TCS1.ConservativeGoldKernel
 import LeanCfgProject.TCS1.WitnessSetConstruction
 import LeanCfgProject.TCS1.ReducednessWitnessChoices
+import LeanCfgProject.TCS1.MinimalReducedWitnessChoices
 import LeanCfgProject.TCS1.GoldConvergenceClosure
 
 import LeanCfgProject.TCS1.SSBNFThicknessBounds
