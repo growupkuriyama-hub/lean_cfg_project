@@ -7,17 +7,15 @@ The long-word proof of Lemma 7.1 must preserve more than the number of marked
 leaves: every omitted sibling subtree has to remain in the single middle gap
 between the first k and last l marked terminals.
 
-This file supplies that invariant for one maximal one-child chain.
+For one maximal one-child chain, the positional information is simple.  If the
+retained child is the left child, the omitted right sibling lies after all
+marked leaves carried by the retained base.  If the retained child is the
+right child, the omitted left sibling lies before all those marked leaves.
 
-For a reaching spine whose retained base contains r marked leaves, an omitted
-right sibling (the retained child is left) lies after all r marked leaves,
-while an omitted left sibling lies before all r marked leaves.  The list
-`reachingSpineOmissionRanks` records these marked-leaf ranks.
-
-The main theorem proves that the cycle-shortening normalization already used
-for Lemma 7.1 preserves the property that every such rank is the same global
-gap k.  Thus shortcutting repeated nonterminal labels cannot move an omitted
-subtree across a marked boundary.
+Because `ReachingSpine` is proposition-valued, the invariant below is also
+proposition-valued rather than computed as data from a proof object.  This
+lets us prove directly that repeated-label shortcutting preserves the unique
+central gap.
 -/
 
 namespace LeanCfgProject
@@ -31,49 +29,47 @@ variable {N : Type u}
 variable {α : Type v}
 
 /--
-Marked-leaf ranks of omitted sibling subtrees along one reaching spine.
+Every omitted sibling on one reaching spine occurs at the same global marked
+leaf gap k.
 
-`offset` is the number of marked leaves lying globally before the retained
-base, and `marks` is the number of marked leaves in that base.
+`offset` is the number of marked leaves globally before the retained base,
+and `marks` is the number of marked leaves in that base.
 -/
-def reachingSpineOmissionRanks
+def ReachingSpineAllOmissionsAt
     {terminalRule : N → α → Prop}
     {binaryRule : N → N → N → Prop}
-    (offset marks : Nat) :
+    (offset marks k : Nat) :
     {A X : N} →
     {left right : Word α} →
     {path : List N} →
     {siblings : List Nat} →
-    ReachingSpine terminalRule binaryRule
-      A X left right path siblings →
-    List Nat
-  | _, _, _, _, _, _, ReachingSpine.hole => []
-  | _, _, _, _, _, _,
-      ReachingSpine.binaryLeft _ child _ =>
-      reachingSpineOmissionRanks offset marks child ++
-        [offset + marks]
-  | _, _, _, _, _, _,
-      ReachingSpine.binaryRight _ _ child =>
-      offset ::
-        reachingSpineOmissionRanks offset marks child
-
-/-- Every omitted sibling on the reaching spine occurs at the same gap k. -/
-def ReachingSpineAllOmissionsAt
-    {terminalRule : N → α → Prop}
-    {binaryRule : N → N → N → Prop}
-    {A X : N}
-    {left right : Word α}
-    {path : List N}
-    {siblings : List Nat}
-    (offset marks k : Nat)
     (spine :
       ReachingSpine terminalRule binaryRule
-        A X left right path siblings) : Prop :=
-  ∀ j ∈ reachingSpineOmissionRanks offset marks spine,
-    j = k
+        A X left right path siblings) →
+    Prop
+  | _, _, _, _, _, _, ReachingSpine.hole =>
+      True
+  | _, _, _, _, _, _,
+      ReachingSpine.binaryLeft _ child _ =>
+      ReachingSpineAllOmissionsAt offset marks k child
+        ∧ offset + marks = k
+  | _, _, _, _, _, _,
+      ReachingSpine.binaryRight _ _ child =>
+      offset = k
+        ∧ ReachingSpineAllOmissionsAt offset marks k child
 
-/-- Decompose the gap invariant through a retained-left spine step. -/
-theorem reachingSpineAllOmissionsAt_binaryLeft_iff
+@[simp] theorem reachingSpineAllOmissionsAt_hole
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (offset marks k : Nat)
+    {A : N} :
+    ReachingSpineAllOmissionsAt offset marks k
+      (ReachingSpine.hole :
+        ReachingSpine terminalRule binaryRule
+          A A [] [] [A] []) := by
+  trivial
+
+@[simp] theorem reachingSpineAllOmissionsAt_binaryLeft
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
     {A B C X : N}
@@ -92,24 +88,9 @@ theorem reachingSpineAllOmissionsAt_binaryLeft_iff
       ↔
     ReachingSpineAllOmissionsAt offset marks k child
       ∧ offset + marks = k := by
-  constructor
-  · intro h
-    constructor
-    · intro j hj
-      exact h j
-        (List.mem_append_left _ hj)
-    · exact h (offset + marks)
-        (by
-          simp [reachingSpineOmissionRanks])
-  · rintro ⟨hchild, hlast⟩ j hj
-    simp only [reachingSpineOmissionRanks,
-      List.mem_append, List.mem_singleton] at hj
-    rcases hj with hj | hj
-    · exact hchild j hj
-    · simpa [hj] using hlast
+  rfl
 
-/-- Decompose the gap invariant through a retained-right spine step. -/
-theorem reachingSpineAllOmissionsAt_binaryRight_iff
+@[simp] theorem reachingSpineAllOmissionsAt_binaryRight
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
     {A B C X : N}
@@ -128,21 +109,7 @@ theorem reachingSpineAllOmissionsAt_binaryRight_iff
       ↔
     offset = k
       ∧ ReachingSpineAllOmissionsAt offset marks k child := by
-  constructor
-  · intro h
-    constructor
-    · exact h offset
-        (by simp [reachingSpineOmissionRanks])
-    · intro j hj
-      exact h j
-        (by
-          simp [reachingSpineOmissionRanks, hj])
-  · rintro ⟨hoffset, hchild⟩ j hj
-    simp only [reachingSpineOmissionRanks,
-      List.mem_cons] at hj
-    rcases hj with hj | hj
-    · simpa [hj] using hoffset
-    · exact hchild j hj
+  rfl
 
 /--
 Taking a repetition-free suffix of a reaching spine preserves the central-gap
@@ -164,30 +131,30 @@ theorem reachingSubspine_preserves_allOmissionsAt
       ReachingSpineAllOmissionsAt
         offset marks k spine)
     (hmem : Y ∈ path) :
-    ∃ left' right' path' siblings'
-        (spine' :
-          ReachingSpine terminalRule binaryRule
-            Y X left' right' path' siblings'),
-      path'.Nodup
-      ∧ ReachingSpineAllOmissionsAt
-          offset marks k spine' := by
+    ∃ left' right' path' siblings',
+      ∃ spine' :
+        ReachingSpine terminalRule binaryRule
+          Y X left' right' path' siblings',
+        path'.Nodup
+        ∧ ReachingSpineAllOmissionsAt
+            offset marks k spine' := by
   induction spine generalizing Y with
   | @hole A =>
       simp only [List.mem_singleton] at hmem
       subst Y
-      refine ⟨[], [], [A], [], ReachingSpine.hole, by simp, ?_⟩
-      intro j hj
-      simp [reachingSpineOmissionRanks] at hj
+      exact
+        ⟨[], [], [A], [], ReachingSpine.hole,
+          by simp,
+          by trivial⟩
 
   | @binaryLeft A B C X left right z path siblings
       hbin child sibling ih =>
       rw [List.nodup_cons] at hnodup
       simp only [List.mem_cons] at hmem
-      have hparts :=
-        (reachingSpineAllOmissionsAt_binaryLeft_iff
-          terminalRule binaryRule hbin child sibling
-          offset marks k).1 hgap
-      rcases hparts with ⟨hchildGap, hlast⟩
+      have hchildGap :
+          ReachingSpineAllOmissionsAt
+            offset marks k child :=
+        hgap.1
       rcases hmem with hYA | hYtail
       · subst Y
         exact
@@ -202,11 +169,10 @@ theorem reachingSubspine_preserves_allOmissionsAt
       hbin sibling child ih =>
       rw [List.nodup_cons] at hnodup
       simp only [List.mem_cons] at hmem
-      have hparts :=
-        (reachingSpineAllOmissionsAt_binaryRight_iff
-          terminalRule binaryRule hbin sibling child
-          offset marks k).1 hgap
-      rcases hparts with ⟨hfirst, hchildGap⟩
+      have hchildGap :
+          ReachingSpineAllOmissionsAt
+            offset marks k child :=
+        hgap.2
       rcases hmem with hYA | hYtail
       · subst Y
         exact
@@ -238,26 +204,28 @@ theorem normalize_reachingSpine_preserves_allOmissionsAt
     (hgap :
       ReachingSpineAllOmissionsAt
         offset marks k spine) :
-    ∃ left' right' path' siblings'
-        (spine' :
-          ReachingSpine terminalRule binaryRule
-            A X left' right' path' siblings'),
-      path'.Nodup
-      ∧ ReachingSpineAllOmissionsAt
-          offset marks k spine' := by
+    ∃ left' right' path' siblings',
+      ∃ spine' :
+        ReachingSpine terminalRule binaryRule
+          A X left' right' path' siblings',
+        path'.Nodup
+        ∧ ReachingSpineAllOmissionsAt
+            offset marks k spine' := by
   induction spine with
   | @hole A =>
-      refine ⟨[], [], [A], [], ReachingSpine.hole, by simp, ?_⟩
-      intro j hj
-      simp [reachingSpineOmissionRanks] at hj
+      exact
+        ⟨[], [], [A], [], ReachingSpine.hole,
+          by simp,
+          by trivial⟩
 
   | @binaryLeft A B C X left right z path siblings
       hbin child sibling ih =>
-      have hparts :=
-        (reachingSpineAllOmissionsAt_binaryLeft_iff
-          terminalRule binaryRule hbin child sibling
-          offset marks k).1 hgap
-      rcases hparts with ⟨hchildGap, hlast⟩
+      have hchildGap :
+          ReachingSpineAllOmissionsAt
+            offset marks k child :=
+        hgap.1
+      have hlast : offset + marks = k :=
+        hgap.2
       obtain ⟨left', right', path', siblings',
           child', hnodup, hchildGap'⟩ :=
         ih hchildGap
@@ -275,26 +243,24 @@ theorem normalize_reachingSpine_preserves_allOmissionsAt
         have hgap' :
             ReachingSpineAllOmissionsAt
               offset marks k spine' := by
-          apply
-            (reachingSpineAllOmissionsAt_binaryLeft_iff
-              terminalRule binaryRule
-              hbin child' sibling
-              offset marks k).2
           exact ⟨hchildGap', hlast⟩
         exact
           ⟨left', right' ++ z, A :: path',
             z.length :: siblings',
             spine',
-            (by rw [List.nodup_cons]; exact ⟨hmem, hnodup⟩),
+            (by
+              rw [List.nodup_cons]
+              exact ⟨hmem, hnodup⟩),
             hgap'⟩
 
   | @binaryRight A B C X left right y path siblings
       hbin sibling child ih =>
-      have hparts :=
-        (reachingSpineAllOmissionsAt_binaryRight_iff
-          terminalRule binaryRule hbin sibling child
-          offset marks k).1 hgap
-      rcases hparts with ⟨hfirst, hchildGap⟩
+      have hfirst : offset = k :=
+        hgap.1
+      have hchildGap :
+          ReachingSpineAllOmissionsAt
+            offset marks k child :=
+        hgap.2
       obtain ⟨left', right', path', siblings',
           child', hnodup, hchildGap'⟩ :=
         ih hchildGap
@@ -312,17 +278,14 @@ theorem normalize_reachingSpine_preserves_allOmissionsAt
         have hgap' :
             ReachingSpineAllOmissionsAt
               offset marks k spine' := by
-          apply
-            (reachingSpineAllOmissionsAt_binaryRight_iff
-              terminalRule binaryRule
-              hbin sibling child'
-              offset marks k).2
           exact ⟨hfirst, hchildGap'⟩
         exact
           ⟨y ++ left', right', A :: path',
             y.length :: siblings',
             spine',
-            (by rw [List.nodup_cons]; exact ⟨hmem, hnodup⟩),
+            (by
+              rw [List.nodup_cons]
+              exact ⟨hmem, hnodup⟩),
             hgap'⟩
 
 end MarkedBoundaryGapSemantic
