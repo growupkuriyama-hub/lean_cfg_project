@@ -24,6 +24,43 @@ variable {α : Type u}
 variable {M : Type v} [Monoid M] [Fintype M]
 variable {N : Type w}
 
+/--
+Minimality assumptions for the canonical choices used in Section 7.
+
+The manuscript chooses `omega(X)` shortlex-minimally and `chi(X)`
+minimum-length among terminal reaching contexts.  Only the displayed length
+minimality consequences are needed for the quantitative proof.
+-/
+structure CanonicalChoiceMinimality
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active) : Prop where
+  omega_minimal :
+    ∀ X : N × M,
+      Active X →
+      ∀ z : Word α,
+        ReducedTypedDerives
+          H terminalRule binaryRule Active X z →
+        (C.omega X).length ≤ z.length
+  context_minimal :
+    ∀ X : N × M,
+      Active X →
+      ∀ left right : Word α,
+        (∀ {z : Word α},
+          ReducedTypedDerives
+            H terminalRule binaryRule Active X z →
+          ReducedTypedLanguage
+            H terminalRule binaryRule startRule epsilonStart Active
+            (left ++ z ++ right)) →
+        (C.left X).length + (C.right X).length ≤
+          left.length + right.length
+
 /-- Quantitative data needed from Lemmas 7.1 and the first half of Lemma 7.2. -/
 structure CanonicalYieldContextBounds
     (H : FixedFiniteMonoidHom α M)
@@ -44,6 +81,56 @@ structure CanonicalYieldContextBounds
     ∀ X : N × M,
       Active X →
       (C.left X).length + (C.right X).length ≤ Nt * B
+
+/--
+Bounded alternative yields and reaching contexts transfer to the canonical
+minimal choices.
+-/
+theorem canonicalYieldContextBounds_of_bounded_alternatives
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (minimal :
+      CanonicalChoiceMinimality
+        H terminalRule binaryRule startRule epsilonStart Active C)
+    (Nt B : Nat)
+    (hyield :
+      ∀ X : N × M,
+        Active X →
+        ∃ z : Word α,
+          ReducedTypedDerives
+            H terminalRule binaryRule Active X z
+          ∧ z.length ≤ B)
+    (hcontext :
+      ∀ X : N × M,
+        Active X →
+        ∃ left right : Word α,
+          (∀ {z : Word α},
+            ReducedTypedDerives
+              H terminalRule binaryRule Active X z →
+            ReducedTypedLanguage
+              H terminalRule binaryRule startRule epsilonStart Active
+              (left ++ z ++ right))
+          ∧ left.length + right.length ≤ Nt * B) :
+    CanonicalYieldContextBounds
+      H terminalRule binaryRule startRule epsilonStart Active C Nt B := by
+  constructor
+  · intro X hX
+    obtain ⟨z, dz, hz⟩ := hyield X hX
+    exact le_trans
+      (minimal.omega_minimal X hX z dz) hz
+  · intro X hX
+    obtain ⟨left, right, hreach, hlen⟩ :=
+      hcontext X hX
+    exact le_trans
+      (minimal.context_minimal X hX left right hreach)
+      hlen
 
 /--
 All four canonical witness families satisfy the common
