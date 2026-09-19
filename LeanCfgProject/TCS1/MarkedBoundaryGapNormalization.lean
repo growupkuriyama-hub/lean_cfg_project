@@ -105,7 +105,7 @@ theorem exists_attachGapHead
       ∧
       MarkedBoundaryKernel.AllOmissionsAtAux
         offset K k := by
-  induction spine with
+  induction spine generalizing base with
   | hole =>
       refine
         ⟨MarkedBoundaryBase.toKernel base,
