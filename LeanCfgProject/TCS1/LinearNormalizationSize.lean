@@ -109,10 +109,18 @@ theorem PreparedLinearRhs.terminalCount_pos
       simp only [PreparedLinearRhs.terminalCount]
       rcases hnonunit with hleft | hright
       · have : 0 < left.length := by
-          simpa [List.length_pos] using hleft
+          cases left with
+          | nil =>
+              exact False.elim (hleft rfl)
+          | cons a rest =>
+              simp
         omega
       · have : 0 < right.length := by
-          simpa [List.length_pos] using hright
+          cases right with
+          | nil =>
+              exact False.elim (hright rfl)
+          | cons a rest =>
+              simp
         omega
 
 /-- Fresh chain states are bounded by the source RHS length. -/
@@ -120,9 +128,14 @@ theorem PreparedLinearRhs.auxCount_le_sourceLength
     (r : PreparedLinearRhs N α) :
     r.auxCount ≤ r.sourceLength := by
   unfold PreparedLinearRhs.auxCount
-  cases r <;>
-    simp [PreparedLinearRhs.terminalCount,
-      PreparedLinearRhs.sourceLength]
+  cases r with
+  | terminals head tail =>
+      simp [PreparedLinearRhs.terminalCount,
+        PreparedLinearRhs.sourceLength]
+  | around left core right hnonunit =>
+      simp only [PreparedLinearRhs.terminalCount,
+        PreparedLinearRhs.sourceLength]
+      omega
 
 /-- The appendix factorization uses no more rules than source RHS symbols. -/
 theorem PreparedLinearRhs.expansionRuleCount_le_sourceLength
@@ -227,7 +240,8 @@ abbrev LinearNormalizedStateIndex
     (G : PreparedLinearIndexedCFG N α P) :
     Fintype.card (LinearNormalizedStateIndex G) =
       Fintype.card N + Fintype.card α + G.totalAuxCount := by
-  simp [LinearNormalizedStateIndex]
+  rw [Fintype.card_sum, Fintype.card_sum]
+  rw [linearAuxStateIndex_card G]
   omega
 
 /-- Normalized non-start states are linear in the prepared representation. -/
