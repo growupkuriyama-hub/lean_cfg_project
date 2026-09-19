@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.FixedHSubstitutability
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.ReconstructionSoundness
+import LeanCfgProject.TCS1.BatchLanguageMonotonicity
 import LeanCfgProject.TCS1.CanonicalWitnessCompleteness
 import LeanCfgProject.TCS1.ConservativeGoldKernel
 import LeanCfgProject.TCS1.WitnessSetConstruction
