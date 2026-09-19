@@ -63,6 +63,24 @@ def applyLinearSpineSteps :
   | step :: rest, word =>
       step.apply (applyLinearSpineSteps rest word)
 
+
+/--
+At any valid position, executing the dropped plan exposes exactly the indexed
+step followed by the next dropped suffix.
+-/
+theorem applyLinearSpineSteps_drop_get
+    (steps : List (LinearSpineStep α))
+    (i : Fin steps.length)
+    (word : List α) :
+    applyLinearSpineSteps
+        (steps.drop i.1) word
+      =
+    (steps.get i).apply
+      (applyLinearSpineSteps
+        (steps.drop (i.1 + 1)) word) := by
+  rw [← List.cons_get_drop_succ (l := steps) (n := i)]
+  rfl
+
 /-- Left-wrapper steps associated with a terminal list. -/
 def leftLinearSteps
     (xs : List α) :
