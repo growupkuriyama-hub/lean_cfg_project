@@ -268,6 +268,88 @@ theorem reconstruction_degreeFive_mono
       (Nat.add_le_add_right hab 1) 5
 
 /--
+The next presented word's own encoding is bounded by the encoded prefix after
+that word has been read.
+-/
+theorem nextDatum_encoding_le_prefix
+    (datum : Nat → Word α)
+    (n : Nat) :
+    (datum (n + 1)).length + 1 ≤
+      positiveDataPrefixNorm datum (n + 1) := by
+  simp [positiveDataPrefixNorm]
+  omega
+
+/--
+The reconstruction-output envelope attached to the accumulated rebuild sample
+is degree-five in the encoded data prefix, without introducing auxiliary
+production-count parameters.
+-/
+theorem concreteAccumulated_outputEnvelope_le_prefix_degreeFive
+    (datum : Nat → Word α)
+    (n : Nat) :
+    reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm
+          (concreteAccumulatedSample datum n))
+      ≤
+    5 * (positiveDataPrefixNorm datum n + 1) ^ 5 := by
+  have hdeg :
+      reconstructionOutputEncodingEnvelope
+          (reconstructionSampleNorm
+            (concreteAccumulatedSample datum n))
+        ≤
+      5 *
+        (reconstructionSampleNorm
+            (concreteAccumulatedSample datum n) + 1) ^ 5 :=
+    reconstructionOutputEncodingEnvelope_le_degreeFive
+      (reconstructionSampleNorm
+        (concreteAccumulatedSample datum n))
+  have hnorm :
+      reconstructionSampleNorm
+          (concreteAccumulatedSample datum n)
+        ≤
+      positiveDataPrefixNorm datum n :=
+    concreteAccumulatedSample_norm_le_prefix datum n
+  exact
+    le_trans hdeg
+      (reconstruction_degreeFive_mono hnorm)
+
+/--
+Every current conservative hypothesis has the same degree-five reconstruction
+envelope in the data prefix seen so far.  This supplies the grammar-size premise
+used by the manuscript's polynomial CFG-membership update argument.
+-/
+theorem concreteCurrentHypothesis_outputEnvelope_le_prefix_degreeFive
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm
+          (concreteConservativeHypothesis H datum n))
+      ≤
+    5 * (positiveDataPrefixNorm datum n + 1) ^ 5 := by
+  have hdeg :
+      reconstructionOutputEncodingEnvelope
+          (reconstructionSampleNorm
+            (concreteConservativeHypothesis H datum n))
+        ≤
+      5 *
+        (reconstructionSampleNorm
+            (concreteConservativeHypothesis H datum n) + 1) ^ 5 :=
+    reconstructionOutputEncodingEnvelope_le_degreeFive
+      (reconstructionSampleNorm
+        (concreteConservativeHypothesis H datum n))
+  have hnorm :
+      reconstructionSampleNorm
+          (concreteConservativeHypothesis H datum n)
+        ≤
+      positiveDataPrefixNorm datum n :=
+    concreteConservativeHypothesis_norm_le_prefix
+      H datum n
+  exact
+    le_trans hdeg
+      (reconstruction_degreeFive_mono hnorm)
+
+/--
 Any rebuild at stage n has the degree-five output-size majorant evaluated at
 the encoded data prefix seen by that stage.
 
