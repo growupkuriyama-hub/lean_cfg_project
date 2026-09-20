@@ -61,6 +61,7 @@ import LeanCfgProject.TCS1.LinearNormalizationSoundness
 import LeanCfgProject.TCS1.LinearNormalizationCompleteness
 import LeanCfgProject.TCS1.PreparedLinearNormalizationFacade
 import LeanCfgProject.TCS1.LinearMixedRhsDecomposition
+import LeanCfgProject.TCS1.LinearIndexedPreprocessedBridge
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
 import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
 import LeanCfgProject.TCS1.ConcreteLinearCharacteristicData
