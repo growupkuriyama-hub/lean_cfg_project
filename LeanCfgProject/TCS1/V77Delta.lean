@@ -16,6 +16,7 @@ import LeanCfgProject.TCS1.LinearSeparatorNonregular
 import LeanCfgProject.TCS1.LinearSeparatorPreparedGrammar
 import LeanCfgProject.TCS1.ClarkCongruentialKernel
 import LeanCfgProject.TCS1.ClarkCongruentialPackaging
+import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 
 /-!
 # TCS #1 v77 delta verification facade
