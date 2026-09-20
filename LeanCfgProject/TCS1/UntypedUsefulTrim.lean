@@ -162,7 +162,7 @@ theorem untypedDerives_to_useful
       (untypedUsefulBinaryRule
         terminalRule binaryRule startRule)
       ⟨A, hA⟩ word := by
-  induction d generalizing hA with
+  induction d with
   | @terminal A a hterm =>
       exact UntypedDerives.terminal hterm
   | @binary A B C wB wC hbin dB dC ihB ihC =>
@@ -182,9 +182,14 @@ theorem untypedDerives_to_useful
             terminalRule binaryRule startRule C :=
         ProductiveUntypedReachable.right
           hA hbin hprodB hprodC
+      have hbinUseful :
+          untypedUsefulBinaryRule
+            terminalRule binaryRule startRule
+            ⟨A, hA⟩ ⟨B, hB⟩ ⟨C, hC⟩ :=
+        hbin
       exact
         UntypedDerives.binary
-          hbin
+          hbinUseful
           (ihB hB)
           (ihC hC)
 
@@ -238,9 +243,13 @@ theorem untypedStartDerives_to_useful
             terminalRule binaryRule startRule A :=
         ProductiveUntypedReachable.start
           hstart ⟨word, dA⟩
+      have hstartUseful :
+          untypedUsefulStartRule
+            terminalRule binaryRule startRule ⟨A, hA⟩ :=
+        hstart
       exact
         UntypedStartDerives.nonempty
-          hstart
+          hstartUseful
           (untypedDerives_to_useful
             terminalRule binaryRule startRule hA dA)
   | epsilon heps =>
