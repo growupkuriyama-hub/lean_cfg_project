@@ -125,7 +125,7 @@ theorem linearConstructed_finalContinuation_derives
       endpointWord := by
   cases hend : (G.rhs p).toPlan.endpoint with
   | terminal a =>
-      change endpointWord = [a] at hendpoint
+      rw [LinearPlanEndpointConstructedDerivable, hend] at hendpoint
       subst endpointWord
       have hcont :
           linearStepContinuation G p i =
@@ -137,12 +137,7 @@ theorem linearConstructed_finalContinuation_derives
           (LinearConstructedTerminalRule.auxEndpoint
             p a i hend hlast)
   | core B =>
-      change
-        UntypedDerives
-          (LinearConstructedTerminalRule G)
-          (LinearConstructedBinaryRule G)
-          (linearOldState G B)
-          endpointWord at hendpoint
+      rw [LinearPlanEndpointConstructedDerivable, hend] at hendpoint
       rw [linearStepContinuation_eq_core_of_last
         G p i B hend hlast]
       exact hendpoint
@@ -168,7 +163,11 @@ theorem linearConstructed_nonemptyPlan_derives
         (G.rhs p).toPlan.steps endpointWord) := by
   let steps := (G.rhs p).toPlan.steps
   have hlenpos : 0 < steps.length := by
-    exact List.length_pos.mpr hnonempty
+    cases hsteps : steps with
+    | nil =>
+        exact False.elim (hnonempty hsteps)
+    | cons step rest =>
+        simp [hsteps]
   let n := steps.length - 1
   have hnlt : n < steps.length := by
     dsimp [n]
@@ -309,6 +308,27 @@ theorem linearConstructed_nonemptyPlan_derives
   exact hzero'
 
 /--
+For the concrete old-state interpretation, semantic endpoint realization is
+exactly the endpoint condition consumed by the finite spine executor.
+-/
+theorem linearPlanEndpoint_realizes_constructed_iff
+    (G : PreparedLinearIndexedCFG N α P)
+    (p : P)
+    (word : List α) :
+    LinearPlanEndpoint.realizes
+        (fun A =>
+          {u |
+            UntypedDerives
+              (LinearConstructedTerminalRule G)
+              (LinearConstructedBinaryRule G)
+              (linearOldState G A) u})
+        (G.rhs p).toPlan.endpoint word
+      ↔
+    LinearPlanEndpointConstructedDerivable
+      G p word := by
+  cases (G.rhs p).toPlan.endpoint <;> rfl
+
+/--
 The old-state language of the concrete factorization is closed under every
 prepared plan.
 -/
@@ -337,6 +357,7 @@ theorem linearConstructed_oldLanguage_planClosed
                 LinearPlanEndpoint.terminal head := by
             simp [hrhs, PreparedLinearRhs.toPlan,
               terminalLinearPlan]
+          rw [hend] at hendpoint
           change endpointWord = [head] at hendpoint
           subst endpointWord
           rw [hsteps] at hword
@@ -353,21 +374,18 @@ theorem linearConstructed_oldLanguage_planClosed
               terminalLinearPlan]
           have hderivable :
               LinearPlanEndpointConstructedDerivable
-                G p endpointWord := by
-            cases hend :
-                (G.rhs p).toPlan.endpoint with
-            | core B =>
-                rw [hend] at hendpoint
-                exact False.elim (by
-                  simp [hrhs, PreparedLinearRhs.toPlan,
-                    terminalLinearPlan] at hend)
-            | terminal a =>
-                rw [hend] at hendpoint
-                exact hendpoint
+                G p endpointWord :=
+            (linearPlanEndpoint_realizes_constructed_iff
+              G p endpointWord).1 hendpoint
           have d :=
             linearConstructed_nonemptyPlan_derives
               G p hnonempty hderivable
-          rw [← hword]
+          change
+            UntypedDerives
+              (LinearConstructedTerminalRule G)
+              (LinearConstructedBinaryRule G)
+              (linearOldState G (G.lhs p)) word
+          rw [hword]
           exact d
   | around left core right hnonunit =>
       have hnonempty :
@@ -391,14 +409,18 @@ theorem linearConstructed_oldLanguage_planClosed
         exact hendpoint
       have hderivable :
           LinearPlanEndpointConstructedDerivable
-            G p endpointWord := by
-        rw [LinearPlanEndpointConstructedDerivable,
-          hend]
-        exact hcore
+            G p endpointWord :=
+        (linearPlanEndpoint_realizes_constructed_iff
+          G p endpointWord).1 hendpoint
       have d :=
         linearConstructed_nonemptyPlan_derives
           G p hnonempty hderivable
-      rw [← hword]
+      change
+        UntypedDerives
+          (LinearConstructedTerminalRule G)
+          (LinearConstructedBinaryRule G)
+          (linearOldState G (G.lhs p)) word
+      rw [hword]
       exact d
 
 /--
