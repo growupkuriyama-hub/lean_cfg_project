@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
+import LeanCfgProject.TCS1.FiniteMonoidObstructionKernel
 import LeanCfgProject.TCS1.FixedHRightQuotient
 import LeanCfgProject.TCS1.LinearSeparatorExample
 import LeanCfgProject.TCS1.LinearSeparatorTyping
