@@ -43,7 +43,16 @@ theorem rawLinearCorePreparedRhs_false_eq
           RawLinearCoreRuleIndex G)
       =
     rhs := by
-  simp [rawLinearCorePreparedRhs, hrhs]
+  cases hraw : G.rhs p with
+  | epsilon =>
+      simp [hraw] at hrhs
+  | unit B =>
+      simp [hraw] at hrhs
+  | prepared rhs₀ =>
+      have heq : rhs₀ = rhs := by
+        injection hrhs
+      subst rhs₀
+      simp [rawLinearCorePreparedRhs, hraw]
 
 /-- Deterministic true-variant RHS is the terminal dropped-core rule. -/
 theorem rawLinearCorePreparedRhs_true_eq
@@ -68,7 +77,25 @@ theorem rawLinearCorePreparedRhs_true_eq
       =
     droppedCorePreparedRhs
       (N := N) left right hnonunit := by
-  simp [rawLinearCorePreparedRhs, hrhs]
+  cases hraw : G.rhs p with
+  | epsilon =>
+      simp [hraw] at hrhs
+  | unit B =>
+      simp [hraw] at hrhs
+  | prepared rhs₀ =>
+      cases rhs₀ with
+      | terminals head tail =>
+          simp [hraw] at hrhs
+      | around left₀ core₀ right₀ hnonunit₀ =>
+          have heq :
+              PreparedLinearRhs.around
+                  left₀ core₀ right₀ hnonunit₀
+                =
+              PreparedLinearRhs.around
+                  left core right hnonunit := by
+            injection hrhs
+          cases heq
+          simp [rawLinearCorePreparedRhs, hraw]
 
 /--
 A prepared grammar rule whose RHS is the deterministic dropped-core rule
@@ -292,6 +319,9 @@ theorem preparedDerives_to_rawLinearUnitFree
               A p head tail hreach hrhsSource
 
       | true =>
+          change
+            RawLinearUnitFreeDerives G A
+              (head :: tail)
           have hvalid0 := hvalid
           change
             ∃ left : List α,
