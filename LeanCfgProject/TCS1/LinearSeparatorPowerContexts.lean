@@ -55,5 +55,70 @@ theorem lpm_e_power_context_transfer
   omega
 
 
+/--
+The c/d branch of the Section 8.1 distribution argument, restricted to the
+pure-power contexts that the context-shape lemma will later supply.
+
+A shared pure context fixes both the balance offset and the parity phase, so
+membership in any second pure context transfers from one factor to the other.
+-/
+theorem lpm_cd_power_context_fourth
+    {z z' : LpmSymbol}
+    (hz : z = c ∨ z = d)
+    (hz' : z' = c ∨ z' = d)
+    {r s m n i j i' j' : Nat}
+    (hsharedX :
+      List.replicate r a ++
+          lpmOneCenter i z j ++
+          List.replicate s b ∈ LpmLanguage)
+    (hsharedY :
+      List.replicate r a ++
+          lpmOneCenter i' z' j' ++
+          List.replicate s b ∈ LpmLanguage)
+    (hctxX :
+      List.replicate m a ++
+          lpmOneCenter i z j ++
+          List.replicate n b ∈ LpmLanguage) :
+    List.replicate m a ++
+        lpmOneCenter i' z' j' ++
+        List.replicate n b ∈ LpmLanguage := by
+  rcases hz with rfl | rfl <;>
+    rcases hz' with rfl | rfl
+  · rw [lpm_power_context_c_mem_iff] at hsharedX hsharedY hctxX ⊢
+    omega
+  · rw [lpm_power_context_c_mem_iff] at hsharedX hctxX
+    rw [lpm_power_context_d_mem_iff] at hsharedY ⊢
+    omega
+  · rw [lpm_power_context_d_mem_iff] at hsharedX hctxX
+    rw [lpm_power_context_c_mem_iff] at hsharedY ⊢
+    omega
+  · rw [lpm_power_context_d_mem_iff] at hsharedX hsharedY hctxX ⊢
+    omega
+
+/--
+The e branch of the same argument: a shared pure context fixes the balance
+offset, and that alone determines every other pure-power context.
+-/
+theorem lpm_e_power_context_fourth
+    {r s m n i j i' j' : Nat}
+    (hsharedX :
+      List.replicate r a ++
+          lpmOneCenter i e j ++
+          List.replicate s b ∈ LpmLanguage)
+    (hsharedY :
+      List.replicate r a ++
+          lpmOneCenter i' e j' ++
+          List.replicate s b ∈ LpmLanguage)
+    (hctxX :
+      List.replicate m a ++
+          lpmOneCenter i e j ++
+          List.replicate n b ∈ LpmLanguage) :
+    List.replicate m a ++
+        lpmOneCenter i' e j' ++
+        List.replicate n b ∈ LpmLanguage := by
+  rw [lpm_power_context_e_mem_iff] at hsharedX hsharedY hctxX ⊢
+  omega
+
+
 end TCS1
 end LeanCfgProject
