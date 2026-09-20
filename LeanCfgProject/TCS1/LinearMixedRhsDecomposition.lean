@@ -39,6 +39,32 @@ def mixedRhsNonterminalCount :
   | Sum.inr _ :: rest =>
       mixedRhsNonterminalCount rest
 
+
+/-- A list of literal terminals contains no nonterminal occurrences. -/
+@[simp] theorem mixedRhsNonterminalCount_map_terminal
+    (xs : List α) :
+    mixedRhsNonterminalCount
+      (xs.map (fun a => (Sum.inr a : MixedSymbol N α))) = 0 := by
+  induction xs with
+  | nil =>
+      rfl
+  | cons a rest ih =>
+      simpa [mixedRhsNonterminalCount] using ih
+
+/-- A literal terminal prefix does not change the nonterminal count. -/
+@[simp] theorem mixedRhsNonterminalCount_terminalPrefix
+    (xs : List α)
+    (rhs : List (MixedSymbol N α)) :
+    mixedRhsNonterminalCount
+      (xs.map (fun a => (Sum.inr a : MixedSymbol N α)) ++ rhs)
+      =
+    mixedRhsNonterminalCount rhs := by
+  induction xs with
+  | nil =>
+      rfl
+  | cons a rest ih =>
+      simpa [mixedRhsNonterminalCount] using ih
+
 /-- A mixed RHS is linear iff it contains at most one nonterminal. -/
 def MixedRhsLinear
     (rhs : List (MixedSymbol N α)) : Prop :=
@@ -79,13 +105,15 @@ theorem mixedRhsNonterminalCount_eq_zero_iff
             | nil =>
                 simp at hxs
             | cons b tail =>
-                simp at hxs
-                rcases hxs with ⟨rfl, hrest⟩
-                have hz :
-                    mixedRhsNonterminalCount
-                      (tail.map Sum.inr) = 0 :=
-                  ih.mpr ⟨tail, rfl⟩
-                simpa [mixedRhsNonterminalCount] using hz
+                have hEq :
+                    a = b ∧
+                    rest =
+                      tail.map
+                        (fun x =>
+                          (Sum.inr x : MixedSymbol N α)) := by
+                  simpa using hxs
+                rcases hEq with ⟨rfl, rfl⟩
+                simp [mixedRhsNonterminalCount]
 
 /--
 Every linear mixed RHS is either terminal-only or has exactly one
@@ -161,16 +189,16 @@ followed by a realization of the remaining suffix.
 -/
 theorem rhsRealizes_terminalPrefix_iff
     (L : N → Set (List α))
-    (prefix : List α)
+    (pre : List α)
     (rhs : List (MixedSymbol N α))
     (word : List α) :
     RhsRealizes L
-        (prefix.map Sum.inr ++ rhs) word
+        (pre.map Sum.inr ++ rhs) word
       ↔
     ∃ tail,
-      word = prefix ++ tail ∧
+      word = pre ++ tail ∧
       RhsRealizes L rhs tail := by
-  induction prefix generalizing word with
+  induction pre generalizing word with
   | nil =>
       simp
   | cons a rest ih =>
@@ -295,15 +323,16 @@ theorem exists_preparedLinearRhs_of_linear_nonempty_nonunit
       ⟨left, B, right, hEq⟩
     have hnonunitContext :
         left ≠ [] ∨ right ≠ [] := by
-      by_contra h
-      push_neg at h
-      rcases h with ⟨hleft, hright⟩
-      subst left
-      subst right
-      have hunit :
-          rhs = [Sum.inl B] := by
-        simpa using hEq
-      exact (hnonunit B) hunit
+      by_cases hleft : left = []
+      · right
+        intro hright
+        subst left
+        subst right
+        have hunit :
+            rhs = [Sum.inl B] := by
+          simpa using hEq
+        exact (hnonunit B) hunit
+      · exact Or.inl hleft
     refine
       ⟨PreparedLinearRhs.around
         left B right hnonunitContext, ?_⟩
@@ -313,30 +342,14 @@ theorem exists_preparedLinearRhs_of_linear_nonempty_nonunit
 theorem PreparedLinearRhs.toMixedRhs_linear
     (rhs : PreparedLinearRhs N α) :
     MixedRhsLinear rhs.toMixedRhs := by
+  unfold MixedRhsLinear
   cases rhs with
   | terminals head tail =>
-      unfold MixedRhsLinear
-      induction tail with
-      | nil =>
-          simp [PreparedLinearRhs.toMixedRhs,
-            mixedRhsNonterminalCount]
-      | cons a rest ih =>
-          simp [PreparedLinearRhs.toMixedRhs,
-            mixedRhsNonterminalCount]
+      simp [PreparedLinearRhs.toMixedRhs,
+        mixedRhsNonterminalCount]
   | around left core right hnonunit =>
-      unfold MixedRhsLinear
-      induction left with
-      | nil =>
-          induction right with
-          | nil =>
-              simp [PreparedLinearRhs.toMixedRhs,
-                mixedRhsNonterminalCount]
-          | cons a rest ih =>
-              simp [PreparedLinearRhs.toMixedRhs,
-                mixedRhsNonterminalCount]
-      | cons a rest ih =>
-          simp [PreparedLinearRhs.toMixedRhs,
-            mixedRhsNonterminalCount]
+      simp [PreparedLinearRhs.toMixedRhs,
+        mixedRhsNonterminalCount]
 
 end LinearMixedRhsDecomposition
 
