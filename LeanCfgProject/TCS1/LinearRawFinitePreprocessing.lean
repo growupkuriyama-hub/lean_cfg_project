@@ -106,27 +106,47 @@ theorem droppedCorePreparedRhs_sourceLength
       omega
 
 /--
-Validity of one of the two possible epsilon-free non-unit variants attached
-to source production p.
+One of the two possible epsilon-free non-unit variants attached to a source
+production.
+
+The false variant keeps an already prepared source RHS.  The true variant
+deletes the unique nullable core of an around-rule and emits the surviving
+terminal context.
 -/
+inductive RawLinearCoreVariantProduces
+    (G : RawLinearIndexedCFG N α P) :
+    (P × Bool) → PreparedLinearRhs N α → Prop
+  | keep
+      (p : P)
+      (rhs : PreparedLinearRhs N α)
+      (hrhs :
+        G.rhs p = RawLinearRhs.prepared rhs) :
+      RawLinearCoreVariantProduces G
+        (p, false) rhs
+  | drop
+      (p : P)
+      (left : List α)
+      (core : N)
+      (right : List α)
+      (hnonunit : left ≠ [] ∨ right ≠ [])
+      (hrhs :
+        G.rhs p =
+          RawLinearRhs.prepared
+            (PreparedLinearRhs.around
+              left core right hnonunit))
+      (hnullable :
+        RawLinearNullable G core) :
+      RawLinearCoreVariantProduces G
+        (p, true)
+        (droppedCorePreparedRhs
+          (N := N) left right hnonunit)
+
+/-- A core variant is valid exactly when it produces some prepared RHS. -/
 def RawLinearCoreVariantValid
     (G : RawLinearIndexedCFG N α P)
     (q : P × Bool) : Prop :=
-  match q.2 with
-  | false =>
-      ∃ rhs : PreparedLinearRhs N α,
-        G.rhs q.1 = RawLinearRhs.prepared rhs
-  | true =>
-      ∃ left : List α,
-      ∃ core : N,
-      ∃ right : List α,
-      ∃ hnonunit : left ≠ [] ∨ right ≠ [],
-        G.rhs q.1 =
-          RawLinearRhs.prepared
-            (PreparedLinearRhs.around
-              left core right hnonunit)
-        ∧
-        RawLinearNullable G core
+  ∃ rhs : PreparedLinearRhs N α,
+    RawLinearCoreVariantProduces G q rhs
 
 /-- Finite index of non-unit epsilon-free core-rule variants. -/
 abbrev RawLinearCoreRuleIndex
@@ -145,50 +165,66 @@ def rawLinearCoreRuleSource
     (q : RawLinearCoreRuleIndex G) : P :=
   q.1.1
 
-/-- Prepared RHS represented by one valid core-rule variant.
+/-- A fixed finite core slot produces only one prepared RHS. -/
+theorem rawLinearCoreVariantProduces_functional
+    (G : RawLinearIndexedCFG N α P)
+    {q : P × Bool}
+    {rhs₁ rhs₂ : PreparedLinearRhs N α}
+    (h₁ : RawLinearCoreVariantProduces G q rhs₁)
+    (h₂ : RawLinearCoreVariantProduces G q rhs₂) :
+    rhs₁ = rhs₂ := by
+  cases h₁ with
+  | keep p rhs hrhs =>
+      cases h₂ with
+      | keep p' rhs' hrhs' =>
+          have hsource :
+              RawLinearRhs.prepared rhs =
+                RawLinearRhs.prepared rhs' :=
+            hrhs.symm.trans hrhs'
+          cases hsource
+          rfl
+  | drop p left core right hnonunit hrhs hnullable =>
+      cases h₂ with
+      | drop p' left' core' right' hnonunit' hrhs' hnullable' =>
+          have hsource :
+              RawLinearRhs.prepared
+                  (PreparedLinearRhs.around
+                    left core right hnonunit)
+                =
+              RawLinearRhs.prepared
+                  (PreparedLinearRhs.around
+                    left' core' right' hnonunit') :=
+            hrhs.symm.trans hrhs'
+          cases hsource
+          rfl
 
-The source RHS itself is inspected, so no arbitrary witness choice remains in
-the rule semantics.  The validity proof is used only to discharge impossible
-branches.
--/
-def rawLinearCorePreparedRhs
+/-- Prepared RHS represented by one valid finite core-rule variant. -/
+noncomputable def rawLinearCorePreparedRhs
     (G : RawLinearIndexedCFG N α P)
     (q : RawLinearCoreRuleIndex G) :
-    PreparedLinearRhs N α := by
-  rcases q with ⟨⟨p, variant⟩, hvalid⟩
-  cases variant with
-  | false =>
-      cases hraw : G.rhs p with
-      | epsilon =>
-          have hfalse : False := by
-            simpa [RawLinearCoreVariantValid, hraw] using hvalid
-          exact hfalse.elim
-      | unit B =>
-          have hfalse : False := by
-            simpa [RawLinearCoreVariantValid, hraw] using hvalid
-          exact hfalse.elim
-      | prepared rhs =>
-          exact rhs
-  | true =>
-      cases hraw : G.rhs p with
-      | epsilon =>
-          have hfalse : False := by
-            simpa [RawLinearCoreVariantValid, hraw] using hvalid
-          exact hfalse.elim
-      | unit B =>
-          have hfalse : False := by
-            simpa [RawLinearCoreVariantValid, hraw] using hvalid
-          exact hfalse.elim
-      | prepared rhs =>
-          cases rhs with
-          | terminals head tail =>
-              have hfalse : False := by
-                simpa [RawLinearCoreVariantValid, hraw] using hvalid
-              exact hfalse.elim
-          | around left core right hnonunit =>
-              exact
-                droppedCorePreparedRhs
-                  (N := N) left right hnonunit
+    PreparedLinearRhs N α :=
+  Classical.choose q.2
+
+/-- The chosen RHS is produced by its indexed core variant. -/
+theorem rawLinearCorePreparedRhs_spec
+    (G : RawLinearIndexedCFG N α P)
+    (q : RawLinearCoreRuleIndex G) :
+    RawLinearCoreVariantProduces G q.1
+      (rawLinearCorePreparedRhs G q) :=
+  Classical.choose_spec q.2
+
+/-- Any explicit produced RHS equals the chosen RHS of the same core slot. -/
+theorem rawLinearCorePreparedRhs_eq_of_produces
+    (G : RawLinearIndexedCFG N α P)
+    (q : RawLinearCoreRuleIndex G)
+    {rhs : PreparedLinearRhs N α}
+    (hproduce :
+      RawLinearCoreVariantProduces G q.1 rhs) :
+    rawLinearCorePreparedRhs G q = rhs :=
+  rawLinearCoreVariantProduces_functional
+    G
+    (rawLinearCorePreparedRhs_spec G q)
+    hproduce
 
 /--
 After unit elimination, a prepared rule is indexed by its copied root A and
