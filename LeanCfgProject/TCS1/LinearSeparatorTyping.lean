@@ -110,6 +110,13 @@ def lpmTyping :
     lpmTyping.h (lpmCore n e) = ee := by
   simp [lpmLetterType]
 
+/-- One-step evaluation of the concrete separator typing. -/
+@[simp] theorem lpmTyping_cons
+    (z : LpmSymbol) (w : Word LpmSymbol) :
+    lpmTyping.h (z :: w) =
+      lpmLetterType z * lpmTyping.h w := by
+  simp [lpmTyping]
+
 /-- Boundary letters are exactly the letters typed by the identity. -/
 def LpmBoundaryLetter (z : LpmSymbol) : Prop :=
   z = a ∨ z = b
@@ -126,28 +133,52 @@ theorem lpmTyping_eq_one_iff_boundary_only
   | nil =>
       simp [lpmTyping]
   | cons z w ih =>
-      change
-        lpmLetterType z * lpmTyping.h w = 1 ↔
-          LpmBoundaryLetter z ∧
-            ∀ t ∈ w, LpmBoundaryLetter t
-      cases z with
-      | a =>
-          simpa [lpmLetterType, LpmBoundaryLetter] using ih
-      | b =>
-          simpa [lpmLetterType, LpmBoundaryLetter] using ih
-      | c =>
-          cases htail : lpmTyping.h w <;>
-            simp [lpmLetterType, LpmBoundaryLetter,
-              LpmType.mul, htail]
-      | d =>
-          cases htail : lpmTyping.h w <;>
-            simp [lpmLetterType, LpmBoundaryLetter,
-              LpmType.mul, htail]
-      | e =>
-          cases htail : lpmTyping.h w <;>
-            simp [lpmLetterType, LpmBoundaryLetter,
-              LpmType.mul, htail]
-
+      constructor
+      · intro h
+        have hzw :
+            lpmLetterType z * lpmTyping.h w = 1 := by
+          simpa using h
+        have hz : LpmBoundaryLetter z := by
+          cases z with
+          | a => exact Or.inl rfl
+          | b => exact Or.inr rfl
+          | c =>
+              cases ht : lpmTyping.h w <;>
+                simp [lpmLetterType, LpmType.mul, ht] at hzw
+          | d =>
+              cases ht : lpmTyping.h w <;>
+                simp [lpmLetterType, LpmType.mul, ht] at hzw
+          | e =>
+              cases ht : lpmTyping.h w <;>
+                simp [lpmLetterType, LpmType.mul, ht] at hzw
+        have htail : lpmTyping.h w = 1 := by
+          rcases hz with hza | hzb
+          · subst z
+            simpa [lpmLetterType] using hzw
+          · subst z
+            simpa [lpmLetterType] using hzw
+        intro t ht
+        rcases List.mem_cons.mp ht with htz | htw
+        · subst t
+          exact hz
+        · exact (ih.mp htail) t htw
+      · intro hall
+        have hz : LpmBoundaryLetter z :=
+          hall z (by simp)
+        have htailBoundary :
+            ∀ t ∈ w, LpmBoundaryLetter t := by
+          intro t ht
+          exact hall t (by simp [ht])
+        have htail : lpmTyping.h w = 1 :=
+          ih.mpr htailBoundary
+        have hzw :
+            lpmLetterType z * lpmTyping.h w = 1 := by
+          rcases hz with hza | hzb
+          · subst z
+            simp [lpmLetterType, htail]
+          · subst z
+            simp [lpmLetterType, htail]
+        simpa using hzw
 
 end TCS1
 end LeanCfgProject
