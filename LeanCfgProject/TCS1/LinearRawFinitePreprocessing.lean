@@ -226,6 +226,51 @@ theorem rawLinearCorePreparedRhs_eq_of_produces
     (rawLinearCorePreparedRhs_spec G q)
     hproduce
 
+
+/--
+Classification of the chosen core RHS without dependent elimination on the
+finite subtype index.
+-/
+theorem rawLinearCorePreparedRhs_cases
+    (G : RawLinearIndexedCFG N α P)
+    (q : RawLinearCoreRuleIndex G) :
+    (∃ p : P,
+      ∃ rhs : PreparedLinearRhs N α,
+        q.1 = (p, false)
+        ∧
+        G.rhs p = RawLinearRhs.prepared rhs
+        ∧
+        rawLinearCorePreparedRhs G q = rhs)
+    ∨
+    (∃ p : P,
+      ∃ left : List α,
+      ∃ core : N,
+      ∃ right : List α,
+      ∃ hnonunit : left ≠ [] ∨ right ≠ [],
+        q.1 = (p, true)
+        ∧
+        G.rhs p =
+          RawLinearRhs.prepared
+            (PreparedLinearRhs.around
+              left core right hnonunit)
+        ∧
+        RawLinearNullable G core
+        ∧
+        rawLinearCorePreparedRhs G q =
+          droppedCorePreparedRhs
+            (N := N) left right hnonunit) := by
+  have hspec :=
+    rawLinearCorePreparedRhs_spec G q
+  cases hspec with
+  | keep p rhs hrhs =>
+      left
+      exact ⟨p, rhs, rfl, hrhs, rfl⟩
+  | drop p left core right hnonunit hrhs hnullable =>
+      right
+      exact
+        ⟨p, left, core, right, hnonunit,
+          rfl, hrhs, hnullable, rfl⟩
+
 /--
 After unit elimination, a prepared rule is indexed by its copied root A and
 one core-rule variant whose original lhs is unit-reachable from A.
