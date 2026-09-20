@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.FixedHSubstitutability
+import LeanCfgProject.TCS1.FixedHFiniteObstructions
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.ReconstructionSoundness
 import LeanCfgProject.TCS1.ReconstructionComplexityCounts
