@@ -94,7 +94,7 @@ Characteristic-data theorem for an arbitrary finite indexed linear CFG.
 For fixed H, the right-hand side is a polynomial in the original source
 encoding scale.
 -/
-set_option maxHeartbeats 1000000 in
+set_option maxHeartbeats 400000 in
 theorem indexedLinear_characteristic_package
     [DecidableEq α]
     (H : FixedFiniteMonoidHom α M)
@@ -145,6 +145,17 @@ theorem indexedLinear_characteristic_package
       (G.linearKeepEmpty hlinear S)
       (LinearConstructedWrapper Gp)
       hshape hsubNorm
+  have hsampleDef :
+      indexedLinearCanonicalSample
+          H G hlinear S
+        =
+      concreteLinearCanonicalSample
+        H
+        (LinearConstructedTerminalRule Gp)
+        (LinearConstructedBinaryRule Gp)
+        (linearConstructedStartRule Gp S)
+        (G.linearKeepEmpty hlinear S) := by
+    rfl
   constructor
   · calc
       BatchLanguage H
@@ -156,8 +167,8 @@ theorem indexedLinear_characteristic_package
           (LinearConstructedBinaryRule Gp)
           (linearConstructedStartRule Gp S)
           (G.linearKeepEmpty hlinear S) := by
-            simpa [indexedLinearCanonicalSample, Gp]
-              using hpack.1
+            rw [hsampleDef]
+            exact hpack.1
       _ =
       LeastClosedLanguage G.toMixedRules S := by
         simpa [Gp] using
@@ -180,8 +191,8 @@ theorem indexedLinear_characteristic_package
             (UntypedBinaryRuleIndex
               (LinearConstructedBinaryRule Gp))
             (Fintype.ofFinite _)) := by
-      simpa [indexedLinearCanonicalSample, Gp]
-        using hpack.2
+      rw [hsampleDef]
+      exact hpack.2
     have hpreparedEnvelope :
         linearCharacteristicEnvelope
           (Fintype.card M)
