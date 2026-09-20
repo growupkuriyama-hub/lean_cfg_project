@@ -53,6 +53,7 @@ import LeanCfgProject.TCS1.ShortestNonemptyPathBound
 import LeanCfgProject.TCS1.LinearSpineBounds
 import LeanCfgProject.TCS1.LinearSpineSemantic
 import LeanCfgProject.TCS1.LinearTypedShapeBridge
+import LeanCfgProject.TCS1.UntypedUsefulTrim
 import LeanCfgProject.TCS1.LinearNormalizationSize
 import LeanCfgProject.TCS1.LinearNormalizationPlan
 import LeanCfgProject.TCS1.PreparedLinearGrammarSemantics
