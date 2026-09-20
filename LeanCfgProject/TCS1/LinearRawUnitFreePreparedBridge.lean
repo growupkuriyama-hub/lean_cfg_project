@@ -254,22 +254,24 @@ theorem preparedDerives_to_rawLinearUnitFree
                     (fun h => h rfl)
                     (fun h => h rfl))
             | cons b rest =>
-                have hEq :
-                    b = head ∧ rest = tail := by
+                have hdropEq' :
+                    PreparedLinearRhs.terminals b rest =
+                      PreparedLinearRhs.terminals
+                        head tail := by
                   simpa [droppedCorePreparedRhs]
-                    using
-                      PreparedLinearRhs.terminals.inj
-                        hdropEq
-                rcases hEq with ⟨rfl, rfl⟩
+                    using hdropEq
+                cases hdropEq'
                 simpa using ddrop
         | cons a rest =>
-            have hEq :
-                a = head ∧ rest ++ right = tail := by
+            have hdropEq' :
+                PreparedLinearRhs.terminals
+                    a (rest ++ right)
+                  =
+                PreparedLinearRhs.terminals
+                  head tail := by
               simpa [droppedCorePreparedRhs]
-                using
-                  PreparedLinearRhs.terminals.inj
-                    hdropEq
-            rcases hEq with ⟨rfl, rfl⟩
+                using hdropEq
+            cases hdropEq'
             simpa using ddrop
 
   | @around q left core right hnonunit hrhs word child ih =>
