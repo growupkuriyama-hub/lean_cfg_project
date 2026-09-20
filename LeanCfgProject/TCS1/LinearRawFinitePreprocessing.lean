@@ -187,8 +187,12 @@ theorem rawLinearCorePreparedRhs_false
     G.rhs p =
       RawLinearRhs.prepared
         (rawLinearCorePreparedRhs G q) := by
-  rcases hvalid with ⟨rhs, hrhs⟩
-  simpa [rawLinearCorePreparedRhs] using hrhs
+  have hs :
+      G.rhs p =
+        RawLinearRhs.prepared
+          (Classical.choose hvalid) :=
+    Classical.choose_spec hvalid
+  simpa [rawLinearCorePreparedRhs] using hs
 
 /--
 Dropped-core variants decode to the terminal-only prepared RHS obtained from
