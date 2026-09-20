@@ -191,56 +191,6 @@ def rawLinearCorePreparedRhs
                   (N := N) left right hnonunit
 
 /--
-Original variants decode to the prepared RHS already stored in the raw source
-production.
--/
-theorem rawLinearCorePreparedRhs_false
-    (G : RawLinearIndexedCFG N α P)
-    (p : P)
-    (rhs : PreparedLinearRhs N α)
-    (hrhs :
-      G.rhs p = RawLinearRhs.prepared rhs) :
-    let hvalid :
-        RawLinearCoreVariantValid G (p, false) :=
-      ⟨rhs, hrhs⟩
-    rawLinearCorePreparedRhs G
-      (⟨(p, false), hvalid⟩ :
-        RawLinearCoreRuleIndex G)
-      =
-    rhs := by
-  cases rhs <;>
-    simp [rawLinearCorePreparedRhs, hrhs]
-
-/--
-Dropped-core variants decode to the terminal-only RHS obtained by deleting
-the nullable core.
--/
-theorem rawLinearCorePreparedRhs_true
-    (G : RawLinearIndexedCFG N α P)
-    (p : P)
-    (left : List α)
-    (core : N)
-    (right : List α)
-    (hnonunit : left ≠ [] ∨ right ≠ [])
-    (hrhs :
-      G.rhs p =
-        RawLinearRhs.prepared
-          (PreparedLinearRhs.around
-            left core right hnonunit))
-    (hnullable : RawLinearNullable G core) :
-    let hvalid :
-        RawLinearCoreVariantValid G (p, true) :=
-      ⟨left, core, right, hnonunit,
-        hrhs, hnullable⟩
-    rawLinearCorePreparedRhs G
-      (⟨(p, true), hvalid⟩ :
-        RawLinearCoreRuleIndex G)
-      =
-    droppedCorePreparedRhs
-      (N := N) left right hnonunit := by
-  simp [rawLinearCorePreparedRhs, hrhs]
-
-/--
 After unit elimination, a prepared rule is indexed by its copied root A and
 one core-rule variant whose original lhs is unit-reachable from A.
 -/
