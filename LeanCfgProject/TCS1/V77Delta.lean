@@ -1,10 +1,12 @@
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
+import LeanCfgProject.TCS1.FixedHRightQuotient
 import LeanCfgProject.TCS1.LinearSeparatorExample
 import LeanCfgProject.TCS1.LinearSeparatorTyping
 import LeanCfgProject.TCS1.LinearSeparatorDistribution
 import LeanCfgProject.TCS1.LinearSeparatorPowerContexts
 import LeanCfgProject.TCS1.LinearSeparatorFactorSlices
+import LeanCfgProject.TCS1.LinearSeparatorContextShape
 import LeanCfgProject.TCS1.ClarkCongruentialKernel
 
 /-!
