@@ -187,6 +187,85 @@ theorem rawLinearUnitFreeDerives_to_prepared
       simpa [rawLinearPreparedGrammar, q, coreq]
         using dq
 
+/-- The dropped-core prepared RHS realizes exactly the surviving context. -/
+theorem droppedCorePreparedRhs_realizes_iff
+    (L : N → Set (List α))
+    (left right : List α)
+    (hnonunit : left ≠ [] ∨ right ≠ [])
+    (word : List α) :
+    PreparedLinearRhs.realizes L
+        (droppedCorePreparedRhs
+          (N := N) left right hnonunit)
+        word
+      ↔
+    word = left ++ right := by
+  cases left with
+  | nil =>
+      cases right with
+      | nil =>
+          exact False.elim
+            (hnonunit.elim
+              (fun h => h rfl)
+              (fun h => h rfl))
+      | cons b rest =>
+          rfl
+  | cons a rest =>
+      simp [droppedCorePreparedRhs]
+
+/--
+One produced finite core variant acts soundly on the semantic unit-free
+language.  Keeping this lemma at the ambient (P × Bool) index avoids dependent
+elimination on the finite subtype index.
+-/
+theorem rawLinearCoreVariantProduces_realizes_to_unitFree
+    (G : RawLinearIndexedCFG N α P)
+    {slot : P × Bool}
+    {rhs : PreparedLinearRhs N α}
+    (hproduce :
+      RawLinearCoreVariantProduces G slot rhs)
+    {A : N}
+    (hreach :
+      RawLinearUnitReach G A (G.lhs slot.1))
+    {word : List α}
+    (hreal :
+      PreparedLinearRhs.realizes
+        (fun B => {u | RawLinearUnitFreeDerives G B u})
+        rhs word) :
+    RawLinearUnitFreeDerives G A word := by
+  cases hproduce with
+  | keep p rhs hrhs =>
+      cases rhs with
+      | terminals head tail =>
+          change word = head :: tail at hreal
+          subst word
+          exact
+            RawLinearUnitFreeDerives.terminals
+              A p head tail hreach hrhs
+      | around left core right hnonunit =>
+          change
+            ∃ z,
+              RawLinearUnitFreeDerives G core z
+              ∧
+              word = left ++ z ++ right
+            at hreal
+          rcases hreal with ⟨z, hz, rfl⟩
+          exact
+            RawLinearUnitFreeDerives.around
+              A p left core right hnonunit
+              hreach hrhs hz
+  | drop p left core right hnonunit hrhs hnullable =>
+      have hword :
+          word = left ++ right :=
+        (droppedCorePreparedRhs_realizes_iff
+          (N := N)
+          (fun B => {u | RawLinearUnitFreeDerives G B u})
+          left right hnonunit word).1 hreal
+      rw [hword]
+      exact
+        RawLinearUnitFreeDerives.dropCore
+          A p left core right hnonunit
+          hreach hrhs hnullable
+
 /--
 Every finite-prepared derivation expands to the semantic unit-free derivation
 relation.
@@ -203,127 +282,36 @@ theorem preparedDerives_to_rawLinearUnitFree
   | terminals q head tail hrhs =>
       rcases q with
         ⟨⟨A, coreq⟩, hreach⟩
-      have hcases :=
-        rawLinearCorePreparedRhs_cases
-          G coreq
+      change RawLinearUnitFreeDerives G A (head :: tail)
+      have hproduce :=
+        rawLinearCorePreparedRhs_spec G coreq
       change
         rawLinearCorePreparedRhs G coreq =
-          PreparedLinearRhs.terminals
-            head tail at hrhs
-      rcases hcases with hkeep | hdrop
-      · rcases hkeep with
-          ⟨p, rhs, hslot, hsource, hchosen⟩
-        have hreach' :
-            RawLinearUnitReach G A (G.lhs p) := by
-          simpa [rawLinearCoreRuleSource, hslot]
-            using hreach
-        have hrhsSource :
-            G.rhs p =
-              RawLinearRhs.prepared
-                (PreparedLinearRhs.terminals
-                  head tail) := by
-          rw [hsource, ← hchosen, hrhs]
-        exact
-          RawLinearUnitFreeDerives.terminals
-            A p head tail hreach' hrhsSource
-      · rcases hdrop with
-          ⟨p, left, core, right, hnonunit,
-            hslot, hsource, hnullable, hchosen⟩
-        have hreach' :
-            RawLinearUnitReach G A (G.lhs p) := by
-          simpa [rawLinearCoreRuleSource, hslot]
-            using hreach
-        have hdropEq :
-            droppedCorePreparedRhs
-                (N := N) left right hnonunit
-              =
-            PreparedLinearRhs.terminals
-              head tail := by
-          rw [← hchosen]
-          exact hrhs
-        have ddrop :=
-          RawLinearUnitFreeDerives.dropCore
-            A p left core right hnonunit
-            hreach' hsource hnullable
-        cases left with
-        | nil =>
-            cases right with
-            | nil =>
-                exact False.elim
-                  (hnonunit.elim
-                    (fun h => h rfl)
-                    (fun h => h rfl))
-            | cons b rest =>
-                have hdropEq' :
-                    PreparedLinearRhs.terminals b rest =
-                      PreparedLinearRhs.terminals
-                        head tail := by
-                  simpa [droppedCorePreparedRhs]
-                    using hdropEq
-                cases hdropEq'
-                simpa using ddrop
-        | cons a rest =>
-            have hdropEq' :
-                PreparedLinearRhs.terminals
-                    a (rest ++ right)
-                  =
-                PreparedLinearRhs.terminals
-                  head tail := by
-              simpa [droppedCorePreparedRhs]
-                using hdropEq
-            cases hdropEq'
-            simpa using ddrop
-
+          PreparedLinearRhs.terminals head tail
+        at hrhs
+      rw [hrhs] at hproduce
+      apply
+        rawLinearCoreVariantProduces_realizes_to_unitFree
+          G hproduce hreach
+      rfl
   | @around q left core right hnonunit hrhs word child ih =>
       rcases q with
         ⟨⟨A, coreq⟩, hreach⟩
-      have hcases :=
-        rawLinearCorePreparedRhs_cases
-          G coreq
+      change
+        RawLinearUnitFreeDerives G A
+          (left ++ word ++ right)
+      have hproduce :=
+        rawLinearCorePreparedRhs_spec G coreq
       change
         rawLinearCorePreparedRhs G coreq =
           PreparedLinearRhs.around
-            left core right hnonunit at hrhs
-      rcases hcases with hkeep | hdrop
-      · rcases hkeep with
-          ⟨p, rhs, hslot, hsource, hchosen⟩
-        have hreach' :
-            RawLinearUnitReach G A (G.lhs p) := by
-          simpa [rawLinearCoreRuleSource, hslot]
-            using hreach
-        have hrhsSource :
-            G.rhs p =
-              RawLinearRhs.prepared
-                (PreparedLinearRhs.around
-                  left core right hnonunit) := by
-          rw [hsource, ← hchosen, hrhs]
-        exact
-          RawLinearUnitFreeDerives.around
-            A p left core right hnonunit
-            hreach' hrhsSource ih
-      · rcases hdrop with
-          ⟨p, left', core', right', hnonunit',
-            hslot, hsource, hnullable, hchosen⟩
-        have himpossible :
-            droppedCorePreparedRhs
-                (N := N) left' right' hnonunit'
-              =
-            PreparedLinearRhs.around
-              left core right hnonunit := by
-          rw [← hchosen]
-          exact hrhs
-        cases left' with
-        | nil =>
-            cases right' with
-            | nil =>
-                exact False.elim
-                  (hnonunit'.elim
-                    (fun h => h rfl)
-                    (fun h => h rfl))
-            | cons b rest =>
-                cases himpossible
-        | cons a rest =>
-            cases himpossible
+            left core right hnonunit
+        at hrhs
+      rw [hrhs] at hproduce
+      apply
+        rawLinearCoreVariantProduces_realizes_to_unitFree
+          G hproduce hreach
+      exact ⟨word, ih, rfl⟩
 
 /-- Exact derivation equivalence for the finite prepared preprocessing output. -/
 theorem rawLinearUnitFreeDerives_iff_prepared
