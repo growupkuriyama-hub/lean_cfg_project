@@ -106,11 +106,14 @@ theorem rawLinearRhs_realizes_iff_mixed
         RhsRealizes L [Sum.inl B] word
       constructor
       · intro h
-        exact ⟨word, [], rfl, h, rfl⟩
+        exact ⟨word, [], by simp, h, rfl⟩
       · rintro ⟨left, right, hword, hleft, hright⟩
         have hrightNil : right = [] := hright
         subst right
-        simpa using hleft
+        have hw : word = left := by
+          simpa using hword
+        rw [hw]
+        exact hleft
   | prepared rhs =>
       exact
         preparedLinearRhs_realizes_iff_mixed
@@ -197,6 +200,10 @@ theorem indexedMixedCFG_rawClosed_iff_grammarClosed
     apply
       (rawLinearRhs_realizes_iff_mixed
         L ((G.toRawLinear hlinear).rhs p) word).2
+    change
+      RhsRealizes L
+        (indexedRawLinearRhs G hlinear p).toMixedRhs
+        word
     rw [indexedRawLinearRhs_toMixed]
     rw [hrhs]
     exact hreal
@@ -208,6 +215,10 @@ theorem indexedMixedCFG_rawClosed_iff_grammarClosed
         (rawLinearRhs_realizes_iff_mixed
           L ((G.toRawLinear hlinear).rhs p) word).1
           hreal
+      change
+        RhsRealizes L
+          (indexedRawLinearRhs G hlinear p).toMixedRhs
+          word at hmixed
       rw [indexedRawLinearRhs_toMixed] at hmixed
       exact hmixed
 
