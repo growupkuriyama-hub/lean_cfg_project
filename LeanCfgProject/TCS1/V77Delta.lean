@@ -12,6 +12,7 @@ import LeanCfgProject.TCS1.LinearSeparatorBalance
 import LeanCfgProject.TCS1.LinearSeparatorFixedH
 import LeanCfgProject.TCS1.LinearSeparatorProposition86
 import LeanCfgProject.TCS1.LinearSeparatorDisplayedGrammar
+import LeanCfgProject.TCS1.LinearSeparatorNonregular
 import LeanCfgProject.TCS1.ClarkCongruentialKernel
 
 /-!
