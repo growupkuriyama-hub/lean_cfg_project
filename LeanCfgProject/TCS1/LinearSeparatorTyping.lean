@@ -126,9 +126,27 @@ theorem lpmTyping_eq_one_iff_boundary_only
   | nil =>
       simp [lpmTyping]
   | cons z w ih =>
-      cases z <;>
-        simp [lpmTyping, lpmLetterType, LpmType.mul,
-          LpmBoundaryLetter, ih]
+      change
+        lpmLetterType z * lpmTyping.h w = 1 ↔
+          LpmBoundaryLetter z ∧
+            ∀ t ∈ w, LpmBoundaryLetter t
+      cases z with
+      | a =>
+          simpa [lpmLetterType, LpmBoundaryLetter] using ih
+      | b =>
+          simpa [lpmLetterType, LpmBoundaryLetter] using ih
+      | c =>
+          cases htail : lpmTyping.h w <;>
+            simp [lpmLetterType, LpmBoundaryLetter,
+              LpmType.mul, htail]
+      | d =>
+          cases htail : lpmTyping.h w <;>
+            simp [lpmLetterType, LpmBoundaryLetter,
+              LpmType.mul, htail]
+      | e =>
+          cases htail : lpmTyping.h w <;>
+            simp [lpmLetterType, LpmBoundaryLetter,
+              LpmType.mul, htail]
 
 
 end TCS1
