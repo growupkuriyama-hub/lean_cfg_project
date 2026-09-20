@@ -212,11 +212,9 @@ theorem rhsRealizes_terminalPrefix_iff
           ⟨suffix, htailEq, hsuffix⟩
         refine ⟨suffix, ?_, hsuffix⟩
         rw [hword, htailEq]
-        simp
       · rintro ⟨suffix, hword, hsuffix⟩
         refine ⟨rest ++ suffix, ?_, ?_⟩
         · rw [hword]
-          simp
         · exact
             (ih (rest ++ suffix)).2
               ⟨suffix, rfl, hsuffix⟩
@@ -240,8 +238,8 @@ theorem rhsRealizes_terminalWord_iff
     simpa using hword
   · intro hword
     subst word
-    apply h.mpr
-    exact ⟨[], by simp, rfl⟩
+    simpa using
+      h.mpr ⟨[], by simp, rfl⟩
 
 /--
 The prepared representation and the ordinary mixed RHS have exactly the same
@@ -267,24 +265,38 @@ theorem preparedLinearRhs_realizes_iff_mixed
   | around left core right hnonunit =>
       constructor
       · rintro ⟨z, hz, rfl⟩
-        apply
-          (rhsRealizes_terminalPrefix_iff
-            L left
-            ([Sum.inl core] ++
-              right.map Sum.inr)
-            (left ++ z ++ right)).2
-        refine ⟨z ++ right, by simp, ?_⟩
-        refine ⟨z, right, rfl, hz, ?_⟩
-        exact
-          (rhsRealizes_terminalWord_iff
-            L right right).2 rfl
+        have hp :
+            RhsRealizes L
+              (left.map Sum.inr ++
+                ([Sum.inl core] ++ right.map Sum.inr))
+              (left ++ z ++ right) := by
+          apply
+            (rhsRealizes_terminalPrefix_iff
+              L left
+              ([Sum.inl core] ++
+                right.map Sum.inr)
+              (left ++ z ++ right)).2
+          refine ⟨z ++ right, by simp, ?_⟩
+          refine ⟨z, right, rfl, hz, ?_⟩
+          exact
+            (rhsRealizes_terminalWord_iff
+              L right right).2 rfl
+        simpa [PreparedLinearRhs.toMixedRhs,
+          List.append_assoc] using hp
       · intro h
+        have h' :
+            RhsRealizes L
+              (left.map Sum.inr ++
+                ([Sum.inl core] ++ right.map Sum.inr))
+              word := by
+          simpa [PreparedLinearRhs.toMixedRhs,
+            List.append_assoc] using h
         have hp :=
           (rhsRealizes_terminalPrefix_iff
             L left
             ([Sum.inl core] ++
               right.map Sum.inr)
-            word).1 h
+            word).1 h'
         rcases hp with ⟨tail, hword, htail⟩
         rcases htail with
           ⟨z, suffix, htailEq, hz, hsuffix⟩
@@ -294,7 +306,8 @@ theorem preparedLinearRhs_realizes_iff_mixed
             L right suffix).1 hsuffix
         subst suffix
         subst tail
-        exact ⟨z, hz, by simpa [List.append_assoc] using hword⟩
+        exact ⟨z, hz,
+          by simpa [List.append_assoc] using hword⟩
 
 /--
 After empty and unit rules have been removed, every linear mixed RHS has a
