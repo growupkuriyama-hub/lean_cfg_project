@@ -129,6 +129,7 @@ import LeanCfgProject.TCS1.SeparatedStartSSBNF
 import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
+import LeanCfgProject.TCS1.ClarkCongruentialPackaging
 /-!
 # TCS #1 v77 Lean verification facade
 
@@ -155,5 +156,3 @@ theorem v77_facade_loaded : True :=
 
 end TCS1
 end LeanCfgProject
-
-import LeanCfgProject.TCS1.ClarkCongruentialPackaging
