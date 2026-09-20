@@ -112,6 +112,59 @@ theorem prefix_context_is_power
           simp [List.replicate_succ, Nat.add_comm]
 
 /--
+Generic right-shape lemma, obtained by reversing the word and reusing
+'prefix_context_is_power'.
+-/
+theorem suffix_context_is_power
+    (left right z z' : LpmSymbol)
+    (hzleft : z ≠ left)
+    {i j p q : Nat}
+    {u v : Word LpmSymbol}
+    (h :
+      u ++
+          (List.replicate i left ++ [z] ++
+            List.replicate j right) ++
+          v =
+        List.replicate p left ++ [z'] ++
+          List.replicate q right) :
+    ∃ n : Nat, v = List.replicate n right := by
+  have hrev :
+      v.reverse ++
+          (List.replicate j right ++ [z] ++
+            List.replicate i left) ++
+          u.reverse =
+        List.replicate q right ++ [z'] ++
+          List.replicate p left := by
+    have hr := congrArg List.reverse h
+    simpa [List.reverse_append, List.append_assoc] using hr
+  obtain ⟨n, hvrev⟩ :=
+    prefix_context_is_power
+      right left z z' hzleft
+      (i := j) (j := i) (p := q) (q := p)
+      (u := v.reverse) (v := u.reverse)
+      hrev
+  have hrv := congrArg List.reverse hvrev
+  refine ⟨n, ?_⟩
+  simpa using hrv
+
+/-- Elementary list decomposition used by the factor-shape proof. -/
+theorem exists_split_around_mem
+    {z : LpmSymbol}
+    {x : Word LpmSymbol}
+    (hzx : z ∈ x) :
+    ∃ l r : Word LpmSymbol, x = l ++ z :: r := by
+  induction x with
+  | nil =>
+      simp at hzx
+  | cons t x ih =>
+      simp only [List.mem_cons] at hzx
+      rcases hzx with rfl | hzx
+      · exact ⟨[], x, rfl⟩
+      · obtain ⟨l, r, hlr⟩ := ih hzx
+        refine ⟨t :: l, r, ?_⟩
+        simp [hlr]
+
+/--
 A center-containing factor inside an L_{±,e} word has a pure-a left context
 and a pure-b right context.
 -/
@@ -178,6 +231,80 @@ theorem lpm_distribution_context_shape
       v = List.replicate n b := by
   exact
     lpm_center_context_shape hz hctx
+/--
+Any factor of an L_{±,e} word that contains a specified center symbol has
+the canonical one-center shape a^i z b^j; the surrounding context is
+simultaneously a pure a-prefix and pure b-suffix.
+-/
+theorem lpm_factor_shape_of_center_mem
+    {u x v : Word LpmSymbol}
+    {z : LpmSymbol}
+    (hz : LpmCenterSymbol z)
+    (hzx : z ∈ x)
+    (hmem : u ++ x ++ v ∈ LpmLanguage) :
+    ∃ m i j n : Nat,
+      u = List.replicate m a ∧
+      x = lpmOneCenter i z j ∧
+      v = List.replicate n b := by
+  obtain ⟨xL, xR, hxsplit⟩ :=
+    exists_split_around_mem hzx
+  subst x
+  rcases hmem with ⟨N, z', hword, hacc⟩
+
+  have hwhole :
+      (u ++ xL) ++
+          ([] ++ [z] ++ []) ++
+          (xR ++ v) =
+        List.replicate N a ++ [z'] ++
+          List.replicate N b := by
+    simpa [lpmCore, List.append_assoc] using hword
+
+  obtain ⟨M, hprefix⟩ :=
+    prefix_context_is_power
+      a b z z' (center_ne_b hz)
+      (i := 0) (j := 0) (p := N) (q := N)
+      (u := u ++ xL) (v := xR ++ v)
+      hwhole
+  obtain ⟨K, hsuffix⟩ :=
+    suffix_context_is_power
+      a b z z' (center_ne_a hz)
+      (i := 0) (j := 0) (p := N) (q := N)
+      (u := u ++ xL) (v := xR ++ v)
+      hwhole
+
+  have hprefSub :
+      u ++ xL ⊆ [a] := by
+    rw [hprefix]
+    exact List.replicate_subset_singleton M a
+  have huSub : u ⊆ [a] := by
+    intro t ht
+    exact hprefSub (by simp [ht])
+  have hxLSub : xL ⊆ [a] := by
+    intro t ht
+    exact hprefSub (by simp [ht])
+  obtain ⟨m, hum⟩ :=
+    List.subset_singleton_iff.mp huSub
+  obtain ⟨i, hxLi⟩ :=
+    List.subset_singleton_iff.mp hxLSub
+
+  have hsufSub :
+      xR ++ v ⊆ [b] := by
+    rw [hsuffix]
+    exact List.replicate_subset_singleton K b
+  have hxRSub : xR ⊆ [b] := by
+    intro t ht
+    exact hsufSub (by simp [ht])
+  have hvSub : v ⊆ [b] := by
+    intro t ht
+    exact hsufSub (by simp [ht])
+  obtain ⟨j, hxRj⟩ :=
+    List.subset_singleton_iff.mp hxRSub
+  obtain ⟨n, hvn⟩ :=
+    List.subset_singleton_iff.mp hvSub
+
+  refine ⟨m, i, j, n, hum, ?_, hvn⟩
+  simp [lpmOneCenter, hxLi, hxRj]
+
 
 end TCS1
 end LeanCfgProject
