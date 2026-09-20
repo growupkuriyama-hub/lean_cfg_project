@@ -110,5 +110,26 @@ def lpmTyping :
     lpmTyping.h (lpmCore n e) = ee := by
   simp [lpmLetterType]
 
+/-- Boundary letters are exactly the letters typed by the identity. -/
+def LpmBoundaryLetter (z : LpmSymbol) : Prop :=
+  z = a ∨ z = b
+
+/--
+A word has h-type 1 exactly when it contains no center symbol.
+This is the first case distinction in the manuscript's fixed-h proof.
+-/
+theorem lpmTyping_eq_one_iff_boundary_only
+    (w : Word LpmSymbol) :
+    lpmTyping.h w = 1 ↔
+      ∀ z ∈ w, LpmBoundaryLetter z := by
+  induction w with
+  | nil =>
+      simp [lpmTyping]
+  | cons z w ih =>
+      cases z <;>
+        simp [lpmTyping, lpmLetterType, LpmType.mul,
+          LpmBoundaryLetter, ih]
+
+
 end TCS1
 end LeanCfgProject
