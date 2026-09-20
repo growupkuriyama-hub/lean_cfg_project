@@ -203,7 +203,7 @@ theorem indexedLinear_characteristic_package
         Gp.encodingScale ≤
           linearPreparedEncodingEnvelope
             G.linearNormalizationSourceScale := by
-      simpa [Gp] using
+      exact
         indexedLinear_preparedEncodingScale_le
           G hlinear
     have hmono :
