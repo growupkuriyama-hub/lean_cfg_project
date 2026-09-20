@@ -151,7 +151,7 @@ order in the generated terminal word.
     word ++ xs := by
   induction xs generalizing word with
   | nil =>
-      rfl
+      simp [rightLinearSteps, applyLinearSpineSteps]
   | cons a rest ih =>
       rw [show rightLinearSteps (a :: rest) =
           rightLinearSteps rest ++
