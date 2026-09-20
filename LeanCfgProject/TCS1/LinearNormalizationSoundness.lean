@@ -102,6 +102,35 @@ theorem untypedDerives_mem_of_linearClosed
   | binary hbin dB dC ihB ihC =>
       exact hclosed.binary hbin ihB ihC
 
+/-- Old states retain exactly the supplied source interpretation. -/
+@[simp] theorem linearOldState_mem_iff
+    (G : PreparedLinearIndexedCFG N α P)
+    (L : N → Set (List α))
+    (A : N)
+    (word : List α) :
+    word ∈
+        LinearConstructedInterpretation G L
+          (linearOldState G A)
+      ↔
+    word ∈ L A := by
+  rfl
+
+/-- Auxiliary state i denotes precisely the residual plan after step i. -/
+theorem linearAuxState_mem_iff
+    (G : PreparedLinearIndexedCFG N α P)
+    (L : N → Set (List α))
+    (p : P)
+    (i : Fin (G.rhs p).toPlan.steps.length)
+    (word : List α) :
+    word ∈
+        LinearConstructedInterpretation G L
+          (linearAuxState G p i)
+      ↔
+    word ∈
+        LinearPlanResidualLanguage L
+          (G.rhs p).toPlan (i.1 + 1) := by
+  rfl
+
 /--
 Membership of a planned continuing child is exactly the residual language
 after the current step.
@@ -121,25 +150,36 @@ theorem linearStepContinuation_mem_iff_residual
           (G.rhs p).toPlan (i.1 + 1) := by
   cases hend : (G.rhs p).toPlan.endpoint with
   | terminal a =>
-      simp [linearStepContinuation,
-        LinearConstructedInterpretation,
-        LinearPlanResidualLanguage,
-        linearAuxState, hend]
+      have hcont :
+          linearStepContinuation G p i =
+            linearAuxState G p i := by
+        simp [linearStepContinuation, hend]
+      rw [hcont]
+      exact linearAuxState_mem_iff G L p i word
   | core B =>
       by_cases hnext :
           i.1 + 1 < (G.rhs p).toPlan.steps.length
-      · simp [linearStepContinuation,
-          LinearConstructedInterpretation,
-          LinearPlanResidualLanguage,
-          hend, hnext]
+      · have hcont :
+            linearStepContinuation G p i =
+              linearAuxState G p i := by
+          simp [linearStepContinuation, hend, hnext]
+        rw [hcont]
+        exact linearAuxState_mem_iff G L p i word
       · have heq :
             i.1 + 1 =
               (G.rhs p).toPlan.steps.length := by
           omega
-        simp [linearStepContinuation,
-          LinearConstructedInterpretation,
-          LinearPlanResidualLanguage,
-          linearOldState, hend, hnext, heq]
+        have hcont :
+            linearStepContinuation G p i =
+              linearOldState G B := by
+          exact
+            linearStepContinuation_eq_core_of_last
+              G p i B hend heq
+        rw [hcont, linearOldState_mem_iff]
+        unfold LinearPlanResidualLanguage
+        rw [hend, heq]
+        simp [LinearPlanEndpoint.realizes,
+          applyLinearSpineSteps]
 
 /--
 Away from the first step, a planned step parent denotes the residual language
@@ -162,9 +202,10 @@ theorem linearStepParent_mem_iff_residual
   have hidx :
       i.1 - 1 + 1 = i.1 := by
     omega
-  simp [linearStepParent, hpos,
-    LinearConstructedInterpretation,
-    linearAuxState, hidx]
+  unfold linearStepParent
+  rw [dif_neg hpos]
+  rw [linearAuxState_mem_iff]
+  simpa [hidx]
 
 /--
 The canonical residual interpretation is closed under all concrete factorized
