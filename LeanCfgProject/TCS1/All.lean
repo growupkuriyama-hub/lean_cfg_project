@@ -74,6 +74,7 @@ import LeanCfgProject.TCS1.LinearRawUnitFreePreparedBridge
 import LeanCfgProject.TCS1.IndexedLinearNormalizationFacade
 import LeanCfgProject.TCS1.IndexedLinearNormalizationSize
 import LeanCfgProject.TCS1.IndexedLinearNormalizationTheorem
+import LeanCfgProject.TCS1.IndexedLinearReducedNormalization
 import LeanCfgProject.TCS1.IndexedLinearCharacteristicData
 import LeanCfgProject.TCS1.LinearRawFinitePreprocessing
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
