@@ -113,7 +113,6 @@ theorem lpmLinearDerives_shape
       · refine Or.inl ⟨m + 1, ?_⟩
         rw [lpmCore_succ]
         congr 1
-        omega
   | odd_d =>
       exact Or.inl ⟨0, by simp [lpmCore]⟩
   | @odd_wrap_ev w der ih =>
@@ -131,7 +130,6 @@ theorem lpmLinearDerives_shape
       · refine Or.inl ⟨m + 1, ?_⟩
         rw [lpmCore_succ]
         congr 1
-        omega
   | ee_e =>
       exact ⟨0, by simp [lpmCore]⟩
   | @ee_wrap w der ih =>
