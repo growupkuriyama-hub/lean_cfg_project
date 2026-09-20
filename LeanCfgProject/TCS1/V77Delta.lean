@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
+import LeanCfgProject.TCS1.FixedHFiniteObstructions
 
 /-!
 # TCS #1 v77 delta verification facade
