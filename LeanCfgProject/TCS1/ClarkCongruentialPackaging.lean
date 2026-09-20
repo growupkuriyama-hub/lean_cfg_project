@@ -144,8 +144,13 @@ theorem activeUntypedDerives_to_clarkPackaged
   induction d with
   | terminal hterm =>
       exact BinaryNullableDerives.terminal hterm
-  | binary hbin _ _ ihB ihC =>
-      exact BinaryNullableDerives.binary hbin ihB ihC
+  | @binary A B C wB wC hbin dB dC ihB ihC =>
+      have hpack :
+          (clarkPackagedGrammar
+            H terminalRule binaryRule startRule epsilonStart).binaryRule
+            (some A) (some B) (some C) := by
+        simpa [clarkPackagedGrammar] using hbin
+      exact BinaryNullableDerives.binary hpack ihB ihC
 
 /--
 Shape of every packaged derivation.  The fresh symbol derives only epsilon;
@@ -277,7 +282,7 @@ theorem clarkPackaged_language_eq_reducedTyped
 
 /-- The packaged initial set is finite whenever the source nonterminal set is finite. -/
 theorem clarkPackagedInitial_finite
-    [Fintype N]
+    [Finite N]
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
@@ -402,7 +407,7 @@ Paper-facing finite-initial-set form of the fixed-h-to-congruential inclusion
 for a finite start-separated SSBNF presentation.
 -/
 theorem fixedH_has_Clark_congruential_packaging
-    [Fintype N]
+    [Finite N]
     (H : FixedFiniteMonoidHom α M)
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
