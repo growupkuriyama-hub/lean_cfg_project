@@ -48,12 +48,16 @@ theorem fixedWindowSubstitutable_of_fixedHSubstitutable
           hpos p q y₁ y₂ hp hq
     · have hk : k = 0 := by omega
       have hl : l = 0 := by omega
-      subst k
-      subst l
-      exact
+      have hw₁ne' : w₁ ≠ [] := by
+        simpa [w₁] using hw₁ne
+      have hw₂ne' : w₂ ≠ [] := by
+        simpa [w₂] using hw₂ne
+      have hzero :
+          SameFixedWindowSummary 0 0 w₁ w₂ :=
         zero_words_sameFixedWindowSummary
-          (List.length_pos_of_ne_nil hw₁ne)
-          (List.length_pos_of_ne_nil hw₂ne)
+          (List.length_pos_of_ne_nil hw₁ne')
+          (List.length_pos_of_ne_nil hw₂ne')
+      simpa [hk, hl] using hzero
   have htype :
       (fixedWindowMonoidHom (α := α) k l).h w₁ =
         (fixedWindowMonoidHom (α := α) k l).h w₂ := by
