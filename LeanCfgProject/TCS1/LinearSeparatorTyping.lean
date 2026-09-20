@@ -92,24 +92,23 @@ def lpmTyping :
     (n : Nat) (z : LpmSymbol) :
     lpmTyping.h (lpmCore n z) =
       lpmLetterType z := by
-  rw [lpmTyping.map_append]
-  rw [lpmTyping.map_append]
-  simp [lpmCore, lpmTyping, lpmLetterType]
+  simp [lpmCore, lpmTyping, lpmLetterType,
+    List.map_append, List.prod_append]
 
 @[simp] theorem lpmTyping_core_c
     (n : Nat) :
     lpmTyping.h (lpmCore n c) = cd := by
-  simp
+  simp [lpmLetterType]
 
 @[simp] theorem lpmTyping_core_d
     (n : Nat) :
     lpmTyping.h (lpmCore n d) = cd := by
-  simp
+  simp [lpmLetterType]
 
 @[simp] theorem lpmTyping_core_e
     (n : Nat) :
     lpmTyping.h (lpmCore n e) = ee := by
-  simp
+  simp [lpmLetterType]
 
 end TCS1
 end LeanCfgProject
