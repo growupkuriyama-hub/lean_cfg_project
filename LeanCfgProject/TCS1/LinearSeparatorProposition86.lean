@@ -5,12 +5,14 @@ import LeanCfgProject.TCS1.LinearSeparatorFixedH
 /-!
 # TCS #1 v78: Proposition 8.6 separation package
 
-This facade bundles the parts of Proposition 8.6 that are currently verified
-inside Lean: the concrete four-element fixed-h positive result, failure of
-Clark--Eyraud substitutability, and failure of every fixed (k,l) window.
+This facade bundles the Lean verification of Proposition 8.6.  It includes
+the concrete prepared linear-CFG witness, exact generated-language equality,
+Mathlib regular-language nonregularity, the four-element fixed-h positive
+result, failure of Clark--Eyraud substitutability, and failure of every fixed
+(k,l) window.
 
-The displayed linear grammar and the external nonregularity argument are kept
-as separate targets; this theorem does not overstate those two components.
+The smaller theorem below keeps the substitutability claims available as a
+standalone core; the final theorem packages all semantic components together.
 -/
 
 namespace LeanCfgProject
