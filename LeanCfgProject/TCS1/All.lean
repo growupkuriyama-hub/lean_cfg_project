@@ -130,6 +130,7 @@ import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
 import LeanCfgProject.TCS1.ClarkCongruentialPackaging
+import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 /-!
 # TCS #1 v77 Lean verification facade
 
