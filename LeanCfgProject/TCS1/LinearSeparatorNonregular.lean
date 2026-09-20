@@ -17,7 +17,13 @@ open LpmSymbol
 
 /-- L_{±,e} viewed through Mathlib's formal-language API. -/
 def LpmFormalLanguage : Language LpmSymbol :=
-  LpmLanguage
+  { w | w ∈ LpmLanguage }
+
+@[simp] theorem mem_LpmFormalLanguage
+    (w : Word LpmSymbol) :
+    w ∈ LpmFormalLanguage ↔
+      w ∈ LpmLanguage := by
+  rfl
 
 /-- The left quotients by the prefixes a^n are pairwise distinct. -/
 theorem lpm_leftQuotient_prefix_injective :
@@ -50,14 +56,21 @@ theorem lpm_leftQuotient_prefix_injective :
           (List.replicate n a) := by
     rw [← hmn']
     exact hm
+  have hnFormal :
+      List.replicate n a ++ suffix ∈
+        LpmFormalLanguage := by
+    exact hn
+  have hnSet :
+      List.replicate n a ++ suffix ∈
+        LpmLanguage :=
+    (mem_LpmFormalLanguage
+      (List.replicate n a ++ suffix)).1
+      hnFormal
   have hnmem :
       lpmOneCenter n e m ∈
         LpmLanguage := by
-    change
-      List.replicate n a ++ suffix ∈
-        LpmFormalLanguage at hn
-    simpa [LpmFormalLanguage, suffix, lpmOneCenter,
-      List.append_assoc] using hn
+    simpa [suffix, lpmOneCenter,
+      List.append_assoc] using hnSet
   exact
     ((lpmOneCenter_e_mem_iff n m).1 hnmem).symm
 
