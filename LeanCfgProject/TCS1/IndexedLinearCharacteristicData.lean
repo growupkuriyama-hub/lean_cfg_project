@@ -94,6 +94,7 @@ Characteristic-data theorem for an arbitrary finite indexed linear CFG.
 For fixed H, the right-hand side is a polynomial in the original source
 encoding scale.
 -/
+set_option maxHeartbeats 1000000 in
 theorem indexedLinear_characteristic_package
     [DecidableEq α]
     (H : FixedFiniteMonoidHom α M)
