@@ -71,6 +71,37 @@ inductive TypedDerives
       TypedDerives H terminalRule binaryRule (C, ν) wC →
       TypedDerives H terminalRule binaryRule (A, μ * ν) (wB ++ wC)
 
+/-- Every non-start SSBNF derivation has a nonempty terminal yield. -/
+theorem untypedDerives_length_pos
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N}
+    {w : Word α}
+    (d : UntypedDerives terminalRule binaryRule A w) :
+    0 < w.length := by
+  induction d with
+  | terminal hterm =>
+      simp
+  | @binary A B C wB wC hbin dB dC ihB ihC =>
+      simp only [List.length_append]
+      omega
+
+/-- Typed non-start derivations also have nonempty terminal yields. -/
+theorem typedDerives_length_pos
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {X : N × M}
+    {w : Word α}
+    (d : TypedDerives H terminalRule binaryRule X w) :
+    0 < w.length := by
+  induction d with
+  | terminal hterm =>
+      simp
+  | @binary A B C μ ν wB wC hbin dB dC ihB ihC =>
+      simp only [List.length_append]
+      omega
+
 /-- Erasing type annotations sends a typed derivation to an untyped one. -/
 theorem typedDerives_erase
     (H : FixedFiniteMonoidHom α M)
