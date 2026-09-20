@@ -326,6 +326,7 @@ theorem linearPlanEndpoint_realizes_constructed_iff
       ↔
     LinearPlanEndpointConstructedDerivable
       G p word := by
+  unfold LinearPlanEndpointConstructedDerivable
   cases (G.rhs p).toPlan.endpoint <;> rfl
 
 /--
