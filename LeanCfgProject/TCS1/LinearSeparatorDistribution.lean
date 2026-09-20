@@ -35,8 +35,28 @@ theorem lpmOneCenter_c_mem_iff
       i = j ∧ i % 2 = 0 := by
   constructor
   · rintro ⟨n, z', hword, hacc⟩
-    cases z' <;>
-      simp_all [lpmOneCenter, lpmCore, LpmAccepted]
+    cases z' with
+    | a =>
+        simp [LpmAccepted] at hacc
+    | b =>
+        simp [LpmAccepted] at hacc
+    | c =>
+        have ha := congrArg (List.count a) hword
+        have hb := congrArg (List.count b) hword
+        have hin : i = n := by
+          simpa [lpmOneCenter, lpmCore] using ha
+        have hjn : j = n := by
+          simpa [lpmOneCenter, lpmCore] using hb
+        refine ⟨hin.trans hjn.symm, ?_⟩
+        simpa [hin] using hacc
+    | d =>
+        have hc := congrArg (List.count c) hword
+        exfalso
+        simpa [lpmOneCenter, lpmCore] using hc
+    | e =>
+        have hc := congrArg (List.count c) hword
+        exfalso
+        simpa [lpmOneCenter, lpmCore] using hc
   · rintro ⟨rfl, heven⟩
     simpa [lpmOneCenter, lpmCore] using
       (lpmCore_mem_iff i c).2 heven
@@ -48,8 +68,28 @@ theorem lpmOneCenter_d_mem_iff
       i = j ∧ i % 2 = 1 := by
   constructor
   · rintro ⟨n, z', hword, hacc⟩
-    cases z' <;>
-      simp_all [lpmOneCenter, lpmCore, LpmAccepted]
+    cases z' with
+    | a =>
+        simp [LpmAccepted] at hacc
+    | b =>
+        simp [LpmAccepted] at hacc
+    | c =>
+        have hd := congrArg (List.count d) hword
+        exfalso
+        simpa [lpmOneCenter, lpmCore] using hd
+    | d =>
+        have ha := congrArg (List.count a) hword
+        have hb := congrArg (List.count b) hword
+        have hin : i = n := by
+          simpa [lpmOneCenter, lpmCore] using ha
+        have hjn : j = n := by
+          simpa [lpmOneCenter, lpmCore] using hb
+        refine ⟨hin.trans hjn.symm, ?_⟩
+        simpa [hin] using hacc
+    | e =>
+        have hd := congrArg (List.count d) hword
+        exfalso
+        simpa [lpmOneCenter, lpmCore] using hd
   · rintro ⟨rfl, hodd⟩
     simpa [lpmOneCenter, lpmCore] using
       (lpmCore_mem_iff i d).2 hodd
@@ -61,8 +101,27 @@ theorem lpmOneCenter_e_mem_iff
       i = j := by
   constructor
   · rintro ⟨n, z', hword, hacc⟩
-    cases z' <;>
-      simp_all [lpmOneCenter, lpmCore, LpmAccepted]
+    cases z' with
+    | a =>
+        simp [LpmAccepted] at hacc
+    | b =>
+        simp [LpmAccepted] at hacc
+    | c =>
+        have heq := congrArg (List.count e) hword
+        exfalso
+        simpa [lpmOneCenter, lpmCore] using heq
+    | d =>
+        have heq := congrArg (List.count e) hword
+        exfalso
+        simpa [lpmOneCenter, lpmCore] using heq
+    | e =>
+        have ha := congrArg (List.count a) hword
+        have hb := congrArg (List.count b) hword
+        have hin : i = n := by
+          simpa [lpmOneCenter, lpmCore] using ha
+        have hjn : j = n := by
+          simpa [lpmOneCenter, lpmCore] using hb
+        exact hin.trans hjn.symm
   · intro hij
     subst j
     simpa [lpmOneCenter, lpmCore] using
@@ -79,9 +138,19 @@ theorem lpm_power_context_word
         List.replicate n b =
       lpmOneCenter (m + i) z (j + n) := by
   unfold lpmOneCenter
-  rw [List.replicate_add m i a]
-  rw [List.replicate_add j n b]
-  simp [List.append_assoc]
+  calc
+    List.replicate m a ++
+          (List.replicate i a ++ [z] ++ List.replicate j b) ++
+          List.replicate n b =
+        (List.replicate m a ++ List.replicate i a) ++
+          [z] ++
+          (List.replicate j b ++ List.replicate n b) := by
+            simp [List.append_assoc]
+    _ =
+        List.replicate (m + i) a ++
+          [z] ++
+          List.replicate (j + n) b := by
+            rw [← List.replicate_add, ← List.replicate_add]
 
 
 
