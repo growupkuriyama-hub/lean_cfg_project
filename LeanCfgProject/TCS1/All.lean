@@ -1,5 +1,8 @@
 import LeanCfgProject.TCS1.FixedHSubstitutability
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
+import LeanCfgProject.TCS1.LinearSeparatorExample
+import LeanCfgProject.TCS1.LinearSeparatorTyping
+import LeanCfgProject.TCS1.ClarkCongruentialKernel
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.ReconstructionSoundness
 import LeanCfgProject.TCS1.ReconstructionComplexityCounts
