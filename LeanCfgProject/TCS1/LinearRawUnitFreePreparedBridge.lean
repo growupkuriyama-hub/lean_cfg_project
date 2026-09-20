@@ -210,7 +210,7 @@ theorem droppedCorePreparedRhs_realizes_iff
       | cons b rest =>
           rfl
   | cons a rest =>
-      simp [droppedCorePreparedRhs]
+      rfl
 
 /--
 One produced finite core variant acts soundly on the semantic unit-free
