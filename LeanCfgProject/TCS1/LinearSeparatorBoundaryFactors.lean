@@ -48,7 +48,7 @@ theorem lpm_boundary_factor_shape
     rw [hword]
     simp [lpmCore]
   have hzcases :
-      z' ∈ u ∨ z' ∈ x ∨ z' ∈ v := by
+      (z' ∈ u ∨ z' ∈ x) ∨ z' ∈ v := by
     simpa only [List.mem_append] using hzwhole
   have hznotx : z' ∉ x := by
     intro hzx
@@ -56,7 +56,7 @@ theorem lpm_boundary_factor_shape
       center_not_boundary hzcenter
         (hboundary z' hzx)
 
-  rcases hzcases with hzu | hzx | hzv
+  rcases hzcases with (hzu | hzx) | hzv
   · obtain ⟨uL, uR, husplit⟩ :=
       exists_split_around_mem hzu
     have hmarker :
