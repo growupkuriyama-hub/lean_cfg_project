@@ -38,6 +38,16 @@ instance : Monoid LpmType where
   mul_assoc x y z := by
     cases x <;> cases y <;> cases z <;> rfl
 
+/-- Multiplying a center type on the left can never return the identity. -/
+theorem cd_mul_ne_one (t : LpmType) :
+    cd * t ≠ 1 := by
+  cases t <;> decide
+
+/-- The e-center type likewise never returns the identity on the left. -/
+theorem ee_mul_ne_one (t : LpmType) :
+    ee * t ≠ 1 := by
+  cases t <;> decide
+
 end LpmType
 
 open LpmSymbol LpmType
@@ -143,14 +153,17 @@ theorem lpmTyping_eq_one_iff_boundary_only
           | a => exact Or.inl rfl
           | b => exact Or.inr rfl
           | c =>
-              cases ht : lpmTyping.h w <;>
-                simp [lpmLetterType, LpmType.mul, ht] at hzw
+              exact False.elim
+                (LpmType.cd_mul_ne_one
+                  (lpmTyping.h w) hzw)
           | d =>
-              cases ht : lpmTyping.h w <;>
-                simp [lpmLetterType, LpmType.mul, ht] at hzw
+              exact False.elim
+                (LpmType.cd_mul_ne_one
+                  (lpmTyping.h w) hzw)
           | e =>
-              cases ht : lpmTyping.h w <;>
-                simp [lpmLetterType, LpmType.mul, ht] at hzw
+              exact False.elim
+                (LpmType.ee_mul_ne_one
+                  (lpmTyping.h w) hzw)
         have htail : lpmTyping.h w = 1 := by
           rcases hz with hza | hzb
           · subst z
