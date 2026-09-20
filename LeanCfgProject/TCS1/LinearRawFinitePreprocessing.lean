@@ -173,30 +173,7 @@ theorem rawLinearCoreVariantProduces_functional
     (h₁ : RawLinearCoreVariantProduces G q rhs₁)
     (h₂ : RawLinearCoreVariantProduces G q rhs₂) :
     rhs₁ = rhs₂ := by
-  cases h₁ with
-  | keep p rhs hrhs =>
-      cases h₂ with
-      | keep p' rhs' hrhs' =>
-          have hsource :
-              RawLinearRhs.prepared rhs =
-                RawLinearRhs.prepared rhs' :=
-            hrhs.symm.trans hrhs'
-          cases hsource
-          rfl
-  | drop p left core right hnonunit hrhs hnullable =>
-      cases h₂ with
-      | drop p' left' core' right' hnonunit' hrhs' hnullable' =>
-          have hsource :
-              RawLinearRhs.prepared
-                  (PreparedLinearRhs.around
-                    left core right hnonunit)
-                =
-              RawLinearRhs.prepared
-                  (PreparedLinearRhs.around
-                    left' core' right' hnonunit') :=
-            hrhs.symm.trans hrhs'
-          cases hsource
-          rfl
+  cases h₁ <;> cases h₂ <;> simp_all
 
 /-- Prepared RHS represented by one valid finite core-rule variant. -/
 noncomputable def rawLinearCorePreparedRhs
@@ -259,17 +236,28 @@ theorem rawLinearCorePreparedRhs_cases
         rawLinearCorePreparedRhs G q =
           droppedCorePreparedRhs
             (N := N) left right hnonunit) := by
-  have hspec :=
-    rawLinearCorePreparedRhs_spec G q
-  cases hspec with
-  | keep p rhs hrhs =>
-      left
-      exact ⟨p, rhs, rfl, hrhs, rfl⟩
-  | drop p left core right hnonunit hrhs hnullable =>
-      right
-      exact
-        ⟨p, left, core, right, hnonunit,
-          rfl, hrhs, hnullable, rfl⟩
+  rcases q with ⟨⟨p, variant⟩, hvalid⟩
+  cases variant with
+  | false =>
+      have hspec :=
+        rawLinearCorePreparedRhs_spec G
+          (⟨(p, false), hvalid⟩ :
+            RawLinearCoreRuleIndex G)
+      cases hspec with
+      | keep p' rhs hrhs =>
+          left
+          exact ⟨p, rhs, rfl, hrhs, rfl⟩
+  | true =>
+      have hspec :=
+        rawLinearCorePreparedRhs_spec G
+          (⟨(p, true), hvalid⟩ :
+            RawLinearCoreRuleIndex G)
+      cases hspec with
+      | drop p' left core right hnonunit hrhs hnullable =>
+          right
+          exact
+            ⟨p, left, core, right, hnonunit,
+              rfl, hrhs, hnullable, rfl⟩
 
 /--
 After unit elimination, a prepared rule is indexed by its copied root A and
