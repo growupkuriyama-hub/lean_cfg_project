@@ -32,7 +32,7 @@ variable {N : Type u}
 variable {α : Type v}
 
 /-- Encoded-size proxy for the useful-state terminal/binary presentation. -/
-def untypedUsefulGrammarSize
+noncomputable def untypedUsefulGrammarSize
     [Fintype N] [Fintype α]
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
