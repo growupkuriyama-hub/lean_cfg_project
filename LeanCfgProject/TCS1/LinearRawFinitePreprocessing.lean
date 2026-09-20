@@ -145,101 +145,100 @@ def rawLinearCoreRuleSource
     (q : RawLinearCoreRuleIndex G) : P :=
   q.1.1
 
-/-- Prepared RHS represented by one valid core-rule variant. -/
-noncomputable def rawLinearCorePreparedRhs
+/-- Prepared RHS represented by one valid core-rule variant.
+
+The source RHS itself is inspected, so no arbitrary witness choice remains in
+the rule semantics.  The validity proof is used only to discharge impossible
+branches.
+-/
+def rawLinearCorePreparedRhs
     (G : RawLinearIndexedCFG N α P)
     (q : RawLinearCoreRuleIndex G) :
     PreparedLinearRhs N α := by
   rcases q with ⟨⟨p, variant⟩, hvalid⟩
   cases variant with
   | false =>
-      exact Classical.choose hvalid
+      cases hraw : G.rhs p with
+      | epsilon =>
+          have hfalse : False := by
+            simpa [RawLinearCoreVariantValid, hraw] using hvalid
+          exact hfalse.elim
+      | unit B =>
+          have hfalse : False := by
+            simpa [RawLinearCoreVariantValid, hraw] using hvalid
+          exact hfalse.elim
+      | prepared rhs =>
+          exact rhs
   | true =>
-      let left : List α :=
-        Classical.choose hvalid
-      let h₁ :=
-        Classical.choose_spec hvalid
-      let core : N :=
-        Classical.choose h₁
-      let h₂ :=
-        Classical.choose_spec h₁
-      let right : List α :=
-        Classical.choose h₂
-      let h₃ :=
-        Classical.choose_spec h₂
-      let hnonunit : left ≠ [] ∨ right ≠ [] :=
-        Classical.choose h₃
-      exact
-        droppedCorePreparedRhs
-          (N := N) left right hnonunit
+      cases hraw : G.rhs p with
+      | epsilon =>
+          have hfalse : False := by
+            simpa [RawLinearCoreVariantValid, hraw] using hvalid
+          exact hfalse.elim
+      | unit B =>
+          have hfalse : False := by
+            simpa [RawLinearCoreVariantValid, hraw] using hvalid
+          exact hfalse.elim
+      | prepared rhs =>
+          cases rhs with
+          | terminals head tail =>
+              have hfalse : False := by
+                simpa [RawLinearCoreVariantValid, hraw] using hvalid
+              exact hfalse.elim
+          | around left core right hnonunit =>
+              exact
+                droppedCorePreparedRhs
+                  (N := N) left right hnonunit
 
 /--
-Original variants decode to the unique prepared RHS already stored in the raw
-source production.
+Original variants decode to the prepared RHS already stored in the raw source
+production.
 -/
 theorem rawLinearCorePreparedRhs_false
     (G : RawLinearIndexedCFG N α P)
     (p : P)
-    (hvalid :
-      RawLinearCoreVariantValid G (p, false)) :
-    let q : RawLinearCoreRuleIndex G :=
-      ⟨(p, false), hvalid⟩
-    G.rhs p =
-      RawLinearRhs.prepared
-        (rawLinearCorePreparedRhs G q) := by
-  have hs :
-      G.rhs p =
-        RawLinearRhs.prepared
-          (Classical.choose hvalid) :=
-    Classical.choose_spec hvalid
-  simpa [rawLinearCorePreparedRhs] using hs
+    (rhs : PreparedLinearRhs N α)
+    (hrhs :
+      G.rhs p = RawLinearRhs.prepared rhs) :
+    let hvalid :
+        RawLinearCoreVariantValid G (p, false) :=
+      ⟨rhs, hrhs⟩
+    rawLinearCorePreparedRhs G
+      (⟨(p, false), hvalid⟩ :
+        RawLinearCoreRuleIndex G)
+      =
+    rhs := by
+  cases rhs <;>
+    simp [rawLinearCorePreparedRhs, hrhs]
 
 /--
-Dropped-core variants decode to the terminal-only prepared RHS obtained from
-their nullable-core source rule.
+Dropped-core variants decode to the terminal-only RHS obtained by deleting
+the nullable core.
 -/
 theorem rawLinearCorePreparedRhs_true
     (G : RawLinearIndexedCFG N α P)
     (p : P)
-    (hvalid :
-      RawLinearCoreVariantValid G (p, true)) :
-    ∃ left : List α,
-    ∃ core : N,
-    ∃ right : List α,
-    ∃ hnonunit : left ≠ [] ∨ right ≠ [],
+    (left : List α)
+    (core : N)
+    (right : List α)
+    (hnonunit : left ≠ [] ∨ right ≠ [])
+    (hrhs :
       G.rhs p =
         RawLinearRhs.prepared
           (PreparedLinearRhs.around
-            left core right hnonunit)
-      ∧
-      RawLinearNullable G core
-      ∧
-      rawLinearCorePreparedRhs G
-        (⟨(p, true), hvalid⟩ :
-          RawLinearCoreRuleIndex G)
-        =
-      droppedCorePreparedRhs
-        (N := N) left right hnonunit := by
-  let left : List α :=
-    Classical.choose hvalid
-  let h₁ :=
-    Classical.choose_spec hvalid
-  let core : N :=
-    Classical.choose h₁
-  let h₂ :=
-    Classical.choose_spec h₁
-  let right : List α :=
-    Classical.choose h₂
-  let h₃ :=
-    Classical.choose_spec h₂
-  let hnonunit : left ≠ [] ∨ right ≠ [] :=
-    Classical.choose h₃
-  let h₄ :=
-    Classical.choose_spec h₃
-  refine
-    ⟨left, core, right, hnonunit,
-      h₄.1, h₄.2, ?_⟩
-  rfl
+            left core right hnonunit))
+    (hnullable : RawLinearNullable G core) :
+    let hvalid :
+        RawLinearCoreVariantValid G (p, true) :=
+      ⟨left, core, right, hnonunit,
+        hrhs, hnullable⟩
+    rawLinearCorePreparedRhs G
+      (⟨(p, true), hvalid⟩ :
+        RawLinearCoreRuleIndex G)
+      =
+    droppedCorePreparedRhs
+      (N := N) left right hnonunit := by
+  simp [rawLinearCorePreparedRhs, hrhs]
 
 /--
 After unit elimination, a prepared rule is indexed by its copied root A and
