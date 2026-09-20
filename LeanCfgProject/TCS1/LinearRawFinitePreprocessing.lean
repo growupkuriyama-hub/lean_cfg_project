@@ -236,28 +236,27 @@ theorem rawLinearCorePreparedRhs_cases
         rawLinearCorePreparedRhs G q =
           droppedCorePreparedRhs
             (N := N) left right hnonunit) := by
-  rcases q with ⟨⟨p, variant⟩, hvalid⟩
-  cases variant with
-  | false =>
-      have hspec :=
-        rawLinearCorePreparedRhs_spec G
-          (⟨(p, false), hvalid⟩ :
-            RawLinearCoreRuleIndex G)
-      cases hspec with
-      | keep p' rhs hrhs =>
-          left
-          exact ⟨p, rhs, rfl, hrhs, rfl⟩
-  | true =>
-      have hspec :=
-        rawLinearCorePreparedRhs_spec G
-          (⟨(p, true), hvalid⟩ :
-            RawLinearCoreRuleIndex G)
-      cases hspec with
-      | drop p' left core right hnonunit hrhs hnullable =>
-          right
-          exact
-            ⟨p, left, core, right, hnonunit,
-              rfl, hrhs, hnullable, rfl⟩
+  obtain ⟨rhs, hproduce⟩ := q.2
+  cases hproduce with
+  | keep p rhs hrhs =>
+      left
+      refine ⟨p, rhs, rfl, hrhs, ?_⟩
+      exact
+        rawLinearCorePreparedRhs_eq_of_produces
+          G q
+          (RawLinearCoreVariantProduces.keep
+            p rhs hrhs)
+  | drop p left core right hnonunit hrhs hnullable =>
+      right
+      refine
+        ⟨p, left, core, right, hnonunit,
+          rfl, hrhs, hnullable, ?_⟩
+      exact
+        rawLinearCorePreparedRhs_eq_of_produces
+          G q
+          (RawLinearCoreVariantProduces.drop
+            p left core right hnonunit
+            hrhs hnullable)
 
 /--
 After unit elimination, a prepared rule is indexed by its copied root A and
