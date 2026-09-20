@@ -69,6 +69,7 @@ import LeanCfgProject.TCS1.LinearRawPreprocessing
 import LeanCfgProject.TCS1.LinearRawEpsilonUnitSemantics
 import LeanCfgProject.TCS1.LinearRawPreprocessingFacade
 import LeanCfgProject.TCS1.LinearRawUnitFreePreparedBridge
+import LeanCfgProject.TCS1.IndexedLinearNormalizationFacade
 import LeanCfgProject.TCS1.LinearRawFinitePreprocessing
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
 import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
