@@ -108,6 +108,18 @@ def linearSourceCharacteristicEnvelope
   linearCharacteristicEnvelope
     m g (g ^ 2) (g ^ 3)
 
+/-- The source-only characteristic envelope is monotone in the grammar scale. -/
+theorem linearSourceCharacteristicEnvelope_mono
+    {m g g' : Nat}
+    (hgg' : g ≤ g') :
+    linearSourceCharacteristicEnvelope m g ≤
+      linearSourceCharacteristicEnvelope m g' := by
+  unfold linearSourceCharacteristicEnvelope
+  apply linearCharacteristicEnvelope_mono
+  · exact hgg'
+  · exact Nat.pow_le_pow_left hgg' 2
+  · exact Nat.pow_le_pow_left hgg' 3
+
 /--
 For the actual specialized linear normalization, the internal characteristic
 envelope is bounded by the source-scale envelope.
