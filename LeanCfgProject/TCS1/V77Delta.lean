@@ -9,6 +9,7 @@ import LeanCfgProject.TCS1.LinearSeparatorFactorSlices
 import LeanCfgProject.TCS1.LinearSeparatorContextShape
 import LeanCfgProject.TCS1.LinearSeparatorBoundaryFactors
 import LeanCfgProject.TCS1.LinearSeparatorBalance
+import LeanCfgProject.TCS1.LinearSeparatorFixedH
 import LeanCfgProject.TCS1.ClarkCongruentialKernel
 
 /-!
