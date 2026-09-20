@@ -70,7 +70,7 @@ theorem lpmPreparedDerives_to_displayed
           exact LpmLinearDerives.ev_c
       | evWrap =>
           change
-            PreparedLinearRhs.around [a] .odd [b] _ =
+            PreparedLinearRhs.around [a] LpmLinearNT.odd [b] _ =
               PreparedLinearRhs.terminals head tail at hrhs
           cases hrhs
       | oddD =>
@@ -81,7 +81,7 @@ theorem lpmPreparedDerives_to_displayed
           exact LpmLinearDerives.odd_d
       | oddWrap =>
           change
-            PreparedLinearRhs.around [a] .ev [b] _ =
+            PreparedLinearRhs.around [a] LpmLinearNT.ev [b] _ =
               PreparedLinearRhs.terminals head tail at hrhs
           cases hrhs
       | eeE =>
@@ -92,7 +92,7 @@ theorem lpmPreparedDerives_to_displayed
           exact LpmLinearDerives.ee_e
       | eeWrap =>
           change
-            PreparedLinearRhs.around [a] .ee [b] _ =
+            PreparedLinearRhs.around [a] LpmLinearNT.ee [b] _ =
               PreparedLinearRhs.terminals head tail at hrhs
           cases hrhs
   | @around p left core right hnonunit hrhs word child ih =>
@@ -105,11 +105,11 @@ theorem lpmPreparedDerives_to_displayed
           cases hrhs
       | evWrap =>
           change
-            PreparedLinearRhs.around [a] .odd [b] _ =
+            PreparedLinearRhs.around [a] LpmLinearNT.odd [b] _ =
               PreparedLinearRhs.around
                 left core right hnonunit at hrhs
           cases hrhs
-          simpa using
+          simpa [lpmPreparedLinearGrammar] using
             LpmLinearDerives.ev_wrap_odd ih
       | oddD =>
           change
@@ -119,11 +119,11 @@ theorem lpmPreparedDerives_to_displayed
           cases hrhs
       | oddWrap =>
           change
-            PreparedLinearRhs.around [a] .ev [b] _ =
+            PreparedLinearRhs.around [a] LpmLinearNT.ev [b] _ =
               PreparedLinearRhs.around
                 left core right hnonunit at hrhs
           cases hrhs
-          simpa using
+          simpa [lpmPreparedLinearGrammar] using
             LpmLinearDerives.odd_wrap_ev ih
       | eeE =>
           change
@@ -133,11 +133,11 @@ theorem lpmPreparedDerives_to_displayed
           cases hrhs
       | eeWrap =>
           change
-            PreparedLinearRhs.around [a] .ee [b] _ =
+            PreparedLinearRhs.around [a] LpmLinearNT.ee [b] _ =
               PreparedLinearRhs.around
                 left core right hnonunit at hrhs
           cases hrhs
-          simpa using
+          simpa [lpmPreparedLinearGrammar] using
             LpmLinearDerives.ee_wrap ih
 
 /-- Every displayed derivation is realized by the generic prepared grammar. -/
@@ -158,7 +158,7 @@ theorem lpmDisplayedDerives_to_prepared
           LpmLinearProd.evWrap [a]
           LpmLinearNT.odd [b]
           (by simp) rfl ih
-      simpa using h
+      simpa [lpmPreparedLinearGrammar] using h
   | odd_d =>
       exact
         PreparedLinearDerives.terminals
@@ -169,7 +169,7 @@ theorem lpmDisplayedDerives_to_prepared
           LpmLinearProd.oddWrap [a]
           LpmLinearNT.ev [b]
           (by simp) rfl ih
-      simpa using h
+      simpa [lpmPreparedLinearGrammar] using h
   | ee_e =>
       exact
         PreparedLinearDerives.terminals
@@ -180,7 +180,7 @@ theorem lpmDisplayedDerives_to_prepared
           LpmLinearProd.eeWrap [a]
           LpmLinearNT.ee [b]
           (by simp) rfl ih
-      simpa using h
+      simpa [lpmPreparedLinearGrammar] using h
 
 theorem lpmPreparedDerives_iff_displayed
     (A : LpmLinearNT)
