@@ -153,11 +153,22 @@ noncomputable def rawLinearCorePreparedRhs
   rcases q with ⟨⟨p, variant⟩, hvalid⟩
   cases variant with
   | false =>
-      rcases hvalid with ⟨rhs, hrhs⟩
-      exact rhs
+      exact Classical.choose hvalid
   | true =>
-      rcases hvalid with
-        ⟨left, core, right, hnonunit, hrhs, hnullable⟩
+      let left : List α :=
+        Classical.choose hvalid
+      let h₁ :=
+        Classical.choose_spec hvalid
+      let core : N :=
+        Classical.choose h₁
+      let h₂ :=
+        Classical.choose_spec h₁
+      let right : List α :=
+        Classical.choose h₂
+      let h₃ :=
+        Classical.choose_spec h₂
+      let hnonunit : left ≠ [] ∨ right ≠ [] :=
+        Classical.choose h₃
       exact
         droppedCorePreparedRhs
           (N := N) left right hnonunit
@@ -205,11 +216,25 @@ theorem rawLinearCorePreparedRhs_true
         =
       droppedCorePreparedRhs
         (N := N) left right hnonunit := by
-  rcases hvalid with
-    ⟨left, core, right, hnonunit, hrhs, hnullable⟩
+  let left : List α :=
+    Classical.choose hvalid
+  let h₁ :=
+    Classical.choose_spec hvalid
+  let core : N :=
+    Classical.choose h₁
+  let h₂ :=
+    Classical.choose_spec h₁
+  let right : List α :=
+    Classical.choose h₂
+  let h₃ :=
+    Classical.choose_spec h₂
+  let hnonunit : left ≠ [] ∨ right ≠ [] :=
+    Classical.choose h₃
+  let h₄ :=
+    Classical.choose_spec h₃
   refine
     ⟨left, core, right, hnonunit,
-      hrhs, hnullable, ?_⟩
+      h₄.1, h₄.2, ?_⟩
   rfl
 
 /--
