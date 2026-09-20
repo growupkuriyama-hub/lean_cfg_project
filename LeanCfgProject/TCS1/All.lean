@@ -13,6 +13,7 @@ import LeanCfgProject.TCS1.LinearSeparatorFixedH
 import LeanCfgProject.TCS1.LinearSeparatorProposition86
 import LeanCfgProject.TCS1.LinearSeparatorDisplayedGrammar
 import LeanCfgProject.TCS1.LinearSeparatorNonregular
+import LeanCfgProject.TCS1.LinearSeparatorPreparedGrammar
 import LeanCfgProject.TCS1.ClarkCongruentialKernel
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.ReconstructionSoundness
