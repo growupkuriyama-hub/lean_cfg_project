@@ -137,7 +137,28 @@ theorem lpm_power_context_word
         lpmOneCenter i z j ++
         List.replicate n b =
       lpmOneCenter (m + i) z (j + n) := by
-  simp [lpmOneCenter, List.replicate_add, List.append_assoc]
+  unfold lpmOneCenter
+  have ha :
+      List.replicate m a ++ List.replicate i a =
+        List.replicate (m + i) a :=
+    (List.replicate_add m i a).symm
+  have hb :
+      List.replicate j b ++ List.replicate n b =
+        List.replicate (j + n) b :=
+    (List.replicate_add j n b).symm
+  calc
+    List.replicate m a ++
+          (List.replicate i a ++ [z] ++ List.replicate j b) ++
+          List.replicate n b =
+        (List.replicate m a ++ List.replicate i a) ++
+          [z] ++
+          (List.replicate j b ++ List.replicate n b) := by
+            simp only [List.append_assoc]
+    _ =
+        List.replicate (m + i) a ++
+          [z] ++
+          List.replicate (j + n) b := by
+            rw [ha, hb]
 
 
 
