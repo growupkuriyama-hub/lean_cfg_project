@@ -54,21 +54,6 @@ theorem lpm_e_power_context_transfer
   rw [lpm_power_context_e_mem_iff, lpm_power_context_e_mem_iff]
   omega
 
-/--
-For c/d centers, equality of balance together with equality of the parity
-constraint transfers every pure-power context.
--/
-theorem lpm_cd_power_context_transfer
-    {z z' : LpmSymbol}
-    (hz : z = c ∨ z = d)
-    (hz' : z' = c ∨ z' = d)
-    {i j i' j' m n : Nat}
-    (hbal : i + j' = i' + j)
-    (hphase :
-      ((i % 2 = 0) ↔ (i' % 2 = 0)) ↔
-      (z = z')) :
-    True := by
-  trivial
 
 end TCS1
 end LeanCfgProject
