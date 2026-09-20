@@ -28,33 +28,45 @@ def lpmOneCenter
     lpmOneCenter n z n = lpmCore n z := by
   rfl
 
-/--
-A one-center word belongs to L_{±,e} exactly when its two exponents agree
-and the center/parity condition is accepted.
--/
-theorem lpmOneCenter_mem_iff
-    (i j : Nat) (z : LpmSymbol) :
-    lpmOneCenter i z j ∈ LpmLanguage ↔
-      i = j ∧ LpmAccepted i z := by
+/-- Exact membership for the even-parity center c. -/
+theorem lpmOneCenter_c_mem_iff
+    (i j : Nat) :
+    lpmOneCenter i c j ∈ LpmLanguage ↔
+      i = j ∧ i % 2 = 0 := by
   constructor
   · rintro ⟨n, z', hword, hacc⟩
-    have ha :=
-      congrArg (List.count a) hword
-    have hb :=
-      congrArg (List.count b) hword
-    have hc :=
-      congrArg (List.count c) hword
-    have hd :=
-      congrArg (List.count d) hword
-    have he :=
-      congrArg (List.count e) hword
-    cases z <;> cases z' <;>
-      simp_all [lpmOneCenter, lpmCore, LpmAccepted] <;>
-      omega
-  · rintro ⟨hij, hacc⟩
+    cases z' <;>
+      simp_all [lpmOneCenter, lpmCore, LpmAccepted]
+  · rintro ⟨rfl, heven⟩
+    simpa [lpmOneCenter, lpmCore] using
+      (lpmCore_mem_iff i c).2 heven
+
+/-- Exact membership for the odd-parity center d. -/
+theorem lpmOneCenter_d_mem_iff
+    (i j : Nat) :
+    lpmOneCenter i d j ∈ LpmLanguage ↔
+      i = j ∧ i % 2 = 1 := by
+  constructor
+  · rintro ⟨n, z', hword, hacc⟩
+    cases z' <;>
+      simp_all [lpmOneCenter, lpmCore, LpmAccepted]
+  · rintro ⟨rfl, hodd⟩
+    simpa [lpmOneCenter, lpmCore] using
+      (lpmCore_mem_iff i d).2 hodd
+
+/-- Exact membership for the parity-free center e. -/
+theorem lpmOneCenter_e_mem_iff
+    (i j : Nat) :
+    lpmOneCenter i e j ∈ LpmLanguage ↔
+      i = j := by
+  constructor
+  · rintro ⟨n, z', hword, hacc⟩
+    cases z' <;>
+      simp_all [lpmOneCenter, lpmCore, LpmAccepted]
+  · intro hij
     subst j
     simpa [lpmOneCenter, lpmCore] using
-      (lpmCore_mem_iff i z).2 hacc
+      lpm_e_mem i
 
 /--
 Adding a pure-a context on the left and a pure-b context on the right just
@@ -72,3 +84,6 @@ theorem lpm_power_context_word
   simp [List.append_assoc]
 
 
+
+end TCS1
+end LeanCfgProject
