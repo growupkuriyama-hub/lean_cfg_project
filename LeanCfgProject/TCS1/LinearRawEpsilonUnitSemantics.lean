@@ -223,19 +223,21 @@ theorem rawLinearEpsilonFreeDerives_nonempty
       simp
   | @around p left core right hnonunit hrhs word child ih =>
       intro hnil
-      have hwordNil : word = [] := by
-        apply List.eq_nil_of_append_eq_nil_left
-        exact List.eq_nil_of_append_eq_nil_left hnil
-      exact ih hwordNil
+      have houter :
+          left ++ word = [] ∧ right = [] :=
+        List.append_eq_nil_iff.mp hnil
+      have hinner :
+          left = [] ∧ word = [] :=
+        List.append_eq_nil_iff.mp houter.1
+      exact ih hinner.2
   | dropCore p left core right hnonunit hrhs hnullable =>
       intro hnil
-      have hleft : left = [] :=
-        List.eq_nil_of_append_eq_nil_left hnil
-      have hright : right = [] :=
-        List.eq_nil_of_append_eq_nil_right hnil
+      have hparts :
+          left = [] ∧ right = [] :=
+        List.append_eq_nil_iff.mp hnil
       exact hnonunit.elim
-        (fun h => h hleft)
-        (fun h => h hright)
+        (fun h => h hparts.1)
+        (fun h => h hparts.2)
 
 /-- Every nonempty raw derivation survives epsilon elimination. -/
 theorem rawLinearDerives_to_epsilonFree
