@@ -42,8 +42,10 @@ theorem singleton_fixedHSubstitutable
     simpa only [Set.mem_singleton_iff] using hy
   have hctx : u ++ x ++ v = u ++ y ++ v :=
     hxw.trans hyw.symm
+  have hctx' : u ++ (x ++ v) = u ++ (y ++ v) := by
+    simpa [List.append_assoc] using hctx
   have hxyv : x ++ v = y ++ v :=
-    List.append_cancel_left hctx
+    List.append_cancel_left hctx'
   have hxy : x = y :=
     List.append_cancel_right hxyv
   subst y
@@ -76,7 +78,7 @@ theorem exists_distinct_nonempty_same_fixedH_type
   · intro hwords
     have hlen := congrArg List.length hwords
     simp at hlen
-    exact hnm (Nat.add_left_cancel hlen)
+    exact hnm hlen
   · simpa [f] using htype
 
 /-- The three-word finite counter used in the v77 Section 3 argument. -/
