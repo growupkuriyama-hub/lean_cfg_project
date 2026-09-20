@@ -15,6 +15,7 @@ import LeanCfgProject.TCS1.LinearSeparatorDisplayedGrammar
 import LeanCfgProject.TCS1.LinearSeparatorNonregular
 import LeanCfgProject.TCS1.LinearSeparatorPreparedGrammar
 import LeanCfgProject.TCS1.ClarkCongruentialKernel
+import LeanCfgProject.TCS1.ClarkCongruentialPackaging
 
 /-!
 # TCS #1 v77 delta verification facade
@@ -33,5 +34,3 @@ theorem v77_delta_facade_loaded : True :=
 
 end TCS1
 end LeanCfgProject
-
-import LeanCfgProject.TCS1.ClarkCongruentialPackaging
