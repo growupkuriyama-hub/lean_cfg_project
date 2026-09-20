@@ -1,22 +1,91 @@
 import LeanCfgProject.TCS1.FixedHSubstitutability
 import LeanCfgProject.TCS1.YieldTypedRefinementCore
 import LeanCfgProject.TCS1.ReconstructionSoundness
+import LeanCfgProject.TCS1.ReconstructionComplexityCounts
+import LeanCfgProject.TCS1.ReconstructionFiniteCandidateSpaces
+import LeanCfgProject.TCS1.BatchLanguageMonotonicity
 import LeanCfgProject.TCS1.CanonicalWitnessCompleteness
 import LeanCfgProject.TCS1.ConservativeGoldKernel
 import LeanCfgProject.TCS1.WitnessSetConstruction
+import LeanCfgProject.TCS1.CanonicalWitnessCounting
 import LeanCfgProject.TCS1.ReducednessWitnessChoices
+import LeanCfgProject.TCS1.MinimalReducedWitnessChoices
 import LeanCfgProject.TCS1.GoldConvergenceClosure
+import LeanCfgProject.TCS1.GoldCharacteristicBridge
+import LeanCfgProject.TCS1.ConcreteConservativeLearner
+import LeanCfgProject.TCS1.ConcreteLearnerComplexity
+import LeanCfgProject.TCS1.TrivialTargetEndpoints
+import LeanCfgProject.TCS1.IndexedGoldBridge
+import LeanCfgProject.TCS1.IndexedConcreteGoldLearner
+import LeanCfgProject.TCS1.IndexedFixedHBridge
 
 import LeanCfgProject.TCS1.SSBNFThicknessBounds
 import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
 import LeanCfgProject.TCS1.FrontEndSizeCombinatorics
 import LeanCfgProject.TCS1.FixedWindowCharacteristicDataBounds
+import LeanCfgProject.TCS1.FixedWindowCharacteristicDataFacade
 import LeanCfgProject.TCS1.FixedWindowTreeCombinatorics
+import LeanCfgProject.TCS1.FixedWindowSummarySemantic
+import LeanCfgProject.TCS1.FixedWindowConcreteSummary
+import LeanCfgProject.TCS1.FixedWindowConcreteMonoid
+import LeanCfgProject.TCS1.FixedWindowClassicalSubstitutability
+import LeanCfgProject.TCS1.ZeroWindowEndpoint
+import LeanCfgProject.TCS1.FixedWindowConcreteCharacteristicData
+import LeanCfgProject.TCS1.FixedWindowSection7Package
+import LeanCfgProject.TCS1.FixedWindowBoundarySemantic
+import LeanCfgProject.TCS1.MarkedBoundaryKernel
+import LeanCfgProject.TCS1.MarkedBoundaryNormalization
+import LeanCfgProject.TCS1.MarkedBoundaryGapSemantic
+import LeanCfgProject.TCS1.MarkedBoundaryGapNormalization
+import LeanCfgProject.TCS1.MarkedBoundaryExpansion
+import LeanCfgProject.TCS1.MarkedBoundarySelection
+import LeanCfgProject.TCS1.FixedWindowBoundaryMarking
+import LeanCfgProject.TCS1.FixedWindowTreeSurgeryFacade
+import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
+import LeanCfgProject.TCS1.SuccessfulTypedTrimClosureBridge
+import LeanCfgProject.TCS1.FixedWindowLemma72Facade
+import LeanCfgProject.TCS1.FixedWindowReducedContextFacade
+import LeanCfgProject.TCS1.ActiveTypedReachabilityBridge
+import LeanCfgProject.TCS1.ConcreteTypedTrimming
+import LeanCfgProject.TCS1.ConcreteTypedTrimLanguage
+import LeanCfgProject.TCS1.ReducedTypedRuleBridge
 import LeanCfgProject.TCS1.ShortestNonemptyPathBound
+import LeanCfgProject.TCS1.LinearSpineBounds
+import LeanCfgProject.TCS1.LinearSpineSemantic
+import LeanCfgProject.TCS1.LinearTypedShapeBridge
+import LeanCfgProject.TCS1.UntypedUsefulTrim
+import LeanCfgProject.TCS1.UntypedUsefulTrimSize
+import LeanCfgProject.TCS1.LinearNormalizationSize
+import LeanCfgProject.TCS1.LinearNormalizationPlan
+import LeanCfgProject.TCS1.PreparedLinearGrammarSemantics
+import LeanCfgProject.TCS1.LinearNormalizationRules
+import LeanCfgProject.TCS1.LinearNormalizationSoundness
+import LeanCfgProject.TCS1.LinearNormalizationCompleteness
+import LeanCfgProject.TCS1.PreparedLinearNormalizationFacade
+import LeanCfgProject.TCS1.LinearMixedRhsDecomposition
+import LeanCfgProject.TCS1.LinearIndexedPreprocessedBridge
+import LeanCfgProject.TCS1.LinearConstructedStartLanguage
+import LeanCfgProject.TCS1.IndexedPreprocessedLinearCharacteristicData
+import LeanCfgProject.TCS1.LinearCharacteristicSourceBounds
+import LeanCfgProject.TCS1.LinearRawPreprocessing
+import LeanCfgProject.TCS1.LinearRawEpsilonUnitSemantics
+import LeanCfgProject.TCS1.LinearRawPreprocessingFacade
+import LeanCfgProject.TCS1.LinearRawUnitFreePreparedBridge
+import LeanCfgProject.TCS1.IndexedLinearNormalizationFacade
+import LeanCfgProject.TCS1.IndexedLinearNormalizationSize
+import LeanCfgProject.TCS1.IndexedLinearNormalizationTheorem
+import LeanCfgProject.TCS1.IndexedLinearReducedNormalization
+import LeanCfgProject.TCS1.IndexedLinearCharacteristicData
+import LeanCfgProject.TCS1.LinearRawFinitePreprocessing
+import LeanCfgProject.TCS1.LinearReducedWitnessBridge
+import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
+import LeanCfgProject.TCS1.ConcreteLinearCharacteristicData
+import LeanCfgProject.TCS1.LinearCanonicalWitnessBounds
 import LeanCfgProject.TCS1.ShortestNonemptySpineSemantic
 import LeanCfgProject.TCS1.FiniteSupportSpineBound
 import LeanCfgProject.TCS1.BinaryGrammarFiniteRestriction
 import LeanCfgProject.TCS1.FixedWindowContextPathBound
+import LeanCfgProject.TCS1.FixedWindowContextSemantic
 
 import LeanCfgProject.TCS1.TerminalIsolationKernel
 import LeanCfgProject.TCS1.LeastClosedCFGLanguage
@@ -32,6 +101,11 @@ import LeanCfgProject.TCS1.FiniteCFGEncoding
 import LeanCfgProject.TCS1.IndexedClosedFrontSupport
 import LeanCfgProject.TCS1.IndexedFrontRuleClosure
 import LeanCfgProject.TCS1.IndexedNormalizationFacade
+import LeanCfgProject.TCS1.EpsilonFreeProductiveTrim
+import LeanCfgProject.TCS1.IndexedConcreteSSBNFNormalization
+import LeanCfgProject.TCS1.IndexedNormalizationLanguage
+import LeanCfgProject.TCS1.IndexedNormalizationCounts
+import LeanCfgProject.TCS1.IndexedSection7Bridge
 import LeanCfgProject.TCS1.NormalizationLanguageBounds
 import LeanCfgProject.TCS1.BinaryEpsilonElimination
 import LeanCfgProject.TCS1.BinaryUnitElimination
@@ -43,10 +117,10 @@ import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
 /-!
-# TCS #1 v66 Lean verification facade
+# TCS #1 v68 Lean verification facade
 
 This module imports every theorem-facing kernel maintained for the current
-TCS #1 working baseline. Building this one target is the fast integration
+TCS #1 v68 working baseline. Building this one target is the fast integration
 check; CI separately rejects placeholder proofs and project-level axiom declarations
 inside the TCS1 namespace.
 -/
@@ -54,8 +128,12 @@ inside the TCS1 namespace.
 namespace LeanCfgProject
 namespace TCS1
 
-/-- Marker theorem for the integrated v66 verification facade. -/
+/-- Compatibility marker for the integrated v66 verification facade. -/
 theorem v66_facade_loaded : True :=
+  True.intro
+
+/-- Marker theorem for the integrated v68 verification facade. -/
+theorem v68_facade_loaded : True :=
   True.intro
 
 end TCS1

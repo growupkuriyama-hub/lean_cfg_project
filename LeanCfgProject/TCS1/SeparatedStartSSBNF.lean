@@ -85,8 +85,12 @@ theorem reducedDerives_to_separated
       exact False.elim h
   | unit h _ _ =>
       exact False.elim h
-  | binary h _ _ ihB ihC =>
-      exact BinaryNullableDerives.binary h ihB ihC
+  | @binary A B C wB wC h _ _ ihB ihC =>
+      have h' :
+          (separatedStartGrammar G start keepEmpty).binaryRule
+            (some A) (some B) (some C) := by
+        simpa [separatedStartGrammar] using h
+      exact BinaryNullableDerives.binary h' ihB ihC
 
 /--
 Shape theorem for every separated-start derivation.  At none, a derivation is

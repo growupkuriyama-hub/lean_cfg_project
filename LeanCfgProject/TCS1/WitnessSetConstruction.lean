@@ -405,6 +405,64 @@ theorem canonicalWitnessWords_completeness
     (canonicalWitnessData_of_subset
       H K terminalRule binaryRule startRule epsilonStart Active C hWK)
 
+/--
+The explicit canonical witness finset is itself a characteristic sample for
+the reduced typed target, for any valid reduced witness choices.
+
+Minimality of the choices is irrelevant to exact reconstruction; it is used
+only for the quantitative Section 7 bounds.
+-/
+theorem exact_reconstruction_of_canonicalWitnessFinset
+    [Fintype α] [Fintype N]
+    (H : FixedFiniteMonoidHom α M)
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    (startRule : N → Prop)
+    (epsilonStart : Prop)
+    (Active : N × M → Prop)
+    (C :
+      ReducedWitnessChoices
+        H terminalRule binaryRule startRule epsilonStart Active)
+    (hsub :
+      FixedHSubstitutable H
+        (ReducedTypedLanguage
+          H terminalRule binaryRule startRule epsilonStart Active)) :
+    BatchLanguage H
+        (canonicalWitnessFinset
+          H terminalRule binaryRule startRule epsilonStart Active C)
+      =
+    ReducedTypedLanguage
+      H terminalRule binaryRule startRule epsilonStart Active := by
+  classical
+  apply Set.Subset.antisymm
+  · apply
+      batchLanguage_sound
+        H
+        (canonicalWitnessFinset
+          H terminalRule binaryRule startRule epsilonStart Active C)
+        (ReducedTypedLanguage
+          H terminalRule binaryRule startRule epsilonStart Active)
+    · intro word hword
+      apply
+        canonicalWitnessWords_subset_target
+          H terminalRule binaryRule startRule epsilonStart Active C
+      exact
+        (mem_canonicalWitnessFinset_iff
+          H terminalRule binaryRule startRule epsilonStart Active C word).1
+          hword
+    · exact hsub
+  · apply
+      canonicalWitnessWords_completeness
+        H
+        (canonicalWitnessFinset
+          H terminalRule binaryRule startRule epsilonStart Active C)
+        terminalRule binaryRule startRule epsilonStart Active C
+    intro word hword
+    exact
+      (mem_canonicalWitnessFinset_iff
+        H terminalRule binaryRule startRule epsilonStart Active C word).2
+        hword
+
 end WitnessSetConstruction
 
 end TCS1
