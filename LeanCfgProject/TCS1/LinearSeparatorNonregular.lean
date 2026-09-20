@@ -38,19 +38,28 @@ theorem lpm_leftQuotient_prefix_injective :
         LpmLanguage
     simpa [lpmOneCenter, List.append_assoc] using
       (lpmOneCenter_e_mem_iff m m).2 rfl
+  have hmn' :
+      LpmFormalLanguage.leftQuotient
+          (List.replicate m a) =
+        LpmFormalLanguage.leftQuotient
+          (List.replicate n a) := by
+    simpa using hmn
   have hn :
       suffix ∈
         LpmFormalLanguage.leftQuotient
           (List.replicate n a) := by
-    rw [← hmn]
+    rw [← hmn']
     exact hm
   have hnmem :
       lpmOneCenter n e m ∈
         LpmLanguage := by
-    simpa [suffix, lpmOneCenter,
+    change
+      List.replicate n a ++ suffix ∈
+        LpmFormalLanguage at hn
+    simpa [LpmFormalLanguage, suffix, lpmOneCenter,
       List.append_assoc] using hn
   exact
-    (lpmOneCenter_e_mem_iff n m).1 hnmem
+    ((lpmOneCenter_e_mem_iff n m).1 hnmem).symm
 
 /-- Proposition 8.6, nonregularity component. -/
 theorem lpm_not_regular :
