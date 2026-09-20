@@ -143,6 +143,7 @@ theorem indexedMixedCFG_preparedClosed_iff_grammarClosed
   · intro hprepared A word hstep
     rcases hstep with
       ⟨rhs, ⟨p, hlhs, hrhs⟩, hreal⟩
+    subst A
     apply hprepared p word
     apply
       (preparedLinearRhs_realizes_iff_mixed
