@@ -189,16 +189,16 @@ followed by a realization of the remaining suffix.
 -/
 theorem rhsRealizes_terminalPrefix_iff
     (L : N → Set (List α))
-    (pre : List α)
+    (stem : List α)
     (rhs : List (MixedSymbol N α))
     (word : List α) :
     RhsRealizes L
-        (pre.map Sum.inr ++ rhs) word
+        (stem.map Sum.inr ++ rhs) word
       ↔
     ∃ tail,
-      word = pre ++ tail ∧
+      word = stem ++ tail ∧
       RhsRealizes L rhs tail := by
-  induction pre generalizing word with
+  induction stem generalizing word with
   | nil =>
       simp
   | cons a rest ih =>
