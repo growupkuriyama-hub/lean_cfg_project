@@ -52,8 +52,8 @@ theorem fixedWindowSubstitutable_of_fixedHSubstitutable
       subst l
       exact
         zero_words_sameFixedWindowSummary
-          (List.length_pos.mpr hw₁ne)
-          (List.length_pos.mpr hw₂ne)
+          (List.length_pos_of_ne_nil hw₁ne)
+          (List.length_pos_of_ne_nil hw₂ne)
   have htype :
       (fixedWindowMonoidHom (α := α) k l).h w₁ =
         (fixedWindowMonoidHom (α := α) k l).h w₂ := by
