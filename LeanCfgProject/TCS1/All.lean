@@ -29,6 +29,7 @@ import LeanCfgProject.TCS1.FixedWindowSummarySemantic
 import LeanCfgProject.TCS1.FixedWindowConcreteSummary
 import LeanCfgProject.TCS1.FixedWindowConcreteMonoid
 import LeanCfgProject.TCS1.FixedWindowClassicalSubstitutability
+import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.ZeroWindowEndpoint
 import LeanCfgProject.TCS1.FixedWindowConcreteCharacteristicData
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -113,7 +114,7 @@ import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
 
 /-!
-# TCS #1 v68 Lean verification facade
+# TCS #1 v77 Lean verification facade
 
 This module imports every theorem-facing kernel maintained for the current
 TCS #1 v68 working baseline. Building this one target is the fast integration
@@ -130,6 +131,10 @@ theorem v66_facade_loaded : True :=
 
 /-- Marker theorem for the integrated v68 verification facade. -/
 theorem v68_facade_loaded : True :=
+  True.intro
+
+/-- Marker theorem for the integrated v77 verification facade. -/
+theorem v77_facade_loaded : True :=
   True.intro
 
 end TCS1
