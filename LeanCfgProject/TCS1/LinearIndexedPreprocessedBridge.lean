@@ -80,7 +80,7 @@ theorem indexedPreparedLinearRhs_toMixedRhs
 Prepared indexed grammar obtained without changing production identities or
 left-hand sides.
 -/
-noncomputable def indexedMixedCFG.toPreparedLinear
+noncomputable def IndexedMixedCFG.toPreparedLinear
     (G : IndexedMixedCFG N α P)
     (hprep : IndexedLinearPreprocessed G) :
     PreparedLinearIndexedCFG N α P where
