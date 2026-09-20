@@ -58,6 +58,7 @@ import LeanCfgProject.TCS1.LinearNormalizationPlan
 import LeanCfgProject.TCS1.PreparedLinearGrammarSemantics
 import LeanCfgProject.TCS1.LinearNormalizationRules
 import LeanCfgProject.TCS1.LinearNormalizationSoundness
+import LeanCfgProject.TCS1.LinearNormalizationCompleteness
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
 import LeanCfgProject.TCS1.LinearCharacteristicDataFacade
 import LeanCfgProject.TCS1.ConcreteLinearCharacteristicData
