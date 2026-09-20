@@ -70,7 +70,6 @@ theorem rawLinearCoreVariantProduces_sourceLength_le
       rw [hrhs]
       simp [RawLinearRhs.toMixedRhs,
         PreparedLinearRhs.toMixedRhs]
-      omega
 
 /-- The chosen finite core RHS inherits the same source-length bound. -/
 theorem rawLinearCorePreparedRhs_sourceLength_le
@@ -141,6 +140,9 @@ theorem indexedMixedCFG_toRawLinear_totalMixedLength
   unfold IndexedMixedCFG.totalRhsLength
   apply Finset.sum_congr rfl
   intro p hp
+  change
+    (indexedRawLinearRhs G hlinear p).toMixedRhs.length =
+      (G.rhs p).length
   rw [indexedRawLinearRhs_toMixed]
 
 /-- Original size scale including the terminal alphabet. -/
@@ -208,7 +210,7 @@ theorem indexedLinear_preparedEncodingScale_le
         2 * Fintype.card N * Fintype.card P := hq0
       _ =
         2 * (Fintype.card N * Fintype.card P) := by
-          omega
+          rw [Nat.mul_assoc]
       _ ≤
         2 * (g * g) := htwo
       _ =
