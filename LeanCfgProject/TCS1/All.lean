@@ -16,6 +16,7 @@ import LeanCfgProject.TCS1.DeltaStarDisplayedGrammar
 import LeanCfgProject.TCS1.DeltaStarBinaryGrammar
 import LeanCfgProject.TCS1.DeltaStarNonlinearityBridge
 import LeanCfgProject.TCS1.DeltaStarFourBlockDFA
+import LeanCfgProject.TCS1.DeltaStarNonlinearityReduction
 import LeanCfgProject.TCS1.DeltaStarProposition
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
