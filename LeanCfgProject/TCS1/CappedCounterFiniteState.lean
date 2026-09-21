@@ -317,11 +317,10 @@ theorem automaton_accepts_eq
       FormalLanguage rho := by
   apply Set.ext
   intro w
-  rw [DFA.mem_accepts]
-  rw [automaton_eval_eq_run]
   change
-    run rho (initialState rho) w ≠ none ↔
+    (automaton rho).eval w ≠ none ↔
       ∃ h : Nat, scan rho 0 w = some h
+  rw [automaton_eval_eq_run]
   have hrel :=
     stateHeight_run
       rho (initialState rho) w
