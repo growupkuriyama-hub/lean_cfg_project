@@ -61,7 +61,7 @@ theorem starMul_assoc_all :
     ∀ x y z : StarType,
       starMul (starMul x y) z =
         starMul x (starMul y z) := by
-  native_decide
+  decide
 
 theorem starMul_assoc
     (x y z : StarType) :
