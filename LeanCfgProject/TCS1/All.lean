@@ -151,16 +151,19 @@ import LeanCfgProject.TCS1.UnitFreeReachableTrim
 import LeanCfgProject.TCS1.SeparatedStartSSBNF
 import LeanCfgProject.TCS1.FixedWindowTransferKernel
 import LeanCfgProject.TCS1.Proposition74Facade
+import LeanCfgProject.TCS1.Proposition74IndexedPackage
 
 import LeanCfgProject.TCS1.ClarkCongruentialPackaging
 import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 import LeanCfgProject.TCS1.ClarkCongruentialEndpoints
 import LeanCfgProject.TCS1.ClarkCongruentialComparison
 /-!
-# TCS #1 v78 Lean verification facade
+# TCS #1 v79 Lean verification facade
 
 This module imports every theorem-facing kernel maintained for the current
-TCS #1 v68 working baseline. Building this one target is the fast integration
+TCS #1 v79 working baseline.  The v79 manuscript is a non-mathematical
+micro-revision of v78, so the theorem surface is inherited unchanged while
+this facade tracks the current submission-candidate source. Building this one target is the fast integration
 check; CI separately rejects placeholder proofs and project-level axiom declarations
 inside the TCS1 namespace.
 -/
@@ -182,6 +185,10 @@ theorem v77_facade_loaded : True :=
 
 /-- Marker theorem for the integrated v78 verification facade. -/
 theorem v78_facade_loaded : True :=
+  True.intro
+
+/-- Marker theorem for the current v79 verification facade. -/
+theorem v79_facade_loaded : True :=
   True.intro
 
 end TCS1
