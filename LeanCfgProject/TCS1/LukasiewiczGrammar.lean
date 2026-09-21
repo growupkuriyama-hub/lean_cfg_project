@@ -255,6 +255,25 @@ theorem finite_cfg_witness :
     ⟨initial_finite,
       initial_language_eq⟩
 
+/--
+Section 9 boundary package: the Lukasiewicz language has an explicit finite
+CFG presentation but is not fixed-h substitutable for the supplied arbitrary
+finite-monoid typing.
+-/
+theorem finite_cfg_but_not_fixedH
+    {M : Type*} [Monoid M] [Fintype M]
+    (H : FixedFiniteMonoidHom
+      DyckOne.Symbol M) :
+    (initial.Finite ∧
+      InitialSetLanguage
+        binaryGrammar initial =
+      Language)
+      ∧
+    ¬ FixedHSubstitutable H Language := by
+  exact
+    ⟨finite_cfg_witness,
+      Lukasiewicz.not_fixedH H⟩
+
 end Lukasiewicz
 end TCS1
 end LeanCfgProject
