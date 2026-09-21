@@ -14,6 +14,7 @@ import LeanCfgProject.TCS1.DeltaStarFixedHSubstitutability
 import LeanCfgProject.TCS1.DeltaStarNonregular
 import LeanCfgProject.TCS1.DeltaStarDisplayedGrammar
 import LeanCfgProject.TCS1.DeltaStarBinaryGrammar
+import LeanCfgProject.TCS1.DeltaStarProposition
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
 import LeanCfgProject.TCS1.LukasiewiczBoundary
