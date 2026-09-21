@@ -107,6 +107,7 @@ import LeanCfgProject.TCS1.LinearIndexedPreprocessedBridge
 import LeanCfgProject.TCS1.LinearConstructedStartLanguage
 import LeanCfgProject.TCS1.IndexedPreprocessedLinearCharacteristicData
 import LeanCfgProject.TCS1.LinearCharacteristicSourceBounds
+import LeanCfgProject.TCS1.IndexedLinearCharacteristicData
 import LeanCfgProject.TCS1.LinearRawPreprocessing
 import LeanCfgProject.TCS1.LinearRawEpsilonUnitSemantics
 import LeanCfgProject.TCS1.LinearRawPreprocessingFacade
