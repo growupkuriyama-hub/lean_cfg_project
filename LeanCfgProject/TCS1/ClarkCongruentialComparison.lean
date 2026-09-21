@@ -342,6 +342,24 @@ theorem indexedFixedH_has_ClarkCongruentialPresentation
 
 end
 
+/--
+Paper-facing name for the inclusion direction of Proposition 9.9:
+every fixed-h substitutable language given by a finite indexed CFG
+presentation admits a finite Clark-congruential presentation.
+-/
+theorem proposition99_fixedH_inclusion
+    (H : FixedFiniteMonoidHom α M)
+    (G : IndexedMixedCFG N α P)
+    (A : N)
+    (hsub :
+      FixedHSubstitutable H
+        (LeastClosedLanguage G.toMixedRules A)) :
+    ClarkCongruentialRepresentable.{
+      u, max (max x v) u}
+      (LeastClosedLanguage G.toMixedRules A) :=
+  indexedFixedH_has_ClarkCongruentialPresentation
+    H G A hsub
+
 end IndexedComparison
 
 section DyckProperness
