@@ -213,7 +213,8 @@ decreasing_by
       _ = p + (p + 1) + rest.length := by
         simp only [List.length_append,
           List.length_replicate, Nat.zero_add]
-        omega
+  change rest.length < (a :: tail).length
+  simp only [List.length_cons]
   omega
 
 /-- Exact parser/Kleene-star semantic equality. -/
