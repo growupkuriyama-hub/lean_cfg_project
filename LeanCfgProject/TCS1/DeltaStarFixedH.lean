@@ -393,6 +393,7 @@ theorem scan_context_decompose
   change
     scan .zero (u ++ x ++ v) =
       some .zero at hmem
+  rw [List.append_assoc] at hmem
   rw [scan_append] at hmem
   cases hu : scan .zero u with
   | none =>
@@ -419,7 +420,7 @@ theorem scan_middle_of_context
   change
     scan .zero (u ++ x ++ v) =
       some .zero at hmem
-  rw [← List.append_assoc] at hmem
+  rw [List.append_assoc] at hmem
   rw [scan_append, hu] at hmem
   rw [scan_append] at hmem
   cases hx : scan q x with
@@ -440,7 +441,7 @@ theorem mem_of_context_scans
   change
     scan .zero (u ++ x ++ v) =
       some .zero
-  rw [← List.append_assoc]
+  rw [List.append_assoc]
   rw [scan_append, hu]
   rw [scan_append, hx]
   exact hv
