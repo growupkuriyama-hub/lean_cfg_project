@@ -82,19 +82,19 @@ namespace TCS1
 #check lpm_proposition86_full_semantic
 
 -- Section 9.1: nonlinear Delta-star example.
-#check nonlinear_rs_example_verified_core
-#check nonlinear_rs_example_nonlinearity_reduction
+#check DeltaStar.nonlinear_rs_example_verified_core
+#check DeltaStar.nonlinear_rs_example_nonlinearity_reduction
 
 -- Section 9.2: regular separation from all fixed windows.
-#check proposition_ctr_regular
-#check theorem_ctr_non_kl
-#check regular_fixedH_outside_every_fixedWindow
+#check CappedCounter.proposition_ctr_regular
+#check CappedCounter.theorem_ctr_non_kl
+#check CappedCounter.regular_fixedH_outside_every_fixedWindow
 
 -- Section 9.3: finite-monoid obstructions and quotient closure.
 #check finiteMonoid_obstruction
 #check finiteMonoid_obstruction_uniform
 #check UncappedCounter.not_fixedH
-#check DyckOneBracket.not_fixedH
+#check DyckOne.not_fixedH
 #check fixedHSubstitutable_fixedRightQuotient
 
 -- Proposition 9.9: comparison with Clark's congruential family.
