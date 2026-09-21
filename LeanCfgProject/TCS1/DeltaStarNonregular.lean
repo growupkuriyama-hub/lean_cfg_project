@@ -20,7 +20,7 @@ namespace DeltaStar
 open Symbol
 
 /-- Delta-star through Mathlib's formal-language API. -/
-def FormalLanguage : Language Symbol :=
+def FormalLanguage : _root_.Language Symbol :=
   { w | w ∈ Language }
 
 @[simp] theorem mem_FormalLanguage
