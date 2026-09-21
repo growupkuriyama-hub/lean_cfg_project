@@ -410,7 +410,7 @@ theorem scan_context_decompose
       | some r =>
           rw [hx] at hmem
           simp only at hmem
-          exact ⟨q, r, rfl, rfl, hmem⟩
+          exact ⟨q, r, rfl, hx, hmem⟩
 
 /-- Reuse a known prefix state inside another accepted context. -/
 theorem scan_middle_of_context
