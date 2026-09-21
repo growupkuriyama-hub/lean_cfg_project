@@ -201,9 +201,19 @@ theorem language_to_starDerives
               (p + 1) drest
 termination_by w.length
 decreasing_by
-  have hlen :=
-    congrArg List.length hshape
-  simp at hlen
+  have hlen :
+      tail.length =
+        p + (p + 1) + rest.length := by
+    calc
+      tail.length =
+          (List.replicate p a ++
+            List.replicate (0 + p + 1) b ++
+              rest).length :=
+        congrArg List.length hshape
+      _ = p + (p + 1) + rest.length := by
+        simp only [List.length_append,
+          List.length_replicate, Nat.zero_add]
+        omega
   omega
 
 /-- Exact parser/Kleene-star semantic equality. -/
