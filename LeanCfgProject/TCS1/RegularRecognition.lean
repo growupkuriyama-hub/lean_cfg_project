@@ -188,8 +188,11 @@ theorem recognizedPreimage_isRegular
     (H : FixedFiniteMonoidHom α M)
     (Acc : Set M) :
     Language.IsRegular (RecognizedPreimage H Acc) := by
-  refine ⟨M, inferInstance, monoidRecognitionDFA H Acc, ?_⟩
-  exact monoidRecognitionDFA_accepts_eq H Acc
+  refine ⟨M, inferInstance,
+    monoidRecognitionDFA (α := α) (M := M) H Acc, ?_⟩
+  exact
+    monoidRecognitionDFA_accepts_eq
+      (α := α) (M := M) H Acc
 
 /--
 Paper-facing finite-automaton / finite-monoid equivalence, split into the two
