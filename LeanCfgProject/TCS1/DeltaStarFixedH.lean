@@ -398,7 +398,7 @@ theorem scan_context_decompose
   cases hu : scan .zero u with
   | none =>
       rw [hu] at hmem
-      simp only at hmem
+      cases hmem
   | some q =>
       rw [hu] at hmem
       simp only at hmem
@@ -406,11 +406,11 @@ theorem scan_context_decompose
       cases hx : scan q x with
       | none =>
           rw [hx] at hmem
-          simp only at hmem
+          cases hmem
       | some r =>
           rw [hx] at hmem
           simp only at hmem
-          exact ⟨q, r, hu, hx, hmem⟩
+          exact ⟨q, r, rfl, rfl, hmem⟩
 
 /-- Reuse a known prefix state inside another accepted context. -/
 theorem scan_middle_of_context
@@ -432,11 +432,11 @@ theorem scan_middle_of_context
   cases hx : scan q x with
   | none =>
       rw [hx] at hmem
-      simp only at hmem
+      cases hmem
   | some r =>
       rw [hx] at hmem
       simp only at hmem
-      exact ⟨r, hx, hmem⟩
+      exact ⟨r, rfl, hmem⟩
 
 /-- Reassemble language membership from three successful scan pieces. -/
 theorem mem_of_context_scans
