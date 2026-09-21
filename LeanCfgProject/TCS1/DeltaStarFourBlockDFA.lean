@@ -276,6 +276,46 @@ theorem fourBlock_shape_from_a0
           .b3
       exact ih
 
+
+@[simp] theorem fourBlock_eval_a0_replicate_b_succ
+    (n : Nat) :
+    fourBlockDFA.evalFrom .a0
+        (List.replicate (n + 1) b) =
+      .b1 := by
+  rw [List.replicate_succ,
+    DFA.evalFrom_cons]
+  change
+    fourBlockDFA.evalFrom .b1
+        (List.replicate n b) =
+      .b1
+  exact fourBlock_eval_b1_replicate_b n
+
+@[simp] theorem fourBlock_eval_b1_replicate_a_succ
+    (n : Nat) :
+    fourBlockDFA.evalFrom .b1
+        (List.replicate (n + 1) a) =
+      .a2 := by
+  rw [List.replicate_succ,
+    DFA.evalFrom_cons]
+  change
+    fourBlockDFA.evalFrom .a2
+        (List.replicate n a) =
+      .a2
+  exact fourBlock_eval_a2_replicate_a n
+
+@[simp] theorem fourBlock_eval_a2_replicate_b_succ
+    (n : Nat) :
+    fourBlockDFA.evalFrom .a2
+        (List.replicate (n + 1) b) =
+      .b3 := by
+  rw [List.replicate_succ,
+    DFA.evalFrom_cons]
+  change
+    fourBlockDFA.evalFrom .b3
+        (List.replicate n b) =
+      .b3
+  exact fourBlock_eval_b3_replicate_b n
+
 theorem fourBlock_shape_accepted
     (p q r s : Nat) :
     fourBlockDFA.eval
@@ -291,46 +331,36 @@ theorem fourBlock_shape_accepted
             List.replicate r a ++
               List.replicate s b) ≠
       .sink
-  rw [DFA.evalFrom_of_append,
+  simp only [DFA.evalFrom_of_append,
     fourBlock_eval_a0_replicate_a]
   cases q with
   | zero =>
-      simp
+      simp only [List.replicate_zero,
+        DFA.evalFrom_nil]
       rw [fourBlock_eval_a0_replicate_a]
       cases s with
       | zero =>
           simp
       | succ s =>
-          simp [List.replicate_succ,
-            DFA.evalFrom_cons,
-            fourBlockDFA, fourBlockStep,
-            fourBlock_eval_b1_replicate_b]
+          have h :=
+            fourBlock_eval_a0_replicate_b_succ s
+          simpa using h
   | succ q =>
-      rw [List.replicate_succ,
-        DFA.evalFrom_cons]
-      simp [fourBlockDFA, fourBlockStep]
-      rw [DFA.evalFrom_of_append,
-        fourBlock_eval_b1_replicate_b]
+      rw [fourBlock_eval_a0_replicate_b_succ]
       cases r with
       | zero =>
+          simp only [List.replicate_zero,
+            DFA.evalFrom_nil]
+          rw [fourBlock_eval_b1_replicate_b]
           simp
-          have h :=
-            fourBlock_eval_b1_replicate_b s
-          simpa using h
       | succ r =>
-          rw [List.replicate_succ,
-            DFA.evalFrom_cons]
-          simp [fourBlockDFA, fourBlockStep]
-          rw [DFA.evalFrom_of_append,
-            fourBlock_eval_a2_replicate_a]
+          rw [fourBlock_eval_b1_replicate_a_succ]
           cases s with
           | zero =>
               simp
           | succ s =>
-              rw [List.replicate_succ,
-                DFA.evalFrom_cons]
-              simp [fourBlockDFA, fourBlockStep,
-                fourBlock_eval_b3_replicate_b]
+              rw [fourBlock_eval_a2_replicate_b_succ]
+              simp
 
 theorem fourBlockDFA_accepts_eq :
     fourBlockDFA.accepts =
