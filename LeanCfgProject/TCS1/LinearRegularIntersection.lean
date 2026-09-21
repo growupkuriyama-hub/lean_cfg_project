@@ -136,9 +136,9 @@ theorem rawDFAProductDerives_sound
       cases hsrc : G.rhs i.sourceProd with
       | epsilon =>
           constructor
-          · exact
-              RawLinearDerives.epsilon
-                i.sourceProd hsrc
+          · simpa [rawDFAProductGrammar, hsrc] using
+              (RawLinearDerives.epsilon
+                (G := G) i.sourceProd hsrc)
           · simp [rawDFAProductGrammar, hsrc]
       | unit B =>
           simp [rawDFAProductGrammar, hsrc] at hrhs
@@ -148,21 +148,21 @@ theorem rawDFAProductDerives_sound
               simp [rawDFAProductGrammar, hsrc] at hrhs
           | around left core right hnonunit =>
               simp [rawDFAProductGrammar, hsrc] at hrhs
-  | @unit i B word hrhs child ih =>
+  | @unit i B hrhs word child ih =>
       cases hsrc : G.rhs i.sourceProd with
       | epsilon =>
           simp [rawDFAProductGrammar, hsrc] at hrhs
       | unit core =>
           have hB :
-              B =
-                ⟨core, i.entry, i.middle⟩ := by
-            simpa [rawDFAProductGrammar, hsrc] using hrhs.symm
+              ⟨core, i.entry, i.middle⟩ = B := by
+            simpa [rawDFAProductGrammar, hsrc] using hrhs
           subst B
           constructor
-          · exact
-              RawLinearDerives.unit
-                i.sourceProd core hsrc ih.1
-          · exact ih.2
+          · simpa [rawDFAProductGrammar, hsrc] using
+              (RawLinearDerives.unit
+                (G := G)
+                i.sourceProd core hsrc ih.1)
+          · simpa [rawDFAProductGrammar, hsrc] using ih.2
       | prepared rhs =>
           cases rhs with
           | terminals head tail =>
@@ -179,15 +179,16 @@ theorem rawDFAProductDerives_sound
           cases rhs with
           | terminals srcHead srcTail =>
               have hEq :
-                  head = srcHead ∧
-                  tail = srcTail := by
+                  srcHead = head ∧
+                  srcTail = tail := by
                 simpa [rawDFAProductGrammar, hsrc] using hrhs
               rcases hEq with ⟨rfl, rfl⟩
               constructor
-              · exact
-                  RawLinearDerives.terminals
-                    i.sourceProd srcHead srcTail hsrc
-              · rfl
+              · simpa [rawDFAProductGrammar, hsrc] using
+                  (RawLinearDerives.terminals
+                    (G := G)
+                    i.sourceProd head tail hsrc)
+              · simp [rawDFAProductGrammar, hsrc]
           | around left core right hnonunit =>
               simp [rawDFAProductGrammar, hsrc] at hrhs
   | @around i left core right hnonunit hrhs word child ih =>
@@ -202,38 +203,39 @@ theorem rawDFAProductDerives_sound
               simp [rawDFAProductGrammar, hsrc] at hrhs
           | around srcLeft srcCore srcRight srcNonunit =>
               have hparts :
-                  left = srcLeft ∧
-                  right = srcRight ∧
-                  core =
-                    ⟨srcCore,
-                      D.evalFrom i.entry srcLeft,
-                      i.middle⟩ := by
+                  srcLeft = left ∧
+                  ⟨srcCore,
+                    D.evalFrom i.entry srcLeft,
+                    i.middle⟩ = core ∧
+                  srcRight = right := by
                 simpa [rawDFAProductGrammar, hsrc] using hrhs
               rcases hparts with
                 ⟨rfl, rfl, rfl⟩
               constructor
-              · exact
-                  RawLinearDerives.around
+              · simpa [rawDFAProductGrammar, hsrc] using
+                  (RawLinearDerives.around
+                    (G := G)
                     i.sourceProd
-                    srcLeft srcCore srcRight
-                    srcNonunit hsrc ih.1
+                    left srcCore right
+                    srcNonunit hsrc ih.1)
               · calc
                   D.evalFrom i.entry
-                      (srcLeft ++ word ++ srcRight)
+                      (left ++ word ++ right)
                     =
                   D.evalFrom
-                      (D.evalFrom i.entry srcLeft)
-                      (word ++ srcRight) := by
+                      (D.evalFrom i.entry
+                        (left ++ word))
+                      right := by
                         rw [DFA.evalFrom_of_append]
                   _ =
                   D.evalFrom
                       (D.evalFrom
-                        (D.evalFrom i.entry srcLeft)
+                        (D.evalFrom i.entry left)
                         word)
-                      srcRight := by
+                      right := by
                         rw [DFA.evalFrom_of_append]
                   _ =
-                  D.evalFrom i.middle srcRight := by
+                  D.evalFrom i.middle right := by
                         rw [ih.2]
 
 /--
@@ -290,10 +292,11 @@ theorem rawDFAProductDerives_complete
               (PreparedLinearRhs.terminals
                 head tail) := by
         simp [rawDFAProductGrammar, i, hrhs]
-      exact
+      have d' :=
         RawLinearDerives.terminals
           (G := rawDFAProductGrammar G D)
           i head tail h
+      simpa [rawDFAProductGrammar, i, hrhs] using d'
   | @around p left core right hnonunit hrhs word child ih =>
       let qLeft := D.evalFrom q left
       let qMiddle := D.evalFrom qLeft word
@@ -330,8 +333,8 @@ theorem rawDFAProductDerives_complete
               (left ++ word ++ right)
             =
           D.evalFrom
-              (D.evalFrom q left)
-              (word ++ right) := by
+              (D.evalFrom q (left ++ word))
+              right := by
                 rw [DFA.evalFrom_of_append]
           _ =
           D.evalFrom
