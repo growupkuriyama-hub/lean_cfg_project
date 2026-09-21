@@ -4,6 +4,7 @@ import LeanCfgProject.TCS1.FiniteMonoidObstructionKernel
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
 import LeanCfgProject.TCS1.LukasiewiczBoundary
+import LeanCfgProject.TCS1.LukasiewiczGrammar
 import LeanCfgProject.TCS1.FixedHRightQuotient
 import LeanCfgProject.TCS1.LinearSeparatorExample
 import LeanCfgProject.TCS1.LinearSeparatorTyping
