@@ -134,7 +134,7 @@ import LeanCfgProject.TCS1.Proposition74Facade
 import LeanCfgProject.TCS1.ClarkCongruentialPackaging
 import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 /-!
-# TCS #1 v77 Lean verification facade
+# TCS #1 v78 Lean verification facade
 
 This module imports every theorem-facing kernel maintained for the current
 TCS #1 v68 working baseline. Building this one target is the fast integration
@@ -153,8 +153,8 @@ theorem v66_facade_loaded : True :=
 theorem v68_facade_loaded : True :=
   True.intro
 
-/-- Marker theorem for the integrated v77 verification facade. -/
-theorem v77_facade_loaded : True :=
+/-- Marker theorem for the integrated v78 verification facade. -/
+theorem v78_facade_loaded : True :=
   True.intro
 
 end TCS1
