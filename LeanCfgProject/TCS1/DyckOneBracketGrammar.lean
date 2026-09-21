@@ -67,6 +67,21 @@ def decodeStep : DyckStep → Symbol
   | cons s w ih =>
       cases s <;> simp [encodeStep, ih]
 
+theorem take_map_encode
+    (w : Word Symbol)
+    (i : Nat) :
+    (w.map encodeStep).take i =
+      (w.take i).map encodeStep := by
+  induction w generalizing i with
+  | nil =>
+      simp
+  | cons s w ih =>
+      cases i with
+      | zero =>
+          simp
+      | succ i =>
+          simp [ih]
+
 /-- Successful scanning gives the expected global balance equation. -/
 theorem scan_count_balance
     {h k : Nat}
@@ -154,11 +169,30 @@ def asMathlibDyckWord
       scan_prefix_safe
         (show scan 0 w = some 0 from hw)
         i
+    rw [take_map_encode]
     simpa using hp
 
 /-- Decode a Mathlib Dyck word to the paper alphabet. -/
 def decodeWord (p : DyckWord) : Word Symbol :=
   p.toList.map decodeStep
+
+@[simp] theorem decodeWord_zero :
+    decodeWord (0 : DyckWord) = [] := by
+  rfl
+
+@[simp] theorem decodeWord_add
+    (p q : DyckWord) :
+    decodeWord (p + q) =
+      decodeWord p ++ decodeWord q := by
+  rfl
+
+@[simp] theorem decodeWord_nest
+    (p : DyckWord) :
+    decodeWord p.nest =
+      a :: decodeWord p ++ [b] := by
+  simp [decodeWord, DyckWord.nest,
+    List.map_append, decodeStep,
+    List.append_assoc]
 
 @[simp] theorem decode_asMathlibDyckWord
     {w : Word Symbol}
@@ -188,16 +222,13 @@ theorem mathlibDyckWord_to_paperDerives
     PaperDerives (decodeWord p) := by
   by_cases hp : p = 0
   · subst p
-    simpa [decodeWord] using
-      PaperDerives.epsilon
+    simpa using PaperDerives.epsilon
   · have hi :=
       mathlibDyckWord_to_paperDerives p.insidePart
     have ho :=
       mathlibDyckWord_to_paperDerives p.outsidePart
     rw [← p.nest_insidePart_add_outsidePart hp]
-    simpa [decodeWord, DyckWord.nest,
-      List.map_append, decodeStep,
-      List.append_assoc] using
+    simpa [List.append_assoc] using
       PaperDerives.branch hi ho
 termination_by p.semilength
 decreasing_by
@@ -224,8 +255,7 @@ theorem paperDerives_to_language
       exact nil_mem
   | @branch x y dx dy ihx ihy =>
       change
-        scan 0 (a :: x ++ b :: y) = some 0
-      simp only [scan]
+        scan 1 (x ++ b :: y) = some 0
       rw [scan_append,
         scan_dyck_at_height ihx 1]
       simpa [scan] using ihy
@@ -320,6 +350,9 @@ theorem binaryDerives_shape
           rcases ihC with
             ⟨z₁, z₂, hz₁, hz₂, rfl⟩
           subst wB
+          change
+            PaperDerives
+              ([a] ++ (z₁ ++ b :: z₂))
           simpa [List.append_assoc] using
             PaperDerives.branch hz₁ hz₂
       | xRule =>
