@@ -50,6 +50,7 @@ namespace TCS1
 #check regular_auto_proposition_package
 #check clarkEyraud_special_case
 #check fixedWindowSubstitutable_iff_fixedHSubstitutable
+#check fixedWindowSubstitutable_of_fixedHSubstitutable
 
 -- Main qualitative learning theorem and Sections 4--5.
 #check sample_consistency
@@ -68,11 +69,16 @@ namespace TCS1
 #check concreteConservative_update_size_certificate
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
+#check omittedSibling_contribution_le
+#check boundaryAssembly_typed_lift_of_fixedWindowSummary
+#check terminalIsolation_then_binarization_language_eq
+#check frontEndBinary_active_short_derivation_envelope
 #check fixedWindow_reduced_minimal_typed_yield_length_le
 #check canonicalWitnessWords_length_le_fixedWindow
 #check concreteFixedWindowSection7_package
 #check classicalFixedWindowSection7_package
 #check indexed_proposition74_full_package
+#check proposition74_thickness_from_yieldBound
 
 -- Section 8: arbitrary linear normalization, short witnesses, and data bound.
 #check indexedLinear_normalization_source_package
