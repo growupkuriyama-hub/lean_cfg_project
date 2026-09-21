@@ -157,65 +157,77 @@ theorem starDerives_to_language
       rw [scan_append, scan_block]
       exact ih
 
+/-- Length-indexed form of the parser-to-block-star decomposition. -/
+theorem language_to_starDerives_aux :
+    ∀ n : Nat, ∀ w : Word Symbol,
+      w.length = n →
+      w ∈ Language →
+      StarDerives w := by
+  intro n
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+      intro w hlen hw
+      cases w with
+      | nil =>
+          exact StarDerives.epsilon
+      | cons s tail =>
+          cases s with
+          | b =>
+              change
+                scan .zero (b :: tail) =
+                  some .zero at hw
+              simp [scan, step] at hw
+          | a =>
+              have hrun :
+                  scan (.rising 0) tail =
+                    some .zero := by
+                simpa [scan, step] using hw
+              obtain ⟨p, rest, hshape, hrest⟩ :=
+                scan_rising_to_zero_shape
+                  0 hrun
+              have htail :
+                  tail.length =
+                    p + (p + 1) + rest.length := by
+                calc
+                  tail.length =
+                      (List.replicate p a ++
+                        List.replicate (0 + p + 1) b ++
+                          rest).length :=
+                    congrArg List.length hshape
+                  _ = p + (p + 1) + rest.length := by
+                    simp only [List.length_append,
+                      List.length_replicate, Nat.zero_add]
+              have hrestlt :
+                  rest.length < n := by
+                simp only [List.length_cons] at hlen
+                omega
+              have drest :
+                  StarDerives rest :=
+                ih rest.length hrestlt
+                  rest rfl
+                  (show rest ∈ Language from hrest)
+              have heq :
+                  a :: tail =
+                    ((List.replicate (p + 1) a ++
+                        List.replicate (p + 1) b) ++
+                      rest) := by
+                rw [hshape]
+                simp [List.replicate_succ,
+                  List.append_assoc,
+                  Nat.add_assoc, Nat.add_comm,
+                  Nat.add_left_comm]
+              rw [heq]
+              exact
+                StarDerives.prepend
+                  (p + 1) drest
+
 /-- Every parser-accepted word decomposes into balanced monotone blocks. -/
 theorem language_to_starDerives
     {w : Word Symbol}
     (hw : w ∈ Language) :
-    StarDerives w := by
-  cases w with
-  | nil =>
-      exact StarDerives.epsilon
-  | cons s tail =>
-      cases s with
-      | b =>
-          change
-            scan .zero (b :: tail) =
-              some .zero at hw
-          simp [scan, step] at hw
-      | a =>
-          have hrun :
-              scan (.rising 0) tail =
-                some .zero := by
-            simpa [scan, step] using hw
-          obtain ⟨p, rest, hshape, hrest⟩ :=
-            scan_rising_to_zero_shape
-              0 hrun
-          have drest :
-              StarDerives rest :=
-            language_to_starDerives
-              (w := rest)
-              (show rest ∈ Language from hrest)
-          have heq :
-              a :: tail =
-                ((List.replicate (p + 1) a ++
-                    List.replicate (p + 1) b) ++
-                  rest) := by
-            rw [hshape]
-            simp [List.replicate_succ,
-              List.append_assoc,
-              Nat.add_assoc, Nat.add_comm,
-              Nat.add_left_comm]
-          rw [heq]
-          exact
-            StarDerives.prepend
-              (p + 1) drest
-termination_by w.length
-decreasing_by
-  have hlen :
-      tail.length =
-        p + (p + 1) + rest.length := by
-    calc
-      tail.length =
-          (List.replicate p a ++
-            List.replicate (0 + p + 1) b ++
-              rest).length :=
-        congrArg List.length hshape
-      _ = p + (p + 1) + rest.length := by
-        simp only [List.length_append,
-          List.length_replicate, Nat.zero_add]
-  change rest.length < (a :: tail).length
-  simp only [List.length_cons]
-  omega
+    StarDerives w :=
+  language_to_starDerives_aux
+    w.length w rfl hw
 
 /-- Exact parser/Kleene-star semantic equality. -/
 theorem starDerives_iff_language
