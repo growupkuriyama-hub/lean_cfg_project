@@ -67,6 +67,7 @@ the encoded characteristic-sample norm is bounded by an explicit polynomial
 in the source normalization scale (with the fixed monoid cardinality as a
 constant parameter).
 -/
+set_option maxHeartbeats 800000 in
 theorem indexedLinear_characteristic_package
     [DecidableEq α]
     (H : FixedFiniteMonoidHom α M)
@@ -103,7 +104,7 @@ theorem indexedLinear_characteristic_package
           (G.linearKeepEmpty hlinear S)
         =
       LeastClosedLanguage G.toMixedRules S := by
-    simpa [Gp] using
+    simpa only [Gp] using
       indexedLinear_normalization_language_eq
         G hlinear S
 
@@ -146,7 +147,8 @@ theorem indexedLinear_characteristic_package
           (LinearConstructedBinaryRuleIndex Gp))
         ≤
       gBound := by
-    simpa [Gp, gBound] using
+    dsimp [Gp, gBound]
+    exact
       indexedLinear_normalization_size_le
         G hlinear
 
@@ -217,7 +219,7 @@ theorem indexedLinear_characteristic_package
           (LinearConstructedBinaryRule Gp)
           (linearConstructedStartRule Gp S)
           (G.linearKeepEmpty hlinear S) := by
-            simpa [indexedLinearCanonicalSample, Gp]
+            simpa only [indexedLinearCanonicalSample, Gp]
               using hpack.1
       _ =
       LeastClosedLanguage G.toMixedRules S :=
@@ -240,9 +242,8 @@ theorem indexedLinear_characteristic_package
         linearSourceCharacteristicEnvelope
           (Fintype.card M) gBound :=
       le_trans hsample hmono
-    simpa [indexedLinearCanonicalSample,
+    simpa only [indexedLinearCanonicalSample,
       indexedLinearCharacteristicEnvelope,
-      linearSourceCharacteristicEnvelope,
       Gp, gBound] using hbound
 
 end IndexedLinearCharacteristicData
