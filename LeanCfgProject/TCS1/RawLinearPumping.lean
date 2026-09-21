@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.LinearPumpingBounded
 import LeanCfgProject.TCS1.LinearRawUnitFreePreparedBridge
 import LeanCfgProject.TCS1.LinearConstructedStartLanguage
+import LeanCfgProject.TCS1.LinearRegularIntersection
 
 /-!
 # TCS #1 v79: pumping theorem for finite raw linear grammars
@@ -87,25 +88,43 @@ theorem rawLinearDerives_pumping_bounded
         (linearOldState Gp A)
         word :=
     preparedLinearDerives_to_linearConstructed Gp dp
+  have hshape :
+      LinearSpineShape
+        (LinearConstructedTerminalRule Gp)
+        (LinearConstructedBinaryRule Gp)
+        (LinearConstructedWrapper Gp) := by
+    let hu :=
+      linearConstructed_untypedLinearSpineShape Gp
+    exact
+      { wrapper_terminal := hu.wrapper_terminal
+        wrapper_no_binary := hu.wrapper_no_binary
+        binary_children := hu.binary_children }
+  have hthreshold :
+      rawLinearPumpingThreshold G =
+        Fintype.card (LinearConstructedState Gp) := by
+    rfl
+  have hlong' :
+      Fintype.card (LinearConstructedState Gp) <
+        word.length := by
+    rw [← hthreshold]
+    exact hlong
   have hp :=
     linearSpine_pumping_bounded
       (LinearConstructedTerminalRule Gp)
       (LinearConstructedBinaryRule Gp)
       (LinearConstructedWrapper Gp)
-      (linearConstructed_untypedLinearSpineShape Gp)
+      hshape
       (linearConstructedWrapper_old Gp A)
       dc
-      (by
-        simpa [rawLinearPumpingThreshold, Gp]
-          using hlong)
+      hlong'
   rcases hp with
     ⟨u, v, x, y, z,
       heq, hpos, hbound, hpump⟩
   refine
     ⟨u, v, x, y, z,
       heq, hpos, ?_, ?_⟩
-  · simpa [rawLinearPumpingThreshold, Gp]
-      using hbound
+  · rw [hthreshold]
+    exact hbound
   · intro n
     have dc' :=
       hpump n
