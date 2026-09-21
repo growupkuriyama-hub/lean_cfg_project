@@ -112,9 +112,7 @@ theorem paperS_mem
           List.replicate (rho - 1) up) ++
         List.replicate l reset) =
       some q
-  rw [scan_append]
-  rw [scan_append, hpairs, hups]
-  exact hreset
+  simpa [scan_append, hpairs, hups] using hreset
 
 theorem paperT_mem
     (rho k l : Nat)
@@ -193,9 +191,7 @@ theorem up_paperS_mem
       some q
   have hzero : 0 < rho := by omega
   simp only [scan, if_pos hzero]
-  rw [scan_append]
-  rw [scan_append, hpairs, hups]
-  exact hreset
+  simpa [scan_append, hpairs, hups] using hreset
 
 /-- The same leading up makes the larger witness overflow before any reset. -/
 theorem up_paperT_not_mem
@@ -230,9 +226,7 @@ theorem up_paperT_not_mem
       some q at hscan
   have hzero : 0 < rho := by omega
   simp only [scan, if_pos hzero] at hscan
-  rw [scan_append] at hscan
-  rw [scan_append, hpairs, hover] at hscan
-  contradiction
+  simpa [scan_append, hpairs, hover] using hscan
 
 theorem paperS_ne_nil
     (rho k l : Nat)
@@ -292,20 +286,24 @@ theorem paper_sameFixedWindowSummary
       omega
     have hq : q.length = l := by
       simp [q]
+    have hpair :
+        p ++ (upDownPairs k).drop k =
+          upDownPairs k := by
+      dsimp [p]
+      exact List.take_append_drop k
+        (upDownPairs k)
     have hs :
         paperS rho k l =
           p ++ m₁ ++ q := by
-      dsimp [paperS, p, q, m₁]
-      rw [← List.take_append_drop k
-        (upDownPairs k)]
-      simp [List.append_assoc]
+      unfold paperS
+      rw [← hpair]
+      simp [m₁, q, List.append_assoc]
     have ht :
         paperT rho k l =
           p ++ m₂ ++ q := by
-      dsimp [paperT, p, q, m₂]
-      rw [← List.take_append_drop k
-        (upDownPairs k)]
-      simp [List.append_assoc]
+      unfold paperT
+      rw [← hpair]
+      simp [m₂, q, List.append_assoc]
     rw [hs, ht]
     exact
       boundary_words_sameFixedWindowSummary
