@@ -19,6 +19,8 @@ namespace LeanCfgProject
 namespace TCS1
 namespace CappedCounter
 
+open Symbol
+
 /-- The manuscript's alternating prefix (up down)^k. -/
 def upDownPairs : Nat → Word Symbol
   | 0 => []
