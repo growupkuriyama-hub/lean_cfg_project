@@ -12,10 +12,11 @@ the regular four-block language a* b* a* b*.  The intersection is exactly
 
 and the cited literature supplies that Delta Delta is not linear.
 
-This module machine-checks the exact intersection identity.  It deliberately
-stops short of asserting non-linearity itself: the closure of linear languages
-under regular intersection and the external theorem that Delta Delta is not
-linear are not formalized in the current repository.
+This module machine-checks the exact intersection identity.  The subsequent
+modules formalize the four-block DFA and the closure of finite raw-linear
+presentations under DFA intersection.  The final cited theorem that Delta
+Delta is not linear remains external and is exposed explicitly as a
+hypothesis in the paper-facing reduction rather than encoded as an axiom.
 -/
 
 namespace LeanCfgProject
