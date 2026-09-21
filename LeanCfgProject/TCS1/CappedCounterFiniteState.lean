@@ -65,6 +65,17 @@ def run
   | q, s :: w =>
       run rho (step rho q s) w
 
+/-- Once the automaton reaches the sink, every suffix stays in the sink. -/
+@[simp] theorem run_none
+    (rho : Nat)
+    (w : Word Symbol) :
+    run rho none w = none := by
+  induction w with
+  | nil =>
+      rfl
+  | cons s w ih =>
+      simpa [run, step] using ih
+
 /-- Word actions compose across concatenation. -/
 theorem run_append
     (rho : Nat)
@@ -97,7 +108,7 @@ theorem stateHeight_run
   | cons s w ih =>
       cases q with
       | none =>
-          simp [run, step, stateHeight, ih]
+          simp [run, step, run_none, stateHeight]
       | some h =>
           cases s with
           | reset =>
@@ -113,14 +124,14 @@ theorem stateHeight_run
                 simpa [run, step, scan, hh,
                   h', stateHeight] using hi
               · simp [run, step, scan, hh,
-                  stateHeight, ih]
+                  run_none, stateHeight]
           | down =>
               cases h with
               | mk hv hlt =>
                   cases hv with
                   | zero =>
                       simp [run, step, scan,
-                        stateHeight, ih]
+                        run_none, stateHeight]
                   | succ hv =>
                       let h' : Fin (rho + 1) :=
                         ⟨hv, by omega⟩
