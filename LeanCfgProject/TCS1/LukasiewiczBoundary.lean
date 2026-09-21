@@ -50,7 +50,7 @@ theorem rightQuotient_b_eq_dyck :
     change w ++ [b] ∈ Language at hw
     rcases hw with ⟨x, hx, hEq⟩
     have hwx : w = x := by
-      exact List.append_right_cancel hEq
+      exact List.append_cancel_right hEq
     simpa [hwx] using hx
   · intro hw
     change w ++ [b] ∈ Language
