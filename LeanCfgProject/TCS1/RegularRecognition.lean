@@ -128,7 +128,7 @@ theorem isRegular_exists_finiteMonoidRecognition
 
 /-- DFA associated with a finite-monoid recognition. -/
 def monoidRecognitionDFA
-    {α M : Type}
+    {α : Type u} {M : Type}
     [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom α M)
     (Acc : Set M) :
@@ -139,7 +139,7 @@ def monoidRecognitionDFA
 
 /-- Reading a word from state q multiplies q by its h-image. -/
 theorem monoidRecognitionDFA_evalFrom
-    {α M : Type}
+    {α : Type u} {M : Type}
     [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom α M)
     (Acc : Set M)
@@ -163,7 +163,7 @@ theorem monoidRecognitionDFA_evalFrom
 
 /-- The Cayley-style DFA recognizes exactly the finite-monoid preimage. -/
 theorem monoidRecognitionDFA_accepts_eq
-    {α M : Type}
+    {α : Type u} {M : Type}
     [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom α M)
     (Acc : Set M) :
