@@ -140,7 +140,7 @@ theorem scan_height_shift
           simp only [scan] at hw ⊢
           have hs :=
             ih (h := h + 1) (k := k) hw
-          convert hs using 1 <;> omega
+          simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hs
       | b =>
           cases h with
           | zero =>
@@ -154,7 +154,7 @@ theorem scan_height_shift
                   have hs :=
                     ih (h := h) (k := k) hw
                   simp only [scan]
-                  convert hs using 1 <;> omega
+                  simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hs
 
 /-- The one-bracket Dyck language, via deterministic stack acceptance. -/
 def Language : Set (Word Symbol) :=
@@ -263,6 +263,7 @@ theorem context_badFactor_mem_iff
               (List.replicate n b ++ List.replicate n a) ++
               List.replicate m b) =
           some 0 := by
+      rw [List.append_assoc]
       rw [scan_append, h1]
       rw [List.append_assoc]
       rw [scan_append, h2]
@@ -284,6 +285,7 @@ theorem context_badFactor_mem_iff
               (List.replicate n b ++ List.replicate n a) ++
               List.replicate m b) =
           none := by
+      rw [List.append_assoc]
       rw [scan_append, h1]
       rw [List.append_assoc]
       rw [scan_append, h2]
