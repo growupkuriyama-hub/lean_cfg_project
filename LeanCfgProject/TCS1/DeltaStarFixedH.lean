@@ -381,6 +381,483 @@ theorem noBA_nonempty_shape_cases
           Nat.pos_of_ne_zero hq0,
           hpq⟩
 
+
+/-- Decompose an accepted word around a designated middle factor. -/
+theorem scan_context_decompose
+    {u x v : Word Symbol}
+    (hmem : u ++ x ++ v ∈ Language) :
+    ∃ q r : Mode,
+      scan .zero u = some q ∧
+      scan q x = some r ∧
+      scan r v = some .zero := by
+  change
+    scan .zero (u ++ x ++ v) =
+      some .zero at hmem
+  rw [scan_append] at hmem
+  cases hu : scan .zero u with
+  | none =>
+      simp [hu] at hmem
+  | some q =>
+      rw [hu] at hmem
+      rw [scan_append] at hmem
+      cases hx : scan q x with
+      | none =>
+          simp [hx] at hmem
+      | some r =>
+          rw [hx] at hmem
+          exact ⟨q, r, hu, hx, hmem⟩
+
+/-- Reuse a known prefix state inside another accepted context. -/
+theorem scan_middle_of_context
+    {u x v : Word Symbol}
+    {q : Mode}
+    (hu : scan .zero u = some q)
+    (hmem : u ++ x ++ v ∈ Language) :
+    ∃ r : Mode,
+      scan q x = some r ∧
+      scan r v = some .zero := by
+  change
+    scan .zero (u ++ x ++ v) =
+      some .zero at hmem
+  rw [scan_append, hu] at hmem
+  rw [scan_append] at hmem
+  cases hx : scan q x with
+  | none =>
+      simp [hx] at hmem
+  | some r =>
+      rw [hx] at hmem
+      exact ⟨r, hx, hmem⟩
+
+/-- Reassemble language membership from three successful scan pieces. -/
+theorem mem_of_context_scans
+    {u x v : Word Symbol}
+    {q r : Mode}
+    (hu : scan .zero u = some q)
+    (hx : scan q x = some r)
+    (hv : scan r v = some .zero) :
+    u ++ x ++ v ∈ Language := by
+  change
+    scan .zero (u ++ x ++ v) =
+      some .zero
+  rw [scan_append, hu]
+  rw [scan_append, hx]
+  exact hv
+
+/-- A successful a-step always enters a rising mode. -/
+theorem step_a_result
+    {q r : Mode}
+    (hstep : step q a = some r) :
+    ∃ n : Nat, r = .rising n := by
+  cases q with
+  | zero =>
+      simp [step] at hstep
+      subst r
+      exact ⟨0, rfl⟩
+  | rising n =>
+      simp [step] at hstep
+      subst r
+      exact ⟨n + 1, rfl⟩
+  | falling n =>
+      simp [step] at hstep
+
+/-- A successful b-step ends either at zero or in a falling mode. -/
+theorem step_b_result
+    {q r : Mode}
+    (hstep : step q b = some r) :
+    r = .zero ∨
+      ∃ n : Nat, r = .falling n := by
+  cases q with
+  | zero =>
+      simp [step] at hstep
+  | rising n =>
+      cases n with
+      | zero =>
+          simp [step] at hstep
+          subst r
+          exact Or.inl rfl
+      | succ n =>
+          simp [step] at hstep
+          subst r
+          exact Or.inr ⟨n, rfl⟩
+  | falling n =>
+      cases n with
+      | zero =>
+          simp [step] at hstep
+          subst r
+          exact Or.inl rfl
+      | succ n =>
+          simp [step] at hstep
+          subst r
+          exact Or.inr ⟨n, rfl⟩
+
+/-- Equal entry heights and the same successful symbol force equal next states. -/
+theorem step_eq_of_same_height
+    {q₁ q₂ p₁ p₂ : Mode}
+    {s : Symbol}
+    (hheight : modeHeight q₁ = modeHeight q₂)
+    (h₁ : step q₁ s = some p₁)
+    (h₂ : step q₂ s = some p₂) :
+    p₁ = p₂ := by
+  have hpheight :
+      modeHeight p₁ = modeHeight p₂ := by
+    have hh₁ := step_height h₁
+    have hh₂ := step_height h₂
+    omega
+  cases s with
+  | a =>
+      obtain ⟨n₁, rfl⟩ := step_a_result h₁
+      obtain ⟨n₂, rfl⟩ := step_a_result h₂
+      simp [modeHeight] at hpheight
+      have hn : n₁ = n₂ := by omega
+      subst n₂
+      rfl
+  | b =>
+      rcases step_b_result h₁ with rfl | ⟨n₁, rfl⟩ <;>
+        rcases step_b_result h₂ with rfl | ⟨n₂, rfl⟩
+      · rfl
+      · simp [modeHeight] at hpheight
+      · simp [modeHeight] at hpheight
+      · simp [modeHeight] at hpheight
+        have hn : n₁ = n₂ := by omega
+        subst n₂
+        rfl
+
+theorem lastSymbol_eq_none_iff
+    (w : Word Symbol) :
+    lastSymbol? w = none ↔ w = [] := by
+  cases w <;> simp [lastSymbol?]
+
+/-- If the last processed terminal is a, a successful scan ends rising. -/
+theorem scan_result_of_last_a
+    {q r : Mode} {w : Word Symbol}
+    (hne : w ≠ [])
+    (hlast : lastSymbol? w = some a)
+    (hscan : scan q w = some r) :
+    ∃ n : Nat, r = .rising n := by
+  induction w generalizing q with
+  | nil =>
+      exact False.elim (hne rfl)
+  | cons s w ih =>
+      cases w with
+      | nil =>
+          simp [lastSymbol?, lastFrom] at hlast
+          subst s
+          exact step_a_result hscan
+      | cons t rest =>
+          obtain ⟨q', hstep, htail⟩ :=
+            scan_cons_success hscan
+          have hlast' :
+              lastSymbol? (t :: rest) = some a := by
+            simpa [lastSymbol?, lastFrom] using hlast
+          exact
+            ih (q := q')
+              (by simp) hlast' htail
+
+/-- If the last processed terminal is b, a successful scan ends zero or falling. -/
+theorem scan_result_of_last_b
+    {q r : Mode} {w : Word Symbol}
+    (hne : w ≠ [])
+    (hlast : lastSymbol? w = some b)
+    (hscan : scan q w = some r) :
+    r = .zero ∨
+      ∃ n : Nat, r = .falling n := by
+  induction w generalizing q with
+  | nil =>
+      exact False.elim (hne rfl)
+  | cons s w ih =>
+      cases w with
+      | nil =>
+          simp [lastSymbol?, lastFrom] at hlast
+          subst s
+          exact step_b_result hscan
+      | cons t rest =>
+          obtain ⟨q', hstep, htail⟩ :=
+            scan_cons_success hscan
+          have hlast' :
+              lastSymbol? (t :: rest) = some b := by
+            simpa [lastSymbol?, lastFrom] using hlast
+          exact
+            ih (q := q')
+              (by simp) hlast' htail
+
+/--
+With the same entry mode, equal balance and equal last symbol force equal
+successful exit modes.
+-/
+theorem scan_final_eq_of_balance_last
+    {q r₁ r₂ : Mode}
+    {x y : Word Symbol}
+    (hxne : x ≠ [])
+    (hyne : y ≠ [])
+    (hbal : balance x = balance y)
+    (hlast : lastSymbol? x = lastSymbol? y)
+    (hx : scan q x = some r₁)
+    (hy : scan q y = some r₂) :
+    r₁ = r₂ := by
+  have hh₁ := scan_height hx
+  have hh₂ := scan_height hy
+  have hh :
+      modeHeight r₁ = modeHeight r₂ := by
+    omega
+  cases hxl : lastSymbol? x with
+  | none =>
+      exact
+        False.elim
+          (hxne ((lastSymbol_eq_none_iff x).1 hxl))
+  | some s =>
+      have hyl :
+          lastSymbol? y = some s := by
+        rw [← hlast]
+        exact hxl
+      cases s with
+      | a =>
+          obtain ⟨n₁, rfl⟩ :=
+            scan_result_of_last_a hxne hxl hx
+          obtain ⟨n₂, rfl⟩ :=
+            scan_result_of_last_a hyne hyl hy
+          simp [modeHeight] at hh
+          have hn : n₁ = n₂ := by omega
+          subst n₂
+          rfl
+      | b =>
+          rcases
+              scan_result_of_last_b hxne hxl hx with
+              rfl | ⟨n₁, rfl⟩ <;>
+            rcases
+              scan_result_of_last_b hyne hyl hy with
+              rfl | ⟨n₂, rfl⟩
+          · rfl
+          · simp [modeHeight] at hh
+          · simp [modeHeight] at hh
+          · simp [modeHeight] at hh
+            have hn : n₁ = n₂ := by omega
+            subst n₂
+            rfl
+
+@[simp] theorem lastFrom_replicate_same
+    (s : Symbol) (n : Nat) :
+    lastFrom s (List.replicate n s) = s := by
+  induction n with
+  | zero =>
+      rfl
+  | succ n ih =>
+      rw [List.replicate_succ]
+      simp [lastFrom, ih]
+
+theorem lastFrom_append_single
+    (s : Symbol)
+    (w : Word Symbol)
+    (t : Symbol) :
+    lastFrom s (w ++ [t]) = t := by
+  induction w generalizing s with
+  | nil =>
+      rfl
+  | cons z w ih =>
+      simp [lastFrom, ih]
+
+theorem lastSymbol_append_single
+    (w : Word Symbol)
+    (s : Symbol) :
+    lastSymbol? (w ++ [s]) = some s := by
+  cases w with
+  | nil =>
+      rfl
+  | cons t w =>
+      simp [lastSymbol?, lastFrom_append_single]
+
+theorem firstSymbol_replicate_pos
+    (s : Symbol)
+    {n : Nat}
+    (hn : 0 < n) :
+    firstSymbol? (List.replicate n s) =
+      some s := by
+  cases n with
+  | zero =>
+      omega
+  | succ n =>
+      simp [List.replicate_succ, firstSymbol?]
+
+theorem lastSymbol_replicate_pos
+    (s : Symbol)
+    {n : Nat}
+    (hn : 0 < n) :
+    lastSymbol? (List.replicate n s) =
+      some s := by
+  cases n with
+  | zero =>
+      omega
+  | succ n =>
+      rw [← replicate_succ_right s n]
+      exact lastSymbol_append_single
+        (List.replicate n s) s
+
+theorem firstSymbol_mixed
+    {p q : Nat}
+    (hp : 0 < p) :
+    firstSymbol?
+        (List.replicate p a ++
+          List.replicate q b) =
+      some a := by
+  cases p with
+  | zero =>
+      omega
+  | succ p =>
+      simp [List.replicate_succ, firstSymbol?]
+
+theorem lastSymbol_mixed
+    {p q : Nat}
+    (hq : 0 < q) :
+    lastSymbol?
+        (List.replicate p a ++
+          List.replicate q b) =
+      some b := by
+  cases q with
+  | zero =>
+      omega
+  | succ q =>
+      rw [← replicate_succ_right b q]
+      simpa [List.append_assoc] using
+        lastSymbol_append_single
+          (List.replicate p a ++
+            List.replicate q b) b
+
+/-- A falling state can read any b-prefix no longer than its current height. -/
+theorem exists_scan_falling_replicate_b_of_le
+    (h q : Nat)
+    (hle : q ≤ h + 1) :
+    ∃ r : Mode,
+      scan (.falling h)
+          (List.replicate q b) =
+        some r := by
+  induction q generalizing h with
+  | zero =>
+      exact ⟨.falling h, rfl⟩
+  | succ q ih =>
+      cases h with
+      | zero =>
+          have hq : q = 0 := by omega
+          subst q
+          exact ⟨.zero, by simp [List.replicate_succ, scan, step]⟩
+      | succ h =>
+          have hle' : q ≤ h + 1 := by omega
+          obtain ⟨r, hr⟩ := ih (h := h) hle'
+          refine ⟨r, ?_⟩
+          rw [List.replicate_succ]
+          simp only [scan, step]
+          exact hr
+
+/-- A rising state can read any b-prefix no longer than its current height. -/
+theorem exists_scan_rising_replicate_b_of_le
+    (h q : Nat)
+    (hle : q ≤ h + 1) :
+    ∃ r : Mode,
+      scan (.rising h)
+          (List.replicate q b) =
+        some r := by
+  cases q with
+  | zero =>
+      exact ⟨.rising h, rfl⟩
+  | succ q =>
+      cases h with
+      | zero =>
+          have hq : q = 0 := by omega
+          subst q
+          exact ⟨.zero, by simp [List.replicate_succ, scan, step]⟩
+      | succ h =>
+          have hle' : q ≤ h + 1 := by omega
+          obtain ⟨r, hr⟩ :=
+            exists_scan_falling_replicate_b_of_le
+              h q hle'
+          refine ⟨r, ?_⟩
+          rw [List.replicate_succ]
+          simp only [scan, step]
+          exact hr
+
+theorem scan_zero_replicate_a_succ
+    (p : Nat) :
+    scan .zero
+        (List.replicate (p + 1) a) =
+      some (.rising p) := by
+  rw [List.replicate_succ]
+  simp only [scan, step]
+  simpa using
+    scan_rising_replicate_a 0 p
+
+/--
+For a mixed a+ b+ word, successful scanning depends on the entry mode and on
+the signed exponent difference, not on the individual exponents.
+-/
+theorem scan_mixed_exists_of_same_balance
+    {entry r : Mode}
+    {p q p' q' : Nat}
+    (hp : 0 < p)
+    (hq : 0 < q)
+    (hp' : 0 < p')
+    (hq' : 0 < q')
+    (hbal :
+      (p : Int) - (q : Int) =
+        (p' : Int) - (q' : Int))
+    (hscan :
+      scan entry
+          (List.replicate p a ++
+            List.replicate q b) =
+        some r) :
+    ∃ r' : Mode,
+      scan entry
+          (List.replicate p' a ++
+            List.replicate q' b) =
+        some r' := by
+  cases entry with
+  | falling n =>
+      cases p with
+      | zero =>
+          omega
+      | succ p =>
+          rw [List.replicate_succ] at hscan
+          simp [scan, step] at hscan
+  | zero =>
+      cases p with
+      | zero =>
+          omega
+      | succ p =>
+          cases p' with
+          | zero =>
+              omega
+          | succ p' =>
+              rw [scan_append,
+                scan_zero_replicate_a_succ] at hscan
+              have hh := scan_height hscan
+              have hrnonneg := modeHeight_nonneg r
+              have hle : q ≤ p + 1 := by
+                simp [modeHeight] at hh
+                omega
+              have hle' : q' ≤ p' + 1 := by
+                omega
+              obtain ⟨r', hr'⟩ :=
+                exists_scan_rising_replicate_b_of_le
+                  p' q' hle'
+              refine ⟨r', ?_⟩
+              rw [scan_append,
+                scan_zero_replicate_a_succ]
+              exact hr'
+  | rising n =>
+      rw [scan_append,
+        scan_rising_replicate_a] at hscan
+      have hh := scan_height hscan
+      have hrnonneg := modeHeight_nonneg r
+      have hle : q ≤ n + p + 1 := by
+        simp [modeHeight] at hh
+        omega
+      have hle' : q' ≤ n + p' + 1 := by
+        omega
+      obtain ⟨r', hr'⟩ :=
+        exists_scan_rising_replicate_b_of_le
+          (n + p') q' (by omega)
+      refine ⟨r', ?_⟩
+      rw [scan_append,
+        scan_rising_replicate_a]
+      exact hr'
+
 end DeltaStar
 end TCS1
 end LeanCfgProject
