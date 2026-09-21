@@ -26,7 +26,7 @@ import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 This lightweight facade collects theorem-facing modules added specifically
 while synchronizing the Lean experiment with the v78 manuscript, including the Section 9 boundary work.  It is used
 by a fast CI job during development; the full `TCS1.All` facade remains the
-final integration check.
+final integration check; both facades track the current v78 theorem surface.
 -/
 
 namespace LeanCfgProject
