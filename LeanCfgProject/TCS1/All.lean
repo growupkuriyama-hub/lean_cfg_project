@@ -8,6 +8,7 @@ import LeanCfgProject.TCS1.CappedCounterPaperWitness
 import LeanCfgProject.TCS1.CappedCounterProposition
 import LeanCfgProject.TCS1.DeltaStarFixedWindow
 import LeanCfgProject.TCS1.DeltaStarTyping
+import LeanCfgProject.TCS1.DeltaStarFixedH
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
 import LeanCfgProject.TCS1.LukasiewiczBoundary
