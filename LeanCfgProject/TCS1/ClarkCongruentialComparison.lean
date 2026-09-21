@@ -7,18 +7,19 @@ import LeanCfgProject.TCS1.DyckOneBracketGrammar
 
 This file packages the Section 9 comparison in a representation-level form.
 
-* A congruential presentation records a finite nonterminal type, a finite
-  initial set, exact generated-language equality, and Clark's one-syntactic-
-  class condition for every nonterminal.
-* Every fixed-h substitutable language presented by the repository's finite
-  indexed CFG model receives such a presentation.  The proof splits exactly
-  into the three semantic cases needed by the normalization pipeline:
-  empty, epsilon-only, and a target containing a nonempty word.
-* The one-bracket Dyck language has a finite congruential presentation but is
-  not fixed-h substitutable for any supplied finite-monoid typing.
+A language has a Clark-congruential presentation here when there exist a
+finite nonterminal type, a finite initial set, an exact binary-CFG
+presentation, and Clark's one-syntactic-class condition for every
+nonterminal.
 
-Thus the formal statement mirrors Proposition 9.9 at the level of the finite
-CFG representation used throughout the Lean development.
+The indexed theorem covers all target cases.  A target containing a nonempty
+word is handled by the concrete SSBNF normalization, yield-typed refinement,
+and start-removal construction.  If there is no nonempty word, the language
+is either empty or epsilon-only and the explicit endpoint grammars apply.
+
+The one-bracket Dyck theorem packages the properness witness: D1 has a finite
+congruential grammar, while no supplied finite-monoid typing makes D1
+fixed-h substitutable.
 -/
 
 namespace LeanCfgProject
@@ -26,49 +27,51 @@ namespace TCS1
 
 universe u s v w x
 
-/-- A finite Clark-congruential CFG presentation of a language. -/
-structure ClarkCongruentialPresentation
+/-- Existence of a finite Clark-congruential CFG presentation. -/
+def ClarkCongruentialRepresentable
     {α : Type u}
-    (L : Set (Word α)) where
-  State : Type s
-  finiteState : Finite State
-  grammar : BinaryNullableGrammar State α
-  initial : Set State
-  initial_finite : initial.Finite
-  language_eq :
-    InitialSetLanguage grammar initial = L
-  congruential :
-    ClarkCongruentialInitialSet grammar initial
+    (L : Set (Word α)) : Prop :=
+  ∃ State : Type s,
+    ∃ _finiteState : Finite State,
+    ∃ grammar : BinaryNullableGrammar State α,
+    ∃ initial : Set State,
+      initial.Finite
+        ∧
+      InitialSetLanguage grammar initial = L
+        ∧
+      ClarkCongruentialInitialSet grammar initial
 
-section EndpointPresentations
+section EndpointRepresentability
 
 variable {α : Type u}
 
-/-- Finite congruential presentation of the empty language. -/
-def clarkEmptyPresentation :
-    ClarkCongruentialPresentation
-      (∅ : Set (Word α)) where
-  State := ClarkEndpointState
-  finiteState := inferInstance
-  grammar := clarkEmptyGrammar
-  initial := clarkEndpointInitial
-  initial_finite := clarkEndpointInitial_finite
-  language_eq := clarkEmptyGrammar_language_eq
-  congruential := clarkEmptyGrammar_congruential
+/-- The empty language has a finite congruential presentation. -/
+theorem clarkEmpty_representable :
+    ClarkCongruentialRepresentable.{u, s}
+      (∅ : Set (Word α)) := by
+  refine
+    ⟨ClarkEndpointState,
+      inferInstance,
+      clarkEmptyGrammar,
+      clarkEndpointInitial,
+      clarkEndpointInitial_finite,
+      clarkEmptyGrammar_language_eq,
+      clarkEmptyGrammar_congruential⟩
 
-/-- Finite congruential presentation of the epsilon-only language. -/
-def clarkEpsilonPresentation :
-    ClarkCongruentialPresentation
-      ({[]} : Set (Word α)) where
-  State := ClarkEndpointState
-  finiteState := inferInstance
-  grammar := clarkEpsilonGrammar
-  initial := clarkEndpointInitial
-  initial_finite := clarkEndpointInitial_finite
-  language_eq := clarkEpsilonGrammar_language_eq
-  congruential := clarkEpsilonGrammar_congruential
+/-- The epsilon-only language has a finite congruential presentation. -/
+theorem clarkEpsilon_representable :
+    ClarkCongruentialRepresentable.{u, s}
+      ({[]} : Set (Word α)) := by
+  refine
+    ⟨ClarkEndpointState,
+      inferInstance,
+      clarkEpsilonGrammar,
+      clarkEndpointInitial,
+      clarkEndpointInitial_finite,
+      clarkEpsilonGrammar_language_eq,
+      clarkEpsilonGrammar_congruential⟩
 
-end EndpointPresentations
+end EndpointRepresentability
 
 section IndexedComparison
 
@@ -101,10 +104,10 @@ abbrev IndexedClarkPackagedState
     (indexedClarkStartRule G A hprod)
 
 /--
-Nontrivial case: compose the indexed normalization theorem with the finite
-initial-set packaging theorem and record the result as one presentation.
+Nontrivial case of the inclusion: the normalized typed grammar yields an
+explicit finite congruential presentation of the source language.
 -/
-def indexedFixedHClarkPresentation_of_nonempty
+theorem indexedFixedH_representable_of_nonempty
     (H : FixedFiniteMonoidHom α M)
     (G : IndexedMixedCFG N α P)
     (A : N)
@@ -115,31 +118,30 @@ def indexedFixedHClarkPresentation_of_nonempty
     (hsub :
       FixedHSubstitutable H
         (LeastClosedLanguage G.toMixedRules A)) :
-    ClarkCongruentialPresentation
+    ClarkCongruentialRepresentable.{
+      u, max (max x v) u}
       (LeastClosedLanguage G.toMixedRules A) := by
   have hpack :=
     indexed_fixedH_has_Clark_congruential_packaging
       H G A hprod hsub
   rcases hpack with
     ⟨hfinite, hlang, hcong⟩
-  exact
-    { State :=
-        IndexedClarkPackagedState H G A hprod
-      finiteState := by infer_instance
-      grammar :=
-        indexedClarkPackagedGrammar H G A hprod
-      initial :=
-        indexedClarkInitial H G A hprod
-      initial_finite := hfinite
-      language_eq := hlang
-      congruential := hcong }
+  refine
+    ⟨IndexedClarkPackagedState H G A hprod,
+      ?_,
+      indexedClarkPackagedGrammar H G A hprod,
+      indexedClarkInitial H G A hprod,
+      hfinite,
+      hlang,
+      hcong⟩
+  infer_instance
 
 /--
 Full finite-CFG form of the inclusion direction of Proposition 9.9.
 
-No nontriviality assumption remains: if the source language has a nonempty
-word we use the normalized typed refinement; otherwise it is either empty or
-epsilon-only and the explicit endpoint presentations apply.
+No nontriviality assumption remains.  If the source language has a nonempty
+word, use the normalized typed refinement.  Otherwise the source is either
+empty or epsilon-only.
 -/
 theorem indexedFixedH_has_ClarkCongruentialPresentation
     (H : FixedFiniteMonoidHom α M)
@@ -148,7 +150,8 @@ theorem indexedFixedH_has_ClarkCongruentialPresentation
     (hsub :
       FixedHSubstitutable H
         (LeastClosedLanguage G.toMixedRules A)) :
-    ClarkCongruentialPresentation
+    ClarkCongruentialRepresentable.{
+      u, max (max x v) u}
       (LeastClosedLanguage G.toMixedRules A) := by
   classical
   let L : Set (Word α) :=
@@ -156,7 +159,7 @@ theorem indexedFixedH_has_ClarkCongruentialPresentation
   by_cases hprod :
       ∃ z : Word α, z ∈ L ∧ z ≠ []
   · exact
-      indexedFixedHClarkPresentation_of_nonempty
+      indexedFixedH_representable_of_nonempty
         H G A hprod hsub
   · by_cases heps : ([] : Word α) ∈ L
     · have hL :
@@ -174,9 +177,10 @@ theorem indexedFixedH_has_ClarkCongruentialPresentation
             simpa using hz
           simpa [hz0] using heps
       change
-        ClarkCongruentialPresentation L
+        ClarkCongruentialRepresentable.{
+          u, max (max x v) u} L
       rw [hL]
-      exact clarkEpsilonPresentation
+      exact clarkEpsilon_representable
     · have hL :
           L = (∅ : Set (Word α)) := by
         apply Set.ext
@@ -190,9 +194,10 @@ theorem indexedFixedH_has_ClarkCongruentialPresentation
         · intro hz
           exact False.elim (by simpa using hz)
       change
-        ClarkCongruentialPresentation L
+        ClarkCongruentialRepresentable.{
+          u, max (max x v) u} L
       rw [hL]
-      exact clarkEmptyPresentation
+      exact clarkEmpty_representable
 
 end
 
@@ -202,7 +207,7 @@ section DyckProperness
 
 /--
 Properness witness from Proposition 9.9, stated independently of the chosen
-finite monoid: D1 has a finite congruential presentation, while the supplied
+finite monoid: D1 has a finite congruential grammar, yet the supplied
 arbitrary finite-monoid typing cannot make it fixed-h substitutable.
 -/
 theorem proposition99_dyck_properness
