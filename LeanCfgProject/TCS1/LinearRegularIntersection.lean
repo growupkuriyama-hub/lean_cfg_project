@@ -187,7 +187,7 @@ theorem rawDFAProductDerives_sound
               · simpa [rawDFAProductGrammar, hsrc] using
                   (RawLinearDerives.terminals
                     (G := G)
-                    i.sourceProd head tail hsrc)
+                    i.sourceProd srcHead srcTail hsrc)
               · simp [rawDFAProductGrammar, hsrc]
           | around left core right hnonunit =>
               simp [rawDFAProductGrammar, hsrc] at hrhs
@@ -216,26 +216,26 @@ theorem rawDFAProductDerives_sound
                   (RawLinearDerives.around
                     (G := G)
                     i.sourceProd
-                    left srcCore right
+                    srcLeft srcCore srcRight
                     srcNonunit hsrc ih.1)
               · calc
                   D.evalFrom i.entry
-                      (left ++ word ++ right)
+                      (srcLeft ++ word ++ srcRight)
                     =
                   D.evalFrom
                       (D.evalFrom i.entry
-                        (left ++ word))
-                      right := by
+                        (srcLeft ++ word))
+                      srcRight := by
                         rw [DFA.evalFrom_of_append]
                   _ =
                   D.evalFrom
                       (D.evalFrom
-                        (D.evalFrom i.entry left)
+                        (D.evalFrom i.entry srcLeft)
                         word)
-                      right := by
+                      srcRight := by
                         rw [DFA.evalFrom_of_append]
                   _ =
-                  D.evalFrom i.middle right := by
+                  D.evalFrom i.middle srcRight := by
                         rw [ih.2]
 
 /--
