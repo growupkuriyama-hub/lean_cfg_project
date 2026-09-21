@@ -15,12 +15,14 @@ is the disjunction of the two internal flags with the boundary test
 left.last=b and right.first=a.
 
 This is the finite homomorphism h_star used by the nonlinear Delta-star
-proposition.  Substitutability is proved in a later layer.
+proposition.  Substitutability is proved in the next layer.
 -/
 
 namespace LeanCfgProject
 namespace TCS1
 namespace DeltaStar
+
+open Symbol
 
 /-- Exact finite boundary summary used by h_star. -/
 inductive StarType where
@@ -54,12 +56,18 @@ theorem starMul_one_right
     starMul x starOne = x := by
   cases x <;> rfl
 
-/-- Associativity is a finite check on the nine summary states. -/
+/-- Associativity is a closed finite check on the nine summary states. -/
+theorem starMul_assoc_all :
+    ∀ x y z : StarType,
+      starMul (starMul x y) z =
+        starMul x (starMul y z) := by
+  native_decide
+
 theorem starMul_assoc
     (x y z : StarType) :
     starMul (starMul x y) z =
-      starMul x (starMul y z) := by
-  native_decide
+      starMul x (starMul y z) :=
+  starMul_assoc_all x y z
 
 instance starTypeMonoid :
     Monoid StarType where
@@ -80,7 +88,7 @@ def starSummary :
     Word Symbol → StarType
   | [] => .empty
   | s :: w =>
-      letterType s * starSummary w
+      starMul (letterType s) (starSummary w)
 
 @[simp] theorem starSummary_nil :
     starSummary ([] : Word Symbol) = 1 := by
@@ -89,14 +97,18 @@ def starSummary :
 theorem starSummary_append
     (u v : Word Symbol) :
     starSummary (u ++ v) =
-      starSummary u * starSummary v := by
+      starMul (starSummary u) (starSummary v) := by
   induction u with
   | nil =>
-      simp [starSummary]
+      rfl
   | cons s u ih =>
       simp only [List.cons_append, starSummary]
       rw [ih]
-      exact (mul_assoc _ _ _).symm
+      exact
+        (starMul_assoc
+          (letterType s)
+          (starSummary u)
+          (starSummary v)).symm
 
 /-- Concrete finite-monoid homomorphism h_star. -/
 def starTyping :
@@ -104,7 +116,21 @@ def starTyping :
       Symbol StarType where
   h := starSummary
   map_nil := starSummary_nil
-  map_append := starSummary_append
+  map_append := by
+    intro u v
+    change
+      starSummary (u ++ v) =
+        starMul (starSummary u) (starSummary v)
+    exact starSummary_append u v
+
+/--
+Last terminal of a nonempty word, threaded from an already-known first
+terminal.
+-/
+def lastFrom :
+    Symbol → Word Symbol → Symbol
+  | s, [] => s
+  | _, t :: w => lastFrom t w
 
 /-- First symbol of a word, with none on the empty word. -/
 def firstSymbol? :
@@ -116,19 +142,39 @@ def firstSymbol? :
 def lastSymbol? :
     Word Symbol → Option Symbol
   | [] => none
-  | s :: w =>
-      match lastSymbol? w with
-      | none => some s
-      | some t => some t
+  | s :: w => some (lastFrom s w)
 
 /-- Whether the adjacent factor ba occurs in the word. -/
 def containsBA :
     Word Symbol → Bool
   | [] => false
-  | s :: w =>
-      ((s == b) &&
-        (firstSymbol? w == some a)) ||
-      containsBA w
+  | [_] => false
+  | s :: t :: w =>
+      ((s == b) && (t == a)) ||
+        containsBA (t :: w)
+
+/-- Direct closed form of the h_star summary on every nonempty word. -/
+theorem starSummary_cons_features
+    (s : Symbol)
+    (w : Word Symbol) :
+    starSummary (s :: w) =
+      .nonempty s
+        (lastFrom s w)
+        (containsBA (s :: w)) := by
+  induction w generalizing s with
+  | nil =>
+      simp [starSummary, letterType,
+        starMul, lastFrom, containsBA]
+  | cons t w ih =>
+      rw [show
+        starSummary (s :: t :: w) =
+          starMul (letterType s)
+            (starSummary (t :: w)) by rfl]
+      rw [ih (s := t)]
+      simp [letterType, starMul,
+        lastFrom, containsBA,
+        Bool.or_assoc, Bool.or_comm,
+        Bool.or_left_comm]
 
 /-- Read the first-symbol component out of a summary. -/
 def StarType.first? : StarType → Option Symbol
@@ -153,9 +199,8 @@ theorem starSummary_eq_empty_iff
   | nil =>
       simp [starSummary]
   | cons s w =>
-      cases h : starSummary w <;>
-        simp [starSummary, letterType,
-          starMul, h]
+      rw [starSummary_cons_features]
+      simp
 
 /-- The first component of h_star is exactly the first terminal. -/
 theorem starType_first_summary
@@ -166,10 +211,8 @@ theorem starType_first_summary
   | nil =>
       rfl
   | cons s w =>
-      cases h : starSummary w <;>
-        simp [starSummary, letterType,
-          starMul, StarType.first?,
-          firstSymbol?, h]
+      rw [starSummary_cons_features]
+      rfl
 
 /-- Nonempty words have nonempty h_star state. -/
 theorem starSummary_ne_empty_of_ne_nil
@@ -185,56 +228,24 @@ theorem starType_last_summary
     (w : Word Symbol) :
     (starSummary w).last? =
       lastSymbol? w := by
-  induction w with
+  cases w with
   | nil =>
       rfl
-  | cons s w ih =>
-      cases w with
-      | nil =>
-          rfl
-      | cons t w =>
-          have hne :
-              starSummary (t :: w) ≠
-                StarType.empty :=
-            starSummary_ne_empty_of_ne_nil
-              (by simp)
-          cases hq :
-              starSummary (t :: w) with
-          | empty =>
-              exact False.elim (hne hq)
-          | nonempty f l q =>
-              have ih' := ih
-              simp [starSummary, letterType,
-                starMul, StarType.last?,
-                lastSymbol?, hq] at ih' ⊢
-              exact ih'
+  | cons s w =>
+      rw [starSummary_cons_features]
+      rfl
 
 /-- The Boolean component of h_star is exactly occurrence of ba. -/
 theorem starType_ba_summary
     (w : Word Symbol) :
     (starSummary w).ba =
       containsBA w := by
-  induction w with
+  cases w with
   | nil =>
       rfl
-  | cons s w ih =>
-      cases hq : starSummary w with
-      | empty =>
-          have hw0 :
-              w = [] :=
-            (starSummary_eq_empty_iff w).1 hq
-          subst w
-          simp [starSummary, letterType,
-            starMul, StarType.ba,
-            containsBA, firstSymbol?]
-      | nonempty f l q =>
-          have hf :=
-            starType_first_summary w
-          rw [hq] at hf
-          simp [StarType.first?] at hf
-          simp [starSummary, letterType,
-            starMul, StarType.ba,
-            containsBA, hq, ← hf, ih]
+  | cons s w =>
+      rw [starSummary_cons_features]
+      rfl
 
 /--
 Equality of h_star types gives exactly the three finite features used in the
