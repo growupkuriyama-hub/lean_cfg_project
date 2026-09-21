@@ -77,6 +77,8 @@ namespace TCS1
 #check canonicalWitnessWords_length_le_fixedWindow
 #check concreteFixedWindowSection7_package
 #check classicalFixedWindowSection7_package
+#check indexedClassicalFixedWindowSection7_package
+#check indexedZeroWindowSection7_package
 #check indexed_proposition74_full_package
 #check proposition74_thickness_from_yieldBound
 
