@@ -55,8 +55,10 @@ def fourBlockDFA :
   | nil =>
       rfl
   | cons s w ih =>
+      rw [DFA.evalFrom_cons]
       cases s <;>
-        simpa [fourBlockDFA, fourBlockStep] using ih
+        change fourBlockDFA.evalFrom .sink w = .sink <;>
+        exact ih
 
 theorem fourBlock_shape_from_b3
     {w : Word Symbol}
@@ -73,9 +75,11 @@ theorem fourBlock_shape_from_b3
       | a =>
           exfalso
           apply h
-          simp [DFA.evalFrom_cons,
-            fourBlockDFA, fourBlockStep,
-            fourBlock_evalFrom_sink]
+          rw [DFA.evalFrom_cons]
+          change
+            fourBlockDFA.evalFrom .sink w =
+              .sink
+          exact fourBlock_evalFrom_sink w
       | b =>
           have htail :
               fourBlockDFA.evalFrom .b3 w ≠
@@ -213,9 +217,13 @@ theorem fourBlock_shape_from_a0
   | zero =>
       rfl
   | succ n ih =>
-      simp [List.replicate_succ,
-        DFA.evalFrom_cons,
-        fourBlockDFA, fourBlockStep, ih]
+      rw [List.replicate_succ,
+        DFA.evalFrom_cons]
+      change
+        fourBlockDFA.evalFrom .a0
+            (List.replicate n a) =
+          .a0
+      exact ih
 
 @[simp] theorem fourBlock_eval_b1_replicate_b
     (n : Nat) :
@@ -226,9 +234,13 @@ theorem fourBlock_shape_from_a0
   | zero =>
       rfl
   | succ n ih =>
-      simp [List.replicate_succ,
-        DFA.evalFrom_cons,
-        fourBlockDFA, fourBlockStep, ih]
+      rw [List.replicate_succ,
+        DFA.evalFrom_cons]
+      change
+        fourBlockDFA.evalFrom .b1
+            (List.replicate n b) =
+          .b1
+      exact ih
 
 @[simp] theorem fourBlock_eval_a2_replicate_a
     (n : Nat) :
@@ -239,9 +251,13 @@ theorem fourBlock_shape_from_a0
   | zero =>
       rfl
   | succ n ih =>
-      simp [List.replicate_succ,
-        DFA.evalFrom_cons,
-        fourBlockDFA, fourBlockStep, ih]
+      rw [List.replicate_succ,
+        DFA.evalFrom_cons]
+      change
+        fourBlockDFA.evalFrom .a2
+            (List.replicate n a) =
+          .a2
+      exact ih
 
 @[simp] theorem fourBlock_eval_b3_replicate_b
     (n : Nat) :
@@ -252,9 +268,13 @@ theorem fourBlock_shape_from_a0
   | zero =>
       rfl
   | succ n ih =>
-      simp [List.replicate_succ,
-        DFA.evalFrom_cons,
-        fourBlockDFA, fourBlockStep, ih]
+      rw [List.replicate_succ,
+        DFA.evalFrom_cons]
+      change
+        fourBlockDFA.evalFrom .b3
+            (List.replicate n b) =
+          .b3
+      exact ih
 
 theorem fourBlock_shape_accepted
     (p q r s : Nat) :
