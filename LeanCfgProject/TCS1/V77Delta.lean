@@ -6,6 +6,7 @@ import LeanCfgProject.TCS1.UncappedCounterObstruction
 import LeanCfgProject.TCS1.CappedCounterFixedWindow
 import LeanCfgProject.TCS1.CappedCounterFiniteState
 import LeanCfgProject.TCS1.CappedCounterPaperWitness
+import LeanCfgProject.TCS1.CappedCounterProposition
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
 import LeanCfgProject.TCS1.LukasiewiczBoundary
