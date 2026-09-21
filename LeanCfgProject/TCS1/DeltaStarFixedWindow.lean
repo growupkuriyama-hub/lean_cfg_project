@@ -446,7 +446,7 @@ theorem paper_sameFixedWindowSummary
             (List.replicate (N - k) a ++
               List.replicate (N - l) b) ++
             List.replicate l b := by
-              simp [List.append_assoc]
+              simp only [List.append_assoc]
     have ht :
         paperT k l =
           p ++ m₂ ++ q := by
@@ -475,7 +475,7 @@ theorem paper_sameFixedWindowSummary
           (List.replicate (N - l) b ++
             List.replicate l b) := by
               rw [ha, hb]
-              simp [List.append_assoc]
+              simp only [List.append_assoc]
         _ =
         List.replicate k a ++
           (List.replicate (N - k) a ++
@@ -483,7 +483,7 @@ theorem paper_sameFixedWindowSummary
             List.replicate N a ++
             List.replicate (N - l) b) ++
           List.replicate l b := by
-              simp [List.append_assoc]
+              simp only [List.append_assoc]
     rw [hs, ht]
     exact
       boundary_words_sameFixedWindowSummary
