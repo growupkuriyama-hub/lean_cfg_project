@@ -78,9 +78,12 @@ theorem take_map_encode
   | cons s w ih =>
       cases i with
       | zero =>
-          simp
+          rfl
       | succ i =>
-          simp [ih]
+          change
+            encodeStep s :: (w.map encodeStep).take i =
+              encodeStep s :: (w.take i).map encodeStep
+          rw [ih]
 
 /-- Successful scanning gives the expected global balance equation. -/
 theorem scan_count_balance
@@ -169,8 +172,8 @@ def asMathlibDyckWord
       scan_prefix_safe
         (show scan 0 w = some 0 from hw)
         i
-    rw [take_map_encode]
-    simpa using hp
+    rw [take_map_encode w i]
+    simpa only [count_D_encode, count_U_encode] using hp
 
 /-- Decode a Mathlib Dyck word to the paper alphabet. -/
 def decodeWord (p : DyckWord) : Word Symbol :=
@@ -184,7 +187,11 @@ def decodeWord (p : DyckWord) : Word Symbol :=
     (p q : DyckWord) :
     decodeWord (p + q) =
       decodeWord p ++ decodeWord q := by
-  rfl
+  change
+    (p.toList ++ q.toList).map decodeStep =
+      p.toList.map decodeStep ++
+        q.toList.map decodeStep
+  exact List.map_append _ _ _
 
 @[simp] theorem decodeWord_nest
     (p : DyckWord) :
