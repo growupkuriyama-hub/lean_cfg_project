@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.DeltaStarBinaryGrammar
 import LeanCfgProject.TCS1.DeltaStarNonregular
+import LeanCfgProject.TCS1.DeltaStarNonlinearityBridge
 
 /-!
 # TCS #1 v78: paper-facing Delta-star proposition package
@@ -14,7 +15,9 @@ Verified here, by reference to the preceding modules:
 * an explicit finite binary CFG has exactly the same initial language;
 * the language is nonregular;
 * it is substitutable for the finite monoid homomorphism `h_star`;
-* it lies outside every fixed prefix--suffix window class.
+* it lies outside every fixed prefix--suffix window class;
+* the manuscript's non-linearity reduction identity
+  `Delta* ∩ a* b* a* b* = Delta Delta` holds extensionally.
 
 The manuscript's separate claim that Delta-star is *non-linear* uses the
 external theorem that linear languages are closed under intersection with
@@ -46,6 +49,9 @@ theorem nonlinear_rs_example_verified_core :
     ∧
     (¬ FormalLanguage.IsRegular)
     ∧
+    (Language ∩ FourBlockLanguage =
+      DoubleDeltaLanguage)
+    ∧
     FixedHSubstitutable
       starTyping Language
     ∧
@@ -55,6 +61,7 @@ theorem nonlinear_rs_example_verified_core :
   refine ⟨displayedDerives_iff_language, ?_⟩
   refine ⟨finite_cfg_witness, ?_⟩
   refine ⟨not_regular, ?_⟩
+  refine ⟨language_inter_fourBlock_eq_doubleDelta, ?_⟩
   exact
     deltaStar_fixedH_and_outside_all_fixedWindows
 
