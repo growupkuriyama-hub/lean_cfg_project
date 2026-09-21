@@ -161,6 +161,7 @@ import LeanCfgProject.TCS1.ClarkCongruentialPackaging
 import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 import LeanCfgProject.TCS1.ClarkCongruentialEndpoints
 import LeanCfgProject.TCS1.ClarkCongruentialComparison
+import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
 /-!
 # TCS #1 v79 Lean verification facade
 
