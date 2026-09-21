@@ -274,6 +274,77 @@ theorem obstructionFactor_ne_nil
   simp [obstructionFactor, badFactor]
 
 /--
+If i < j, the two obstruction factors have a common context but different
+full distributions.
+-/
+theorem obstructionFactor_bad_of_lt
+    {i j : Nat}
+    (hij : i < j) :
+    HaveSharedContext Language
+        (obstructionFactor i)
+        (obstructionFactor j)
+      ∧
+    Distribution Language (obstructionFactor i) ≠
+      Distribution Language (obstructionFactor j) := by
+  let p := i + 1
+  let q := j + 1
+  have hpq : p < q := by
+    dsimp [p, q]
+    omega
+  have hip :
+      List.replicate q a ++
+          obstructionFactor i ++
+          List.replicate q b ∈ Language := by
+    rw [show obstructionFactor i = badFactor p by
+      simp [obstructionFactor, p]]
+    exact
+      (context_badFactor_mem_iff q p).2
+        (by omega)
+  have hjq :
+      List.replicate q a ++
+          obstructionFactor j ++
+          List.replicate q b ∈ Language := by
+    rw [show obstructionFactor j = badFactor q by
+      simp [obstructionFactor, q]]
+    exact
+      (context_badFactor_mem_iff q q).2 le_rfl
+  constructor
+  · exact
+      ⟨List.replicate q a,
+        List.replicate q b,
+        hip, hjq⟩
+  · intro hdist
+    have hiSmall :
+        (List.replicate p a,
+          List.replicate p b) ∈
+        Distribution Language
+          (obstructionFactor i) := by
+      change
+        List.replicate p a ++
+            obstructionFactor i ++
+            List.replicate p b ∈ Language
+      rw [show obstructionFactor i = badFactor p by
+        simp [obstructionFactor, p]]
+      exact
+        (context_badFactor_mem_iff p p).2 le_rfl
+    have hjSmall :
+        (List.replicate p a,
+          List.replicate p b) ∈
+        Distribution Language
+          (obstructionFactor j) := by
+      rw [← hdist]
+      exact hiSmall
+    change
+      List.replicate p a ++
+          obstructionFactor j ++
+          List.replicate p b ∈ Language at hjSmall
+    rw [show obstructionFactor j = badFactor q by
+      simp [obstructionFactor, q]] at hjSmall
+    have :=
+      (context_badFactor_mem_iff p q).1 hjSmall
+    omega
+
+/--
 Distinct obstruction factors have a common Dyck context but different full
 distributions.
 -/
@@ -287,73 +358,15 @@ theorem obstructionFactor_bad
     Distribution Language (obstructionFactor i) ≠
       Distribution Language (obstructionFactor j) := by
   rcases lt_or_gt_of_ne hij with hijlt | hjilt
-  · let p := i + 1
-    let q := j + 1
-    have hpq : p < q := by
-      dsimp [p, q]
-      omega
-    have hip :
-        List.replicate q a ++
-            obstructionFactor i ++
-            List.replicate q b ∈ Language := by
-      rw [show obstructionFactor i = badFactor p by
-        simp [obstructionFactor, p]]
-      exact
-        (context_badFactor_mem_iff q p).2
-          (by omega)
-    have hjq :
-        List.replicate q a ++
-            obstructionFactor j ++
-            List.replicate q b ∈ Language := by
-      rw [show obstructionFactor j = badFactor q by
-        simp [obstructionFactor, q]]
-      exact
-        (context_badFactor_mem_iff q q).2 le_rfl
-    constructor
-    · exact
-        ⟨List.replicate q a,
-          List.replicate q b,
-          hip, hjq⟩
-    · intro hdist
-      have hiSmall :
-          (List.replicate p a,
-            List.replicate p b) ∈
-          Distribution Language
-            (obstructionFactor i) := by
-        change
-          List.replicate p a ++
-              obstructionFactor i ++
-              List.replicate p b ∈ Language
-        rw [show obstructionFactor i = badFactor p by
-          simp [obstructionFactor, p]]
-        exact
-          (context_badFactor_mem_iff p p).2 le_rfl
-      have hjSmall :
-          (List.replicate p a,
-            List.replicate p b) ∈
-          Distribution Language
-            (obstructionFactor j) := by
-        rw [← hdist]
-        exact hiSmall
-      change
-        List.replicate p a ++
-            obstructionFactor j ++
-            List.replicate p b ∈ Language at hjSmall
-      rw [show obstructionFactor j = badFactor q by
-        simp [obstructionFactor, q]] at hjSmall
-      have :=
-        (context_badFactor_mem_iff p q).1 hjSmall
-      omega
-  · have hji : j ≠ i := Ne.symm hij
-    have hswap :=
-      obstructionFactor_bad hji
+  · exact obstructionFactor_bad_of_lt hijlt
+  · have hswap :=
+      obstructionFactor_bad_of_lt hjilt
     rcases hswap with ⟨hshared, hdist⟩
     constructor
     · rcases hshared with
         ⟨u, v, hjL, hiL⟩
       exact ⟨u, v, hiL, hjL⟩
     · exact fun h => hdist h.symm
-termination_by i + j
 
 /-- D1 lies outside every fixed finite-monoid substitutability class. -/
 theorem not_fixedH
