@@ -97,6 +97,7 @@ import LeanCfgProject.TCS1.LinearSpineBounds
 import LeanCfgProject.TCS1.LinearSpineSemantic
 import LeanCfgProject.TCS1.LinearPumpingKernel
 import LeanCfgProject.TCS1.LinearPumpingBounded
+import LeanCfgProject.TCS1.RawLinearPumping
 import LeanCfgProject.TCS1.LinearTypedShapeBridge
 import LeanCfgProject.TCS1.LinearNormalizationSize
 import LeanCfgProject.TCS1.LinearNormalizationPlan
