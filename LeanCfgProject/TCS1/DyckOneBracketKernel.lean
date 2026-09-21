@@ -263,12 +263,7 @@ theorem context_badFactor_mem_iff
               (List.replicate n b ++ List.replicate n a) ++
               List.replicate m b) =
           some 0 := by
-      rw [List.append_assoc]
-      rw [scan_append, h1]
-      rw [List.append_assoc]
-      rw [scan_append, h2]
-      rw [scan_append, h3]
-      exact h4
+      simpa [List.append_assoc, scan_append, h1, h2, h3, h4]
     exact ⟨fun _ => hnm, fun _ => hscan⟩
   · have hlt : m < n := by omega
     have h1 :
@@ -285,10 +280,7 @@ theorem context_badFactor_mem_iff
               (List.replicate n b ++ List.replicate n a) ++
               List.replicate m b) =
           none := by
-      rw [List.append_assoc]
-      rw [scan_append, h1]
-      rw [List.append_assoc]
-      rw [scan_append, h2]
+      simpa [List.append_assoc, scan_append, h1, h2]
     constructor
     · intro hmem
       rw [hscan] at hmem
