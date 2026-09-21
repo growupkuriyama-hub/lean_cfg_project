@@ -55,9 +55,8 @@ noncomputable def indexedLinearCanonicalSample
 /-- One explicit source-only envelope for the linear characteristic sample. -/
 def indexedLinearCharacteristicEnvelope
     (m n : Nat) : Nat :=
-  let g :=
-    2 * linearPreparedEncodingEnvelope n
-  linearCharacteristicEnvelope m g g g
+  linearSourceCharacteristicEnvelope
+    m (2 * linearPreparedEncodingEnvelope n)
 
 /--
 End-to-end characteristic-sample theorem for an arbitrary finite indexed
@@ -156,41 +155,57 @@ theorem indexedLinear_characteristic_package
         ≤ gBound := by
     omega
 
+  have halpha :
+      Fintype.card α ≤ gBound := by
+    dsimp [gBound]
+    unfold IndexedMixedCFG.linearNormalizationSourceScale
+    unfold linearPreparedEncodingEnvelope
+    omega
+
+  have ht0 :=
+    untypedTerminalRuleIndex_card_le_ambient
+      (LinearConstructedTerminalRule Gp)
   have ht :
       (@Fintype.card
         (UntypedTerminalRuleIndex
           (LinearConstructedTerminalRule Gp))
         (Fintype.ofFinite _))
-        ≤ gBound := by
-    have heq :
-        (@Fintype.card
-          (UntypedTerminalRuleIndex
-            (LinearConstructedTerminalRule Gp))
-          (Fintype.ofFinite _))
-        =
-        Fintype.card
-          (LinearConstructedTerminalRuleIndex Gp) := by
-      rfl
-    rw [heq]
-    omega
+        ≤ gBound ^ 2 := by
+    have hmul :
+        Fintype.card (LinearConstructedState Gp) *
+            Fintype.card α
+          ≤
+        gBound * gBound :=
+      Nat.mul_le_mul hN halpha
+    exact le_trans ht0
+      (by simpa [pow_two] using hmul)
 
+  have hb0 :=
+    untypedBinaryRuleIndex_card_le_ambient
+      (LinearConstructedBinaryRule Gp)
+  have hpair :
+      Fintype.card (LinearConstructedState Gp) *
+          Fintype.card (LinearConstructedState Gp)
+        ≤
+      gBound * gBound :=
+    Nat.mul_le_mul hN hN
+  have htriple :
+      Fintype.card (LinearConstructedState Gp) *
+          (Fintype.card (LinearConstructedState Gp) *
+            Fintype.card (LinearConstructedState Gp))
+        ≤
+      gBound * (gBound * gBound) :=
+    Nat.mul_le_mul hN hpair
   have hb :
       (@Fintype.card
         (UntypedBinaryRuleIndex
           (LinearConstructedBinaryRule Gp))
         (Fintype.ofFinite _))
-        ≤ gBound := by
-    have heq :
-        (@Fintype.card
-          (UntypedBinaryRuleIndex
-            (LinearConstructedBinaryRule Gp))
-          (Fintype.ofFinite _))
-        =
-        Fintype.card
-          (LinearConstructedBinaryRuleIndex Gp) := by
-      rfl
-    rw [heq]
-    omega
+        ≤ gBound ^ 3 := by
+    exact le_trans hb0
+      (by
+        simpa [pow_succ, pow_two, Nat.mul_assoc]
+          using htriple)
 
   constructor
   · calc
@@ -222,12 +237,12 @@ theorem indexedLinear_characteristic_package
             (G.linearKeepEmpty hlinear S),
           (word.length + 1))
           ≤
-        linearCharacteristicEnvelope
-          (Fintype.card M)
-          gBound gBound gBound :=
+        linearSourceCharacteristicEnvelope
+          (Fintype.card M) gBound :=
       le_trans hsample hmono
     simpa [indexedLinearCanonicalSample,
       indexedLinearCharacteristicEnvelope,
+      linearSourceCharacteristicEnvelope,
       Gp, gBound] using hbound
 
 end IndexedLinearCharacteristicData
