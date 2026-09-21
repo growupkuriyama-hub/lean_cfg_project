@@ -54,6 +54,7 @@ import LeanCfgProject.TCS1.FixedWindowConcreteSummary
 import LeanCfgProject.TCS1.FixedWindowConcreteMonoid
 import LeanCfgProject.TCS1.FixedWindowClassicalSubstitutability
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
+import LeanCfgProject.TCS1.FixedWindowCounterexampleCriterion
 import LeanCfgProject.TCS1.ZeroWindowEndpoint
 import LeanCfgProject.TCS1.FixedWindowConcreteCharacteristicData
 import LeanCfgProject.TCS1.FixedWindowSection7Package
