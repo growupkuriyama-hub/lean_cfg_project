@@ -11,6 +11,7 @@ import LeanCfgProject.TCS1.DeltaStarFixedWindow
 import LeanCfgProject.TCS1.DeltaStarTyping
 import LeanCfgProject.TCS1.DeltaStarFixedH
 import LeanCfgProject.TCS1.DeltaStarFixedHSubstitutability
+import LeanCfgProject.TCS1.DeltaStarNonregular
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
 import LeanCfgProject.TCS1.LukasiewiczBoundary
