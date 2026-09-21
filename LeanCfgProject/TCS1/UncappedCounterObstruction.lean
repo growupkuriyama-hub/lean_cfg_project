@@ -145,6 +145,7 @@ theorem up_down_mem_iff
           some m := by
       simpa using scan_replicate_up 0 m
     rw [hup] at hscan
+    simp only at hscan
     by_contra hle
     have hlt : m < n := by omega
     have hdown :
