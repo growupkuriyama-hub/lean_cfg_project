@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
 import LeanCfgProject.TCS1.FiniteMonoidObstructionKernel
+import LeanCfgProject.TCS1.UncappedCounterObstruction
 import LeanCfgProject.TCS1.DyckOneBracketKernel
 import LeanCfgProject.TCS1.DyckOneBracketGrammar
 import LeanCfgProject.TCS1.LukasiewiczBoundary
