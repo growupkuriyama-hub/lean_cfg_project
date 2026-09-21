@@ -42,14 +42,14 @@ def step
     (rho : Nat) :
     State rho → Symbol → State rho
   | none, _ => none
-  | some h, reset =>
+  | some h, .reset =>
       initialState rho
-  | some h, up =>
+  | some h, .up =>
       if hh : h.1 < rho then
         some ⟨h.1 + 1, by omega⟩
       else
         none
-  | some h, down =>
+  | some h, .down =>
       if hh : 0 < h.1 then
         some ⟨h.1 - 1, by
           have hlt : h.1 < rho + 1 := h.2
