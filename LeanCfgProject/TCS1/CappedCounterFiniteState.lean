@@ -1,3 +1,4 @@
+import Mathlib.Computability.DFA
 import LeanCfgProject.TCS1.CappedCounterFixedWindow
 import LeanCfgProject.TCS1.FixedHSubstitutability
 
@@ -262,6 +263,113 @@ theorem fixedHSubstitutable_transitionMonoid
     recognizedPreimage_fixedHSubstitutable
       (transitionMonoidHom rho)
       (acceptingTransitions rho)
+
+/-- The capped-counter language viewed through Mathlib's formal-language API. -/
+def FormalLanguage
+    (rho : Nat) :
+    _root_.Language Symbol :=
+  {w | w ∈ Language rho}
+
+/-- DFA with live heights as accepting states and the overflow/underflow sink rejecting. -/
+def automaton
+    (rho : Nat) :
+    DFA Symbol (State rho) where
+  step := step rho
+  start := initialState rho
+  accept := {q | q ≠ none}
+
+/-- Mathlib DFA evaluation coincides with the recursive finite-state run. -/
+theorem automaton_evalFrom_eq_run
+    (rho : Nat)
+    (q : State rho)
+    (w : Word Symbol) :
+    (automaton rho).evalFrom q w =
+      run rho q w := by
+  induction w generalizing q with
+  | nil =>
+      rfl
+  | cons s w ih =>
+      rw [DFA.evalFrom_cons]
+      change
+        (automaton rho).evalFrom
+            (step rho q s) w =
+          run rho (step rho q s) w
+      exact ih (q := step rho q s)
+
+/-- Evaluation from the DFA start state is the capped-counter run from height zero. -/
+theorem automaton_eval_eq_run
+    (rho : Nat)
+    (w : Word Symbol) :
+    (automaton rho).eval w =
+      run rho (initialState rho) w := by
+  change
+    (automaton rho).evalFrom
+        (initialState rho) w =
+      run rho (initialState rho) w
+  exact
+    automaton_evalFrom_eq_run
+      rho (initialState rho) w
+
+/-- The explicit DFA accepts exactly the semantic capped-counter language. -/
+theorem automaton_accepts_eq
+    (rho : Nat) :
+    (automaton rho).accepts =
+      FormalLanguage rho := by
+  apply Set.ext
+  intro w
+  rw [DFA.mem_accepts]
+  rw [automaton_eval_eq_run]
+  change
+    run rho (initialState rho) w ≠ none ↔
+      ∃ h : Nat, scan rho 0 w = some h
+  have hrel :=
+    stateHeight_run
+      rho (initialState rho) w
+  have hrel' :
+      stateHeight
+          (run rho (initialState rho) w) =
+        scan rho 0 w := by
+    simpa [initialState, stateHeight] using hrel
+  constructor
+  · intro hrun
+    cases hr :
+        run rho (initialState rho) w with
+    | none =>
+        exact False.elim (hrun hr)
+    | some q =>
+        refine ⟨q.1, ?_⟩
+        rw [hr] at hrel'
+        simpa [stateHeight] using hrel'.symm
+  · rintro ⟨h, hscan⟩ hrun
+    rw [hrun] at hrel'
+    simp [stateHeight, hscan] at hrel'
+
+/-- Proposition 9 regularity component: every capped-counter language is regular. -/
+theorem isRegular
+    (rho : Nat) :
+    (FormalLanguage rho).IsRegular := by
+  rw [_root_.Language.isRegular_iff]
+  exact
+    ⟨State rho,
+      inferInstance,
+      automaton rho,
+      automaton_accepts_eq rho⟩
+
+/--
+Paper-facing regular/fixed-h package for the capped counter.  The regularity
+proof uses the same rho+2-state automaton whose transition monoid supplies the
+fixed-h witness.
+-/
+theorem regular_and_fixedH
+    (rho : Nat) :
+    (FormalLanguage rho).IsRegular
+      ∧
+    FixedHSubstitutable
+      (transitionMonoidHom rho)
+      (Language rho) := by
+  exact
+    ⟨isRegular rho,
+      fixedHSubstitutable_transitionMonoid rho⟩
 
 /--
 Paper-facing regular-separation core: for rho >= 2, the same capped-counter
