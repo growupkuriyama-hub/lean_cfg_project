@@ -32,6 +32,9 @@ final integration check.
 namespace LeanCfgProject
 namespace TCS1
 
+theorem v77_delta_facade_loaded : True :=
+  True.intro
+
 theorem v78_delta_facade_loaded : True :=
   True.intro
 
