@@ -364,7 +364,10 @@ theorem not_fixedWindowSubstitutable
           scan_replicate_up_of_le
             (rho := rho) (h := rho - 1)
             (n := 1) hcap
-        convert hz' using 1 <;> omega
+        have heq :
+            rho - 1 + 1 = rho := by
+          omega
+        simpa [heq] using hz'
       refine ⟨rho, ?_⟩
       simp [scan_append, hpScan,
         hy₁Scan, hq₁Scan, z₂, hmod]
@@ -379,7 +382,10 @@ theorem not_fixedWindowSubstitutable
           scan_replicate_up_of_le
             (rho := rho) (h := rho - 2)
             (n := 2) hcap
-        convert hz' using 1 <;> omega
+        have heq :
+            rho - 2 + 2 = rho := by
+          omega
+        simpa [heq] using hz'
       refine ⟨rho, ?_⟩
       simp [scan_append, hpScan,
         hy₁Scan, hq₁Scan, z₂, hmod]
