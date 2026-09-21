@@ -100,12 +100,12 @@ theorem linearSpineContext_plug
   | @rightSibling A B C X a u v hbin hsibling ctx ih =>
       have dA :=
         UntypedDerives.binary
-          hbin ih (UntypedDerives.terminal hsibling)
+          hbin (ih d) (UntypedDerives.terminal hsibling)
       simpa [List.append_assoc] using dA
   | @leftSibling A B C X a u v hbin hsibling ctx ih =>
       have dA :=
         UntypedDerives.binary
-          hbin (UntypedDerives.terminal hsibling) ih
+          hbin (UntypedDerives.terminal hsibling) (ih d)
       simpa [List.append_assoc] using dA
 
 theorem linearSpineContext_pump
