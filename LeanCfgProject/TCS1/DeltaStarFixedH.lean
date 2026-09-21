@@ -397,15 +397,19 @@ theorem scan_context_decompose
   rw [scan_append] at hmem
   cases hu : scan .zero u with
   | none =>
-      simp [hu] at hmem
+      rw [hu] at hmem
+      simp only at hmem
   | some q =>
       rw [hu] at hmem
+      simp only at hmem
       rw [scan_append] at hmem
       cases hx : scan q x with
       | none =>
-          simp [hx] at hmem
+          rw [hx] at hmem
+          simp only at hmem
       | some r =>
           rw [hx] at hmem
+          simp only at hmem
           exact ⟨q, r, hu, hx, hmem⟩
 
 /-- Reuse a known prefix state inside another accepted context. -/
@@ -421,13 +425,17 @@ theorem scan_middle_of_context
     scan .zero (u ++ x ++ v) =
       some .zero at hmem
   rw [List.append_assoc] at hmem
-  rw [scan_append, hu] at hmem
+  rw [scan_append] at hmem
+  rw [hu] at hmem
+  simp only at hmem
   rw [scan_append] at hmem
   cases hx : scan q x with
   | none =>
-      simp [hx] at hmem
+      rw [hx] at hmem
+      simp only at hmem
   | some r =>
       rw [hx] at hmem
+      simp only at hmem
       exact ⟨r, hx, hmem⟩
 
 /-- Reassemble language membership from three successful scan pieces. -/
@@ -442,8 +450,12 @@ theorem mem_of_context_scans
     scan .zero (u ++ x ++ v) =
       some .zero
   rw [List.append_assoc]
-  rw [scan_append, hu]
-  rw [scan_append, hx]
+  rw [scan_append]
+  rw [hu]
+  simp only
+  rw [scan_append]
+  rw [hx]
+  simp only
   exact hv
 
 /-- A successful a-step always enters a rising mode. -/
