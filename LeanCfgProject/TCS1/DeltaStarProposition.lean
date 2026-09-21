@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.DeltaStarBinaryGrammar
 import LeanCfgProject.TCS1.DeltaStarNonregular
 import LeanCfgProject.TCS1.DeltaStarNonlinearityBridge
+import LeanCfgProject.TCS1.DeltaStarNonlinearityReduction
 
 /-!
 # TCS #1 v78: paper-facing Delta-star proposition package
@@ -19,12 +20,12 @@ Verified here, by reference to the preceding modules:
 * the manuscript's non-linearity reduction identity
   `Delta* ∩ a* b* a* b* = Delta Delta` holds extensionally.
 
-The manuscript's separate claim that Delta-star is *non-linear* uses the
-external theorem that linear languages are closed under intersection with
-regular languages together with the cited non-linearity of Delta Delta.
-That external linear-language theorem is not represented in the current Lean
-library, so this package deliberately does not encode that clause as if it had
-been machine checked.
+The manuscript's separate claim that Delta-star is *non-linear* reduces to
+the cited non-linearity of Delta Delta.  The regular four-block filter, exact
+intersection identity, and closure of finite raw-linear presentations under
+DFA intersection are now machine checked in the local development.  The cited
+Double-Delta non-linearity theorem itself remains an explicit external
+mathematical input rather than an encoded axiom.
 -/
 
 namespace LeanCfgProject
@@ -35,8 +36,9 @@ namespace DeltaStar
 Paper-facing verified core of the nonlinear fixed-h-star example.
 
 The only proposition clause intentionally omitted from this conjunction is
-non-linearity, whose manuscript proof depends on an external linear-language
-closure/non-linearity theorem not formalized in this repository.
+the final unconditional non-linearity assertion.  Its internal reduction is
+machine checked; only the cited Double-Delta non-linearity fact remains
+external.
 -/
 theorem nonlinear_rs_example_verified_core :
     (∀ w : Word Symbol,
@@ -64,6 +66,26 @@ theorem nonlinear_rs_example_verified_core :
   refine ⟨language_inter_fourBlock_eq_doubleDelta, ?_⟩
   exact
     deltaStar_fixedH_and_outside_all_fixedWindows
+
+
+universe u w
+
+/--
+Paper-facing non-linearity reduction for Proposition 9.1.
+
+Supplying the cited Double-Delta non-linearity fact in the repository's
+finite raw-linear presentation form yields the Delta-star non-linearity
+conclusion in the same form.  All other steps of the manuscript reduction
+are discharged internally.
+-/
+theorem nonlinear_rs_example_nonlinearity_reduction
+    (hDouble :
+      ¬ RawLinearInitialRepresentable.{u, 0, w}
+        DoubleDeltaLanguage) :
+    ¬ RawLinearInitialRepresentable.{u, 0, w}
+        Language :=
+  deltaStar_not_rawLinearRepresentable_of_doubleDelta
+    hDouble
 
 end DeltaStar
 end TCS1
