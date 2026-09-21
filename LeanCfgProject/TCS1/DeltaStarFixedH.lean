@@ -517,8 +517,10 @@ theorem step_eq_of_same_height
       · rfl
       · exfalso
         simp [modeHeight] at hpheight
+        omega
       · exfalso
         simp [modeHeight] at hpheight
+        omega
       · simp [modeHeight] at hpheight
         have hn : n₁ = n₂ := by omega
         subst n₂
@@ -544,8 +546,11 @@ theorem scan_result_of_last_a
       | nil =>
           simp [lastSymbol?, lastFrom] at hlast
           subst s
-          have hstep : step q a = some r := by
-            simpa [scan] using hscan
+          obtain ⟨q', hstep, htail⟩ :=
+            scan_cons_success hscan
+          have hqr : q' = r := by
+            simpa [scan] using htail
+          subst r
           exact step_a_result hstep
       | cons t rest =>
           obtain ⟨q', hstep, htail⟩ :=
@@ -573,8 +578,11 @@ theorem scan_result_of_last_b
       | nil =>
           simp [lastSymbol?, lastFrom] at hlast
           subst s
-          have hstep : step q b = some r := by
-            simpa [scan] using hscan
+          obtain ⟨q', hstep, htail⟩ :=
+            scan_cons_success hscan
+          have hqr : q' = r := by
+            simpa [scan] using htail
+          subst r
           exact step_b_result hstep
       | cons t rest =>
           obtain ⟨q', hstep, htail⟩ :=
@@ -635,8 +643,10 @@ theorem scan_final_eq_of_balance_last
           · rfl
           · exfalso
             simp [modeHeight] at hh
+            omega
           · exfalso
             simp [modeHeight] at hh
+            omega
           · simp [modeHeight] at hh
             have hn : n₁ = n₂ := by omega
             subst n₂
@@ -837,9 +847,10 @@ theorem scan_mixed_exists_of_same_balance
               have hh := scan_height hscan
               have hrnonneg := modeHeight_nonneg r
               have hle : q ≤ p + 1 := by
+                rw [balance_replicate_b] at hh
                 change
                   modeHeight r =
-                    (p : Int) + 1 - (q : Int) at hh
+                    ((p : Int) + 1) + -(q : Int) at hh
                 omega
               have hle' : q' ≤ p' + 1 := by
                 omega
@@ -856,9 +867,10 @@ theorem scan_mixed_exists_of_same_balance
       have hh := scan_height hscan
       have hrnonneg := modeHeight_nonneg r
       have hle : q ≤ n + p + 1 := by
+        rw [balance_replicate_b] at hh
         change
           modeHeight r =
-            (n : Int) + (p : Int) + 1 - (q : Int) at hh
+            (((n + p : Nat) : Int) + 1) + -(q : Int) at hh
         omega
       have hle' : q' ≤ n + p' + 1 := by
         omega
