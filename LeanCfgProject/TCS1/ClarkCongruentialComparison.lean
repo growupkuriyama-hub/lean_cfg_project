@@ -31,7 +31,7 @@ universe u s v w x
 def ClarkCongruentialRepresentable
     {α : Type u}
     (L : Set (Word α)) : Prop :=
-  ∃ State : Type (max u s),
+  ∃ State : Type s,
     ∃ _finiteState : Finite State,
     ∃ grammar : BinaryNullableGrammar State α,
     ∃ initial : Set State,
