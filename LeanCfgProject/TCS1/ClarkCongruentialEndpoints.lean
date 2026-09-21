@@ -76,11 +76,11 @@ theorem clarkEmptyGrammar_language_eq :
 /-- The empty endpoint grammar is congruential vacuously. -/
 theorem clarkEmptyGrammar_congruential :
     ClarkCongruentialInitialSet
-      clarkEmptyGrammar
+      (clarkEmptyGrammar (α := α))
       clarkEndpointInitial := by
   intro A x y dx dy
   exact False.elim
-    (clarkEmptyGrammar_no_derives dx)
+    (clarkEmptyGrammar_no_derives (α := α) dx)
 
 /-- Empty-language endpoint of Proposition 9.9. -/
 theorem clark_empty_endpoint :
@@ -93,7 +93,7 @@ theorem clark_empty_endpoint :
     (∅ : Set (Word α))
       ∧
     ClarkCongruentialInitialSet
-      clarkEmptyGrammar
+      (clarkEmptyGrammar (α := α))
       clarkEndpointInitial := by
   exact
     ⟨clarkEndpointInitial_finite,
@@ -161,17 +161,17 @@ theorem clarkEpsilonGrammar_language_eq :
 /-- The epsilon-only endpoint grammar is congruential. -/
 theorem clarkEpsilonGrammar_congruential :
     ClarkCongruentialInitialSet
-      clarkEpsilonGrammar
+      (clarkEpsilonGrammar (α := α))
       clarkEndpointInitial := by
   intro A x y dx dy
   cases A with
   | root =>
       have hx :
           x = [] :=
-        (clarkEpsilonGrammar_derives_iff x).1 dx
+        (clarkEpsilonGrammar_derives_iff (α := α) x).1 dx
       have hy :
           y = [] :=
-        (clarkEpsilonGrammar_derives_iff y).1 dy
+        (clarkEpsilonGrammar_derives_iff (α := α) y).1 dy
       subst x
       subst y
       rfl
@@ -187,7 +187,7 @@ theorem clark_epsilon_endpoint :
     ({[]} : Set (Word α))
       ∧
     ClarkCongruentialInitialSet
-      clarkEpsilonGrammar
+      (clarkEpsilonGrammar (α := α))
       clarkEndpointInitial := by
   exact
     ⟨clarkEndpointInitial_finite,
