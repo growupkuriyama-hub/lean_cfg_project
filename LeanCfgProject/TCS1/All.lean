@@ -1,5 +1,7 @@
 import LeanCfgProject.TCS1.LinearRegularIntersection
 import LeanCfgProject.TCS1.FixedHSubstitutability
+import LeanCfgProject.TCS1.RegularRecognition
+import LeanCfgProject.TCS1.ClarkEyraudSpecialCase
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
 import LeanCfgProject.TCS1.FiniteMonoidObstructionKernel
 import LeanCfgProject.TCS1.UncappedCounterObstruction
