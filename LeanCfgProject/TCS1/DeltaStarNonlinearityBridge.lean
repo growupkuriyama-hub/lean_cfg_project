@@ -163,7 +163,9 @@ theorem language_inter_fourBlock_eq_doubleDelta :
         omega
       subst s
       refine ⟨p + r, 0, ?_⟩
-      simp [balancedBlock,
+      simp only [balancedBlock,
+        List.replicate_zero,
+        List.nil_append, List.append_nil,
         List.replicate_add,
         List.append_assoc]
     · by_cases hr0 : r = 0
@@ -172,7 +174,9 @@ theorem language_inter_fourBlock_eq_doubleDelta :
           omega
         subst p
         refine ⟨q + s, 0, ?_⟩
-        simp [balancedBlock,
+        simp only [balancedBlock,
+          List.replicate_zero,
+          List.nil_append, List.append_nil,
           List.replicate_add,
           List.append_assoc]
       · have hpq : p = q :=
