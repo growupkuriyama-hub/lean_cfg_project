@@ -24,7 +24,7 @@ import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 # TCS #1 v78 delta verification facade
 
 This lightweight facade collects theorem-facing modules added specifically
-while synchronizing the Lean experiment with the v78 manuscript.  It is used
+while synchronizing the Lean experiment with the v78 manuscript, including the Section 9 boundary work.  It is used
 by a fast CI job during development; the full `TCS1.All` facade remains the
 final integration check.
 -/
