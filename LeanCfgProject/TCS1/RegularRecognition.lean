@@ -59,12 +59,18 @@ instance {σ : Type} : Monoid (DFATransition σ) where
     rfl
 
 noncomputable instance {σ : Type} [Fintype σ] :
-    Fintype (DFATransition σ) :=
-  Fintype.ofFinite _
+    Fintype (DFATransition σ) := by
+  classical
+  exact
+    Fintype.ofEquiv (σ → σ)
+      { toFun := fun f => ⟨f⟩
+        invFun := fun t => t.toFun
+        left_inv := by intro f; rfl
+        right_inv := by intro t; cases t; rfl }
 
 /-- The transition transformation induced by a word. -/
 def dfaTransitionHom
-    {α σ : Type}
+    {α : Type u} {σ : Type}
     [Fintype σ]
     (D : DFA α σ) :
     FixedFiniteMonoidHom α (DFATransition σ) where
@@ -74,12 +80,14 @@ def dfaTransitionHom
     rfl
   map_append u v := by
     ext q
+    change
+      D.evalFrom q (u ++ v) =
+        D.evalFrom (D.evalFrom q u) v
     rw [DFA.evalFrom_of_append]
-    rfl
 
 /-- Accepting transformations are those sending the start state to an accept state. -/
 def dfaTransitionAccept
-    {α σ : Type}
+    {α : Type u} {σ : Type}
     [Fintype σ]
     (D : DFA α σ) :
     Set (DFATransition σ) :=
@@ -87,7 +95,7 @@ def dfaTransitionAccept
 
 /-- The transition-monoid preimage is exactly the DFA language. -/
 theorem dfa_recognizedPreimage_eq_accepts
-    {α σ : Type}
+    {α : Type u} {σ : Type}
     [Fintype σ]
     (D : DFA α σ) :
     RecognizedPreimage
@@ -179,65 +187,72 @@ theorem recognizedPreimage_isRegular
     [Monoid M] [Fintype M]
     (H : FixedFiniteMonoidHom α M)
     (Acc : Set M) :
-    (RecognizedPreimage H Acc : Language α).IsRegular := by
+    Language.IsRegular (RecognizedPreimage H Acc) := by
   refine ⟨M, inferInstance, monoidRecognitionDFA H Acc, ?_⟩
   exact monoidRecognitionDFA_accepts_eq H Acc
 
 /--
-Paper-facing finite-automaton / finite-monoid equivalence.
+Paper-facing finite-automaton / finite-monoid equivalence, split into the two
+directions in a form that keeps all typeclass witnesses explicit.
 
-The right-hand side deliberately quantifies over small finite monoids, matching
-Mathlib's definition of regularity by a small finite DFA state type.
+The forward direction produces the full finite transition monoid of a DFA.
+The converse accepts an arbitrary small finite monoid recognition.
 -/
-theorem isRegular_iff_finiteMonoidRecognition
+theorem regular_has_finiteMonoidRecognition
     {α : Type u}
     (L : Language α) :
-    L.IsRegular ↔
-      ∃ M : Type,
-        ∃ _mon : Monoid M,
-          ∃ _fin : Fintype M,
-            ∃ H : FixedFiniteMonoidHom α M,
-              ∃ Acc : Set M,
-                RecognizedPreimage H Acc = L := by
-  constructor
-  · intro hreg
-    obtain ⟨σ, hfin, H, Acc, hL⟩ :=
-      isRegular_exists_finiteMonoidRecognition L hreg
-    exact
-      ⟨DFATransition σ, inferInstance, inferInstance,
-        H, Acc, hL⟩
-  · rintro ⟨M, hmon, hfin, H, Acc, rfl⟩
-    letI : Monoid M := hmon
-    letI : Fintype M := hfin
-    exact recognizedPreimage_isRegular H Acc
+    L.IsRegular →
+      ∃ σ : Type,
+        ∃ _inst : Fintype σ,
+          ∃ D : DFA α σ,
+            D.accepts = L ∧
+            RecognizedPreimage
+                (dfaTransitionHom D)
+                (dfaTransitionAccept D)
+              =
+            L := by
+  intro hreg
+  rcases hreg with ⟨σ, hfin, D, hD⟩
+  refine ⟨σ, hfin, D, hD, ?_⟩
+  rw [dfa_recognizedPreimage_eq_accepts D]
+  exact hD
 
 /--
-Complete Proposition 3.1 package: regularity is equivalent to finite-monoid
-recognition, and every language recognized by its fixed monoid is
-fixed-h substitutable.
+Complete Proposition 3.1 package.
+
+1. Every regular language has an explicit finite transition-monoid
+   recognition.
+2. Every finite-monoid preimage is regular.
+3. Every such preimage is fixed-h substitutable.
 -/
 theorem regular_auto_proposition_package
     {α : Type u}
     (L : Language α) :
-    (L.IsRegular ↔
-      ∃ M : Type,
-        ∃ _mon : Monoid M,
-          ∃ _fin : Fintype M,
-            ∃ H : FixedFiniteMonoidHom α M,
-              ∃ Acc : Set M,
-                RecognizedPreimage H Acc = L)
+    (L.IsRegular →
+      ∃ σ : Type,
+        ∃ _inst : Fintype σ,
+          ∃ D : DFA α σ,
+            D.accepts = L ∧
+            RecognizedPreimage
+                (dfaTransitionHom D)
+                (dfaTransitionAccept D)
+              =
+            L)
     ∧
-    (∀ (M : Type) (_mon : Monoid M)
-        (_fin : Fintype M)
+    (∀ (M : Type) [Monoid M] [Fintype M]
+        (H : FixedFiniteMonoidHom α M)
+        (Acc : Set M),
+      Language.IsRegular (RecognizedPreimage H Acc))
+    ∧
+    (∀ (M : Type) [Monoid M] [Fintype M]
         (H : FixedFiniteMonoidHom α M)
         (Acc : Set M),
       FixedHSubstitutable H
         (RecognizedPreimage H Acc)) := by
-  constructor
-  · exact isRegular_iff_finiteMonoidRecognition L
+  refine ⟨regular_has_finiteMonoidRecognition L, ?_, ?_⟩
   · intro M hmon hfin H Acc
-    letI : Monoid M := hmon
-    letI : Fintype M := hfin
+    exact recognizedPreimage_isRegular H Acc
+  · intro M hmon hfin H Acc
     exact recognizedPreimage_fixedHSubstitutable H Acc
 
 end TCS1
