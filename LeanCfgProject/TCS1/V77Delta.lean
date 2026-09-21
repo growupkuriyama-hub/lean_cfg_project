@@ -1,3 +1,4 @@
+import LeanCfgProject.TCS1.LinearRegularIntersection
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.FixedWindowCounterexampleCriterion
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
