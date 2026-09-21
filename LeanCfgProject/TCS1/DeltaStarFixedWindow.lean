@@ -191,7 +191,8 @@ theorem scan_bad_prefix
   have ha :=
     scan_rising_replicate_a 0 n
   rw [ha]
-  exact scan_rising_replicate_b_partial hn
+  simp only
+  simpa using scan_rising_replicate_b_partial hn
 
 theorem block_mem
     (n : Nat) :
@@ -222,12 +223,12 @@ theorem replicate_succ_right
       List.replicate (n + 1) s := by
   induction n with
   | zero =>
-      simp
+      rfl
   | succ n ih =>
       rw [List.replicate_succ]
       rw [List.replicate_succ]
-      simp only [List.cons_append, List.cons.injEq]
-      exact ih
+      simp only [List.cons_append]
+      exact congrArg (fun w => s :: w) ih
 
 theorem a_block_b_mem
     (n : Nat) :
@@ -235,6 +236,10 @@ theorem a_block_b_mem
         (List.replicate n a ++
           List.replicate n b) ++ [b]
       ∈ Language := by
+  have hb :
+      List.replicate n b ++ [b] =
+        List.replicate (n + 1) b :=
+    replicate_succ_right b n
   have heq :
       a ::
           (List.replicate n a ++
@@ -242,9 +247,25 @@ theorem a_block_b_mem
         =
       List.replicate (n + 1) a ++
         List.replicate (n + 1) b := by
-    rw [List.replicate_succ]
-    simp only [List.cons_append, List.cons.injEq]
-    exact replicate_succ_right b n
+    calc
+      a ::
+          (List.replicate n a ++
+            List.replicate n b) ++ [b]
+        =
+      a ::
+          (List.replicate n a ++
+            (List.replicate n b ++ [b])) := by
+          simp [List.append_assoc]
+      _ =
+      a ::
+          (List.replicate n a ++
+            List.replicate (n + 1) b) := by
+          rw [hb]
+      _ =
+      List.replicate (n + 1) a ++
+        List.replicate (n + 1) b := by
+          rw [List.replicate_succ]
+          rfl
   rw [heq]
   exact block_mem (n + 1)
 
@@ -266,6 +287,10 @@ theorem a_two_blocks_b_not_mem
           (List.replicate n a ++
             List.replicate n b)) ++ [b]) =
       some .zero at hmem
+  have hb :
+      List.replicate n b ++ [b] =
+        List.replicate (n + 1) b :=
+    replicate_succ_right b n
   have hshape :
       a ::
           ((List.replicate n a ++
@@ -277,10 +302,31 @@ theorem a_two_blocks_b_not_mem
           List.replicate n b) ++
         (List.replicate n a ++
           List.replicate (n + 1) b) := by
-    rw [List.replicate_succ]
-    simp only [List.cons_append, List.cons.injEq]
-    rw [replicate_succ_right b n]
-    simp [List.append_assoc]
+    calc
+      a ::
+          ((List.replicate n a ++
+              List.replicate n b) ++
+            (List.replicate n a ++
+              List.replicate n b)) ++ [b]
+        =
+      (a :: List.replicate n a) ++
+        List.replicate n b ++
+        (List.replicate n a ++
+          (List.replicate n b ++ [b])) := by
+            simp [List.append_assoc]
+      _ =
+      (a :: List.replicate n a) ++
+        List.replicate n b ++
+        (List.replicate n a ++
+          List.replicate (n + 1) b) := by
+            rw [hb]
+      _ =
+      (List.replicate (n + 1) a ++
+          List.replicate n b) ++
+        (List.replicate n a ++
+          List.replicate (n + 1) b) := by
+            rw [List.replicate_succ]
+            simp [List.append_assoc]
   rw [hshape] at hmem
   rw [scan_append, scan_bad_prefix hn] at hmem
   cases n with
@@ -296,6 +342,17 @@ theorem replicate_split
     (hk : k ≤ n) :
     List.replicate k s ++
         List.replicate (n - k) s =
+      List.replicate n s := by
+  rw [← List.replicate_add]
+  congr 1
+  omega
+
+theorem replicate_split_right
+    (s : Symbol)
+    {l n : Nat}
+    (hl : l ≤ n) :
+    List.replicate (n - l) s ++
+        List.replicate l s =
       List.replicate n s := by
   rw [← List.replicate_add]
   congr 1
@@ -322,9 +379,6 @@ theorem paper_sameFixedWindowSummary
     SameFixedWindowSummary k l
       (paperS k l) (paperT k l) := by
   let N := max 1 (k + l)
-  have hNpos : 0 < N := by
-    dsimp [N]
-    omega
   have hkN : k ≤ N := by
     dsimp [N]
     omega
@@ -357,26 +411,45 @@ theorem paper_sameFixedWindowSummary
       simp [p]
     have hq : q.length = l := by
       simp [q]
+    have ha :
+        List.replicate k a ++
+            List.replicate (N - k) a =
+          List.replicate N a :=
+      replicate_split a hkN
+    have hb :
+        List.replicate (N - l) b ++
+            List.replicate l b =
+          List.replicate N b :=
+      replicate_split_right b hlN
     have hs :
         paperS k l =
           p ++ m₁ ++ q := by
-      dsimp [paperS, p, m₁, q, N]
-      rw [← replicate_split a hkN]
-      rw [← List.append_assoc]
-      rw [← replicate_split b hlN]
+      dsimp [paperS, p, m₁, q]
+      change
+        List.replicate N a ++
+            List.replicate N b =
+          List.replicate k a ++
+            (List.replicate (N - k) a ++
+              List.replicate (N - l) b) ++
+            List.replicate l b
+      rw [← ha, ← hb]
+      simp [List.append_assoc]
     have ht :
         paperT k l =
           p ++ m₂ ++ q := by
-      dsimp [paperT, p, m₂, q, N]
-      rw [← replicate_split a hkN]
-      simp only [List.append_assoc]
-      rw [← List.append_assoc
+      dsimp [paperT, p, m₂, q]
+      change
         (List.replicate N a ++
-          List.replicate N b ++
-          List.replicate N a)
-        (List.replicate (N - l) b)
-        (List.replicate l b)]
-      rw [← replicate_split b hlN]
+            List.replicate N b) ++
+          (List.replicate N a ++
+            List.replicate N b) =
+        List.replicate k a ++
+          (List.replicate (N - k) a ++
+            List.replicate N b ++
+            List.replicate N a ++
+            List.replicate (N - l) b) ++
+          List.replicate l b
+      rw [← ha, ← hb]
       simp [List.append_assoc]
     rw [hs, ht]
     exact
@@ -393,9 +466,9 @@ theorem paper_shared_context
   exact
     ⟨[], [],
       by
-        simpa [paperS, N] using block_mem N,
+        simpa [paperS] using block_mem N,
       by
-        simpa [paperT, N] using two_blocks_mem N⟩
+        simpa [paperT] using two_blocks_mem N⟩
 
 theorem paperS_ne_nil
     (k l : Nat) :
