@@ -67,7 +67,6 @@ def balance : Word Symbol → Int
   | succ n ih =>
       rw [List.replicate_succ]
       simp [ih]
-      omega
 
 /-- Numerical height represented by a parser mode. -/
 def modeHeight : Mode → Int
@@ -78,7 +77,7 @@ def modeHeight : Mode → Int
 theorem modeHeight_nonneg
     (q : Mode) :
     0 ≤ modeHeight q := by
-  cases q <;> simp [modeHeight]
+  cases q <;> simp [modeHeight] <;> omega
 
 /-- One successful parser step changes height by the symbol balance. -/
 theorem step_height
@@ -101,7 +100,6 @@ theorem step_height
           simp [step] at hstep
           subst r
           simp [modeHeight]
-          omega
       | b =>
           cases n with
           | zero =>
@@ -112,7 +110,6 @@ theorem step_height
               simp [step] at hstep
               subst r
               simp [modeHeight]
-              omega
   | falling n =>
       cases s with
       | a =>
@@ -127,7 +124,6 @@ theorem step_height
               simp [step] at hstep
               subst r
               simp [modeHeight]
-              omega
 
 /-- Peel the first successful step from a successful nonempty scan. -/
 theorem scan_cons_success
@@ -142,7 +138,7 @@ theorem scan_cons_success
   | none =>
       simp [hs] at hscan
   | some q' =>
-      refine ⟨q', hs, ?_⟩
+      refine ⟨q', rfl, ?_⟩
       simpa [hs] using hscan
 
 /-- Successful scanning realizes exact signed balance as height change. -/
