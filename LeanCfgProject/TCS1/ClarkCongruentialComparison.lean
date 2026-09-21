@@ -45,31 +45,172 @@ section EndpointRepresentability
 
 variable {α : Type u}
 
-/-- The empty language has a finite congruential presentation. -/
+/-- Universe-lifted one-state endpoint type. -/
+abbrev LiftedClarkEndpointState :=
+  ULift.{s} ClarkEndpointState
+
+/-- All states are initial; the lifted endpoint type has only one state. -/
+def liftedClarkEndpointInitial :
+    Set (LiftedClarkEndpointState (s := s)) :=
+  Set.univ
+
+theorem liftedClarkEndpointInitial_finite :
+    (liftedClarkEndpointInitial (s := s)).Finite := by
+  exact Set.toFinite _
+
+/-- Universe-polymorphic empty endpoint grammar. -/
+def liftedClarkEmptyGrammar :
+    BinaryNullableGrammar
+      (LiftedClarkEndpointState (s := s)) α where
+  terminalRule _ _ := False
+  binaryRule _ _ _ := False
+  epsilonRule _ := False
+  unitRule _ _ := False
+
+theorem liftedClarkEmpty_no_derives
+    {A : LiftedClarkEndpointState (s := s)}
+    {z : Word α} :
+    ¬ BinaryNullableDerives
+        (liftedClarkEmptyGrammar (s := s))
+        A z := by
+  intro d
+  cases d with
+  | terminal h => exact h.elim
+  | epsilon h => exact h.elim
+  | unit h _ => exact h.elim
+  | binary h _ _ => exact h.elim
+
+theorem liftedClarkEmpty_language_eq :
+    InitialSetLanguage
+        (liftedClarkEmptyGrammar
+          (α := α) (s := s))
+        (liftedClarkEndpointInitial (s := s))
+      =
+    (∅ : Set (Word α)) := by
+  apply Set.ext
+  intro z
+  constructor
+  · rintro ⟨A, hA, d⟩
+    exact False.elim
+      (liftedClarkEmpty_no_derives
+        (α := α) (s := s) d)
+  · intro hz
+    exact False.elim (by simpa using hz)
+
+theorem liftedClarkEmpty_congruential :
+    ClarkCongruentialInitialSet
+      (liftedClarkEmptyGrammar
+        (α := α) (s := s))
+      (liftedClarkEndpointInitial (s := s)) := by
+  intro A z₁ z₂ d₁ d₂
+  exact False.elim
+    (liftedClarkEmpty_no_derives
+      (α := α) (s := s) d₁)
+
+/-- Universe-polymorphic epsilon-only endpoint grammar. -/
+def liftedClarkEpsilonGrammar :
+    BinaryNullableGrammar
+      (LiftedClarkEndpointState (s := s)) α where
+  terminalRule _ _ := False
+  binaryRule _ _ _ := False
+  epsilonRule _ := True
+  unitRule _ _ := False
+
+theorem liftedClarkEpsilon_derives_iff
+    (A : LiftedClarkEndpointState (s := s))
+    (z : Word α) :
+    BinaryNullableDerives
+        (liftedClarkEpsilonGrammar (s := s))
+        A z
+      ↔
+    z = [] := by
+  constructor
+  · intro d
+    cases d with
+    | terminal h => exact False.elim h
+    | epsilon h => rfl
+    | unit h _ => exact False.elim h
+    | binary h _ _ => exact False.elim h
+  · rintro rfl
+    exact BinaryNullableDerives.epsilon True.intro
+
+theorem liftedClarkEpsilon_language_eq :
+    InitialSetLanguage
+        (liftedClarkEpsilonGrammar
+          (α := α) (s := s))
+        (liftedClarkEndpointInitial (s := s))
+      =
+    ({[]} : Set (Word α)) := by
+  apply Set.ext
+  intro z
+  constructor
+  · rintro ⟨A, hA, d⟩
+    have hz0 :=
+      (liftedClarkEpsilon_derives_iff
+        (α := α) (s := s) A z).1 d
+    simpa [hz0]
+  · intro hz
+    have hz0 : z = [] := by
+      simpa using hz
+    subst z
+    let A : LiftedClarkEndpointState (s := s) :=
+      ⟨ClarkEndpointState.root⟩
+    exact
+      ⟨A, Set.mem_univ A,
+        BinaryNullableDerives.epsilon
+          True.intro⟩
+
+theorem liftedClarkEpsilon_congruential :
+    ClarkCongruentialInitialSet
+      (liftedClarkEpsilonGrammar
+        (α := α) (s := s))
+      (liftedClarkEndpointInitial (s := s)) := by
+  intro A z₁ z₂ d₁ d₂
+  have hz₁ :
+      z₁ = [] :=
+    (liftedClarkEpsilon_derives_iff
+      (α := α) (s := s) A z₁).1 d₁
+  have hz₂ :
+      z₂ = [] :=
+    (liftedClarkEpsilon_derives_iff
+      (α := α) (s := s) A z₂).1 d₂
+  subst z₁
+  subst z₂
+  rfl
+
+/-- The empty language has a finite congruential presentation in any state universe. -/
 theorem clarkEmpty_representable :
     ClarkCongruentialRepresentable.{u, s}
       (∅ : Set (Word α)) := by
   refine
-    ⟨ClarkEndpointState,
+    ⟨LiftedClarkEndpointState (s := s),
       inferInstance,
-      clarkEmptyGrammar,
-      clarkEndpointInitial,
-      clarkEndpointInitial_finite,
-      clarkEmptyGrammar_language_eq,
-      clarkEmptyGrammar_congruential⟩
+      liftedClarkEmptyGrammar
+        (α := α) (s := s),
+      liftedClarkEndpointInitial (s := s),
+      liftedClarkEndpointInitial_finite
+        (s := s),
+      liftedClarkEmpty_language_eq
+        (α := α) (s := s),
+      liftedClarkEmpty_congruential
+        (α := α) (s := s)⟩
 
-/-- The epsilon-only language has a finite congruential presentation. -/
+/-- The epsilon-only language has a finite congruential presentation in any state universe. -/
 theorem clarkEpsilon_representable :
     ClarkCongruentialRepresentable.{u, s}
       ({[]} : Set (Word α)) := by
   refine
-    ⟨ClarkEndpointState,
+    ⟨LiftedClarkEndpointState (s := s),
       inferInstance,
-      clarkEpsilonGrammar,
-      clarkEndpointInitial,
-      clarkEndpointInitial_finite,
-      clarkEpsilonGrammar_language_eq,
-      clarkEpsilonGrammar_congruential⟩
+      liftedClarkEpsilonGrammar
+        (α := α) (s := s),
+      liftedClarkEndpointInitial (s := s),
+      liftedClarkEndpointInitial_finite
+        (s := s),
+      liftedClarkEpsilon_language_eq
+        (α := α) (s := s),
+      liftedClarkEpsilon_congruential
+        (α := α) (s := s)⟩
 
 end EndpointRepresentability
 
