@@ -254,12 +254,18 @@ theorem not_fixedWindowSubstitutable
     simpa [q] using suffixWindow_length l
   have hy₁ne :
       p ++ y₁ ++ q ≠ [] := by
-    have : 0 < rho - 1 := by omega
-    simp [p, y₁, q, this]
+    intro hempty
+    have hlen :=
+      congrArg List.length hempty
+    simp [p, y₁, q] at hlen
+    omega
   have hy₂ne :
       p ++ y₂ ++ q ≠ [] := by
-    have : 0 < rho := by omega
-    simp [p, y₂, q, this]
+    intro hempty
+    have hlen :=
+      congrArg List.length hempty
+    simp [p, y₂, q] at hlen
+    omega
 
   have hpScan :
       scan rho 0 p = some 0 := by
@@ -298,7 +304,14 @@ theorem not_fixedWindowSubstitutable
       scan_suffixWindow
         (rho := rho) (h := rho - 1)
         (l := l) hpos hcap
-    simpa [q] using h
+    by_cases hmod : l % 2 = 0
+    · simpa [q, hmod] using h
+    · rw [if_neg hmod]
+      rw [if_neg hmod] at h
+      have heq :
+          rho - 1 - 1 = rho - 2 := by
+        omega
+      simpa [q, heq] using h
 
   have hq₂Scan :
       scan rho rho q =
@@ -321,21 +334,21 @@ theorem not_fixedWindowSubstitutable
       p ++ y₁ ++ q ∈ Language rho := by
     by_cases hmod : l % 2 = 0
     · refine ⟨rho - 1, ?_⟩
-      simp only [scan_append, hpScan,
-        hy₁Scan, hq₁Scan, hmod, if_pos]
+      simp [scan_append, hpScan,
+        hy₁Scan, hq₁Scan, hmod]
     · refine ⟨rho - 2, ?_⟩
-      simp only [scan_append, hpScan,
-        hy₁Scan, hq₁Scan, hmod, if_neg]
+      simp [scan_append, hpScan,
+        hy₁Scan, hq₁Scan, hmod]
 
   have hmem₂ :
       p ++ y₂ ++ q ∈ Language rho := by
     by_cases hmod : l % 2 = 0
     · refine ⟨rho, ?_⟩
-      simp only [scan_append, hpScan,
-        hy₂Scan, hq₂Scan, hmod, if_pos]
+      simp [scan_append, hpScan,
+        hy₂Scan, hq₂Scan, hmod]
     · refine ⟨rho - 1, ?_⟩
-      simp only [scan_append, hpScan,
-        hy₂Scan, hq₂Scan, hmod, if_neg]
+      simp [scan_append, hpScan,
+        hy₂Scan, hq₂Scan, hmod]
 
   have hmem₃ :
       p ++ y₁ ++ q ++ z₂ ∈
@@ -347,14 +360,14 @@ theorem not_fixedWindowSubstitutable
         have hcap :
             (rho - 1) + 1 ≤ rho := by
           omega
-        simpa using
-          (scan_replicate_up_of_le
+        have hz' :=
+          scan_replicate_up_of_le
             (rho := rho) (h := rho - 1)
-            (n := 1) hcap)
+            (n := 1) hcap
+        convert hz' using 1 <;> omega
       refine ⟨rho, ?_⟩
-      simp only [scan_append, hpScan,
-        hy₁Scan, hq₁Scan, z₂,
-        hmod, if_pos]
+      simp [scan_append, hpScan,
+        hy₁Scan, hq₁Scan, z₂, hmod]
       exact hz
     · have hz :
           scan rho (rho - 2) [up, up] =
@@ -362,14 +375,14 @@ theorem not_fixedWindowSubstitutable
         have hcap :
             (rho - 2) + 2 ≤ rho := by
           omega
-        simpa using
-          (scan_replicate_up_of_le
+        have hz' :=
+          scan_replicate_up_of_le
             (rho := rho) (h := rho - 2)
-            (n := 2) hcap)
+            (n := 2) hcap
+        convert hz' using 1 <;> omega
       refine ⟨rho, ?_⟩
-      simp only [scan_append, hpScan,
-        hy₁Scan, hq₁Scan, z₂,
-        hmod, if_neg]
+      simp [scan_append, hpScan,
+        hy₁Scan, hq₁Scan, z₂, hmod]
       exact hz
 
   have hbad :
@@ -392,9 +405,9 @@ theorem not_fixedWindowSubstitutable
         (scan_replicate_up_of_overflow
           (rho := rho) (h := rho)
           (n := 1) hle hov)
-    simp only [scan_append, hpScan,
+    simp [scan_append, hpScan,
       hy₂Scan, hq₂Scan, z₂,
-      hmod, if_pos] at hscanBad
+      hmod] at hscanBad
     rw [hover] at hscanBad
     contradiction
   · have hover :
@@ -408,9 +421,9 @@ theorem not_fixedWindowSubstitutable
         (scan_replicate_up_of_overflow
           (rho := rho) (h := rho - 1)
           (n := 2) hle hov)
-    simp only [scan_append, hpScan,
+    simp [scan_append, hpScan,
       hy₂Scan, hq₂Scan, z₂,
-      hmod, if_neg] at hscanBad
+      hmod] at hscanBad
     rw [hover] at hscanBad
     contradiction
 
