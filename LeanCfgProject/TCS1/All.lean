@@ -135,6 +135,7 @@ import LeanCfgProject.TCS1.Proposition74Facade
 import LeanCfgProject.TCS1.ClarkCongruentialPackaging
 import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 import LeanCfgProject.TCS1.ClarkCongruentialEndpoints
+import LeanCfgProject.TCS1.ClarkCongruentialComparison
 /-!
 # TCS #1 v78 Lean verification facade
 
