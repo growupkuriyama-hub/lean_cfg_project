@@ -325,8 +325,8 @@ theorem a_two_blocks_b_not_mem
           List.replicate n b) ++
         (List.replicate n a ++
           List.replicate (n + 1) b) := by
-            rw [List.replicate_succ]
-            simp [List.append_assoc]
+            simpa [List.replicate_succ,
+              List.append_assoc]
   rw [hshape] at hmem
   rw [scan_append, scan_bad_prefix hn] at hmem
   cases n with
@@ -432,8 +432,21 @@ theorem paper_sameFixedWindowSummary
             (List.replicate (N - k) a ++
               List.replicate (N - l) b) ++
             List.replicate l b
-      rw [← ha, ← hb]
-      simp [List.append_assoc]
+      calc
+        List.replicate N a ++
+            List.replicate N b
+          =
+        (List.replicate k a ++
+            List.replicate (N - k) a) ++
+          (List.replicate (N - l) b ++
+            List.replicate l b) := by
+              rw [ha, hb]
+        _ =
+        List.replicate k a ++
+            (List.replicate (N - k) a ++
+              List.replicate (N - l) b) ++
+            List.replicate l b := by
+              simp [List.append_assoc]
     have ht :
         paperT k l =
           p ++ m₂ ++ q := by
@@ -449,8 +462,28 @@ theorem paper_sameFixedWindowSummary
             List.replicate N a ++
             List.replicate (N - l) b) ++
           List.replicate l b
-      rw [← ha, ← hb]
-      simp [List.append_assoc]
+      calc
+        (List.replicate N a ++
+            List.replicate N b) ++
+          (List.replicate N a ++
+            List.replicate N b)
+          =
+        (List.replicate k a ++
+            List.replicate (N - k) a) ++
+          List.replicate N b ++
+          List.replicate N a ++
+          (List.replicate (N - l) b ++
+            List.replicate l b) := by
+              rw [ha, hb]
+              simp [List.append_assoc]
+        _ =
+        List.replicate k a ++
+          (List.replicate (N - k) a ++
+            List.replicate N b ++
+            List.replicate N a ++
+            List.replicate (N - l) b) ++
+          List.replicate l b := by
+              simp [List.append_assoc]
     rw [hs, ht]
     exact
       boundary_words_sameFixedWindowSummary
