@@ -146,9 +146,7 @@ theorem paperT_mem
           List.replicate rho up) ++
         List.replicate l reset) =
       some q
-  rw [scan_append]
-  rw [scan_append, hpairs, hups]
-  exact hreset
+  simpa [scan_append, hpairs, hups] using hreset
 
 /-- The distinguishing left context up keeps the smaller witness accepted. -/
 theorem up_paperS_mem
