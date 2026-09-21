@@ -139,7 +139,7 @@ theorem scan_height_shift
       | a =>
           simp only [scan] at hw ⊢
           have hs :=
-            ih (h := h + 1) (k := k) d hw
+            ih (h := h + 1) (k := k) hw
           convert hs using 1 <;> omega
       | b =>
           cases h with
@@ -152,7 +152,7 @@ theorem scan_height_shift
                   simpa [scan] using hw
               | succ d =>
                   have hs :=
-                    ih (h := h) (k := k) (d + 1) hw
+                    ih (h := h) (k := k) hw
                   simp only [scan]
                   convert hs using 1 <;> omega
 
@@ -189,8 +189,10 @@ theorem insert_neutral
     (u v : Word Symbol) :
     u ++ x ++ v ∈ Language ↔
       u ++ v ∈ Language := by
-  unfold Language
-  rw [scan_append, scan_append]
+  change
+    scan 0 (u ++ x ++ v) = some 0 ↔
+      scan 0 (u ++ v) = some 0
+  simp only [List.append_assoc, scan_append]
   cases hu : scan 0 u with
   | none =>
       simp [hu]
@@ -227,7 +229,14 @@ theorem context_badFactor_mem_iff
         List.replicate m b ∈ Language
       ↔
     n ≤ m := by
-  unfold Language badFactor
+  change
+    scan 0
+        (List.replicate m a ++
+          (List.replicate n b ++ List.replicate n a) ++
+          List.replicate m b) =
+      some 0
+      ↔
+    n ≤ m
   by_cases hnm : n ≤ m
   · have h1 :
         scan 0 (List.replicate m a) =
@@ -248,9 +257,17 @@ theorem context_badFactor_mem_iff
           some 0 := by
       simpa using
         scan_replicate_b_of_le (show m ≤ m from le_rfl)
-    simp only [scan_append]
-    rw [h1, h2, h3, h4]
-    exact iff_of_true rfl hnm
+    have hscan :
+        scan 0
+            (List.replicate m a ++
+              (List.replicate n b ++ List.replicate n a) ++
+              List.replicate m b) =
+          some 0 := by
+      rw [scan_append, h1]
+      rw [scan_append, h2]
+      rw [scan_append, h3]
+      exact h4
+    exact ⟨fun _ => hnm, fun _ => hscan⟩
   · have hlt : m < n := by omega
     have h1 :
         scan 0 (List.replicate m a) =
@@ -260,9 +277,20 @@ theorem context_badFactor_mem_iff
         scan m (List.replicate n b) =
           none :=
       scan_replicate_b_of_lt hlt
-    simp only [scan_append]
-    rw [h1, h2]
-    simp [hnm]
+    have hscan :
+        scan 0
+            (List.replicate m a ++
+              (List.replicate n b ++ List.replicate n a) ++
+              List.replicate m b) =
+          none := by
+      rw [scan_append, h1]
+      rw [scan_append, h2]
+    constructor
+    · intro hmem
+      rw [hscan] at hmem
+      contradiction
+    · intro hn
+      exact False.elim (hnm hn)
 
 /-- Nat-indexed nonempty obstruction family b^(n+1) a^(n+1). -/
 def obstructionFactor (n : Nat) : Word Symbol :=
