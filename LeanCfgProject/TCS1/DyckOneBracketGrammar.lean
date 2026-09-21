@@ -173,7 +173,8 @@ def asMathlibDyckWord
         (show scan 0 w = some 0 from hw)
         i
     rw [take_map_encode w i]
-    simpa only [count_D_encode, count_U_encode] using hp
+    simpa only [count_D_encode, count_U_encode,
+      Nat.zero_add] using hp
 
 /-- Decode a Mathlib Dyck word to the paper alphabet. -/
 def decodeWord (p : DyckWord) : Word Symbol :=
@@ -191,7 +192,7 @@ def decodeWord (p : DyckWord) : Word Symbol :=
     (p.toList ++ q.toList).map decodeStep =
       p.toList.map decodeStep ++
         q.toList.map decodeStep
-  exact List.map_append _ _ _
+  simp only [List.map_append]
 
 @[simp] theorem decodeWord_nest
     (p : DyckWord) :
