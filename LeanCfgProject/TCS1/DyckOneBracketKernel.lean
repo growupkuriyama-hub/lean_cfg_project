@@ -264,6 +264,7 @@ theorem context_badFactor_mem_iff
               List.replicate m b) =
           some 0 := by
       rw [scan_append, h1]
+      rw [List.append_assoc]
       rw [scan_append, h2]
       rw [scan_append, h3]
       exact h4
@@ -284,6 +285,7 @@ theorem context_badFactor_mem_iff
               List.replicate m b) =
           none := by
       rw [scan_append, h1]
+      rw [List.append_assoc]
       rw [scan_append, h2]
     constructor
     · intro hmem
