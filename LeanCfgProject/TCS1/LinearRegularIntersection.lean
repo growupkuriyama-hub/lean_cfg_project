@@ -218,25 +218,30 @@ theorem rawDFAProductDerives_sound
                     i.sourceProd
                     srcLeft srcCore srcRight
                     srcNonunit hsrc ih.1)
-              · calc
-                  D.evalFrom i.entry
-                      (srcLeft ++ word ++ srcRight)
-                    =
-                  D.evalFrom
-                      (D.evalFrom i.entry
-                        (srcLeft ++ word))
-                      srcRight := by
-                        rw [DFA.evalFrom_of_append]
-                  _ =
-                  D.evalFrom
-                      (D.evalFrom
-                        (D.evalFrom i.entry srcLeft)
-                        word)
-                      srcRight := by
-                        rw [DFA.evalFrom_of_append]
-                  _ =
-                  D.evalFrom i.middle srcRight := by
-                        rw [ih.2]
+              · have htrans :
+                    D.evalFrom i.entry
+                        (srcLeft ++ word ++ srcRight) =
+                      D.evalFrom i.middle srcRight := by
+                  calc
+                    D.evalFrom i.entry
+                        (srcLeft ++ word ++ srcRight)
+                      =
+                    D.evalFrom
+                        (D.evalFrom i.entry
+                          (srcLeft ++ word))
+                        srcRight := by
+                          rw [DFA.evalFrom_of_append]
+                    _ =
+                    D.evalFrom
+                        (D.evalFrom
+                          (D.evalFrom i.entry srcLeft)
+                          word)
+                        srcRight := by
+                          rw [DFA.evalFrom_of_append]
+                    _ =
+                    D.evalFrom i.middle srcRight := by
+                          rw [ih.2]
+                simpa [rawDFAProductGrammar, hsrc] using htrans
 
 /--
 Completeness of the DFA product: every source derivation lifts from an
