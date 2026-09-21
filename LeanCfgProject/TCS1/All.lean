@@ -153,6 +153,10 @@ theorem v66_facade_loaded : True :=
 theorem v68_facade_loaded : True :=
   True.intro
 
+/-- Compatibility marker for the integrated v77 verification facade. -/
+theorem v77_facade_loaded : True :=
+  True.intro
+
 /-- Marker theorem for the integrated v78 verification facade. -/
 theorem v78_facade_loaded : True :=
   True.intro
