@@ -8,6 +8,7 @@ import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
 import LeanCfgProject.TCS1.Proposition74IndexedPackage
 import LeanCfgProject.TCS1.IndexedLinearNormalizationTheorem
+import LeanCfgProject.TCS1.IndexedLinearReducedNormalization
 import LeanCfgProject.TCS1.LinearReducedWitnessBridge
 import LeanCfgProject.TCS1.IndexedLinearCharacteristicData
 import LeanCfgProject.TCS1.LinearSeparatorProposition86
@@ -84,6 +85,7 @@ namespace TCS1
 
 -- Section 8: arbitrary linear normalization, short witnesses, and data bound.
 #check indexedLinear_normalization_source_package
+#check indexedLinear_reduced_normalization_semantic_package
 #check minimumCanonicalYield_linear_length_le
 #check minimumCanonicalContext_linear_length_le
 #check indexedLinear_characteristic_package
