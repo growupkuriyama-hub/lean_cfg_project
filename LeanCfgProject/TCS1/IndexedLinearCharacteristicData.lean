@@ -58,16 +58,9 @@ def indexedLinearCharacteristicEnvelope
   linearSourceCharacteristicEnvelope
     m (2 * linearPreparedEncodingEnvelope n)
 
-/--
-End-to-end characteristic-sample theorem for an arbitrary finite indexed
-linear CFG under an arbitrary fixed finite typing.
-
-The reconstructed language is exactly the original source-start language, and
-the encoded characteristic-sample norm is bounded by an explicit polynomial
-in the source normalization scale (with the fixed monoid cardinality as a
-constant parameter).
--/
 set_option maxHeartbeats 800000 in
+/-- The composition expands several finite subtype cardinality bounds, so this
+paper-facing package is given a larger elaboration budget. -/
 theorem indexedLinear_characteristic_package
     [DecidableEq α]
     (H : FixedFiniteMonoidHom α M)
