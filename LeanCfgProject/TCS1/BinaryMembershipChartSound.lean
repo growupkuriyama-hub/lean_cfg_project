@@ -127,7 +127,6 @@ theorem cykChartStep_sound
   rcases he with hold | hnew
   · exact hsound e hold
   · unfold cykProduced at hnew
-    dsimp only at hnew
     rcases Finset.mem_image.mp hnew with
       ⟨c, hc, rfl⟩
     have hen :
