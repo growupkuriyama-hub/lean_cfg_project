@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.DeltaStarFourBlockDFA
+import LeanCfgProject.TCS1.DeltaStarDoubleDeltaNonlinear
 
 /-!
 # TCS #1 v78: machine-checked non-linearity reduction
@@ -9,16 +10,14 @@ The manuscript proves Delta-star non-linear by the chain
     => Delta-star intersect a* b* a* b* linear
     => Delta Delta linear,
 
-contradicting the cited non-linearity of Delta Delta.
+contradicting non-linearity of Delta Delta.
 
-The preceding modules now machine-check every internal step of that reduction:
-the four-block DFA recognizes exactly a* b* a* b*; finite raw-linear
-presentations are closed under intersection with that DFA; and
-DeltaStar.Language intersect FourBlockLanguage equals DoubleDeltaLanguage.
-
-Accordingly, the only remaining external mathematical input is the cited
-non-linearity of DoubleDeltaLanguage. We expose that boundary explicitly as
-a hypothesis rather than encoding the literature theorem as an axiom.
+The full chain is now machine checked internally.  The four-block DFA
+recognizes exactly a* b* a* b*; finite raw-linear presentations are closed
+under intersection with that DFA; the intersection is exactly Double Delta;
+and the bounded linear pumping theorem proves Double Delta itself is not
+linear.  The conditional reduction theorem is retained as a reusable lemma,
+and the unconditional theorem below closes the manuscript claim.
 -/
 
 namespace LeanCfgProject
@@ -78,6 +77,36 @@ theorem deltaStar_no_indexedLinear_presentation_of_doubleDelta
   exact
     (deltaStar_not_rawLinearRepresentable_of_doubleDelta
       hDouble) hRep
+
+theorem deltaStar_not_rawLinearRepresentable
+    : ¬ RawLinearInitialRepresentable.{u, 0, w}
+        Language := by
+  exact
+    deltaStar_not_rawLinearRepresentable_of_doubleDelta
+      (doubleDelta_not_rawLinearInitialRepresentable
+        (u := u) (w := w))
+
+/--
+Unconditional presentation-level non-linearity: no finite indexed linear CFG
+can generate Delta-star from any selected start nonterminal.
+-/
+theorem deltaStar_no_indexedLinear_presentation
+    {N : Type u}
+    {P : Type w}
+    [Fintype N]
+    [Fintype P]
+    (G : IndexedMixedCFG N Symbol P)
+    (hlinear : G.IsLinear)
+    (S : N)
+    (hlang :
+      LeastClosedLanguage G.toMixedRules S =
+        Language) :
+    False := by
+  exact
+    deltaStar_no_indexedLinear_presentation_of_doubleDelta
+      (doubleDelta_not_rawLinearInitialRepresentable
+        (u := u) (w := w))
+      G hlinear S hlang
 
 end DeltaStar
 end TCS1
