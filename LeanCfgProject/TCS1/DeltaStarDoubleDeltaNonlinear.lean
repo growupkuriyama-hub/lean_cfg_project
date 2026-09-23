@@ -261,7 +261,7 @@ theorem doubleDelta_pumpDown_shape
         List.replicate N a ++
           List.replicate (N - kz) b) ++
       List.replicate z.length b := by
-        simp [List.append_assoc]
+        simp only [List.append_assoc]
     _ =
     List.replicate (u.length + (N - ku)) a ++
       (List.replicate N b ++
@@ -272,7 +272,6 @@ theorem doubleDelta_pumpDown_shape
           List.replicate_add
             u.length (N - ku) a
         rw [haRep]
-        simp only [List.append_assoc]
     _ =
     List.replicate (N - v.length) a ++
       (List.replicate N b ++
