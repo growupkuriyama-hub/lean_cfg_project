@@ -227,24 +227,40 @@ theorem activeReconstructionNonterminal_card_le_key
         (α := α) K)
 
 
-/-- The global finite key space is polynomially dominated by the rule envelope. -/
-theorem reconstructionActiveStateKey_card_le_ruleEnvelope
+/--
+The global finite key space is already bounded by the direct output-encoding
+envelope.  The extra factor (n+1) in that envelope absorbs the common cut
+coordinate bound without needing any case split at n=0.
+-/
+theorem reconstructionActiveStateKey_card_le_outputEncodingEnvelope
     (K : Finset (Word α)) :
     Fintype.card (ReconstructionActiveStateKey K) ≤
-      reconstructionRuleCandidateEnvelope
+      reconstructionOutputEncodingEnvelope
         (reconstructionSampleNorm K) := by
   rw [reconstructionActiveStateKey_card_eq]
-  have hK :
-      K.card ≤ reconstructionSampleNorm K :=
-    reconstructionSample_card_le_norm K
+  let n := reconstructionSampleNorm K
+  have hK : K.card ≤ n := by
+    simpa [n] using reconstructionSample_card_le_norm K
   have hmul :
-      K.card * (reconstructionSampleNorm K + 1) ^ 2 ≤
-        reconstructionSampleNorm K *
-          (reconstructionSampleNorm K + 1) ^ 2 :=
+      K.card * (n + 1) ^ 2 ≤
+        n * (n + 1) ^ 2 :=
     Nat.mul_le_mul_right _ hK
-  refine le_trans hmul ?_
-  unfold reconstructionRuleCandidateEnvelope
-  nlinarith [Nat.zero_le (reconstructionSampleNorm K)]
+  have hbase :
+      n * (n + 1) ≤
+        reconstructionRuleCandidateEnvelope n := by
+    unfold reconstructionRuleCandidateEnvelope
+    nlinarith [Nat.zero_le (n ^ 3), Nat.zero_le (n ^ 4)]
+  have hscaled :
+      n * (n + 1) ^ 2 ≤
+        reconstructionRuleCandidateEnvelope n * (n + 1) := by
+    calc
+      n * (n + 1) ^ 2
+          = (n * (n + 1)) * (n + 1) := by ring
+      _ ≤
+        reconstructionRuleCandidateEnvelope n * (n + 1) :=
+          Nat.mul_le_mul_right (n + 1) hbase
+  simpa [n, reconstructionOutputEncodingEnvelope] using
+    (le_trans hmul hscaled)
 
 /--
 The actual observed reconstruction-state count is bounded by the same explicit
@@ -258,34 +274,11 @@ theorem activeReconstructionNonterminal_card_le_outputEncodingEnvelope
       ≤
     reconstructionOutputEncodingEnvelope
       (reconstructionSampleNorm K) := by
-  have hactive :=
-    activeReconstructionNonterminal_card_le_key
-      (α := α) K
-  have hkey :=
-    reconstructionActiveStateKey_card_le_ruleEnvelope
-      (α := α) K
-  have hcand :
-      reconstructionRuleCandidateEnvelope
-          (reconstructionSampleNorm K)
-        ≤
-      reconstructionOutputEncodingEnvelope
-        (reconstructionSampleNorm K) := by
-    calc
-      reconstructionRuleCandidateEnvelope
-          (reconstructionSampleNorm K)
-        =
-      reconstructionRuleCandidateEnvelope
-          (reconstructionSampleNorm K) * 1 := by simp
-      _ ≤
-      reconstructionRuleCandidateEnvelope
-          (reconstructionSampleNorm K) *
-            (reconstructionSampleNorm K + 1) := by
-          exact Nat.mul_le_mul_left _
-            (by omega)
-      _ =
-      reconstructionOutputEncodingEnvelope
-        (reconstructionSampleNorm K) := rfl
-  exact le_trans hactive (le_trans hkey hcand)
+  exact le_trans
+    (activeReconstructionNonterminal_card_le_key
+      (α := α) K)
+    (reconstructionActiveStateKey_card_le_outputEncodingEnvelope
+      (α := α) K)
 
 end ReconstructionFiniteStateSupport
 
