@@ -83,8 +83,7 @@ theorem deltaStar_not_rawLinearRepresentable
         Language := by
   exact
     deltaStar_not_rawLinearRepresentable_of_doubleDelta
-      (doubleDelta_not_rawLinearInitialRepresentable
-        (u := u) (w := w))
+      doubleDelta_not_rawLinearInitialRepresentable
 
 /--
 Unconditional presentation-level non-linearity: no finite indexed linear CFG
@@ -104,8 +103,7 @@ theorem deltaStar_no_indexedLinear_presentation
     False := by
   exact
     deltaStar_no_indexedLinear_presentation_of_doubleDelta
-      (doubleDelta_not_rawLinearInitialRepresentable
-        (u := u) (w := w))
+      doubleDelta_not_rawLinearInitialRepresentable
       G hlinear S hlang
 
 end DeltaStar
