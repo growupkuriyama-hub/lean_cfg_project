@@ -110,8 +110,7 @@ theorem nonlinear_rs_example_full
   refine ⟨displayedDerives_iff_language, ?_⟩
   refine ⟨finite_cfg_witness, ?_⟩
   refine ⟨not_regular, ?_⟩
-  refine ⟨deltaStar_not_rawLinearRepresentable
-    (u := u) (w := w), ?_⟩
+  refine ⟨deltaStar_not_rawLinearRepresentable, ?_⟩
   exact
     deltaStar_fixedH_and_outside_all_fixedWindows
 
