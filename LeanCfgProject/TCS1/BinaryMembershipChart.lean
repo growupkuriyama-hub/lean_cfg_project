@@ -77,10 +77,17 @@ def cykProduced
     [∀ A B : N, DecidablePred (binaryRule A B)]
     {n : Nat}
     (old : CYKChart N n) :
-    CYKChart N n :=
-  (Finset.univ.filter
-      (CYKCandidateEnabled binaryRule old)).image
-    cykCandidateOutput
+    CYKChart N n := by
+  letI :
+      DecidablePred
+        (CYKCandidateEnabled binaryRule old) :=
+    fun c => by
+      unfold CYKCandidateEnabled
+      infer_instance
+  exact
+    (Finset.univ.filter
+        (CYKCandidateEnabled binaryRule old)).image
+      cykCandidateOutput
 
 /-- One cumulative CYK chart update. -/
 def cykChartStep
