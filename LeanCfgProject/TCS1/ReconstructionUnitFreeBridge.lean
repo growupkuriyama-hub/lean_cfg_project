@@ -186,7 +186,7 @@ theorem reconstructionUnitFree_untypedStartDerives_iff_batchDerives
   constructor
   · intro d
     cases d with
-    | @nonempty A word hstart hder =>
+    | @nonempty A _ hstart hder =>
         rcases A with ⟨⟨x, u, v⟩, hobs⟩
         change u = [] ∧ v = [] at hstart
         rcases hstart with ⟨hu, hv⟩
@@ -196,16 +196,16 @@ theorem reconstructionUnitFree_untypedStartDerives_iff_batchDerives
         have hxK : x ∈ K := by
           simpa using hobs.2
         have hhyp :
-            HypDerives H K x [] [] word :=
+            HypDerives H K x [] [] w :=
           (reconstructionUnitFree_untypedDerives_iff_hypDerives
-            H K ⟨⟨x, [], []⟩, hobs⟩ word).1 hder
+            H K ⟨⟨x, [], []⟩, hobs⟩ w).1 hder
         exact
           BatchDerives.nonempty hxK hxne hhyp
     | epsilon heps =>
         exact BatchDerives.epsilon heps
   · intro d
     cases d with
-    | @nonempty s word hs hsne hder =>
+    | @nonempty s _ hs hsne hder =>
         have hobs : Observed K s [] [] := by
           constructor
           · exact hsne
@@ -219,9 +219,9 @@ theorem reconstructionUnitFree_untypedStartDerives_iff_batchDerives
             UntypedDerives
               (reconstructionUnitFreeTerminalRule H K)
               (reconstructionUnitFreeBinaryRule H K)
-              A word :=
+              A w :=
           (reconstructionUnitFree_untypedDerives_iff_hypDerives
-            H K A word).2 hder
+            H K A w).2 hder
         exact
           UntypedStartDerives.nonempty hstart hunit
     | epsilon heps =>
