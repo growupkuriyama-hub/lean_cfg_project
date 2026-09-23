@@ -113,6 +113,36 @@ theorem concreteConservative_membershipComparison_le_prefix
   simpa [conservativeCYKPrefixEnvelope, p] using
     (cykNaiveComparisonEnvelope_mono hm hn)
 
+
+/--
+Occurrence-indexed specialization with no external state-count premise.
+
+The reconstructed non-start symbols are generously named by two-cut sampled
+factor slots.  Their finite cardinality is already bounded by the explicit
+output encoding envelope, so the representation-count assumption of the
+generic bridge is discharged internally.
+-/
+theorem concreteConservative_occurrenceIndexed_membershipComparison_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    cykNaiveComparisonEnvelope
+        (Fintype.card
+          (ReconstructionFactorSlot
+            (concreteConservativeHypothesis H datum n)))
+        (datum (n + 1)).length
+      ≤
+    conservativeCYKPrefixEnvelope
+      (positiveDataPrefixNorm datum (n + 1)) := by
+  exact
+    concreteConservative_membershipComparison_le_prefix
+      H datum n
+      (Fintype.card
+        (ReconstructionFactorSlot
+          (concreteConservativeHypothesis H datum n)))
+      (reconstructionFactorSlot_card_le_outputEncodingEnvelope
+        (concreteConservativeHypothesis H datum n))
+
 /--
 A single explicit work envelope for one conservative update:
 the membership check plus the worst-case reconstruction output work of a
@@ -154,6 +184,39 @@ theorem concreteConservative_update_work_le_prefix
       H datum n
   unfold conservativeUpdateWorkEnvelope
   exact Nat.add_le_add hmem hcert.2.2.1
+
+
+/--
+End-to-end occurrence-indexed work bound for one conservative update.
+
+This removes the last abstract nonterminal-count parameter from the cost
+composition: membership testing plus a possible rebuild is bounded by one
+explicit polynomial in the positive-data prefix.
+-/
+theorem concreteConservative_occurrenceIndexed_update_work_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    cykNaiveComparisonEnvelope
+        (Fintype.card
+          (ReconstructionFactorSlot
+            (concreteConservativeHypothesis H datum n)))
+        (datum (n + 1)).length
+      +
+    reconstructionOutputEncodingEnvelope
+      (reconstructionSampleNorm
+        (concreteAccumulatedSample datum (n + 1)))
+      ≤
+    conservativeUpdateWorkEnvelope
+      (positiveDataPrefixNorm datum (n + 1)) := by
+  exact
+    concreteConservative_update_work_le_prefix
+      H datum n
+      (Fintype.card
+        (ReconstructionFactorSlot
+          (concreteConservativeHypothesis H datum n)))
+      (reconstructionFactorSlot_card_le_outputEncodingEnvelope
+        (concreteConservativeHypothesis H datum n))
 
 end ConservativeMembershipCost
 
