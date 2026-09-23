@@ -471,8 +471,9 @@ theorem conservativeExecutableUpdateWorkEnvelope_polynomial_form
         conservativeCYKPrefixEnvelope p +
         5 * (p + 1) ^ 5 := by
   unfold conservativeExecutableUpdateWorkEnvelope
+  unfold conservativeUpdateWorkEnvelope
   rw [reconstructionUnitClosureTableScanEnvelope_eq]
-  rfl
+  ring
 
 /--
 End-to-end cost composition for the computable factor-slot parser:
