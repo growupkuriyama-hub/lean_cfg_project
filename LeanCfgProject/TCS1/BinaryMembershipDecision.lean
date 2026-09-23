@@ -50,6 +50,27 @@ def CYKStartMembership
           (cykTerminalSeed terminalRule w)
           w.length
 
+/-- The start-membership proposition is decidable from the executable chart data. -/
+instance instDecidableCYKStartMembership
+    [Fintype N]
+    [DecidableEq N]
+    [DecidableEq α]
+    (terminalRule : N → α → Prop)
+    [DecidableRel terminalRule]
+    (binaryRule : N → N → N → Prop)
+    [∀ A B : N, DecidablePred (binaryRule A B)]
+    (startRule : N → Prop)
+    [DecidablePred startRule]
+    (epsilonStart : Prop)
+    [Decidable epsilonStart]
+    (w : Word α) :
+    Decidable
+      (CYKStartMembership
+        terminalRule binaryRule
+        startRule epsilonStart w) := by
+  unfold CYKStartMembership
+  infer_instance
+
 /-- Exact semantic correctness of the start-language CYK predicate. -/
 theorem cykStartMembership_iff
     [Fintype N]
@@ -82,13 +103,13 @@ theorem cykStartMembership_iff
             A w hchart)
   · intro d
     cases d with
-    | @nonempty A word hstart hder =>
+    | @nonempty A _ hstart hder =>
         exact
           Or.inr
             ⟨A, hstart,
               cykFullSpan_complete
                 terminalRule binaryRule
-                A word hder⟩
+                A w hder⟩
     | epsilon heps =>
         exact Or.inl ⟨rfl, heps⟩
 
