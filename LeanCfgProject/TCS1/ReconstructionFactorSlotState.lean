@@ -76,9 +76,7 @@ theorem reconstructionFactorSlotNonterminal_observed
     (⟨x, u, v⟩ : ReconstructionNonterminal α) := by
   apply ReconstructionNonterminal.ext <;>
     simp [reconstructionFactorSlotNonterminal,
-      observedReconstructionFactorSlot,
-      List.drop_append_eq_append_drop,
-      Nat.add_sub_cancel_left]
+      observedReconstructionFactorSlot]
 
 /-- The canonical observed slot therefore decodes to a nonempty factor. -/
 theorem observedReconstructionFactorSlot_factor_ne_nil
