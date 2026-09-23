@@ -3,6 +3,7 @@ import LeanCfgProject.TCS1.ClarkEyraudSpecialCase
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.MainTheoremSemanticPackage
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
+import LeanCfgProject.TCS1.BinaryMembershipDecision
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -66,6 +67,9 @@ namespace TCS1
 #check reconstructionRuleCandidateSpace_card_le_fourth
 #check concreteAccumulated_directCandidateScan_le_prefix_degreeFive
 #check concreteConservative_update_size_certificate
+#check cykStartMember_eq_true_iff
+#check cykMembershipCandidateEnvelope_exact
+#check cykNaiveComparisonEnvelope_polynomial_form
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
