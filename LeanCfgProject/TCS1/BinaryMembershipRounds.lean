@@ -75,6 +75,33 @@ theorem cykRound_mono
   | succ s hrs ih =>
       exact CYKRound.carry ih
 
+theorem cykRound_of_exact_height
+    (terminalRule : N → α → Prop)
+    (binaryRule : N → N → N → Prop)
+    {A : N} {w : Word α} {h : Nat}
+    (d :
+      UntypedDerivesHeight
+        terminalRule binaryRule A w h) :
+    CYKRound terminalRule binaryRule h A w := by
+  induction d with
+  | terminal hterm =>
+      exact CYKRound.terminal hterm
+  | @binary A B C wB wC hB hC hbin dB dC ihB ihC =>
+      let m := max hB hC
+      have hB_le : hB ≤ m :=
+        Nat.le_max_left _ _
+      have hC_le : hC ≤ m :=
+        Nat.le_max_right _ _
+      have dB' :
+          CYKRound terminalRule binaryRule m B wB :=
+        cykRound_mono
+          terminalRule binaryRule hB_le ihB
+      have dC' :
+          CYKRound terminalRule binaryRule m C wC :=
+        cykRound_mono
+          terminalRule binaryRule hC_le ihC
+      exact CYKRound.binary hbin dB' dC'
+
 theorem cykRound_of_height
     (terminalRule : N → α → Prop)
     (binaryRule : N → N → N → Prop)
@@ -84,29 +111,11 @@ theorem cykRound_of_height
         terminalRule binaryRule A w h)
     (hhr : h ≤ r) :
     CYKRound terminalRule binaryRule r A w := by
-  have hexact :
-      CYKRound terminalRule binaryRule h A w := by
-    induction d with
-    | terminal hterm =>
-        exact CYKRound.terminal hterm
-    | @binary A B C wB wC hB hC hbin dB dC ihB ihC =>
-        let m := max hB hC
-        have hB_le : hB ≤ m :=
-          Nat.le_max_left _ _
-        have hC_le : hC ≤ m :=
-          Nat.le_max_right _ _
-        have dB' :
-            CYKRound terminalRule binaryRule m B wB :=
-          cykRound_mono
-            terminalRule binaryRule hB_le ihB
-        have dC' :
-            CYKRound terminalRule binaryRule m C wC :=
-          cykRound_mono
-            terminalRule binaryRule hC_le ihC
-        exact CYKRound.binary hbin dB' dC'
   exact
     cykRound_mono
-      terminalRule binaryRule hhr hexact
+      terminalRule binaryRule hhr
+      (cykRound_of_exact_height
+        terminalRule binaryRule d)
 
 theorem cykRound_complete_at_length
     (terminalRule : N → α → Prop)
