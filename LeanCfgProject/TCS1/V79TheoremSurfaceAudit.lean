@@ -4,6 +4,7 @@ import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.MainTheoremSemanticPackage
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
 import LeanCfgProject.TCS1.BinaryMembershipDecision
+import LeanCfgProject.TCS1.ConservativeMembershipCost
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -27,12 +28,14 @@ import LeanCfgProject.TCS1.ClarkCongruentialComparison
 This file is a compile-time index from the numbered theorem surface of the
 v79 manuscript to the Lean declarations that discharge it.
 
-It distinguishes theorem-level mathematical verification from algorithmic
-running-time statements that rely on a machine/cost model (most notably
-polynomial CFG membership and the phrase "constructible in polynomial
-time").  The repository verifies the finite candidate spaces, polynomial
-cardinality/output-size envelopes, and conservative-update size certificates
-used by those arguments.
+It distinguishes theorem-level mathematical verification from the remaining
+representation-level cost bookkeeping.  The repository now includes an
+executable CYK kernel for the separated-start SSBNF shape, exact semantic
+correctness, explicit polynomial candidate/comparison envelopes, and a bridge
+from those envelopes to the concrete conservative learner's positive-data
+prefix bounds.  The only explicit cost-side premise left in that bridge is the
+standard encoding sanity condition that the number of non-start symbols is at
+most the stored grammar encoding envelope.
 
 The former external Double-Delta non-linearity fact is no longer external:
 the repository now proves its own bounded linear pumping lemma and derives
@@ -70,6 +73,9 @@ namespace TCS1
 #check cykStartMember_eq_true_iff
 #check cykMembershipCandidateEnvelope_exact
 #check cykNaiveComparisonEnvelope_polynomial_form
+#check conservativeCYKPrefixEnvelope_polynomial_form
+#check concreteConservative_membershipComparison_le_prefix
+#check concreteConservative_update_work_le_prefix
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
