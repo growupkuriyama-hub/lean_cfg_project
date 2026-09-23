@@ -57,6 +57,7 @@ import LeanCfgProject.TCS1.ConcreteConservativeLearner
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
 import LeanCfgProject.TCS1.BinaryMembershipKernel
 import LeanCfgProject.TCS1.BinaryMembershipRounds
+import LeanCfgProject.TCS1.BinaryMembershipChart
 import LeanCfgProject.TCS1.TrivialTargetEndpoints
 import LeanCfgProject.TCS1.IndexedGoldBridge
 import LeanCfgProject.TCS1.IndexedConcreteGoldLearner
