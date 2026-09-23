@@ -110,27 +110,35 @@ instance instDecidableReconstructionFactorSlotStartRule
   unfold reconstructionFactorSlotStartRule
   infer_instance
 
-/-- Terminal relation after executable finite unit closure. -/
+/-- Terminal relation obtained by closing the original R2/R3 unit graph. -/
 def reconstructionFactorSlotUnitFreeTerminalRule
     (H : FixedFiniteMonoidHom α M)
     (K : Finset (Word α)) :
     ReconstructionFactorSlot K → α → Prop :=
-  UnitFreeTerminalRule
-    (reconstructionFactorSlotGrammar H K)
+  fun A a =>
+    ∃ B : ReconstructionFactorSlot K,
+      UnitReach
+        (reconstructionFactorSlotGrammar H K).unitRule
+        A B ∧
+      (reconstructionFactorSlotGrammar H K).terminalRule B a
 
-/-- Binary relation after executable finite unit closure. -/
+/-- Binary relation obtained by the same direct R2/R3 unit closure. -/
 def reconstructionFactorSlotUnitFreeBinaryRule
     (H : FixedFiniteMonoidHom α M)
     (K : Finset (Word α)) :
     ReconstructionFactorSlot K →
       ReconstructionFactorSlot K →
       ReconstructionFactorSlot K → Prop :=
-  UnitFreeBinaryRule
-    (reconstructionFactorSlotGrammar H K)
+  fun A C D =>
+    ∃ B : ReconstructionFactorSlot K,
+      UnitReach
+        (reconstructionFactorSlotGrammar H K).unitRule
+        A B ∧
+      (reconstructionFactorSlotGrammar H K).binaryRule B C D
 
 /--
-The finite unit-free terminal relation is decidable through
-`instDecidableUnitReachFinite`.
+The finite unit-free terminal relation is decidable by the executable
+finite-graph closure of the original R2/R3 relation.
 -/
 instance instDecidableReconstructionFactorSlotUnitFreeTerminalRule
     (H : FixedFiniteMonoidHom α M)
@@ -139,23 +147,115 @@ instance instDecidableReconstructionFactorSlotUnitFreeTerminalRule
       (reconstructionFactorSlotUnitFreeTerminalRule H K) := by
   intro A a
   unfold reconstructionFactorSlotUnitFreeTerminalRule
-  unfold UnitFreeTerminalRule
   infer_instance
 
-/-- The finite unit-free binary relation is decidable by the same closure. -/
+/-- The copied binary relation is decidable by the same finite closure. -/
 instance instDecidableReconstructionFactorSlotUnitFreeBinaryRule
     (H : FixedFiniteMonoidHom α M)
     (K : Finset (Word α)) :
-    ∀ A B : ReconstructionFactorSlot K,
+    ∀ A C : ReconstructionFactorSlot K,
       DecidablePred
-        (reconstructionFactorSlotUnitFreeBinaryRule H K A B) := by
-  intro A B C
+        (reconstructionFactorSlotUnitFreeBinaryRule H K A C) := by
+  intro A C D
   unfold reconstructionFactorSlotUnitFreeBinaryRule
-  unfold UnitFreeBinaryRule
   infer_instance
 
-/-- Terminal/binary derivations are literally unit-free derivations. -/
-theorem factorSlotUntyped_to_unitFree
+/-- Lift an original derivation backward along an R2/R3 unit-closure path. -/
+theorem factorSlotGrammarDerives_of_unitReach
+    (H : FixedFiniteMonoidHom α M)
+    (K : Finset (Word α))
+    {A B : ReconstructionFactorSlot K}
+    {w : Word α}
+    (hAB :
+      UnitReach
+        (reconstructionFactorSlotGrammar H K).unitRule
+        A B)
+    (d :
+      BinaryNullableDerives
+        (reconstructionFactorSlotGrammar H K)
+        B w) :
+    BinaryNullableDerives
+      (reconstructionFactorSlotGrammar H K)
+      A w := by
+  induction hAB with
+  | refl _ =>
+      exact d
+  | @step A B C hAB hBC ih =>
+      exact
+        BinaryNullableDerives.unit
+          hAB (ih d)
+
+/--
+Changing the root backward along an R2/R3 closure path is admissible in the
+direct copied terminal/binary grammar.
+-/
+theorem factorSlotUnitFreeUntyped_of_unitReach
+    (H : FixedFiniteMonoidHom α M)
+    (K : Finset (Word α))
+    {A B : ReconstructionFactorSlot K}
+    {w : Word α}
+    (hAB :
+      UnitReach
+        (reconstructionFactorSlotGrammar H K).unitRule
+        A B)
+    (d :
+      UntypedDerives
+        (reconstructionFactorSlotUnitFreeTerminalRule H K)
+        (reconstructionFactorSlotUnitFreeBinaryRule H K)
+        B w) :
+    UntypedDerives
+      (reconstructionFactorSlotUnitFreeTerminalRule H K)
+      (reconstructionFactorSlotUnitFreeBinaryRule H K)
+      A w := by
+  induction d with
+  | @terminal B a hterm =>
+      rcases hterm with ⟨C, hBC, hCa⟩
+      exact
+        UntypedDerives.terminal
+          ⟨C, UnitReach.trans hAB hBC, hCa⟩
+  | @binary B C D wC wD hbin dC dD ihC ihD =>
+      rcases hbin with ⟨E, hBE, hECD⟩
+      exact
+        UntypedDerives.binary
+          ⟨E, UnitReach.trans hAB hBE, hECD⟩
+          dC dD
+
+/--
+Forward direct unit elimination for the factor-slot grammar.  There are no
+epsilon rules, so only R2/R3 unit edges need to be collapsed.
+-/
+theorem factorSlotGrammar_to_unitFreeUntyped
+    (H : FixedFiniteMonoidHom α M)
+    (K : Finset (Word α))
+    {A : ReconstructionFactorSlot K}
+    {w : Word α}
+    (d :
+      BinaryNullableDerives
+        (reconstructionFactorSlotGrammar H K)
+        A w) :
+    UntypedDerives
+      (reconstructionFactorSlotUnitFreeTerminalRule H K)
+      (reconstructionFactorSlotUnitFreeBinaryRule H K)
+      A w := by
+  induction d with
+  | @terminal A a h =>
+      exact
+        UntypedDerives.terminal
+          ⟨A, UnitReach.refl A, h⟩
+  | @epsilon A h =>
+      exact False.elim h
+  | @unit A B w h d ih =>
+      exact
+        factorSlotUnitFreeUntyped_of_unitReach
+          H K (UnitReach.single h) ih
+  | @binary A B C wB wC h dB dC ihB ihC =>
+      exact
+        UntypedDerives.binary
+          ⟨A, UnitReach.refl A, h⟩
+          ihB ihC
+
+/-- Reverse expansion of the copied terminal/binary rules. -/
+theorem factorSlotUnitFreeUntyped_to_grammar
     (H : FixedFiniteMonoidHom α M)
     (K : Finset (Word α))
     {A : ReconstructionFactorSlot K}
@@ -165,38 +265,31 @@ theorem factorSlotUntyped_to_unitFree
         (reconstructionFactorSlotUnitFreeTerminalRule H K)
         (reconstructionFactorSlotUnitFreeBinaryRule H K)
         A w) :
-    UnitFreeDerives
+    BinaryNullableDerives
       (reconstructionFactorSlotGrammar H K)
       A w := by
   induction d with
-  | terminal h =>
-      exact UnitFreeDerives.terminal h
-  | binary h _ _ ihB ihC =>
-      exact UnitFreeDerives.binary h ihB ihC
-
-/-- Unit-free derivations erase to the CYK terminal/binary derivation type. -/
-theorem factorSlotUnitFree_to_untyped
-    (H : FixedFiniteMonoidHom α M)
-    (K : Finset (Word α))
-    {A : ReconstructionFactorSlot K}
-    {w : Word α}
-    (d :
-      UnitFreeDerives
-        (reconstructionFactorSlotGrammar H K)
-        A w) :
-    UntypedDerives
-      (reconstructionFactorSlotUnitFreeTerminalRule H K)
-      (reconstructionFactorSlotUnitFreeBinaryRule H K)
-      A w := by
-  induction d with
-  | terminal h =>
-      exact UntypedDerives.terminal h
-  | binary h _ _ ihB ihC =>
-      exact UntypedDerives.binary h ihB ihC
+  | @terminal A a h =>
+      rcases h with ⟨B, hAB, hBa⟩
+      exact
+        factorSlotGrammarDerives_of_unitReach
+          H K hAB
+          (BinaryNullableDerives.terminal hBa)
+  | @binary A C D wC wD h dC dD ihC ihD =>
+      rcases h with ⟨B, hAB, hBCD⟩
+      have dB :
+          BinaryNullableDerives
+            (reconstructionFactorSlotGrammar H K)
+            B (wC ++ wD) :=
+        BinaryNullableDerives.binary
+          hBCD ihC ihD
+      exact
+        factorSlotGrammarDerives_of_unitReach
+          H K hAB dB
 
 /--
-Exact start-language identity for the fully finite, unit-free factor-slot
-presentation.
+Exact start-language identity for the fully finite, direct-unit-closed
+factor-slot presentation.
 -/
 theorem reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage
     (H : FixedFiniteMonoidHom α M)
@@ -221,25 +314,12 @@ theorem reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage
             (reconstructionFactorSlotSymbol A).leftContext
             (reconstructionFactorSlotSymbol A).rightContext
           at hobs
-        have dUnit :
-            UnitFreeDerives
-              (reconstructionFactorSlotGrammar H K)
-              A w :=
-          factorSlotUntyped_to_unitFree H K hder
-        have dEps :
-            EpsilonFreeDerives
-              (reconstructionFactorSlotGrammar H K)
-              A w :=
-          unitFreeDerives_to_epsilonFree
-            (reconstructionFactorSlotGrammar H K)
-            dUnit
         have dBin :
             BinaryNullableDerives
               (reconstructionFactorSlotGrammar H K)
               A w :=
-          epsilonFreeDerives_to_binaryNullable
-            (reconstructionFactorSlotGrammar H K)
-            dEps
+          factorSlotUnitFreeUntyped_to_grammar
+            H K hder
         have hhyp :=
           factorSlotGrammar_to_hypDerives H K dBin
         have hs :
@@ -264,22 +344,6 @@ theorem reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage
               A w := by
           simpa [A] using
             (hypDerives_to_factorSlotGrammar H K hder)
-        have hne : w ≠ [] :=
-          hypDerives_nonempty H K hder
-        have dEps :
-            EpsilonFreeDerives
-              (reconstructionFactorSlotGrammar H K)
-              A w :=
-          binaryNullableDerives_to_epsilonFree
-            (reconstructionFactorSlotGrammar H K)
-            dBin hne
-        have dUnit :
-            UnitFreeDerives
-              (reconstructionFactorSlotGrammar H K)
-              A w :=
-          epsilonFreeDerives_to_unitFree
-            (reconstructionFactorSlotGrammar H K)
-            dEps
         have hstart :
             reconstructionFactorSlotStartRule K A := by
           refine
@@ -293,7 +357,8 @@ theorem reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage
         exact
           UntypedStartDerives.nonempty
             hstart
-            (factorSlotUnitFree_to_untyped H K dUnit)
+            (factorSlotGrammar_to_unitFreeUntyped
+              H K dBin)
     | epsilon heps =>
         exact UntypedStartDerives.epsilon heps
 
