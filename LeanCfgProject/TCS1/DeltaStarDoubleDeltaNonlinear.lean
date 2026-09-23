@@ -104,7 +104,7 @@ theorem doubleDelta_pumpDown_shape
           (by
             rw [List.length_reverse]
             exact Nat.le_of_lt hinner))
-    simpa using h
+    simpa [List.length_append, Nat.add_comm] using h
 
   have hu_all :
       ∀ c ∈ u, c = a := by
@@ -169,11 +169,19 @@ theorem doubleDelta_pumpDown_shape
       Nat.add_sub_of_le hku
     have hNkz : (N - kz) + kz = N :=
       Nat.sub_add_cancel hkz
+    have haSplit :
+        List.replicate N a =
+          List.replicate ku a ++
+            List.replicate (N - ku) a := by
+      rw [← List.replicate_add, hNku]
+    have hbSplit :
+        List.replicate N b =
+          List.replicate (N - kz) b ++
+            List.replicate kz b := by
+      rw [← List.replicate_add, hNkz]
     simp only [balancedBlock]
-    rw [← List.replicate_add ku (N - ku) a,
-      hNku]
-    rw [← List.replicate_add (N - kz) kz b,
-      hNkz]
+    rw [haSplit]
+    nth_rewrite 2 [hbSplit]
     simp [List.append_assoc]
 
   have huv' :
@@ -210,8 +218,9 @@ theorem doubleDelta_pumpDown_shape
         _ =
           List.replicate ku a ++
             (x ++ List.replicate kz b) := by
-              rw [huv', hyz]
-              simp [List.append_assoc]
+              rw [huv']
+              simp only [List.append_assoc]
+              rw [hyz]
     have hEq' :
         (List.replicate (N - ku) a ++
             List.replicate N b ++
@@ -221,7 +230,7 @@ theorem doubleDelta_pumpDown_shape
         =
         x ++ List.replicate kz b :=
       List.append_cancel_left hEq
-    exact List.append_cancel_right hEq'
+    exact List.append_cancel_right hEq'.symm
 
   rw [hu, hx, hz]
   have hkuEq :
@@ -240,13 +249,54 @@ theorem doubleDelta_pumpDown_shape
         N - y.length := by
     rw [hkzEq]
     omega
-  rw [← List.replicate_add]
-  rw [ha]
-  rw [List.append_assoc]
-  rw [List.append_assoc]
-  rw [← List.replicate_add]
-  rw [hb]
-  simp [List.append_assoc]
+  calc
+    List.replicate u.length a ++
+        (List.replicate (N - ku) a ++
+          List.replicate N b ++
+            List.replicate N a ++
+              List.replicate (N - kz) b) ++
+      List.replicate z.length b
+      =
+    (List.replicate u.length a ++
+        List.replicate (N - ku) a) ++
+      (List.replicate N b ++
+        List.replicate N a ++
+          List.replicate (N - kz) b) ++
+      List.replicate z.length b := by
+        simp [List.append_assoc]
+    _ =
+    List.replicate (u.length + (N - ku)) a ++
+      (List.replicate N b ++
+        List.replicate N a ++
+          List.replicate (N - kz) b) ++
+      List.replicate z.length b := by
+        rw [← List.replicate_add]
+    _ =
+    List.replicate (N - v.length) a ++
+      (List.replicate N b ++
+        List.replicate N a ++
+          List.replicate (N - kz) b) ++
+      List.replicate z.length b := by
+        rw [ha]
+    _ =
+    List.replicate (N - v.length) a ++
+      List.replicate N b ++
+        List.replicate N a ++
+          (List.replicate (N - kz) b ++
+            List.replicate z.length b) := by
+        simp [List.append_assoc]
+    _ =
+    List.replicate (N - v.length) a ++
+      List.replicate N b ++
+        List.replicate N a ++
+          List.replicate ((N - kz) + z.length) b := by
+        rw [← List.replicate_add]
+    _ =
+    List.replicate (N - v.length) a ++
+      List.replicate N b ++
+        List.replicate N a ++
+          List.replicate (N - y.length) b := by
+        rw [hb]
 
 theorem doubleDelta_not_rawLinearInitialRepresentable :
     ¬ RawLinearInitialRepresentable.{u, 0, w}
