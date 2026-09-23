@@ -79,6 +79,7 @@ import LeanCfgProject.TCS1.IndexedGoldBridge
 import LeanCfgProject.TCS1.IndexedConcreteGoldLearner
 import LeanCfgProject.TCS1.IndexedFixedHBridge
 import LeanCfgProject.TCS1.MainTheoremSemanticPackage
+import LeanCfgProject.TCS1.MainTheoremExecutablePackage
 
 import LeanCfgProject.TCS1.SSBNFThicknessBounds
 import LeanCfgProject.TCS1.SSBNFNormalizationCombinatorics
