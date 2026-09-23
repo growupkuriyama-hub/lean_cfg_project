@@ -105,6 +105,54 @@ theorem reconstructionFactorSlot_card_le_sq
   rw [reconstructionFactorSlot_card_eq]
   exact reconstructionFactorSlotCount_le_sq K
 
+
+/--
+The generous occurrence-indexed nonterminal universe is already dominated by
+the explicit output-grammar encoding envelope.
+
+This is the concrete representation bridge used by the conservative CYK cost
+layer: one may name reconstructed nonterminals by their sampled occurrence
+slots, and the number of such names is no larger than the stored grammar
+encoding budget.
+-/
+theorem reconstructionFactorSlot_card_le_outputEncodingEnvelope
+    (K : Finset (Word α)) :
+    Fintype.card (ReconstructionFactorSlot K) ≤
+      reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm K) := by
+  have hslot :
+      Fintype.card (ReconstructionFactorSlot K) ≤
+        (reconstructionSampleNorm K) ^ 2 :=
+    reconstructionFactorSlot_card_le_sq K
+  have hsq :
+      (reconstructionSampleNorm K) ^ 2 ≤
+        reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K) := by
+    unfold reconstructionRuleCandidateEnvelope
+    omega
+  have hcand :
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K)
+        ≤
+      reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm K) := by
+    calc
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K)
+        =
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K) * 1 := by simp
+      _ ≤
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K) *
+            (reconstructionSampleNorm K + 1) := by
+          exact Nat.mul_le_mul_left _
+            (by omega)
+      _ =
+      reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm K) := rfl
+  exact le_trans hslot (le_trans hsq hcand)
+
 /-- The actual three-cut finite space is cubically bounded by ||K||. -/
 theorem reconstructionSplitSlot_card_le_cube
     (K : Finset (Word α)) :
