@@ -45,6 +45,7 @@ import LeanCfgProject.TCS1.ReconstructionSoundness
 import LeanCfgProject.TCS1.ReconstructionCFGPresentation
 import LeanCfgProject.TCS1.ReconstructionFiniteStateSupport
 import LeanCfgProject.TCS1.ReconstructionActiveGrammar
+import LeanCfgProject.TCS1.ReconstructionUnitFreeBridge
 import LeanCfgProject.TCS1.ReconstructionComplexityCounts
 import LeanCfgProject.TCS1.ReconstructionFiniteCandidateSpaces
 import LeanCfgProject.TCS1.BatchLanguageMonotonicity
