@@ -103,13 +103,12 @@ theorem cykChartStep_complete_binary
     (A, (i, j)) ∈
       cykChartStep binaryRule old := by
   apply Finset.mem_union_right
-  unfold cykProduced
-  apply Finset.mem_image.2
+  apply
+    (mem_cykProduced_iff
+      binaryRule old (A, (i, j))).2
   let c : CYKBinaryCandidate N n :=
     ((A, B, C), (i, k, j))
   refine ⟨c, ?_, rfl⟩
-  apply Finset.mem_filter.2
-  refine ⟨Finset.mem_univ _, ?_⟩
   exact ⟨hik, hkj, hbin, hleft, hright⟩
 
 end BinaryMembershipChartComplete
