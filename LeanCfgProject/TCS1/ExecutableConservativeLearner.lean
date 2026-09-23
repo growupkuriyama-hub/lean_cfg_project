@@ -216,6 +216,37 @@ theorem executableConservativeHypothesis_rebuild
       hmiss
 
 /--
+End-to-end polynomial work bound stated on the actual executable hypothesis
+sequence.  It includes finite R2/R3 unit closure, CYK membership, and a
+possible rebuild.
+-/
+theorem executableConservative_update_work_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    reconstructionUnitClosureTableScanEnvelope
+        (Fintype.card
+          (ReconstructionFactorSlot
+            (executableConservativeHypothesis H datum n)))
+      +
+    (cykNaiveComparisonEnvelope
+        (Fintype.card
+          (ReconstructionFactorSlot
+            (executableConservativeHypothesis H datum n)))
+        (datum (n + 1)).length
+      +
+     reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm
+          (concreteAccumulatedSample datum (n + 1))))
+      ≤
+    conservativeExecutableUpdateWorkEnvelope
+      (positiveDataPrefixNorm datum (n + 1)) := by
+  rw [executableConservativeHypothesis_eq_concrete]
+  exact
+    concreteConservative_executable_update_work_le_prefix
+      H datum n
+
+/--
 Gold identification stated directly for the executable hypothesis sequence.
 The convergence proof is inherited from the already verified semantic run via
 pointwise equality.
