@@ -89,6 +89,22 @@ def cykProduced
         (CYKCandidateEnabled binaryRule old)).image
       cykCandidateOutput
 
+/-- Membership characterization for one produced-entry scan. -/
+theorem mem_cykProduced_iff
+    [Fintype N]
+    [DecidableEq N]
+    (binaryRule : N → N → N → Prop)
+    [∀ A B : N, DecidablePred (binaryRule A B)]
+    {n : Nat}
+    (old : CYKChart N n)
+    (e : CYKSpan N n) :
+    e ∈ cykProduced binaryRule old ↔
+      ∃ c : CYKBinaryCandidate N n,
+        CYKCandidateEnabled binaryRule old c ∧
+        cykCandidateOutput c = e := by
+  classical
+  simp [cykProduced]
+
 /-- One cumulative CYK chart update. -/
 def cykChartStep
     [Fintype N]
