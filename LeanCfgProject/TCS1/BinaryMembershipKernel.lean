@@ -166,7 +166,7 @@ theorem cykSpan_card_eq
     (n : Nat) :
     Fintype.card (CYKSpan N n) =
       Fintype.card N * (n + 1) ^ 2 := by
-  simp [CYKSpan, pow_two, Nat.mul_assoc]
+  simp [CYKSpan, pow_two]
 
 theorem cykBinaryCandidate_card_eq
     [Fintype N]
@@ -174,7 +174,6 @@ theorem cykBinaryCandidate_card_eq
     Fintype.card (CYKBinaryCandidate N n) =
       (Fintype.card N) ^ 3 * (n + 1) ^ 3 := by
   simp [CYKBinaryCandidate, pow_succ, Nat.mul_assoc]
-  ring
 
 def cykRoundScanEnvelope
     (nonterminalCount inputLength : Nat) : Nat :=
