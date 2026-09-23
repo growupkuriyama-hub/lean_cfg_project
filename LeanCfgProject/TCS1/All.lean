@@ -59,6 +59,7 @@ import LeanCfgProject.TCS1.BinaryMembershipKernel
 import LeanCfgProject.TCS1.BinaryMembershipRounds
 import LeanCfgProject.TCS1.BinaryMembershipChart
 import LeanCfgProject.TCS1.BinaryMembershipSeed
+import LeanCfgProject.TCS1.BinaryMembershipChartSound
 import LeanCfgProject.TCS1.TrivialTargetEndpoints
 import LeanCfgProject.TCS1.IndexedGoldBridge
 import LeanCfgProject.TCS1.IndexedConcreteGoldLearner
