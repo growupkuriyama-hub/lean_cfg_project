@@ -126,12 +126,11 @@ theorem cykChartStep_sound
   simp only [cykChartStep, Finset.mem_union] at he
   rcases he with hold | hnew
   · exact hsound e hold
-  · unfold cykProduced at hnew
-    rcases Finset.mem_image.mp hnew with
-      ⟨c, hc, rfl⟩
-    have hen :
-        CYKCandidateEnabled binaryRule old c :=
-      (Finset.mem_filter.mp hc).2
+  · rcases
+      (mem_cykProduced_iff
+        binaryRule old e).1 hnew with
+      ⟨c, hen, hout⟩
+    subst e
     rcases c with
       ⟨⟨A, B, C⟩, ⟨i, k, j⟩⟩
     change
@@ -152,6 +151,9 @@ theorem cykChartStep_sound
       hsound (C, (k, j)) hright
     have d :=
       UntypedDerives.binary hbin dleft dright
+    change
+      UntypedDerives terminalRule binaryRule
+        A (cykSlice w i j)
     rw [cykSlice_split w i k j
       (Nat.le_of_lt hik) (Nat.le_of_lt hkj)]
     exact d
