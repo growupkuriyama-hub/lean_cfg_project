@@ -117,7 +117,9 @@ theorem hypDerives_to_factorSlotGrammar
       apply BinaryNullableDerives.terminal
       constructor
       · exact observedReconstructionFactorSlot_isObserved K hobs
-      · rw [reconstructionFactorSlotNonterminal_observed]
+      · have hdecode :=
+          reconstructionFactorSlotNonterminal_observed K hobs
+        exact congrArg ReconstructionNonterminal.factor hdecode
   | @r3 x x' u v w hobs hobs' htype d ih =>
       apply BinaryNullableDerives.unit
         (B := observedReconstructionFactorSlot K hobs')
