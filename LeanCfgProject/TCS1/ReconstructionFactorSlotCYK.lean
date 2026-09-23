@@ -420,6 +420,97 @@ theorem reconstructionUnitClosureTableScanEnvelope_eq
   rw [finiteUnitReachScanEnvelope_eq]
   ring
 
+
+/-- The all-source unit-closure scan envelope is monotone in the state count. -/
+theorem reconstructionUnitClosureTableScanEnvelope_mono
+    {m m' : Nat}
+    (h : m ≤ m') :
+    reconstructionUnitClosureTableScanEnvelope m ≤
+      reconstructionUnitClosureTableScanEnvelope m' := by
+  rw [reconstructionUnitClosureTableScanEnvelope_eq,
+    reconstructionUnitClosureTableScanEnvelope_eq]
+  gcongr
+
+/--
+The actual computable factor-slot state count of the current hypothesis is
+bounded by the same degree-five prefix envelope used by the reconstruction
+size certificate.
+-/
+theorem reconstructionFactorSlot_current_card_le_prefix_degreeFive
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    Fintype.card
+        (ReconstructionFactorSlot
+          (concreteConservativeHypothesis H datum n))
+      ≤
+    5 * (positiveDataPrefixNorm datum (n + 1) + 1) ^ 5 := by
+  exact le_trans
+    (reconstructionFactorSlot_card_le_outputEncodingEnvelope
+      (concreteConservativeHypothesis H datum n))
+    (concreteConservative_update_size_certificate
+      H datum n).2.1
+
+/--
+Prefix-only budget for an executable conservative update, including one
+all-source R2/R3 unit-closure precomputation, the CYK membership test, and a
+possible reconstruction.
+-/
+def conservativeExecutableUpdateWorkEnvelope
+    (prefixNorm : Nat) : Nat :=
+  reconstructionUnitClosureTableScanEnvelope
+      (5 * (prefixNorm + 1) ^ 5)
+    +
+  conservativeUpdateWorkEnvelope prefixNorm
+
+/-- The executable-update envelope is a manifest polynomial expression. -/
+theorem conservativeExecutableUpdateWorkEnvelope_polynomial_form
+    (p : Nat) :
+    conservativeExecutableUpdateWorkEnvelope p =
+      (5 * (p + 1) ^ 5) ^ 4 +
+        conservativeCYKPrefixEnvelope p +
+        5 * (p + 1) ^ 5 := by
+  unfold conservativeExecutableUpdateWorkEnvelope
+  rw [reconstructionUnitClosureTableScanEnvelope_eq]
+  rfl
+
+/--
+End-to-end cost composition for the computable factor-slot parser:
+unit closure + CYK membership + a possible rebuild are bounded by one explicit
+polynomial in the positive-data prefix.
+-/
+theorem concreteConservative_executable_update_work_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    reconstructionUnitClosureTableScanEnvelope
+        (Fintype.card
+          (ReconstructionFactorSlot
+            (concreteConservativeHypothesis H datum n)))
+      +
+    (cykNaiveComparisonEnvelope
+        (Fintype.card
+          (ReconstructionFactorSlot
+            (concreteConservativeHypothesis H datum n)))
+        (datum (n + 1)).length
+      +
+     reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm
+          (concreteAccumulatedSample datum (n + 1))))
+      ≤
+    conservativeExecutableUpdateWorkEnvelope
+      (positiveDataPrefixNorm datum (n + 1)) := by
+  have hcard :=
+    reconstructionFactorSlot_current_card_le_prefix_degreeFive
+      H datum n
+  have hclosure :=
+    reconstructionUnitClosureTableScanEnvelope_mono hcard
+  have hwork :=
+    concreteConservative_occurrenceIndexed_update_work_le_prefix
+      H datum n
+  unfold conservativeExecutableUpdateWorkEnvelope
+  exact Nat.add_le_add hclosure hwork
+
 end ReconstructionFactorSlotCYK
 
 end TCS1
