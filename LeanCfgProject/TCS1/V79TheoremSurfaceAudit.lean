@@ -2,6 +2,7 @@ import LeanCfgProject.TCS1.RegularRecognition
 import LeanCfgProject.TCS1.ClarkEyraudSpecialCase
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.MainTheoremSemanticPackage
+import LeanCfgProject.TCS1.MainTheoremExecutablePackage
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
 import LeanCfgProject.TCS1.BinaryMembershipDecision
 import LeanCfgProject.TCS1.ConservativeMembershipCost
@@ -83,6 +84,7 @@ namespace TCS1
 #check exact_reconstruction_of_qualitative_reducedness
 #check indexedFixedH_exists_characteristic_sample
 #check indexedFixedH_learning_semantic_core
+#check indexedFixedH_learning_executable_core
 #check indexedFixedH_concreteGold_identification_nonempty
 
 -- Section 6: polynomial reconstruction/update bookkeeping.
@@ -112,6 +114,7 @@ namespace TCS1
 #check concreteConservative_executable_update_work_le_prefix
 #check executableConservativeHypothesis_eq_concrete
 #check executableConservative_update_work_le_prefix
+#check corollary_poly_update_executable
 #check executableConservative_gold_identification_explicit
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
