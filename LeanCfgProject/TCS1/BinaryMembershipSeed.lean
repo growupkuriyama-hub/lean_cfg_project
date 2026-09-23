@@ -68,6 +68,16 @@ def CYKTerminalEnabled
     (c : CYKTerminalCandidate N w.length) : Prop :=
   terminalRule c.1 (w.get c.2)
 
+
+instance instDecidableCYKTerminalEnabled
+    (terminalRule : N → α → Prop)
+    [DecidableRel terminalRule]
+    (w : Word α) :
+    DecidablePred (CYKTerminalEnabled terminalRule w) :=
+  fun c => by
+    unfold CYKTerminalEnabled
+    infer_instance
+
 /-- Executable initial CYK chart. -/
 def cykTerminalSeed
     [Fintype N]
