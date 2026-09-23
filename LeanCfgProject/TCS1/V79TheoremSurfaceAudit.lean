@@ -26,18 +26,16 @@ import LeanCfgProject.TCS1.ClarkCongruentialComparison
 This file is a compile-time index from the numbered theorem surface of the
 v79 manuscript to the Lean declarations that discharge it.
 
-It deliberately distinguishes mathematical verification from two kinds of
-external background facts that are not encoded as internal Lean cost/theory
-developments:
+It distinguishes theorem-level mathematical verification from algorithmic
+running-time statements that rely on a machine/cost model (most notably
+polynomial CFG membership and the phrase "constructible in polynomial
+time").  The repository verifies the finite candidate spaces, polynomial
+cardinality/output-size envelopes, and conservative-update size certificates
+used by those arguments.
 
-* algorithmic running-time statements that rely on a machine/cost model
-  (most notably polynomial CFG membership and the phrase "constructible in
-  polynomial time"); the repository verifies the finite candidate spaces,
-  polynomial cardinality/output-size envelopes, and conservative-update size
-  certificates used by those arguments;
-* the classical literature theorem that
-  Delta Delta = {a^m b^m a^n b^n} is not a linear language.  All reductions
-  from the manuscript's Delta-star language to that theorem are verified.
+The former external Double-Delta non-linearity fact is no longer external:
+the repository now proves its own bounded linear pumping lemma and derives
+the obstruction internally.
 
 Every declaration below is checked by the Lean compiler.  Keeping this file in
 the full facade makes accidental theorem renaming or loss of a paper-facing
@@ -93,7 +91,11 @@ namespace TCS1
 
 -- Section 9.1: nonlinear Delta-star example.
 #check DeltaStar.nonlinear_rs_example_verified_core
+#check DeltaStar.doubleDelta_not_rawLinearInitialRepresentable
+#check DeltaStar.deltaStar_not_rawLinearRepresentable
+#check DeltaStar.deltaStar_no_indexedLinear_presentation
 #check DeltaStar.nonlinear_rs_example_nonlinearity_reduction
+#check DeltaStar.nonlinear_rs_example_full
 
 -- Section 9.2: regular separation from all fixed windows.
 #check CappedCounter.proposition_ctr_regular
