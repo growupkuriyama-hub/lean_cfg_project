@@ -226,6 +226,67 @@ theorem activeReconstructionNonterminal_card_le_key
       (reconstructionActiveStateKey_injective
         (α := α) K)
 
+
+/-- The global finite key space is polynomially dominated by the rule envelope. -/
+theorem reconstructionActiveStateKey_card_le_ruleEnvelope
+    (K : Finset (Word α)) :
+    Fintype.card (ReconstructionActiveStateKey K) ≤
+      reconstructionRuleCandidateEnvelope
+        (reconstructionSampleNorm K) := by
+  rw [reconstructionActiveStateKey_card_eq]
+  have hK :
+      K.card ≤ reconstructionSampleNorm K :=
+    reconstructionSample_card_le_norm K
+  have hmul :
+      K.card * (reconstructionSampleNorm K + 1) ^ 2 ≤
+        reconstructionSampleNorm K *
+          (reconstructionSampleNorm K + 1) ^ 2 :=
+    Nat.mul_le_mul_right _ hK
+  refine le_trans hmul ?_
+  unfold reconstructionRuleCandidateEnvelope
+  nlinarith [Nat.zero_le (reconstructionSampleNorm K)]
+
+/--
+The actual observed reconstruction-state count is bounded by the same explicit
+stored-grammar encoding envelope used by the CYK cost layer.
+-/
+theorem activeReconstructionNonterminal_card_le_outputEncodingEnvelope
+    (K : Finset (Word α)) :
+    @Fintype.card
+        (ActiveReconstructionNonterminal K)
+        (activeReconstructionNonterminalFintype K)
+      ≤
+    reconstructionOutputEncodingEnvelope
+      (reconstructionSampleNorm K) := by
+  have hactive :=
+    activeReconstructionNonterminal_card_le_key
+      (α := α) K
+  have hkey :=
+    reconstructionActiveStateKey_card_le_ruleEnvelope
+      (α := α) K
+  have hcand :
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K)
+        ≤
+      reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm K) := by
+    calc
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K)
+        =
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K) * 1 := by simp
+      _ ≤
+      reconstructionRuleCandidateEnvelope
+          (reconstructionSampleNorm K) *
+            (reconstructionSampleNorm K + 1) := by
+          exact Nat.mul_le_mul_left _
+            (by omega)
+      _ =
+      reconstructionOutputEncodingEnvelope
+        (reconstructionSampleNorm K) := rfl
+  exact le_trans hactive (le_trans hkey hcand)
+
 end ReconstructionFiniteStateSupport
 
 end TCS1
