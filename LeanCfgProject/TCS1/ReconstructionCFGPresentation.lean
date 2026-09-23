@@ -28,11 +28,12 @@ variable {α : Type u}
 variable {M : Type v} [Monoid M] [Fintype M]
 
 /-- Paper-facing reconstruction nonterminal `[x;u,v]`. -/
-structure ReconstructionNonterminal
+@[ext] structure ReconstructionNonterminal
     (α : Type u) where
   factor : Word α
   leftContext : Word α
   rightContext : Word α
+deriving DecidableEq
 
 /--
 Ordinary mixed-CFG presentation of rules R1--R4.
