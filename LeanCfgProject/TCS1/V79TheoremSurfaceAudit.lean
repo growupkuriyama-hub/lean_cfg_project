@@ -5,6 +5,9 @@ import LeanCfgProject.TCS1.MainTheoremSemanticPackage
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
 import LeanCfgProject.TCS1.BinaryMembershipDecision
 import LeanCfgProject.TCS1.ConservativeMembershipCost
+import LeanCfgProject.TCS1.ReconstructionCYKBridge
+import LeanCfgProject.TCS1.FiniteUnitReachability
+import LeanCfgProject.TCS1.ReconstructionFactorSlotState
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -33,11 +36,18 @@ representation-level cost bookkeeping.  The repository now includes an
 executable CYK kernel for the separated-start SSBNF shape, exact semantic
 correctness, explicit polynomial candidate/comparison envelopes, and a bridge
 from those envelopes to the concrete conservative learner's positive-data
-prefix bounds.  The occurrence-indexed reconstruction state space is now
-counted directly by the two-cut factor-slot universe and shown to fit inside
-the stored grammar encoding envelope.  What remains is the semantic
-presentation bridge from the reconstruction grammar itself to the
-separated-start SSBNF interface consumed by the executable CYK kernel.
+prefix bounds.  The reconstruction semantics is now presented as an ordinary
+finite grammar, its R2/R3 unit rules are eliminated semantically, and the
+resulting terminal/binary start language is proved exactly equal to
+`BatchLanguage H K`.  The CYK predicate and Boolean wrapper are therefore
+connected directly to the actual reconstructed hypothesis.
+
+The remaining implementation boundary is narrower: the semantic finite state
+support currently uses a classical finite enumeration.  An executable
+finite-graph unit-closure procedure and a computable two-cut factor-slot state
+representation are now in the facade; the final task is to transport the
+reconstruction grammar to that computable representation and remove the
+classical wrapper from the specialized Boolean learner test.
 
 The former external Double-Delta non-linearity fact is no longer external:
 the repository now proves its own bounded linear pumping lemma and derives
@@ -81,6 +91,13 @@ namespace TCS1
 #check reconstructionFactorSlot_card_le_outputEncodingEnvelope
 #check concreteConservative_occurrenceIndexed_membershipComparison_le_prefix
 #check concreteConservative_occurrenceIndexed_update_work_le_prefix
+#check reconstructionUnitFree_untypedStartLanguage_eq_batchLanguage
+#check reconstructionCYKStartMembership_iff_batchLanguage
+#check reconstructionCYKMember_eq_true_iff
+#check reconstructionCYK_conservativeComparison_le_prefix
+#check finiteUnitReach_eq_true_iff
+#check finiteUnitReachScanEnvelope_eq
+#check reconstructionFactorSlotNonterminal_observed
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
