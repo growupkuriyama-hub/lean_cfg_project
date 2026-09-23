@@ -180,9 +180,7 @@ theorem doubleDelta_pumpDown_shape
             List.replicate kz b := by
       rw [← List.replicate_add, hNkz]
     simp only [balancedBlock]
-    rw [haSplit]
-    nth_rewrite 2 [hbSplit]
-    simp [List.append_assoc]
+    simp [haSplit, hbSplit, List.append_assoc]
 
   have huv' :
       u ++ v = List.replicate ku a := by
@@ -270,7 +268,8 @@ theorem doubleDelta_pumpDown_shape
         List.replicate N a ++
           List.replicate (N - kz) b) ++
       List.replicate z.length b := by
-        rw [← List.replicate_add]
+        rw [List.replicate_add]
+        simp [List.append_assoc]
     _ =
     List.replicate (N - v.length) a ++
       (List.replicate N b ++
@@ -290,7 +289,7 @@ theorem doubleDelta_pumpDown_shape
       List.replicate N b ++
         List.replicate N a ++
           List.replicate ((N - kz) + z.length) b := by
-        rw [← List.replicate_add]
+        rw [List.replicate_add]
     _ =
     List.replicate (N - v.length) a ++
       List.replicate N b ++
