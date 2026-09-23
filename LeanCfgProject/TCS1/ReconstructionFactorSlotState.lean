@@ -57,11 +57,9 @@ def observedReconstructionFactorSlot
   have hi :
       u.length < w.length + 1 := by
     simp [w]
-    omega
   have hj :
       u.length + x.length < w.length + 1 := by
     simp [w]
-    omega
   exact
     ⟨⟨w, hw⟩,
       (⟨u.length, hi⟩,
