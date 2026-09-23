@@ -100,6 +100,12 @@ theorem cykTerminalSeed_sound
   have hen :
       CYKTerminalEnabled terminalRule w c :=
     (Finset.mem_filter.mp hc).2
+  change
+    UntypedDerives terminalRule binaryRule
+      c.1
+      (cykSlice w
+        (cykLeftBoundary c.2)
+        (cykRightBoundary c.2))
   rw [cykSlice_terminal]
   exact UntypedDerives.terminal hen
 
