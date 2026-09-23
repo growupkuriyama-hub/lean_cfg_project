@@ -8,6 +8,8 @@ import LeanCfgProject.TCS1.ConservativeMembershipCost
 import LeanCfgProject.TCS1.ReconstructionCYKBridge
 import LeanCfgProject.TCS1.FiniteUnitReachability
 import LeanCfgProject.TCS1.ReconstructionFactorSlotState
+import LeanCfgProject.TCS1.ReconstructionFactorSlotCYK
+import LeanCfgProject.TCS1.ExecutableConservativeLearner
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -42,12 +44,17 @@ resulting terminal/binary start language is proved exactly equal to
 `BatchLanguage H K`.  The CYK predicate and Boolean wrapper are therefore
 connected directly to the actual reconstructed hypothesis.
 
-The remaining implementation boundary is narrower: the semantic finite state
-support currently uses a classical finite enumeration.  An executable
-finite-graph unit-closure procedure and a computable two-cut factor-slot state
-representation are now in the facade; the final task is to transport the
-reconstruction grammar to that computable representation and remove the
-classical wrapper from the specialized Boolean learner test.
+The representation/decision boundary is now closed at the Lean definition
+level.  The reconstruction grammar has been transported to the computable
+two-cut factor-slot state space; finite R2/R3 unit reachability is executable;
+the specialized CYK Boolean test is no longer `noncomputable`; and the
+resulting executable conservative hypothesis sequence is proved pointwise
+identical to the semantic Gold run.  Unit-closure preprocessing, CYK work, and
+a possible rebuild are composed into one explicit prefix-polynomial envelope.
+
+The cost statements are an explicit algorithmic scan/comparison accounting,
+not a low-level operational semantics of Lean's evaluator or generated
+machine code.
 
 The former external Double-Delta non-linearity fact is no longer external:
 the repository now proves its own bounded linear pumping lemma and derives
@@ -98,6 +105,14 @@ namespace TCS1
 #check finiteUnitReach_eq_true_iff
 #check finiteUnitReachScanEnvelope_eq
 #check reconstructionFactorSlotNonterminal_observed
+#check reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage
+#check reconstructionFactorSlotCYKMember_eq_true_iff
+#check reconstructionUnitClosureTableScanEnvelope_eq
+#check conservativeExecutableUpdateWorkEnvelope_polynomial_form
+#check concreteConservative_executable_update_work_le_prefix
+#check executableConservativeHypothesis_eq_concrete
+#check executableConservative_update_work_le_prefix
+#check executableConservative_gold_identification_explicit
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
