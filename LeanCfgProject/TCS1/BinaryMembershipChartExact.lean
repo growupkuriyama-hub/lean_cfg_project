@@ -85,14 +85,17 @@ theorem untypedDerivesHeight_chart_complete
         hterminalSlice.symm.trans hslice
       have hget : w.get p = a := by
         simpa using hsingleton
+      have hterm' :
+          terminalRule A (w.get p) := by
+        rw [hget]
+        exact hterm
       have hseed :
           (A,
             (cykLeftBoundary p,
               cykRightBoundary p))
             ∈ cykTerminalSeed terminalRule w :=
         cykTerminalSeed_complete
-          terminalRule w A p
-          (by simpa [hget] using hterm)
+          terminalRule w A p hterm'
       rw [hleft, hright] at hseed
       exact
         cykChartIterate_mono_succ
