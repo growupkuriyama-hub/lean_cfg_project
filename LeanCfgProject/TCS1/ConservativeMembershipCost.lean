@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.BinaryMembershipDecision
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
+import LeanCfgProject.TCS1.ReconstructionFiniteStateSupport
 
 /-!
 # TCS #1 v79: conservative-update CYK cost bridge
@@ -216,6 +217,72 @@ theorem concreteConservative_occurrenceIndexed_update_work_le_prefix
         (ReconstructionFactorSlot
           (concreteConservativeHypothesis H datum n)))
       (reconstructionFactorSlot_card_le_outputEncodingEnvelope
+        (concreteConservativeHypothesis H datum n))
+
+
+/--
+Semantic-state specialization: use the actual observed paper-facing
+reconstruction nonterminals rather than the generous occurrence-slot universe.
+
+This is the representation-count bridge needed by the concrete CFG
+presentation of R1--R4.
+-/
+theorem concreteConservative_activeReconstruction_membershipComparison_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    cykNaiveComparisonEnvelope
+        (@Fintype.card
+          (ActiveReconstructionNonterminal
+            (concreteConservativeHypothesis H datum n))
+          (activeReconstructionNonterminalFintype
+            (concreteConservativeHypothesis H datum n)))
+        (datum (n + 1)).length
+      ≤
+    conservativeCYKPrefixEnvelope
+      (positiveDataPrefixNorm datum (n + 1)) := by
+  exact
+    concreteConservative_membershipComparison_le_prefix
+      H datum n
+      (@Fintype.card
+        (ActiveReconstructionNonterminal
+          (concreteConservativeHypothesis H datum n))
+        (activeReconstructionNonterminalFintype
+          (concreteConservativeHypothesis H datum n)))
+      (activeReconstructionNonterminal_card_le_outputEncodingEnvelope
+        (concreteConservativeHypothesis H datum n))
+
+/--
+End-to-end work bound using the actual finite reconstruction-state support.
+No abstract nonterminal-count parameter remains.
+-/
+theorem concreteConservative_activeReconstruction_update_work_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    cykNaiveComparisonEnvelope
+        (@Fintype.card
+          (ActiveReconstructionNonterminal
+            (concreteConservativeHypothesis H datum n))
+          (activeReconstructionNonterminalFintype
+            (concreteConservativeHypothesis H datum n)))
+        (datum (n + 1)).length
+      +
+    reconstructionOutputEncodingEnvelope
+      (reconstructionSampleNorm
+        (concreteAccumulatedSample datum (n + 1)))
+      ≤
+    conservativeUpdateWorkEnvelope
+      (positiveDataPrefixNorm datum (n + 1)) := by
+  exact
+    concreteConservative_update_work_le_prefix
+      H datum n
+      (@Fintype.card
+        (ActiveReconstructionNonterminal
+          (concreteConservativeHypothesis H datum n))
+        (activeReconstructionNonterminalFintype
+          (concreteConservativeHypothesis H datum n)))
+      (activeReconstructionNonterminal_card_le_outputEncodingEnvelope
         (concreteConservativeHypothesis H datum n))
 
 end ConservativeMembershipCost
