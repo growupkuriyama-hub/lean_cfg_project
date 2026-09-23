@@ -33,9 +33,11 @@ representation-level cost bookkeeping.  The repository now includes an
 executable CYK kernel for the separated-start SSBNF shape, exact semantic
 correctness, explicit polynomial candidate/comparison envelopes, and a bridge
 from those envelopes to the concrete conservative learner's positive-data
-prefix bounds.  The only explicit cost-side premise left in that bridge is the
-standard encoding sanity condition that the number of non-start symbols is at
-most the stored grammar encoding envelope.
+prefix bounds.  The occurrence-indexed reconstruction state space is now
+counted directly by the two-cut factor-slot universe and shown to fit inside
+the stored grammar encoding envelope.  What remains is the semantic
+presentation bridge from the reconstruction grammar itself to the
+separated-start SSBNF interface consumed by the executable CYK kernel.
 
 The former external Double-Delta non-linearity fact is no longer external:
 the repository now proves its own bounded linear pumping lemma and derives
@@ -76,6 +78,9 @@ namespace TCS1
 #check conservativeCYKPrefixEnvelope_polynomial_form
 #check concreteConservative_membershipComparison_le_prefix
 #check concreteConservative_update_work_le_prefix
+#check reconstructionFactorSlot_card_le_outputEncodingEnvelope
+#check concreteConservative_occurrenceIndexed_membershipComparison_le_prefix
+#check concreteConservative_occurrenceIndexed_update_work_le_prefix
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
