@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.ReconstructionFactorSlotState
+import LeanCfgProject.TCS1.ReconstructionActiveGrammar
 import LeanCfgProject.TCS1.BinaryUnitElimination
 import LeanCfgProject.TCS1.ConcreteTypedTrimLanguage
 
@@ -93,9 +94,10 @@ theorem observedReconstructionFactorSlot_isObserved
     (hobs : Observed K x u v) :
     ReconstructionFactorSlotObserved K
       (observedReconstructionFactorSlot K hobs) := by
-  unfold ReconstructionFactorSlotObserved
-  rw [reconstructionFactorSlotNonterminal_observed]
-  exact hobs
+  have hdecode :=
+    reconstructionFactorSlotNonterminal_observed K hobs
+  simpa [ReconstructionFactorSlotObserved,
+    reconstructionFactorSlotSymbol, hdecode] using hobs
 
 /--
 Forward simulation of R1--R4 into the computable factor-slot grammar.
@@ -173,38 +175,95 @@ theorem factorSlotGrammar_to_hypDerives
   induction d with
   | @terminal A a hterm =>
       rcases hterm with ⟨hobs, hfac⟩
+      change
+        Observed K
+          (reconstructionFactorSlotSymbol A).factor
+          (reconstructionFactorSlotSymbol A).leftContext
+          (reconstructionFactorSlotSymbol A).rightContext
+        at hobs
+      have hobs' :
+          Observed K [a]
+            (reconstructionFactorSlotSymbol A).leftContext
+            (reconstructionFactorSlotSymbol A).rightContext := by
+        simpa [hfac] using hobs
       have h :=
         HypDerives.r4
-          (H := H) (K := K)
-          (u := (reconstructionFactorSlotSymbol A).leftContext)
-          (v := (reconstructionFactorSlotSymbol A).rightContext)
-          (a := a) ?_
-      · simpa [hfac] using h
-      · simpa [hfac] using hobs
+          (H := H) (K := K) hobs'
+      simpa [hfac] using h
   | @epsilon A heps =>
       exact False.elim heps
   | @unit A B w hunit d ih =>
       rcases hunit with ⟨hobsA, hobsB, hrel⟩
+      change
+        Observed K
+          (reconstructionFactorSlotSymbol A).factor
+          (reconstructionFactorSlotSymbol A).leftContext
+          (reconstructionFactorSlotSymbol A).rightContext
+        at hobsA
+      change
+        Observed K
+          (reconstructionFactorSlotSymbol B).factor
+          (reconstructionFactorSlotSymbol B).leftContext
+          (reconstructionFactorSlotSymbol B).rightContext
+        at hobsB
       rcases hrel with hsame | htyped
-      · exact
+      · have hobsB' :
+            Observed K
+              (reconstructionFactorSlotSymbol A).factor
+              (reconstructionFactorSlotSymbol B).leftContext
+              (reconstructionFactorSlotSymbol B).rightContext := by
+          simpa [hsame] using hobsB
+        have ih' :
+            HypDerives H K
+              (reconstructionFactorSlotSymbol A).factor
+              (reconstructionFactorSlotSymbol B).leftContext
+              (reconstructionFactorSlotSymbol B).rightContext
+              w := by
+          simpa [hsame] using ih
+        exact
           HypDerives.r2
             (H := H) (K := K)
-            hobsA hobsB
-            (by simpa [hsame] using ih)
+            hobsA hobsB' ih'
       · rcases htyped with ⟨hleft, hright, htype⟩
+        have hobsB' :
+            Observed K
+              (reconstructionFactorSlotSymbol B).factor
+              (reconstructionFactorSlotSymbol A).leftContext
+              (reconstructionFactorSlotSymbol A).rightContext := by
+          simpa [hleft, hright] using hobsB
+        have ih' :
+            HypDerives H K
+              (reconstructionFactorSlotSymbol B).factor
+              (reconstructionFactorSlotSymbol A).leftContext
+              (reconstructionFactorSlotSymbol A).rightContext
+              w := by
+          simpa [hleft, hright] using ih
         exact
           HypDerives.r3
             (H := H) (K := K)
-            hobsA
-            (by
-              simpa [hleft, hright] using hobsB)
-            htype
-            (by
-              simpa [hleft, hright] using ih)
+            hobsA hobsB' htype ih'
   | @binary A B C wB wC hbin dB dC ihB ihC =>
       rcases hbin with
         ⟨hobsA, hobsB, hobsC,
           hfac, hleftB, hrightB, hleftC, hrightC⟩
+      change
+        Observed K
+          (reconstructionFactorSlotSymbol A).factor
+          (reconstructionFactorSlotSymbol A).leftContext
+          (reconstructionFactorSlotSymbol A).rightContext
+        at hobsA
+      change
+        Observed K
+          (reconstructionFactorSlotSymbol B).factor
+          (reconstructionFactorSlotSymbol B).leftContext
+          (reconstructionFactorSlotSymbol B).rightContext
+        at hobsB
+      change
+        Observed K
+          (reconstructionFactorSlotSymbol C).factor
+          (reconstructionFactorSlotSymbol C).leftContext
+          (reconstructionFactorSlotSymbol C).rightContext
+        at hobsC
       have hleftObs :
           Observed K
             (reconstructionFactorSlotSymbol B).factor
@@ -235,16 +294,17 @@ theorem factorSlotGrammar_to_hypDerives
             (reconstructionFactorSlotSymbol A).rightContext
             wC := by
         simpa [hleftC, hrightC] using ihC
+      have hparent :
+          Observed K
+            ((reconstructionFactorSlotSymbol B).factor ++
+              (reconstructionFactorSlotSymbol C).factor)
+            (reconstructionFactorSlotSymbol A).leftContext
+            (reconstructionFactorSlotSymbol A).rightContext := by
+        simpa [hfac] using hobsA
       have h :=
         HypDerives.r1
           (H := H) (K := K)
-          (x := (reconstructionFactorSlotSymbol B).factor)
-          (y := (reconstructionFactorSlotSymbol C).factor)
-          (u := (reconstructionFactorSlotSymbol A).leftContext)
-          (v := (reconstructionFactorSlotSymbol A).rightContext)
-          (w₁ := wB) (w₂ := wC)
-          (by simpa [hfac] using hobsA)
-          hleftObs hrightObs ihB' ihC'
+          hparent hleftObs hrightObs ihB' ihC'
       simpa [hfac] using h
 
 /-- Start children are observed slots with empty outer contexts. -/
@@ -298,8 +358,12 @@ theorem reconstructionFactorSlotStartDerives_iff_batchDerives
           ⟨observedReconstructionFactorSlot K hobs, ?_, ?_⟩
         · refine
             ⟨observedReconstructionFactorSlot_isObserved K hobs, ?_, ?_⟩
-          · rw [reconstructionFactorSlotNonterminal_observed]
-          · rw [reconstructionFactorSlotNonterminal_observed]
+          · have hdecode :=
+              reconstructionFactorSlotNonterminal_observed K hobs
+            exact congrArg ReconstructionNonterminal.leftContext hdecode
+          · have hdecode :=
+              reconstructionFactorSlotNonterminal_observed K hobs
+            exact congrArg ReconstructionNonterminal.rightContext hdecode
         · exact hypDerives_to_factorSlotGrammar H K hder
     | epsilon heps =>
         exact Or.inr ⟨rfl, heps⟩
