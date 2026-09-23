@@ -20,12 +20,11 @@ Verified here, by reference to the preceding modules:
 * the manuscript's non-linearity reduction identity
   `Delta* ∩ a* b* a* b* = Delta Delta` holds extensionally.
 
-The manuscript's separate claim that Delta-star is *non-linear* reduces to
-the cited non-linearity of Delta Delta.  The regular four-block filter, exact
-intersection identity, and closure of finite raw-linear presentations under
-DFA intersection are now machine checked in the local development.  The cited
-Double-Delta non-linearity theorem itself remains an explicit external
-mathematical input rather than an encoded axiom.
+The non-linearity clause is now internal as well.  The repository proves a
+bounded pumping lemma for arbitrary finite raw-linear presentations, applies
+it to Double Delta, and combines that obstruction with the verified regular
+four-block intersection reduction.  Thus no external non-linearity theorem is
+assumed by the paper-facing package.
 -/
 
 namespace LeanCfgProject
@@ -35,10 +34,8 @@ namespace DeltaStar
 /--
 Paper-facing verified core of the nonlinear fixed-h-star example.
 
-The only proposition clause intentionally omitted from this conjunction is
-the final unconditional non-linearity assertion.  Its internal reduction is
-machine checked; only the cited Double-Delta non-linearity fact remains
-external.
+This theorem keeps the original semantic clauses grouped together; the
+unconditional non-linearity conclusion is supplied by the full package below.
 -/
 theorem nonlinear_rs_example_verified_core :
     (∀ w : Word Symbol,
@@ -71,12 +68,9 @@ theorem nonlinear_rs_example_verified_core :
 universe u w
 
 /--
-Paper-facing non-linearity reduction for Proposition 9.1.
-
-Supplying the cited Double-Delta non-linearity fact in the repository's
-finite raw-linear presentation form yields the Delta-star non-linearity
-conclusion in the same form.  All other steps of the manuscript reduction
-are discharged internally.
+Reusable conditional form of the Proposition 9.1 non-linearity reduction.
+The hypothesis is discharged internally by
+doubleDelta_not_rawLinearInitialRepresentable in the full package below.
 -/
 theorem nonlinear_rs_example_nonlinearity_reduction
     (hDouble :
@@ -86,6 +80,40 @@ theorem nonlinear_rs_example_nonlinearity_reduction
         Language :=
   deltaStar_not_rawLinearRepresentable_of_doubleDelta
     hDouble
+
+
+
+/--
+Full paper-facing Proposition 9.1 package, including unconditional
+non-linearity in the finite raw-linear presentation semantics.
+-/
+theorem nonlinear_rs_example_full
+    : (∀ w : Word Symbol,
+        SDerives w ↔ w ∈ Language)
+      ∧
+      (initial.Finite ∧
+        InitialSetLanguage
+          binaryGrammar initial =
+        Language)
+      ∧
+      (¬ FormalLanguage.IsRegular)
+      ∧
+      (¬ RawLinearInitialRepresentable.{u, 0, w}
+          Language)
+      ∧
+      FixedHSubstitutable
+        starTyping Language
+      ∧
+      (∀ k l : Nat,
+        ¬ FixedWindowSubstitutable
+          k l Language) := by
+  refine ⟨displayedDerives_iff_language, ?_⟩
+  refine ⟨finite_cfg_witness, ?_⟩
+  refine ⟨not_regular, ?_⟩
+  refine ⟨deltaStar_not_rawLinearRepresentable
+    (u := u) (w := w), ?_⟩
+  exact
+    deltaStar_fixedH_and_outside_all_fixedWindows
 
 end DeltaStar
 end TCS1
