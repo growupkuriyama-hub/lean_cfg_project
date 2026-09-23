@@ -17,6 +17,7 @@ import LeanCfgProject.TCS1.DeltaStarNonregular
 import LeanCfgProject.TCS1.DeltaStarDisplayedGrammar
 import LeanCfgProject.TCS1.DeltaStarBinaryGrammar
 import LeanCfgProject.TCS1.DeltaStarNonlinearityBridge
+import LeanCfgProject.TCS1.DeltaStarDoubleDeltaNonlinear
 import LeanCfgProject.TCS1.DeltaStarFourBlockDFA
 import LeanCfgProject.TCS1.DeltaStarNonlinearityReduction
 import LeanCfgProject.TCS1.DeltaStarProposition
