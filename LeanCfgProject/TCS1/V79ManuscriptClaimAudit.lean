@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
+import LeanCfgProject.TCS1.FixedHTypingRefinement
 
 /-!
 # TCS #1 v79: manuscript-label claim audit
@@ -24,6 +25,13 @@ namespace TCS1
 -- ---------------------------------------------------------------------------
 -- Section 3: Fixed Recognizable Substitutability
 -- ---------------------------------------------------------------------------
+
+-- Section 3 prose: refinement monotonicity, the sufficient
+-- syntactic-refinement criterion, and product typing.
+#check fixedHSubstitutable_of_refinement
+#check fixedHSubstitutable_of_type_implies_distribution_eq
+#check productFixedFiniteMonoidHom_eq_iff
+#check fixedHSubstitutable_product_of_either
 
 -- Proposition 3.1 / prop:regular-auto.
 #check regular_auto_proposition_package
