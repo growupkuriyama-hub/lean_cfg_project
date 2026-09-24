@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
 import LeanCfgProject.TCS1.FixedHTypingRefinement
+import LeanCfgProject.TCS1.GoldCompatibilityFiniteObstruction
 import LeanCfgProject.TCS1.SingletonDataLowerBound
 import LeanCfgProject.TCS1.DoublingSingletonGrammar
 
@@ -55,6 +56,12 @@ namespace TCS1
 #check corollary_poly_update_materialized
 #check indexedClassicalFixedWindowSection7_package
 #check indexedLinear_characteristic_package
+
+-- Unnumbered paragraph immediately after Theorem 3.4: the fixed-h class
+-- omits a finite language, so Gold's superfinite obstruction is compatible
+-- with the positive fixed-h theorem.
+#check goldThreeWordSample_not_fixedH
+#check fixedH_omits_some_finite_language
 
 -- ---------------------------------------------------------------------------
 -- Section 4: Reconstruction Operator and Sequential Learner
