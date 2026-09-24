@@ -27,12 +27,12 @@ L_{±,e} gives the desired strictness witness.
 namespace LeanCfgProject
 namespace TCS1
 
-universe u v
+universe u
 
 section SyntacticRefinementRegularity
 
 variable {α : Type u}
-variable {M : Type v} [Monoid M] [Fintype M]
+variable {M : Type} [Monoid M] [Fintype M]
 
 /--
 Finite DFA induced by a fixed typing when membership of nonempty words is
