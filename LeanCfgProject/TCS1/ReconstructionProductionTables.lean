@@ -219,8 +219,10 @@ instance instDecidableReconstructionMaterializedBinaryRule
     ∀ A B : ReconstructionFactorSlot K,
       DecidablePred (reconstructionMaterializedBinaryRule H K A B) := by
   intro A B C
-  unfold reconstructionMaterializedBinaryRule
-  infer_instance
+  exact
+    decidable_of_iff
+      (reconstructionFactorSlotUnitFreeBinaryRule H K A B C)
+      (reconstructionMaterializedBinaryRule_iff H K A B C).symm
 
 /-- Decidable table lookup for materialized start children. -/
 instance instDecidableReconstructionMaterializedStartRule
@@ -293,19 +295,26 @@ theorem reconstructionMaterializedCYKMember_eq_true_iff
     w ∈ BatchLanguage H K := by
   rw [reconstructionMaterializedCYKMember]
   rw [cykStartMember_eq_true_iff]
-  have hmem :
-      w ∈
-          UntypedStartLanguage
-            (reconstructionFactorSlotUnitFreeTerminalRule H K)
-            (reconstructionFactorSlotUnitFreeBinaryRule H K)
-            (reconstructionFactorSlotStartRule K)
-            (([] : Word α) ∈ K)
-        ↔
-      w ∈ BatchLanguage H K := by
-    rw [reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage]
-  simpa [reconstructionMaterializedTerminalRule,
-    reconstructionMaterializedBinaryRule,
-    reconstructionMaterializedStartRule] using hmem
+  have hterm :
+      reconstructionMaterializedTerminalRule H K =
+        reconstructionFactorSlotUnitFreeTerminalRule H K := by
+    funext A a
+    apply propext
+    exact reconstructionMaterializedTerminalRule_iff H K A a
+  have hbin :
+      reconstructionMaterializedBinaryRule H K =
+        reconstructionFactorSlotUnitFreeBinaryRule H K := by
+    funext A B C
+    apply propext
+    exact reconstructionMaterializedBinaryRule_iff H K A B C
+  have hstart :
+      reconstructionMaterializedStartRule K =
+        reconstructionFactorSlotStartRule K := by
+    funext A
+    apply propext
+    exact reconstructionMaterializedStartRule_iff K A
+  rw [hterm, hbin, hstart]
+  rw [reconstructionFactorSlotUnitFree_untypedStartLanguage_eq_batchLanguage]
 
 end ReconstructionProductionTables
 
