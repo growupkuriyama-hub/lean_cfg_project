@@ -73,12 +73,14 @@ theorem singleton_characteristic_sample_contains
   by_contra hword
   have hCempty : C = ∅ := by
     ext z
-    simp only [Finset.mem_empty, iff_false]
-    intro hz
-    have hzword : z = word := by
-      simpa using hpositive hz
-    subst z
-    exact hword hz
+    constructor
+    · intro hz
+      have hzword : z = word := by
+        simpa using hpositive hz
+      subst z
+      exact False.elim (hword hz)
+    · intro hz
+      simp at hz
   have hwBatch :
       word ∈ BatchLanguage H C := by
     rw [hcharacteristic]
