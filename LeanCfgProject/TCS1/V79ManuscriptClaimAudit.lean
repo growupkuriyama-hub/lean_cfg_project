@@ -3,6 +3,8 @@ import LeanCfgProject.TCS1.FixedHTypingRefinement
 import LeanCfgProject.TCS1.GoldCompatibilityFiniteObstruction
 import LeanCfgProject.TCS1.SingletonDataLowerBound
 import LeanCfgProject.TCS1.DoublingSingletonGrammar
+import LeanCfgProject.TCS1.WitnessSetConstruction
+import LeanCfgProject.TCS1.IndexedNormalizationLanguage
 
 /-!
 # TCS #1 v79: manuscript-label claim audit
@@ -76,6 +78,13 @@ namespace TCS1
 -- ---------------------------------------------------------------------------
 -- Section 5: Completeness via Yield-Typed Refinement and Finite Witnesses
 -- ---------------------------------------------------------------------------
+
+-- Unnumbered Section 5 setup used by the completeness theorem:
+-- the canonical witness set is positive and finite, and the concrete
+-- normalization preserves the source language on the productive branch.
+#check canonicalWitnessWords_subset_target
+#check canonicalWitnessWords_finite
+#check indexedReducedSSBNF_untypedStartLanguage_eq_source
 
 -- Proposition 5.1 / prop:typed-core:
 -- exact language preservation plus the typed-yield invariant.
