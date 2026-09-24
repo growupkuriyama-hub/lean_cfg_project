@@ -79,6 +79,12 @@ namespace TCS1
 -- Theorem 4.2 / thm:soundness.
 #check batchLanguage_sound
 
+-- Unnumbered Section 4 sequential-learner motivation: a genuinely new
+-- sample word strictly enlarges the occurrence-indexed factor/context state
+-- universe of the executable batch presentation.
+#check reconstructionFactorSlotCount_insert
+#check reconstructionFactorSlot_card_lt_insert
+
 -- ---------------------------------------------------------------------------
 -- Section 5: Completeness via Yield-Typed Refinement and Finite Witnesses
 -- ---------------------------------------------------------------------------
