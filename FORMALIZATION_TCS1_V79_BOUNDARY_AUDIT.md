@@ -171,7 +171,29 @@ fully internal RS-exclusion proof.
 
 ---
 
-## G. Open problems in the Conclusion
+## G. Expository batch-syntax observation
+
+**Manuscript:** lines 550--554.
+
+**Decision:** promoted to Lean-internal representation evidence.
+
+The paper notes that the raw batch operator need not stabilize syntactically
+when recomputed after every newly observed positive example.  Rather than
+formalizing the specific `a^n c b^n` text from the footnote, the repository
+now proves the stronger generic representation fact:
+
+- `reconstructionFactorSlotCount_insert`;
+- `reconstructionFactorSlot_card_lt_insert`.
+
+Whenever a genuinely new sample word is inserted, the occurrence-indexed
+factor/context state universe used by the executable batch grammar grows
+strictly.  This is exactly the syntactic phenomenon for which the paper
+introduces the conservative sequential wrapper.  No language-semantic theorem
+depends on this observation.
+
+---
+
+## H. Open problems in the Conclusion
 
 **Manuscript:** lines 1491--1497.
 
@@ -190,7 +212,7 @@ The audit must not turn any of these into an asserted theorem.
 
 ---
 
-## H. Final boundary decision
+## I. Final boundary decision
 
 After this review, no remaining item classified as
 literature/background, convention, or open problem is being used to hide a
