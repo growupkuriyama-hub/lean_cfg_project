@@ -47,6 +47,7 @@ namespace TCS1
 
 -- Proposition 3.1 / prop:regular-auto.
 #check regular_auto_proposition_package
+#check regular_exists_fixedHSubstitutable
 
 -- Proposition 3.2 / prop:ce-special.
 #check clarkEyraud_special_case
