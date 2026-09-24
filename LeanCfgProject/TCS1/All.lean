@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.LinearRegularIntersection
 import LeanCfgProject.TCS1.FixedHSubstitutability
+import LeanCfgProject.TCS1.FixedHomEvaluation
 import LeanCfgProject.TCS1.FixedHTypingRefinement
 import LeanCfgProject.TCS1.RegularRecognition
 import LeanCfgProject.TCS1.ClarkEyraudSpecialCase
@@ -195,6 +196,7 @@ import LeanCfgProject.TCS1.ClarkCongruentialIndexedFacade
 import LeanCfgProject.TCS1.ClarkCongruentialEndpoints
 import LeanCfgProject.TCS1.ClarkCongruentialComparison
 import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
+import LeanCfgProject.TCS1.V79PreliminariesAudit
 import LeanCfgProject.TCS1.V79ManuscriptClaimAudit
 import LeanCfgProject.TCS1.V79FrontBackAppendixAudit
 /-!
