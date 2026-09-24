@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
 import LeanCfgProject.TCS1.FixedHTypingRefinement
 import LeanCfgProject.TCS1.SingletonDataLowerBound
+import LeanCfgProject.TCS1.DoublingSingletonGrammar
 
 /-!
 # TCS #1 v79: manuscript-label claim audit
@@ -113,6 +114,9 @@ namespace TCS1
 #check singleton_fixedHSubstitutable
 #check singleton_characteristic_sample_contains
 #check singleton_doubling_characteristic_norm_ge
+#check doublingGrammarEncodingScale_eq
+#check doublingStartLanguage_eq_singleton
+#check grammarSizeOnlyDataBound_obstruction
 
 -- ---------------------------------------------------------------------------
 -- Section 7: Fixed-Window Thick Data
