@@ -71,11 +71,13 @@ paper's own bounds and transfer package; it does not formalize Yoshinaka's
 paper as an external theorem library.
 
 The broader statement that the union class `RS` (and `RS ∩ CFL`) is not
-identifiable from positive data because it is superfinite is classified as
-**literature/background**: the repository verifies the regular-language /
-finite-monoid interface used to place all finite regular languages in the
-union, while Gold's general superfinite negative theorem remains the cited
-external result.
+identifiable from positive data because it is superfinite has a mixed status.
+The internal bridge
+`regular_exists_fixedHSubstitutable` now states directly that every regular
+language belongs to some fixed-h substitutable class, exactly the existential
+step needed for the union-class discussion.  Gold's general superfinite
+negative theorem, and the standard background fact that every finite language
+is regular, remain cited/external rather than being re-proved here.
 
 ### Expressiveness claims — Lean-internal
 
@@ -174,7 +176,7 @@ All numbered mathematical claims are compile-checked.
 
 | Manuscript claim | Lean cross-reference |
 | --- | --- |
-| Proposition 3.1, regular recognition / regular languages in RS | `regular_auto_proposition_package` |
+| Proposition 3.1, regular recognition / regular languages in RS | `regular_auto_proposition_package`, `regular_exists_fixedHSubstitutable` |
 | Proposition 3.2, Clark--Eyraud special case | `clarkEyraud_special_case` |
 | Proposition 3.3, exact fixed-window equivalence | `fixedWindowSubstitutable_iff_fixedHSubstitutable` |
 | Theorem 3.4, fixed-h learning theorem | `indexedFixedH_learning_materialized_core`, `corollary_poly_update_materialized`, Section 7/8 packages |
