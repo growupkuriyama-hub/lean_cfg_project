@@ -162,7 +162,10 @@ theorem isRegular_of_fixedH_type_refines_distribution
         have hzctx :
             (([] : Word α), ([] : Word α)) ∈
               Distribution L z := by
-          simpa [Distribution] using hzLset
+          change
+            (show Set (Word α) from L)
+              (([] : Word α) ++ z ++ [])
+          simpa using hzLset
         have hwctx :
             (([] : Word α), ([] : Word α)) ∈
               Distribution L (a :: w) := by
@@ -170,7 +173,11 @@ theorem isRegular_of_fixedH_type_refines_distribution
           exact hzctx
         have hwLset :
             (show Set (Word α) from L) (a :: w) := by
-          simpa [Distribution] using hwctx
+          change
+            (show Set (Word α) from L)
+              (([] : Word α) ++ (a :: w) ++ [])
+            at hwctx
+          simpa using hwctx
         change L (a :: w)
         exact hwLset
       · intro hwL
