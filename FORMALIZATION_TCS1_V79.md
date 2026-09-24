@@ -224,6 +224,13 @@ Important unnumbered prose is also formalized:
 The executable and materialized learners are proved pointwise identical to
 the semantic learner used in the Gold proof.
 
+The unnumbered Section 4 motivation that raw batch recomputation need not
+stabilize syntactically is also represented at the executable syntax level:
+`reconstructionFactorSlotCount_insert` and
+`reconstructionFactorSlot_card_lt_insert` show that every genuinely new
+sample word strictly enlarges the occurrence-indexed factor/context state
+universe.
+
 The unnumbered canonical-witness setup used in Theorem 5.2 is also checked
 explicitly:
 
