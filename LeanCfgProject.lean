@@ -1,8 +1,6 @@
-import LeanCfgProject.MCFG.Basic
+import LeanCfgProject.TCS1.All
 
 /-!
-Root import file for the LeanCfgProject package.
-
-This imports the MCFG submodule root. Keep `Basic.lean` under
-`LeanCfgProject/MCFG/Basic.lean`, not directly under `LeanCfgProject/Basic.lean`.
+Standalone root import for the TCS #1 formalization archive.
+Building `LeanCfgProject` therefore checks the complete TCS1 facade.
 -/
