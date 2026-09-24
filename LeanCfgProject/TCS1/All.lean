@@ -57,6 +57,7 @@ import LeanCfgProject.TCS1.ExecutableConservativeLearner
 import LeanCfgProject.TCS1.MaterializedConservativeLearner
 import LeanCfgProject.TCS1.MaterializedProductionCost
 import LeanCfgProject.TCS1.SingletonDataLowerBound
+import LeanCfgProject.TCS1.DoublingSingletonGrammar
 import LeanCfgProject.TCS1.ExecutableSmokeTest
 import LeanCfgProject.TCS1.ReconstructionComplexityCounts
 import LeanCfgProject.TCS1.ReconstructionFiniteCandidateSpaces
