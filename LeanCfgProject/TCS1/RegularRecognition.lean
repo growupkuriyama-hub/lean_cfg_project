@@ -221,6 +221,31 @@ theorem regular_has_finiteMonoidRecognition
   exact hD
 
 /--
+Every regular language belongs to at least one fixed-h substitutable class.
+
+This is the paper-facing existential form used in the discussion of the union
+class RS = ⋃_h RS_h: a finite DFA supplies its transition-monoid typing.
+-/
+theorem regular_exists_fixedHSubstitutable
+    {α : Type u}
+    (L : Language α)
+    (hreg : L.IsRegular) :
+    ∃ σ : Type,
+      ∃ _inst : Fintype σ,
+        ∃ D : DFA α σ,
+          D.accepts = L ∧
+          FixedHSubstitutable
+            (dfaTransitionHom D) L := by
+  rcases hreg with ⟨σ, hfin, D, hD⟩
+  refine ⟨σ, hfin, D, hD, ?_⟩
+  have hsub :=
+    recognizedPreimage_fixedHSubstitutable
+      (dfaTransitionHom D)
+      (dfaTransitionAccept D)
+  rw [dfa_recognizedPreimage_eq_accepts D, hD] at hsub
+  exact hsub
+
+/--
 Complete Proposition 3.1 package.
 
 1. Every regular language has an explicit finite transition-monoid
