@@ -60,10 +60,8 @@ theorem goldThreeWordSample_not_fixedH
   have hshared :
       HaveSharedContext L x y := by
     refine ⟨[], [], ?_, ?_⟩
-    · change x ∈ goldThreeWordSample x y r
-      simp [goldThreeWordSample]
-    · change y ∈ goldThreeWordSample x y r
-      simp [goldThreeWordSample]
+    · simp [L, goldThreeWordSample]
+    · simp [L, goldThreeWordSample]
 
   have hdist :
       Distribution L x = Distribution L y :=
@@ -71,8 +69,7 @@ theorem goldThreeWordSample_not_fixedH
 
   have hrxContext :
       (r, ([] : Word α)) ∈ Distribution L x := by
-    change r ++ x ∈ goldThreeWordSample x y r
-    simp [goldThreeWordSample]
+    simp [Distribution, L, goldThreeWordSample]
 
   have hryContext :
       (r, ([] : Word α)) ∈ Distribution L y := by
@@ -151,10 +148,8 @@ theorem fixedH_omits_some_finite_language
 
   have hrx : x.length < r.length := by
     simp [r]
-    omega
   have hry : y.length < r.length := by
     simp [r]
-    omega
 
   refine
     ⟨goldThreeWordSample x y r, ?_⟩
