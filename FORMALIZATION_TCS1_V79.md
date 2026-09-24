@@ -70,6 +70,13 @@ Yoshinaka" is a comparison with the cited literature.  Lean verifies the
 paper's own bounds and transfer package; it does not formalize Yoshinaka's
 paper as an external theorem library.
 
+The broader statement that the union class `RS` (and `RS ∩ CFL`) is not
+identifiable from positive data because it is superfinite is classified as
+**literature/background**: the repository verifies the regular-language /
+finite-monoid interface used to place all finite regular languages in the
+union, while Gold's general superfinite negative theorem remains the cited
+external result.
+
 ### Expressiveness claims — Lean-internal
 
 Manuscript lines 117--124 are covered by:
@@ -208,6 +215,15 @@ Important unnumbered prose is also formalized:
 The executable and materialized learners are proved pointwise identical to
 the semantic learner used in the Gold proof.
 
+The unnumbered canonical-witness setup used in Theorem 5.2 is also checked
+explicitly:
+
+- `canonicalWitnessWords_subset_target` proves positivity of the canonical
+  witness words;
+- `canonicalWitnessWords_finite` proves finiteness;
+- `indexedReducedSSBNF_untypedStartLanguage_eq_source` connects the
+  normalized productive branch back to the source language.
+
 ---
 
 ## 5. Section 6 — reconstruction/update complexity
@@ -294,6 +310,10 @@ elimination, productive/reachable trimming, and separated-start conversion.
 | Theorem 8.3, polynomial characteristic data | `indexedLinear_characteristic_package` |
 | Proposition 8.4, nonregular linear separator | `lpm_proposition86_full_semantic` |
 
+The classical characterization of linear languages by one-turn pushdown
+automata, cited in the manuscript for background, is classified as
+**literature/background** rather than re-proved in the Lean artifact.
+
 Appendix-level construction and witness proofs are additionally checked by:
 
 - `indexedLinear_rawPreprocessedLanguage_eq_source`;
@@ -329,7 +349,7 @@ classical cited nonlinearity fact.
 ### Literature/background statements in Section 9
 
 The following are not separate internal proof obligations in the current
-artifact:
+artifact and are classified as **literature/background**:
 
 - that the uncapped counter language is deterministic context-free via the
   displayed/standard DPDA construction;
