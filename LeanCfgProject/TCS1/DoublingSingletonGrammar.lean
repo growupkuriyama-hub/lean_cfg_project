@@ -179,7 +179,7 @@ theorem unitWord_eq_replicate_length
       cases a
       simp only [List.length_cons]
       rw [List.replicate_succ]
-      rw [ih]
+      exact congrArg (fun t => () :: t) ih
 
 /-- Each layer A_k derives its intended unary word of length 2^k. -/
 theorem doublingLayer_derives
