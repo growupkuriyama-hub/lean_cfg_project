@@ -40,3 +40,5 @@ The Lean toolchain and Mathlib dependency are pinned by `lean-toolchain` and `la
 The artifact covers fixed finite-monoid substitutability, exact reconstruction, canonical finite witnesses, conservative Gold identification, executable CYK membership, materialized production tables and learner, paper-facing polynomial combinatorial bounds, fixed-window and linear-subclass results, and the Section 9 expressiveness examples.
 
 The remaining non-internal material is limited to cited literature/background, representation conventions, explicit open problems, and low-level runtime cost semantics outside the manuscript's abstraction level.
+
+This standalone branch contains only the TCS #1 source, reproducibility metadata, and its CI definition.
