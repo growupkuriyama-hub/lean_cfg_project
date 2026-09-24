@@ -51,7 +51,11 @@ theorem productFixedFiniteMonoidHom_eq_iff
         (productFixedFiniteMonoidHom H G).h v
       ↔
     H.h u = H.h v ∧ G.h u = G.h v := by
-  rfl
+  constructor
+  · intro h
+    exact ⟨congrArg Prod.fst h, congrArg Prod.snd h⟩
+  · rintro ⟨hH, hG⟩
+    exact Prod.ext hH hG
 
 /-- The product typing refines its left component. -/
 theorem productFixedFiniteMonoidHom_refines_left
