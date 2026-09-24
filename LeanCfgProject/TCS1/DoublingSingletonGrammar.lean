@@ -95,7 +95,6 @@ abbrev DoublingProductionIndex
     (n : Nat) :
     Fintype.card (DoublingState n) = n + 2 := by
   simp [DoublingState]
-  omega
 
 /--
 Production-symbol count (one LHS plus RHS symbols):
@@ -178,7 +177,9 @@ theorem unitWord_eq_replicate_length
       rfl
   | cons a w ih =>
       cases a
-      simp [ih]
+      simp only [List.length_cons]
+      rw [List.replicate_succ]
+      rw [ih]
 
 /-- Each layer A_k derives its intended unary word of length 2^k. -/
 theorem doublingLayer_derives
@@ -211,8 +212,13 @@ theorem doublingLayer_derives
       have d :=
         BinaryNullableDerives.binary
           hbin dchild dchild
-      simpa [pow_succ, Nat.mul_two,
-        List.replicate_add] using d
+      have hpow :
+          2 ^ (k + 1) =
+            2 ^ k + 2 ^ k := by
+        rw [pow_succ]
+        omega
+      rw [hpow, List.replicate_add]
+      exact d
 
 /-- The start state S₀ derives a^(2^n). -/
 theorem doublingStart_derives
@@ -295,8 +301,7 @@ theorem doublingGrammar_characteristic_norm_ge
       BatchLanguage H C =
         doublingStartLanguage n) :
     2 ^ n + 1 ≤ reconstructionSampleNorm C := by
-  rw [doublingStartLanguage_eq_singleton] at
-    hpositive hcharacteristic
+  rw [doublingStartLanguage_eq_singleton n] at hpositive hcharacteristic
   exact
     singleton_doubling_characteristic_norm_ge
       H () n C hpositive hcharacteristic
