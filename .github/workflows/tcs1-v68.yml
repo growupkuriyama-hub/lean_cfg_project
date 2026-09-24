@@ -32,3 +32,17 @@ jobs:
         uses: leanprover/lean-action@v1
         with:
           build-args: "LeanCfgProject/TCS1/All.lean:o"
+
+      - name: Reject sorry in TCS1
+        run: |
+          if grep -R -nE '\\bsorry\\b' LeanCfgProject/TCS1 --include="*.lean"; then
+            echo "::error::sorry found in TCS1 Lean files"
+            exit 1
+          fi
+
+      - name: Reject project-level axiom in TCS1
+        run: |
+          if grep -R -nE '^[[:space:]]*axiom\\b' LeanCfgProject/TCS1 --include="*.lean"; then
+            echo "::error::axiom found in TCS1 Lean files"
+            exit 1
+          fi
