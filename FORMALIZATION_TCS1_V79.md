@@ -189,6 +189,13 @@ Important unnumbered prose is also formalized:
   `fixedHSubstitutable_of_refinement`;
 - sufficient syntactic-refinement criterion:
   `fixedHSubstitutable_of_type_implies_distribution_eq`;
+- strictness of that sufficient criterion:
+  `isRegular_of_fixedH_type_refines_distribution`,
+  `nonregular_has_same_type_distinct_distribution`, and
+  `lpm_fixedH_without_syntactic_kernel_refinement`; the last theorem uses
+  the already verified nonregular linear separator to show that fixed-h
+  substitutability does not require the finite h-kernel to refine full
+  syntactic congruence;
 - product typing and kernel intersection:
   `productFixedFiniteMonoidHom_eq_iff`;
 - pointwise class-union consequence
@@ -393,6 +400,7 @@ Lean coverage for:
 - the fixed-window normalization/witness appendices;
 - the linear normalization/witness appendices;
 - important unnumbered Section 3 refinement/product-typing claims;
+- the Section 3 syntactic-kernel strictness paragraph;
 - the Section 6 grammar-size-only data lower-bound example;
 - executable membership and conservative learning;
 - explicit finite production-table materialization and polynomial
