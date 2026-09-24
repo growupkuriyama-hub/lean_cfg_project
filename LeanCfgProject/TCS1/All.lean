@@ -3,6 +3,7 @@ import LeanCfgProject.TCS1.FixedHSubstitutability
 import LeanCfgProject.TCS1.FixedHomEvaluation
 import LeanCfgProject.TCS1.FixedHTypingRefinement
 import LeanCfgProject.TCS1.GoldCompatibilityFiniteObstruction
+import LeanCfgProject.TCS1.SyntacticRefinementRegularity
 import LeanCfgProject.TCS1.RegularRecognition
 import LeanCfgProject.TCS1.ClarkEyraudSpecialCase
 import LeanCfgProject.TCS1.FixedHFiniteObstructions
