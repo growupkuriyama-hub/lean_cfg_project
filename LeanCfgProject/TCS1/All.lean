@@ -199,6 +199,7 @@ import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
 import LeanCfgProject.TCS1.V79PreliminariesAudit
 import LeanCfgProject.TCS1.V79ManuscriptClaimAudit
 import LeanCfgProject.TCS1.V79FrontBackAppendixAudit
+import LeanCfgProject.TCS1.V79FullManuscriptAudit
 /-!
 # TCS #1 v79 Lean verification facade
 
