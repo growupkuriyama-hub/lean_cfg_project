@@ -155,16 +155,24 @@ theorem isRegular_of_fixedH_type_refines_distribution
         have hdist :=
           hrefines z (a :: w)
             hzne (by simp) hztype
+        have hzLset :
+            (show Set (Word α) from L) z := by
+          change L z at hzL
+          exact hzL
         have hzctx :
             (([] : Word α), ([] : Word α)) ∈
               Distribution L z := by
-          simpa [Distribution] using hzL
+          simpa [Distribution] using hzLset
         have hwctx :
             (([] : Word α), ([] : Word α)) ∈
               Distribution L (a :: w) := by
           rw [← hdist]
           exact hzctx
-        simpa [Distribution] using hwctx
+        have hwLset :
+            (show Set (Word α) from L) (a :: w) := by
+          simpa [Distribution] using hwctx
+        change L (a :: w)
+        exact hwLset
       · intro hwL
         exact
           ⟨a :: w, by simp, rfl, hwL⟩
