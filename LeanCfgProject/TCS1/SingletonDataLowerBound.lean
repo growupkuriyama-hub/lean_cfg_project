@@ -72,8 +72,9 @@ theorem singleton_characteristic_sample_contains
     word ∈ C := by
   by_contra hword
   have hCempty : C = ∅ := by
-    apply Finset.eq_empty_iff_forall_not_mem.mpr
-    intro z hz
+    ext z
+    simp only [Finset.mem_empty, iff_false]
+    intro hz
     have hzword : z = word := by
       simpa using hpositive hz
     subst z
