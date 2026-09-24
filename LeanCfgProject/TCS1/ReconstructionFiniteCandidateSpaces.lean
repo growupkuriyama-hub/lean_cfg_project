@@ -97,6 +97,37 @@ theorem reconstructionFactorPairSlot_card_eq
   rw [Fintype.card_prod]
   simp only [reconstructionFactorSlot_card_eq]
 
+/--
+Adding a genuinely new positive example strictly enlarges the occurrence-indexed
+factor/context state universe.
+
+This is the executable representation-level counterpart of the manuscript's
+observation that the raw batch reconstruction need not stabilize syntactically
+when it is recomputed after every newly observed word.
+-/
+theorem reconstructionFactorSlotCount_insert
+    (K : Finset (Word α))
+    {w : Word α}
+    (hw : w ∉ K) :
+    reconstructionFactorSlotCount (insert w K) =
+      (w.length + 1) ^ 2 +
+        reconstructionFactorSlotCount K := by
+  classical
+  simp [reconstructionFactorSlotCount, hw]
+
+theorem reconstructionFactorSlot_card_lt_insert
+    (K : Finset (Word α))
+    {w : Word α}
+    (hw : w ∉ K) :
+    Fintype.card (ReconstructionFactorSlot K) <
+      Fintype.card (ReconstructionFactorSlot (insert w K)) := by
+  rw [reconstructionFactorSlot_card_eq,
+    reconstructionFactorSlot_card_eq,
+    reconstructionFactorSlotCount_insert K hw]
+  have hpos : 0 < (w.length + 1) ^ 2 := by
+    positivity
+  omega
+
 /-- The actual two-cut finite space is quadratically bounded by ||K||. -/
 theorem reconstructionFactorSlot_card_le_sq
     (K : Finset (Word α)) :
