@@ -12,6 +12,7 @@ import LeanCfgProject.TCS1.ReconstructionFactorSlotState
 import LeanCfgProject.TCS1.ReconstructionFactorSlotCYK
 import LeanCfgProject.TCS1.ReconstructionProductionTables
 import LeanCfgProject.TCS1.ExecutableConservativeLearner
+import LeanCfgProject.TCS1.MaterializedConservativeLearner
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -121,6 +122,9 @@ namespace TCS1
 #check reconstructionFactorSlotUnitFreeBinaryTable_card_le
 #check reconstructionFactorSlotUnitTable_card_le
 #check reconstructionMaterializedCYKMember_eq_true_iff
+#check materializedConservativeUpdate_eq_executable
+#check materializedConservativeHypothesis_eq_concrete
+#check materializedConservative_gold_identification_explicit
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
