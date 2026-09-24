@@ -202,6 +202,34 @@ def reconstructionMaterializedStartRule
     reconstructionFactorSlotStartRule K A := by
   simp [reconstructionMaterializedStartRule]
 
+
+/-- Decidable table lookup for materialized terminal productions. -/
+instance instDecidableReconstructionMaterializedTerminalRule
+    (H : FixedFiniteMonoidHom α M)
+    (K : Finset (Word α)) :
+    DecidableRel (reconstructionMaterializedTerminalRule H K) := by
+  intro A a
+  unfold reconstructionMaterializedTerminalRule
+  infer_instance
+
+/-- Decidable table lookup for materialized binary productions. -/
+instance instDecidableReconstructionMaterializedBinaryRule
+    (H : FixedFiniteMonoidHom α M)
+    (K : Finset (Word α)) :
+    ∀ A B : ReconstructionFactorSlot K,
+      DecidablePred (reconstructionMaterializedBinaryRule H K A B) := by
+  intro A B C
+  unfold reconstructionMaterializedBinaryRule
+  infer_instance
+
+/-- Decidable table lookup for materialized start children. -/
+instance instDecidableReconstructionMaterializedStartRule
+    (K : Finset (Word α)) :
+    DecidablePred (reconstructionMaterializedStartRule K) := by
+  intro A
+  unfold reconstructionMaterializedStartRule
+  infer_instance
+
 /-- Concrete table size is bounded by the full state/terminal product. -/
 theorem reconstructionFactorSlotUnitFreeTerminalTable_card_le
     (H : FixedFiniteMonoidHom α M)
