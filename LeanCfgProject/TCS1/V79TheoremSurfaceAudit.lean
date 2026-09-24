@@ -38,8 +38,9 @@ import LeanCfgProject.TCS1.ClarkCongruentialComparison
 This file is a compile-time index from the numbered theorem surface of the
 v79 manuscript to the Lean declarations that discharge it.
 
-It distinguishes theorem-level mathematical verification from the remaining
-representation-level cost bookkeeping.  The repository now includes an
+It indexes theorem-level mathematical verification together with the
+representation-level cost bookkeeping needed by the manuscript.  The
+repository now includes an
 executable CYK kernel for the separated-start SSBNF shape, exact semantic
 correctness, explicit polynomial candidate/comparison envelopes, and a bridge
 from those envelopes to the concrete conservative learner's positive-data
