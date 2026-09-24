@@ -1,4 +1,5 @@
 import LeanCfgProject.TCS1.ExecutableConservativeLearner
+import LeanCfgProject.TCS1.ReconstructionProductionTables
 
 /-!
 # TCS #1 v79: executable reconstruction smoke test
@@ -77,6 +78,21 @@ theorem smoke_update_rebuilds_on_missing_word :
         smokeTyping smokeSample smokeAccumulated [false]
       =
     smokeAccumulated := by
+  native_decide
+
+
+theorem smoke_materialized_member_true :
+    reconstructionMaterializedCYKMember
+        smokeTyping smokeSample [true]
+      =
+    true := by
+  native_decide
+
+theorem smoke_materialized_reject_false :
+    reconstructionMaterializedCYKMember
+        smokeTyping smokeSample [false]
+      =
+    false := by
   native_decide
 
 end ExecutableSmokeTest
