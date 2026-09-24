@@ -3,6 +3,7 @@ import LeanCfgProject.TCS1.ClarkEyraudSpecialCase
 import LeanCfgProject.TCS1.FixedWindowExactEquivalence
 import LeanCfgProject.TCS1.MainTheoremSemanticPackage
 import LeanCfgProject.TCS1.MainTheoremExecutablePackage
+import LeanCfgProject.TCS1.MainTheoremMaterializedPackage
 import LeanCfgProject.TCS1.ConcreteLearnerComplexity
 import LeanCfgProject.TCS1.BinaryMembershipDecision
 import LeanCfgProject.TCS1.ConservativeMembershipCost
@@ -13,6 +14,7 @@ import LeanCfgProject.TCS1.ReconstructionFactorSlotCYK
 import LeanCfgProject.TCS1.ReconstructionProductionTables
 import LeanCfgProject.TCS1.ExecutableConservativeLearner
 import LeanCfgProject.TCS1.MaterializedConservativeLearner
+import LeanCfgProject.TCS1.MaterializedProductionCost
 import LeanCfgProject.TCS1.FixedWindowLemma71ReducedFacade
 import LeanCfgProject.TCS1.FixedWindowLemma72Facade
 import LeanCfgProject.TCS1.FixedWindowSection7Package
@@ -52,8 +54,10 @@ level.  The reconstruction grammar has been transported to the computable
 two-cut factor-slot state space; finite R2/R3 unit reachability is executable;
 the specialized CYK Boolean test is no longer `noncomputable`; and the
 resulting executable conservative hypothesis sequence is proved pointwise
-identical to the semantic Gold run.  Unit-closure preprocessing, CYK work, and
-a possible rebuild are composed into one explicit prefix-polynomial envelope.
+identical to the semantic Gold run.  The parser-facing terminal, binary, and
+start relations are also materialized as explicit finite production tables.
+Production-table scanning, unit-closure preprocessing, CYK work, and a
+possible rebuild are composed into one explicit prefix-polynomial envelope.
 
 The cost statements are an explicit algorithmic scan/comparison accounting,
 not a low-level operational semantics of Lean's evaluator or generated
@@ -87,6 +91,7 @@ namespace TCS1
 #check indexedFixedH_exists_characteristic_sample
 #check indexedFixedH_learning_semantic_core
 #check indexedFixedH_learning_executable_core
+#check indexedFixedH_learning_materialized_core
 #check indexedFixedH_concreteGold_identification_nonempty
 
 -- Section 6: polynomial reconstruction/update bookkeeping.
@@ -125,6 +130,12 @@ namespace TCS1
 #check materializedConservativeUpdate_eq_executable
 #check materializedConservativeHypothesis_eq_concrete
 #check materializedConservative_gold_identification_explicit
+#check reconstructionProductionTableScanEnvelope_polynomial_form
+#check reconstructionMaterializedProductionCard_le_scanEnvelope
+#check conservativeMaterializedUpdateWorkEnvelope_polynomial_form
+#check concreteConservative_materialized_update_work_le_prefix
+#check materializedConservative_update_work_le_prefix
+#check corollary_poly_update_materialized
 
 -- Section 7: fixed-window quantitative bounds and normalization transfer.
 #check omittedSibling_contribution_le
