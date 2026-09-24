@@ -1,5 +1,6 @@
 import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
 import LeanCfgProject.TCS1.FixedHTypingRefinement
+import LeanCfgProject.TCS1.SingletonDataLowerBound
 
 /-!
 # TCS #1 v79: manuscript-label claim audit
@@ -32,6 +33,10 @@ namespace TCS1
 #check fixedHSubstitutable_of_type_implies_distribution_eq
 #check productFixedFiniteMonoidHom_eq_iff
 #check fixedHSubstitutable_product_of_either
+
+-- Further unnumbered Section 3 compatibility facts.
+#check not_fixedWindowSubstitutable_of_bad_pair
+#check fixedWindowSubstitutable_zero_iff_fixedHSubstitutable
 
 -- Proposition 3.1 / prop:regular-auto.
 #check regular_auto_proposition_package
@@ -101,6 +106,13 @@ namespace TCS1
 #check materializedConservative_update_work_le_prefix
 #check conservativeMaterializedUpdateWorkEnvelope_polynomial_form
 #check corollary_poly_update_materialized
+
+-- Unnumbered Section 6 data-lower-bound paragraph:
+-- singleton targets are fixed-h for every typing and any positive
+-- characteristic sample for {a^(2^n)} has encoded norm at least 2^n+1.
+#check singleton_fixedHSubstitutable
+#check singleton_characteristic_sample_contains
+#check singleton_doubling_characteristic_norm_ge
 
 -- ---------------------------------------------------------------------------
 -- Section 7: Fixed-Window Thick Data
