@@ -174,6 +174,10 @@ All numbered mathematical claims are compile-checked.
 
 Important unnumbered prose is also formalized:
 
+- the post-Theorem 3.4 compatibility paragraph with Gold's superfinite
+  obstruction:
+  `goldThreeWordSample_not_fixedH` and
+  `fixedH_omits_some_finite_language`;
 - refinement monotonicity:
   `fixedHSubstitutable_of_refinement`;
 - sufficient syntactic-refinement criterion:
