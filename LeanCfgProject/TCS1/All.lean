@@ -53,6 +53,7 @@ import LeanCfgProject.TCS1.ReconstructionFactorSlotGrammar
 import LeanCfgProject.TCS1.ReconstructionFactorSlotCYK
 import LeanCfgProject.TCS1.ReconstructionProductionTables
 import LeanCfgProject.TCS1.ExecutableConservativeLearner
+import LeanCfgProject.TCS1.MaterializedConservativeLearner
 import LeanCfgProject.TCS1.ExecutableSmokeTest
 import LeanCfgProject.TCS1.ReconstructionComplexityCounts
 import LeanCfgProject.TCS1.ReconstructionFiniteCandidateSpaces
