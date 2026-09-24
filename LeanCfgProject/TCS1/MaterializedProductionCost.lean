@@ -99,6 +99,50 @@ theorem reconstructionMaterializedProductionCard_le_scanEnvelope
   exact Nat.add_le_add (Nat.add_le_add ht hb) hs
 
 /--
+The physically stored production table of the current concrete hypothesis is
+itself bounded by the same prefix-only materialization scan polynomial.
+-/
+theorem concreteConservative_materializedProductionCard_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    reconstructionMaterializedProductionCard
+        H (concreteConservativeHypothesis H datum n)
+      ≤
+    reconstructionProductionTableScanEnvelope
+      (5 * (positiveDataPrefixNorm datum (n + 1) + 1) ^ 5)
+      (Fintype.card α) := by
+  have hstored :=
+    reconstructionMaterializedProductionCard_le_scanEnvelope
+      H (concreteConservativeHypothesis H datum n)
+  have hcard :=
+    reconstructionFactorSlot_current_card_le_prefix_degreeFive
+      H datum n
+  have hscan :=
+    reconstructionProductionTableScanEnvelope_mono_left
+      (a := Fintype.card α) hcard
+  exact le_trans hstored hscan
+
+/--
+The same production-storage bound for the actual materialized hypothesis
+sequence used by the table-backed learner.
+-/
+theorem materializedConservative_productionCard_le_prefix
+    (H : FixedFiniteMonoidHom α M)
+    (datum : Nat → Word α)
+    (n : Nat) :
+    reconstructionMaterializedProductionCard
+        H (materializedConservativeHypothesis H datum n)
+      ≤
+    reconstructionProductionTableScanEnvelope
+      (5 * (positiveDataPrefixNorm datum (n + 1) + 1) ^ 5)
+      (Fintype.card α) := by
+  rw [materializedConservativeHypothesis_eq_concrete]
+  exact
+    concreteConservative_materializedProductionCard_le_prefix
+      H datum n
+
+/--
 Prefix-only budget for a materialized update: production-table scan plus the
 previous executable budget (unit closure, CYK, and a possible rebuild).
 -/
