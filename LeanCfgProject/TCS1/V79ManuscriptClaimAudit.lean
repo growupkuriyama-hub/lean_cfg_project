@@ -1,6 +1,7 @@
 import LeanCfgProject.TCS1.V79TheoremSurfaceAudit
 import LeanCfgProject.TCS1.FixedHTypingRefinement
 import LeanCfgProject.TCS1.GoldCompatibilityFiniteObstruction
+import LeanCfgProject.TCS1.SyntacticRefinementRegularity
 import LeanCfgProject.TCS1.SingletonDataLowerBound
 import LeanCfgProject.TCS1.DoublingSingletonGrammar
 import LeanCfgProject.TCS1.WitnessSetConstruction
@@ -35,6 +36,8 @@ namespace TCS1
 -- syntactic-refinement criterion, and product typing.
 #check fixedHSubstitutable_of_refinement
 #check fixedHSubstitutable_of_type_implies_distribution_eq
+#check isRegular_of_fixedH_type_refines_distribution
+#check lpm_fixedH_without_syntactic_kernel_refinement
 #check productFixedFiniteMonoidHom_eq_iff
 #check fixedHSubstitutable_product_of_either
 
